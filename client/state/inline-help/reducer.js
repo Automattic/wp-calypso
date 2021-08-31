@@ -48,7 +48,7 @@ export const search = (
 	state = {
 		searchQuery: '',
 		items: {},
-		selectedResult: -1,
+		selectedResult: null,
 		shouldOpenSelectedResult: false,
 		hasAPIResults: false,
 	},
@@ -62,7 +62,7 @@ export const search = (
 					...state.items,
 					'': action.searchResults,
 				},
-				selectedResult: -1,
+				selectedResult: null,
 				hasAPIResults: false,
 			};
 		case INLINE_HELP_SET_SEARCH_QUERY:
@@ -78,7 +78,7 @@ export const search = (
 		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 			return {
 				...state,
-				selectedResult: -1,
+				selectedResult: null,
 				items: {
 					...state.items,
 					[ action.searchQuery ]: action.searchResults,
@@ -92,7 +92,7 @@ export const search = (
 		case INLINE_HELP_SELECT_RESULT:
 			return {
 				...state,
-				selectedResult: action.resultIndex,
+				selectedResult: action.result,
 			};
 	}
 

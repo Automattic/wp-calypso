@@ -118,7 +118,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				items: {},
-				selectedResult: -1,
+				selectedResult: null,
 				shouldOpenSelectedResult: false,
 				hasAPIResults: false,
 			} );
@@ -134,7 +134,7 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( {
 					searchQuery: testQuery,
 					items: {},
-					selectedResult: -1,
+					selectedResult: null,
 					shouldOpenSelectedResult: false,
 					hasAPIResults: false,
 				} );
@@ -155,7 +155,7 @@ describe( 'reducer', () => {
 				searchQuery: '',
 				hasAPIResults: false,
 				shouldOpenSelectedResult: false,
-				selectedResult: -1,
+				selectedResult: null,
 				items: {
 					[ firstQuery ]: API_RESULT_FIXTURE,
 				},
@@ -173,7 +173,7 @@ describe( 'reducer', () => {
 				searchQuery: '',
 				hasAPIResults: false,
 				shouldOpenSelectedResult: false,
-				selectedResult: -1,
+				selectedResult: null,
 				items: {
 					[ firstQuery ]: API_RESULT_FIXTURE,
 					[ secondQuery ]: API_RESULT_FIXTURE,
@@ -190,7 +190,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				items: {},
-				selectedResult: -1,
+				selectedResult: null,
 				shouldOpenSelectedResult: false,
 				hasAPIResults: true,
 			} );
@@ -203,7 +203,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				items: {},
-				selectedResult: -1,
+				selectedResult: null,
 				shouldOpenSelectedResult: false,
 				hasAPIResults: false,
 			} );
@@ -213,7 +213,7 @@ describe( 'reducer', () => {
 			test( 'should correctly set index of selected result', () => {
 				let state = search( undefined, {
 					type: INLINE_HELP_SELECT_RESULT,
-					resultIndex: 2,
+					result: { id: 2, title: 'Some result' },
 				} );
 
 				expect( state ).to.eql( {
@@ -221,12 +221,12 @@ describe( 'reducer', () => {
 					items: {},
 					shouldOpenSelectedResult: false,
 					hasAPIResults: false,
-					selectedResult: 2,
+					selectedResult: { id: 2, title: 'Some result' },
 				} );
 
 				state = search( deepFreeze( state ), {
 					type: INLINE_HELP_SELECT_RESULT,
-					resultIndex: 4,
+					result: { id: 4, title: 'Some other result' },
 				} );
 
 				expect( state ).to.eql( {
@@ -234,7 +234,7 @@ describe( 'reducer', () => {
 					items: {},
 					shouldOpenSelectedResult: false,
 					hasAPIResults: false,
-					selectedResult: 4,
+					selectedResult: { id: 4, title: 'Some other result' },
 				} );
 			} );
 		} );
