@@ -24,12 +24,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/babel-plugin-i18n-calypso@^1.2.0, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
+"@automattic/babel-plugin-i18n-calypso@^2.0.0, @automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso":
   version: 0.0.0-use.local
   resolution: "@automattic/babel-plugin-i18n-calypso@workspace:packages/babel-plugin-i18n-calypso"
   dependencies:
     gettext-parser: ^4.0.3
-    lodash: ^4.17.21
+    lodash-es: ^4.17.21
   peerDependencies:
     "@babel/core": ^7.15.0
   languageName: unknown
@@ -1054,7 +1054,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot"
   dependencies:
-    "@automattic/babel-plugin-i18n-calypso": ^1.2.0
+    "@automattic/babel-plugin-i18n-calypso": ^2.0.0
     "@babel/cli": ^7.14.8
     "@babel/core": ^7.15.0
     "@babel/plugin-proposal-class-properties": ^7.14.5
@@ -39994,7 +39994,7 @@ typescript@^4.3.5:
   version: 0.0.0-use.local
   resolution: "wp-calypso@workspace:."
   dependencies:
-    "@automattic/babel-plugin-i18n-calypso": ^1.2.0
+    "@automattic/babel-plugin-i18n-calypso": ^2.0.0
     "@automattic/babel-plugin-transform-wpcalypso-async": ^1.0.1
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1

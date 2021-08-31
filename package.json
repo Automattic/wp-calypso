@@ -145,7 +145,7 @@
 		"composite-checkout:storybook:start": "start-storybook -c packages/composite-checkout/.storybook"
 	},
 	"dependencies": {
-		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
+		"@automattic/babel-plugin-i18n-calypso": "^2.0.0",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "^1.0.1",
 		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",

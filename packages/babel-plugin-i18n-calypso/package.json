@@ -1,11 +1,15 @@
 {
 	"name": "@automattic/babel-plugin-i18n-calypso",
-	"version": "1.2.0",
+	"version": "2.0.0",
 	"description": "A Babel plugin to generate a POT file for translate calls",
-	"main": "src/index.js",
+	"type": "module",
+	"exports": "./src/index.js",
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	},
 	"dependencies": {
 		"gettext-parser": "^4.0.3",
-		"lodash": "^4.17.21"
+		"lodash-es": "^4.17.21"
 	},
 	"peerDependencies": {
 		"@babel/core": "^7.15.0"

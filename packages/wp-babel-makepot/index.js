@@ -20,7 +20,7 @@ const mergeOptions = ( preset, options = {} ) => {
 
 module.exports = ( filepath, options = {} ) => {
 	try {
-		return babel.transformFileSync( filepath, mergeOptions( defaultPreset, options ) );
+		return babel.transformFileAsync( filepath, mergeOptions( defaultPreset, options ) );
 	} catch ( error ) {
 		console.error( filepath, error );
 	}

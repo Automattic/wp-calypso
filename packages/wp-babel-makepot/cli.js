@@ -38,7 +38,7 @@ program
 		'-l, --lines-filter <file>',
 		'JSON file containing files and line numbers filters. Only included line numbers will be passed.'
 	)
-	.action( ( command, [ files = '.' ] = [] ) => {
+	.action( async ( command, [ files = '.' ] = [] ) => {
 		if ( ! presetsKeys.includes( program.preset ) ) {
 			console.log(
 				`Invalid babel preset. Please use any of available options: ${ presetsKeys.join( ', ' ) }`
@@ -53,14 +53,10 @@ program
 
 		const { dir, base, output, linesFilter } = program;
 
-		filesGlob.forEach( ( pattern ) => {
-			glob.sync( pattern, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
-				makePot( filepath, {
-					base,
-					dir,
-				} )
-			);
-		} );
+		const filepaths = filesGlob.flatMap( ( pattern ) =>
+			glob.sync( pattern, { nodir: true, absolute: true, ignore } )
+		);
+		await Promise.all( filepaths.map( ( filepath ) => makePot( filepath, { base, dir } ) ) );
 
 		if ( output && output !== 'false' ) {
 			concatPot( dir, output, linesFilter );
