@@ -7186,6 +7186,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^16.7.9":
+  version: 16.7.9
+  resolution: "@types/node@npm:16.7.9"
+  checksum: dce4970acc449cae5e5884dc371881ec680c2848e162d08634039735978a59658ca643135fd8bff03a96af47e988d182a716c0c46d9a7cbe5ae0c2def33677af
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
@@ -40488,6 +40495,7 @@ typescript@^4.3.5:
     "@babel/runtime": ^7.3.1
     "@testim/chrome-version": ^1.0.7
     "@types/jest": ^27.0.1
+    "@types/node": ^16.7.9
     "@xmpp/plugins": ^0.3.0
     asana-phrase: ^0.0.8
     cached-path-relative: ">=1.0.2"

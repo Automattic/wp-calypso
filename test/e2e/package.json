@@ -78,5 +78,8 @@
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0",
 		"xunit-viewer": "^5.1.8"
+	},
+	"devDependencies": {
+		"@types/node": "^16.7.9"
 	}
 }
