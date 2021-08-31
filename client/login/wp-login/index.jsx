@@ -115,10 +115,10 @@ export class Login extends React.Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isGutenboarding, translate } = this.props;
+		const { isJetpack, isGutenboarding, isP2Login, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isGutenboarding ) {
+		if ( isJetpack || isGutenboarding || isP2Login ) {
 			return null;
 		}
 
@@ -196,6 +196,7 @@ export class Login extends React.Component {
 			isLoggedIn,
 			isJetpack,
 			isGutenboarding,
+			isP2Login,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -216,7 +217,7 @@ export class Login extends React.Component {
 		const isJetpackMagicLinkSignUpFlow =
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
-		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
+		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow && ! isP2Login;
 
 		const footer = (
 			<>
