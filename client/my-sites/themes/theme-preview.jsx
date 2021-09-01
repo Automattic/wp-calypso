@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import QueryTheme from 'calypso/components/data/query-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import WebPreview from 'calypso/components/web-preview';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideThemePreview } from 'calypso/state/themes/actions';
 import {
@@ -94,7 +95,7 @@ class ThemePreview extends React.Component {
 	};
 
 	render() {
-		const { themeId } = this.props;
+		const { themeId, isJetpack, isAtomic, demoUrl, children } = this.props;
 		const { showActionIndicator } = this.state;
 		if ( ! themeId ) {
 			return null;
@@ -102,9 +103,10 @@ class ThemePreview extends React.Component {
 
 		return (
 			<div>
-				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-				{ this.props.children }
-				{ this.props.demoUrl && (
+				{ isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
+				{ isAtomic && <QueryTheme themeId={ themeId } siteId="wpcom" /> }
+				{ children }
+				{ demoUrl && (
 					<WebPreview
 						showPreview={ true }
 						showExternal={ false }
@@ -137,9 +139,11 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 		const themeOptions = getThemePreviewThemeOptions( state );
+		const isAtomic = isSiteWpcomAtomic( state, siteId );
 		return {
 			themeId,
 			isJetpack,
+			isAtomic,
 			themeOptions,
 			isInstalling: isInstallingTheme( state, themeId, siteId ),
 			isActive: isThemeActive( state, themeId, siteId ),
