@@ -707,6 +707,10 @@ export function generateSteps( {
 
 		design: {
 			stepName: 'design-picker',
+			apiRequestFunction:
+				currentPage && currentPage.toString().match( /\/start\/setup-site/ )
+					? setThemeOnSite
+					: null,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
