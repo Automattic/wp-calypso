@@ -3,7 +3,6 @@
 	grid-template-columns: 0.8fr 1fr 1fr 1.25fr;
 	grid-template-rows: auto;
 	grid-template-areas:
-		'tabs	tabs				tabs				tabs'
 		'.		plan-header-1		plan-header-2	both-plans'
 		'. 		price-1 			price-2 		both-plans'
 		'ft-1 	feature-1-1 		feature-2-1 	both-plans'

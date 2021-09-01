@@ -129,17 +129,18 @@ export class PlansStep extends Component {
 
 		const treatmentPlanDisplay = (
 			<TabbedPlans
-				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+				customerType={ this.getCustomerType() }
+				domainName={ this.getDomainName() }
+				flowName={ flowName }
 				hideFreePlan={ hideFreePlan }
-				onUpgradeClick={ this.onSelectPlan }
+				intervalType={ this.getIntervalType() }
+				isAllPaidPlansShown={ true }
 				isInSignup={ true }
 				isLaunchPage={ isLaunchPage }
-				intervalType={ this.getIntervalType() }
-				domainName={ this.getDomainName() }
-				customerType={ this.getCustomerType() }
+				onUpgradeClick={ this.onSelectPlan }
+				plans={ [ 'personal-bundle', 'value_bundle', 'business-bundle', 'ecommerce-bundle' ] }
 				planTypes={ planTypes }
-				flowName={ flowName }
-				isAllPaidPlansShown={ true }
+				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
 			/>
 		);
