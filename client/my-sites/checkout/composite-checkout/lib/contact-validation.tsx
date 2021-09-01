@@ -81,6 +81,36 @@ const getEmailTakenLoginRedirectMessage = (
 	);
 };
 
+async function runContactValidationCheck(
+	contactInfo: ManagedContactDetails,
+	responseCart: ResponseCart
+): Promise< DomainContactValidationResponse > {
+	const contactDetailsType = getContactDetailsType( responseCart );
+	debug( 'validating contact details for', contactDetailsType );
+
+	switch ( contactDetailsType ) {
+		case 'tax':
+			return getTaxValidationResult( contactInfo );
+		case 'domain':
+			return getDomainValidationResult( responseCart.products, contactInfo );
+		case 'gsuite':
+			return getGSuiteValidationResult( responseCart.products, contactInfo );
+		default:
+			return isCompleteAndValid( contactInfo ) ? { success: true } : { success: false };
+	}
+}
+
+async function runLoggedOutEmailValidationCheck(
+	contactInfo: ManagedContactDetails,
+	reduxDispatch: ReturnType< typeof useDispatch >,
+	translate: ReturnType< typeof useTranslate >
+): Promise< unknown > {
+	const email = contactInfo.email?.value ?? '';
+	return getSignupEmailValidationResult( email, ( newEmail: string ) =>
+		getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
+	);
+}
+
 export const validateContactDetailsAndDisplayErrors = async (
 	contactInfo: ManagedContactDetails,
 	isLoggedOutCart: boolean,
@@ -93,10 +123,9 @@ export const validateContactDetailsAndDisplayErrors = async (
 	reduxDispatch: ReturnType< typeof useDispatch >,
 	translate: ReturnType< typeof useTranslate >
 ): Promise< boolean > => {
-	const contactDetailsType = getContactDetailsType( responseCart );
-	debug( 'validating contact details and reporting errors for', contactDetailsType );
+	debug( 'validating contact details and reporting errors' );
 
-	const completeValidationCheck = ( validationResult: unknown ) => {
+	const completeValidationCheck = ( validationResult: unknown ): boolean => {
 		debug( 'validating contact details result', validationResult );
 		handleContactValidationResult( {
 			translate,
@@ -110,32 +139,16 @@ export const validateContactDetailsAndDisplayErrors = async (
 		return isContactValidationResponseValid( validationResult, contactInfo );
 	};
 
-	if ( isLoggedOutCart ) {
-		const email = contactInfo.email?.value ?? '';
-		const isSignupValidationValid = completeValidationCheck(
-			await getSignupEmailValidationResult( email, ( newEmail: string ) =>
-				getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
-			)
-		);
-		if ( ! isSignupValidationValid ) {
-			return false;
-		}
+	if (
+		isLoggedOutCart &&
+		! completeValidationCheck(
+			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate )
+		)
+	) {
+		return false;
 	}
 
-	switch ( contactDetailsType ) {
-		case 'tax':
-			return completeValidationCheck( await getTaxValidationResult( contactInfo ) );
-		case 'domain':
-			return completeValidationCheck(
-				await getDomainValidationResult( responseCart.products, contactInfo )
-			);
-		case 'gsuite':
-			return completeValidationCheck(
-				await getGSuiteValidationResult( responseCart.products, contactInfo )
-			);
-		default:
-			return isCompleteAndValid( contactInfo );
-	}
+	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );
 };
 
 export const validateContactDetails = async (
@@ -146,39 +159,22 @@ export const validateContactDetails = async (
 	translate: ReturnType< typeof useTranslate >
 ): Promise< boolean > => {
 	debug( 'validating contact details without reporting errors' );
-	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const completeValidationCheck = ( validationResult: unknown ) => {
+	const completeValidationCheck = ( validationResult: unknown ): boolean => {
 		debug( 'validating contact details result', validationResult );
 		return isContactValidationResponseValid( validationResult, contactInfo );
 	};
 
-	if ( isLoggedOutCart ) {
-		const email = contactInfo.email?.value ?? '';
-		const isSignupValidationValid = completeValidationCheck(
-			await getSignupEmailValidationResult( email, ( newEmail: string ) =>
-				getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
-			)
-		);
-		if ( ! isSignupValidationValid ) {
-			return false;
-		}
+	if (
+		isLoggedOutCart &&
+		! completeValidationCheck(
+			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate )
+		)
+	) {
+		return false;
 	}
 
-	switch ( contactDetailsType ) {
-		case 'tax':
-			return completeValidationCheck( await getTaxValidationResult( contactInfo ) );
-		case 'domain':
-			return completeValidationCheck(
-				await getDomainValidationResult( responseCart.products, contactInfo )
-			);
-		case 'gsuite':
-			return completeValidationCheck(
-				await getGSuiteValidationResult( responseCart.products, contactInfo )
-			);
-		default:
-			return isCompleteAndValid( contactInfo );
-	}
+	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );
 };
 
 function isContactValidationResponse( data: unknown ): data is DomainContactValidationResponse {
