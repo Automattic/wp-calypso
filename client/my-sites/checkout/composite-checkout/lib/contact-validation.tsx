@@ -1,3 +1,10 @@
+import {
+	getDomain,
+	isDomainTransfer,
+	isDomainProduct,
+	isDomainMapping,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+} from '@automattic/calypso-products';
 import { useEvents } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -5,21 +12,26 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
+import wp from 'calypso/lib/wp';
 import {
 	handleContactValidationResult,
-	getDomainValidationResult,
-	getTaxValidationResult,
 	getSignupEmailValidationResult,
-	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isCompleteAndValid, areRequiredFieldsNotEmpty } from '../types/wpcom-store-state';
+import {
+	isCompleteAndValid,
+	areRequiredFieldsNotEmpty,
+	prepareDomainContactValidationRequest,
+	prepareGSuiteContactValidationRequest,
+} from '../types/wpcom-store-state';
 import getContactDetailsType from './get-contact-details-type';
 import type { PaymentMethod } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
 	DomainContactValidationResponse,
+	ContactDetailsType,
+	ContactValidationRequestContactInformation,
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
@@ -184,4 +196,131 @@ export function isContactValidationResponseValid(
 		return false;
 	}
 	return data.success && areRequiredFieldsNotEmpty( contactDetails );
+}
+
+function prepareContactDetailsForValidation(
+	type: ContactDetailsType,
+	contactDetails: ManagedContactDetails
+): ContactValidationRequestContactInformation {
+	if ( type === 'domain' || type === 'tax' ) {
+		const { contact_information } = prepareDomainContactValidationRequest( contactDetails );
+		return contact_information;
+	}
+	if ( type === 'gsuite' ) {
+		const { contact_information } = prepareGSuiteContactValidationRequest( contactDetails );
+		return contact_information;
+	}
+	throw new Error( `Unknown validation type: ${ type }` );
+}
+
+// https://stackoverflow.com/a/65072147/2615868
+const hydrateNestedObject = (
+	obj: Record< string, unknown > | unknown = {},
+	paths: string[] = [],
+	value: unknown
+): Record< string, unknown > => {
+	const inputObj = obj === null ? {} : { ...( obj as Record< string, unknown > ) };
+
+	if ( paths.length === 0 ) {
+		return inputObj;
+	}
+
+	if ( paths.length === 1 ) {
+		const path = paths[ 0 ];
+		inputObj[ path ] = value;
+		return { ...inputObj, [ path ]: value };
+	}
+
+	const [ path, ...rest ] = paths;
+	const currentNode = inputObj[ path ];
+
+	const childNode = hydrateNestedObject( currentNode, rest, value );
+
+	return { ...inputObj, [ path ]: childNode };
+};
+
+async function wpcomValidateTaxContactInformation(
+	contactInformation: ContactValidationRequestContactInformation
+): Promise< DomainContactValidationResponse > {
+	return wp.req
+		.post( { path: '/me/tax-contact-information/validate' }, undefined, {
+			contact_information: contactInformation,
+		} )
+		.then( ( successData: unknown ) => {
+			if ( ! isContactValidationResponse( successData ) ) {
+				throw new Error( 'Contact validation returned unknown response.' );
+			}
+
+			if ( successData.messages ) {
+				// Reshape the error messages to a nested object
+				const formattedMessages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
+					const messages = ( successData.messages as Record< string, string[] > )[ key ];
+					const fieldKeys = key.split( '.' );
+					hydrateNestedObject( obj, fieldKeys, messages );
+					return obj;
+				}, {} );
+				return {
+					success: successData.success,
+					messages: formattedMessages,
+				};
+			}
+
+			return successData;
+		} );
+}
+
+async function wpcomValidateDomainContactInformation(
+	contactInformation: ContactValidationRequestContactInformation,
+	domainNames: string[]
+): Promise< DomainContactValidationResponse > {
+	return wp.req.post(
+		{ path: '/me/domain-contact-information/validate' },
+		{
+			apiVersion: '1.2',
+		},
+		{
+			contact_information: contactInformation,
+			domain_names: domainNames,
+		}
+	);
+}
+
+async function wpcomValidateGSuiteContactInformation(
+	contactInformation: ContactValidationRequestContactInformation,
+	domainNames: string[]
+): Promise< DomainContactValidationResponse > {
+	return wp.req.post( { path: '/me/google-apps/validate' }, undefined, {
+		contact_information: contactInformation,
+		domain_names: domainNames,
+	} );
+}
+
+export async function getTaxValidationResult(
+	contactInfo: ManagedContactDetails
+): Promise< DomainContactValidationResponse > {
+	const formattedContactDetails = prepareContactDetailsForValidation( 'tax', contactInfo );
+	return wpcomValidateTaxContactInformation( formattedContactDetails );
+}
+
+async function getDomainValidationResult(
+	products: RequestCartProduct[],
+	contactInfo: ManagedContactDetails
+): Promise< DomainContactValidationResponse > {
+	const domainNames = products
+		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
+		.filter( ( product ) => ! isDomainMapping( product ) )
+		.map( getDomain );
+	const formattedContactDetails = prepareContactDetailsForValidation( 'domain', contactInfo );
+	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
+}
+
+async function getGSuiteValidationResult(
+	products: RequestCartProduct[],
+	contactInfo: ManagedContactDetails
+): Promise< DomainContactValidationResponse > {
+	const domainNames = products
+		.filter( ( item ) => isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) )
+		.map( getDomain );
+	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
+	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
 }

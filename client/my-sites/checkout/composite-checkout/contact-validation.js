@@ -1,51 +1,17 @@
-import {
-	getDomain,
-	isDomainTransfer,
-	isDomainProduct,
-	isDomainMapping,
-} from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import wp from 'calypso/lib/wp';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import {
-	prepareDomainContactValidationRequest,
-	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
 	getSignupValidationErrorResponse,
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 
 const wpcom = wp.undocumented();
 
-const wpcomValidateDomainContactInformation = ( ...args ) =>
-	new Promise( ( resolve, reject ) => {
-		// Promisify this function
-		wpcom.validateDomainContactInformation(
-			...args,
-			( httpErrors, data ) => {
-				if ( httpErrors ) {
-					return reject( httpErrors );
-				}
-				resolve( data );
-			},
-			{ apiVersion: '1.2' }
-		);
-	} );
-
 async function wpcomValidateSignupEmail( ...args ) {
 	return wpcom.validateNewUser( ...args, null );
 }
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcomValidateGSuiteContactInformation = ( ...args ) =>
-	wpcom.validateGoogleAppsContactInformation( ...args );
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcomValidateTaxContactInformation = ( ...args ) =>
-	wpcom.validateTaxContactInformation( ...args );
 
 export function handleContactValidationResult( {
 	recordEvent,
@@ -84,32 +50,6 @@ export function handleContactValidationResult( {
 	}
 }
 
-export function prepareContactDetailsForValidation( type, contactDetails ) {
-	if ( type === 'domains' || type === 'tax' ) {
-		const { contact_information } = prepareDomainContactValidationRequest( contactDetails );
-		return contact_information;
-	}
-	if ( type === 'gsuite' ) {
-		const { contact_information } = prepareGSuiteContactValidationRequest( contactDetails );
-		return contact_information;
-	}
-	throw new Error( `Unknown validation type: ${ type }` );
-}
-
-export async function getTaxValidationResult( contactInfo ) {
-	const formattedContactDetails = prepareContactDetailsForValidation( 'tax', contactInfo );
-	return wpcomValidateTaxContactInformation( formattedContactDetails );
-}
-
-export async function getDomainValidationResult( products, contactInfo ) {
-	const domainNames = products
-		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
-		.filter( ( product ) => ! isDomainMapping( product ) )
-		.map( getDomain );
-	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
-	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
-}
-
 export async function getSignupEmailValidationResult( email, emailTakenLoginRedirect ) {
 	const response = await wpcomValidateSignupEmail( {
 		email,
@@ -129,12 +69,4 @@ export async function getSignupEmailValidationResult( email, emailTakenLoginRedi
 		messages: signupValidationErrorResponse,
 	};
 	return validationResponse;
-}
-
-export async function getGSuiteValidationResult( products, contactInfo ) {
-	const domainNames = products
-		.filter( ( item ) => isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) )
-		.map( getDomain );
-	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
-	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
 }
