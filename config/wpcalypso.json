@@ -33,6 +33,7 @@
 		"devdocs/color-scheme-picker": true,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"difm-lite-pilot": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,

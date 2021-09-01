@@ -29,6 +29,7 @@
 		"current-site/stale-cart-notice": true,
 		"checkout/google-pay": true,
 		"desktop-promo": true,
+		"difm-lite-pilot": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,

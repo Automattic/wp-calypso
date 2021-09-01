@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -101,22 +102,25 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/marketing/do-it-for-me/landing/:domain',
-		siteSelection,
-		sites,
-		navigation,
-		doItForMeLandingPage,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/marketing/do-it-for-me/site-info/:domain',
-		siteSelection,
-		sites,
-		navigation,
-		doItForMeSiteInformationCollection,
-		makeLayout,
-		clientRender
-	);
+
+	if ( config.isEnabled( 'difm-lite-pilot' ) ) {
+		page(
+			'/marketing/do-it-for-me/landing/:domain',
+			siteSelection,
+			sites,
+			navigation,
+			doItForMeLandingPage,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/marketing/do-it-for-me/site-info/:domain',
+			siteSelection,
+			sites,
+			navigation,
+			doItForMeSiteInformationCollection,
+			makeLayout,
+			clientRender
+		);
+	}
 }
