@@ -13,22 +13,22 @@ import { useDispatch } from 'react-redux';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import wp from 'calypso/lib/wp';
-import {
-	handleContactValidationResult,
-	getSignupEmailValidationResult,
-} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSignupEmailValidationResult } from '../contact-validation';
 import {
 	isCompleteAndValid,
 	areRequiredFieldsNotEmpty,
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
+	formatDomainContactValidationResponse,
 } from '../types/wpcom-store-state';
 import getContactDetailsType from './get-contact-details-type';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
+	ManagedContactDetailsErrors,
 	DomainContactValidationResponse,
 	ContactDetailsType,
 	ContactValidationRequestContactInformation,
@@ -88,7 +88,7 @@ export const validateContactDetailsAndDisplayErrors = async (
 	responseCart: ResponseCart,
 	onEvent: ReturnType< typeof useEvents >,
 	showErrorMessageBriefly: ( message: string ) => void,
-	applyDomainContactValidationResults: () => void,
+	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
 	reduxDispatch: ReturnType< typeof useDispatch >,
 	translate: ReturnType< typeof useTranslate >
@@ -99,6 +99,7 @@ export const validateContactDetailsAndDisplayErrors = async (
 	const completeValidationCheck = ( validationResult: unknown ) => {
 		debug( 'validating contact details result', validationResult );
 		handleContactValidationResult( {
+			translate,
 			recordEvent: onEvent,
 			showErrorMessage: showErrorMessageBriefly,
 			paymentMethodId: activePaymentMethod?.id ?? '',
@@ -334,4 +335,60 @@ async function getGSuiteValidationResult(
 		.map( getDomain );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
 	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
+}
+
+function handleContactValidationResult( {
+	translate,
+	recordEvent,
+	showErrorMessage,
+	paymentMethodId,
+	validationResult,
+	applyDomainContactValidationResults,
+	clearDomainContactErrorMessages,
+}: {
+	translate: ReturnType< typeof useTranslate >;
+	recordEvent: ReturnType< typeof useEvents >;
+	showErrorMessage: ( message: string ) => void;
+	paymentMethodId: string;
+	validationResult: unknown;
+	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void;
+	clearDomainContactErrorMessages: () => void;
+} ) {
+	if ( ! isContactValidationResponse( validationResult ) ) {
+		return;
+	}
+
+	recordEvent( {
+		type: 'VALIDATE_DOMAIN_CONTACT_INFO',
+		payload: {
+			credits: null,
+			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ),
+		},
+	} );
+
+	if ( ! validationResult ) {
+		showErrorMessage(
+			String(
+				translate(
+					'There was an error validating your contact information. Please contact support.'
+				)
+			)
+		);
+	}
+	if ( validationResult && validationResult.messages ) {
+		showErrorMessage(
+			String(
+				translate(
+					'We could not validate your contact information. Please review and update all the highlighted fields.'
+				)
+			)
+		);
+	}
+	if ( validationResult?.success ) {
+		clearDomainContactErrorMessages();
+	} else {
+		applyDomainContactValidationResults(
+			formatDomainContactValidationResponse( validationResult ?? {} )
+		);
+	}
 }
