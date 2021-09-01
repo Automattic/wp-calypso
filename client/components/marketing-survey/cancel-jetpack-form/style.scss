@@ -58,7 +58,8 @@
 		transition: border 0.2s ease-in-out;
 		font-size: 1rem;
 
-		&:hover, &:focus {
+		&:hover,
+		&:focus {
 			box-shadow: 0 0 0 1px var( --studio-gray-50 );
 		}
 
@@ -75,7 +76,12 @@
 	&__card-content {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		width: 100%;
+
+		@include break-medium {
+			justify-content: flex-start;
+		}
 	}
 }
 
