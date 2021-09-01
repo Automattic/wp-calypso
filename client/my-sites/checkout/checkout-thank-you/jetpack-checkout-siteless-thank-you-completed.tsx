@@ -1,7 +1,9 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import QuerySites from 'calypso/components/data/query-sites';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -11,6 +13,7 @@ import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { useSetCalendlyListenerEffect } from './hooks';
@@ -22,14 +25,12 @@ interface Props {
 	productSlug: string | 'no_product';
 	receiptId?: number;
 	jetpackTemporarySiteId?: number;
-	activated?: boolean;
 }
 
 const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 	productSlug,
 	receiptId = 0,
 	jetpackTemporarySiteId = 0,
-	activated = false,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -56,25 +57,33 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 		jetpackTemporarySiteId,
 	} );
 
-	const title = activated
-		? translate( 'Your %(productName)s subscription has been activated and is ready to go!', {
-				args: {
-					productName,
-				},
-		  } )
-		: translate( 'Your %(productName)s subscription will be activated soon', {
-				args: {
-					productName,
-				},
-		  } );
-
-	const rawSite = useSelector( ( state ) => getRawSite( state, jetpackTemporarySiteId ) );
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, jetpackTemporarySiteId ) );
-	const wpAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, jetpackTemporarySiteId ) );
+	const destinationSiteId = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
+	);
+	const automaticTransferSucceeded = destinationSiteId > 0;
+	const rawSite = useSelector( ( state ) => getRawSite( state, destinationSiteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, destinationSiteId ) );
+	const wpAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, destinationSiteId ) );
 	const siteConfirmedLink = getActivationCompletedLink( productSlug, siteSlug, wpAdminUrl );
+
+	const title = useMemo( () => {
+		return automaticTransferSucceeded
+			? translate( 'Your %(productName)s subscription has been activated and is ready to go!', {
+					args: {
+						productName,
+					},
+			  } )
+			: translate( 'Your %(productName)s subscription will be activated soon', {
+					args: {
+						productName,
+					},
+			  } );
+	}, [ productName ] );
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
+			{ automaticTransferSucceeded && <QuerySites siteId={ destinationSiteId } /> }
+			{ productSlug && <QueryProducts type="jetpack" /> }
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
 				path="/checkout/jetpack/thank-you-completed/no-site/:product"
@@ -93,7 +102,7 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 					>
 						{ title }
 					</h1>
-					{ ! activated && (
+					{ ! automaticTransferSucceeded && (
 						<>
 							<p>
 								{ translate(
@@ -127,7 +136,7 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 							</p>
 						</>
 					) }
-					{ activated && (
+					{ automaticTransferSucceeded && (
 						<>
 							<p>
 								{ productName &&
