@@ -11,7 +11,7 @@
 	svg {
 		display: inline-block;
 		top: 4px;
-		margin-right: 5px;
+		margin-right: 6px;
 		width: 18px;
 		position: relative;
 		color: var( --color-neutral-20 );
@@ -201,6 +201,13 @@
 	@include breakpoint-deprecated( '<660px' ) {
 		display: inline;
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		display: none;
+	}
+}
+
+.reader-feed-header__seen-button .reader-feed-header__visibility {
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
