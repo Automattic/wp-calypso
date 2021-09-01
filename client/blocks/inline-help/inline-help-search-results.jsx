@@ -1,10 +1,10 @@
 import { speak } from '@wordpress/a11y';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { debounce, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -20,7 +20,7 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
-import { withInlineHelpSearchResults } from './data/use-inline-help-search-query';
+import { useInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 
 const noop = () => {};
@@ -38,22 +38,27 @@ const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
 const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
 function HelpSearchResults( {
-	adminResults,
-	contextualResults,
-	currentUserId,
 	externalLinks = false,
-	hasPurchases,
-	isSearching = false,
 	onSelect,
 	onAdminSectionSelect = noop,
 	searchQuery = '',
-	searchResults = [],
-	sectionName,
-	translate,
 	placeholderLines,
-	track,
 } ) {
-	const hasAPIResults = Array.isArray( searchResults ) && searchResults.length > 0;
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const currentUserId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const hasPurchases = useSelector( ( state ) =>
+		hasCancelableUserPurchases( state, getCurrentUserId( state ) )
+	);
+	const sectionName = useSelector( ( state ) => getSectionName( state ) );
+	const contextualResults = useSelector( ( state ) => getContextualHelpResults( state ) );
+	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
+
+	const { data: searchResults = [], isLoading: isSearching = false } = useInlineHelpSearchQuery(
+		searchQuery
+	);
+	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
 		// Cancel all queued speak messages.
@@ -80,10 +85,12 @@ function HelpSearchResults( {
 		// check and catch admin section links.
 		if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
-			track( 'calypso_inlinehelp_admin_section_visit', {
-				link: link,
-				search_term: searchQuery,
-			} );
+			dispatch(
+				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+					link: link,
+					search_term: searchQuery,
+				} )
+			);
 
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
@@ -199,19 +206,19 @@ function HelpSearchResults( {
 		: translate( 'Helpful resources for this section' );
 
 	const renderSearchResults = () => {
-		if ( isSearching && ! searchResults.length ) {
+		if ( isSearching && ! searchResults.length && ! adminResults.length ) {
 			return <PlaceholderLines lines={ placeholderLines } />;
 		}
 
 		return (
 			<>
-				{ ! isEmpty( searchQuery ) && ! hasAPIResults && (
+				{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 					<p className="inline-help__empty-results">
 						{ translate(
 							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
 						) }
 					</p>
-				) }
+				) : null }
 
 				<div className="inline-help__results" aria-label={ resultsLabel }>
 					{ renderSearchSections() }
@@ -229,24 +236,9 @@ function HelpSearchResults( {
 }
 
 HelpSearchResults.propTypes = {
-	translate: PropTypes.func,
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
 	onAdminSectionSelect: PropTypes.func,
-	searchResults: PropTypes.array,
-	isSearching: PropTypes.bool,
-	track: PropTypes.func,
 };
 
-export default connect(
-	( state, ownProps ) => ( {
-		currentUserId: getCurrentUserId( state ),
-		hasPurchases: hasCancelableUserPurchases( state, getCurrentUserId( state ) ),
-		sectionName: getSectionName( state ),
-		contextualResults: getContextualHelpResults( state ),
-		adminResults: getAdminHelpResults( state, ownProps.searchQuery, 3 ),
-	} ),
-	{
-		track: recordTracksEvent,
-	}
-)( localize( withInlineHelpSearchResults( HelpSearchResults ) ) );
+export default HelpSearchResults;
