@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -176,13 +175,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">
-					{ /* This is a feature-flag test and can be removed. Please remove me! */ }
-					{ isEnabled( 'jetpack/user-licensing-m1' ) && (
-						<p>
-							<code>jetpack/user-licensing-m1</code>:<br />
-							is enabled!
-						</p>
-					) }
 					<JetpackLogo size={ 45 } />
 					{ hasProductInfo && <QueryProducts type="jetpack" /> }
 					<h1 className="jetpack-checkout-siteless-thank-you__main-message">
