@@ -33,9 +33,6 @@ export default function useCachedDomainContactDetails(
 		if ( cachedContactDetails ) {
 			debug( 'using fetched cached domain contact details', cachedContactDetails );
 			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
-			dispatch( 'wpcom' ).updateRequiredDomainFields( {
-				postalCode: cachedDetailCountry?.has_postal_codes ?? true,
-			} );
 		}
 		if (
 			cachedContactDetails?.countryCode ||
