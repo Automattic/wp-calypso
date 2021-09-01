@@ -392,25 +392,27 @@ export type SignupValidationResponse = {
  *
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
+export type ContactValidationRequestContactInformation = {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	alternate_email?: string;
+	phone?: string;
+	phone_number_country?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+};
+
 export type DomainContactValidationRequest = {
-	contact_information: {
-		first_name?: string;
-		last_name?: string;
-		organization?: string;
-		email?: string;
-		alternate_email?: string;
-		phone?: string;
-		phone_number_country?: string;
-		address_1?: string;
-		address_2?: string;
-		city?: string;
-		state?: string;
-		postal_code?: string;
-		country_code?: string;
-		fax?: string;
-		vat_id?: string;
-		extra?: DomainContactValidationRequestExtraFields;
-	};
+	contact_information: ContactValidationRequestContactInformation;
 };
 
 export type GSuiteContactValidationRequest = {
@@ -445,40 +447,42 @@ export type DomainContactValidationRequestExtraFields = {
 /**
  * Response format of the domain contact validation endpoint.
  */
-export type DomainContactValidationResponse = {
-	success: boolean;
-	messages?: {
-		first_name?: string[];
-		last_name?: string[];
-		organization?: string[];
-		email?: string[];
-		alternate_email?: string[];
-		phone?: string[];
-		phone_number_country?: string[];
-		address_1?: string[];
-		address_2?: string[];
-		city?: string[];
-		state?: string[];
-		postal_code?: string[];
-		country_code?: string[];
-		fax?: string[];
-		vat_id?: string[];
-		extra?: {
-			ca?: {
-				lang?: string[];
-				legal_type?: string[];
-				cira_agreement_accepted?: string[];
-			};
-			uk?: {
-				registrant_type?: string[];
-				registration_number?: string[];
-				trading_name?: string[];
-			};
-			fr?: {
-				registrant_type?: string[];
-				trademark_number?: string[];
-				siren_siret?: string[];
-			};
+export type ContactValidationResponseMessages = {
+	first_name?: string[];
+	last_name?: string[];
+	organization?: string[];
+	email?: string[];
+	alternate_email?: string[];
+	phone?: string[];
+	phone_number_country?: string[];
+	address_1?: string[];
+	address_2?: string[];
+	city?: string[];
+	state?: string[];
+	postal_code?: string[];
+	country_code?: string[];
+	fax?: string[];
+	vat_id?: string[];
+	extra?: {
+		ca?: {
+			lang?: string[];
+			legal_type?: string[];
+			cira_agreement_accepted?: string[];
+		};
+		uk?: {
+			registrant_type?: string[];
+			registration_number?: string[];
+			trading_name?: string[];
+		};
+		fr?: {
+			registrant_type?: string[];
+			trademark_number?: string[];
+			siren_siret?: string[];
 		};
 	};
+};
+
+export type DomainContactValidationResponse = {
+	success: boolean;
+	messages?: ContactValidationResponseMessages;
 };
