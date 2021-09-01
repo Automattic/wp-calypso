@@ -1,12 +1,10 @@
 import { Button } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import React from 'react';
-import styled from './styled';
 
 // Disabling this to make migrating files easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
 export default function Field( {
 	type,
 	id,
@@ -89,26 +87,6 @@ export default function Field( {
 		</div>
 	);
 }
-
-Field.propTypes = {
-	type: PropTypes.string,
-	id: PropTypes.string.isRequired,
-	className: PropTypes.string,
-	inputClassName: PropTypes.string,
-	isError: PropTypes.bool,
-	onChange: PropTypes.func,
-	label: PropTypes.string,
-	value: PropTypes.string,
-	icon: PropTypes.node,
-	iconAction: PropTypes.func,
-	isIconVisible: PropTypes.bool,
-	placeholder: PropTypes.string,
-	tabIndex: PropTypes.string,
-	description: PropTypes.string,
-	errorMessage: PropTypes.node,
-	autoComplete: PropTypes.string,
-	disabled: PropTypes.bool,
-};
 
 const Label = styled.label< { disabled?: boolean } >`
 	display: block;

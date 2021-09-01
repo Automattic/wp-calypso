@@ -1,6 +1,9 @@
+import { __ } from '@wordpress/i18n';
+
 export const modeType = {
 	SUGGESTED: 'suggested',
 	ADVANCED: 'advanced',
+	DONE: 'done',
 };
 
 export const stepType = {
@@ -31,3 +34,6 @@ export const defaultDomainSetupInfo = {
 		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 	},
 };
+
+export const stepsHeadingSuggested = __( 'Suggested setup' );
+export const stepsHeadingAdvanced = __( 'Advanced setup' );

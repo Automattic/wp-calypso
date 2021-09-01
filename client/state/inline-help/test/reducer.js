@@ -7,7 +7,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-	INLINE_HELP_SELECT_RESULT,
 } from 'calypso/state/action-types';
 import { popover, requesting, search } from '../reducer';
 
@@ -118,8 +117,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				items: {},
-				selectedResult: -1,
-				shouldOpenSelectedResult: false,
 				hasAPIResults: false,
 			} );
 		} );
@@ -134,8 +131,6 @@ describe( 'reducer', () => {
 				expect( state ).to.eql( {
 					searchQuery: testQuery,
 					items: {},
-					selectedResult: -1,
-					shouldOpenSelectedResult: false,
 					hasAPIResults: false,
 				} );
 			}
@@ -154,8 +149,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				hasAPIResults: false,
-				shouldOpenSelectedResult: false,
-				selectedResult: -1,
 				items: {
 					[ firstQuery ]: API_RESULT_FIXTURE,
 				},
@@ -172,8 +165,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				hasAPIResults: false,
-				shouldOpenSelectedResult: false,
-				selectedResult: -1,
 				items: {
 					[ firstQuery ]: API_RESULT_FIXTURE,
 					[ secondQuery ]: API_RESULT_FIXTURE,
@@ -190,8 +181,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				items: {},
-				selectedResult: -1,
-				shouldOpenSelectedResult: false,
 				hasAPIResults: true,
 			} );
 
@@ -203,39 +192,7 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				searchQuery: '',
 				items: {},
-				selectedResult: -1,
-				shouldOpenSelectedResult: false,
 				hasAPIResults: false,
-			} );
-		} );
-
-		describe( 'Search result selection', () => {
-			test( 'should correctly set index of selected result', () => {
-				let state = search( undefined, {
-					type: INLINE_HELP_SELECT_RESULT,
-					resultIndex: 2,
-				} );
-
-				expect( state ).to.eql( {
-					searchQuery: '',
-					items: {},
-					shouldOpenSelectedResult: false,
-					hasAPIResults: false,
-					selectedResult: 2,
-				} );
-
-				state = search( deepFreeze( state ), {
-					type: INLINE_HELP_SELECT_RESULT,
-					resultIndex: 4,
-				} );
-
-				expect( state ).to.eql( {
-					searchQuery: '',
-					items: {},
-					shouldOpenSelectedResult: false,
-					hasAPIResults: false,
-					selectedResult: 4,
-				} );
 			} );
 		} );
 	} );

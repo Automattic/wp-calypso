@@ -158,19 +158,29 @@ const DisplayPrice = ( {
 			{ currencyCode && originalPrice ? (
 				<>
 					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
-					<PlanPrice
-						original
-						className="jetpack-product-card__original-price"
-						rawPrice={
-							( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-						}
-						currencyCode={ currencyCode }
-					/>
-					<PlanPrice
-						discounted
-						rawPrice={ couponDiscountedPrice as number }
-						currencyCode={ currencyCode }
-					/>
+					{ /*
+					 * Price should be displayed from left-to-right, even in right-to-left
+					 * languages. `PlanPrice` seems to keep the ltr direction no matter
+					 * what when seen in the dev docs page, but somehow it doesn't in
+					 * the pricing page.
+					 */ }
+					<span dir="ltr">
+						<PlanPrice
+							original
+							className="jetpack-product-card__original-price"
+							rawPrice={
+								( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
+							}
+							currencyCode={ currencyCode }
+						/>
+					</span>
+					<span dir="ltr">
+						<PlanPrice
+							discounted
+							rawPrice={ couponDiscountedPrice as number }
+							currencyCode={ currencyCode }
+						/>
+					</span>
 					{ tooltipText && (
 						<InfoPopover position="top" className="jetpack-product-card__price-tooltip">
 							{ tooltipText }

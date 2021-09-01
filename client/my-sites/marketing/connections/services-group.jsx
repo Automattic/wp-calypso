@@ -159,7 +159,7 @@ const mapStateToProps = ( state, { type } ) => {
 		services: getEligibleKeyringServices( state, siteId, type ),
 		expandedService: getExpandedService( state ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize' ),
+		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize', true ),
 	};
 };
 

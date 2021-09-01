@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { createAlipayMethod, createAlipayPaymentMethodStore } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	createApplePayMethod,
@@ -17,6 +16,8 @@ import {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
+	createAlipayMethod,
+	createAlipayPaymentMethodStore,
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
@@ -95,13 +96,9 @@ export function useCreateCreditCard( {
 function useCreateAlipay( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createAlipayPaymentMethodStore(), [] );
@@ -110,11 +107,9 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -389,8 +384,6 @@ export default function useCreatePaymentMethods( {
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const p24Method = useCreateP24( {

@@ -1,5 +1,3 @@
-/* eslint-disable wpcalypso/import-docblock */
-
 import type { ITEM_TYPE_PLAN, ITEM_TYPE_PRODUCT } from './constants';
 import type { PlanRecommendation } from './plan-upgrade/types';
 import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';

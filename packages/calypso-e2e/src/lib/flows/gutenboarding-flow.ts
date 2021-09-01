@@ -17,6 +17,7 @@ const selectors = {
 
 	// Start your website
 	siteTitle: '.acquire-intent-text-input__input',
+	siteTitleLabel: 'label.site-title__input-label',
 
 	// Domain
 	domainSearch: 'input[placeholder="Search for a domain"]',
@@ -40,6 +41,10 @@ const selectors = {
 		`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) ${ selectors.button(
 			'Select'
 		) }`,
+
+	// Language
+	languagePicker: 'a:has(.gutenboarding__header-site-language-label)',
+	languageButton: ( target: string ) => `button:has(span[lang="${ target }"])`,
 };
 
 /**
@@ -78,6 +83,15 @@ export class GutenboardingFlow {
 	 */
 	async enterSiteTitle( title: string ) {
 		await this.page.fill( selectors.siteTitle, title );
+	}
+
+	/**
+	 * Returns the text for site title label.
+	 */
+	async getSiteTitleLabel(): Promise< string > {
+		const elementHandle = await this.page.waitForSelector( selectors.siteTitleLabel );
+		await elementHandle.waitForElementState( 'stable' );
+		return await elementHandle.innerText();
 	}
 
 	/* Domains screen */
@@ -199,5 +213,33 @@ export class GutenboardingFlow {
 		// The plan item with the `has-badge` attribute is the one that is recommended based on features.
 		const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.has-badge` );
 		await elementHandle.waitForSelector( `div:text-is("${ name }")` );
+	}
+
+	/* Other actions */
+
+	/**
+	 * Clicks on the language picker on top right of the Gutenboarding flow.
+	 */
+	async clickLanguagePicker(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.languagePicker ),
+		] );
+	}
+
+	/**
+	 * Given a target string in ISO 639-1 format, click on the button representing
+	 * the target language.
+	 *
+	 * @param {string} target Two-letter langauge code.
+	 */
+	async switchLanguage( target: string ): Promise< void > {
+		await this.clickLanguagePicker();
+		// Clicking on a language button triggers a navigation to a URL containing
+		// the ISO 639-1 code eg. /new/ja.
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.languageButton( target ) ),
+		] );
 	}
 }

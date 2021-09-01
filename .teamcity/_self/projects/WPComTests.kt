@@ -32,6 +32,8 @@ object WPComTests : Project({
 	// Keep the previous ID in order to preserve the historical data
 	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
+	buildType(GutenbergPlaywrightE2EDesktop);
+	buildType(GutenbergPlaywrightE2EMobile);
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
 	buildType(VisualRegressionTests);
@@ -330,6 +332,28 @@ fun jetpackBuildType(screenSize: String): BuildType {
 	}
 }
 
+private object GutenbergPlaywrightE2EDesktop: BuildType ({
+	name = "Playwright WPCOM E2E Tests (desktop)"
+	description = "Runs Gutenberg E2E tests in desktop size using Playwright"
+
+    steps {
+        bashNodeScript {
+            scriptContent = "echo 'Hello world!'"
+        }
+    }
+})
+
+private object GutenbergPlaywrightE2EMobile: BuildType ({
+	name = "Playwright WPCOM E2E Tests (mobile)"
+	description = "Runs Gutenberg E2E tests in mobile size using Playwright"
+
+    steps {
+        bashNodeScript {
+            scriptContent = "echo 'Hello world!'"
+        }
+    }
+})
+
 private object VisualRegressionTests : BuildType({
 	name = "Visual Regression Tests"
 	description = "Runs visual regression tests"
@@ -542,3 +566,4 @@ private object I18NTests : BuildType({
 		}
 	}
 })
+

@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -8,6 +8,7 @@ import Gridicon from 'calypso/components/gridicon';
 import './style.scss';
 
 export default function ConnectDomainStepClipboardButton( { baseClassName, classes, text } ) {
+	const { __ } = useI18n();
 	const [ copiedText, setCopiedText ] = useState( false );
 	const copied = () => setCopiedText( true );
 	const buttonClasses = classNames( baseClassName + '__clipboard-button', ...classes );

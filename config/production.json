@@ -29,6 +29,7 @@
 		"current-site/stale-cart-notice": true,
 		"checkout/google-pay": true,
 		"desktop-promo": true,
+		"difm-lite-pilot": false,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
@@ -114,7 +115,6 @@
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
-		"upgrades/premium-themes": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
 		"upgrades/upcoming-renewals-notices": true,
@@ -125,7 +125,8 @@
 		"use-translation-chunks": true,
 		"woocommerce/extension-referrers": false,
 		"wpcom-user-bootstrap": true,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"redirect-fallback-browsers": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

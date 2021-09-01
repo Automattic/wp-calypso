@@ -1,5 +1,5 @@
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -13,6 +13,7 @@ import { modeType } from './constants';
 import './style.scss';
 
 export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode } ) {
+	const { __ } = useI18n();
 	const supportLink = {
 		[ modeType.SUGGESTED ]: MAP_DOMAIN_CHANGE_NAME_SERVERS,
 		[ modeType.ADVANCED ]: MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,

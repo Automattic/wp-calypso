@@ -4,7 +4,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
@@ -48,8 +47,6 @@ export const search = (
 	state = {
 		searchQuery: '',
 		items: {},
-		selectedResult: -1,
-		shouldOpenSelectedResult: false,
 		hasAPIResults: false,
 	},
 	action
@@ -62,7 +59,6 @@ export const search = (
 					...state.items,
 					'': action.searchResults,
 				},
-				selectedResult: -1,
 				hasAPIResults: false,
 			};
 		case INLINE_HELP_SET_SEARCH_QUERY:
@@ -78,7 +74,6 @@ export const search = (
 		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 			return {
 				...state,
-				selectedResult: -1,
 				items: {
 					...state.items,
 					[ action.searchQuery ]: action.searchResults,
@@ -88,11 +83,6 @@ export const search = (
 			return {
 				...state,
 				hasAPIResults: action.hasAPIResults,
-			};
-		case INLINE_HELP_SELECT_RESULT:
-			return {
-				...state,
-				selectedResult: action.resultIndex,
 			};
 	}
 

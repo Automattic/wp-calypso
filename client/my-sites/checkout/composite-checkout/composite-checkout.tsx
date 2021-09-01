@@ -11,8 +11,8 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import { ThemeProvider } from '@emotion/react';
 import debugFactory from 'debug';
-import { ThemeProvider } from 'emotion-theming';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback, useMemo } from 'react';
@@ -531,6 +531,8 @@ export default function CompositeCheckout( {
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
 		} );
+	} else {
+		debug( 'no longer loading' );
 	}
 
 	useRecordCheckoutLoaded( {
@@ -574,6 +576,7 @@ export default function CompositeCheckout( {
 			isInitialCartLoading,
 		} )
 	) {
+		debug( 'rendering empty cart page' );
 		const goToPlans = () => {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
