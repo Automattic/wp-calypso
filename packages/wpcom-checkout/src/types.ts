@@ -394,21 +394,21 @@ export type SignupValidationResponse = {
  */
 export type DomainContactValidationRequest = {
 	contact_information: {
-		firstName?: string;
-		lastName?: string;
+		first_name?: string;
+		last_name?: string;
 		organization?: string;
 		email?: string;
-		alternateEmail?: string;
+		alternate_email?: string;
 		phone?: string;
-		phoneNumberCountry?: string;
-		address1?: string;
-		address2?: string;
+		phone_number_country?: string;
+		address_1?: string;
+		address_2?: string;
 		city?: string;
 		state?: string;
-		postalCode?: string;
-		countryCode?: string;
+		postal_code?: string;
+		country_code?: string;
 		fax?: string;
-		vatId?: string;
+		vat_id?: string;
 		extra?: DomainContactValidationRequestExtraFields;
 	};
 };
@@ -447,37 +447,37 @@ export type DomainContactValidationRequestExtraFields = {
  */
 export type DomainContactValidationResponse = {
 	success: boolean;
-	messages: {
-		firstName?: string[];
-		lastName?: string[];
+	messages?: {
+		first_name?: string[];
+		last_name?: string[];
 		organization?: string[];
 		email?: string[];
-		alternateEmail?: string[];
+		alternate_email?: string[];
 		phone?: string[];
-		phoneNumberCountry?: string[];
-		address1?: string[];
-		address2?: string[];
+		phone_number_country?: string[];
+		address_1?: string[];
+		address_2?: string[];
 		city?: string[];
 		state?: string[];
-		postalCode?: string[];
-		countryCode?: string[];
+		postal_code?: string[];
+		country_code?: string[];
 		fax?: string[];
-		vatId?: string[];
+		vat_id?: string[];
 		extra?: {
 			ca?: {
 				lang?: string[];
-				legalType?: string[];
-				ciraAgreementAccepted?: string[];
+				legal_type?: string[];
+				cira_agreement_accepted?: string[];
 			};
 			uk?: {
-				registrantType?: string[];
-				registrationNumber?: string[];
-				tradingName?: string[];
+				registrant_type?: string[];
+				registration_number?: string[];
+				trading_name?: string[];
 			};
 			fr?: {
-				registrantType?: string[];
-				trademarkNumber?: string[];
-				sirenSiret?: string[];
+				registrant_type?: string[];
+				trademark_number?: string[];
+				siren_siret?: string[];
 			};
 		};
 	};
