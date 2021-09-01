@@ -7,7 +7,7 @@ import CardHeading from 'calypso/components/card-heading';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const VeticalsGrid = styled.div`
+const VerticalsGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
 	gap: 2em;
@@ -41,7 +41,7 @@ export default function DoItForMeLandingPage(): JSX.Element {
 				Our website building plans are perfect for:
 			</CardHeading>
 
-			<VeticalsGrid>
+			<VerticalsGrid>
 				<div>
 					<CardHeading tagName="h1" size={ 21 }>
 						Online Stores
@@ -72,7 +72,7 @@ export default function DoItForMeLandingPage(): JSX.Element {
 						growing.
 					</p>
 				</div>
-			</VeticalsGrid>
+			</VerticalsGrid>
 
 			<Button primary onClick={ onInterestedSelected }>
 				I am interested
