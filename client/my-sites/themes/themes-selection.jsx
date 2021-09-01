@@ -207,7 +207,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: 'free',
+			tier: '',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
