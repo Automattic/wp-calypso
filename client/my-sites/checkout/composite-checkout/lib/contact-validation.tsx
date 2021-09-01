@@ -193,9 +193,20 @@ export function isContactValidationResponseValid(
 	contactDetails: ManagedContactDetails
 ): boolean {
 	if ( ! isContactValidationResponse( data ) ) {
+		throw new Error( 'Invalid contact validation response.' );
+	}
+	if ( ! data.success ) {
+		debug( 'Validation response says that the contact details not valid' );
 		return false;
 	}
-	return data.success && areRequiredFieldsNotEmpty( contactDetails );
+	if ( ! areRequiredFieldsNotEmpty( contactDetails ) ) {
+		debug(
+			'Validation response says that the contact details are valid but there are empty required fields in',
+			contactDetails
+		);
+		return false;
+	}
+	return true;
 }
 
 function prepareContactDetailsForValidation(
