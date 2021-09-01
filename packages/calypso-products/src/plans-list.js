@@ -531,13 +531,13 @@ const getPlanBusinessDetails = () => ( {
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
-				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' business website with custom plugins and themes,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
+			'Power your business website with custom plugins and themes,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
