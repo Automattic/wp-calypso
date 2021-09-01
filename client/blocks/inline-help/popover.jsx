@@ -125,7 +125,7 @@ class InlineHelpPopover extends Component {
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						query={ this.props.searchQuery }
-						isVisible={ ! this.state.showSecondaryView }
+						isVisible={ ! this.state.activeSecondaryView }
 					/>
 					<InlineHelpSearchResults
 						onSelect={ this.openResultView }
