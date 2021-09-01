@@ -617,7 +617,7 @@ export default connect(
 				: allLogEntries;
 
 		const allLogsVisible = displayRulesEnabled
-			? visibleLogEntries.length < allLogEntries.length
+			? visibleLogEntries.length === allLogEntries.length
 			: false;
 
 		return {
