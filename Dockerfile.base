@@ -8,7 +8,7 @@ ARG node_memory=8192
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
-ENV READONLY_CACHE=true
+ENV READONLY_CACHE=false
 ENV PROFILE=true
 ENV SKIP_TSC=true
 ENV NVM_DIR=/calypso/.nvm
