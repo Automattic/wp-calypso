@@ -305,9 +305,13 @@ export function isTouched( details: ManagedContactDetails ): boolean {
 
 export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
 	const values = getManagedValuesList( details );
-	return (
-		values.length > 0 && values.every( ( value ) => value.value?.length > 0 || ! value.isRequired )
-	);
+	if ( values.length === 0 ) {
+		return false;
+	}
+	if ( values.some( ( value ) => value.value?.length === 0 && value.isRequired ) ) {
+		return false;
+	}
+	return true;
 }
 
 function setManagedContactDetailsErrors(
