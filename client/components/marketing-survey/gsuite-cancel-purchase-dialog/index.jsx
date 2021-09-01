@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { getName } from 'calypso/lib/purchases';
 import wpcom from 'calypso/lib/wp';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -209,7 +209,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 					onClose={ onClose }
 				>
 					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-						<GSuiteCancellationFeatures purchase={ purchase }
+						<GSuiteCancellationFeatures
+							purchase={ purchase }
 							status={ selectedDomain?.googleAppsSubscription?.status }
 						/>
 					) : (
