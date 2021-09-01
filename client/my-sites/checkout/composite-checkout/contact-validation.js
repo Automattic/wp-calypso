@@ -14,7 +14,6 @@ import {
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
 	getSignupValidationErrorResponse,
-	areRequiredFieldsNotEmpty,
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 
 const wpcom = wp.undocumented();
@@ -83,10 +82,6 @@ export function handleContactValidationResult( {
 			formatDomainContactValidationResponse( validationResult ?? {} )
 		);
 	}
-}
-
-export function isContactValidationResponseValid( data, contactDetails ) {
-	return data && data.success && areRequiredFieldsNotEmpty( contactDetails );
 }
 
 export function prepareContactDetailsForValidation( type, contactDetails ) {

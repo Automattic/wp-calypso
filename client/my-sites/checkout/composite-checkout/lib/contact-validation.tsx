@@ -7,18 +7,20 @@ import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	handleContactValidationResult,
-	isContactValidationResponseValid,
 	getDomainValidationResult,
 	getTaxValidationResult,
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isCompleteAndValid } from '../types/wpcom-store-state';
+import { isCompleteAndValid, areRequiredFieldsNotEmpty } from '../types/wpcom-store-state';
 import getContactDetailsType from './get-contact-details-type';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	ManagedContactDetails,
+	DomainContactValidationResponse,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 
@@ -165,3 +167,21 @@ export const validateContactDetails = async (
 			return isCompleteAndValid( contactInfo );
 	}
 };
+
+function isContactValidationResponse( data: unknown ): data is DomainContactValidationResponse {
+	const dataResponse = data as DomainContactValidationResponse;
+	if ( dataResponse?.success !== false && dataResponse?.success !== true ) {
+		return false;
+	}
+	return true;
+}
+
+export function isContactValidationResponseValid(
+	data: unknown,
+	contactDetails: ManagedContactDetails
+): boolean {
+	if ( ! isContactValidationResponse( data ) ) {
+		return false;
+	}
+	return data.success && areRequiredFieldsNotEmpty( contactDetails );
+}
