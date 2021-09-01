@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard, Card } from '@automattic/components';
-import { localize, useTranslate } from 'i18n-calypso';
+import i18nCalypso, { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
@@ -46,14 +46,22 @@ function BillingHistory(): JSX.Element {
 			<FormattedHeader
 				brandFont
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate(
-					'View, print, and email your receipts. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="billing" showIcon={ false } />,
-						},
-					}
-				) }
+				subHeaderText={
+					i18nCalypso.hasTranslation(
+						'View, print, and email your receipts. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+					)
+						? translate(
+								'View, print, and email your receipts. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="billing" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate( 'View, print, and email your receipts.' )
+				}
 				align="left"
 			/>
 			<QueryBillingTransactions />
@@ -66,4 +74,4 @@ function BillingHistory(): JSX.Element {
 		</Main>
 	);
 }
-export default localize( BillingHistory );
+export default BillingHistory;
