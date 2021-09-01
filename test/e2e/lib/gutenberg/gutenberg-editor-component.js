@@ -450,7 +450,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		const titleLocator = By.css( '.editor-post-title__input' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
 		const element = await this.driver.findElement( titleLocator );
-		return await element.getAttribute( 'value' );
+		return await element.getProperty( 'textContent' );
 	}
 
 	async addImage( fileDetails ) {
