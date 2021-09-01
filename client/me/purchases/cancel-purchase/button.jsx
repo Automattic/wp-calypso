@@ -52,10 +52,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = () => {
-		const { purchase } = this.props;
-
-		if ( isDomainRegistration( purchase ) ) {
-			return this.goToCancelDomainConfirmation();
+		if ( isDomainRegistration( this.props.purchase ) ) {
+			return this.goToCancelConfirmation();
 		}
 
 		this.setState( {
@@ -69,7 +67,7 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
-	goToCancelDomainConfirmation = () => {
+	goToCancelConfirmation = () => {
 		const { id } = this.props.purchase;
 		const slug = this.props.siteSlug;
 
