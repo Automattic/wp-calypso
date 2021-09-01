@@ -1,3 +1,4 @@
+import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -22,6 +23,7 @@ class StepWrapper extends Component {
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
+		headerButton: PropTypes.node,
 	};
 
 	static defaultProps = {
@@ -110,9 +112,12 @@ class StepWrapper extends Component {
 			skipButtonAlign,
 			align,
 		} = this.props;
+
+		const hasHeaderButtons = headerButton || ( ! hideSkip && skipButtonAlign === 'top-right' );
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
+			'has-header-buttons': hasHeaderButtons,
 		} );
 
 		return (
@@ -121,22 +126,24 @@ class StepWrapper extends Component {
 					{ ! hideBack && this.renderBack() }
 
 					{ ! hideFormattedHeader && (
-						<FormattedHeader
-							id={ 'step-header' }
-							headerText={ this.headerText() }
-							subHeaderText={ this.subHeaderText() }
-							align={ align }
-							headerButton={
-								<>
+						<div className="step-wrapper__header">
+							<FormattedHeader
+								id={ 'step-header' }
+								headerText={ this.headerText() }
+								subHeaderText={ this.subHeaderText() }
+								align={ align }
+							/>
+							{ hasHeaderButtons && (
+								<ActionButtons>
 									{ headerButton }
 									{ ! hideSkip && skipButtonAlign === 'top-right' && (
 										<div className="step-wrapper__buttons is-top-right-buttons">
 											{ this.renderSkip( { borderless: false } ) }
 										</div>
 									) }
-								</>
-							}
-						/>
+								</ActionButtons>
+							) }
+						</div>
 					) }
 
 					{ ! hideSkip && skipButtonAlign === 'top' && (

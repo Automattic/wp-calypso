@@ -15,7 +15,6 @@ function FormattedHeader( {
 	align,
 	isSecondary,
 	hasScreenOptions,
-	headerButton,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -29,14 +28,11 @@ function FormattedHeader( {
 
 	return (
 		<header id={ id } className={ classes }>
-			<div className="formatted-header__heading">
-				{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
-				{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
-				{ subHeaderText && (
-					<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
-				) }
-			</div>
-			{ headerButton }
+			{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
+			{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
+			{ subHeaderText && (
+				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+			) }
 		</header>
 	);
 }
@@ -50,7 +46,6 @@ FormattedHeader.propTypes = {
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
-	headerButton: PropTypes.node,
 };
 
 FormattedHeader.defaultProps = {

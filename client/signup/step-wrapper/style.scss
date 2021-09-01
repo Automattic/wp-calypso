@@ -1,3 +1,13 @@
+.step-wrapper__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	.formatted-header {
+		flex-grow: 1;
+	}
+}
+
 .step-wrapper__skip-hr {
 	background: var( --color-primary-light );
 	max-width: 270px;
@@ -54,13 +64,14 @@
 }
 
 .step-wrapper__buttons.is-top-right-buttons {
+	margin-left: auto;
 	margin-bottom: 0;
 	font-size: 0.875rem;
 
 	.navigation-link {
 		height: 42px;
 		min-width: 160px;
-		color: var( --studio-gray-50 );
+		color: #2c3338;
 
 		svg {
 			display: none;
