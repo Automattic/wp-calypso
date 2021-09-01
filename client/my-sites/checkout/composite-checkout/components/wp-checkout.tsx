@@ -33,10 +33,7 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
-import {
-	validateContactDetailsAndDisplayErrors,
-	validateContactDetails,
-} from '../lib/contact-validation';
+import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
@@ -339,7 +336,7 @@ export default function WPCheckout( {
 								// Touch the fields so they display validation errors
 								touchContactFields();
 								updateCartContactDetails();
-								return validateContactDetailsAndDisplayErrors(
+								return validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
 									activePaymentMethod,
@@ -349,7 +346,8 @@ export default function WPCheckout( {
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
 									reduxDispatch,
-									translate
+									translate,
+									true
 								);
 							} }
 							activeStepContent={
@@ -362,9 +360,15 @@ export default function WPCheckout( {
 										validateContactDetails(
 											contactInfo,
 											isLoggedOutCart,
+											activePaymentMethod,
 											responseCart,
+											onEvent,
+											showErrorMessageBriefly,
+											applyDomainContactValidationResults,
+											clearDomainContactErrorMessages,
 											reduxDispatch,
-											translate
+											translate,
+											false
 										)
 									}
 									contactDetailsType={ contactDetailsType }
