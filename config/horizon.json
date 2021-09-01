@@ -64,6 +64,7 @@
 		"jetpack/product-cancellation-flow": false,
 		"jetpack/magic-link-signup": true,
 		"jetpack/siteless-checkout": true,
+		"jetpack/user-licensing-m1": true,
 		"jetpack/userless-checkout": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jitms": true,
