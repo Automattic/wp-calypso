@@ -17,11 +17,9 @@ import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import {
-	isContactValidationResponseValid,
-	getTaxValidationResult,
-} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
+import { getTaxValidationResult } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { isContactValidationResponseValid } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
