@@ -20,9 +20,9 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 
-	const GetRole = () => {
-		const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+	const getRole = () => {
 		const wpcomFollowerRole = getWpcomFollowerRole( isPrivate, translate );
 
 		if ( invite && invite.role ) {
@@ -44,7 +44,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		return;
 	};
 
-	const getRoleBadgeText = ( role = GetRole() ) => {
+	const getRoleBadgeText = ( role = getRole() ) => {
 		let text;
 		switch ( role ) {
 			case 'super admin':
@@ -90,7 +90,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		return text;
 	};
 
-	const getRoleBadgeClass = ( role = GetRole() ) => {
+	const getRoleBadgeClass = ( role = getRole() ) => {
 		return 'role-' + role;
 	};
 
@@ -192,7 +192,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			);
 		}
 
-		if ( GetRole() ) {
+		if ( getRole() ) {
 			roleBadge = (
 				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass() ) }>
 					{ getRoleBadgeText() }
