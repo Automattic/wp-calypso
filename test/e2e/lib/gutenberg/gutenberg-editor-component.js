@@ -54,6 +54,22 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	}
 
 	async publish( { visit = false } = {} ) {
+		// The `wpcom-editor-welcome-tour-frame` popup could get in the way
+		// of the actual publish click, so we need to check if it's visible
+		// and click `Skip` to close it.
+		const isWelcomeDialogDisplayed = await driverHelper.isElementLocated(
+			this.driver,
+			By.css( '.wpcom-editor-welcome-tour-frame' )
+		);
+
+		if ( isWelcomeDialogDisplayed ) {
+			// Click the 'Skip' button to get rid of it.
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-card-footer button.is-tertiary' )
+			);
+		}
+
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 
