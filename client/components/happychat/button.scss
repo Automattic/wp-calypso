@@ -1,0 +1,36 @@
+.happychat__button.is-floating {
+	position: fixed;
+	right: 24px;
+	bottom: 24px;
+	z-index: z-index( 'root', '.floating-help' );
+	line-height: 0;
+	padding: 1px;
+	border-radius: 100%; /* stylelint-disable-line */
+	background: var( --color-primary );
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+
+	.gridicon {
+		fill: var( --color-text-inverted );
+		margin: 2px;
+		top: 0;
+		height: 24px;
+		width: 24px;
+	}
+
+	&.is-active {
+		background: var( --color-primary );
+		border-color: var( --color-primary-40 );
+	}
+
+	&.has-unread {
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
+	}
+
+	// Make happychat button appear above the FAB icon
+	// when the latter is already shown.
+	&.is-offset {
+		bottom: calc( 24px + 60px );
+		right: calc( 24px + 5px );
+	}
+}

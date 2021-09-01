@@ -13,6 +13,7 @@ import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat
 import isHappychatConnectionUninitialized from 'calypso/state/happychat/selectors/is-happychat-connection-uninitialized';
 import { openChat } from 'calypso/state/happychat/ui/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
+import './button.scss';
 
 const noop = () => {};
 
@@ -21,6 +22,8 @@ export class HappychatButton extends Component {
 		allowMobileRedirect: PropTypes.bool,
 		borderless: PropTypes.bool,
 		primary: PropTypes.bool,
+		floating: PropTypes.bool,
+		offset: PropTypes.bool,
 		getAuth: PropTypes.func,
 		initConnection: PropTypes.func,
 		isChatActive: PropTypes.bool,
@@ -34,6 +37,9 @@ export class HappychatButton extends Component {
 	static defaultProps = {
 		allowMobileRedirect: false,
 		borderless: true,
+		primary: false,
+		floating: false,
+		offset: false,
 		getAuth: noop,
 		initConnection: noop,
 		isChatActive: false,
@@ -68,12 +74,16 @@ export class HappychatButton extends Component {
 			className,
 			primary,
 			borderless,
+			floating,
+			offset,
 			hasUnread,
 			isChatAvailable,
 			isChatActive,
 		} = this.props;
 		const showButton = isChatAvailable || isChatActive;
 		const classes = classnames( 'happychat__button', className, {
+			'is-floating': floating,
+			'is-offset': offset,
 			'has-unread': hasUnread,
 		} );
 
