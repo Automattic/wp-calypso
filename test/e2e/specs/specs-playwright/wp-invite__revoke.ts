@@ -27,7 +27,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		page = args.page;
 	} );
 
-	it( 'Can log in', async function () {
+	it( 'Log in', async function () {
 		const loginFlow = new LoginFlow( page );
 		await loginFlow.logIn();
 	} );
@@ -52,7 +52,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	it( 'Revoke the invite for test user', async function () {
 		await sidebarComponent.navigate( 'Users', 'All Users' );
 		await peoplePage.clickTab( 'Invites' );
-		await peoplePage.revokeInvite( testEmailAddress );
+		await peoplePage.selectInvitedUser( testEmailAddress );
+		await peoplePage.revokeInvite();
 	} );
 
 	it( `Invite email was received for test user`, async function () {
@@ -63,8 +64,10 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		} );
 		const links = await emailClient.getLinksFromMessage( message );
 		const acceptInviteLink = links.find( ( link: string ) => link.includes( 'accept-invite' ) );
-
-		adjustedInviteLink = await DataHelper.adjustInviteLink( acceptInviteLink );
+		if ( ! acceptInviteLink ) {
+			throw new Error( 'Invite link was not found.' );
+		}
+		adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 
 		expect( acceptInviteLink ).toBeDefined();
 	} );
