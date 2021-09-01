@@ -111,7 +111,7 @@ async function runLoggedOutEmailValidationCheck(
 	);
 }
 
-export const validateContactDetailsAndDisplayErrors = async (
+export async function validateContactDetails(
 	contactInfo: ManagedContactDetails,
 	isLoggedOutCart: boolean,
 	activePaymentMethod: PaymentMethod | null,
@@ -121,21 +121,24 @@ export const validateContactDetailsAndDisplayErrors = async (
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
 	reduxDispatch: ReturnType< typeof useDispatch >,
-	translate: ReturnType< typeof useTranslate >
-): Promise< boolean > => {
-	debug( 'validating contact details and reporting errors' );
+	translate: ReturnType< typeof useTranslate >,
+	shouldDisplayErrors: boolean
+): Promise< boolean > {
+	debug( 'validating contact details; shouldDisplayErrors', shouldDisplayErrors );
 
 	const completeValidationCheck = ( validationResult: unknown ): boolean => {
 		debug( 'validating contact details result', validationResult );
-		handleContactValidationResult( {
-			translate,
-			recordEvent: onEvent,
-			showErrorMessage: showErrorMessageBriefly,
-			paymentMethodId: activePaymentMethod?.id ?? '',
-			validationResult,
-			applyDomainContactValidationResults,
-			clearDomainContactErrorMessages,
-		} );
+		if ( shouldDisplayErrors ) {
+			handleContactValidationResult( {
+				translate,
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+				validationResult,
+				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
+			} );
+		}
 		return isContactValidationResponseValid( validationResult, contactInfo );
 	};
 
@@ -149,33 +152,7 @@ export const validateContactDetailsAndDisplayErrors = async (
 	}
 
 	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );
-};
-
-export const validateContactDetails = async (
-	contactInfo: ManagedContactDetails,
-	isLoggedOutCart: boolean,
-	responseCart: ResponseCart,
-	reduxDispatch: ReturnType< typeof useDispatch >,
-	translate: ReturnType< typeof useTranslate >
-): Promise< boolean > => {
-	debug( 'validating contact details without reporting errors' );
-
-	const completeValidationCheck = ( validationResult: unknown ): boolean => {
-		debug( 'validating contact details result', validationResult );
-		return isContactValidationResponseValid( validationResult, contactInfo );
-	};
-
-	if (
-		isLoggedOutCart &&
-		! completeValidationCheck(
-			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate )
-		)
-	) {
-		return false;
-	}
-
-	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );
-};
+}
 
 function isContactValidationResponse( data: unknown ): data is DomainContactValidationResponse {
 	const dataResponse = data as DomainContactValidationResponse;
