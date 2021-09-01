@@ -13,7 +13,6 @@ import SpinnerLine from 'calypso/components/spinner-line';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -243,20 +242,16 @@ export class WebPreviewContent extends Component {
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
 		}
-		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
-		if ( ! this.props.isInlineHelpPopoverVisible ) {
-			this.focusIfNeeded();
-			// If the preview is loaded and the site is private atomic, there's a chance we ended up on
-			// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
-			// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
-			// iframe OR redirected to using <a href="" target="_top">.
-			if ( this.props.isPrivateAtomic ) {
-				const { protocol, host } = parseUrl( this.props.externalUrl );
-				this.iframe.contentWindow.postMessage(
-					{ connected: 'calypso' },
-					`${ protocol }//${ host }`
-				);
-			}
+
+		this.focusIfNeeded();
+
+		// If the preview is loaded and the site is private atomic, there's a chance we ended up on
+		// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
+		// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
+		// iframe OR redirected to using <a href="" target="_top">.
+		if ( this.props.isPrivateAtomic ) {
+			const { protocol, host } = parseUrl( this.props.externalUrl );
+			this.iframe.contentWindow.postMessage( { connected: 'calypso' }, `${ protocol }//${ host }` );
 		}
 	};
 
@@ -421,7 +416,6 @@ WebPreviewContent.defaultProps = {
 const mapState = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
 		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
 		url: getSelectedSite( state )?.URL,
 	};
