@@ -1,16 +1,4 @@
 import config from '@automattic/calypso-config';
-import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
-import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
-import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
-import {
-	getIncludedDomain,
-	getName,
-	getDisplayName,
-	hasIncludedDomain,
-	isRemovable,
-} from 'calypso/lib/purchases';
-import { isDataLoading } from '../utils';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -36,7 +24,13 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'calypso/lib/purchases';
+import {
+	getIncludedDomain,
+	getName,
+	getDisplayName,
+	hasIncludedDomain,
+	isRemovable,
+} from 'calypso/lib/purchases';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
