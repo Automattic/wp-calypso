@@ -378,7 +378,7 @@ export type ManagedContactDetailsUpdaters = {
  */
 export type SignupValidationResponse = {
 	success: boolean;
-	messages: {
+	messages?: {
 		first_name?: string[];
 		last_name?: string[];
 		email?: Record< string, string >;
