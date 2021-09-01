@@ -291,7 +291,7 @@ class ThemeShowcase extends React.Component {
 			filterString,
 			locale,
 		} = this.props;
-		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
+		const tier = '';
 
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
