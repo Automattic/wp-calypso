@@ -29,7 +29,9 @@ class GSuiteCancellationFeatures extends Component {
 
 				<p>
 					{ translate(
-						'If you cancel and remove %(googleMailService)s from {{siteName/}} you will lose access to the following: ',
+						'If you cancel your subscription now, you will lose access to all of your ' +
+							'%(googleMailService)s features immediately. After that time, you will need to ' +
+							'start a new subscription with Google or another reseller.',
 						{
 							args: {
 								googleMailService: getGoogleMailServiceFamily( productSlug ),
