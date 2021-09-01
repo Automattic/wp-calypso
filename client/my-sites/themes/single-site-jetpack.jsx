@@ -1,7 +1,4 @@
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	PLAN_JETPACK_SECURITY_REALTIME,
-} from '@automattic/calypso-products';
+import { PLAN_JETPACK_SECURITY_REALTIME } from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,11 +8,7 @@ import { isPartnerPurchase } from 'calypso/lib/purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import {
-	getCurrentPlan,
-	hasFeature,
-	isRequestingSitePlans,
-} from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -52,7 +45,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		vertical,
 		tier,
 		translate,
-		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
 		siteSlug,
 	} = props;
@@ -64,7 +56,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			<SidebarNavigation />
 			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
+			{ ! requestingSitePlans && currentPlan && ! isPartnerPlan && (
 				<UpsellNudge
 					forceDisplay
 					title={ translate( 'Get unlimited premium themes' ) }
@@ -140,7 +132,6 @@ export default connect( ( state, { siteId, tier } ) => {
 		showWpcomThemesList,
 		emptyContent,
 		isMultisite,
-		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
 		siteSlug,
 	};
