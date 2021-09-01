@@ -366,7 +366,7 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	showUpsell = () => {
-		const { upsell } = this.state;
+		const { isSubmitting, upsell } = this.state;
 
 		if ( ! upsell ) {
 			return null;
@@ -381,7 +381,12 @@ class CancelPurchaseForm extends React.Component {
 				<img className="cancel-purchase-form__upsell-image" src={ image } alt="" />
 				<div className="cancel-purchase-form__upsell-description">
 					{ children }
-					<GutenbergButton href={ actionHref } isPrimary onClick={ actionOnClick }>
+					<GutenbergButton
+						href={ actionHref }
+						isPrimary
+						onClick={ actionOnClick }
+						disabled={ isSubmitting }
+					>
 						{ actionText }
 					</GutenbergButton>
 					<GutenbergButton onClick={ dismissUpsell }>{ translate( 'Dismiss' ) }</GutenbergButton>
@@ -1019,10 +1024,16 @@ class CancelPurchaseForm extends React.Component {
 
 	getStepButtons = () => {
 		const { flowType, translate, disableButtons, purchase, isImport } = this.props;
-		const { surveyStep } = this.state;
-		const disabled = disableButtons || this.state.isSubmitting;
+		const { isSubmitting, surveyStep } = this.state;
+		const disabled = disableButtons || isSubmitting;
 
 		if ( surveyStep === steps.FEEDBACK_STEP ) {
+			let actionText;
+			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+				actionText = isSubmitting ? translate( 'Removing…' ) : translate( 'Remove plan' );
+			} else {
+				actionText = isSubmitting ? translate( 'Cancelling…' ) : translate( 'Cancel plan' );
+			}
 			return (
 				<>
 					<GutenbergButton disabled={ disabled } isPrimary onClick={ this.closeDialog }>
@@ -1033,9 +1044,7 @@ class CancelPurchaseForm extends React.Component {
 						disabled={ disabled || ! isSurveyFilledIn( this.state, isImport ) }
 						onClick={ this.onSubmit }
 					>
-						{ flowType === CANCEL_FLOW_TYPE.REMOVE
-							? translate( 'Remove plan' )
-							: translate( 'Cancel plan' ) }
+						{ actionText }
 					</GutenbergButton>
 				</>
 			);
