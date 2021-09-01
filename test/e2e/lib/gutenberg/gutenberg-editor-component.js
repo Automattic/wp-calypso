@@ -33,6 +33,12 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	static async Expect( driver, editorType ) {
 		const page = new this( driver, null, editorType );
 		await page._expectInit();
+
+		// The `wpcom-editor-welcome-tour-frame` popup could get in the way
+		// of the actual publish click, so we need to check if it's visible
+		// and click `Skip` to close it.
+		await page.dismissNuxWelcomeModal();
+
 		return page;
 	}
 
@@ -44,6 +50,10 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
 	}
 
+	// @todo discuss/look into refactoring this function. It's strange that
+	// it's an init function that's not always called. Might be better to
+	// either rename it or split it into two, with unconditional portion
+	// moved over to `Expect()`.
 	async initEditor( { dismissPageTemplateLocator = false } = {} ) {
 		if ( dismissPageTemplateLocator ) {
 			await this.dismissPageTemplateLocator();
@@ -54,22 +64,6 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	}
 
 	async publish( { visit = false } = {} ) {
-		// The `wpcom-editor-welcome-tour-frame` popup could get in the way
-		// of the actual publish click, so we need to check if it's visible
-		// and click `Skip` to close it.
-		const isWelcomeDialogDisplayed = await driverHelper.isElementLocated(
-			this.driver,
-			By.css( '.wpcom-editor-welcome-tour-frame' )
-		);
-
-		if ( isWelcomeDialogDisplayed ) {
-			// Click the 'Skip' button to get rid of it.
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.components-card-footer button.is-tertiary' )
-			);
-		}
-
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 
@@ -716,5 +710,20 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		const notices = await this.driver.findElements( locator );
 		await Promise.all( notices.map( ( notice ) => notice.click() ) );
 		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
+	}
+
+	async dismissNuxWelcomeModal() {
+		const isNuxWelcomeDialogDisplayed = await driverHelper.isElementLocated(
+			this.driver,
+			By.css( '.wpcom-editor-welcome-tour-frame' )
+		);
+
+		if ( isNuxWelcomeDialogDisplayed ) {
+			// Click the 'Skip' button to get rid of it.
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-card-footer button.is-tertiary' )
+			);
+		}
 	}
 }
