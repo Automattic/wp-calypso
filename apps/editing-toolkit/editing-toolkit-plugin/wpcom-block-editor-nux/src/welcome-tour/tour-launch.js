@@ -2,9 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useState, useRef, useCallback } from '@wordpress/element';
+import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import useKeyboardNavigation from './hooks/use-keyboard-navigation';
 import maximize from './icons/maximize';
 import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
@@ -51,74 +52,35 @@ function LaunchWpcomWelcomeTour() {
 	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
 
-const useKeyboardNavigation = (
-	ref,
-	{ onMinimize, onNextCardProgression, onPreviousCardProgression }
-) => {
-	const handleKeydown = useCallback(
-		( event ) => {
-			switch ( event.keyCode ) {
-				case 27: // Escape key
-					onMinimize( true );
-					break;
-				case 37: // left arrow
-					onPreviousCardProgression();
-					break;
-				case 39: // right arrow
-					onNextCardProgression();
-					break;
-				default:
-					break;
-			}
-		},
-		[ onMinimize, onNextCardProgression, onPreviousCardProgression ]
-	);
-
-	useEffect( () => {
-		const element = ref?.current || document;
-
-		// console.log( ref, 234 );
-		element.addEventListener( 'keydown', handleKeydown );
-
-		return () => {
-			// console.log( ref, 345 );
-			element.removeEventListener( 'keydown', handleKeydown );
-		};
-	}, [ ref, handleKeydown ] );
-};
-
 function KeyboardNavigation( { onMinimize, onNextCardProgression, onPreviousCardProgression } ) {
-	const ref = useRef();
-	useKeyboardNavigation( ref, { onMinimize, onNextCardProgression, onPreviousCardProgression } );
+	useKeyboardNavigation( onMinimize, onNextCardProgression, onPreviousCardProgression );
+
 	return null;
 }
 
 function WelcomeTourFrame() {
-	const localeSlug = useLocale();
-	const cardContent = getTourContent( localeSlug );
-	const lastCardIndex = cardContent.length - 1;
+	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
-
-	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
-
-	const handleDismiss = ( source ) => {
-		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			slide_number: currentCardIndex + 1,
-			action: source,
-		} );
-		setShowWelcomeGuide( false, { openedManually: false } );
-	};
-
-	// Preload card images
-	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
+	const localeSlug = useLocale();
+	const cardContent = getTourContent( localeSlug );
+	const lastCardIndex = cardContent.length - 1;
+	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 
 	// Some editor menus close when they lose focus (onblur), but when the tour is open or minimized the user should
 	// be able to interact with menus (ex: the Block Inserter). To make that happen we capture the onMouseDown event
 	const captureWelcomeTourFrameClick = ( e ) => {
 		e.preventDefault();
+	};
+
+	const handleDismiss = ( source ) => {
+		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
+			is_gutenboarding: isGutenboarding,
+			slide_number: currentCardIndex + 1,
+			action: source,
+		} );
+		setShowWelcomeGuide( false, { openedManually: false } );
 	};
 
 	const handleNextCardProgression = () => {
@@ -131,6 +93,26 @@ function WelcomeTourFrame() {
 		currentCardIndex && setCurrentCardIndex( currentCardIndex - 1 );
 	};
 
+	const handleMinimize = () => {
+		setIsMinimized( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
+			is_gutenboarding: isGutenboarding,
+			slide_number: currentCardIndex + 1,
+		} );
+	};
+
+	const handleMaximize = () => {
+		setIsMinimized( false );
+		setJustMaximized( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
+			is_gutenboarding: isGutenboarding,
+			slide_number: currentCardIndex + 1,
+		} );
+	};
+
+	// Preload card images
+	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
+
 	return (
 		<div
 			className="wpcom-editor-welcome-tour-frame"
@@ -139,18 +121,18 @@ function WelcomeTourFrame() {
 			{ ! isMinimized ? (
 				<>
 					<KeyboardNavigation
-						onMinimize={ setIsMinimized }
+						onMinimize={ handleMinimize }
 						onNextCardProgression={ handleNextCardProgression }
 						onPreviousCardProgression={ handlePreviousCardProgression }
 					/>
 					<WelcomeTourCard
 						cardContent={ cardContent[ currentCardIndex ] }
-						cardIndex={ currentCardIndex }
+						currentCardIndex={ currentCardIndex }
 						justMaximized={ justMaximized }
 						key={ currentCardIndex }
 						lastCardIndex={ lastCardIndex }
 						onDismiss={ handleDismiss }
-						onMinimize={ setIsMinimized }
+						onMinimize={ handleMinimize }
 						setJustMaximized={ setJustMaximized }
 						setCurrentCardIndex={ setCurrentCardIndex }
 						onNextCardProgression={ handleNextCardProgression }
@@ -158,28 +140,15 @@ function WelcomeTourFrame() {
 					/>
 				</>
 			) : (
-				<WelcomeTourMinimized
-					onMaximize={ setIsMinimized }
-					setJustMaximized={ setJustMaximized }
-					slideNumber={ currentCardIndex + 1 }
-				/>
+				<WelcomeTourMinimized onMaximize={ handleMaximize } />
 			) }
 		</div>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
-	const handleOnMaximize = () => {
-		onMaximize( false );
-		setJustMaximized( true );
-		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			slide_number: slideNumber,
-		} );
-	};
-
+function WelcomeTourMinimized( { handleMaximize } ) {
 	return (
-		<Button onClick={ handleOnMaximize } className="wpcom-editor-welcome-tour__resume-btn">
+		<Button onClick={ handleMaximize } className="wpcom-editor-welcome-tour__resume-btn">
 			<Flex gap={ 13 }>
 				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
 				<Icon icon={ maximize } size={ 24 } />
