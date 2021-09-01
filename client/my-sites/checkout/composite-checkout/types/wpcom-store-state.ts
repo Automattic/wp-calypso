@@ -852,7 +852,7 @@ export const domainRequiredContactDetails: ManagedContactDetailsRequiredMask = {
 	address1: true,
 	address2: false,
 	city: true,
-	state: true,
+	state: false,
 	postalCode: true,
 	countryCode: true,
 	fax: false,
