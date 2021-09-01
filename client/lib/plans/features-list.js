@@ -115,7 +115,6 @@ import {
 	FEATURE_SPELLING_CORRECTION_V2,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
@@ -480,22 +479,6 @@ export const FEATURES_LIST = {
 					'to a previous point in time with just a click! While you’re at it, ' +
 					'improve your SEO with our Advanced SEO tools and automate social media sharing.'
 			),
-	},
-
-	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_UNLIMITED_PREMIUM_THEMES,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Unlimited{{/strong}} Premium themes', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, ' +
-					'including designs specifically tailored for businesses.'
-			),
-		getStoreSlug: () => 'unlimited_themes',
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
