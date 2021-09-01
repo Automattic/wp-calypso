@@ -548,7 +548,9 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
-				{ siteId && <QueryRewindPolicies siteId={ siteId } /> }
+				{ siteId && isEnabled( 'activity-log/display-rules' ) && (
+					<QueryRewindPolicies siteId={ siteId } />
+				) }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
