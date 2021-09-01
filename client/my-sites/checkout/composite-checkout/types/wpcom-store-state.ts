@@ -538,24 +538,24 @@ export function prepareDomainContactValidationRequest(
 
 	return {
 		contact_information: {
-			firstName: details.firstName?.value,
-			lastName: details.lastName?.value,
+			first_name: details.firstName?.value,
+			last_name: details.lastName?.value,
 			organization: details.organization?.value,
 			email: details.email?.value,
-			alternateEmail: details.alternateEmail?.value,
+			alternate_email: details.alternateEmail?.value,
 			phone: details.phone?.value,
-			phoneNumberCountry: details.phoneNumberCountry?.value,
-			address1: details.address1?.value,
-			address2: details.address2?.value,
+			phone_number_country: details.phoneNumberCountry?.value,
+			address_1: details.address1?.value,
+			address_2: details.address2?.value,
 			city: details.city?.value,
 			state: details.state?.value,
-			postalCode: tryToGuessPostalCodeFormat(
+			postal_code: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value
 			),
-			countryCode: details.countryCode?.value,
+			country_code: details.countryCode?.value,
 			fax: details.fax?.value,
-			vatId: details.vatId?.value,
+			vat_id: details.vatId?.value,
 			extra,
 		},
 	};
@@ -603,36 +603,36 @@ export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
 	return {
-		firstName: response.messages?.firstName,
-		lastName: response.messages?.lastName,
+		firstName: response.messages?.first_name,
+		lastName: response.messages?.last_name,
 		organization: response.messages?.organization,
 		email: response.messages?.email,
-		alternateEmail: response.messages?.alternateEmail,
+		alternateEmail: response.messages?.alternate_email,
 		phone: response.messages?.phone,
-		phoneNumberCountry: response.messages?.phoneNumberCountry,
-		address1: response.messages?.address1,
-		address2: response.messages?.address2,
+		phoneNumberCountry: response.messages?.phone_number_country,
+		address1: response.messages?.address_1,
+		address2: response.messages?.address_2,
 		city: response.messages?.city,
 		state: response.messages?.state,
-		postalCode: response.messages?.postalCode,
-		countryCode: response.messages?.countryCode,
+		postalCode: response.messages?.postal_code,
+		countryCode: response.messages?.country_code,
 		fax: response.messages?.fax,
-		vatId: response.messages?.vatId,
+		vatId: response.messages?.vat_id,
 		tldExtraFields: {
 			ca: {
 				lang: response.messages?.extra?.ca?.lang,
-				legalType: response.messages?.extra?.ca?.legalType,
-				ciraAgreementAccepted: response.messages?.extra?.ca?.ciraAgreementAccepted,
+				legalType: response.messages?.extra?.ca?.legal_type,
+				ciraAgreementAccepted: response.messages?.extra?.ca?.cira_agreement_accepted,
 			},
 			uk: {
-				registrantType: response.messages?.extra?.uk?.registrantType,
-				registrationNumber: response.messages?.extra?.uk?.registrationNumber,
-				tradingName: response.messages?.extra?.uk?.tradingName,
+				registrantType: response.messages?.extra?.uk?.registrant_type,
+				registrationNumber: response.messages?.extra?.uk?.registration_number,
+				tradingName: response.messages?.extra?.uk?.trading_name,
 			},
 			fr: {
-				registrantType: response.messages?.extra?.fr?.registrantType,
-				trademarkNumber: response.messages?.extra?.fr?.trademarkNumber,
-				sirenSiret: response.messages?.extra?.fr?.sirenSiret,
+				registrantType: response.messages?.extra?.fr?.registrant_type,
+				trademarkNumber: response.messages?.extra?.fr?.trademark_number,
+				sirenSiret: response.messages?.extra?.fr?.siren_siret,
 			},
 		},
 	};
