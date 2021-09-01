@@ -158,8 +158,9 @@ function HelpSearchResults( {
 		);
 	};
 
-	const renderSearchResultsSection = ( { id, title, results, condition } ) => {
+	const renderSearchResultsSection = ( { type, title, results, condition } ) => {
 		/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
+		const id = `inline-search--${ type }`;
 
 		return condition ? (
 			<Fragment key={ id }>
@@ -179,19 +180,19 @@ function HelpSearchResults( {
 	const renderSearchSections = () => {
 		const sections = [
 			{
-				id: `inline-search--${ SUPPORT_TYPE_API_HELP }`,
+				type: SUPPORT_TYPE_API_HELP,
 				title: translate( 'Support articles' ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
-				id: `inline-search--${ SUPPORT_TYPE_CONTEXTUAL_HELP }`,
+				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
 				title: ! searchQuery.length ? translate( 'This might interest you' ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},
 			{
-				id: `inline-search--${ SUPPORT_TYPE_ADMIN_SECTION }`,
+				type: SUPPORT_TYPE_ADMIN_SECTION,
 				title: translate( 'Show me where to' ),
 				results: adminResults,
 				condition: !! searchQuery && adminResults.length > 0,
