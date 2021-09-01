@@ -1,7 +1,8 @@
-const testFramework = require( '../index' );
-const TestRun = testFramework.TestRun;
 const mockFs = require( 'mock-fs' );
+const testFramework = require( '../index' );
 require( '@automattic/calypso-polyfills' );
+
+const TestRun = testFramework.TestRun;
 
 describe( 'TestRun class', function () {
 	let run;

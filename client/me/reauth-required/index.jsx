@@ -1,13 +1,10 @@
+import { Card, Dialog } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-const debug = debugFactory( 'calypso:me:reauth-required' );
-
-import { Card, Dialog } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -22,6 +19,8 @@ import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
 import './style.scss';
+
+const debug = debugFactory( 'calypso:me:reauth-required' );
 
 // autofocus is used for tracking purposes, not an a11y issue
 /* eslint-disable jsx-a11y/no-autofocus, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
