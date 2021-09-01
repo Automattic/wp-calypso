@@ -17,6 +17,13 @@ class GSuiteCancellationFeatures extends Component {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_learn_more_click' );
 	};
 
+	getTimePeriod = () => {
+		const { status, translate } = this.props;
+		return status === 'suspended'
+			? translate( 'immediately' )
+			: translate( 'in %(days)s days', { args: { days: '30' }, comment: 'Number of days' } );
+	};
+
 	render() {
 		const { purchase, translate } = this.props;
 		const { meta: domainName, productSlug } = purchase;
@@ -30,14 +37,15 @@ class GSuiteCancellationFeatures extends Component {
 				<p>
 					{ translate(
 						'If you cancel your subscription now, you will lose access to all of ' +
-							'your features immediately. After that time, you will need to start a new ' +
-							'subscription with Google or another reseller.',
+							'your %(googleMailService)s features %(days)s. After that time, ' +
+							'you will need to start a new subscription with Google or another reseller.',
 						{
 							args: {
 								googleMailService: getGoogleMailServiceFamily( productSlug ),
+								days: this.getTimePeriod(),
 							},
-							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-							components: { siteName: <em>{ domainName }</em> },
+							comment:
+								'%(googleMailService)s can be either "G Suite" or "Google Workspace" and %(days)s might be "immediately" or "after 30 days"',
 						}
 					) }
 				</p>

@@ -7,12 +7,14 @@ import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getName } from 'calypso/lib/purchases';
 import wpcom from 'calypso/lib/wp';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import * as steps from './steps';
@@ -194,9 +196,9 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, onClose, purchase } = this.props;
+		const { isVisible, onClose, purchase, domains, domain } = this.props;
 		const { surveyAnswerId, surveyAnswerText, isRemoving } = this.state;
-
+		const selectedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (
@@ -207,7 +209,9 @@ class GSuiteCancelPurchaseDialog extends Component {
 					onClose={ onClose }
 				>
 					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-						<GSuiteCancellationFeatures purchase={ purchase } />
+						<GSuiteCancellationFeatures purchase={ purchase }
+							status={ selectedDomain?.googleAppsSubscription?.status }
+						/>
 					) : (
 						<GSuiteCancellationSurvey
 							disabled={ isRemoving }
@@ -235,12 +239,13 @@ GSuiteCancelPurchaseDialog.propTypes = {
 };
 
 export default connect(
-	( state, { purchase } ) => {
+	( state, { purchase, site } ) => {
 		return {
 			productName: getName( purchase ),
 			domain: purchase.meta,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
+			domains: getDomainsBySiteId( state, site.ID ),
 		};
 	},
 	{
