@@ -566,14 +566,14 @@ export function prepareGSuiteContactValidationRequest(
 ): GSuiteContactValidationRequest {
 	return {
 		contact_information: {
-			firstName: details.firstName?.value ?? '',
-			lastName: details.lastName?.value ?? '',
-			alternateEmail: details.alternateEmail?.value ?? '',
-			postalCode: tryToGuessPostalCodeFormat(
+			first_name: details.firstName?.value ?? '',
+			last_name: details.lastName?.value ?? '',
+			alternate_email: details.alternateEmail?.value ?? '',
+			postal_code: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value
 			),
-			countryCode: details.countryCode?.value ?? '',
+			country_code: details.countryCode?.value ?? '',
 		},
 	};
 }
