@@ -25,9 +25,7 @@ It's also possible to build an entirely custom form using the other components e
 
 ## How to use this package
 
-Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
-
-- [createStripeMethod](#createStripeMethod)
+Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form.
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
 
@@ -367,18 +365,6 @@ An [@emotion/styled](https://emotion.sh/docs/styled) theme object that can be me
 ### createRegistry
 
 Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
-
-### createStripeMethod
-
-Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
-
-- `store: StripeStore`. The result of calling [createStripePaymentMethodStore](#createStripePaymentMethodStore).
-- `stripe: object`. The configured stripe object.
-- `stripeConfiguration: object`. The stripe configuration object.
-
-### createStripeMethodStore
-
-Creates a data store for use by [createStripeMethod](#createStripeMethod).
 
 ### defaultRegistry
 
