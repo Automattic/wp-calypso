@@ -20,7 +20,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
+import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
