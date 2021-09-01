@@ -4,6 +4,7 @@ import type {
 	ResponseCartTaxData,
 	DomainContactDetails,
 } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type WPCOMTransactionEndpointCart = {
 	blog_id: string;
@@ -139,20 +140,20 @@ export type PossiblyCompleteDomainContactDetails = {
 };
 
 export type DomainContactDetailsErrors = {
-	firstName?: string;
-	lastName?: string;
-	organization?: string;
-	email?: string;
-	alternateEmail?: string;
-	phone?: string;
-	address1?: string;
-	address2?: string;
-	city?: string;
-	state?: string;
-	postalCode?: string;
-	countryCode?: string;
-	fax?: string;
-	vatId?: string;
+	firstName?: string | TranslateResult;
+	lastName?: string | TranslateResult;
+	organization?: string | TranslateResult;
+	email?: string | TranslateResult;
+	alternateEmail?: string | TranslateResult;
+	phone?: string | TranslateResult;
+	address1?: string | TranslateResult;
+	address2?: string | TranslateResult;
+	city?: string | TranslateResult;
+	state?: string | TranslateResult;
+	postalCode?: string | TranslateResult;
+	countryCode?: string | TranslateResult;
+	fax?: string | TranslateResult;
+	vatId?: string | TranslateResult;
 	extra?: DomainContactDetailsErrorsExtra;
 };
 
@@ -163,22 +164,22 @@ type DomainContactDetailsErrorsExtra = {
 };
 
 export type CaDomainContactExtraDetailsErrors = {
-	lang?: string;
-	legalType?: string;
-	ciraAgreementAccepted?: string;
+	lang?: string | TranslateResult;
+	legalType?: string | TranslateResult;
+	ciraAgreementAccepted?: string | TranslateResult;
 };
 
 export type UkDomainContactExtraDetailsErrors = {
-	registrantType?: { errorCode: string; errorMessage: string }[];
-	registrationNumber?: { errorCode: string; errorMessage: string }[];
-	tradingName?: { errorCode: string; errorMessage: string }[];
+	registrantType?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	registrationNumber?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	tradingName?: { errorCode: string; errorMessage: string | TranslateResult }[];
 };
 
 export type FrDomainContactExtraDetailsErrors = {
-	registrantType?: string[];
-	registrantVatId?: string[];
-	trademarkNumber?: string[];
-	sirenSiret?: string[];
+	registrantType?: string[] | TranslateResult[];
+	registrantVatId?: string[] | TranslateResult[];
+	trademarkNumber?: string[] | TranslateResult[];
+	sirenSiret?: string[] | TranslateResult[];
 };
 
 export type PayPalExpressEndpoint = (
@@ -292,7 +293,9 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
  */
 export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 
-export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
+	undefined | string[] | TranslateResult[]
+>;
 
 /*
  * Intermediate type used to represent update payloads
@@ -315,7 +318,7 @@ export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< bool
 export interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
-	errors: string[]; // Has value passed validation?
+	errors: string[] | TranslateResult[]; // Has value passed validation?
 	isRequired: boolean; // Is this field required?
 }
 

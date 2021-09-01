@@ -26,6 +26,7 @@ import type {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
@@ -242,7 +243,7 @@ export function isValid( arg: ManagedValue ): boolean {
 function getInitialManagedValue( initialProperties?: {
 	value?: string;
 	isTouched?: boolean;
-	errors?: Array< string >;
+	errors?: Array< string | TranslateResult >;
 	isRequired?: boolean;
 } ): ManagedValue {
 	return {
@@ -285,7 +286,10 @@ function setValueUnlessTouched(
 	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
 }
 
-function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
+function setErrors(
+	errors: string[] | TranslateResult[] | undefined,
+	oldData: ManagedValue
+): ManagedValue {
 	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
@@ -469,7 +473,7 @@ function prepareUkDomainContactExtraDetailsErrors(
 ): UkDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.uk ) {
 		// Needed for compatibility with existing component props
-		const toErrorPayload = ( errorMessage: string, index: number ) => {
+		const toErrorPayload = ( errorMessage: string | TranslateResult, index: number ) => {
 			return { errorCode: index.toString(), errorMessage };
 		};
 
@@ -585,7 +589,7 @@ export function prepareGSuiteContactValidationRequest(
 export function getSignupValidationErrorResponse(
 	response: SignupValidationResponse,
 	email: string,
-	emailTakenLoginRedirect: ( arg0: string ) => string
+	emailTakenLoginRedirect: ( email: string ) => TranslateResult
 ): ManagedContactDetailsErrors {
 	const emailResponse: Record< string, string > = response.messages?.email ?? {};
 
