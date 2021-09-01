@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { InfoTooltip } from '@automattic/components';
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { Spinner, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -9,7 +10,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
-import InfoTooltip from '../info-tooltip';
 import WrappingComponent from './suggestion-item-wrapper';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../../types-patch';
