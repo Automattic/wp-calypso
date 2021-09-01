@@ -20,7 +20,6 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
  * @example
  * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
  * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
- *
  * @param {By|Function} locator The element's locator
  * @param {string|RegExp} text The element's inner text
  * @returns {Function} An element locator function
@@ -306,7 +305,17 @@ export async function setWhenSettable(
 			try {
 				const element = await driver.findElement( locator );
 				await highlightElement( driver, element );
-				const currentValue = await element.getAttribute( 'value' );
+				let currentValue = await element.getAttribute( 'value' );
+
+				// Some inputs might not be actual input els, but another element
+				// with the `contentEditable` attribute set to `true`. In this case,
+				// getting the text through the `value` attribute won't work, and
+				// the `textContent` property should be used instead. `getAttribute`
+				// should return `null` when the attribute doesn't exist.
+				if ( currentValue === null ) {
+					currentValue = await element.getProperty( 'textContent' );
+				}
+
 				if ( currentValue === value ) {
 					// Do nothing if given value is already set
 					return element;
