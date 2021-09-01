@@ -24,14 +24,14 @@ class GSuiteCancellationFeatures extends Component {
 		return (
 			<div className="gsuite-cancel-purchase-dialog__features">
 				<CardHeading tagName="h3" size={ 24 }>
-					{ translate( "Are you sure? Here's what you'll be missing:" ) }
+					{ translate( 'Are you sure?' ) }
 				</CardHeading>
 
 				<p>
 					{ translate(
-						'If you cancel your subscription now, you will lose access to all of your ' +
-							'%(googleMailService)s features immediately. After that time, you will need to ' +
-							'start a new subscription with Google or another reseller.',
+						'If you cancel your subscription now, you will lose access to all of ' +
+							'your features immediately. After that time, you will need to start a new ' +
+							'subscription with Google or another reseller.',
 						{
 							args: {
 								googleMailService: getGoogleMailServiceFamily( productSlug ),
@@ -41,6 +41,10 @@ class GSuiteCancellationFeatures extends Component {
 						}
 					) }
 				</p>
+
+				<CardHeading tagName="h3" size={ 24 }>
+					{ translate( "Here’s what you'll be missing" ) }
+				</CardHeading>
 
 				<GSuiteFeatures productSlug={ productSlug } domainName={ domainName } type={ 'list' } />
 
