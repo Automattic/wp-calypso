@@ -13,6 +13,9 @@ references:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
       PUPPETEER_SKIP_DOWNLOAD: 'true'
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'true'
+      SKIP_TSC: 'true'
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
   desktop_defaults: &desktop_defaults
