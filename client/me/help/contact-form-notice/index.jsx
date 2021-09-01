@@ -1,6 +1,5 @@
-import React from 'react';
 import 'moment-timezone'; // monkey patches the existing moment.js
-
+import React from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

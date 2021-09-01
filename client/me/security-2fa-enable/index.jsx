@@ -4,9 +4,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import React from 'react';
-
-const debug = debugFactory( 'calypso:me:security:2fa-enable' );
-
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -17,6 +14,8 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import Security2faProgress from 'calypso/me/security-2fa-progress';
 
 import './style.scss';
+
+const debug = debugFactory( 'calypso:me:security:2fa-enable' );
 
 class Security2faEnable extends React.Component {
 	static displayName = 'Security2faEnable';

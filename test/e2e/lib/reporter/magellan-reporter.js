@@ -1,6 +1,4 @@
 const util = require( 'util' );
-
-// Requirements for Slack output
 const config = require( 'config' );
 const fs = require( 'fs-extra' );
 const pngitxt = require( 'png-itxt' );
