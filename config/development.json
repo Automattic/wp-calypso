@@ -49,6 +49,7 @@
 		"dev/auth-helper": true,
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
+		"difm-lite-pilot": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
