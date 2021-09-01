@@ -21,14 +21,17 @@ export const requestStatus = keyedReducer( 'receiptId', ( state, { type } ) => {
 	return state;
 } );
 
-export const submittedSiteUrl = keyedReducer( 'receiptId', ( state, { type, payload } ) => {
-	switch ( type ) {
-		case JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_RECEIVE:
-			return payload;
-	}
+export const submittedSiteUrl = keyedReducer(
+	'jetpackTemporarySiteId',
+	( state, { type, payload } ) => {
+		switch ( type ) {
+			case JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_RECEIVE:
+				return payload;
+		}
 
-	return state;
-} );
+		return state;
+	}
+);
 
 export default combineReducers( {
 	requestStatus,
