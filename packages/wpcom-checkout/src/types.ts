@@ -415,11 +415,11 @@ export type DomainContactValidationRequest = {
 
 export type GSuiteContactValidationRequest = {
 	contact_information: {
-		firstName: string;
-		lastName: string;
-		alternateEmail: string;
-		postalCode: string;
-		countryCode: string;
+		first_name: string;
+		last_name: string;
+		alternate_email: string;
+		postal_code: string;
+		country_code: string;
 	};
 };
 
