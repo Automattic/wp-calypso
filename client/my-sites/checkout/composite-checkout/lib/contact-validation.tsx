@@ -10,17 +10,18 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSignupEmailValidationResult } from '../contact-validation';
 import {
 	isCompleteAndValid,
 	areRequiredFieldsNotEmpty,
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
+	getSignupValidationErrorResponse,
 } from '../types/wpcom-store-state';
 import getContactDetailsType from './get-contact-details-type';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
@@ -32,7 +33,9 @@ import type {
 	DomainContactValidationResponse,
 	ContactDetailsType,
 	ContactValidationRequestContactInformation,
+	SignupValidationResponse,
 } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:composite-checkout:contact-validation' );
 
@@ -154,6 +157,14 @@ export async function validateContactDetails(
 	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );
 }
 
+function isSignupValidationResponse( data: unknown ): data is SignupValidationResponse {
+	const dataResponse = data as SignupValidationResponse;
+	if ( dataResponse?.success !== false && dataResponse?.success !== true ) {
+		return false;
+	}
+	return true;
+}
+
 function isContactValidationResponse( data: unknown ): data is DomainContactValidationResponse {
 	const dataResponse = data as DomainContactValidationResponse;
 	if ( dataResponse?.success !== false && dataResponse?.success !== true ) {
@@ -223,6 +234,27 @@ const hydrateNestedObject = (
 
 	return { ...inputObj, [ path ]: childNode };
 };
+
+async function wpcomValidateSignupEmail( {
+	email,
+	is_from_registrationless_checkout,
+}: {
+	email: string;
+	is_from_registrationless_checkout: boolean;
+} ): Promise< SignupValidationResponse > {
+	return wp.req
+		.post( '/signups/validation/user/', null, {
+			locale: getLocaleSlug(),
+			email,
+			is_from_registrationless_checkout,
+		} )
+		.then( ( data: unknown ) => {
+			if ( ! isSignupValidationResponse( data ) ) {
+				throw new Error( 'Signup validation returned unknown response.' );
+			}
+			return data;
+		} );
+}
 
 async function wpcomValidateTaxContactInformation(
 	contactInformation: ContactValidationRequestContactInformation
@@ -364,4 +396,28 @@ function handleContactValidationResult( {
 			formatDomainContactValidationResponse( validationResult ?? {} )
 		);
 	}
+}
+
+async function getSignupEmailValidationResult(
+	email: string,
+	emailTakenLoginRedirect: ( email: string ) => TranslateResult
+) {
+	const response = await wpcomValidateSignupEmail( {
+		email,
+		is_from_registrationless_checkout: true,
+	} );
+	const signupValidationErrorResponse = getSignupValidationErrorResponse(
+		response,
+		email,
+		emailTakenLoginRedirect
+	);
+
+	if ( Object.keys( signupValidationErrorResponse ).length === 0 ) {
+		return response;
+	}
+	const validationResponse = {
+		...response,
+		messages: signupValidationErrorResponse,
+	};
+	return validationResponse;
 }
