@@ -1,0 +1,25 @@
+.backup-pricing-header {
+	text-align: center;
+}
+
+.backup-pricing-header__title {
+	.formatted-header__title {
+		font-weight: 700;
+		font-size: $font-headline-medium;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-headline-small;
+		}
+	}
+}
+
+.backup-pricing-header__subtitle {
+	font-size: $font-body-small;
+	color: var( --studio-gray-60 );
+	max-width: 450px;
+	margin: 0 auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-body;
+	}
+}

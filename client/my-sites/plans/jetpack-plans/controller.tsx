@@ -4,6 +4,8 @@ import React from 'react';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { BackupPricing } from './backup-pricing';
+import { BackupPricingHeader } from './backup-pricing-header';
 import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-slug-terms';
 import getParamsFromContext from './get-params-from-context';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
@@ -79,3 +81,16 @@ export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ):
 	context.primary = <JetpackFreeWelcomePage />;
 	next();
 }
+
+export const jetpackBackupPricing = ( context: PageJS.Context, next: () => void ) => {
+	const { duration } = getParamsFromContext( context );
+	context.header = <BackupPricingHeader />;
+	context.primary = (
+		<BackupPricing
+			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }
+			header={ context.header }
+			footer={ context.footer }
+		/>
+	);
+	next();
+};
