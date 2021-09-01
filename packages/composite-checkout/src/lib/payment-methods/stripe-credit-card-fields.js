@@ -2,7 +2,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import debugFactory from 'debug';
 import React, { useState } from 'react';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import Button from '../../components/button';
@@ -18,42 +17,39 @@ import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import PaymentLogo from './payment-logo';
 
-const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
+const actions = {
+	changeBrand( payload ) {
+		return { type: 'BRAND_SET', payload };
+	},
+	setCardDataError( type, message ) {
+		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
+	},
+	setCardDataComplete( type, complete ) {
+		return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
+	},
+	changeCardholderName( payload ) {
+		return { type: 'CARDHOLDER_NAME_SET', payload };
+	},
+};
+
+const selectors = {
+	getBrand( state ) {
+		return state.brand || '';
+	},
+	getCardholderName( state ) {
+		return state.cardholderName || '';
+	},
+	getCardDataErrors( state ) {
+		return state.cardDataErrors;
+	},
+	getIncompleteFieldKeys( state ) {
+		return Object.keys( state.cardDataComplete ).filter(
+			( key ) => ! state.cardDataComplete[ key ]
+		);
+	},
+};
 
 export function createStripePaymentMethodStore() {
-	debug( 'creating a new stripe payment method store' );
-	const actions = {
-		changeBrand( payload ) {
-			return { type: 'BRAND_SET', payload };
-		},
-		setCardDataError( type, message ) {
-			return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
-		},
-		setCardDataComplete( type, complete ) {
-			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
-		},
-		changeCardholderName( payload ) {
-			return { type: 'CARDHOLDER_NAME_SET', payload };
-		},
-	};
-
-	const selectors = {
-		getBrand( state ) {
-			return state.brand || '';
-		},
-		getCardholderName( state ) {
-			return state.cardholderName || '';
-		},
-		getCardDataErrors( state ) {
-			return state.cardDataErrors;
-		},
-		getIncompleteFieldKeys( state ) {
-			return Object.keys( state.cardDataComplete ).filter(
-				( key ) => ! state.cardDataComplete[ key ]
-			);
-		},
-	};
-
 	function cardDataCompleteReducer(
 		state = {
 			cardNumber: false,
@@ -79,7 +75,7 @@ export function createStripePaymentMethodStore() {
 		}
 	}
 
-	const store = registerStore( 'stripe', {
+	return registerStore( 'stripe', {
 		reducer(
 			state = {
 				cardDataErrors: cardDataErrorsReducer(),
@@ -109,24 +105,14 @@ export function createStripePaymentMethodStore() {
 		actions,
 		selectors,
 	} );
-
-	return { ...store, actions, selectors };
 }
 
-export function createStripeMethod( { store, stripe, stripeConfiguration } ) {
+export function createStripeMethod( { store } ) {
 	return {
 		id: 'card',
 		label: <CreditCardLabel />,
-		activeContent: (
-			<StripeCreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
-		submitButton: (
-			<StripePayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <StripeCreditCardFields />,
+		submitButton: <StripePayButton store={ store } />,
 		inactiveContent: <StripeSummary />,
 		getAriaLabel: ( __ ) => __( 'Credit Card' ),
 	};
@@ -361,7 +347,7 @@ function LoadingFields() {
 	);
 }
 
-function StripePayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
+function StripePayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
@@ -373,11 +359,9 @@ function StripePayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, __ ) ) {
 					onClick( 'card', {
-						stripe,
 						name: cardholderName?.value,
 						items,
 						total,
-						stripeConfiguration,
 					} );
 				}
 			} }
@@ -417,18 +401,18 @@ function StripeSummary() {
 }
 
 function isCreditCardFormValid( store, __ ) {
-	const cardholderName = store.selectors.getCardholderName( store.getState() );
-	const errors = store.selectors.getCardDataErrors( store.getState() );
-	const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );
+	const cardholderName = selectors.getCardholderName( store.getState() );
+	const errors = selectors.getCardDataErrors( store.getState() );
+	const incompleteFieldKeys = selectors.getIncompleteFieldKeys( store.getState() );
 	const areThereErrors = Object.keys( errors ).some( ( errorKey ) => errors[ errorKey ] );
 	if ( ! cardholderName?.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCardholderName( '' ) );
+		store.dispatch( actions.changeCardholderName( '' ) );
 	}
 	if ( incompleteFieldKeys.length > 0 ) {
 		// Show "this field is required" for each incomplete field
 		incompleteFieldKeys.map( ( key ) =>
-			store.dispatch( store.actions.setCardDataError( key, __( 'This field is required' ) ) )
+			store.dispatch( actions.setCardDataError( key, __( 'This field is required' ) ) )
 		);
 	}
 	if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
