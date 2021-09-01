@@ -118,7 +118,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	async getTitle() {
 		return await this.driver
 			.findElement( By.css( '.editor-post-title__input' ) )
-			.getAttribute( 'value' );
+			.getProperty( 'textContent' );
 	}
 
 	async enterText( text ) {
@@ -446,6 +446,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		return blockClass.Expect( this.driver, blockID );
 	}
 
+	// @todo This and the `getTitle` method in this class look too similar. Refactor to a single method.
 	async titleShown() {
 		const titleLocator = By.css( '.editor-post-title__input' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
