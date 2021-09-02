@@ -6,6 +6,26 @@ import * as driverHelper from '../driver-helper';
  * Abstract class containing shared code for editor-related classes.
  */
 export default class AbstractEditorComponent extends AsyncBaseContainer {
+	static async Expect( driver, editorType ) {
+		const page = new this( driver, null, editorType );
+		await page._expectInit();
+
+		// The `wpcom-editor-welcome-tour-frame` popup could get in the way
+		// of the actual publish click, so we need to check if it's visible
+		// and click `Skip` to close it.
+		await page.dismissNuxWelcomeModal();
+
+		return page;
+	}
+
+	async _preInit() {
+		if ( this.editorType !== 'iframe' ) {
+			return;
+		}
+		await this.driver.switchTo().defaultContent();
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
+	}
+
 	/**
 	 * Insert a child block into a parent block using the inline block inserter.
 	 *
@@ -49,5 +69,20 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 	 */
 	async runInCanvas( cb ) {
 		return await cb();
+	}
+
+	async dismissNuxWelcomeModal() {
+		const isNuxWelcomeDialogDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			By.css( '.wpcom-editor-welcome-tour-frame' )
+		);
+
+		if ( isNuxWelcomeDialogDisplayed ) {
+			// Click the 'Skip' button to get rid of it.
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-card-footer button.is-tertiary' )
+			);
+		}
 	}
 }
