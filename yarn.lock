@@ -32311,11 +32311,11 @@ fsevents@~2.1.2:
   linkType: hard
 
 "react-resize-aware@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "react-resize-aware@npm:3.1.0"
+  version: 3.1.1
+  resolution: "react-resize-aware@npm:3.1.1"
   peerDependencies:
-    react: ^16.8.0
-  checksum: 7f8ce37106d695db757d2b51f4ea3a73450449eb1740d179c1a709836a1ae4dbd54d5b2b70c8b6ae45f5d63101b6e1182195d535c811bb9e62cbf3d2a3093290
+    react: ^16.8.0 || 17.x
+  checksum: 3c8342763e1090c59c788e75b9b71cecd84a6e54559fff7e3428cd0b43ec052a703cd0c024273ac0df695205aaeffc0abdea914534b2079535ef58282a7de8f4
   languageName: node
   linkType: hard
 
