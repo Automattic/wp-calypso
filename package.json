@@ -214,7 +214,6 @@
 		"caniuse-lite": "^1.0.30001173",
 		"capture-website": "^1.0.0",
 		"chai": "^4.3.4",
-		"chai-enzyme": "^1.0.0-beta.1",
 		"chalk": "^4.0.0",
 		"check-node-version": "^4.0.2",
 		"cheerio": "^1.0.0-rc.3",
