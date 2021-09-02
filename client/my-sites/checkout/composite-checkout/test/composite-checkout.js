@@ -7,8 +7,6 @@ import { render, fireEvent, screen, within, waitFor, act } from '@testing-librar
 import page from 'page';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 import '@testing-library/jest-dom/extend-expect';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -20,11 +18,6 @@ import {
 	domainTransferProduct,
 	planWithBundledDomain,
 	planWithoutDomain,
-	planWithoutDomainMonthly,
-	planWithoutDomainBiannual,
-	planLevel2,
-	planLevel2Monthly,
-	planLevel2Biannual,
 	fetchStripeConfiguration,
 	mockSetCartEndpoint,
 	mockGetCartEndpointWith,
@@ -33,6 +26,8 @@ import {
 	getBusinessPlanForInterval,
 	getVariantItemTextForInterval,
 	getPlansItemsState,
+	createTestReduxStore,
+	countryList,
 } from './util';
 
 jest.mock( 'calypso/state/sites/selectors' );
@@ -82,124 +77,7 @@ describe( 'CompositeCheckout', () => {
 			coupon_discounts_integer: [],
 		};
 
-		const countryList = [
-			{
-				code: 'US',
-				name: 'United States',
-				has_postal_codes: true,
-			},
-			{
-				code: 'CW',
-				name: 'Curacao',
-				has_postal_codes: false,
-			},
-			{
-				code: 'AU',
-				name: 'Australia',
-				has_postal_codes: true,
-			},
-		];
-
-		const store = applyMiddleware( thunk )( createStore )( () => {
-			return {
-				plans: {
-					items: getPlansItemsState(),
-				},
-				sites: { items: {} },
-				siteSettings: { items: {} },
-				ui: { selectedSiteId: siteId },
-				productsList: {
-					items: {
-						[ planWithoutDomain.product_slug ]: {
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomain.item_subtotal_display,
-							currency_code: planWithoutDomain.currency,
-						},
-						[ planWithoutDomainMonthly.product_slug ]: {
-							product_id: planWithoutDomainMonthly.product_id,
-							product_slug: planWithoutDomainMonthly.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomainMonthly.item_subtotal_display,
-							currency_code: planWithoutDomainMonthly.currency,
-						},
-						[ planWithoutDomainBiannual.product_slug ]: {
-							product_id: planWithoutDomainBiannual.product_id,
-							product_slug: planWithoutDomainBiannual.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomainBiannual.item_subtotal_display,
-							currency_code: planWithoutDomainBiannual.currency,
-						},
-						[ planLevel2.product_slug ]: {
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomain.item_subtotal_display,
-							currency_code: planWithoutDomain.currency,
-						},
-						[ planLevel2Monthly.product_slug ]: {
-							product_id: planLevel2Monthly.product_id,
-							product_slug: planLevel2Monthly.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planLevel2Monthly.item_subtotal_display,
-							currency_code: planLevel2Monthly.currency,
-						},
-						[ planLevel2Biannual.product_slug ]: {
-							product_id: planLevel2Biannual.product_id,
-							product_slug: planLevel2Biannual.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planLevel2Biannual.item_subtotal_display,
-							currency_code: planLevel2Biannual.currency,
-						},
-						domain_map: {
-							product_id: 5,
-							product_name: 'Product',
-							product_slug: 'domain_map',
-						},
-						domain_reg: {
-							product_id: 6,
-							product_name: 'Product',
-							product_slug: 'domain_reg',
-						},
-						premium_theme: {
-							product_id: 39,
-							product_name: 'Product',
-							product_slug: 'premium_theme',
-						},
-						'concierge-session': {
-							product_id: 371,
-							product_name: 'Product',
-							product_slug: 'concierge-session',
-						},
-						jetpack_backup_daily: {
-							product_id: 2100,
-							product_name: 'Jetpack Backup (Daily)',
-							product_slug: 'jetpack_backup_daily',
-						},
-						jetpack_scan: {
-							product_id: 2106,
-							product_name: 'Jetpack Scan Daily',
-							product_slug: 'jetpack_scan',
-						},
-					},
-				},
-				purchases: {},
-				countries: { payments: countryList, domains: countryList },
-			};
-		} );
+		const store = createTestReduxStore();
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
