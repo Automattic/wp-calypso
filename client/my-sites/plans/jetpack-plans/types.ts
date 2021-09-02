@@ -37,13 +37,14 @@ export interface SelectorPageProps extends BasePageProps {
 }
 
 export interface ProductsGridProps {
-	duration: Duration;
-	urlQueryArgs: QueryArgs;
-	planRecommendation?: PlanRecommendation;
-	onSelectProduct: PurchaseCallback;
-	onDurationChange?: DurationChangeCallback;
-	scrollCardIntoView: ScrollCardIntoViewCallback;
 	createButtonURL?: PurchaseURLCallback;
+	currencyCode: string | null;
+	duration: Duration;
+	onDurationChange?: DurationChangeCallback;
+	onSelectProduct: PurchaseCallback;
+	planRecommendation?: PlanRecommendation;
+	scrollCardIntoView: ScrollCardIntoViewCallback;
+	urlQueryArgs: QueryArgs;
 }
 
 export type PlanGridProducts = {

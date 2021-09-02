@@ -10,7 +10,6 @@ import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
@@ -84,18 +83,18 @@ const useWrapGridForSmallScreens = ( maxItemsPerRow: number ) => {
 };
 
 const ProductGrid: React.FC< ProductsGridProps > = ( {
-	duration,
-	urlQueryArgs,
-	planRecommendation,
-	onSelectProduct,
-	onDurationChange,
-	scrollCardIntoView,
 	createButtonURL,
+	currencyCode,
+	duration,
+	onDurationChange,
+	onSelectProduct,
+	planRecommendation,
+	scrollCardIntoView,
+	urlQueryArgs,
 } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
 

@@ -1,4 +1,5 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +14,7 @@ import { managePurchase } from 'calypso/me/purchases/paths';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import buildCheckoutURL from './build-checkout-url';
 import getViewTrackerPath from './get-view-tracker-path';
@@ -29,7 +31,10 @@ import type {
 
 import './style.scss';
 
-const currencyCodeFallback = () => {
+const currencyCodeFallback = ( userCurrencyCode: string | null ) => {
+	if ( userCurrencyCode !== null ) {
+		return userCurrencyCode;
+	}
 	return 'RUB';
 };
 
@@ -45,9 +50,15 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
+	const locale = useLocale();
+	console.log( `locale: ${ locale }` );
+
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
+	const currencyCode = useSelector( ( state ) =>
+		currencyCodeFallback( getCurrentUserCurrencyCode( state ) )
+	);
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
@@ -186,13 +197,14 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ header }
 
 			<ProductGrid
-				duration={ currentDuration }
-				urlQueryArgs={ urlQueryArgs }
-				planRecommendation={ planRecommendation }
-				onSelectProduct={ selectProduct }
-				onDurationChange={ trackDurationChange }
-				scrollCardIntoView={ scrollCardIntoView }
 				createButtonURL={ createProductURL }
+				currencyCode={ currencyCode }
+				duration={ currentDuration }
+				onDurationChange={ trackDurationChange }
+				onSelectProduct={ selectProduct }
+				planRecommendation={ planRecommendation }
+				scrollCardIntoView={ scrollCardIntoView }
+				urlQueryArgs={ urlQueryArgs }
 			/>
 
 			{ siteId ? (
