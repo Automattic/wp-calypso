@@ -207,11 +207,13 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( viewportName: String ): BuildType {
+fun gutenbergPlaywrightBuildType( viewportName: String, uuid: String ): BuildType {
     return BuildType {
         id("WPComTests_gutenberg_Playwright_$viewportName")
+		uuid=uuid
         name = "Playwright E2E Tests ($viewportName)"
         description = "Runs Gutenberg E2E tests in $viewportName size using Playwright"
+
 
         artifactRules = """
             reports => reports
