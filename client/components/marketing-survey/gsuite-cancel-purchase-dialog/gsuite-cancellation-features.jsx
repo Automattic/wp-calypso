@@ -38,7 +38,7 @@ class GSuiteCancellationFeatures extends Component {
 					{ translate(
 						'If you cancel your subscription now, you will lose access to all of ' +
 							'your %(googleMailService)s features %(days)s. After that time, ' +
-							'you will need to start a new subscription with Google or another reseller.',
+							'you will need to purchase a new subscription with Google.',
 						{
 							args: {
 								googleMailService: getGoogleMailServiceFamily( productSlug ),
