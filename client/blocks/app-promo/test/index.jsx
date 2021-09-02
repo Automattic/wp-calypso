@@ -34,9 +34,9 @@ describe( 'AppPromo', () => {
 		test( 'should render the primary components', () => {
 			const wrapper = shallow( AppPromoComponent );
 
-			expect( wrapper ).to.have.descendants( '.app-promo' );
-			expect( wrapper ).to.have.descendants( '.app-promo__dismiss' );
-			expect( wrapper ).to.have.descendants( '.app-promo__icon' );
+			expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.app-promo__dismiss' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.app-promo__icon' ) ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should render the promo text', () => {
@@ -50,7 +50,7 @@ describe( 'AppPromo', () => {
 
 			const promoLink = wrapper.find( '.app-promo__link' );
 			expect( promoLink ).to.have.lengthOf( 1 );
-			expect( promoLink ).to.have.prop( 'href' ).equal( appPromoLink );
+			expect( promoLink.prop( 'href' ) ).to.equal( appPromoLink );
 		} );
 	} );
 
