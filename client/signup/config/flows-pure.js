@@ -11,6 +11,7 @@ export function generateFlows( {
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
+	getSetupSiteDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -113,7 +114,9 @@ export function generateFlows( {
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
 				: [ 'user', 'domains', 'plans' ],
-			destination: getSignupDestination,
+			destination: isEnabled( 'signup/setup-site-after-checkout' )
+				? getSetupSiteDestination
+				: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
 			showRecaptcha: true,

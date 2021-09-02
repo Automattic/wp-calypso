@@ -110,6 +110,7 @@
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
+		"signup/setup-site-after-checkout": false,
 		"site-indicator": true,
 		"memberships": true,
 		"ssr/sample-log-cache-misses": true,

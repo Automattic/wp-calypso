@@ -89,6 +89,14 @@ function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
 	);
 }
 
+function getSetupSiteDestination( { siteSlug } ) {
+	if ( 'no-site' === siteSlug ) {
+		return '/home';
+	}
+
+	return addQueryArgs( { siteSlug }, '/start/setup-site' );
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -98,6 +106,7 @@ const flows = generateFlows( {
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getImportDestination,
+	getSetupSiteDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
