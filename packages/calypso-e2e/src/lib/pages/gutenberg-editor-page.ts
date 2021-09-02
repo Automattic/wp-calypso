@@ -67,7 +67,7 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
-	private async getEditorFrame(): Promise< Frame > {
+	async getEditorFrame(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
