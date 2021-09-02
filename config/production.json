@@ -15,6 +15,7 @@
 	"rebrand_cities_prefix": "rebrandcitiessite",
 	"bilmur_url": "/wp-content/js/bilmur.min.js",
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/onboarding-call",
+	"difm_typeform_id": "",
 	"features": {
 		"ad-tracking": true,
 		"async-payments": false,

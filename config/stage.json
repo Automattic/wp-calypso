@@ -14,6 +14,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
+	"difm_typeform_id": "lU7xT1zM",
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
