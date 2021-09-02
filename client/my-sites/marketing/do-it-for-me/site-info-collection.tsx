@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { Widget } from '@typeform/embed-react';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -29,6 +30,7 @@ const SiteInformationCollection = React.memo( () => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
+	const translate = useTranslate();
 
 	const onSubmit = async () => {
 		// After Submitting typeform checkout
@@ -41,14 +43,16 @@ const SiteInformationCollection = React.memo( () => {
 			<ActionPanelBody>
 				<FormattedHeader
 					brandFont
-					headerText="Tell us more about your site"
-					subHeaderText="We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like"
+					headerText={ translate( 'Tell us more about your site' ) }
+					subHeaderText={ translate(
+						'We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like'
+					) }
 					align="left"
 				/>
 				{ isFormSubmitted ? (
 					<LoadingContainer>
 						<CardHeading tagName="h5" size={ 24 }>
-							Redirecting to Checkout...
+							{ translate( 'Redirecting to Checkout…' ) }
 						</CardHeading>
 						<Spinner />
 					</LoadingContainer>
