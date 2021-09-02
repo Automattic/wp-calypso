@@ -100,6 +100,9 @@ class SearchStream extends React.Component {
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );
+		const segmentedControlStyle = ! wideDisplay
+			? { bottom: 15, right: 15 }
+			: { top: 41, right: 50 };
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -159,22 +162,6 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query && (
-							<SegmentedControl compact className="search-stream__sort-picker">
-								<SegmentedControl.Item
-									selected={ sortOrder !== 'date' }
-									onClick={ this.useRelevanceSort }
-								>
-									{ TEXT_RELEVANCE_SORT }
-								</SegmentedControl.Item>
-								<SegmentedControl.Item
-									selected={ sortOrder === 'date' }
-									onClick={ this.useDateSort }
-								>
-									{ TEXT_DATE_SORT }
-								</SegmentedControl.Item>
-							</SegmentedControl>
-						) }
 					</CompactCard>
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
@@ -191,6 +178,23 @@ class SearchStream extends React.Component {
 								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
 						</div>
+					) }
+					{ query && (
+						<SegmentedControl
+							compact
+							className="search-stream__sort-picker"
+							style={ segmentedControlStyle }
+						>
+							<SegmentedControl.Item
+								selected={ sortOrder !== 'date' }
+								onClick={ this.useRelevanceSort }
+							>
+								{ TEXT_RELEVANCE_SORT }
+							</SegmentedControl.Item>
+							<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								{ TEXT_DATE_SORT }
+							</SegmentedControl.Item>
+						</SegmentedControl>
 					) }
 					{ query && (
 						<SearchStreamHeader
