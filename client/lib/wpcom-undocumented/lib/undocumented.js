@@ -877,44 +877,6 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 };
 
 /**
- * Get cart.
- *
- * @param {string} cartKey The cart's key.
- * @param {Function} fn The callback function.
- */
-Undocumented.prototype.getCart = function ( cartKey, fn ) {
-	debug( 'GET: /me/shopping-cart/:cart-key' );
-
-	return this._sendRequest(
-		{
-			path: '/me/shopping-cart/' + cartKey,
-			method: 'GET',
-		},
-		fn
-	);
-};
-
-/**
- * Set cart.
- *
- * @param {string} cartKey The cart's key.
- * @param {object} data The POST data.
- * @param {Function} fn The callback function.
- */
-Undocumented.prototype.setCart = function ( cartKey, data, fn ) {
-	debug( 'POST: /me/shopping-cart/:cart-key', data );
-
-	return this._sendRequest(
-		{
-			path: '/me/shopping-cart/' + cartKey,
-			method: 'POST',
-			body: data,
-		},
-		fn
-	);
-};
-
-/**
  * Get a list of the user's stored cards
  *
  * @param {Function} [fn] The callback function.
