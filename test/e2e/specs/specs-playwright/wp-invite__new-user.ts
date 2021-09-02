@@ -12,7 +12,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe.skip( DataHelper.createSuiteTitle( `Invite: Signup/Remove` ), function () {
+describe.skip( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const role = 'Editor';
 	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
@@ -60,7 +60,6 @@ describe.skip( DataHelper.createSuiteTitle( `Invite: Signup/Remove` ), function 
 			await sidebarComponent.navigate( 'Users', 'All Users' );
 			await peoplePage.clickTab( 'Invites' );
 			await peoplePage.selectInvitedUser( email );
-			throw new Error();
 		} );
 	} );
 
@@ -76,13 +75,11 @@ describe.skip( DataHelper.createSuiteTitle( `Invite: Signup/Remove` ), function 
 				emailAddress: email,
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
-			const acceptInviteLink = links.find( ( link: string ) => link.includes( 'accept-invite' ) );
-			if ( ! acceptInviteLink ) {
-				throw new Error( 'Invite link was not found.' );
-			}
-			adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
-
+			const acceptInviteLink = links.find( ( link: string ) =>
+				link.includes( 'accept-invite' )
+			) as string;
 			expect( acceptInviteLink ).toBeDefined();
+			adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 		} );
 
 		it( 'Sign up as invited user from the invite link', async function () {
