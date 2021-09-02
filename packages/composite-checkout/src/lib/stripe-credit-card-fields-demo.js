@@ -15,12 +15,8 @@ import { useFormStatus } from '../form-status';
 import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import PaymentLogo from './payment-logo';
 
 const actions = {
-	changeBrand( payload ) {
-		return { type: 'BRAND_SET', payload };
-	},
 	setCardDataError( type, message ) {
 		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
 	},
@@ -33,9 +29,6 @@ const actions = {
 };
 
 const selectors = {
-	getBrand( state ) {
-		return state.brand || '';
-	},
 	getCardholderName( state ) {
 		return state.cardholderName || '';
 	},
@@ -87,8 +80,6 @@ export function createStripePaymentMethodStore() {
 			switch ( action.type ) {
 				case 'CARDHOLDER_NAME_SET':
 					return { ...state, cardholderName: { value: action.payload, isTouched: true } };
-				case 'BRAND_SET':
-					return { ...state, brand: action.payload };
 				case 'CARD_DATA_COMPLETE_SET':
 					return {
 						...state,
@@ -123,21 +114,15 @@ function StripeCreditCardFields() {
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
 	const {
 		cardNumber: cardNumberError,
 		cardCvc: cardCvcError,
 		cardExpiry: cardExpiryError,
 	} = useSelect( ( select ) => select( 'stripe' ).getCardDataErrors() );
-	const { changeCardholderName, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
-		'stripe'
-	);
+	const { changeCardholderName, setCardDataError, setCardDataComplete } = useDispatch( 'stripe' );
 
 	const handleStripeFieldChange = ( input ) => {
 		setCardDataComplete( input.elementType, input.complete );
-		if ( input.elementType === 'cardNumber' ) {
-			changeBrand( input.brand );
-		}
 
 		if ( input.error && input.error.message ) {
 			setCardDataError( input.elementType, input.error.message );
@@ -179,7 +164,6 @@ function StripeCreditCardFields() {
 								handleStripeFieldChange( input );
 							} }
 						/>
-						<PaymentLogo brand={ brand } />
 
 						{ cardNumberError && <StripeErrorMessage>{ cardNumberError }</StripeErrorMessage> }
 					</StripeFieldWrapper>
@@ -388,14 +372,11 @@ function ButtonContents( { formStatus, total } ) {
 
 function StripeSummary() {
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
-	const brand = useSelect( ( select ) => select( 'stripe' ).getBrand() );
 
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName?.value }</SummaryLine>
-			<SummaryLine>
-				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary={ true } />
-			</SummaryLine>
+			<SummaryLine>{ '****' }</SummaryLine>
 		</SummaryDetails>
 	);
 }
