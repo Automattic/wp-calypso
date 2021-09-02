@@ -14,6 +14,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_CRM_FREE_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
@@ -134,6 +135,13 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_ANTI_SPAM_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
+	}
+
+	// If Jetpack VideoPress is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_VIDEOPRESS_PRODUCTS.includes( ownedProduct ) )
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
 	}
 
 	return {

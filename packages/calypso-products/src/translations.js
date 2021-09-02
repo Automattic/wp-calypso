@@ -17,6 +17,10 @@ import {
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY,
+	PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY,
+	PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from './constants';
@@ -66,6 +70,10 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY ]: translate( 'VideoPress' ),
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY ]: translate( 'VideoPress' ),
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY ]: translate( 'VideoPress Pro' ),
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY ]: translate( 'VideoPress Pro' ),
 	};
 };
 
@@ -97,6 +105,8 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }
 		</>
 	);
+	const videoPressT1 = translate( 'VideoPress' );
+	const videoPressT2 = translate( 'VideoPress Pro' );
 	const antiSpam = translate( 'Anti-spam' );
 
 	return {
@@ -116,6 +126,10 @@ export const getJetpackProductsDisplayNames = () => {
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY ]: videoPressT1,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY ]: videoPressT1,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY ]: videoPressT2,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY ]: videoPressT2,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -140,6 +154,8 @@ export const getJetpackProductsCallToAction = () => {
 	const backupT2 = translate( 'Get Backup Pro' );
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
+	const videoPressT1 = translate( 'Get VideoPress' );
+	const videoPressT2 = translate( 'Get VideoPress Pro' );
 	const antiSpam = translate( 'Get Anti-spam' );
 
 	return {
@@ -155,6 +171,10 @@ export const getJetpackProductsCallToAction = () => {
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY ]: videoPressT1,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY ]: videoPressT1,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY ]: videoPressT2,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY ]: videoPressT2,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -246,6 +266,14 @@ export const getJetpackProductsDescriptions = () => {
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
+
+	const videoPressT1Description = translate(
+		'We host and serve video content on your site using our customizable and clean video player.'
+	);
+	const videoPressT2Description = translate(
+		'We host and serve video content on your site using our customizable and clean video player, with even more video storage space.'
+	);
+
 	const antiSpamDescription = translate(
 		'Save time and get better responses by automatically blocking spam from your comments and forms.'
 	);
@@ -265,6 +293,10 @@ export const getJetpackProductsDescriptions = () => {
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY ]: videoPressT1Description,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY ]: videoPressT1Description,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY ]: videoPressT2Description,
+		[ PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY ]: videoPressT2Description,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 	};
