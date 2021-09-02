@@ -59,9 +59,9 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			{ ! requestingSitePlans && currentPlan && ! isPartnerPlan && (
 				<UpsellNudge
 					forceDisplay
-					title={ translate( 'Get unlimited premium themes' ) }
+					title={ translate( 'Upload your own themes' ) }
 					description={ translate(
-						'In addition to our collection of premium themes, get comprehensive WordPress' +
+						'In addition to uploading your own themes, get comprehensive WordPress' +
 							' security, real-time backups, and unlimited video hosting.'
 					) }
 					event="themes_plans_free_personal_premium"

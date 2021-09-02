@@ -27,7 +27,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 					plan={ PLAN_PREMIUM }
 					customerType="business"
 					className="themes__showcase-banner"
-					title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
+					title={ translate( 'Upload your own themes with our Premium and Business plans!' ) }
 					event="themes_plans_free_personal"
 					forceHref={ true }
 					showIcon={ true }
@@ -37,11 +37,9 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			upsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
-					title={ translate(
-						'Access all our premium themes with our Premium and Business plans!'
-					) }
+					title={ translate( 'Upload your own themes with our Premium and Business plans!' ) }
 					description={ translate(
-						'Get advanced customization, more storage space, and video support along with all your new themes.'
+						'Get advanced customization, more storage space, and video support along with the ability to upload any theme.'
 					) }
 					event="themes_plans_free_personal"
 					showIcon={ true }

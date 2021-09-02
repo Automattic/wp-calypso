@@ -28,7 +28,6 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 			translate( 'Remove all advertising from your site.' ),
 			translate( 'Enjoy live chat support.' ),
 			translate( 'Easy monetization options' ),
-			translate( 'Unlimited premium themes.' ),
 		];
 	}
 
