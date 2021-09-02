@@ -94,7 +94,6 @@
 		"jetpack/magic-link-signup": true,
 		"jetpack/only-realtime-products": false,
 		"jetpack/personal-plan": false,
-		"jetpack/product-cancellation-flow": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/siteless-checkout": true,
 		"jetpack/user-licensing-m1": true,
