@@ -3,7 +3,15 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
+import {
+	render,
+	fireEvent,
+	screen,
+	within,
+	waitFor,
+	act,
+	waitForElementToBeRemoved,
+} from '@testing-library/react';
 import nock from 'nock';
 import page from 'page';
 import React from 'react';
@@ -344,16 +352,19 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it.each( [
-		{ complete: 'does', success: 'successful', productName: 'plan' },
-		{ complete: 'does not', success: 'not successful', productName: 'plan' },
-		{ complete: 'does', success: 'successful', productName: 'domain' },
-		{ complete: 'does not', success: 'not successful', productName: 'domain' },
-		{ complete: 'does', success: 'successful', productName: 'gsuite' },
-		{ complete: 'does not', success: 'not successful', productName: 'gsuite' },
+		{ complete: 'does', valid: 'valid', name: 'plan', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'domain', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'domain', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'gsuite', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'gsuite', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'plan', email: 'passes', logged: 'out' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'passes', logged: 'out' },
+		{ complete: 'does not', valid: 'valid', name: 'domain', email: 'fails', logged: 'out' },
 	] )(
-		'$complete complete the contact step when validation is $success with a $productName in the cart',
-		async ( { complete, success, productName } ) => {
-			const product = ( ( name ) => {
+		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
+		async ( { complete, valid, name, email, logged } ) => {
+			const product = ( () => {
 				switch ( name ) {
 					case 'plan':
 						return planWithoutDomain;
@@ -362,8 +373,8 @@ describe( 'CompositeCheckout', () => {
 					case 'gsuite':
 						return gSuiteProduct;
 				}
-			} )( productName );
-			const endpointPath = ( ( name ) => {
+			} )();
+			const endpointPath = ( () => {
 				switch ( name ) {
 					case 'plan':
 						return '/rest/v1.1/me/tax-contact-information/validate';
@@ -372,66 +383,82 @@ describe( 'CompositeCheckout', () => {
 					case 'gsuite':
 						return '/rest/v1.1/me/google-apps/validate';
 				}
-			} )( productName );
+			} )();
 			const validContactDetails = {
 				postal_code: '10001',
 				country_code: 'US',
+				email: 'test@example.com',
 			};
+			nock.cleanAll();
 			nock( 'https://public-api.wordpress.com' )
 				.post( endpointPath, ( body ) => {
 					if (
 						body.contact_information.postal_code === validContactDetails.postal_code &&
 						body.contact_information.country_code === validContactDetails.country_code
 					) {
-						if ( [ 'domain', 'gsuite' ].includes( productName ) ) {
+						if ( name === 'domain' ) {
+							return (
+								body.contact_information.email === validContactDetails.email &&
+								body.domain_names[ 0 ] === product.meta
+							);
+						}
+						if ( name === 'gsuite' ) {
 							return body.domain_names[ 0 ] === product.meta;
 						}
 						return true;
 					}
 				} )
 				.reply( 200, {
-					success: success === 'successful',
+					success: valid === 'valid',
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
+					return (
+						body.locale === 'en' &&
+						body.is_from_registrationless_checkout === true &&
+						body.email === validContactDetails.email
+					);
+				} )
+				.reply( 200, {
+					success: email === 'passes',
 				} );
 
-			const cartChanges = { products: [ product ] };
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			render(
+				<MyCheckout
+					cartChanges={ { products: [ product ] } }
+					additionalProps={ { isLoggedOutCart: logged === 'out' } }
+				/>,
+				container
+			);
 
 			// Wait for the cart to load
-			await waitFor( () => {
-				expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-			} );
+			await screen.findByText( 'Country' );
 
 			// Fill in the contact form
+			if ( name === 'domain' || logged === 'out' ) {
+				fireEvent.change( screen.getByLabelText( 'Email' ), {
+					target: { value: validContactDetails.email },
+				} );
+			}
 			fireEvent.change( screen.getByLabelText( 'Country' ), {
 				target: { value: validContactDetails.country_code },
 			} );
-			if ( [ 'domain', 'gsuite' ].includes( productName ) ) {
-				fireEvent.change( screen.getByLabelText( 'ZIP code' ), {
-					target: { value: validContactDetails.postal_code },
-				} );
-			} else {
-				fireEvent.change( screen.getByLabelText( 'Postal code' ), {
-					target: { value: validContactDetails.postal_code },
-				} );
-			}
-			const continueButton = await screen.findByText( 'Continue' );
-			fireEvent.click( continueButton );
+			fireEvent.change( screen.getByLabelText( /(Postal|ZIP) code/i ), {
+				target: { value: validContactDetails.postal_code },
+			} );
+			fireEvent.click( await screen.findByText( 'Continue' ) );
 
 			// Wait for the validation to complete
-			await waitFor( () => {
-				expect( screen.getByText( 'Updating cart…' ) ).toBeInTheDocument();
-			} );
-			await waitFor( () => {
-				expect( screen.getByText( 'Continue' ) ).toBeInTheDocument();
-			} );
+			await waitForElementToBeRemoved( () => screen.queryByText( 'Updating cart…' ) );
 
-			await waitFor( () => {
-				if ( complete === 'does' ) {
-					expect( screen.getByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-				} else {
-					expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
-				}
-			} );
+			if ( complete === 'does' ) {
+				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+			} else {
+				// This is a little tricky because we need to verify something never happens,
+				// even after some time passes, so we use this slightly convoluted technique:
+				// https://stackoverflow.com/a/68318058/2615868
+				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
+			}
 		}
 	);
 
