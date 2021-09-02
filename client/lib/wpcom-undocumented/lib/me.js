@@ -40,10 +40,6 @@ UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
 	);
 };
 
-UndocumentedMe.prototype.purchases = function ( callback ) {
-	return this.wpcom.req.get( '/me/purchases', callback );
-};
-
 UndocumentedMe.prototype.sendSMSValidationCode = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
@@ -249,17 +245,6 @@ UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function ( callback
 	};
 
 	return this.wpcom.req.post( args, callback );
-};
-
-UndocumentedMe.prototype.deletePurchase = function ( purchaseId, fn ) {
-	debug( '/me/purchases/{purchaseId}/delete' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/me/purchases/${ purchaseId }/delete`,
-		},
-		fn
-	);
 };
 
 /**
