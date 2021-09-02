@@ -721,13 +721,47 @@ async function openLinksInParentFrame( calypsoPort ) {
 	} );
 
 	const shouldReplaceCreateNewPostLinksFor = ( node ) =>
-		createNewPostUrl &&
-		( node.classList.contains( 'interface-interface-skeleton__sidebar' ) || // Site editor
-			node.classList.contains( 'edit-post-sidebar' ) ); // Post editor
+		createNewPostUrl && node.classList.contains( 'interface-interface-skeleton__sidebar' );
 
 	const shouldReplaceManageReusableBlockLinksFor = ( node ) =>
 		manageReusableBlocksUrl &&
 		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
+
+	const observeSidebarMutations = ( node ) => {
+		if (
+			// Block settings sidebar for Query block.
+			shouldReplaceCreateNewPostLinksFor( node )
+		) {
+			createNewPostLinkObserver.observe( node, { childList: true, subtree: true } );
+			// If a Query block is selected, then the sidebar will
+			// directly open on the block settings tab
+			tryToReplaceCreateNewPostLink();
+		} else if (
+			// Block inserter sidebar, Reusable tab
+			shouldReplaceManageReusableBlockLinksFor( node )
+		) {
+			const reusableTab = node.querySelector( '.components-tab-panel__tabs-item[id*="reusable"]' );
+			if ( reusableTab ) {
+				inserterManageReusableBlocksObserver.observe( reusableTab, {
+					attributeFilter: [ 'aria-selected' ],
+				} );
+			}
+		}
+	};
+
+	const unobserveSidebarMutations = ( node ) => {
+		if (
+			// Block settings sidebar for Query block.
+			shouldReplaceCreateNewPostLinksFor( node )
+		) {
+			createNewPostLinkObserver.disconnect();
+		} else if (
+			// Block inserter sidebar, Reusable tab
+			shouldReplaceManageReusableBlockLinksFor( node )
+		) {
+			inserterManageReusableBlocksObserver.disconnect();
+		}
+	};
 
 	// This observer functions as a "parent" observer, which connects and disconnects
 	// "child" observers as the relevant sidebar settings appear and disappear in the DOM.
@@ -735,69 +769,30 @@ async function openLinksInParentFrame( calypsoPort ) {
 		for ( const record of mutations ) {
 			// We are checking for added nodes here to start observing for more specific changes.
 			for ( const node of record.addedNodes ) {
-				if (
-					// Block settings sidebar for Query block.
-					shouldReplaceCreateNewPostLinksFor( node )
-				) {
-					const componentsPanel = node.querySelector(
-						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
-					);
-					createNewPostLinkObserver.observe( componentsPanel, {
-						childList: true,
-						subtree: true,
-					} );
-					// If a Query block is selected, then the sidebar will
-					// directly open on the block settings tab
-					tryToReplaceCreateNewPostLink();
-				} else if (
-					// Block inserter sidebar, Reusable tab
-					shouldReplaceManageReusableBlockLinksFor( node )
-				) {
-					const resuableTab = node.querySelector(
-						'.components-tab-panel__tabs-item[id*="reusable"]'
-					);
-					if ( resuableTab ) {
-						inserterManageReusableBlocksObserver.observe( resuableTab, {
-							attributeFilter: [ 'aria-selected' ],
-						} );
-					}
-				}
+				observeSidebarMutations( node );
 			}
 
 			// We are checking the removed nodes here to disconect
 			// the correct observer when a node is removed.
 			for ( const node of record.removedNodes ) {
-				if (
-					// Block settings sidebar for Query block.
-					shouldReplaceCreateNewPostLinksFor( node )
-				) {
-					createNewPostLinkObserver.disconnect();
-				} else if (
-					// Block inserter sidebar, Reusable tab
-					shouldReplaceManageReusableBlockLinksFor( node )
-				) {
-					inserterManageReusableBlocksObserver.disconnect();
-				}
+				unobserveSidebarMutations( node );
 			}
 		}
 	} );
-	// In the Site editor the `.interface-interface-skeleton__sidebar` element
-	// is totally removed when all the sidebars are closed.
-	// We need to observe the body to make sure we catch when a sidebar is opened or closed.
-	// Block inserter sidebar, post editor
-	// Block settings sidebar, site editor
-	sidebarsObserver.observe( document.querySelector( '.interface-interface-skeleton__body' ), {
-		childList: true,
-	} );
-	// In the Post editor the `.interface-interface-skeleton__sidebar` element
-	// is always present. We can scope down our observer to the sidebar element in this case.
-	// Block settings sidebar, post editor
-	const sidebar = document.querySelector( '.interface-interface-skeleton__sidebar' );
-	if ( sidebar ) {
-		sidebarsObserver.observe( sidebar, {
-			childList: true,
-		} );
+
+	// If one of the sidebar elements we're interested in is already present, start observing
+	// them for changes immediately.
+	const sidebars = document.querySelectorAll(
+		'.interface-interface-skeleton__sidebar, .interface-interface-skeleton__secondary-sidebar'
+	);
+	for ( const sidebar of sidebars ) {
+		observeSidebarMutations( sidebar );
 	}
+
+	// Add and remove the sidebar observers as the sidebar elements appear and disappear.
+	// They are always direct children of the body element.
+	const body = document.querySelector( '.interface-interface-skeleton__body' );
+	sidebarsObserver.observe( body, { childList: true } );
 
 	// Manage reusable blocks link in the 3 dots more menu, post and site editors
 	if ( manageReusableBlocksUrl ) {
