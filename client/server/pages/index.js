@@ -623,13 +623,12 @@ export default function pages() {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
+				} else {
+					const pricingPageUrl = ref
+						? `https://wordpress.com/pricing/?ref=${ ref }`
+						: 'https://wordpress.com/pricing';
+					res.redirect( pricingPageUrl );
 				}
-
-				if ( ref ) {
-					res.redirect( `https://wordpress.com/pricing/?ref=${ ref }` );
-				}
-
-				res.redirect( 'https://wordpress.com/pricing' );
 			} else {
 				next();
 			}
