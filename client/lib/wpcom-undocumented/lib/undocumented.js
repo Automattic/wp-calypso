@@ -1832,11 +1832,6 @@ Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
 	);
 };
 
-Undocumented.prototype.sitePurchases = function ( siteId, fn ) {
-	debug( '/site/:site_id/purchases' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/purchases' }, fn );
-};
-
 Undocumented.prototype.resetPasswordForMailbox = function ( domainName, mailbox, fn ) {
 	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
 	return this.wpcom.req.post(

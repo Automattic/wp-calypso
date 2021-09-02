@@ -22,6 +22,9 @@ jest.mock( 'calypso/lib/wp', () => ( {
 		getSitePlans: () => {},
 		getSiteFeatures: () => {},
 	} ),
+	req: {
+		get: () => Promise.reject( new Error( '.get() not implemented in mock' ) ),
+	},
 } ) );
 
 const emptyResponseCart = getEmptyResponseCart();
