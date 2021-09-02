@@ -1030,9 +1030,9 @@ class CancelPurchaseForm extends React.Component {
 		if ( surveyStep === steps.FEEDBACK_STEP ) {
 			let actionText;
 			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
-				actionText = isSubmitting ? translate( 'Removing…' ) : translate( 'Remove plan' );
+				actionText = disabled ? translate( 'Removing…' ) : translate( 'Remove plan' );
 			} else {
-				actionText = isSubmitting ? translate( 'Cancelling…' ) : translate( 'Cancel plan' );
+				actionText = disabled ? translate( 'Cancelling…' ) : translate( 'Cancel plan' );
 			}
 			return (
 				<>
@@ -1041,6 +1041,7 @@ class CancelPurchaseForm extends React.Component {
 					</GutenbergButton>
 					<GutenbergButton
 						isDefault
+						isBusy={ disabled }
 						disabled={ disabled || ! isSurveyFilledIn( this.state, isImport ) }
 						onClick={ this.onSubmit }
 					>
