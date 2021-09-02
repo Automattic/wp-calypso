@@ -3,7 +3,6 @@ import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -145,6 +144,7 @@ class InlineHelpPopover extends Component {
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
+
 		return (
 			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
@@ -201,7 +201,6 @@ const mapDispatchToProps = {
 	resetContactForm: resetInlineHelpContactForm,
 };
 
-export default compose(
-	localize,
-	connect( mapStateToProps, mapDispatchToProps )
-)( withMobileBreakpoint( InlineHelpPopover ) );
+export default withMobileBreakpoint(
+	connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpPopover ) )
+);
