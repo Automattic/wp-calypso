@@ -11,7 +11,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import Gridicon from 'calypso/components/gridicon';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
-import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
+import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 import {
 	isCrowdsignalOAuth2Client,

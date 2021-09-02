@@ -26,7 +26,6 @@ const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
-const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
 const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
@@ -246,27 +245,22 @@ const webpackConfig = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
-		alias: Object.assign(
-			{
-				debug: path.resolve( __dirname, '../node_modules/debug' ),
-				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
-				// By using the path of the package we let Webpack parse the package's `package.json`
-				// and use `mainFields` to decide what is the main file.
-				'@wordpress/data': findPackage( '@wordpress/data' ),
-				'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
-				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
-				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
-				calypso: __dirname,
+		alias: Object.assign( {
+			debug: path.resolve( __dirname, '../node_modules/debug' ),
+			store: 'store/dist/store.modern',
+			gridicons$: path.resolve( __dirname, 'components/gridicon' ),
+			// By using the path of the package we let Webpack parse the package's `package.json`
+			// and use `mainFields` to decide what is the main file.
+			'@wordpress/data': findPackage( '@wordpress/data' ),
+			'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
+			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
+			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
+			calypso: __dirname,
 
-				// Node polyfills
-				process: 'process/browser',
-				util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
-			},
-			getAliasesForExtensions( {
-				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
-			} )
-		),
+			// Node polyfills
+			process: 'process/browser',
+			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
+		} ),
 	},
 	node: false,
 	plugins: [
