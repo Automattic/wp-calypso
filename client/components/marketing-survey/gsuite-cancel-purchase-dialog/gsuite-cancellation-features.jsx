@@ -17,11 +17,51 @@ class GSuiteCancellationFeatures extends Component {
 		this.props.recordTracksEvent( 'calypso_purchases_gsuite_remove_purchase_learn_more_click' );
 	};
 
-	getTimePeriod = () => {
-		const { status, translate } = this.props;
-		return status === 'suspended'
-			? translate( 'immediately' )
-			: translate( 'in %(days)s days', { args: { days: '30' }, comment: 'Number of days' } );
+	getAccessMessage = () => {
+		const { googleSubscriptionStatus, translate, purchase } = this.props;
+		const { meta: domainName, productSlug } = purchase;
+
+		const googleMailService = getGoogleMailServiceFamily( productSlug );
+
+		const accessMessage =
+			googleSubscriptionStatus === 'suspended'
+				? translate(
+						'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
+							'your %(googleMailService)s features immediately{{/strong}}, and you will ' +
+							'need to purchase a new subscription with Google if you wish to regain access to the features.',
+						{
+							args: {
+								domainName,
+								googleMailService,
+							},
+							comment:
+								'%(domainName) is the name of the domain, e.g. example.com; ' +
+								'%(googleMailService)s can be either "G Suite" or "Google Workspace" ',
+							components: {
+								strong: <strong />,
+							},
+						}
+				  )
+				: translate(
+						'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
+							'your %(googleMailService)s features in %(days)s days{{/strong}}. After that time, ' +
+							'you will need to purchase a new subscription with Google.',
+						{
+							args: {
+								domainName,
+								googleMailService,
+								days: '30',
+							},
+							comment:
+								'%(domainName) is the name of the domain, e.g. example.com; ' +
+								'%(googleMailService)s can be either "G Suite" or "Google Workspace" ',
+							components: {
+								strong: <strong />,
+							},
+						}
+				  );
+
+		return accessMessage;
 	};
 
 	render() {
@@ -34,24 +74,10 @@ class GSuiteCancellationFeatures extends Component {
 					{ translate( 'Are you sure?' ) }
 				</CardHeading>
 
-				<p>
-					{ translate(
-						'If you cancel your subscription now, you will lose access to all of ' +
-							'your %(googleMailService)s features %(days)s. After that time, ' +
-							'you will need to purchase a new subscription with Google.',
-						{
-							args: {
-								googleMailService: getGoogleMailServiceFamily( productSlug ),
-								days: this.getTimePeriod(),
-							},
-							comment:
-								'%(googleMailService)s can be either "G Suite" or "Google Workspace" and %(days)s might be "immediately" or "after 30 days"',
-						}
-					) }
-				</p>
+				<p>{ this.getAccessMessage() }</p>
 
 				<CardHeading tagName="h3" size={ 24 }>
-					{ translate( "Here’s what you'll be missing" ) }
+					{ translate( "Here’s what you'll be missing:" ) }
 				</CardHeading>
 
 				<GSuiteFeatures productSlug={ productSlug } domainName={ domainName } type={ 'list' } />
@@ -66,6 +92,7 @@ GSuiteCancellationFeatures.propTypes = {
 	purchase: PropTypes.object.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
+	googleSubscriptionStatus: PropTypes.string,
 };
 
 export default connect( null, {

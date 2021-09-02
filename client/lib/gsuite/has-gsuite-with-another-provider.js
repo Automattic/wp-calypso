@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subscription-status';
 
 /**
  * Given a domain object, does that domain have G Suite with another provider.
@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
 export function hasGSuiteWithAnotherProvider( domain ) {
-	const domainStatus = get( domain, 'googleAppsSubscription.status', '' );
+	const domainStatus = getGSuiteSubscriptionStatus( domain );
 
 	return 'other_provider' === domainStatus;
 }

@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import { getName } from 'calypso/lib/purchases';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
@@ -196,9 +197,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, onClose, purchase, domains, domain } = this.props;
+		const { isVisible, onClose, purchase, selectedDomain } = this.props;
 		const { surveyAnswerId, surveyAnswerText, isRemoving } = this.state;
-		const selectedDomain = getSelectedDomain( { domains, selectedDomainName: domain } );
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (
@@ -211,7 +211,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
 						<GSuiteCancellationFeatures
 							purchase={ purchase }
-							status={ selectedDomain?.googleAppsSubscription?.status }
+							googleSubscriptionStatus={ getGSuiteSubscriptionStatus( selectedDomain ) }
 						/>
 					) : (
 						<GSuiteCancellationSurvey
@@ -240,13 +240,16 @@ GSuiteCancelPurchaseDialog.propTypes = {
 };
 
 export default connect(
-	( state, { purchase, site } ) => {
+	( state, { purchase, site, domain } ) => {
 		return {
 			productName: getName( purchase ),
 			domain: purchase.meta,
 			purchasesError: getPurchasesError( state ),
+			selectedDomain: getSelectedDomain( {
+				domains: getDomainsBySiteId( state, site.ID ),
+				selectedDomainName: domain,
+			} ),
 			userId: getCurrentUserId( state ),
-			domains: getDomainsBySiteId( state, site.ID ),
 		};
 	},
 	{
