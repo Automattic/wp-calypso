@@ -38880,11 +38880,11 @@ typescript@^4.3.5:
   linkType: hard
 
 "use-memo-one@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "use-memo-one@npm:1.1.1"
+  version: 1.1.2
+  resolution: "use-memo-one@npm:1.1.2"
   peerDependencies:
-    react: ^16.8.0
-  checksum: 0139094ca1e79a42ce07da1a339cf43dbe2b3d1750086bdda0bddb5cf301358816761e58dc17d6813d161d97d3fb17677228b0551b660db0163de9706446d20a
+    react: ^16.8.0 || ^17.0.0
+  checksum: 02709d197f4c2bff405f4a7c328d144e83b3d2e727fca8ab8164905ee7202d923663a06ec48d24b386a4984579d3fe54c1e1416303417b0ebe80136692dcd1a6
   languageName: node
   linkType: hard
 
