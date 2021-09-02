@@ -10,7 +10,15 @@ import {
 	DiscoverLogo,
 } from '../../components/payment-logos';
 
-export default function PaymentLogo( { brand, isSummary } ) {
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+export default function PaymentLogo( {
+	brand,
+	isSummary,
+}: {
+	brand: string;
+	isSummary?: boolean;
+} ): JSX.Element | null {
 	let cardFieldIcon = null;
 
 	switch ( brand ) {
@@ -70,16 +78,20 @@ export default function PaymentLogo( { brand, isSummary } ) {
 	return cardFieldIcon;
 }
 
+type BrandLogoProps = {
+	isSummary?: boolean;
+};
+
 const BrandLogo = styled.span`
-	display: ${ ( props ) => ( props.isSummary ? 'inline-block' : 'block' ) };
-	position: ${ ( props ) => ( props.isSummary ? 'relative' : 'absolute' ) };
-	top: ${ ( props ) => ( props.isSummary ? '0' : '15px' ) };
-	right: ${ ( props ) => ( props.isSummary ? '0' : '10px' ) };
+	display: ${ ( props: BrandLogoProps ) => ( props.isSummary ? 'inline-block' : 'block' ) };
+	position: ${ ( props: BrandLogoProps ) => ( props.isSummary ? 'relative' : 'absolute' ) };
+	top: ${ ( props: BrandLogoProps ) => ( props.isSummary ? '0' : '15px' ) };
+	right: ${ ( props: BrandLogoProps ) => ( props.isSummary ? '0' : '10px' ) };
 	transform: translateY( ${ ( props ) => ( props.isSummary ? '4px' : '0' ) } );
 
 	.rtl & {
 		right: auto;
-		left: ${ ( props ) => ( props.isSummary ? '0' : '10px' ) };
+		left: ${ ( props: BrandLogoProps ) => ( props.isSummary ? '0' : '10px' ) };
 	}
 `;
 
@@ -105,7 +117,7 @@ const SmallBrandLogo = styled( BrandLogo )`
 	}
 `;
 
-function LockIcon( { className } ) {
+function LockIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
