@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
@@ -54,7 +54,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import withPluginRedirect from '../with-plugin-redirect';
 
@@ -544,6 +544,30 @@ export class PluginMeta extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
+	renderPaidPlanUpsell() {
+		const { translate, slug } = this.props;
+
+		if ( this.props.isVipSite || this.props.jetpackNonAtomic || this.props.isPaidPlan ) {
+			return null;
+		}
+		const bannerURL = `/plans/my-plan/${ slug }`;
+		const title = translate( 'Upgrade to a paid plan to install plugins.' );
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="plugin-meta__upgrade_nudge">
+				<UpsellNudge
+					event="calypso_plugin_detail_page_upgrade_nudge"
+					href={ bannerURL }
+					feature={ FEATURE_UPLOAD_PLUGINS }
+					title={ title }
+					showIcon={ true }
+				/>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
 	render() {
 		const cardClasses = classNames( 'plugin-meta__information', {
 			'has-button': this.hasOrgInstallButton(),
@@ -620,7 +644,9 @@ export class PluginMeta extends Component {
 					! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
 					! this.isWpcomPreinstalled() &&
-					( this.maybeDisplayUnsupportedNotice() || this.renderUpsell() ) }
+					( this.maybeDisplayUnsupportedNotice() ||
+						( ! isEnabled( 'woop' ) && this.renderUpsell() ) ||
+						( isEnabled( 'woop' ) && this.renderPaidPlanUpsell() ) ) }
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }
@@ -655,6 +681,8 @@ const mapStateToProps = ( state, { plugin, sites } ) => {
 		slug: getSiteSlug( state, siteId ),
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin.slug ),
 		isJetpackSite: isJetpackSite( state, siteId ),
+		jetpackNonAtomic: isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ),
+		isPaidPlan: isCurrentPlanPaid( state, siteId ),
 	};
 };
 

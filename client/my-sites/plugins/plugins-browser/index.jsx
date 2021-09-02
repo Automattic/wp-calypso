@@ -45,7 +45,12 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import {
+	getSitePlan,
+	isJetpackSite,
+	isRequestingSites,
+	isCurrentPlanPaid,
+} from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -441,6 +446,32 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
+	renderPaidPlanUpgradeNudge() {
+		if (
+			! this.props.selectedSiteId ||
+			! this.props.sitePlan ||
+			this.props.isVipSite ||
+			this.props.jetpackNonAtomic ||
+			this.props.isPaidPlan
+		) {
+			return null;
+		}
+
+		const { translate, siteSlug } = this.props;
+		const bannerURL = `/plans/my-plan/${ siteSlug }`;
+		const title = translate( 'Upgrade to a paid plan to install plugins.' );
+
+		return (
+			<UpsellNudge
+				event="calypso_plugins_browser_upgrade_nudge"
+				showIcon={ true }
+				href={ bannerURL }
+				feature={ FEATURE_UPLOAD_PLUGINS }
+				title={ title }
+			/>
+		);
+	}
+
 	renderPageViewTracker() {
 		const { category, selectedSiteId, trackPageViews } = this.props;
 
@@ -506,7 +537,8 @@ export class PluginsBrowser extends Component {
 						</div>
 					</div>
 				) }
-				{ this.renderUpgradeNudge() }
+				{ ! isEnabled( 'woop' ) && this.renderUpgradeNudge() }
+				{ isEnabled( 'woop' ) && this.renderPaidPlanUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
 				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
@@ -534,6 +566,7 @@ export default flow(
 				sitePlan,
 				hasPremiumPlan,
 				hasBusinessPlan,
+				isPaidPlan: isCurrentPlanPaid( state, selectedSiteId ),
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
 				jetpackNonAtomic:
 					isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
