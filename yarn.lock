@@ -1118,6 +1118,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-checkout@workspace:packages/wpcom-checkout"
   dependencies:
+    "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
     "@automattic/composite-checkout": ^1.0.0
     "@automattic/shopping-cart": ^1.0.0
