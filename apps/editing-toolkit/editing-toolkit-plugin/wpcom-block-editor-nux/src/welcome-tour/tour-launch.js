@@ -54,7 +54,6 @@ function LaunchWpcomWelcomeTour() {
 
 function KeyboardNavigation( { onMinimize, onNextCardProgression, onPreviousCardProgression } ) {
 	useKeyboardNavigation( onMinimize, onNextCardProgression, onPreviousCardProgression );
-
 	return null;
 }
 
@@ -137,6 +136,7 @@ function WelcomeTourFrame() {
 						setCurrentCardIndex={ setCurrentCardIndex }
 						onNextCardProgression={ handleNextCardProgression }
 						onPreviousCardProgression={ handlePreviousCardProgression }
+						isGutenboarding={ isGutenboarding }
 					/>
 				</>
 			) : (
@@ -146,9 +146,9 @@ function WelcomeTourFrame() {
 	);
 }
 
-function WelcomeTourMinimized( { handleMaximize } ) {
+function WelcomeTourMinimized( { onMaximize } ) {
 	return (
-		<Button onClick={ handleMaximize } className="wpcom-editor-welcome-tour__resume-btn">
+		<Button onClick={ onMaximize } className="wpcom-editor-welcome-tour__resume-btn">
 			<Flex gap={ 13 }>
 				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
 				<Icon icon={ maximize } size={ 24 } />

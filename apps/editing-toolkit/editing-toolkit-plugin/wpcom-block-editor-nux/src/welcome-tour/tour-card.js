@@ -27,6 +27,7 @@ function WelcomeTourCard( {
 	setCurrentCardIndex,
 	onNextCardProgression,
 	onPreviousCardProgression,
+	isGutenboarding,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastCard = currentCardIndex === lastCardIndex;
@@ -43,7 +44,7 @@ function WelcomeTourCard( {
 			slide_number: currentCardIndex + 1,
 			is_last_slide: isLastCard,
 			slide_heading: heading,
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			is_gutenboarding: isGutenboarding,
 		} );
 	} );
 
@@ -70,7 +71,7 @@ function WelcomeTourCard( {
 			</CardBody>
 			<CardFooter>
 				{ isLastCard ? (
-					<TourRating></TourRating>
+					<TourRating isGutenboarding={ isGutenboarding }></TourRating>
 				) : (
 					<CardNavigation
 						currentCardIndex={ currentCardIndex }
@@ -161,7 +162,7 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 	);
 }
 
-function TourRating() {
+function TourRating( { isGutenboarding } ) {
 	let isDisabled = false;
 	const tourRating = useSelect( ( select ) =>
 		select( 'automattic/wpcom-welcome-guide' ).getTourRating()
@@ -179,7 +180,7 @@ function TourRating() {
 		setTourRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 			thumbs_up: isThumbsUp,
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			is_gutenboarding: isGutenboarding,
 		} );
 	};
 
