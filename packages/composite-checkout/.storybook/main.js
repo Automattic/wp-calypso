@@ -8,6 +8,17 @@ module.exports = {
 		check: false,
 		reactDocgen: false,
 	},
+	babel: {
+		presets: [
+			[ '@babel/preset-env', { loose: true, targets: { node: 'current' } } ],
+			[ '@babel/preset-react' ],
+		],
+		plugins: [
+			[ '@babel/plugin-proposal-class-properties', { loose: true } ],
+			[ '@babel/plugin-proposal-private-methods', { loose: true } ],
+			[ '@babel/plugin-proposal-private-property-in-object', { loose: true } ],
+		],
+	},
 	webpackFinal: async ( config, { configType } ) => {
 		config.resolve.alias = {
 			...config.resolve.alias,
