@@ -147,8 +147,9 @@ export async function validateContactDetails(
 
 	if (
 		isLoggedOutCart &&
-		! completeValidationCheck(
-			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate )
+		! isContactValidationResponseValid(
+			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate ),
+			contactInfo
 		)
 	) {
 		return false;
