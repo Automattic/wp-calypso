@@ -146,7 +146,9 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 										{
 											args: { productName, siteName: rawSite.name },
 											components: {
-												strong: <strong />,
+												strong: (
+													<strong className="jetpack-checkout-siteless-thank-you-completed__site-name" />
+												),
 											},
 										}
 									) }
