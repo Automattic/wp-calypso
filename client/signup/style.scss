@@ -379,6 +379,14 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
+	.navigation-link.button.is-borderless {
+		color: var( --color-accent );
+
+		svg {
+			fill: var( --color-accent );
+		}
+	}
+
 	.navigation-link.button.back {
 		svg {
 			display: none;
