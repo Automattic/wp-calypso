@@ -165,7 +165,7 @@
 		"@babel/register": "^7.15.3",
 		"@babel/runtime": "^7.15.3",
 		"@signal-noise/stylelint-scales": "^2.0.0",
-		"@storybook/react": "^6.1.10",
+		"@storybook/react": "^6.3.7",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",

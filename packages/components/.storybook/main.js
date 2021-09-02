@@ -1,6 +1,17 @@
 const path = require( 'path' );
 
 module.exports = {
+	babel: {
+		presets: [
+			[ '@babel/preset-env', { loose: true, targets: { node: 'current' } } ],
+			[ '@babel/preset-react' ],
+		],
+		plugins: [
+			[ '@babel/plugin-proposal-class-properties', { loose: true } ],
+			[ '@babel/plugin-proposal-private-methods', { loose: true } ],
+			[ '@babel/plugin-proposal-private-property-in-object', { loose: true } ],
+		],
+	},
 	stories: [ '../src/**/*.stories.{js,jsx,ts,tsx}' ],
 	addons: [ '@storybook/addon-actions', '@storybook/preset-scss' ],
 	typescript: {
