@@ -45,10 +45,6 @@ import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import PaymentLogo from './lib/payment-methods/payment-logo';
 import {
-	createStripeMethod,
-	createStripePaymentMethodStore,
-} from './lib/payment-methods/stripe-credit-card-fields';
-import {
 	usePaymentProcessor,
 	usePaymentProcessors,
 	makeManualResponse,
@@ -101,8 +97,6 @@ export {
 	SubmitButtonWrapper,
 	checkoutTheme,
 	createRegistry,
-	createStripeMethod,
-	createStripePaymentMethodStore,
 	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,

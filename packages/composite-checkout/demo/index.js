@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
 	Checkout,
 	CheckoutStepArea,
@@ -6,8 +7,6 @@ import {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutProvider,
-	createStripeMethod,
-	createStripePaymentMethodStore,
 	defaultRegistry,
 	FormStatus,
 	getDefaultOrderSummary,
@@ -23,6 +22,10 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import React, { useState, useEffect, useMemo } from 'react';
+import {
+	createStripeMethod,
+	createStripePaymentMethodStore,
+} from '../src/lib/stripe-credit-card-fields-demo';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
@@ -224,11 +227,7 @@ function MyCheckout() {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
 			return null;
 		}
-		return createStripeMethod( {
-			store: stripeStore,
-			stripe,
-			stripeConfiguration,
-		} );
+		return createStripeMethod( { store: stripeStore } );
 	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const paymentMethods = [ stripeMethod ].filter( Boolean );
