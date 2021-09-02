@@ -47,15 +47,15 @@ function HelpSearchResults( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const currentUserId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const currentUserId = useSelector( getCurrentUserId );
 	const hasPurchases = useSelector( ( state ) =>
-		hasCancelableUserPurchases( state, getCurrentUserId( state ) )
+		hasCancelableUserPurchases( state, currentUserId )
 	);
-	const sectionName = useSelector( ( state ) => getSectionName( state ) );
-	const contextualResults = useSelector( ( state ) => getContextualHelpResults( state ) );
+	const sectionName = useSelector( getSectionName );
+	const contextualResults = useSelector( getContextualHelpResults );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
-	const { data: searchResults = [], isLoading: isSearching = false } = useInlineHelpSearchQuery(
+	const { data: searchResults = [], isLoading: isSearching } = useInlineHelpSearchQuery(
 		searchQuery
 	);
 	const hasAPIResults = searchResults.length > 0;
@@ -159,7 +159,6 @@ function HelpSearchResults( {
 	};
 
 	const renderSearchResultsSection = ( { type, title, results, condition } ) => {
-		/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
 		const id = `inline-search--${ type }`;
 
 		return condition ? (
@@ -174,7 +173,6 @@ function HelpSearchResults( {
 				</ul>
 			</Fragment>
 		) : null;
-		/* eslint-enable jsx-a11y/no-noninteractive-element-to-interactive-role */
 	};
 
 	const renderSearchSections = () => {
