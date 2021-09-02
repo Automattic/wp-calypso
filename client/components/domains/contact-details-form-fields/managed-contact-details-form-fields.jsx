@@ -249,9 +249,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		return (
 			<>
 				<div className="contact-details-form-fields__row">
-					{ this.createEmailField(
-						translate( "You'll use this email address to access your account later" )
-					) }
+					{ this.createEmailField() }
 
 					{ this.createField(
 						'phone',
