@@ -391,6 +391,55 @@ describe( 'CompositeCheckout', () => {
 		}
 	);
 
+	it.each( [
+		{ doesOrDoesNot: 'does', successOrNot: 'successful' },
+		{
+			doesOrDoesNot: 'does not',
+			successOrNot: 'not successful',
+		},
+	] )(
+		'$doesOrDoesNot complete the contact step when validation is $successOrNot with a domain in the cart',
+		async ( { doesOrDoesNot, successOrNot } ) => {
+			const validContactDetails = {
+				postal_code: '10001',
+				country_code: 'US',
+			};
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.2/me/domain-contact-information/validate', ( body ) => {
+					return (
+						body.contact_information.postal_code === validContactDetails.postal_code &&
+						body.contact_information.country_code === validContactDetails.country_code
+					);
+				} )
+				.reply( 200, {
+					success: successOrNot === 'successful',
+				} );
+
+			const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			await waitFor( () => {
+				expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			} );
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
+			fireEvent.change( screen.getByLabelText( 'ZIP code' ), { target: { value: '10001' } } );
+			const continueButton = await screen.findByText( 'Continue' );
+			fireEvent.click( continueButton );
+			await waitFor( () => {
+				expect( screen.getByText( 'Updating cart…' ) ).toBeInTheDocument();
+			} );
+			await waitFor( () => {
+				expect( screen.getByText( 'Continue' ) ).toBeInTheDocument();
+			} );
+			await waitFor( () => {
+				if ( doesOrDoesNot === 'does' ) {
+					expect( screen.getByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+				} else {
+					expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+				}
+			} );
+		}
+	);
+
 	it( 'renders the checkout summary', async () => {
 		render( <MyCheckout />, container );
 		await waitFor( () => {
