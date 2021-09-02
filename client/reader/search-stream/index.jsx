@@ -100,9 +100,9 @@ class SearchStream extends React.Component {
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );
-		const segmentedControlStyle = ! wideDisplay
-			? { bottom: 15, right: 15 }
-			: { top: 41, right: 50 };
+		const segmentedControlClass = wideDisplay
+			? 'search-stream__sort-picker is-wide'
+			: 'search-stream__sort-picker';
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -180,11 +180,7 @@ class SearchStream extends React.Component {
 						</div>
 					) }
 					{ query && (
-						<SegmentedControl
-							compact
-							className="search-stream__sort-picker"
-							style={ segmentedControlStyle }
-						>
+						<SegmentedControl compact className={ segmentedControlClass }>
 							<SegmentedControl.Item
 								selected={ sortOrder !== 'date' }
 								onClick={ this.useRelevanceSort }
