@@ -4,6 +4,7 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
+import nock from 'nock';
 import page from 'page';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -29,6 +30,8 @@ import {
 	createTestReduxStore,
 	countryList,
 } from './util';
+
+/* eslint-disable jest/no-conditional-expect */
 
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
@@ -329,6 +332,64 @@ describe( 'CompositeCheckout', () => {
 			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
 		} );
 	} );
+
+	it( 'does not complete the contact step when the contact step button has not been clicked', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+		} );
+		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		{ doesOrDoesNot: 'does', successOrNot: 'successful' },
+		{
+			doesOrDoesNot: 'does not',
+			successOrNot: 'not successful',
+		},
+	] )(
+		'$doesOrDoesNot complete the contact step when validation is $successOrNot with a plan in the cart',
+		async ( { doesOrDoesNot, successOrNot } ) => {
+			const validContactDetails = {
+				postal_code: '10001',
+				country_code: 'US',
+			};
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/tax-contact-information/validate', ( body ) => {
+					return (
+						body.contact_information.postal_code === validContactDetails.postal_code &&
+						body.contact_information.country_code === validContactDetails.country_code
+					);
+				} )
+				.reply( 200, {
+					success: successOrNot === 'successful',
+				} );
+
+			const cartChanges = { products: [ planWithoutDomain ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			await waitFor( () => {
+				expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			} );
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
+			fireEvent.change( screen.getByLabelText( 'Postal code' ), { target: { value: '10001' } } );
+			const continueButton = await screen.findByText( 'Continue' );
+			fireEvent.click( continueButton );
+			await waitFor( () => {
+				expect( screen.getByText( 'Updating cart…' ) ).toBeInTheDocument();
+			} );
+			await waitFor( () => {
+				expect( screen.getByText( 'Continue' ) ).toBeInTheDocument();
+			} );
+			await waitFor( () => {
+				if ( doesOrDoesNot === 'does' ) {
+					expect( screen.getByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+				} else {
+					expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+				}
+			} );
+		}
+	);
 
 	it( 'renders the checkout summary', async () => {
 		render( <MyCheckout />, container );
