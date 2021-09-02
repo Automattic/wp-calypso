@@ -617,14 +617,19 @@ export default function pages() {
 		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query?.for;
+				const ref = req.query?.ref;
 
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
-				} else {
-					res.redirect( 'https://wordpress.com/pricing' );
 				}
+
+				if ( ref ) {
+					res.redirect( `https://wordpress.com/pricing/?ref=${ ref }` );
+				}
+
+				res.redirect( 'https://wordpress.com/pricing' );
 			} else {
 				next();
 			}
