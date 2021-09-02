@@ -312,7 +312,8 @@
 		"@wordpress/base-styles": "^4.0.0",
 		"newspack-components/@wordpress/base-styles": "4.0.0",
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
-		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1"
+		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
+		"@types/react": "^17.0.19"
 	},
 	"packageManager": "yarn@3.0.0"
 }
