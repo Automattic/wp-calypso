@@ -80,10 +80,10 @@ function HelpSearchResults( {
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
 
-	const onLinkClickHandler = ( event, result ) => {
-		const { support_type: supportType, link } = result;
+	const onLinkClickHandler = ( event, result, type ) => {
+		const { link } = result;
 		// check and catch admin section links.
-		if ( supportType === SUPPORT_TYPE_ADMIN_SECTION && link ) {
+		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
 			// record track-event.
 			dispatch(
 				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
@@ -105,17 +105,10 @@ function HelpSearchResults( {
 		onSelect( event, result );
 	};
 
-	const renderHelpLink = ( result ) => {
-		const {
-			link,
-			key,
-			title,
-			support_type = SUPPORT_TYPE_API_HELP,
-			icon = 'domains',
-			post_id,
-		} = result;
+	const renderHelpLink = ( result, type ) => {
+		const { link, key, title, icon = 'domains', post_id } = result;
 
-		const external = externalLinks && support_type !== SUPPORT_TYPE_ADMIN_SECTION;
+		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
 
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
@@ -140,16 +133,14 @@ function HelpSearchResults( {
 								if ( ! external ) {
 									event.preventDefault();
 								}
-								onLinkClickHandler( event, result );
+								onLinkClickHandler( event, result, type );
 							} }
 							{ ...( external && {
 								target: '_blank',
 								rel: 'noreferrer',
 							} ) }
 						>
-							{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
-								<Gridicon icon={ icon } size={ 18 } />
-							) }
+							{ type === SUPPORT_TYPE_ADMIN_SECTION && <Gridicon icon={ icon } size={ 18 } /> }
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
 					</div>
@@ -169,7 +160,7 @@ function HelpSearchResults( {
 					</h3>
 				) : null }
 				<ul className="inline-help__results-list" aria-labelledby={ title ? id : undefined }>
-					{ results.map( renderHelpLink ) }
+					{ results.map( ( result ) => renderHelpLink( result, type ) ) }
 				</ul>
 			</Fragment>
 		) : null;

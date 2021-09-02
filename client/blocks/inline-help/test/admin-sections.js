@@ -39,7 +39,6 @@ describe( 'filterListBySearchTerm()', () => {
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
-				support_type: 'admin_section',
 			},
 		] );
 	} );
@@ -54,7 +53,6 @@ describe( 'filterListBySearchTerm()', () => {
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
-				support_type: 'admin_section',
 			},
 		] );
 	} );
@@ -69,7 +67,6 @@ describe( 'filterListBySearchTerm()', () => {
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
-				support_type: 'admin_section',
 			},
 		] );
 	} );
