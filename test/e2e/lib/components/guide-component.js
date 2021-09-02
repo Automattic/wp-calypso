@@ -8,6 +8,7 @@ export default class GuideComponent extends AsyncBaseContainer {
 	}
 
 	async dismiss( waitOverride, selector = '.components-guide' ) {
+		// There are two versions of the guide.  Firse we check for the modal version.
 		if (
 			await driverHelper.isElementEventuallyLocatedAndVisible(
 				this.driver,
@@ -30,6 +31,20 @@ export default class GuideComponent extends AsyncBaseContainer {
 					By.css( '.components-guide__finish-button' )
 				);
 			}
+		}
+		// We must also check for the card based version of the welcome guide.
+		if (
+			await driverHelper.isElementEventuallyLocatedAndVisible(
+				this.driver,
+				By.css( '.wpcom-editor-welcome-tour-frame' ),
+				waitOverride
+			)
+		) {
+			const skipButtonLocator = driverHelper.createTextLocator(
+				By.css( '.wpcom-editor-welcome-tour-frame button' ),
+				'Skip'
+			);
+			await driverHelper.clickWhenClickable( this.driver, skipButtonLocator );
 		}
 	}
 }

@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
+import GuideComponent from '../../components/guide-component';
 import SiteEditorComponent from '../../components/site-editor-component';
 import * as driverHelper from '../../driver-helper';
 import GutenbergEditorComponent from '../gutenberg-editor-component';
@@ -19,6 +20,8 @@ export function createGeneralTests( { it, editorType, postType, baseContext = un
 			true,
 			'Tracking events stack missing from window._e2eEventsStack'
 		);
+		const editorWelcomeModal = new GuideComponent( this.driver );
+		await editorWelcomeModal.dismiss( 200 );
 	} );
 
 	it( 'Make sure required and custom properties are added to the events', async function () {
