@@ -1,6 +1,8 @@
 import { Card } from '@automattic/components';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,6 +21,8 @@ import {
 	requestSiteAddressAvailability,
 	clearValidationError,
 } from 'calypso/state/site-address-change/actions';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-change/selectors/get-site-address-availability-pending';
 import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
 import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change/selectors/is-requesting-site-address-change';
@@ -26,6 +30,8 @@ import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-cha
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ConfirmationDialog from './dialog';
+import { getProductsList, getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 
 import './style.scss';
 
@@ -60,7 +66,7 @@ export class SiteAddressChanger extends Component {
 		this.props.clearValidationError( this.props.siteId );
 	}
 
-	onConfirm = () => {
+	onConfirm = ( option ) => {
 		const { domainFieldValue, newDomainSuffix } = this.state;
 		const { currentDomain, currentDomainSuffix, siteId } = this.props;
 		const oldDomain = get( currentDomain, 'name', null );
@@ -71,8 +77,23 @@ export class SiteAddressChanger extends Component {
 			domainFieldValue,
 			newDomainSuffix.substr( 1 ),
 			oldDomain,
-			type
+			type,
+			option === 'discard',
+			option !== 'redirect'
 		);
+
+		if ( option === 'redirect' ) {
+			this.props.shoppingCartManager
+				.addProductsToCart( [
+					fillInSingleCartItemAttributes(
+						siteRedirect( { domainFieldValue } ),
+						this.props.products
+					),
+				] )
+				.then( () => {
+					page( '/checkout/' + this.props.selectedSiteSlug );
+				} );
+		}
 	};
 
 	setValidationState = () => {
@@ -312,6 +333,7 @@ export class SiteAddressChanger extends Component {
 
 		return (
 			<div className="site-address-changer">
+				<QueryProductsList />
 				<ConfirmationDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.onDialogClose }
@@ -321,6 +343,7 @@ export class SiteAddressChanger extends Component {
 					currentDomainSuffix={ this.props.currentDomainSuffix }
 					onConfirm={ this.onConfirm }
 					siteId={ siteId }
+					siteRedirectPrice={ this.props.siteRedirectPrice }
 				/>
 				<form onSubmit={ this.onSubmit }>
 					<TrackComponentView
@@ -383,6 +406,8 @@ export default connect(
 			isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 			isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
 			validationError: getSiteAddressValidationError( state, siteId ),
+			products: getProductsList( state ),
+			siteRedirectPrice: getProductDisplayCost( state, 'offsite_redirect' ),
 		};
 	},
 	{
@@ -391,4 +416,4 @@ export default connect(
 		clearValidationError,
 		recordTracksEvent,
 	}
-)( localize( SiteAddressChanger ) );
+)( withShoppingCart( localize( SiteAddressChanger ) ) );
