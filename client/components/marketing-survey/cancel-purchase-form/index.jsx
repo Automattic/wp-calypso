@@ -528,7 +528,7 @@ class CancelPurchaseForm extends React.Component {
 			{
 				value: 'anotherReasonOne',
 				label: translate( 'Another reason…' ),
-				textPlaceholder: ' ',
+				textPlaceholder: translate( 'Can you please specify?' ),
 			},
 			{
 				value: '',
@@ -680,7 +680,7 @@ class CancelPurchaseForm extends React.Component {
 			{
 				value: 'anotherReasonTwo',
 				label: translate( 'Another reason…' ),
-				textPlaceholder: ' ',
+				textPlaceholder: translate( 'Can you please specify?' ),
 			},
 			{
 				value: '',
