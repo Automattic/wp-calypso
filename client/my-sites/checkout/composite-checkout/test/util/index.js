@@ -44,6 +44,22 @@ export const domainProduct = {
 	item_subtotal_display: 'R$5',
 };
 
+export const gSuiteProduct = {
+	product_name: 'G Suite',
+	product_slug: 'gapps',
+	currency: 'BRL',
+	extra: {},
+	free_trial: false,
+	meta: 'foo.cash',
+	product_id: 9,
+	volume: 1,
+	is_domain_registration: false,
+	item_original_cost_integer: 500,
+	item_original_cost_display: 'R$5',
+	item_subtotal_integer: 500,
+	item_subtotal_display: 'R$5',
+};
+
 export const domainTransferProduct = {
 	product_name: '.cash Domain',
 	product_slug: 'domain_transfer',
@@ -280,6 +296,23 @@ function convertRequestProductToResponseProduct( currency ) {
 					product_slug: 'domain_reg',
 					currency: currency,
 					is_domain_registration: true,
+					item_original_cost_integer: 70,
+					item_original_cost_display: 'R$70',
+					item_subtotal_integer: 70,
+					item_subtotal_display: 'R$70',
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 9:
+				return {
+					product_id: 9,
+					product_name: 'G Suite',
+					product_slug: 'gapps',
+					currency: currency,
+					is_domain_registration: false,
 					item_original_cost_integer: 70,
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
