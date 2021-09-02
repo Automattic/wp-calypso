@@ -142,7 +142,7 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 								{ productName &&
 									rawSite?.name &&
 									translate(
-										"We successfully activated %(productName)s on {{strong}}%(siteName)s{{/strong}}. Next, we'll recommend features based on your goals",
+										"We successfully activated %(productName)s on {{strong}}%(siteName)s{{/strong}}. Next, we'll recommend features based on your goals.",
 										{
 											args: { productName, siteName: rawSite.name },
 											components: {
@@ -153,14 +153,14 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 								{ productName &&
 									! rawSite &&
 									translate(
-										"We successfully activated %(productName)s. Next, we'll recommend features based on your goals",
+										"We successfully activated %(productName)s. Next, we'll recommend features based on your goals.",
 										{
 											args: { productName },
 										}
 									) }
 								{ ! productName &&
 									translate(
-										"We successfully activated your subscription. Next, we'll recommend features based on your goals"
+										"We successfully activated your subscription. Next, we'll recommend features based on your goals."
 									) }
 							</p>
 
