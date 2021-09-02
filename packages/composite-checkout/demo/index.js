@@ -16,7 +16,6 @@ import {
 	useIsStepActive,
 	useSelect,
 	useDispatch,
-	useMessages,
 	useFormStatus,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
@@ -53,14 +52,6 @@ const onEvent = ( event ) => window.console.log( 'Event', event );
 const showErrorMessage = ( error ) => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
-};
-const showInfoMessage = ( message ) => {
-	console.log( 'Info:', message ); /* eslint-disable-line no-console */
-	window.alert( message );
-};
-const showSuccessMessage = ( message ) => {
-	console.log( 'Success:', message ); /* eslint-disable-line no-console */
-	window.alert( message );
 };
 
 async function fetchStripeConfiguration() {
@@ -238,9 +229,6 @@ function MyCheckout() {
 			total={ total }
 			onEvent={ onEvent }
 			onPaymentComplete={ onPaymentComplete }
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ paymentMethods }
@@ -254,7 +242,6 @@ function MyCheckout() {
 
 function MyCheckoutBody() {
 	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
-	const { showErrorMessage: showError } = useMessages();
 
 	return (
 		<Checkout>
@@ -285,7 +272,6 @@ function MyCheckoutBody() {
 							new Promise( ( resolve ) =>
 								setTimeout( () => {
 									if ( country.length === 0 ) {
-										showError( 'The country field is required' );
 										resolve( false );
 										return;
 									}
