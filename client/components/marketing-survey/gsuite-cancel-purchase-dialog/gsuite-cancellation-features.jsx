@@ -54,7 +54,8 @@ class GSuiteCancellationFeatures extends Component {
 							},
 							comment:
 								'%(domainName) is the name of the domain, e.g. example.com; ' +
-								'%(googleMailService)s can be either "G Suite" or "Google Workspace" ',
+								'%(googleMailService)s can be either "G Suite" or "Google Workspace" ' +
+								'and %(days)s is a number of days which will generally be 30, and will always be at least 10',
 							components: {
 								strong: <strong />,
 							},
