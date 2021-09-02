@@ -4,17 +4,17 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
-import Button from '../../components/button';
-import Field from '../../components/field';
-import GridRow from '../../components/grid-row';
-import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
-import Spinner from '../../components/spinner';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { FormStatus, useLineItems } from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
+import Button from '../components/button';
+import Field from '../components/field';
+import GridRow from '../components/grid-row';
+import { VisaLogo, MastercardLogo, AmexLogo } from '../components/payment-logos';
+import Spinner from '../components/spinner';
+import { registerStore, useSelect, useDispatch } from '../lib/registry';
+import { FormStatus, useLineItems } from '../public-api';
+import { useFormStatus } from './form-status';
+import { LeftColumn, RightColumn } from './styled-components/ie-fallback';
+import { PaymentMethodLogos } from './styled-components/payment-method-logos';
+import { SummaryLine, SummaryDetails } from './styled-components/summary-details';
 
 const actions = {
 	setCardDataError( type, message ) {
