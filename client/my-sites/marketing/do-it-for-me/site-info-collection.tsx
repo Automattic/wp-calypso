@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { Widget } from '@typeform/embed-react';
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -26,11 +25,10 @@ const LoadingContainer = styled.div`
 	justify-content: center;
 `;
 
-const SiteInformationCollection = React.memo( () => {
+function SiteInformationCollection() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
-	const translate = useTranslate();
 
 	const onSubmit = async () => {
 		// After Submitting typeform checkout
@@ -43,16 +41,16 @@ const SiteInformationCollection = React.memo( () => {
 			<ActionPanelBody>
 				<FormattedHeader
 					brandFont
-					headerText={ translate( 'Tell us more about your site' ) }
-					subHeaderText={ translate(
+					headerText={ 'Tell us more about your site' }
+					subHeaderText={
 						'We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like'
-					) }
+					}
 					align="left"
 				/>
 				{ isFormSubmitted ? (
 					<LoadingContainer>
 						<CardHeading tagName="h5" size={ 24 }>
-							{ translate( 'Redirecting to Checkout…' ) }
+							{ 'Redirecting to Checkout…' }
 						</CardHeading>
 						<Spinner />
 					</LoadingContainer>
@@ -70,7 +68,7 @@ const SiteInformationCollection = React.memo( () => {
 			</ActionPanelBody>
 		</ActionPanel>
 	);
-} );
+}
 
 export default function WrappedSiteInformationCollection(): JSX.Element {
 	return (
