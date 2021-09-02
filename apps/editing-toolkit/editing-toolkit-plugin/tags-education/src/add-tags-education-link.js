@@ -21,7 +21,7 @@ const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) =>
 				<PostTaxonomyType { ...props } />
 				<ExternalLink
 					href={ localizeUrl(
-						'https://wordpress.com/support/posts/tags',
+						'https://wordpress.com/blog/2014/04/21/better-tagging/',
 						// TODO: remove tagsEducationLocale after fixing useLocalizeUrl.
 						// See https://github.com/Automattic/wp-calypso/pull/55527.
 						// `useLocalizeUrl` will try to get the current locale slug from the @wordpress/i18n locale data if missing `LocaleProvider`
