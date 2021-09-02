@@ -12989,21 +12989,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chai-enzyme@npm:^1.0.0-beta.1":
-  version: 1.0.0-beta.1
-  resolution: "chai-enzyme@npm:1.0.0-beta.1"
-  dependencies:
-    html: ^1.0.0
-  peerDependencies:
-    chai: ^3.0.0 || ^4.0.0
-    cheerio: 0.19.x || 0.20.x || 0.22.x || ^1.0.0-0
-    enzyme: ^2.7.0 || ^3.0.0
-    react: ^0.14.0 || ^15.0.0-0 || ^16.0.0-0
-    react-dom: ^0.14.0 || ^15.0.0-0 || ^16.0.0-0
-  checksum: c7d11e4444336b44d42c6cce4e9a7f7e08bb8a97fdbb8bd0a10e0bf2bf441af2dc601e03031ec13e4969191c125308e3be81703cb5b3129c275b0976b2e78c1a
-  languageName: node
-  linkType: hard
-
 "chai@npm:^4.3.4":
   version: 4.3.4
   resolution: "chai@npm:4.3.4"
@@ -21213,17 +21198,6 @@ fsevents@~2.1.2:
   peerDependencies:
     webpack: ^5.1.2
   checksum: f4fbf49f8449a0bf9bb4078640e9c0df503c9f28db3bc8f494ed70cc4a485d456f89f27a67d770825268fe595c58d5c09939688e504619979741903a3131b2d5
-  languageName: node
-  linkType: hard
-
-"html@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "html@npm:1.0.0"
-  dependencies:
-    concat-stream: ^1.4.7
-  bin:
-    html: ./bin/html.js
-  checksum: ae6e2e2f9c4de666c1b3133d96e33655327fc7d720480898bf5f486e8f2fd3398771ecf2a34491c2c486e603b7ae4009b9ab08f536ba60be7c8749fd6b8ce26a
   languageName: node
   linkType: hard
 
@@ -40379,7 +40353,6 @@ typescript@^4.3.5:
     caniuse-lite: ^1.0.30001173
     capture-website: ^1.0.0
     chai: ^4.3.4
-    chai-enzyme: ^1.0.0-beta.1
     chalk: ^4.0.0
     check-node-version: ^4.0.2
     cheerio: ^1.0.0-rc.3
