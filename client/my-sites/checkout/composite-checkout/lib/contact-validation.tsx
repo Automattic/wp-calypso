@@ -34,6 +34,9 @@ import type {
 	ContactDetailsType,
 	ContactValidationRequestContactInformation,
 	SignupValidationResponse,
+	RawDomainContactValidationResponse,
+	RawContactValidationResponseMessages,
+	ContactValidationResponseMessages,
 } from '@automattic/wpcom-checkout';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -211,7 +214,7 @@ function prepareContactDetailsForValidation(
 }
 
 // https://stackoverflow.com/a/65072147/2615868
-const hydrateNestedObject = (
+export const hydrateNestedObject = (
 	obj: Record< string, unknown > | unknown = {},
 	paths: string[] = [],
 	value: unknown
@@ -257,6 +260,34 @@ async function wpcomValidateSignupEmail( {
 		} );
 }
 
+function convertValidationMessages(
+	rawMessages: RawContactValidationResponseMessages
+): ContactValidationResponseMessages {
+	// Reshape the error messages to a nested object
+	const formattedMessages = Object.keys( rawMessages ).reduce( ( obj, key ) => {
+		const messages = rawMessages[ key as keyof typeof rawMessages ];
+		const fieldKeys = key.split( '.' );
+		return hydrateNestedObject( obj, fieldKeys, messages );
+	}, {} );
+	debug( 'Parsed validation error messages keys', rawMessages, 'into', formattedMessages );
+	return formattedMessages;
+}
+
+function convertValidationResponse(
+	rawResponse: RawDomainContactValidationResponse
+): DomainContactValidationResponse {
+	if ( ! isContactValidationResponse( rawResponse ) ) {
+		throw new Error( 'Contact validation returned unknown response.' );
+	}
+	if ( rawResponse.messages ) {
+		return {
+			success: rawResponse.success,
+			messages: convertValidationMessages( rawResponse.messages ),
+		};
+	}
+	return rawResponse;
+}
+
 async function wpcomValidateTaxContactInformation(
 	contactInformation: ContactValidationRequestContactInformation
 ): Promise< DomainContactValidationResponse > {
@@ -264,53 +295,37 @@ async function wpcomValidateTaxContactInformation(
 		.post( { path: '/me/tax-contact-information/validate' }, undefined, {
 			contact_information: contactInformation,
 		} )
-		.then( ( successData: unknown ) => {
-			if ( ! isContactValidationResponse( successData ) ) {
-				throw new Error( 'Contact validation returned unknown response.' );
-			}
-
-			if ( successData.messages ) {
-				// Reshape the error messages to a nested object
-				const formattedMessages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
-					const messages = ( successData.messages as Record< string, string[] > )[ key ];
-					const fieldKeys = key.split( '.' );
-					hydrateNestedObject( obj, fieldKeys, messages );
-					return obj;
-				}, {} );
-				return {
-					success: successData.success,
-					messages: formattedMessages,
-				};
-			}
-
-			return successData;
-		} );
+		.then( convertValidationResponse );
 }
 
 async function wpcomValidateDomainContactInformation(
 	contactInformation: ContactValidationRequestContactInformation,
 	domainNames: string[]
 ): Promise< DomainContactValidationResponse > {
-	return wp.req.post(
-		{ path: '/me/domain-contact-information/validate' },
-		{
-			apiVersion: '1.2',
-		},
-		{
-			contact_information: contactInformation,
-			domain_names: domainNames,
-		}
-	);
+	return wp.req
+		.post(
+			{ path: '/me/domain-contact-information/validate' },
+			{
+				apiVersion: '1.2',
+			},
+			{
+				contact_information: contactInformation,
+				domain_names: domainNames,
+			}
+		)
+		.then( convertValidationResponse );
 }
 
 async function wpcomValidateGSuiteContactInformation(
 	contactInformation: ContactValidationRequestContactInformation,
 	domainNames: string[]
 ): Promise< DomainContactValidationResponse > {
-	return wp.req.post( { path: '/me/google-apps/validate' }, undefined, {
-		contact_information: contactInformation,
-		domain_names: domainNames,
-	} );
+	return wp.req
+		.post( { path: '/me/google-apps/validate' }, undefined, {
+			contact_information: contactInformation,
+			domain_names: domainNames,
+		} )
+		.then( convertValidationResponse );
 }
 
 export async function getTaxValidationResult(
