@@ -89,10 +89,10 @@ class GSuiteCancellationFeatures extends Component {
 }
 
 GSuiteCancellationFeatures.propTypes = {
+	googleSubscriptionStatus: PropTypes.string,
 	purchase: PropTypes.object.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
-	googleSubscriptionStatus: PropTypes.string,
 };
 
 export default connect( null, {

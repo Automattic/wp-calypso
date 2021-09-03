@@ -210,8 +210,8 @@ class GSuiteCancelPurchaseDialog extends Component {
 				>
 					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
 						<GSuiteCancellationFeatures
-							purchase={ purchase }
 							googleSubscriptionStatus={ getGSuiteSubscriptionStatus( selectedDomain ) }
+							purchase={ purchase }
 						/>
 					) : (
 						<GSuiteCancellationSurvey
