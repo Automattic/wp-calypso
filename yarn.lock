@@ -1123,6 +1123,7 @@ __metadata:
     "@automattic/composite-checkout": ^1.0.0
     "@automattic/shopping-cart": ^1.0.0
     "@emotion/react": ^11.4.1
+    "@emotion/serialize": ^1.0.2
     "@emotion/styled": ^11.3.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
