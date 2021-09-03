@@ -208,6 +208,51 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	renderDomainMappingDialog() {
+		const { purchase, site } = this.props;
+
+		return (
+			<CancelPurchaseForm
+				disableButtons={ this.state.isRemoving }
+				defaultContent={ this.renderDomainMappingDialogText() }
+				purchase={ purchase }
+				selectedSite={ site }
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
+		);
+	}
+
+	renderDomainMappingDialogText() {
+		const { purchase, translate } = this.props;
+		const domainName = getName( purchase );
+		const domainProductName = purchase.productName;
+
+		return (
+			<div>
+				<p>
+					{
+						/* translators: "domainName" is the URL of the Domain Connection being removed (example: "mygroovysite.com"). "domainProductName" is a product name (in this case, Domain Connection).  */
+						translate( 'Are you sure you want to remove %(domainName)s from {{site/}}?', {
+							args: { domainName },
+							components: { site: <em>{ purchase.domain }</em> },
+							/* translators:  ^ "site" is the internal WPcom domain i.e. example.wordpress.com */
+						} )
+					}{ ' ' }
+					{ translate(
+						'You will not be able to reuse it again without starting a new %(domainProductName)s subscription.',
+						{
+							args: { domainProductName },
+							comment: "'domainProductName' refers to Domain Mapping in this case.",
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
 	renderPlanDialog() {
 		const { purchase, site } = this.props;
 
@@ -252,10 +297,13 @@ class RemovePurchase extends Component {
 							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						} )
 					}{ ' ' }
-					{ translate(
-						'You will not be able to reuse it again without purchasing a new subscription.',
-						{ comment: "'it' refers to a product purchased by a user" }
-					) }
+					{ isDomainRegistration &&
+						translate(
+							'You will not be able to reuse it again without starting a new subscription.',
+							{
+								comment: "'it' refers to a product purchased by a user",
+							}
+						) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
@@ -324,7 +372,11 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return this.renderDomainMappingDialog();
+		}
+
+		if ( isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
