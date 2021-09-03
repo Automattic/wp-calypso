@@ -124,15 +124,22 @@
 }
 
 .stats__parsely-banner.banner.card {
+	margin-top: 8px;
+	.banner__icons {
+		margin-right: 8px;
+	}
 	.banner__icon-circle {
 		background-color: transparent;
+		padding-left: 0;
+		width: 100%;
 	}
 	.banner__action {
 		margin-top: 0;
-		margin-right: 28px;
+		margin-right: 40px;
 		top: 2px;
 	}
 	.dismissible-card__close-icon {
-		top: 18px;
+		top: 50%;
+		transform: translateY( -50% );
 	}
 }

@@ -22,6 +22,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { preventWidows } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -290,8 +291,15 @@ class StatsSite extends Component {
 				<Banner
 					className="stats__parsely-banner"
 					callToAction={ translate( 'Learn more' ) }
-					description={ translate(
-						"Parse.ly Analytics makes it easy to understand the full impact of your content. Measure what's driving awareness, engagement, and conversions."
+					description={ preventWidows(
+						translate(
+							"Parse.ly Analytics makes it easy to understand the full impact of your content. {{br/}} Measure what's driving awareness, engagement, and conversions.",
+							{
+								components: {
+									br: <br />,
+								},
+							}
+						)
 					) }
 					dismissPreferenceName="calypso_stats_parsely_banner_dismiss"
 					event="calypso_stats_parsely_banner_view"
