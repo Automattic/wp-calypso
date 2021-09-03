@@ -18,7 +18,7 @@ class GSuiteCancellationFeatures extends Component {
 	};
 
 	getAccessMessage = () => {
-		const { googleSubscriptionStatus, translate, purchase } = this.props;
+		const { googleSubscriptionStatus, purchase, translate } = this.props;
 		const { meta: domainName, productSlug } = purchase;
 
 		const googleMailService = getGoogleMailServiceFamily( productSlug );
