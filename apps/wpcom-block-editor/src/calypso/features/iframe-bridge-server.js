@@ -679,6 +679,11 @@ async function openLinksInParentFrame( calypsoPort ) {
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
+		// Ignore if the click has modifier
+		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
+			return;
+		}
+
 		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
