@@ -355,7 +355,9 @@ class EmailProvidersComparison extends React.Component {
 				? newUsers( selectedDomainName )
 				: this.state.googleUsers;
 
-		const buttonLabel = this.isUpgrading()
+		const buttonLabel = this.isUpgrading() ? translate( 'Upgrade' ) : translate( 'Add' );
+
+		const expandButtonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
@@ -417,7 +419,7 @@ class EmailProvidersComparison extends React.Component {
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ buttonLabel }
+				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
 			/>
 		);
@@ -458,7 +460,9 @@ class EmailProvidersComparison extends React.Component {
 			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 		);
 
-		const buttonLabel = this.isUpgrading()
+		const buttonLabel = this.isUpgrading() ? translate( 'Upgrade' ) : translate( 'Add' );
+
+		const expandButtonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(titanProductName)s', {
 					args: {
 						titanProductName: getTitanProductName(),
@@ -515,7 +519,7 @@ class EmailProvidersComparison extends React.Component {
 				discount={ discount }
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ buttonLabel }
+				expandButtonLabel={ expandButtonLabel }
 				features={ getTitanFeatures() }
 			/>
 		);
