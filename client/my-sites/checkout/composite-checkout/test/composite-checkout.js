@@ -410,6 +410,12 @@ describe( 'CompositeCheckout', () => {
 				} )
 				.reply( 200, {
 					success: valid === 'valid',
+					messages:
+						valid === 'valid'
+							? undefined
+							: {
+									postal_code: [ 'Postal code error message' ],
+							  },
 				} );
 			nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
@@ -458,6 +464,10 @@ describe( 'CompositeCheckout', () => {
 				// even after some time passes, so we use this slightly convoluted technique:
 				// https://stackoverflow.com/a/68318058/2615868
 				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
+				// Make sure the error message is displayed
+				if ( valid !== 'valid' ) {
+					expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+				}
 			}
 		}
 	);
