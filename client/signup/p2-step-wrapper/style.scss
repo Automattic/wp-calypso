@@ -1,6 +1,7 @@
 @import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap' );
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import 'calypso/assets/stylesheets/_p2-extends.scss';
 
 .p2-step-wrapper {
 	box-sizing: border-box;
@@ -25,21 +26,12 @@
 		padding: 80px 20px 0;
 	}
 
-	input,
-	button {
+	input {
 		font-family: var( --p2-font-inter );
 	}
 
 	a {
-		color: var( --p2-color-link );
-		transition: color 0.2s ease;
-		text-decoration: none;
-		border-bottom: 1px solid var( --p2-color-link );
-
-		&:hover {
-			color: var( --p2-color-link-dark );
-			border-color: currentColor;
-		}
+		@extend %p2-link;
 	}
 }
 
@@ -83,37 +75,8 @@
 }
 
 .p2-step-wrapper button {
-	float: none;
-	margin: 0;
-	padding: 18px 24px;
-	width: 100%;
-	background-color: var( --p2-color-button );
-	color: var( --p2-color-text );
-	border: none;
-	border-radius: 40px; /* stylelint-disable-line scales/radii */
-	font-weight: normal;
+	@extend %p2-form-button;
 	font-size: var( --p2-font-size-form );
-	transition: background 0.2s ease;
-
-	&.is-primary {
-		background-color: var( --p2-color-link );
-		color: var( --p2-color-text-white );
-
-		&:hover,
-		&:focus {
-			background-color: var( --p2-color-link-dark );
-			border: none;
-			color: var( --p2-color-text-white );
-		}
-	}
-
-
-	&[disabled] {
-		opacity: 0.5;
-		color: var( --p2-color-text-white );
-		background-color: var( --p2-color-link );
-		border: none;
-	}
 }
 
 .signup__step.is-user .p2-step-wrapper {

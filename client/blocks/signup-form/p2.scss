@@ -1,3 +1,5 @@
+@import 'calypso/assets/stylesheets/_p2-extends.scss';
+
 .is-p2-invite.invite-accept,
 .is-p2-signup .signup__step.is-user {
 	.logged-out-form {
@@ -25,36 +27,8 @@
 		font-weight: 600;
 	}
 
-	input[type='text'].form-text-input,
-	input[type='email'].form-text-input,
-	input[type='password'].form-text-input {
-		background: #fff;
-		color: var( --p2-color-text );
-		font-family: var( --p2-font-inter );
-		font-size: var( --p2-font-size-form-s );
-		line-height: 1.5;
-		padding: 14px 16px;
-		border-color: var( --p2-color-border );
-		border-radius: 2px;
-
-		&:hover,
-		&:focus {
-			border-color: var( --p2-color-link );
-		}
-
-		&:focus,
-		&:focus:hover {
-			box-shadow: 0 0 0 1px var( --p2-color-link );
-		}
-
-		&.is-error {
-			border-color: var( --p2-color-error );
-
-			&:focus,
-			&:focus:hover {
-				box-shadow: 0 0 0 1px var( --p2-color-error );
-			}
-		}
+	.form-text-input {
+		@extend %p2-form-input-text;
 	}
 
 	.form-input-validation {
@@ -112,7 +86,7 @@
 
 	.signup-form__social {
 		width: 100%;
-		padding: 16px 0 0;
+		padding: 0;
 	}
 
 	.signup-form__social-buttons {
@@ -134,21 +108,19 @@
 		margin-top: 24px;
 	}
 
-	.step-wrapper__content .signup-form__p2-footer-link .logged-out-form__links a.logged-out-form__link-item {
-		color: var( --p2-color-link );
-		text-decoration: underline;
-
-		&:hover {
-			color: var( --p2-color-link-dark );
-		}
-	}
-
 	.navigation-link.back {
 		display: none;
 	}
 }
 
-.signup-form__p2-social-signup-separator {
+// Required to override highly specific style in client/signup/style.scss
+// instead of adding another :not(), which would only further specificity
+.is-p2-signup .signup__step.is-user .signup-form .signup-form__p2-footer-link .logged-out-form__links a.logged-out-form__link-item {
+	@extend %p2-link;
+	text-decoration: underline;
+}
+
+.signup-form__p2-form-separator {
 	overflow: hidden;
 	text-align: center;
 	width: 100%;

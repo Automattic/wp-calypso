@@ -14,7 +14,7 @@ class P2SignupForm extends Component {
 
 	render() {
 		return (
-			<div class="signup-form">
+			<div className="signup-form">
 				{ this.state.showEmailSignupForm && (
 					<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
 						{ this.props.formFields }
@@ -23,9 +23,7 @@ class P2SignupForm extends Component {
 				) }
 
 				{ this.state.showEmailSignupForm && (
-					<div class="signup-form__p2-social-signup-separator">
-						{ this.props.translate( 'or' ) }
-					</div>
+					<div className="signup-form__p2-form-separator">{ this.props.translate( 'or' ) }</div>
 				) }
 
 				{ ! this.state.showEmailSignupForm && (

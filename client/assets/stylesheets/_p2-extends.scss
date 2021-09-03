@@ -1,0 +1,77 @@
+/**
+ * P2 common styles
+ */
+
+// Text input field
+%p2-form-input-text {
+	background: #fff;
+	border-color: var( --p2-color-border );
+	border-radius: 2px;
+	color: var( --p2-color-text );
+	font-family: var( --p2-font-inter );
+	font-size: var( --p2-font-size-form-s );
+	line-height: 1.5;
+	padding: 14px 16px;
+
+	&:hover,
+	&:focus {
+		border-color: var( --p2-color-link );
+	}
+
+	&:focus,
+	&:focus:hover {
+		box-shadow: 0 0 0 1px var( --p2-color-link );
+	}
+
+	&.is-error {
+		border-color: var( --p2-color-error );
+
+		&:focus,
+		&:focus:hover {
+			box-shadow: 0 0 0 1px var( --p2-color-error );
+		}
+	}
+}
+
+// Button
+%p2-form-button {
+	background-color: var( --p2-color-button );
+	color: var( --p2-color-text );
+	border: none;
+	border-radius: 50px; /* stylelint-disable-line */
+	display: flex;
+	font-family: var( --p2-font-inter );
+	font-size: var( --p2-font-size-form-s );
+	justify-content: center;
+	line-height: 1.3;
+	margin: 0 0 12px;
+	padding: 16px 24px;
+	transition: 0.2s ease-in-out;
+	width: 100%;
+
+	&:hover {
+		background-color: var( --p2-color-button-dark );
+	}
+
+	&.is-primary {
+		background-color: var( --p2-color-link );
+		color: #fff;
+
+		&:hover {
+			background-color: var( --p2-color-link-dark );
+		}
+	}
+
+	&[disabled] {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+%p2-link {
+	color: var( --p2-color-link );
+
+	&:hover {
+		color: var( --p2-color-link-dark );
+	}
+}

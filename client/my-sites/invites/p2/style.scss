@@ -1,6 +1,7 @@
 @import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap' );
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import 'calypso/assets/stylesheets/_p2-extends.scss';
 
 .is-p2-invite.invite-accept {
 	position: fixed;
@@ -16,11 +17,7 @@
 	overflow-x: hidden;
 
 	a {
-		color: var( --p2-color-link );
-
-		&:hover {
-			color: var( --p2-color-link-dark );
-		}
+		@extend %p2-link;
 	}
 
 	.invite-accept__form {
@@ -81,31 +78,7 @@
 	}
 
 	button {
-		border-radius: 50px; /* stylelint-disable-line */
-		margin: 0 0 12px;
-		width: 100%;
-		display: flex;
-		justify-content: center;
-		font-size: var( --p2-font-size-form-s );
-		background-color: var( --p2-color-button );
-		color: var( --p2-color-text );
-		border: none;
-		padding: 16px 24px;
-		line-height: 1.3;
-		transition: 0.2s ease-in-out;
-
-		&:hover {
-			background-color: var( --p2-color-button-dark );
-		}
-
-		&.is-primary {
-			color: #fff;
-			background-color: var( --p2-color-link );
-
-			&:hover {
-				background-color: var( --p2-color-link-dark );
-			}
-		}
+		@extend %p2-form-button;
 	}
 
 	.is-busy button,
