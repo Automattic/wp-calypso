@@ -797,10 +797,10 @@ class DomainsStep extends React.Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
-				isTopButtons={ showSkip }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Choose a domain later' ) }
+				skipButtonAlign={ 'top' }
 				align={ isReskinned ? 'left' : 'center' }
 				isWideLayout={ isReskinned }
 			/>
