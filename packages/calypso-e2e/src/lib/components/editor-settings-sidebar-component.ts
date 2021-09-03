@@ -16,9 +16,10 @@ const selectors = {
 		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
-	tagInput: `${ sidebarParentSelector } >> .components-form-token-field:has-text("Add New Tag") >> input`,
+	tagInput: `${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") input`,
 	addedTag: ( tagName: string ) =>
-		`${ sidebarParentSelector } >> .components-form-token-field:has-text("Add New Tag") >> .components-form-token-field__token:has-text("${ tagName }")`,
+		`${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
+	closeSidebarButton: `${ sidebarParentSelector } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
 };
 
 /**
@@ -84,5 +85,14 @@ export class EditorSettingsSidebarComponent {
 		await this.frame.fill( selectors.tagInput, tagName );
 		await this.page.keyboard.press( 'Enter' );
 		await this.frame.waitForSelector( selectors.addedTag( tagName ) ); // make sure it got added!
+	}
+
+	/**
+	 * Closes this settings sidebar using close button within sidebar.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async closeSidebar(): Promise< void > {
+		await this.frame.click( selectors.closeSidebarButton );
 	}
 }

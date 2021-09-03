@@ -23,6 +23,7 @@ const selectors = {
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
+	previewButton: '.edit-post-header a:has-text("Preview")', // there's a hidden button also with the Preview text
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
@@ -289,6 +290,16 @@ export class GutenbergEditorPage {
 		// are disabled while the post is saved. Wait for the state of
 		// Publish button to return to 'enabled' before proceeding.
 		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+	}
+
+	/**
+	 * Launches editor preview by clicking toolbar preview button.
+	 *
+	 * @returns {Promise<void} No return value.
+	 */
+	async launchPreview(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.previewButton );
 	}
 
 	/**
