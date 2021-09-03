@@ -122,3 +122,17 @@
 		margin-right: 16px;
 	}
 }
+
+.stats__parsely-banner.banner.card {
+	.banner__icon-circle {
+		background-color: transparent;
+	}
+	.banner__action {
+		margin-top: 0;
+		margin-right: 28px;
+		top: 2px;
+	}
+	.dismissible-card__close-icon {
+		top: 18px;
+	}
+}

@@ -288,6 +288,7 @@ class StatsSite extends Component {
 					</div>
 				</div>
 				<Banner
+					className="stats__parsely-banner"
 					callToAction={ translate( 'Learn more' ) }
 					description={ translate(
 						"Parse.ly Analytics makes it easy to understand the full impact of your content. Measure what's driving awareness, engagement, and conversions."
