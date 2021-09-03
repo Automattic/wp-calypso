@@ -1,5 +1,5 @@
+import styled from '@emotion/styled';
 import { pulse } from './animations';
-import styled from './styled';
 
 export const CheckoutSummaryLineItem = styled.div`
 	display: flex;
