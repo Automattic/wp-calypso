@@ -126,6 +126,7 @@
 .stats__parsely-banner.banner.card {
 	padding: 16px;
 	margin-top: 16px;
+	
 	.banner__icons {
 		margin-right: 12px;
 	}
@@ -135,12 +136,8 @@
 		width: 100%;
 	}
 	.banner__action {
+		margin-right: 4px;
 		margin-top: 0;
-		margin-right: 40px;
 		top: 2px;
-	}
-	.dismissible-card__close-icon {
-		top: 50%;
-		transform: translateY( -50% );
 	}
 }

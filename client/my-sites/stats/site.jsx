@@ -1,4 +1,3 @@
-import { FEATURE_WORDADS_INSTANT } from '@automattic/calypso-products';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
@@ -31,12 +30,9 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
@@ -301,14 +297,12 @@ class StatsSite extends Component {
 							}
 						)
 					) }
-					dismissPreferenceName="calypso_stats_parsely_banner_dismiss"
 					event="calypso_stats_parsely_banner_view"
 					href="http://parse.ly"
 					iconPath={ parselyIcon }
 					title={ translate( 'Discover more stats with Parse.ly Analytics' ) }
 					tracksImpressionName="calypso_stats_parsely_banner_view"
 					tracksClickName="calypso_stats_parsely_banner_click"
-					tracksDismissName="calypso_stats_parsely_banner_dismiss"
 				/>
 				<JetpackColophon />
 			</>
@@ -367,17 +361,12 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
-		const isVip = isVipSite( state, siteId );
 		const showEnableStatsModule =
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
-			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
 			siteId,
-			isVip,
 			slug: getSelectedSiteSlug( state ),
-			planSlug: getSitePlanSlug( state, siteId ),
-			planSupportsWordAdsInstantFeature: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
