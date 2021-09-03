@@ -181,6 +181,12 @@
 					margin-left: auto;
 				}
 			}
+
+			.email-providers-comparison__titan-mailbox-action-skip {
+				@include break-mobile {
+					margin-left: 1em;
+				}
+			}
 		}
 
 		.email-provider-features {
