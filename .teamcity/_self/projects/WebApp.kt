@@ -642,7 +642,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --config jest.config.calypso-pr.js
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}

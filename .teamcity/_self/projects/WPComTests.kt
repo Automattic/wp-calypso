@@ -297,7 +297,7 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
                     export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
                     export DEBUG=pw:api
 
-                    xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright-wpcom
+                    xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --config jest.config.gutenberg.js
                 """.trimIndent()
                 dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
             }
