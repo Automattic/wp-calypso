@@ -309,7 +309,7 @@ __metadata:
     jest-fetch-mock: ^3.0.3
     nock: ^12.0.3
     qs: ^6.9.1
-    redux: ^4.0.5
+    redux: ^4.1.1
     tslib: ^2.3.0
     typescript: ^4.3.5
     utility-types: ^3.10.0
@@ -680,7 +680,7 @@ __metadata:
     react: ^16.12.0
     react-dom: ^16.12.0
     react-redux: ^7.2.4
-    redux: ^4.0.5
+    redux: ^4.1.1
     redux-thunk: ^2.3.0
     webpack: ^5.46.0
     webpack-dev-server: ^3.11.2
@@ -925,7 +925,7 @@ __metadata:
     "@wordpress/is-shallow-equal": ^3.1.3
     "@wordpress/warning": ^1.4.2
     lodash: ^4.17.21
-    redux: ^4.0.5
+    redux: ^4.1.1
     redux-thunk: ^2.3.0
     tslib: ^2.3.0
     typescript: ^4.3.5
@@ -1208,7 +1208,7 @@ __metadata:
     react-dom: ^16.12.0
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.1
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
     webpack: ^5.46.0
@@ -12780,7 +12780,7 @@ __metadata:
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
     reakit-utils: ^0.15.1
-    redux: ^4.0.5
+    redux: ^4.1.1
     redux-dynamic-middlewares: ^2.0.0
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.3.0
@@ -33242,13 +33242,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.1, redux@npm:^4.0.4, redux@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "redux@npm:4.0.5"
+"redux@npm:^4.0.0, redux@npm:^4.0.1, redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "redux@npm:4.1.1"
   dependencies:
-    loose-envify: ^1.4.0
-    symbol-observable: ^1.2.0
-  checksum: 4978859bf790a74d8e7ee9ba528a171b3d8e565df28c6cfa8c659540bb40f392164d43bfd3c0000761a65b68248c00dfb24f9f810fcd2b5389d65e89959cc416
+    "@babel/runtime": ^7.9.2
+  checksum: e46d986dd9a1b515078b3f2e05e165e8664694e96f36588e9bbd54ac60759e4d0699252599c5a00ca411e9946b223ab89b95829551f75058f5573aedaa32eb97
   languageName: node
   linkType: hard
 
@@ -37156,13 +37155,6 @@ swiper@4.5.1:
     dom7: ^2.1.3
     ssr-window: ^1.0.1
   checksum: 9ccef355fb41050e14dc66fdca1aa9258dd3c10b239f600b0308bbe8ef67fa219793e1bc331fc428b96e6fd06c50ee6783a39412979a5a051fbc5be7c861d861
-  languageName: node
-  linkType: hard
-
-"symbol-observable@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "symbol-observable@npm:1.2.0"
-  checksum: 009fee50798ef80ed4b8195048288f108b03de162db07493f2e1fd993b33fafa72d659e832b584da5a2427daa78e5a738fb2a9ab027ee9454252e0bedbcd1fdc
   languageName: node
   linkType: hard
 
