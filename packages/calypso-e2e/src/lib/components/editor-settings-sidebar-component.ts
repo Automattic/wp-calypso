@@ -41,7 +41,7 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar
+	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar. Ensures that tab becomes active.
 	 *
 	 * @param {EditorSidebarTab} tabName Name of tab to click.
 	 * @returns {Promise<void>} No return value.
@@ -68,9 +68,8 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * @param {string} categoryName The category name.
 	 * @returns {Promise<void>} No return value.
-	 * @throws If no category matching the name is found.
 	 */
-	async checkCategory( categoryName: string ): Promise< void > {
+	async clickCategory( categoryName: string ): Promise< void > {
 		await this.frame.click( selectors.categoryCheckbox( categoryName ) );
 	}
 

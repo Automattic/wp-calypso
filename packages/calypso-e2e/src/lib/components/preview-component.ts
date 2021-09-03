@@ -2,15 +2,15 @@ import { Frame, Page } from 'playwright';
 
 const selectors = {
 	previewPane: '.web-preview',
+	iframe: '.web-preview__frame',
 
 	// Actions on pane
 	closeButton: 'button[aria-label="Close preview"]',
 	activateButton: 'text=Activate',
-	iframe: '.web-preview__frame',
 };
 
 /**
- * Component representing the site published preview component.
+ * Component representing the site published preview component. This same preview modal is used for themes and editor previewing.
  */
 export class PreviewComponent {
 	private page: Page;
@@ -34,7 +34,7 @@ export class PreviewComponent {
 	}
 
 	/**
-	 * Close the theme preview pane.
+	 * Close the preview pane.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */

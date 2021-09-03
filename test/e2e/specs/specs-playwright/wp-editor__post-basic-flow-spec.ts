@@ -1,4 +1,5 @@
 import {
+	BrowserHelper,
 	DataHelper,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
@@ -22,7 +23,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let settingsSidebar: EditorSettingsSidebarComponent;
 	let previewComponent: PreviewComponent;
 	let publishedPostPage: PublishedPostPage;
-	const user = 'gutenbergSimpleSiteUser';
+	const user = BrowserHelper.targetGutenbergEdge()
+		? 'gutenbergSimpleSiteEdgeUser'
+		: 'gutenbergSimpleSiteUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -57,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		it( 'Add post category', async function () {
 			await settingsSidebar.expandSectionIfCollapsed( 'Categories' );
-			await settingsSidebar.checkCategory( category );
+			await settingsSidebar.clickCategory( category );
 		} );
 
 		it( 'Add post tag', async function () {
