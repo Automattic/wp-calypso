@@ -13,8 +13,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	SUPPORT_TYPE_ADMIN_SECTION,
 	SUPPORT_TYPE_API_HELP,
@@ -48,10 +46,6 @@ function HelpSearchResults( {
 	const dispatch = useDispatch();
 
 	const currentUserId = useSelector( getCurrentUserId );
-	const hasPurchases = useSelector( ( state ) =>
-		hasCancelableUserPurchases( state, currentUserId )
-	);
-	const sectionName = useSelector( getSectionName );
 	const contextualResults = useSelector( getContextualHelpResults );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
@@ -106,22 +100,9 @@ function HelpSearchResults( {
 	};
 
 	const renderHelpLink = ( result, type ) => {
-		const { link, title, icon, post_id } = result;
+		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
-
-		// Unless searching with Inline Help or on the Purchases section, hide the
-		// "Managing Purchases" documentation link for users who have not made a purchase.
-		if (
-			post_id === 111349 &&
-			! isSearching &&
-			! hasAPIResults &&
-			! hasPurchases &&
-			sectionName !== 'purchases' &&
-			sectionName !== 'site-purchases'
-		) {
-			return null;
-		}
 
 		return (
 			<Fragment key={ link ?? title }>
