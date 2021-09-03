@@ -281,6 +281,10 @@
 		@extend %p2-form-input-text;
 	}
 
+	.form-password-input {
+		@extend %p2-form-input-password;
+	}
+
 	.login__form-header {
 		margin-bottom: 5px;
 		font-weight: 700;
