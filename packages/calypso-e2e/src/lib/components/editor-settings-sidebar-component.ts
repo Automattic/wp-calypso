@@ -70,7 +70,8 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickCategory( categoryName: string ): Promise< void > {
-		await this.frame.click( selectors.categoryCheckbox( categoryName ) );
+		//TODO: Categories can be slow because we never do any cleanup. Remove extended timeout once we start doing cleanup.
+		await this.frame.click( selectors.categoryCheckbox( categoryName ), { timeout: 60 * 1000 } );
 	}
 
 	/**
