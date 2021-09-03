@@ -35,7 +35,7 @@ describe( 'BrowserHelper Tests', function () {
 		);
 
 		test( 'Returns default value found in config if environment variable not set', function () {
-			delete process.env.VIEWPORT_NAME;
+			delete process.env.TARGET_DEVICE;
 			expect( getTargetDeviceName() ).toBe( 'desktop' );
 		} );
 	} );

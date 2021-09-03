@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { clickNavTab } from '../../element-helper';
 import { TargetDevice } from '../../types';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
@@ -9,9 +10,13 @@ export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
 const selectors = {
 	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
+
+	// Navigation
+	mobileNavTabsToggle: `button.section-nav__mobile-header`,
 	navigationTab: ( tabName: PlansPageTab ) => `.section-nav-tab:has-text("${ tabName }")`,
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
+
 	actionButton: ( {
 		viewport,
 		plan,
@@ -58,7 +63,17 @@ export class PlansPage {
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
-		await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
+		const targetDevice = getTargetDeviceName();
+
+		// For mobile sized viewport, the currently selected tab name will be shown alongside the
+		// dropdown toggle button, so verify the expected tab name is shown there.
+		if ( targetDevice === 'mobile' ) {
+			await this.page.waitForSelector(
+				`${ selectors.mobileNavTabsToggle }:has-text("${ expectedTab }")`
+			);
+		} else {
+			await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
+		}
 	}
 
 	/**
@@ -67,9 +82,12 @@ export class PlansPage {
 	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
 	async clickNavigationTab( targetTab: PlansPageTab ): Promise< void > {
-		await this.page.click( selectors.navigationTab( targetTab ) );
-		// make sure it actually got marked as active!
-		await this.validateActiveNavigationTab( targetTab );
+		await clickNavTab( this.page, targetTab );
+
+		// Close the dropdown manually due to https://github.com/Automattic/wp-calypso/issues/56038.
+		if ( getTargetDeviceName() === 'mobile' ) {
+			await this.page.click( selectors.mobileNavTabsToggle );
+		}
 	}
 
 	/**

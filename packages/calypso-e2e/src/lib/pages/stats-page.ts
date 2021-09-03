@@ -1,10 +1,7 @@
 import { Page } from 'playwright';
+import { clickNavTab } from '../../element-helper';
 
 export type StatsTabs = 'Traffic' | 'Insights' | 'Store';
-
-const selectors = {
-	tabItems: ( name: StatsTabs ) => `a:has-text("${ name }")`,
-};
 
 /**
  * Represents the Statistics page.
@@ -27,10 +24,7 @@ export class StatsPage {
 	 * @param {StatsTabs} name Name of the tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickTabItem( name: StatsTabs ): Promise< void > {
-		await this.page.click( selectors.tabItems( name ) );
-
-		// Confirm the tab is now selected.
-		await this.page.waitForSelector( `*css=li.is-selected >> ${ selectors.tabItems( name ) }` );
+	async clickTab( name: StatsTabs ): Promise< void > {
+		await clickNavTab( this.page, name );
 	}
 }

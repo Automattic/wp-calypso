@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 		it( 'Click on Insights tab', async function () {
 			const statsPage = new StatsPage( page );
-			await statsPage.clickTabItem( 'Insights' );
+			await statsPage.clickTab( 'Insights' );
 		} );
 	} );
 } );

@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { clickNavTab } from '../../element-helper';
 
 export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
 
@@ -12,6 +13,9 @@ const selectors = {
 	deletedUserContentAction: ( action: 'reassign' | 'delete' ) => `input[value="${ action }"]`,
 	deleteUserButton: `button:text("Delete user")`,
 	deleteConfirmBanner: ':text("Successfully deleted")',
+
+	// Header
+	invitePeopleButton: '.people-list-section-header__add-button',
 
 	// Invites
 	invitedUser: ( email: string ) => `[title="${ email }"]`,
@@ -28,7 +32,7 @@ export class PeoplePage {
 	/**
 	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page The underlying page.
+	 * @param {Page} page The underlying page
 	 */
 	constructor( page: Page ) {
 		this.page = page;
@@ -41,20 +45,7 @@ export class PeoplePage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PeoplePageTabs ): Promise< void > {
-		const navTabs = await this.page.waitForSelector( selectors.navTabs );
-
-		const isDropdown = await navTabs
-			.getAttribute( 'class' )
-			.then( ( value ) => value?.includes( 'is-dropdown' ) );
-
-		if ( isDropdown ) {
-			// Mobile view - navtabs become a dropdown.
-			await navTabs.click();
-			await this.page.click( `${ selectors.navTabsDropdownOptions } >> text=${ name }` );
-		} else {
-			// Desktop view - navtabs are constantly visible tabs.
-			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
-		}
+		await clickNavTab( this.page, name );
 	}
 
 	/* Team People */
@@ -103,7 +94,7 @@ export class PeoplePage {
 	async clickInviteUser(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( 'span:text-is("Invite")' ),
+			this.page.click( selectors.invitePeopleButton ),
 		] );
 	}
 
