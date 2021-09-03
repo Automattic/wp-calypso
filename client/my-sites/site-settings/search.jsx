@@ -25,7 +25,7 @@ import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchas
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -286,7 +286,7 @@ class Search extends Component {
 				</CompactCard>
 				{ hasSearchProduct && fields.instant_search_enabled && (
 					<CompactCard
-						href={ this.props.customizerUrl }
+						href={ `${ this.props.siteAdminUrl }admin.php?page=jetpack-search-configure` }
 						target={ siteIsJetpack ? 'external' : null }
 					>
 						{ translate( 'Customize Search' ) }
@@ -337,11 +337,11 @@ export default connect( ( state, { isRequestingSettings } ) => {
 
 	return {
 		activatingSearchModule: activating || deactivating,
-		customizerUrl: getCustomizerUrl( state, siteId, 'jetpack_search' ),
 		hasSearchProduct,
 		isSearchEligible,
 		isLoading: isRequestingSettings || isFetchingSitePurchases( state ),
 		site: getSelectedSite( state ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),

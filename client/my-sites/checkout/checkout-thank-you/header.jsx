@@ -396,7 +396,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			site: 'wpcom',
 		} );
 
-		window.location.href = siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search';
+		window.location.href = siteAdminUrl + 'admin.php?page=jetpack-search-configure';
 	};
 
 	getButtonText = () => {

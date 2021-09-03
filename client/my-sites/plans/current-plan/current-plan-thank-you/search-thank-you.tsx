@@ -20,7 +20,7 @@ const ThankYouCta: ThankYouCtaType = ( {
 				href={
 					jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
 						? siteAdminUrl + 'plugins.php'
-						: siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search'
+						: siteAdminUrl + 'admin.php?page=jetpack-search-configure'
 				}
 				onClick={ () => recordThankYouClick( 'search', 'customizer' ) }
 			>
