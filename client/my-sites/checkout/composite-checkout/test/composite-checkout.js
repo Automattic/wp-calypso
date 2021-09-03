@@ -38,6 +38,7 @@ import {
 	createTestReduxStore,
 	countryList,
 	gSuiteProduct,
+	caDomainProduct,
 } from './util';
 
 /* eslint-disable jest/no-conditional-expect */
@@ -369,7 +370,7 @@ describe( 'CompositeCheckout', () => {
 					case 'plan':
 						return planWithoutDomain;
 					case 'domain':
-						return domainProduct;
+						return caDomainProduct;
 					case 'gsuite':
 						return gSuiteProduct;
 				}
@@ -390,6 +391,20 @@ describe( 'CompositeCheckout', () => {
 				email: 'test@example.com',
 			};
 			nock.cleanAll();
+			const messages = ( () => {
+				if ( valid === 'valid' ) {
+					return undefined;
+				}
+				if ( name === 'domain' ) {
+					return {
+						postal_code: [ 'Postal code error message' ],
+						'extra.ca.cira_agreement_accepted': [ 'Missing CIRA agreement' ],
+					};
+				}
+				return {
+					postal_code: [ 'Postal code error message' ],
+				};
+			} )();
 			nock( 'https://public-api.wordpress.com' )
 				.post( endpointPath, ( body ) => {
 					if (
@@ -410,12 +425,7 @@ describe( 'CompositeCheckout', () => {
 				} )
 				.reply( 200, {
 					success: valid === 'valid',
-					messages:
-						valid === 'valid'
-							? undefined
-							: {
-									postal_code: [ 'Postal code error message' ],
-							  },
+					messages,
 				} );
 			nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
@@ -467,6 +477,9 @@ describe( 'CompositeCheckout', () => {
 				// Make sure the error message is displayed
 				if ( valid !== 'valid' ) {
 					expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					if ( name === 'domain' ) {
+						expect( screen.getByText( 'Missing CIRA agreement' ) ).toBeInTheDocument();
+					}
 				}
 			}
 		}

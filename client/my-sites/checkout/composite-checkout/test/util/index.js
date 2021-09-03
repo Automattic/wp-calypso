@@ -44,6 +44,29 @@ export const domainProduct = {
 	item_subtotal_display: 'R$5',
 };
 
+export const caDomainProduct = {
+	product_name: '.ca Domain',
+	product_slug: 'domain_reg',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+		domain_registration_agreement_url:
+			'https://wordpress.com/automattic-domain-name-registration-agreement/',
+		privacy: true,
+		privacy_available: true,
+		registrar: 'KS_RAM',
+	},
+	free_trial: false,
+	meta: 'foo.ca',
+	product_id: 6,
+	volume: 1,
+	is_domain_registration: true,
+	item_original_cost_integer: 500,
+	item_original_cost_display: 'R$5',
+	item_subtotal_integer: 500,
+	item_subtotal_display: 'R$5',
+};
+
 export const gSuiteProduct = {
 	product_name: 'G Suite',
 	product_slug: 'gapps',
