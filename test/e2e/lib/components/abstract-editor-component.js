@@ -72,10 +72,11 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissNuxWelcomeModal() {
-		const isNuxWelcomeDialogDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			By.css( '.wpcom-editor-welcome-tour-frame' )
-		);
+		const element = await this.driver
+			.findElement( By.css( '.wpcom-editor-welcome-tour-frame' ) )
+			.catch( () => false );
+
+		const isNuxWelcomeDialogDisplayed = element && ( await element.isDisplayed() );
 
 		if ( isNuxWelcomeDialogDisplayed ) {
 			// Click the 'Skip' button to get rid of it.

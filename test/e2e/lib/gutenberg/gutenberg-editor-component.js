@@ -691,19 +691,4 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		await Promise.all( notices.map( ( notice ) => notice.click() ) );
 		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 	}
-
-	async dismissNuxWelcomeModal() {
-		const isNuxWelcomeDialogDisplayed = await driverHelper.isElementLocated(
-			this.driver,
-			By.css( '.wpcom-editor-welcome-tour-frame' )
-		);
-
-		if ( isNuxWelcomeDialogDisplayed ) {
-			// Click the 'Skip' button to get rid of it.
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.components-card-footer button.is-tertiary' )
-			);
-		}
-	}
 }
