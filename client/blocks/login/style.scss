@@ -267,9 +267,67 @@
 .layout.is-p2-login {
 	background: #fff;
 
+	.wp-login__main.main {
+		max-width: 450px;
+	}
+
 	.login__form-header {
 		margin-bottom: 5px;
 		font-weight: 700;
 		font-size: var( --p2-font-size-form-xl );
+	}
+
+	.login__form-terms {
+		margin-top: 24px;
+		margin-bottom: 8px;
+	}
+
+	.login__form, .login__social {
+		box-shadow: none;
+	}
+
+	.login button {
+		border-radius: 50px; /* stylelint-disable-line */
+		margin: 0 0 12px;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		font-size: var( --p2-font-size-form-s );
+		background-color: var( --p2-color-button );
+		color: var( --p2-color-text );
+		border: none;
+		padding: 16px 24px;
+		line-height: 1.3;
+		transition: 0.2s ease-in-out;
+
+		&:hover {
+			background-color: var( --p2-color-button-dark );
+		}
+
+		&.is-primary {
+			color: #fff;
+			background-color: var( --p2-color-link );
+
+			&:hover {
+				background-color: var( --p2-color-link-dark );
+			}
+		}
+	}
+
+	.wp-login__links {
+		display: flex;
+
+		a {
+			border-bottom: none;
+			font-size: var( --p2-font-size-form-xs );
+			font-weight: 400;
+			padding: 24px 4px;
+			text-decoration: underline;
+			color: var( --p2-color-link );
+
+			&:hover {
+				color: var( --p2-color-link-dark );
+			}
+		}
 	}
 }
