@@ -106,7 +106,7 @@ function HelpSearchResults( {
 	};
 
 	const renderHelpLink = ( result, type ) => {
-		const { link, key, title, icon = 'domains', post_id } = result;
+		const { link, title, icon = 'domains', post_id } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
 
@@ -124,7 +124,7 @@ function HelpSearchResults( {
 		}
 
 		return (
-			<Fragment key={ link ?? key }>
+			<Fragment key={ link ?? title }>
 				<li className="inline-help__results-item">
 					<div className="inline-help__results-cell">
 						<a

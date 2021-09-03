@@ -442,7 +442,5 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 		}
 	} );
 
-	return [ ...exactMatches, ...partialMatches, ...synonymMatches ]
-		.map( ( item ) => ( { ...item, key: item.title } ) )
-		.slice( 0, limit );
+	return [ ...exactMatches, ...partialMatches, ...synonymMatches ].slice( 0, limit );
 }
