@@ -175,6 +175,12 @@
 			> .form-fieldset {
 				margin-bottom: 0;
 			}
+
+			.email-providers-comparison__titan-mailbox-action-continue {
+				@include break-mobile {
+					margin-left: auto;
+				}
+			}
 		}
 
 		.email-provider-features {
@@ -191,7 +197,7 @@
 
 .email-providers-comparison__gsuite-user-list-actions-container {
 	$container-top-margin: 1em;
-	$container-left-margin: 1.5em;
+	$container-left-margin: 1em;
 	$child-top-margin: 1em;
 	$child-left-margin: 1em;
 
