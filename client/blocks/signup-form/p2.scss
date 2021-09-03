@@ -117,7 +117,6 @@
 // instead of adding another :not(), which would only further specificity
 .is-p2-signup .signup__step.is-user .signup-form .signup-form__p2-footer-link .logged-out-form__links a.logged-out-form__link-item {
 	@extend %p2-link;
-	text-decoration: underline;
 }
 
 .signup-form__p2-form-separator {

@@ -40,10 +40,11 @@
 	border: none;
 	border-radius: 50px; /* stylelint-disable-line */
 	display: flex;
+	align-items: center;
 	font-family: var( --p2-font-inter );
 	font-size: var( --p2-font-size-form-s );
 	justify-content: center;
-	line-height: 1.3;
+	line-height: 1.5;
 	margin: 0 0 12px;
 	padding: 16px 24px;
 	transition: 0.2s ease-in-out;
@@ -70,6 +71,7 @@
 
 %p2-link {
 	color: var( --p2-color-link );
+	text-decoration: underline;
 
 	&:hover {
 		color: var( --p2-color-link-dark );
