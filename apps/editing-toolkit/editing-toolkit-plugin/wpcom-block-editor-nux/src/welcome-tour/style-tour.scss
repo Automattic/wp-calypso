@@ -152,16 +152,19 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 		opacity: 0;
 		transition: opacity 200ms;
 	}
-}
 
-.wpcom-editor-welcome-tour-frame:hover .welcome-tour-card__overlay-controls .components-button,
-.welcome-tour-card__overlay-controls-visible .components-button {
-	opacity: 0.7;
-}
+	.wpcom-editor-welcome-tour-frame:hover &,
+	.wpcom-editor-welcome-tour-frame:focus-within &,
+	&-controls-visible {
+		.components-button {
+			opacity: 0.7;
 
-.wpcom-editor-welcome-tour-frame .welcome-tour-card__overlay-controls .components-button:hover,
-.welcome-tour-card__overlay-controls-visible .components-button:hover {
-	opacity: 0.9;
+			&:hover,
+			&:focus {
+				opacity: 0.9;
+			}
+		}
+	}
 }
 
 .welcome-tour-card__next-btn {
