@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -65,7 +66,7 @@ class GSuiteCancellationFeatures extends Component {
 	};
 
 	render() {
-		const { purchase, translate } = this.props;
+		const { googleSubscriptionStatus, purchase, translate } = this.props;
 		const { meta: domainName, productSlug } = purchase;
 
 		return (
@@ -74,7 +75,9 @@ class GSuiteCancellationFeatures extends Component {
 					{ translate( 'Are you sure?' ) }
 				</CardHeading>
 
-				<p>{ this.getAccessMessage() }</p>
+				<p className={ classNames( { placeholder: googleSubscriptionStatus === '' } ) }>
+					{ this.getAccessMessage() }
+				</p>
 
 				<CardHeading tagName="h3" size={ 24 }>
 					{ translate( "Here’s what you'll be missing:" ) }

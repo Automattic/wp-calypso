@@ -12,3 +12,7 @@
 		content: none;
 	}
 }
+
+.gsuite-cancel-purchase-dialog__dialog > div > p.placeholder {
+	@include placeholder();
+}
