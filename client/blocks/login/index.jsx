@@ -423,6 +423,7 @@ class Login extends Component {
 			domain,
 			isJetpack,
 			isGutenboarding,
+			isP2Login,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -476,6 +477,7 @@ class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				isGutenboarding={ isGutenboarding }
+				isP2Login={ isP2Login }
 				locale={ locale }
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }

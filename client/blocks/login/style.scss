@@ -277,6 +277,10 @@
 		padding: 0 25px;
 	}
 
+	.form-text-input {
+		@extend %p2-form-input-text;
+	}
+
 	.login__form-header {
 		margin-bottom: 5px;
 		font-weight: 700;
@@ -294,6 +298,14 @@
 
 	.login button {
 		@extend %p2-form-button;
+
+		&.login__form-change-username {
+			background: none;
+			color: var( --p2-color-link );
+			font-size: var( --p2-font-size-form-xs );
+			padding: 12px 0;
+			width: auto;
+		}
 	}
 
 	.wp-login__links {
