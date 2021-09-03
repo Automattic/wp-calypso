@@ -23,7 +23,7 @@ class GSuiteCancellationFeatures extends Component {
 
 		const googleMailService = getGoogleMailServiceFamily( productSlug );
 
-		if ( googleSubscriptionStatus === 'suspended' ) {
+		if ( [ 'suspended', '' ].includes( googleSubscriptionStatus ) ) {
 			return translate(
 				'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
 					'your %(googleMailService)s features immediately{{/strong}}, and you will ' +
