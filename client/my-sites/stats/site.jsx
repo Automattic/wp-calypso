@@ -6,6 +6,7 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import parselyIcon from 'calypso/assets/images/icons/parsely-logo.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -286,6 +287,20 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
+				<Banner
+					callToAction={ translate( 'Learn more' ) }
+					description={ translate(
+						"Parse.ly Analytics makes it easy to understand the full impact of your content. Measure what's driving awareness, engagement, and conversions."
+					) }
+					dismissPreferenceName="calypso_stats_parsely_banner_dismiss"
+					event="calypso_stats_parsely_banner_view"
+					href="http://parse.ly"
+					iconPath={ parselyIcon }
+					title={ translate( 'Discover more stats with Parse.ly Analytics' ) }
+					tracksImpressionName="calypso_stats_parsely_banner_view"
+					tracksClickName="calypso_stats_parsely_banner_click"
+					tracksDismissName="calypso_stats_parsely_banner_dismiss"
+				/>
 				<JetpackColophon />
 			</>
 		);
