@@ -485,7 +485,14 @@ export type ContactValidationResponseMessages = {
 	};
 };
 
+export type RawContactValidationResponseMessages = Record< string, string[] >;
+
 export type DomainContactValidationResponse = {
 	success: boolean;
 	messages?: ContactValidationResponseMessages;
+};
+
+export type RawDomainContactValidationResponse = {
+	success: boolean;
+	messages?: RawContactValidationResponseMessages;
 };
