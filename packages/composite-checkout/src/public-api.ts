@@ -37,18 +37,12 @@ import {
 import RadioButton from './components/radio-button';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import useEvents from './components/use-events';
-import useMessages from './components/use-messages';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
 import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
 import PaymentLogo from './lib/payment-methods/payment-logo';
-import {
-	createStripeMethod,
-	createStripePaymentMethodStore,
-} from './lib/payment-methods/stripe-credit-card-fields';
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
@@ -101,11 +95,7 @@ export {
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
-	createAlipayMethod,
-	createAlipayPaymentMethodStore,
 	createRegistry,
-	createStripeMethod,
-	createStripePaymentMethodStore,
 	defaultRegistry,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -124,7 +114,6 @@ export {
 	useIsStepComplete,
 	useLineItems,
 	useLineItemsOfType,
-	useMessages,
 	usePaymentMethod,
 	usePaymentMethodId,
 	usePaymentProcessor,

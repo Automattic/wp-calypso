@@ -3,7 +3,7 @@
  */
 
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
 import page from 'page';
 import React from 'react';
@@ -356,26 +356,34 @@ describe( 'CompositeCheckout', () => {
 			};
 		} );
 
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => (
-			<ReduxProvider store={ store }>
-				<ShoppingCartProvider
-					cartKey={ 'foo.com' }
-					setCart={ mockSetCartEndpoint }
-					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
-					{ ...additionalCartProps }
-				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CompositeCheckout
-							siteId={ siteId }
-							siteSlug={ 'foo.com' }
-							getStoredCards={ async () => [] }
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
-					</StripeHookProvider>
-				</ShoppingCartProvider>
-			</ReduxProvider>
-		);
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+			const managerClient = createShoppingCartManagerClient( {
+				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
+				setCart: mockSetCartEndpoint,
+			} );
+			const mainCartKey = 'foo.com';
+			return (
+				<ReduxProvider store={ store }>
+					<ShoppingCartProvider
+						managerClient={ managerClient }
+						options={ {
+							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+						} }
+						{ ...additionalCartProps }
+					>
+						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+							<CompositeCheckout
+								siteId={ siteId }
+								siteSlug={ 'foo.com' }
+								getStoredCards={ async () => [] }
+								overrideCountryList={ countryList }
+								{ ...additionalProps }
+							/>
+						</StripeHookProvider>
+					</ShoppingCartProvider>
+				</ReduxProvider>
+			);
+		};
 	} );
 
 	afterEach( () => {
@@ -1068,9 +1076,8 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
-		const additionalCartProps = { cartKey: undefined };
 		await act( async () => {
-			render( <MyCheckout additionalCartProps={ additionalCartProps } />, container );
+			render( <MyCheckout useUndefinedCartKey={ true } />, container );
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );

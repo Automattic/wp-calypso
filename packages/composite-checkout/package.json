@@ -37,20 +37,19 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
-		"@emotion/core": "^10.0.27",
-		"@emotion/styled": "^10.0.27",
+		"@emotion/react": "^11.4.1",
+		"@emotion/styled": "^11.3.0",
 		"@wordpress/data": "^4.27.3",
 		"@wordpress/i18n": "^3.20.0",
 		"@wordpress/react-i18n": "^1.0.3",
 		"debug": "^4.1.1",
-		"emotion-theming": "^10.0.27",
 		"prop-types": "^15.7.2",
 		"react-stripe-elements": "^4.0.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
-		"@storybook/addon-actions": "^6.1.10",
+		"@storybook/addon-actions": "^6.3.7",
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.0.0",

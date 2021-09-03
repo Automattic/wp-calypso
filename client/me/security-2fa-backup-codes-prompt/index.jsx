@@ -2,9 +2,6 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
-
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -14,6 +11,8 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
 import './style.scss';
+
+const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-prompt' );
 
 class Security2faBackupCodesPrompt extends React.Component {
 	static displayName = 'Security2faBackupCodesPrompt';

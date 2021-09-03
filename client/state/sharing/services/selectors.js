@@ -71,7 +71,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		if (
 			isJetpackSite( state, siteId ) &&
 			service.jetpack_module_required &&
-			! isJetpackModuleActive( state, siteId, service.jetpack_module_required )
+			! isJetpackModuleActive( state, siteId, service.jetpack_module_required, true )
 		) {
 			return false;
 		}

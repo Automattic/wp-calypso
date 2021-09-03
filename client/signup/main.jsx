@@ -82,6 +82,7 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
+	isReskinnedFlow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -113,10 +114,6 @@ function removeLoadingScreenClassNamesFromBody() {
 
 function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
-}
-
-function isReskinnedFlow( flowName ) {
-	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
 }
 
 class Signup extends React.Component {

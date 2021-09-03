@@ -1,12 +1,13 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import i18nCalypso, { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { BillingHistoryContent } from 'calypso/me/purchases/billing-history/main';
@@ -26,6 +27,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
+
+import './style.scss';
 
 function useLogBillingHistoryError( message: string ) {
 	const reduxDispatch = useDispatch();
@@ -69,7 +72,22 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 				brandFont
 				className="billing-history__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate( 'View, print, and email your receipts for this site.' ) }
+				subHeaderText={
+					i18nCalypso.hasTranslation(
+						'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+					)
+						? translate(
+								'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="billing" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate( 'View, print, and email your receipts for this site.' )
+				}
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />

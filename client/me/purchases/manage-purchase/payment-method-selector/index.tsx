@@ -48,19 +48,20 @@ export default function PaymentMethodSelector( {
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			const message = error?.toString ? error.toString() : error;
-			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
-		},
-		[ reduxDispatch ]
-	);
+	const showRedirectMessage = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
-	const showInfoMessage = useCallback(
-		( message ) => {
-			reduxDispatch( infoNotice( message ) );
+	const showErrorMessage = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice(
+					transactionError ||
+						translate( 'There was a problem assigning that payment method. Please try again.' )
+				)
+			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -75,9 +76,10 @@ export default function PaymentMethodSelector( {
 	);
 
 	useHandleRedirectChangeError( () => {
-		showErrorMessage(
-			translate( 'There was a problem assigning that payment method. Please try again.' )
+		const message = translate(
+			'There was a problem assigning that payment method. Please try again.'
 		);
+		reduxDispatch( errorNotice( message ) );
 	} );
 	useHandleRedirectChangeComplete( () => {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
@@ -90,18 +92,17 @@ export default function PaymentMethodSelector( {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			showErrorMessage( stripeLoadingError );
+			reduxDispatch( errorNotice( stripeLoadingError ) );
 		}
-	}, [ stripeLoadingError, showErrorMessage ] );
+	}, [ stripeLoadingError, reduxDispatch ] );
 
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
 				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
 			}
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
+			onPaymentRedirect={ showRedirectMessage }
+			onPaymentError={ showErrorMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
 				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),

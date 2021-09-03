@@ -1,6 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +14,8 @@ import { stepType } from './constants';
 
 import './style.scss';
 
-function ConnectDomainStepDone( { className, domain, step, selectedSiteSlug } ) {
+const ConnectDomainStepDone = ( { className, domain, step, selectedSiteSlug } ) => {
+	const { __ } = useI18n();
 	const siteDomainsUrl = domainManagementList( selectedSiteSlug );
 
 	const illustration = domainConnectedIllustration && (
@@ -77,7 +79,7 @@ function ConnectDomainStepDone( { className, domain, step, selectedSiteSlug } ) 
 			</div>
 		</Card>
 	);
-}
+};
 
 ConnectDomainStepDone.propTypes = {
 	className: PropTypes.string,

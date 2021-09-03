@@ -24,7 +24,6 @@ import {
 	usePaymentProcessor,
 } from '../src/public-api';
 
-const noop = () => {};
 const myContext = React.createContext();
 const usePaymentData = () => useContext( myContext );
 
@@ -40,10 +39,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -106,10 +101,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						registry={ registry }
@@ -172,10 +163,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -217,10 +204,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -264,10 +247,6 @@ describe( 'Checkout', () => {
 						<CheckoutProvider
 							items={ items }
 							total={ total }
-							onPaymentComplete={ noop }
-							showErrorMessage={ noop }
-							showInfoMessage={ noop }
-							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
 							initiallySelectedPaymentMethodId={ mockMethod.id }

@@ -1,7 +1,8 @@
-import { localize, useTranslate } from 'i18n-calypso';
+import i18nCalypso, { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
@@ -23,7 +24,22 @@ function PaymentMethods(): JSX.Element {
 			<FormattedHeader
 				brandFont
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate( 'Add or delete payment methods for your account.' ) }
+				subHeaderText={
+					i18nCalypso.hasTranslation(
+						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+					)
+						? translate(
+								'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="payment_methods" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate( 'Add or delete payment methods for your account.' )
+				}
 				align="left"
 			/>
 			<PurchasesNavigation section="paymentMethods" />
@@ -32,4 +48,4 @@ function PaymentMethods(): JSX.Element {
 	);
 }
 
-export default localize( PaymentMethods );
+export default PaymentMethods;

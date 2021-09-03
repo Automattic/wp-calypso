@@ -1,6 +1,6 @@
 import { Button } from '@automattic/composite-checkout';
 import { Field, styled } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
