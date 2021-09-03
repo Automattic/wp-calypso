@@ -240,14 +240,14 @@ GSuiteCancelPurchaseDialog.propTypes = {
 };
 
 export default connect(
-	( state, { purchase, site, domain } ) => {
+	( state, { purchase, site } ) => {
 		return {
 			domain: purchase.meta,
 			productName: getName( purchase ),
 			purchasesError: getPurchasesError( state ),
 			selectedDomain: getSelectedDomain( {
 				domains: getDomainsBySiteId( state, site.ID ),
-				selectedDomainName: domain,
+				selectedDomainName: purchase.meta,
 			} ),
 			userId: getCurrentUserId( state ),
 		};

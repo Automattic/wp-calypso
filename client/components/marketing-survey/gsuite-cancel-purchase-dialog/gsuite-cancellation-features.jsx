@@ -23,46 +23,45 @@ class GSuiteCancellationFeatures extends Component {
 
 		const googleMailService = getGoogleMailServiceFamily( productSlug );
 
-		const accessMessage =
-			googleSubscriptionStatus === 'suspended'
-				? translate(
-						'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
-							'your %(googleMailService)s features immediately{{/strong}}, and you will ' +
-							'need to purchase a new subscription with Google if you wish to regain access to the features.',
-						{
-							args: {
-								domainName,
-								googleMailService,
-							},
-							comment:
-								'%(domainName) is the name of the domain, e.g. example.com; ' +
-								'%(googleMailService)s can be either "G Suite" or "Google Workspace" ',
-							components: {
-								strong: <strong />,
-							},
-						}
-				  )
-				: translate(
-						'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
-							'your %(googleMailService)s features in %(days)s days{{/strong}}. After that time, ' +
-							'you will need to purchase a new subscription with Google.',
-						{
-							args: {
-								domainName,
-								googleMailService,
-								days: '30',
-							},
-							comment:
-								'%(domainName) is the name of the domain, e.g. example.com; ' +
-								'%(googleMailService)s can be either "G Suite" or "Google Workspace" ' +
-								'and %(days)s is a number of days which will generally be 30, and will always be at least 10',
-							components: {
-								strong: <strong />,
-							},
-						}
-				  );
+		if ( googleSubscriptionStatus === 'suspended' ) {
+			return translate(
+				'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
+					'your %(googleMailService)s features immediately{{/strong}}, and you will ' +
+					'need to purchase a new subscription with Google if you wish to regain access to the features.',
+				{
+					args: {
+						domainName,
+						googleMailService,
+					},
+					comment:
+						'%(domainName) is the name of the domain, e.g. example.com; ' +
+						'%(googleMailService)s can be either "G Suite" or "Google Workspace" ',
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		}
 
-		return accessMessage;
+		return translate(
+			'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
+				'your %(googleMailService)s features in %(days)s days{{/strong}}. After that time, ' +
+				'you will need to purchase a new subscription with Google.',
+			{
+				args: {
+					domainName,
+					googleMailService,
+					days: '30',
+				},
+				comment:
+					'%(domainName) is the name of the domain, e.g. example.com; ' +
+					'%(googleMailService)s can be either "G Suite" or "Google Workspace" ' +
+					'and %(days)s is a number of days which will generally be 30, and will always be at least 10',
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
 	};
 
 	render() {
