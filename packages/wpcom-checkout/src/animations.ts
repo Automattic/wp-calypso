@@ -1,6 +1,7 @@
 import { keyframes } from '@emotion/react';
+import type { Keyframes } from '@emotion/serialize';
 
-export const pulse = keyframes`
+export const pulse: Keyframes = keyframes`
 	0% { opacity: 1; }
 
 	70% { opacity: 0.25; }
