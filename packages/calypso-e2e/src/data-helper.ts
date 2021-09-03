@@ -199,7 +199,6 @@ export function createSuiteTitle( title: string ): string {
 		`[${ getJetpackHost() }]`,
 		`${ toTitleCase( title ) }:`,
 		`(${ getViewportName() })`,
-		'@parallel',
 	];
 
 	return parts.join( ' ' );
