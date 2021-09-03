@@ -601,11 +601,11 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderHeaderSkipButton() {
-		const { showSkipButton, onSkipClick, translate } = this.props;
+		const { showSkipButton, onSkipClick, skipButtonLabel } = this.props;
 
 		return showSkipButton ? (
 			<Button compact borderless onClick={ onSkipClick }>
-				{ translate( 'Skip' ) }
+				{ skipButtonLabel }
 				<Gridicon icon={ 'arrow-right' } size={ 18 } />
 			</Button>
 		) : null;
