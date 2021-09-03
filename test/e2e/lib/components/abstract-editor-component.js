@@ -13,7 +13,7 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 		// The `wpcom-editor-welcome-tour-frame` popup could get in the way
 		// of the actual publish click, so we need to check if it's visible
 		// and click `Skip` to close it.
-		await page.dismissNuxWelcomeModal();
+		await page.dismissNuxWelcomeModalIfDisplayed();
 
 		return page;
 	}
@@ -71,7 +71,7 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 		return await cb();
 	}
 
-	async dismissNuxWelcomeModal() {
+	async dismissNuxWelcomeModalIfDisplayed() {
 		const element = await this.driver
 			.findElement( By.css( '.wpcom-editor-welcome-tour-frame' ) )
 			.catch( () => false );
