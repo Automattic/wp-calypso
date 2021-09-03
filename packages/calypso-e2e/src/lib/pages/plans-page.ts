@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
-import { getViewportName } from '../../browser-helper';
-import { viewportName } from '../../types';
+import { getTargetDeviceName } from '../../browser-helper';
+import { TargetDevice } from '../../types';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
@@ -17,7 +17,7 @@ const selectors = {
 		plan,
 		buttonText,
 	}: {
-		viewport: viewportName;
+		viewport: TargetDevice;
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ) => {
@@ -87,7 +87,7 @@ export class PlansPage {
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
 		const selector = selectors.actionButton( {
-			viewport: getViewportName(),
+			viewport: getTargetDeviceName(),
 			plan: plan,
 			buttonText: buttonText,
 		} );

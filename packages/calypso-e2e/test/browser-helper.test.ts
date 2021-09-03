@@ -1,5 +1,10 @@
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-import { getViewportName, getLocale, getViewportSize } from '../src/browser-helper';
+import {
+	getTargetDeviceName,
+	getLocale,
+	getDevice,
+	getLaunchConfiguration,
+} from '../src/browser-helper';
 
 let env: NodeJS.ProcessEnv;
 
@@ -8,7 +13,7 @@ beforeAll( function () {
 } );
 
 describe( 'BrowserHelper Tests', function () {
-	describe( `Test: getViewportName`, function () {
+	describe( `Test: getTargetDeviceName`, function () {
 		test.each`
 			env_var                      | expected
 			${ 'desktop' }               | ${ 'desktop' }
@@ -24,14 +29,14 @@ describe( 'BrowserHelper Tests', function () {
 		`(
 			'Returns $expected when environment variable is set to $env_var',
 			function ( { env_var, expected } ) {
-				process.env.VIEWPORT_NAME = env_var;
-				expect( getViewportName() ).toBe( expected );
+				process.env.TARGET_DEVICE = env_var;
+				expect( getTargetDeviceName() ).toBe( expected );
 			}
 		);
 
 		test( 'Returns default value found in config if environment variable not set', function () {
 			delete process.env.VIEWPORT_NAME;
-			expect( getViewportName() ).toBe( 'desktop' );
+			expect( getTargetDeviceName() ).toBe( 'desktop' );
 		} );
 	} );
 
@@ -57,41 +62,47 @@ describe( 'BrowserHelper Tests', function () {
 		} );
 	} );
 
-	describe( `Test: getViewportSize`, function () {
+	describe( `Test: getDevice`, function () {
 		test.each`
-			env_var        | expected_width | expected_height
-			${ 'desktop' } | ${ 1440 }      | ${ 1000 }
-			${ 'tablet' }  | ${ 1024 }      | ${ 1000 }
-			${ 'mobile' }  | ${ 400 }       | ${ 1000 }
-			${ 'laptop' }  | ${ 1440 }      | ${ 790 }
+			name           | expected_viewport                 | expected_isMobile
+			${ 'desktop' } | ${ { width: 1280, height: 720 } } | ${ false }
+			${ 'mobile' }  | ${ { width: 412, height: 765 } }  | ${ true }
 		`(
-			'Returns expected dimensions when environment variable is set to $env_var',
-			function ( { env_var, expected_width, expected_height } ) {
-				process.env.VIEWPORT_NAME = env_var;
-				const dimensions = getViewportSize();
-				expect( dimensions.width ).toBe( expected_width );
-				expect( dimensions.height ).toBe( expected_height );
+			'Check expected values if target device is $name',
+			function ( { name, expected_viewport, expected_isMobile } ) {
+				const device = getDevice( name );
+				expect( device.viewport ).toStrictEqual( expected_viewport );
+				expect( device.isMobile ).toStrictEqual( expected_isMobile );
 			}
 		);
 
 		test.each`
-			env_var
-			${ 'unsupported_viewport' }
-			${ 'desktop_variant' }
-			${ 'm0bile' }
-			${ '"desktop"' }
-		`( 'Throws error when environment variable is set to $env_var', function ( { env_var } ) {
-			process.env.VIEWPORT_NAME = env_var;
-			expect( () => getViewportSize() ).toThrow();
+			name
+			${ 'tablet' }
+			${ 'MOBILE' }
+			${ 'Desktop' }
+		`( 'Throws error if unexpected target device', function ( { name } ) {
+			expect( () => getDevice( name ) ).toThrow();
 		} );
+	} );
 
-		test( 'Returns default value based on config if environment variable not set', function () {
-			delete process.env.VIEWPORT_NAME;
-			// Defaults to 'desktop' as set in the stubbed config file.
-			const dimensions = getViewportSize();
-			expect( dimensions.width ).toBe( 1440 );
-			expect( dimensions.height ).toBe( 1000 );
-		} );
+	describe( `Test: getLaunchConfiguration`, function () {
+		test.each`
+			name          | browser_version
+			${ 'mobile' } | ${ `92.0.4515.131` }
+		`(
+			'Returns expected values in launch configuration for target device $name',
+			function ( { name, browser_version } ) {
+				process.env.TARGET_DEVICE = name;
+				const dummy_logger = ( name: string, message: string | Error ) =>
+					console.log( `${ name } ${ message }` );
+				const expected_e2e_test_string = 'wp-e2e-tests';
+
+				const config = getLaunchConfiguration( browser_version, { logger: dummy_logger } );
+				expect( config.userAgent ).toContain( expected_e2e_test_string );
+				expect( config.userAgent ).toContain( browser_version );
+			}
+		);
 	} );
 } );
 

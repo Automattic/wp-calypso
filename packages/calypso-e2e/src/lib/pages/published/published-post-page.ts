@@ -35,6 +35,8 @@ export class PublishedPostPage {
 	private async getLikeFrame(): Promise< Frame > {
 		// Obtain the ElementHandle for the widget containing the like/unlike button.
 		const elementHandle = await this.page.waitForSelector( selectors.likeWidget );
+		// Without the next line, headless viewports fail to locate the Like widget.
+		await elementHandle.scrollIntoViewIfNeeded();
 		// Obtain the Frame object from the elementHandleHandle. This represents the widget iframe.
 		const frame = ( await elementHandle.contentFrame() ) as Frame;
 		// Wait until the widget element is stable in the DOM.

@@ -207,12 +207,12 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): BuildType {
-	return BuildType {
-		id("WPComTests_gutenberg_Playwright_$viewportName")
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
+    return BuildType {
+		id("WPComTests_gutenberg_Playwright_$targetDevice")
 		uuid=buildUuid
-		name = "Playwright E2E Tests ($viewportName)"
-		description = "Runs Gutenberg E2E tests in $viewportName size using Playwright"
+		name = "Playwright E2E Tests ($targetDevice)"
+		description = "Runs Gutenberg E2E tests as $targetDevice using Playwright"
 
 
 		artifactRules = """
@@ -267,7 +267,7 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
 				"""
 			}
 			bashNodeScript {
-				name = "Run e2e tests ($viewportName)"
+				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
@@ -281,7 +281,7 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
 					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
 					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 					export URL=%URL%
-					export VIEWPORT_NAME=$viewportName
+					export VIEWPORT_NAME=$targetDevice
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
