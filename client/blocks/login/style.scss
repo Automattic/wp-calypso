@@ -286,9 +286,9 @@
 	}
 
 	.login__form-header {
-		margin-bottom: 5px;
-		font-weight: 700;
 		font-size: var( --p2-font-size-form-xl );
+		font-weight: 700;
+		margin-bottom: 5px;
 	}
 
 	.login__form-terms {
@@ -317,10 +317,41 @@
 
 		a {
 			@extend %p2-link;
-			font-size: var( --p2-font-size-form-xs );
 			border-bottom: none;
+			font-size: var( --p2-font-size-form-xs );
 			font-weight: 400;
 			padding: 24px 4px;
+		}
+	}
+
+	.login__divider {
+		color: var( --p2-color-border );
+		font-size: var( --p2-font-size-form-xs );
+		margin: 0 auto;
+		max-width: 400px;
+		overflow: hidden;
+		text-align: center;
+		width: 100%;
+
+		&::before,
+		&::after {
+			background-color: var( --p2-color-border );
+			content: '';
+			display: inline-block;
+			height: 1px;
+			position: relative;
+			vertical-align: middle;
+			width: 50%;
+		}
+
+		&::before {
+			margin-left: -50%;
+			right: 0.5em;
+		}
+
+		&::after {
+			left: 0.5em;
+			margin-right: -50%;
 		}
 	}
 }
