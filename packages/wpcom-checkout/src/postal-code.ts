@@ -76,6 +76,17 @@ const twoPartPostalCodes: Record<
 		delimiter: ' ',
 		partLength: 3,
 	},
+	US: {
+		length: [ 9 ],
+		delimiter: '-',
+		formatter: ( postalCodeInput: string, delimiter: string ) => {
+			return (
+				postalCodeInput.substring( 0, postalCodeInput.length - 4 ) +
+				delimiter +
+				postalCodeInput.substring( postalCodeInput.length - 4 )
+			);
+		},
+	},
 };
 
 function isCountryCodeDataWithFormatter(
