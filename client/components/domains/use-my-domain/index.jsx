@@ -3,6 +3,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
+import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
+import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import { connectADomainOwnershipVerificationStepsDefinition } from 'calypso/components/domains/connect-domain-step/page-definitions';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
 import wpcom from 'calypso/lib/wp';
@@ -25,6 +28,7 @@ function UseMyDomain( {
 	const inputMode = {
 		domainInput: 'domain-input',
 		transferOrConnect: 'transfer-or-connect',
+		ownershipVerification: 'ownership-verification',
 	};
 
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
@@ -32,16 +36,31 @@ function UseMyDomain( {
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
 	const [ mode, setMode ] = useState( inputMode.domainInput );
+	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
+		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
+	);
 	const initialValidation = useRef( null );
 
 	const baseClassName = 'use-my-domain';
 
 	const onGoBack = () => {
-		if ( inputMode.domainInput === mode ) {
-			goBack();
-		}
+		const prevOwnershipVerificationFlowPageSlug =
+			connectADomainOwnershipVerificationStepsDefinition[ ownershipVerificationFlowPageSlug ]?.prev;
 
-		setMode( inputMode.domainInput );
+		switch ( mode ) {
+			case inputMode.ownershipVerification:
+				if ( prevOwnershipVerificationFlowPageSlug ) {
+					setOwnershipVerificationFlowPageSlug( prevOwnershipVerificationFlowPageSlug );
+				} else {
+					setMode( inputMode.transferOrConnect );
+				}
+				return;
+			case inputMode.transferOrConnect:
+				setMode( inputMode.domainInput );
+				return;
+			default:
+				goBack();
+		}
 	};
 
 	const validateDomainName = useCallback( () => {
@@ -98,6 +117,10 @@ function UseMyDomain( {
 		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
 	}, [ initialQuery, onNext ] );
 
+	const showOwnershipVerificationFlow = () => {
+		setMode( inputMode.ownershipVerification );
+	};
+
 	const renderDomainInput = () => {
 		return (
 			<UseMyDomainInput
@@ -119,11 +142,39 @@ function UseMyDomain( {
 				availability={ domainAvailabilityData }
 				domain={ domainName }
 				isSignupStep={ isSignupStep }
-				onConnect={ onConnect }
+				onConnect={
+					'auth_code' === domainAvailabilityData.ownership_verification_type
+						? showOwnershipVerificationFlow
+						: onConnect
+				}
 				onTransfer={ onTransfer }
 				transferDomainUrl={ transferDomainUrl }
 			/>
 		);
+	};
+
+	const renderOwnershipVerificationFlow = () => {
+		return (
+			<ConnectDomainSteps
+				baseClassName={ 'connect-domain-step' }
+				domain={ domainName }
+				initialPageSlug={ ownershipVerificationFlowPageSlug }
+				onConnect={ onConnect }
+				onSetPage={ setOwnershipVerificationFlowPageSlug }
+				stepsDefinition={ connectADomainOwnershipVerificationStepsDefinition }
+			/>
+		);
+	};
+
+	const renderContent = () => {
+		switch ( mode ) {
+			case inputMode.domainInput:
+				return renderDomainInput();
+			case inputMode.transferOrConnect:
+				return renderTransferOrConnect();
+			case inputMode.ownershipVerification:
+				return renderOwnershipVerificationFlow();
+		}
 	};
 
 	const headerText =
@@ -144,8 +195,7 @@ function UseMyDomain( {
 				headerText={ headerText }
 				align="left"
 			/>
-			{ mode === inputMode.domainInput && renderDomainInput() }
-			{ mode === inputMode.transferOrConnect && renderTransferOrConnect() }
+			{ renderContent() }
 		</>
 	);
 }

@@ -13,6 +13,7 @@ export default function ConnectDomainStepLogin( {
 	className,
 	pageSlug,
 	domain,
+	isOwnershipVerificationFlow,
 	mode,
 	onNextStep,
 	progressStepList,
@@ -20,6 +21,11 @@ export default function ConnectDomainStepLogin( {
 	const { __ } = useI18n();
 	const stepContent = (
 		<div className={ className + '__login' }>
+			{ isOwnershipVerificationFlow && (
+				<p className={ className + '__text' }>
+					__( 'We need to confirm that you are authorized to connect this domain.' )
+				</p>
+			) }
 			<p className={ className + '__text' }>
 				{ createInterpolateElement(
 					__(
@@ -64,7 +70,12 @@ ConnectDomainStepLogin.propTypes = {
 	className: PropTypes.string.isRequired,
 	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	domain: PropTypes.string.isRequired,
+	isOwnershipVerificationFlow: PropTypes.bool,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
+};
+
+ConnectDomainStepLogin.defaultProps = {
+	isOwnershipVerificationFlow: false,
 };
