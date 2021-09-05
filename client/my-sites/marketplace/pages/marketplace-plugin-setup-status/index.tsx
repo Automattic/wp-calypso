@@ -1,32 +1,26 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { ThemeProvider } from 'emotion-theming';
-import { useSelector, useDispatch } from 'react-redux';
-import page from 'page';
+import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import theme from 'calypso/my-sites/marketplace/theme';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import page from 'page';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import {
-	getPurchaseFlowState,
-	getIsProductSetupComplete,
-	getHasProductSetupError,
-} from 'calypso/state/marketplace/purchase-flow/selectors';
+import Masterbar from 'calypso/layout/masterbar/masterbar';
 import SimulatedProgressBar from 'calypso/my-sites/marketplace/components/simulated-progressbar';
-import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
-import { tryProductInstall } from 'calypso/state/marketplace/purchase-flow/actions';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getPluginsToInstall } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import theme from 'calypso/my-sites/marketplace/theme';
 import {
 	navigateToInstallationThankYouPage,
 	navigateToProductGroupHomePage,
 	waitFor,
 } from 'calypso/my-sites/marketplace/util';
+import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
+import { tryProductInstall } from 'calypso/state/marketplace/purchase-flow/actions';
+import {
+	getPurchaseFlowState,
+	getIsProductSetupComplete,
+	getHasProductSetupError,
+} from 'calypso/state/marketplace/purchase-flow/selectors';
 import {
 	isLoaded,
 	isRequestingForSites,
@@ -37,11 +31,7 @@ import {
 	isFetched as getIsWporgPluginFetched,
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
-
-/**
- * Style dependencies
- */
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 /**
@@ -50,6 +40,7 @@ import './style.scss';
 function WrappedMarketplacePluginSetup(): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ installedPluginSlug, setInstalledPluginSlug ] = useState< string >();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const {
@@ -58,16 +49,16 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	} = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 
 	const {
-		pluginSlugToBeInstalled,
+		productSlugInstalled,
+		productGroupSlug,
 		siteTransferStatus,
 		pluginInstallationStatus,
-		productGroupSlug,
 	} = useSelector( getPurchaseFlowState );
 	const hasProductSetupError = useSelector( getHasProductSetupError );
 	const isProductSetupComplete = useSelector( getIsProductSetupComplete );
 
 	const pluginStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, selectedSiteId, pluginSlugToBeInstalled )
+		getStatusForPlugin( state, selectedSiteId, installedPluginSlug )
 	);
 	const isPluginStateLoaded = useSelector( ( state ) => isLoaded( state, [ selectedSiteId ] ) );
 	const isPluginStateFetching = useSelector( ( state ) =>
@@ -76,23 +67,36 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 
 	// WPorg Plugin Data
 	const isWporgPluginFetching = useSelector( ( state ) =>
-		getIsWporgPluginFetching( state, pluginSlugToBeInstalled )
+		getIsWporgPluginFetching( state, installedPluginSlug )
 	);
 	const isWporgPluginFetched = useSelector( ( state ) =>
-		getIsWporgPluginFetched( state, pluginSlugToBeInstalled )
+		getIsWporgPluginFetched( state, installedPluginSlug )
 	);
-	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, pluginSlugToBeInstalled ) );
+	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, installedPluginSlug ) );
 	useEffect( () => {
 		if ( ! selectedSiteSlug ) {
 			page( '/home' );
-		} else if ( ! pluginSlugToBeInstalled ) {
+		} else if ( ! productSlugInstalled || ! productGroupSlug ) {
 			// A plugin slug should have been provided to reach this page
 			marketplaceDebugger(
-				'::MARKETPLACE::ERROR:: There is an error in plugin setup page pluginSlugToBeInstalled is not provided'
+				'::MARKETPLACE::ERROR:: There is an error in plugin setup page, productSlugInstalled or productGroupSlug is not provided'
 			);
 			page( `/home/${ selectedSiteSlug }` );
+		} else {
+			const plugins = getPluginsToInstall( productGroupSlug, productSlugInstalled );
+			if ( ! Array.isArray( plugins ) || plugins.length === 0 ) {
+				marketplaceDebugger(
+					`::MARKETPLACE::ERROR:: There is an error in plugin setup page, plugins to install are not available ${
+						( productGroupSlug, productSlugInstalled )
+					}`
+				);
+				page( `/home/${ selectedSiteSlug }` );
+			} else {
+				// TODO: handle installation of multiple plugins
+				setInstalledPluginSlug( plugins[ 0 ] );
+			}
 		}
-	}, [ dispatch, pluginSlugToBeInstalled, selectedSiteSlug ] );
+	}, [ dispatch, installedPluginSlug, productGroupSlug, productSlugInstalled, selectedSiteSlug ] );
 
 	useEffect( () => {
 		if ( hasProductSetupError ) {
@@ -118,7 +122,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		siteTransferStatus,
 		hasProductSetupError,
 		isProductSetupComplete,
-		pluginSlugToBeInstalled,
+		installedPluginSlug,
 		productGroupSlug,
 		/**
 		 * Additional subscribed states to run tryProductInstall

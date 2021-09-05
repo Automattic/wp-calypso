@@ -25,12 +25,13 @@
 	"dependencies": {
 		"@automattic/explat-client": "^0.0.2",
 		"react": "^16.12.0",
-		"tslib": "^2.2.0"
+		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0",
 		"@testing-library/react": "^12.0.0",
 		"@testing-library/react-hooks": "7.0.1",
-		"react-dom": "^16.12.0"
+		"react-dom": "^16.12.0",
+		"typescript": "^4.3.5"
 	}
 }

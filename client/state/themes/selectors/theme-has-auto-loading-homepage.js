@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 

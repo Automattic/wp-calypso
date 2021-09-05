@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import {
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
 	CONNECTED_APPLICATIONS_RECEIVE,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	const app1 = {

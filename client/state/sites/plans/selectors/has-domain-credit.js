@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { initialSiteState } from 'calypso/state/sites/plans/reducer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 

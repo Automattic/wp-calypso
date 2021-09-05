@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -29,11 +26,6 @@ jest.mock( 'enzyme', () => {
 	const actualEnzyme = jest.requireActual( 'enzyme' );
 	if ( ! mockEnzymeSetup ) {
 		mockEnzymeSetup = true;
-
-		// configure custom enzyme matchers for chai
-		const chai = jest.requireActual( 'chai' );
-		const chaiEnzyme = jest.requireActual( 'chai-enzyme' );
-		chai.use( chaiEnzyme() );
 
 		// configure custom Enzyme matchers for Jest
 		jest.requireActual( 'jest-enzyme' );

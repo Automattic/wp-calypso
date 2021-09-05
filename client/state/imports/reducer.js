@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, isEmpty, map, omit, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { get, isEmpty, map, omit, omitBy } from 'lodash';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -23,10 +16,10 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
-import uploads from './uploads/reducer';
-import siteImporter from './site-importer/reducer';
-import { appStates } from './constants';
 import { fromApi } from './api';
+import { appStates } from './constants';
+import siteImporter from './site-importer/reducer';
+import uploads from './uploads/reducer';
 
 function isImporterStatusHydrated( state = false, action ) {
 	switch ( action.type ) {

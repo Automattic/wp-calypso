@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPreviousQuery from 'calypso/state/selectors/get-previous-query';
 
 describe( 'getPreviousQuery()', () => {

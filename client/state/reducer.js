@@ -5,15 +5,8 @@
     "patterns": ["./*\/reducer*", "state/*\/reducer*"]
 }]*/
 
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import { reducer as httpData } from 'calypso/state/data-layer/http-data';
-
-/**
- * Reducers
- */
+import { combineReducers } from 'calypso/state/utils';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import sites from './sites/reducer';

@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce } from 'lodash';
 import i18n from 'i18n-calypso';
+import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

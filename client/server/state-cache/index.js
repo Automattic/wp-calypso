@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import Lru from 'lru';
 
 const HOUR_IN_MS = 3600000;

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { LOGSTASH } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/logstash';
 

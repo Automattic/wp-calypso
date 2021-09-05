@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -23,12 +18,10 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	isDotComPlan,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import { CheckoutThankYou } from '../index';
+import { shallow } from 'enzyme';
+import React from 'react';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import { CheckoutThankYou } from '../index';
 
 jest.unmock( '@automattic/calypso-products' );
 jest.mock( '@automattic/calypso-products', () => ( {

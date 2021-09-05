@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { addLocaleQueryParam, injectLocalization } from '../';
 
 describe( 'index', () => {

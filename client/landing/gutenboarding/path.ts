@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { findKey } from 'lodash';
-import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
 import languages from '@automattic/languages';
-import type { ValuesType } from 'utility-types';
-
-/**
- * Internal dependencies
- */
+import { findKey } from 'lodash';
+import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { FLOW_ID } from '../gutenboarding/constants';
+import type { ValuesType } from 'utility-types';
 
 type PlanPath = Plans.PlanPath;
 
@@ -28,6 +21,7 @@ export const Step = {
 	Login: 'login',
 	CreateSite: 'create-site',
 	Domains: 'domains',
+	Emails: 'emails',
 	Plans: 'plans',
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',

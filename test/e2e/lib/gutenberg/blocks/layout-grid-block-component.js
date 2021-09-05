@@ -1,5 +1,6 @@
 import { By } from 'selenium-webdriver';
 import * as driverHelper from '../../driver-helper';
+import { currentScreenSize } from '../../driver-manager';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
@@ -33,7 +34,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	 *
 	 * @param { Function } blockClass A block class that responds to blockTitle and blockName
 	 * @returns { GutenbergBlockComponent } instance of the added block
-	 **/
+	 */
 	async insertBlock( blockClass ) {
 		if ( ! this.columns ) {
 			throw new Error( 'You need to run setupColumns before inserting an inner block.' );
@@ -50,9 +51,12 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		// We need to click through the layers until the appender is clickable:
 		await driverHelper.clickWhenClickable( this.driver, blockLocator );
 		await driverHelper.clickWhenClickable( this.driver, columnLocator );
-		await driverHelper.clickWhenClickable( this.driver, addBlockButtonLocator );
 
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
+		if ( currentScreenSize() === 'mobile' ) {
+			await driverHelper.clickWhenClickable( this.driver, addBlockButtonLocator );
+		}
+
+		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
 
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,

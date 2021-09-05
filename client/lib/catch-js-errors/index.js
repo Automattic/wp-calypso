@@ -1,8 +1,6 @@
-/**
- * External dependencies
- */
-import TraceKit from 'tracekit';
 import debug from 'debug';
+import TraceKit from 'tracekit';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Module variables
@@ -119,17 +117,24 @@ export default class ErrorLogger {
 	}
 
 	sendToApi( error ) {
-		const body = new window.FormData();
-		body.append( 'error', JSON.stringify( error ) );
-
-		try {
-			window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
-				method: 'POST',
-				body,
-			} );
-		} catch {
+		const onUnableToRecordError = () => {
 			// eslint-disable-next-line no-console
 			console.error( 'Error: Unable to record the error in Logstash.' );
+		};
+
+		try {
+			wpcom.req.post(
+				{
+					path: '/js-error',
+					apiNamespace: 'rest/v1.1',
+					body: {
+						error: JSON.stringify( error ),
+					},
+				},
+				( err ) => err && onUnableToRecordError()
+			);
+		} catch {
+			onUnableToRecordError();
 		}
 	}
 }

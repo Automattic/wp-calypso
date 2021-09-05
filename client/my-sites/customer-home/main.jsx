@@ -1,39 +1,27 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
-import Main from 'calypso/components/main';
-import { preventWidows } from 'calypso/lib/formatting';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { preventWidows } from 'calypso/lib/formatting';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import config from '@automattic/calypso-config';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noticeType } ) => {
@@ -76,7 +64,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
-				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+				hasScreenOptions
 			/>
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction }>
@@ -156,4 +144,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
+export default connectHome( withTrackingTool( 'HotJar' )( Home ) );

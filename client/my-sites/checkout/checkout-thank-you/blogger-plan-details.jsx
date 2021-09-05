@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { isBlogger, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { isBlogger, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 

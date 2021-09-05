@@ -2,20 +2,13 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { size } from 'lodash';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
-import signupReducer from 'calypso/state/signup/reducer';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import signupReducer from 'calypso/state/signup/reducer';
+import { combineReducers } from 'calypso/state/utils';
 import SignupFlowController from '../flow-controller';
 
 jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );

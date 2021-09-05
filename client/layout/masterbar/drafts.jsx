@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import { Button } from '@automattic/components';
-import Count from 'calypso/components/count';
+import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
 
 const MasterbarDraftsPopover = ( props ) => (
 	<AsyncLoad { ...props } require="calypso/layout/masterbar/drafts-popover" placeholder={ null } />
@@ -23,6 +15,8 @@ const MasterbarDraftsPopover = ( props ) => (
 
 class MasterbarDrafts extends Component {
 	static propTypes = {
+		draftCount: PropTypes.number,
+		numberFormat: PropTypes.func,
 		selectedSiteId: PropTypes.number,
 	};
 
@@ -86,8 +80,21 @@ class MasterbarDrafts extends Component {
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }
 				ref={ this.setDraftsRef }
+				aria-haspopup
+				aria-expanded={ this.state.showDrafts || undefined }
 			>
-				<Count count={ this.props.draftCount } />
+				<span className="masterbar__toggle-drafts-lg-label">
+					{ this.props.numberFormat( this.props.draftCount ) }
+				</span>
+
+				{ /* Don't display draft count on small screens when the count has more than 2 digits */ }
+				{ this.props.draftCount < 100 && (
+					<span className="masterbar__toggle-drafts-sm-label">
+						{ this.props.numberFormat( this.props.draftCount ) }
+					</span>
+				) }
+
+				<Gridicon icon={ this.state.showDrafts ? 'chevron-up' : 'chevron-down' } />
 			</Button>
 		);
 	}
@@ -126,14 +133,8 @@ class MasterbarDrafts extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
-
-		return {
-			selectedSiteId,
-			draftCount,
-		};
-	},
+	( state ) => ( {
+		selectedSiteId: getSelectedSiteId( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( MasterbarDrafts ) );

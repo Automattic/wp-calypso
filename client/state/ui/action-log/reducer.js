@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, has, includes, overSome } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { GUIDED_TOUR_UPDATE, ROUTE_SET, SITE_SETTINGS_RECEIVE } from 'calypso/state/action-types';
 import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 

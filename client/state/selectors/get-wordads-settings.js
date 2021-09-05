@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/wordads/init';
 

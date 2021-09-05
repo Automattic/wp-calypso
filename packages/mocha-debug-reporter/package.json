@@ -18,6 +18,9 @@
 	"dependencies": {
 		"@types/mocha": "^8.2.3"
 	},
+	"devDependencies": {
+		"typescript": "^4.3.5"
+	},
 	"peerDependencies": {
 		"mocha": ">=8.0.0"
 	},

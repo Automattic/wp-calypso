@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, LabelHTMLAttributes } from 'react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent, LabelHTMLAttributes } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

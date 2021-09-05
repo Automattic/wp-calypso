@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
 
 const site1UrlKey = 'discover.wordpress.com';

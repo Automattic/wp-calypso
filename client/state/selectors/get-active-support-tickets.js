@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/help/init';
 
 const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];

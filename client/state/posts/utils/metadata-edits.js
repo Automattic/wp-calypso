@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { filter, find } from 'lodash';
 
 function isUnappliedMetadataEdit( edit, savedMetadata ) {

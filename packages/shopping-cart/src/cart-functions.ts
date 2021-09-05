@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { getEmptyResponseCart } from './empty-carts';
-import type { TempResponseCart } from './shopping-cart-endpoint';
 import type {
+	TempResponseCart,
 	CartLocation,
 	RequestCart,
 	RequestCartProduct,

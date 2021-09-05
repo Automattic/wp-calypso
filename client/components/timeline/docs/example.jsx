@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import Timeline from 'calypso/components/timeline';
 import TimelineEvent from 'calypso/components/timeline/timeline-event.jsx';
 

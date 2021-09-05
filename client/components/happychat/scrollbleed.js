@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import React, { useEffect, useState } from 'react';
 
 function createScrollbleed() {
 	let scrollbleedNode = null;

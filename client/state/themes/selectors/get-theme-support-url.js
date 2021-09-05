@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 

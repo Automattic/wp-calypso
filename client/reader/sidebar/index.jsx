@@ -1,53 +1,42 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderSidebarHelper from './helper';
-import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarTags from './reader-sidebar-tags';
-import ReaderSidebarOrganizations from './reader-sidebar-organizations';
-import ReaderSidebarNudges from './reader-sidebar-nudges';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
+import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
+import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarTags,
 } from 'calypso/state/reader-ui/sidebar/actions';
 import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import ReaderSidebarPromo from './promo';
-import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
-import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
-import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import { isEnabled } from '@automattic/calypso-config';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import ReaderSidebarHelper from './helper';
+import ReaderSidebarPromo from './promo';
+import ReaderSidebarLists from './reader-sidebar-lists';
+import ReaderSidebarNudges from './reader-sidebar-nudges';
+import ReaderSidebarOrganizations from './reader-sidebar-organizations';
+import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
+import './style.scss';
 
 const A8CConversationsIcon = () => (
 	<svg

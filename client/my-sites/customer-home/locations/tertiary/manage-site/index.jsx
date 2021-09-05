@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import GoMobile from 'calypso/my-sites/customer-home/cards/features/go-mobile';
-import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
-import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import WpForTeamsQuickLinks from 'calypso/my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	ACTION_QUICK_LINKS,
 	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
@@ -20,8 +10,11 @@ import {
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import GoMobile from 'calypso/my-sites/customer-home/cards/features/go-mobile';
+import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
+import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,

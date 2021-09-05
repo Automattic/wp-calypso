@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { useState, useRef } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import Tooltip from 'calypso/components/tooltip';
 
@@ -37,8 +30,7 @@ function LanguagePickerItemTooltip( { children } ) {
 }
 
 LanguagePickerItemTooltip.propTypes = {
-	children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] )
-		.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 export default LanguagePickerItemTooltip;

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,

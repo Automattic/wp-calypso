@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
+import DesignPicker from '@automattic/design-picker';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import DesignPicker from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DesignPickerStep extends Component {
@@ -52,7 +41,13 @@ class DesignPickerStep extends Component {
 
 	renderDesignPicker() {
 		// props.locale obtained via `localize` HoC
-		return <DesignPicker theme="dark" locale={ this.props.locale } onSelect={ this.pickDesign } />;
+		return (
+			<DesignPicker
+				theme={ this.props.isReskinned ? 'light' : 'dark' }
+				locale={ this.props.locale }
+				onSelect={ this.pickDesign }
+			/>
+		);
 	}
 
 	headerText() {
@@ -67,6 +62,7 @@ class DesignPickerStep extends Component {
 	}
 
 	render() {
+		const { isReskinned } = this.props;
 		const headerText = this.headerText();
 		const subHeaderText = this.subHeaderText();
 
@@ -77,6 +73,8 @@ class DesignPickerStep extends Component {
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderDesignPicker() }
+				align={ isReskinned ? 'left' : 'center' }
+				skipButtonAlign={ isReskinned ? 'top-right' : 'bottom' }
 				{ ...this.props }
 			/>
 		);

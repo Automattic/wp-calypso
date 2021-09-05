@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
 import { Context } from './types';
 

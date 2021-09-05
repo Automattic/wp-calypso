@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import ActivityCardList from 'calypso/components/activity-card-list';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useActivityLogs } from './hooks';
 
 const SearchResults = () => {

@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { JETPACK_REMOTE_INSTALL } from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	jetpackRemoteInstallComplete,
 	jetpackRemoteInstallUpdateError,
 } from 'calypso/state/jetpack-remote-install/actions';
-import { JETPACK_REMOTE_INSTALL } from 'calypso/state/action-types';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const JETPACK_REMOTE_INSTALL_RETRIES = 3;
 

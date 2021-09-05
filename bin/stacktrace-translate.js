@@ -9,14 +9,14 @@
  * Paste stacktrace array from error log into stdin.
  */
 
-const _ = require( 'lodash' );
-const readline = require( 'readline' );
 const fs = require( 'fs' );
+const readline = require( 'readline' );
+const glob = require( 'glob' );
+const _ = require( 'lodash' );
 const sourceMap = require( 'source-map' );
-const StackTraceGPS = require( 'stacktrace-gps' );
 const SourceMap = require( 'source-map' );
 const StackFrame = require( 'stackframe' );
-const glob = require( 'glob' );
+const StackTraceGPS = require( 'stacktrace-gps' );
 
 const BUNDLE_URL_ROOT = 'https://wordpress.com/calypso/';
 const SOURCE_PATTERN = './public/*.js';

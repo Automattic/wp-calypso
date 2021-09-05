@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
-
+import { Card, Ribbon, Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty, isEqual, some } from 'lodash';
+import photon from 'photon';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { get, isEmpty, isEqual, some } from 'lodash';
+import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import photon from 'photon';
-
-/**
- * Internal dependencies
- */
-import { Card, Ribbon, Button } from '@automattic/components';
-import ThemeMoreButton from './more-button';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import InfoPopover from 'calypso/components/info-popover';
-import { decodeEntities } from 'calypso/lib/formatting';
+import PulsingDot from 'calypso/components/pulsing-dot';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
+import ThemeMoreButton from './more-button';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -117,6 +107,12 @@ export class Theme extends Component {
 		const { theme } = this.props;
 		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
 		return some( skillLevels, { slug: 'beginner' } );
+	}
+
+	isFullSiteEditingTheme() {
+		const { theme } = this.props;
+		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
+		return some( features, { slug: 'block-templates' } );
 	}
 
 	renderPlaceholder() {
@@ -248,7 +244,14 @@ export class Theme extends Component {
 					</a>
 
 					<div className="theme__info">
-						<h2 className="theme__info-title">{ name }</h2>
+						<h2 className="theme__info-title">
+							{ name }
+							{ this.isFullSiteEditingTheme() && (
+								<Badge type="warning-clear" className="theme__badge-beta">
+									{ translate( 'Beta' ) }
+								</Badge>
+							) }
+						</h2>
 						{ active && (
 							<span className="theme__badge-active">
 								{ translate( 'Active', {

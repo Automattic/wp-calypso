@@ -1,10 +1,3 @@
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import type { Purchase } from './types';
 

@@ -1,8 +1,5 @@
 /* global fullSiteEditing */
 
-/**
- * External dependencies
- */
 import { use } from '@wordpress/data';
 
 // The purpose of this override is to prevent Switch to Draft action for template CPTs.

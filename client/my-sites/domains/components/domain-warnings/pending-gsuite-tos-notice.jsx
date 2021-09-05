@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 const strong = <strong />;
 
@@ -93,7 +83,6 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	};
 
 	compactNotice() {
-		const severity = this.getNoticeSeverity();
 		const href =
 			this.props.domains.length === 1
 				? emailManagement( this.props.siteSlug, this.props.domains[ 0 ].name )
@@ -102,7 +91,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
-				status={ `is-${ severity }` }
+				status={ `is-${ this.getNoticeSeverity() }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain-compact"
 				text={ this.props.translate( 'Email requires action', 'Emails require action', {
@@ -110,7 +99,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				} ) }
 			>
 				<NoticeAction href={ href } onClick={ this.finishSetupClickHandler }>
-					{ this.props.translate( 'Finish Setup' ) }
+					{ this.props.translate( 'Go' ) }
 				</NoticeAction>
 			</Notice>
 		);

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { setPosterUrl, showError, showUploadProgress, updatePoster } from '../actions';
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_UPDATE_POSTER,
 } from 'calypso/state/action-types';
+import { setPosterUrl, showError, showUploadProgress, updatePoster } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#updatePoster()', () => {

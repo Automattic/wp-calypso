@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
+import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, isEqual, property, snakeCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { trackClick } from './helpers';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -26,13 +18,8 @@ import {
 	isInstallingTheme,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import { setThemePreviewOptions } from 'calypso/state/themes/actions';
-import config from '@automattic/calypso-config';
-import ThemesSelectionHeader from './themes-selection-header';
+import { trackClick } from './helpers';
 
-/**
- * Style dependencies
- */
 import './themes-selection.scss';
 
 class ThemesSelection extends Component {
@@ -56,7 +43,7 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		placeholderCount: PropTypes.number,
-		recommendedThemes: PropTypes.array,
+		customizedThemesList: PropTypes.array,
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
@@ -69,16 +56,15 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
-		const { query, recommendedThemes } = this.props;
-		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
+		const { query, customizedThemesList } = this.props;
+		if ( ! customizedThemesList && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
-		// TODO do we need different query if from RecommendedThemes?
 		const { query, filterString } = this.props;
-		const themes = this.props.recommendedThemes || this.props.themes;
+		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 
@@ -121,7 +107,7 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.recommendedThemes ) {
+		if ( ! this.props.customizedThemesList ) {
 			this.props.incrementPage();
 		}
 	};
@@ -159,20 +145,14 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, listLabel, noMarginBeforeHeader } = this.props;
+		const { source, query, upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
-				{ this.props.isLoggedIn && (
-					<ThemesSelectionHeader
-						label={ listLabel }
-						noMarginBeforeHeader={ noMarginBeforeHeader }
-					/>
-				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.recommendedThemes || this.props.themes }
+					themes={ this.props.customizedThemesList || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -204,10 +184,13 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
-// Exporting this for use in recommended-themes.jsx
+// Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
+	(
+		state,
+		{ filter, page, search, vertical, siteId, source, isLoading: isCustomizedThemeListLoading }
+	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -220,24 +203,24 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 30;
+		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 30;
 		const query = {
 			search,
 			page,
-			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
+			tier: '',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
-
 		return {
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
-			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
+			isRequesting:
+				isCustomizedThemeListLoading || isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
-			isLoggedIn: !! getCurrentUserId( state ),
+			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
 			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree

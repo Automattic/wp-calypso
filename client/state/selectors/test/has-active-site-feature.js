@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 
 describe( 'selectors', () => {
@@ -47,7 +40,7 @@ describe( 'selectors', () => {
 			expect( activeFeature ).to.eql( false );
 		} );
 
-		test( 'should return False when feature is no feature id', () => {
+		test( 'should return False when feature param is not defined', () => {
 			const active = [ 'feature_active_01', 'feature_active_02', 'feature_active_03' ];
 
 			const state = {

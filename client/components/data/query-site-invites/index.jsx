@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { isRequestingInvitesForSite } from 'calypso/state/invites/selectors';
 

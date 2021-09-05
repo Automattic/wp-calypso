@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getMarks } from '../api/user-timing';
 
 export const collector: Collector = ( report ) => {

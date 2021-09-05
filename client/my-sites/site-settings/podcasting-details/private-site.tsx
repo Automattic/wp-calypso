@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize, LocalizeProps } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface Props extends LocalizeProps {

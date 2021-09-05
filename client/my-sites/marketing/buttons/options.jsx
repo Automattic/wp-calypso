@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { filter, flowRight, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { filter, flowRight, get, partial, some, values, xor } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FormFieldset from 'calypso/components/forms/form-fieldset';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import SupportInfo from 'calypso/components/support-info';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPostTypes } from 'calypso/state/post-types/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import QueryPostTypes from 'calypso/components/data/query-post-types';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -226,7 +218,9 @@ class SharingButtonsOptions extends Component {
 	getSharingShowOptionsElement = () => {
 		const { initialized, settings, translate } = this.props;
 
-		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
+		const changeSharingPostTypes = ( event ) =>
+			this.handleMultiCheckboxChange( 'sharing_show', event );
+
 		return (
 			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
 
 import 'calypso/state/selected-editor/init';

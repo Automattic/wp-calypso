@@ -1,16 +1,9 @@
-/**
- *  External Dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 
 const TransferLock = ( props ) => {
 	const translate = useTranslate();

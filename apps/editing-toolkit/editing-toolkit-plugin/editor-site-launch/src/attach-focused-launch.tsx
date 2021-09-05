@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { hasQueryArg } from '@wordpress/url';
 import FocusedLaunchModal from '@automattic/launch';
-
-/**
- * Internal dependencies
- */
+import { useSelect, useDispatch } from '@wordpress/data';
+import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import { hasQueryArg } from '@wordpress/url';
+import React from 'react';
 import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
+import { IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 import { LAUNCH_STORE, SITE_STORE } from './stores';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
-import { IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

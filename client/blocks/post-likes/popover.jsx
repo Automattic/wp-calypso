@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import { Popover } from '@automattic/components';
+import classnames from 'classnames';
+import { omit } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { omit } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Popover from 'calypso/components/popover';
-import PostLikes from './index';
-import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
+import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
+import PostLikes from './index';
 
-/**
- * Style dependencies
- */
 import './popover.scss';
 
 function PostLikesPopover( props ) {

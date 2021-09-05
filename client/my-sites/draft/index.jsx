@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import classnames from 'classnames';
 import url from 'url';
-import { connect } from 'react-redux';
+import { CompactCard } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 import photon from 'photon';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import TimeSince from 'calypso/components/time-since';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import * as utils from 'calypso/state/posts/utils';
-import TimeSince from 'calypso/components/time-since';
 import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

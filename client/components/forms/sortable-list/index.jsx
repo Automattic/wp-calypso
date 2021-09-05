@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { findIndex } from 'lodash';
+import { ScreenReaderText } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { findIndex } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { ScreenReaderText } from '@automattic/components';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SortableList extends React.Component {

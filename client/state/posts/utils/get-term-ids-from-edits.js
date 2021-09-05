@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { isEmpty, isPlainObject, map, mapValues, reduce } from 'lodash';
 
 /**

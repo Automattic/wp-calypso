@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { get, isEqual, mapValues, omit, omitBy, reduce } from 'lodash';
+import { SerializationResult } from 'calypso/state/serialization-result';
+import { serialize, deserialize, SerializableReducer } from './serialize';
+import { withPersistence } from './with-persistence';
 import type { PropertyPath } from 'lodash';
 import type { Action, AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
-import { serialize, deserialize, SerializableReducer } from './serialize';
-import { SerializationResult } from 'calypso/state/serialization-result';
-import { withPersistence } from './with-persistence';
 
 type CalypsoInitAction = Action< '@@calypso/INIT' >;
 export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInitAction;

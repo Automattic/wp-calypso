@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
+import { getInitialState } from '@automattic/state-utils';
+import warn from '@wordpress/warning';
 import validator from 'is-my-json-valid';
 import { forEach, get, isEmpty, isEqual } from 'lodash';
-import { getInitialState } from '@automattic/state-utils';
-
-/**
- * WordPress dependencies
- */
-import warn from '@wordpress/warning';
-
-/**
- * Internal dependencies
- */
 import { serialize, deserialize } from './serialize';
 import { withPersistence } from './with-persistence';
 

@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
+import { debounce, isEqual, find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce, isEqual, find, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { preventWidows } from 'calypso/lib/formatting';
-import config from '@automattic/calypso-config';
+import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
+import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormButton from 'calypso/components/forms/form-button';
-import SitesDropdown from 'calypso/components/sites-dropdown';
-import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { selectSiteId } from 'calypso/state/help/actions';
-import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import SitesDropdown from 'calypso/components/sites-dropdown';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { resemblesUrl } from 'calypso/lib/url';
 import wpcomLib from 'calypso/lib/wp';
 import HelpResults from 'calypso/me/help/help-results';
 import {
@@ -38,17 +31,13 @@ import {
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
+import { selectSiteId } from 'calypso/state/help/actions';
+import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
-import { resemblesUrl } from 'calypso/lib/url';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
+import { requestSite } from 'calypso/state/sites/actions';
 import { generateSubjectFromMessage } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -109,7 +98,6 @@ export class HelpContactForm extends React.PureComponent {
 			value: PropTypes.any,
 			requestChange: PropTypes.func.isRequired,
 		} ),
-		npsSurveyFeedback: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -128,7 +116,6 @@ export class HelpContactForm extends React.PureComponent {
 		},
 		showingQandAStep: false,
 		showQandAOnInlineHelpContactForm: () => {},
-		npsSurveyFeedback: '',
 	};
 
 	/**
@@ -148,17 +135,6 @@ export class HelpContactForm extends React.PureComponent {
 		userRequestsHidingUrl: false,
 		qanda: [],
 	};
-
-	UNSAFE_componentWillMount() {
-		const { npsSurveyFeedback, translate } = this.props;
-
-		if ( npsSurveyFeedback ) {
-			this.state.message =
-				'\n' +
-				translate( 'The comment below is copied from your survey response:' ) +
-				`\n--------------------\n${ npsSurveyFeedback }`;
-		}
-	}
 
 	componentDidMount() {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
@@ -206,16 +182,16 @@ export class HelpContactForm extends React.PureComponent {
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
-			const request = ( query ) =>
+			const request = ( q ) =>
 				this.props
-					.requestSite( query )
+					.requestSite( q )
 					.then( ( siteData ) =>
 						this.setState( { siteData, errorData: null, hasRetriedRequest: false } )
 					)
 					.catch( ( error ) => {
 						if ( url.includes( 'www.' ) && ! this.state.hasRetriedRequest ) {
 							this.setState( { hasRetriedRequest: true } );
-							return request( query.replace( 'www.', '' ) );
+							return request( q.replace( 'www.', '' ) );
 						}
 						this.setState( { errorData: error.error, siteData: null, hasRetriedRequest: false } );
 					} );
@@ -778,7 +754,6 @@ const mapStateToProps = ( state ) => ( {
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
-	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
 
 const mapDispatchToProps = {

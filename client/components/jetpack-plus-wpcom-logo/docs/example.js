@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 
 export default function JetpackPlusWpComLogoExample() {

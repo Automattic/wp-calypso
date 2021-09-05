@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import waitForExpect from 'wait-for-expect';
-
-/**
- * Internal dependencies
- */
 import { dispatch, select } from '@wordpress/data';
+import waitForExpect from 'wait-for-expect';
 import { register, DEFAULT_VARIANT } from '../store';
 
 const STORE_KEY = 'automattic/wpcom-welcome-guide';
 
 beforeAll( () => {
 	register();
+	jest.useFakeTimers(); // Required for wait-for-expect to work.
 } );
 
 let originalFetch;

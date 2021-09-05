@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import reducer from '../reducer';
 import {
 	getRequestError,
 	getTwoFactorAuthNonce,
@@ -26,7 +20,6 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 } from '../selectors';
-import reducer from '../reducer';
 
 // Initialize empty state from a missing previous state and a no-op.
 const EMPTY_STATE = {

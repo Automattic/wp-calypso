@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getMediaUrl from 'calypso/state/selectors/get-media-url';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 
 /**

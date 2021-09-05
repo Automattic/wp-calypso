@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**

@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
-
-/**
- * Image dependencies
- */
+import React, { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
+import Spinner from 'calypso/components/spinner';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const CelebrateNotice = ( {
 	actionText,
@@ -34,15 +22,8 @@ const CelebrateNotice = ( {
 	tracksEventExtras = {},
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ isVisible, setIsVisible ] = useState( true );
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	if ( ! isVisible ) {
-		return null;
-	}
-
-	const dismissalPreferenceKey = `dismissible-card-${ noticeId }-${ siteId }`;
 
 	const showNextTask = () => {
 		setIsLoading( true );
@@ -59,8 +40,8 @@ const CelebrateNotice = ( {
 	};
 
 	const skip = () => {
-		setIsVisible( false );
-		dispatch( savePreference( dismissalPreferenceKey, true ) );
+		setIsLoading( true );
+		skipCurrentView();
 		onSkip && onSkip();
 
 		dispatch(

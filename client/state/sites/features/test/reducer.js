@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { featuresReducer as features } from '../reducer';
 import {
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
 	SITE_FEATURES_REMOVE,
 } from 'calypso/state/action-types';
+import { featuresReducer as features } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#features()', () => {

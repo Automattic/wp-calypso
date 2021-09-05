@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { cloneDeep, concat, find, map, mergeWith, reduce, reject } from 'lodash';
 
 /*

@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { JETPACK_SCAN_THREATS_GET_FIX_STATUS } from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getFixThreatsStatus } from 'calypso/state/jetpack-scan/threats/actions';
-import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
-import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions.ts';
+import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
+import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
+import { getFixThreatsStatus } from 'calypso/state/jetpack-scan/threats/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const POLL_EVERY_MILLISECONDS = 1000;
 

@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import { partition, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import { getSite } from 'calypso/state/sites/selectors';
+import { partition, sortBy } from 'lodash';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { getSite } from 'calypso/state/sites/selectors';
 
 const sortByNameAndUrl = ( list ) => sortBy( list, [ 'name', 'URL' ] );
 

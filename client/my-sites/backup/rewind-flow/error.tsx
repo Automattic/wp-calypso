@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import Gridicon from 'calypso/components/gridicon';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
 interface Props {
 	imgSrc?: string;

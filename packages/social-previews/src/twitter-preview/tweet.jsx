@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { SandBox } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import moment from 'moment';
-import { __ } from '@wordpress/i18n';
-import { SandBox } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DESCRIPTION_LENGTH = 200;

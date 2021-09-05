@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { forEach, get } from 'lodash';
 
 /**

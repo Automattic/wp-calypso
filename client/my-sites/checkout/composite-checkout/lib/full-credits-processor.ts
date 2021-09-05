@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { TransactionRequest } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
+import debugFactory from 'debug';
 import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:full-credits-processor' );
 

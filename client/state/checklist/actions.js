@@ -1,12 +1,8 @@
-/**
- * Internal dependencies
- */
 import {
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_REQUEST,
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'calypso/state/action-types';
-
 import 'calypso/state/data-layer/wpcom/checklist';
 import 'calypso/state/checklist/init';
 

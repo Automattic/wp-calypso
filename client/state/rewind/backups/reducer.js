@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 
 /**

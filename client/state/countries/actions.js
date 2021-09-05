@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	COUNTRIES_DOMAINS_FETCH,
 	COUNTRIES_PAYMENTS_FETCH,

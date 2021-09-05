@@ -1,29 +1,21 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { includes, some } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, some } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FoldableCard from 'calypso/components/foldable-card';
-import { Button } from '@automattic/components';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import SupportInfo from 'calypso/components/support-info';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class Protect extends Component {
 	static propTypes = {

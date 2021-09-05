@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { READER_VIEW_STREAM } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/reader-ui/init';

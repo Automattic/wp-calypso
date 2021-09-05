@@ -1,14 +1,12 @@
-/**
- * Internal dependencies
- */
-import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
+import { isEnabled } from '@automattic/calypso-config';
+import { isDomainTransfer } from '@automattic/calypso-products';
 import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer } from '@automattic/calypso-products';
+import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -39,9 +37,14 @@ function getAddNewPaymentMethodPath() {
 	return addNewPaymentMethod;
 }
 
+function isJetpackTemporarySitePurchase( domain ) {
+	return 'siteless.jetpack.com' === domain && isEnabled( 'jetpack/siteless-checkout' );
+}
+
 export {
 	canEditPaymentDetails,
 	getChangePaymentMethodPath,
 	getAddNewPaymentMethodPath,
 	isDataLoading,
+	isJetpackTemporarySitePurchase,
 };

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-detected-country-code' );

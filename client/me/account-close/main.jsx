@@ -1,43 +1,33 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import page from 'page';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import page from 'page';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFigureHeader from 'calypso/components/action-panel/figure-header';
 import ActionPanelFigureList from 'calypso/components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-list-item';
-import ActionPanelLink from 'calypso/components/action-panel/link';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import { Button } from '@automattic/components';
-import AccountCloseConfirmDialog from './confirm-dialog';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
-import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
-import isAccountClosed from 'calypso/state/selectors/is-account-closed';
-import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
+import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
+import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import isAccountClosed from 'calypso/state/selectors/is-account-closed';
+import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
+import AccountCloseConfirmDialog from './confirm-dialog';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class AccountSettingsClose extends Component {

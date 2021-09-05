@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import 'moment-timezone';
-
-/**
- * Internal dependencies
- */
-import Confirmation from './confirmation';
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormButton from 'calypso/components/forms/form-button';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Confirmation from './confirmation';
 
 class AppointmentInfo extends Component {
 	static propTypes = {
@@ -35,6 +28,11 @@ class AppointmentInfo extends Component {
 
 		const conferenceLink = meta.conference_link || '';
 		const guessedTimezone = moment.tz.guess();
+		const userTimezoneAbbr = moment.tz( guessedTimezone ).format( 'z' );
+		// Moment timezone does not display the abbreviation for some countries(e.g. for Dubai, it shows timezone abbr as +04 ).
+		// Don't display the timezone for such countries.
+		const shouldDisplayTzAbbr = /[a-zA-Z]/g.test( userTimezoneAbbr );
+		const momentDisplayFormat = shouldDisplayTzAbbr ? 'LT z' : 'LT';
 		const isAllowedToChangeAppointment = meta.canChangeAppointment;
 
 		return (
@@ -45,6 +43,7 @@ class AppointmentInfo extends Component {
 
 				<CompactCard>
 					<FormattedHeader
+						headerText=""
 						subHeaderText={ translate( 'Your scheduled Quick Start session details are:' ) }
 					/>
 
@@ -77,7 +76,7 @@ class AppointmentInfo extends Component {
 						<FormLabel>{ translate( 'When?' ) }</FormLabel>
 						<FormSettingExplanation>
 							{ moment( beginTimestamp ).format( 'llll - ' ) }
-							{ moment.tz( endTimestamp, guessedTimezone ).format( 'LT z' ) }{ ' ' }
+							{ moment.tz( endTimestamp, guessedTimezone ).format( momentDisplayFormat ) }{ ' ' }
 							{ `(${ guessedTimezone })` }
 						</FormSettingExplanation>
 					</FormFieldset>
@@ -91,7 +90,7 @@ class AppointmentInfo extends Component {
 
 					{ isAllowedToChangeAppointment && (
 						<FormFieldset>
-							<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
+							<a href={ `/me/quickstart/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
 								<FormButton isPrimary={ false } type="button">
 									{ translate( 'Reschedule or cancel' ) }
 								</FormButton>

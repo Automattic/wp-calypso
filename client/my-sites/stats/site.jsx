@@ -1,55 +1,49 @@
-/**
- * External dependencies
- */
+import { FEATURE_WORDADS_INSTANT } from '@automattic/calypso-products';
+import { localize, translate } from 'i18n-calypso';
+import { find } from 'lodash';
 import page from 'page';
+import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, translate } from 'i18n-calypso';
-import { parse as parseQs, stringify as stringifyQs } from 'qs';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import StatsPeriodNavigation from './stats-period-navigation';
-import Main from 'calypso/components/main';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import DatePicker from './stats-date-picker';
-import Countries from './stats-countries';
-import ChartTabs from './stats-chart-tabs';
-import Cloudflare from './cloudflare';
-import StatsModule from './stats-module';
-import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import StickyPanel from 'calypso/components/sticky-panel';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
+import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import Banner from 'calypso/components/banner';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_WORDADS_INSTANT } from '@automattic/calypso-products';
+import Main from 'calypso/components/main';
+import StickyPanel from 'calypso/components/sticky-panel';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import memoizeLast from 'calypso/lib/memoize-last';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
-import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import memoizeLast from 'calypso/lib/memoize-last';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import EmptyContent from 'calypso/components/empty-content';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import Banner from 'calypso/components/banner';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import Cloudflare from './cloudflare';
+import ChartTabs from './stats-chart-tabs';
+import Countries from './stats-countries';
+import DatePicker from './stats-date-picker';
+import StatsModule from './stats-module';
+import StatsPeriodNavigation from './stats-period-navigation';
+import statsStrings from './stats-strings';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -197,7 +191,12 @@ class StatsSite extends Component {
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
 					subHeaderText={ translate(
-						"Learn more about the activity and behavior of your site's visitors."
+						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+							},
+						}
 					) }
 				/>
 				<StatsNavigation

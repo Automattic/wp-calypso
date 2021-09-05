@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noticeOptions = ( siteId ) => ( {
 	duration: 8000,

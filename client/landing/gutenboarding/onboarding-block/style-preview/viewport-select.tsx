@@ -1,15 +1,29 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { SVG, Path, Rect, Button } from '@wordpress/components';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 import type { Viewport } from './types';
+
+interface ButtonProps {
+	onClick: () => void;
+	isSelected?: boolean;
+}
+const ViewportButton: React.FunctionComponent< ButtonProps > = ( {
+	children,
+	onClick,
+	isSelected,
+	...rest
+} ) => (
+	<Button
+		className={ classnames( 'style-preview__viewport-select-button', {
+			'is-selected': isSelected,
+		} ) }
+		onClick={ onClick }
+		{ ...rest }
+	>
+		{ children }
+	</Button>
+);
 
 // TODO FIXME: React elements are a poor choice for static svgs.
 // Refactor, external svg with use?
@@ -78,26 +92,5 @@ const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected 
 		</div>
 	);
 };
-
-interface ButtonProps {
-	onClick: () => void;
-	isSelected?: boolean;
-}
-const ViewportButton: React.FunctionComponent< ButtonProps > = ( {
-	children,
-	onClick,
-	isSelected,
-	...rest
-} ) => (
-	<Button
-		className={ classnames( 'style-preview__viewport-select-button', {
-			'is-selected': isSelected,
-		} ) }
-		onClick={ onClick }
-		{ ...rest }
-	>
-		{ children }
-	</Button>
-);
 
 export default ViewportSelect;

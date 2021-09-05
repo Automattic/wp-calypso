@@ -1,5 +1,6 @@
 import {
 	DataHelper,
+	MediaHelper,
 	LoginFlow,
 	MediaPage,
 	SidebarComponent,
@@ -7,53 +8,60 @@ import {
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
-	// Parametrized test.
+	let testImage;
 	let page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	[
-		[ 'Simple', 'defaultUser' ],
-		[ 'Atomic', 'wooCommerceUser' ],
-	].forEach( function ( [ siteType, user ] ) {
-		describe( `Edit Image (${ siteType })`, function () {
-			let mediaPage;
+	beforeAll( async () => {
+		testImage = await MediaHelper.createTestImage();
+	} );
 
-			it( 'Log In', async function () {
-				const loginFlow = new LoginFlow( page, user );
-				await loginFlow.logIn();
-			} );
+	describe.each`
+		siteType      | user
+		${ 'Simple' } | ${ 'defaultUser' }
+		${ 'Atomic' } | ${ 'wooCommerceUser' }
+	`( 'Edit Image ($siteType)', function ( { user } ) {
+		let mediaPage;
 
-			it( 'Navigate to Media', async function () {
-				const sidebarComponent = await SidebarComponent.Expect( page );
-				await sidebarComponent.gotoMenu( { item: 'Media' } );
-			} );
+		it( 'Log In', async function () {
+			const loginFlow = new LoginFlow( page, user );
+			await loginFlow.logIn();
+		} );
 
-			it( 'See media gallery', async function () {
-				mediaPage = await MediaPage.Expect( page );
-			} );
+		it( 'Navigate to Media', async function () {
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Media' );
+		} );
 
-			it( 'Show only images', async function () {
-				await mediaPage.clickTab( 'Images' );
-			} );
+		it( 'See media gallery', async function () {
+			mediaPage = new MediaPage( page );
+		} );
 
-			it( 'Select the first image item', async function () {
-				await mediaPage.selectItem( 1 );
-			} );
+		it( 'Show only images', async function () {
+			await mediaPage.clickTab( 'Images' );
+		} );
 
-			it( 'Click to edit selected image', async function () {
-				await mediaPage.editImage();
-			} );
+		it( 'Upload image', async function () {
+			// Ideally, we'd not want to upload an image (that's a separate test)
+			// but occasionally, the photo gallery is cleaned out leaving no images.
+			const uploadedImageHandle = await mediaPage.upload( testImage );
+			const isVisible = await uploadedImageHandle.isVisible();
+			expect( isVisible ).toBe( true );
+		} );
 
-			it( 'Rotate image', async function () {
-				await mediaPage.rotateImage();
-			} );
+		it( 'Click to edit selected image', async function () {
+			await mediaPage.editImage();
+		} );
 
-			it( 'Cancel image edit', async function () {
-				await mediaPage.cancelImageEdit();
-			} );
+		it( 'Rotate image', async function () {
+			await mediaPage.rotateImage();
+		} );
+
+		it( 'Cancel image edit', async function () {
+			await mediaPage.cancelImageEdit();
 		} );
 	} );
 } );

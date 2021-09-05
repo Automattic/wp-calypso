@@ -25,9 +25,9 @@ export default withTrackingTool( 'HotJar' )( MyComponent );
 When combined with other wrappers (like `localize()`):
 
 ```js
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
-import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 
 class MyComponent {
 	render() {

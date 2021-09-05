@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import chai from 'chai';
-
-/**
- * Internal dependencies
- */
 import { canUpdateFiles, isMainNetworkSite } from 'calypso/lib/site/utils';
 
 const assert = chai.assert;

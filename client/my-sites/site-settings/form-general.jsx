@@ -1,54 +1,47 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Card, CompactCard, Button } from '@automattic/components';
+import languages from '@automattic/languages';
+import classNames from 'classnames';
+import { flowRight, get, has } from 'lodash';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import { flowRight, get, has } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import wrapSettingsForm from './wrap-settings-form';
-import { Card, CompactCard, Button } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import LanguagePicker from 'calypso/components/language-picker';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import config from '@automattic/calypso-config';
-import languages from '@automattic/languages';
-import FormInput from 'calypso/components/forms/form-text-input';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import LanguagePicker from 'calypso/components/language-picker';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
-import SiteIconSetting from './site-icon-setting';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import scrollTo from 'calypso/lib/scroll-to';
+import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getSiteOption, isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
-import { preventWidows } from 'calypso/lib/formatting';
-import scrollTo from 'calypso/lib/scroll-to';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { launchSite } from 'calypso/state/sites/launch/actions';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import SiteIconSetting from './site-icon-setting';
+import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -559,7 +552,6 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 			handleSubmitForm,
 			isSavingSettings,
-			siteId,
 			isP2HubSite,
 		} = this.props;
 
@@ -568,14 +560,18 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 		return (
 			<>
-				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
 					id="site-privacy-settings"
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy', { context: 'Privacy Settings header' } ) }
+					title={ translate( 'Privacy {{learnMoreLink/}}', {
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
+						},
+						comment: 'Privacy Settings header',
+					} ) }
 				/>
 				<Card>
 					<form> { this.visibilityOptionsComingSoon() }</form>
@@ -679,24 +675,21 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteIsJetpack = isJetpackSite( state, siteId );
-	const selectedSite = getSelectedSite( state );
 
 	return {
 		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
-		siteIsJetpack,
+		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteIsVip: isVipSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
-		selectedSite,
+		selectedSite: getSelectedSite( state ),
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
-		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
-			state,
-			siteId
-		),
+		isAtomicAndEditingToolkitDeactivated:
+			isAtomicSite( state, siteId ) &&
+			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 	};
 }, mapDispatchToProps );
 

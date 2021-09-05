@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import {
 	getPluginsToInstall,
 	getDefaultPluginInProduct,
 	getDefaultProductInProductGroup,
 	getProductDefinition,
 	productGroups,
+	findProductDefinition,
 } from '../index';
-import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 
 describe( 'Constants and product related utilities test', () => {
 	test( 'getPluginsToInstall returns the relevant plugins to be installed', () => {
@@ -61,5 +55,20 @@ describe( 'Constants and product related utilities test', () => {
 			'NON_EXISTENT_PRODUCT'
 		);
 		expect( receivedForNonExistentProduct ).toEqual( null );
+	} );
+
+	test( 'findProductDefinition returns the correct product details, given an an available product slug', () => {
+		const received = findProductDefinition( YOAST_FREE );
+		expect( received ).toEqual( {
+			productName: 'Yoast Free',
+			defaultPluginSlug: 'wordpress-seo',
+			isPurchasableProduct: false,
+			pluginsToBeInstalled: [ 'wordpress-seo' ],
+		} );
+	} );
+
+	test( 'findProductDefinition returns null, given a product slug that does not exist', () => {
+		const received = findProductDefinition( 'PRODUCT_SLUG_THAT_DOES_NOT_EXIST' );
+		expect( received ).toEqual( null );
 	} );
 } );

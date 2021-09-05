@@ -50,7 +50,7 @@
 	// displays at full height.
 	.is-section-preview & {
 		height: 100%;
-		padding: 47px 0 0 calc( var( --sidebar-width-max ) + 1px );
+		padding: calc( var( --masterbar-height ) + 1px ) 0 0 calc( var( --sidebar-width-max ) + 1px );
 	}
 
 	// Tablets
@@ -68,7 +68,7 @@
 		}
 
 		.is-section-preview & {
-			padding: 47px 0 0 ( 228px + 1px );
+			padding: calc( var( --masterbar-height ) + 1px ) 0 0 ( 228px + 1px );
 		}
 	}
 
@@ -76,14 +76,14 @@
 	@include breakpoint-deprecated( '<660px' ) {
 		margin-left: 0;
 		padding: 0;
-		padding-top: 47px;
+		padding-top: calc( var( --masterbar-height ) + 1px );
 
 		.has-no-sidebar & {
 			padding-left: 0;
 		}
 
 		.is-section-preview & {
-			padding: 47px 0 0;
+			padding: calc( var( --masterbar-height ) + 1px ) 0 0;
 		}
 	}
 }

@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import weChatProcessor from '../lib/we-chat-processor';
 import wp from 'calypso/lib/wp';
+import weChatProcessor from '../lib/we-chat-processor';
 
 jest.mock( 'calypso/lib/wp' );
 

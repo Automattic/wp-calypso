@@ -1,23 +1,24 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { Dialog } from '@automattic/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { Dialog } from '@automattic/components';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import {
+	acceptAutoLoadingHomepageWarning,
+	hideAutoLoadingHomepageWarning,
+	activate as activateTheme,
+} from 'calypso/state/themes/actions';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -28,18 +29,7 @@ import {
 	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
-import {
-	acceptAutoLoadingHomepageWarning,
-	hideAutoLoadingHomepageWarning,
-	activate as activateTheme,
-} from 'calypso/state/themes/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './auto-loading-homepage-modal.scss';
 
 class AutoLoadingHomepageModal extends Component {

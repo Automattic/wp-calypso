@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
-import DomainProductPrice from 'calypso/components/domains/domain-product-price';
-import { Button } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
-		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
-			.isRequired,
+		buttonContent: PropTypes.node.isRequired,
 		buttonStyles: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,
@@ -93,13 +81,6 @@ class DomainSuggestion extends React.Component {
 			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
 		} );
 
-		const wrapDivActionContainer = ( contentElement ) =>
-			isReskinned ? (
-				<div className="domain-suggestion__action-container">{ contentElement }</div>
-			) : (
-				contentElement
-			);
-
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		/* eslint-disable jsx-a11y/interactive-supports-focus */
 		return (
@@ -112,13 +93,16 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className={ contentClassName }>
 					{ children }
-					{ this.renderPrice() }
+					{ ( isReskinned || ! isFeatured ) && this.renderPrice() }
 				</div>
-				{ wrapDivActionContainer(
+				{ ! isReskinned && isFeatured && (
+					<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
+				) }
+				<div className="domain-suggestion__action-container">
 					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 						{ this.props.buttonContent }
 					</Button>
-				) }
+				</div>
 				{ this.props.showChevron && (
 					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
 				) }

@@ -14,15 +14,8 @@
  * API call and used to customize the invitation and inform the HE that this is a Rebrand Cities session.
  */
 
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 
 const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';

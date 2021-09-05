@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import getSite from './get-site';
 
 /**

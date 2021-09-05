@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import WixLogo from './logos/wix';
+import SocialLogo from 'calypso/components/social-logo';
 import MediumLogo from './logos/medium';
 import SubstackLogo from './logos/substack';
-import SocialLogo from 'calypso/components/social-logo';
+import WixLogo from './logos/wix';
 
-/**
- * Style dependencies
- */
 import './importer-logo.scss';
 
 const ImporterLogo = ( { icon } ) => {
-	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {
+	if ( [ 'wordpress', 'blogger-alt', 'squarespace' ].includes( icon ) ) {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 	}
 

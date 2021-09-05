@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import creditcards from 'creditcards';
-import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
-import i18n from 'i18n-calypso';
 import { isValidPostalCode } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import creditcards from 'creditcards';
+import i18n from 'i18n-calypso';
+import { capitalize, compact, isEmpty, mergeWith } from 'lodash';
 import {
 	isValidCPF,
 	isValidCNPJ,

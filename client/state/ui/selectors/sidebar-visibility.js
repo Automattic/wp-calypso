@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/ui/init';
 import { getPreference } from 'calypso/state/preferences/selectors';
 

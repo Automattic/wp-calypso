@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import stringify from 'fast-json-stable-stringify';
 import { parse } from 'qs';
 

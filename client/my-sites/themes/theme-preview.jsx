@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import QueryTheme from 'calypso/components/data/query-theme';
-import { connectOptions } from './theme-options';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import WebPreview from 'calypso/components/web-preview';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { hideThemePreview } from 'calypso/state/themes/actions';
 import {
 	getThemeDemoUrl,
 	getThemePreviewThemeOptions,
@@ -23,9 +17,7 @@ import {
 	isActivatingTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { hideThemePreview } from 'calypso/state/themes/actions';
-import WebPreview from 'calypso/components/web-preview';
+import { connectOptions } from './theme-options';
 
 class ThemePreview extends React.Component {
 	static displayName = 'ThemePreview';

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { ReactComponent, ReactNode } from 'react';
 
 /**

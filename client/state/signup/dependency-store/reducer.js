@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
 	SIGNUP_DEPENDENCY_STORE_REMOVE_SITE_SLUG,
@@ -8,8 +5,8 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_COMPLETE_RESET,
 } from 'calypso/state/action-types';
-import { dependencyStoreSchema } from './schema';
 import { withSchemaValidation } from 'calypso/state/utils';
+import { dependencyStoreSchema } from './schema';
 
 const EMPTY = {};
 

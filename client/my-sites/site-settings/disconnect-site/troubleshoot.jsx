@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import HelpButton from 'calypso/jetpack-connect/help-button';
-import JetpackConnectHappychatButton from 'calypso/jetpack-connect/happychat-button';
+import React from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import JetpackConnectHappychatButton from 'calypso/jetpack-connect/happychat-button';
+import HelpButton from 'calypso/jetpack-connect/help-button';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';

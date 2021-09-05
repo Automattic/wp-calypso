@@ -2,19 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import React from 'react';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import fixtures from './fixtures';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import fixtures from './fixtures';
 
 jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )

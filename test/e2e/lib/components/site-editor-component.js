@@ -1,10 +1,10 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
+import AbstractEditorComponent from './abstract-editor-component';
 
-export default class SiteEditorComponent extends AsyncBaseContainer {
+export default class SiteEditorComponent extends AbstractEditorComponent {
 	constructor( driver, url, editorType = 'iframe' ) {
 		super( driver, By.css( '.edit-site-header' ), url );
 		this.editorType = editorType;
@@ -67,20 +67,6 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 
 		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
-	}
-
-	async openBlockInserterAndSearch( searchTerm ) {
-		await this.runInCanvas( async () => {
-			await driverHelper.scrollIntoView(
-				this.driver,
-				By.css( '.block-editor-writing-flow' ),
-				'start'
-			);
-		} );
-
-		await this.openBlockInserter();
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
-		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
 	}
 
 	async insertPattern( category, name ) {
@@ -243,26 +229,6 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		}
 
 		await driverHelper.waitUntilElementNotLocated( this.driver, snackbarNoticeLocator );
-	}
-
-	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
-		const containerBlockId = await this.addBlock( container );
-		await this.runInCanvas( async () => {
-			const blockAppenderLocator = By.css(
-				`#${ containerBlockId } .block-editor-button-block-appender`
-			);
-			await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
-		} );
-
-		const quickInserterSearchInputLocator = By.css(
-			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
-		);
-		const patternItemLocator = By.css(
-			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
-		);
-
-		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
-		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 
 	async toggleNavigationSidebar() {

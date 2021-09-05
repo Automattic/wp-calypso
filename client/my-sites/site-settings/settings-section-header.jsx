@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import SectionHeader from 'calypso/components/section-header';
 
 const SettingsSectionHeader = ( {

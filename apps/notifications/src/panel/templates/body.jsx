@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { html } from '../indices-to-html';
+import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
-import Comment from './block-comment';
 import NoteActions from './actions';
-import NotePreface from './preface';
+import Comment from './block-comment';
 import Post from './block-post';
 import User from './block-user';
-import { bumpStat } from '../rest-client/bump-stat';
-import { html } from '../indices-to-html';
 import { p, zipWithSignature } from './functions';
+import NotePreface from './preface';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

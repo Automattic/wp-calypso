@@ -1,9 +1,4 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import {
 	Checkout,
 	CheckoutStep,
@@ -22,25 +17,22 @@ import {
 	useTotal,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
-import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import useCouponFieldState from '../hooks/use-coupon-field-state';
-import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
-import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary from './wp-checkout-order-summary';
-import WPContactForm from './wp-contact-form';
-import WPContactFormSummary from './wp-contact-form-summary';
-import { isCompleteAndValid } from '../types/wpcom-store-state';
-import MaterialIcon from 'calypso/components/material-icon';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import SecondaryCartPromotions from './secondary-cart-promotions';
+import MaterialIcon from 'calypso/components/material-icon';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasTransferProduct,
+} from 'calypso/lib/cart-values/cart-items';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
 import {
 	handleContactValidationResult,
 	isContactValidationResponseValid,
@@ -49,20 +41,25 @@ import {
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
-import { login } from 'calypso/lib/paths';
-import getContactDetailsType from '../lib/get-contact-details-type';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasTransferProduct,
-} from 'calypso/lib/cart-values/cart-items';
-import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import PaymentMethodStep from './payment-method-step';
+import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
+import getContactDetailsType from '../lib/get-contact-details-type';
+import { isCompleteAndValid } from '../types/wpcom-store-state';
+import badge14Src from './assets/icons/badge-14.svg';
+import badge7Src from './assets/icons/badge-7.svg';
+import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import CheckoutHelpLink from './checkout-help-link';
-import type { CountryListItem } from '../types/country-list-item';
+import PaymentMethodStep from './payment-method-step';
+import SecondaryCartPromotions from './secondary-cart-promotions';
+import WPCheckoutOrderReview from './wp-checkout-order-review';
+import WPCheckoutOrderSummary from './wp-checkout-order-summary';
+import WPContactForm from './wp-contact-form';
+import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
+import type { CountryListItem } from '../types/country-list-item';
+import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -170,9 +167,12 @@ export default function WPCheckout( {
 
 	const contactInfo: ManagedContactDetails =
 		useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
-		'wpcom'
-	);
+	const {
+		setSiteId,
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = useDispatch( 'wpcom' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -188,7 +188,7 @@ export default function WPCheckout( {
 		// checkout -> login -> checkout.
 		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
 		const redirectTo = isJetpackCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
+			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
 			: '/checkout/no-site?cart=no-user';
 
 		const loginUrl = login( { redirectTo, emailAddress } );
@@ -196,7 +196,6 @@ export default function WPCheckout( {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
 				email: emailAddress,
-				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
 			} )
 		);
 
@@ -210,9 +209,6 @@ export default function WPCheckout( {
 								reduxDispatch(
 									recordTracksEvent( 'calypso_checkout_composite_login_click', {
 										email: emailAddress,
-										checkout_flow: isJetpackCheckout
-											? 'site_only_checkout'
-											: 'wpcom_registrationless',
 									} )
 								)
 							}
@@ -238,6 +234,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			const isSignupValidationValid = isContactValidationResponseValid(
 				validationResult,
@@ -258,6 +255,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'domain' ) {
@@ -272,6 +270,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'gsuite' ) {
@@ -286,6 +285,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
@@ -442,6 +442,7 @@ export default function WPCheckout( {
 						<SecondaryCartPromotions
 							responseCart={ responseCart }
 							addItemToCart={ addItemToCart }
+							isCartPendingUpdate={ isCartPendingUpdate }
 						/>
 						<CheckoutHelpLink />
 					</CheckoutSummaryBody>
@@ -449,6 +450,7 @@ export default function WPCheckout( {
 			</CheckoutSummaryArea>
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
+				submitButtonFooter={ <SubmitButtonFooter /> }
 				disableSubmitButton={ isOrderReviewActive }
 			>
 				{ infoMessage }
@@ -657,6 +659,70 @@ function SubmitButtonHeader() {
 		</SubmitButtonHeaderWrapper>
 	);
 }
+
+const SubmitButtonFooter = () => {
+	const { responseCart } = useShoppingCart();
+	const translate = useTranslate();
+
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
+
+	if ( ! hasCartJetpackProductsOnly ) {
+		return null;
+	}
+
+	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
+	const show14DayGuarantee = responseCart?.products?.every( isYearly );
+	const content =
+		show7DayGuarantee || show14DayGuarantee ? (
+			translate( '%(dayCount)s day money back guarantee', {
+				args: {
+					dayCount: show7DayGuarantee ? 7 : 14,
+				},
+			} )
+		) : (
+			<>
+				{ translate( '14 day money back guarantee on yearly subscriptions' ) }
+				<br />
+				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
+			</>
+		);
+	let imgSrc = badgeGenericSrc;
+
+	if ( show7DayGuarantee ) {
+		imgSrc = badge7Src;
+	} else if ( show14DayGuarantee ) {
+		imgSrc = badge14Src;
+	}
+
+	return (
+		<SubmitButtonFooterWrapper>
+			<img src={ imgSrc } alt="" />
+			<span>{ content }</span>
+		</SubmitButtonFooterWrapper>
+	);
+};
+
+const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+
+	margin-top: 1.25rem;
+
+	color: ${ ( props ) => props.theme.colors.textColor };
+
+	font-weight: 500;
+
+	img {
+		margin-right: 0.5rem;
+	}
+
+	span {
+		padding-top: 3px;
+	}
+`;
 
 const SubmitButtonHeaderWrapper = styled.div`
 	display: none;

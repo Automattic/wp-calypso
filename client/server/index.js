@@ -4,16 +4,9 @@
 import 'source-map-support/register';
 import '@automattic/calypso-polyfills';
 
-/**
- * External dependencies.
- */
 import fs from 'fs';
-
-/**
- * Internal dependencies
- */
-import boot from './boot';
 import config from '@automattic/calypso-config';
+import boot from './boot';
 import { getLogger } from './lib/logger';
 
 const logger = getLogger();

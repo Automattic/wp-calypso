@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
@@ -29,6 +26,7 @@ export const DOMAIN_PRIMARY = {
 	blogId: SITE_ID_FIRST,
 	bundledPlanSubscriptionId: null,
 	canSetAsPrimary: true,
+	connectionMode: typeof undefined,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
 	currentUserCanAddEmail: true,
@@ -105,6 +103,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	blogId: SITE_ID_SECOND,
 	bundledPlanSubscriptionId: null,
 	canSetAsPrimary: true,
+	connectionMode: typeof undefined,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
 	currentUserCanAddEmail: false,

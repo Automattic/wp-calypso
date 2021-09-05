@@ -1,25 +1,18 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ * WARNING: No ES6 modules here. Not transpiled! *
  */
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const process = require( 'process' );
-const webpack = require( 'webpack' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const webpack = require( 'webpack' );
 const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-
-/**
- * Internal dependencies
- */
 const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
@@ -37,7 +30,6 @@ const cachePath = path.resolve( '.cache' );
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
  * @param  {object}  env                                 environment options
  * @param  {object}  argv                                options map
  * @param  {object}  argv.entry                          Entry point(s)
@@ -123,7 +115,6 @@ function getWebpackConfig(
 					postCssOptions: {
 						...( fs.existsSync( postCssConfigPath ) ? { config: postCssConfigPath } : {} ),
 					},
-					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 				} ),
 				FileConfig.loader(),
 			],

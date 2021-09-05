@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import Count from 'calypso/components/count';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderSidebarFollowingItem from './item';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
-import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
-import SidebarItem from 'calypso/layout/sidebar/item';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Count from 'calypso/components/count';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import ReaderSidebarFollowingItem from './item';
 import '../style.scss';
 
 export class ReaderSidebarFollowedSites extends Component {

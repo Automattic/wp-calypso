@@ -1,0 +1,24 @@
+name: Tooling Request
+description: Bug or feature request related to scripts, tooling, DevX, etc.
+title: "Tooling:"
+labels: "[Type] Tooling"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to Calypso! Pick a clear title ("ETK: Build script fails to build SPT files") and proceed.
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: Describe the problem or suggest an improvement.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide more context as applicable.
+      placeholder: |
+        eg. nodeJS: 16.7.0
+            browser: Firefox Nightly 92.0a1

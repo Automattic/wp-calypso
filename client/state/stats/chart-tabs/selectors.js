@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 
 import 'calypso/state/stats/init';

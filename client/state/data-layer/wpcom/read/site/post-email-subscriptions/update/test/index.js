@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { merge } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { updateNewPostEmailSubscription } from 'calypso/state/reader/follows/actions';
 import {
 	requestUpdatePostEmailSubscription,
 	receiveUpdatePostEmailSubscription,
 	receiveUpdatePostEmailSubscriptionError,
 } from '../';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { updateNewPostEmailSubscription } from 'calypso/state/reader/follows/actions';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestUpdatePostEmailSubscription', () => {

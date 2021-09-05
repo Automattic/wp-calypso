@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
+import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
-import getDomainDetails from './get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 

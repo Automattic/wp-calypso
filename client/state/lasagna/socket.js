@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
 import createDebug from 'debug';
-
-/**
- * Internal dependencies
- */
-import { lasagna } from './middleware';
 import { getCurrentUserLasagnaJwt } from 'calypso/state/current-user/selectors';
 import { socketConnected, socketDisconnected } from 'calypso/state/lasagna/actions';
+import { lasagna } from './middleware';
 
 const debug = createDebug( 'lasagna:socket' );
 

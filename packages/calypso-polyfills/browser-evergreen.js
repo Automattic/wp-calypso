@@ -4,8 +4,5 @@
 // avoid including polyfills for features that are supported acroll all target
 // browsers.
 
-/**
- * External dependencies
- */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';

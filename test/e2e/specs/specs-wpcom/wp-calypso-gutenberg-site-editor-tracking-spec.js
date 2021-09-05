@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import config from 'config';
 import { By, Key } from 'selenium-webdriver';
+/**
+ * Internal dependencies
+ */
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
@@ -15,7 +21,10 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-const siteEditorUser = 'siteEditorSimpleSiteUser';
+const siteEditorUser =
+	process.env.GUTENBERG_EDGE === 'true'
+		? 'siteEditorSimpleSiteEdgeUser'
+		: 'siteEditorSimpleSiteUser';
 
 const navigationSidebarBackToRoot = async ( driver ) => {
 	const backButtonLocator = By.css(
@@ -183,7 +192,12 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 
 	let updateEvents = await getGlobalStylesUpdateEvents( driver );
 
-	assert.strictEqual( updateEvents.length, 3 );
+	// Due to variation in test speed combined with the debouncing of events the step to update the
+	// fontSize input can trigger anywhere between 1 and 3 events.  Thus we expect to see between 3
+	// and 5 events total.
+	assert( updateEvents.length >= 3, 'There should be at least 3 update events' );
+	assert( updateEvents.length <= 5, 'There should be no more than 5 update events' );
+
 	assert(
 		updateEvents.some( ( event ) => {
 			const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
@@ -194,7 +208,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 				element_type === undefined &&
 				palette_slug === undefined &&
 				typeof field_value === 'string' &&
-				field_value[ 0 ] === '#'
+				( field_value[ 0 ] === '#' || field_value.startsWith( 'var' ) )
 			);
 		} )
 	);
@@ -221,7 +235,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 				element_type === 'link' &&
 				palette_slug === undefined &&
 				typeof field_value === 'string' &&
-				field_value[ 0 ] === '#'
+				( field_value[ 0 ] === '#' || field_value.startsWith( 'var' ) )
 			);
 		} )
 	);
@@ -373,17 +387,11 @@ const GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME = 'block-type';
 describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	// TODO: Create an edge user with a Site Editor enabled site
-	before( async function () {
-		if ( process.env.GUTENBERG_EDGE === 'true' ) {
-			this.skip();
-		}
-	} );
-
 	describe( 'Tracking Site Editor: @parallel', function () {
 		it( 'Log in with site editor user and Site Editor opens successfully', async function () {
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
-			await loginFlow.loginAndSelectMySite();
+			const userConfig = dataHelper.getAccountConfig( siteEditorUser );
+			await loginFlow.loginAndSelectMySite( userConfig[ 2 ] );
 
 			const sidebar = await SidebarComponent.Expect( this.driver );
 			await sidebar.selectSiteEditor();
@@ -580,7 +588,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await changeGlobalStylesFontSize( this.driver, '11' );
 				await changeGlobalStylesColor( this.driver, 1, 1 );
-				await changeGlobalStylesColor( this.driver, 3, 1 );
+				await changeGlobalStylesColor( this.driver, 3, 2 );
 				await saveGlobalStyles( this.driver );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
@@ -724,8 +732,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 						'Choose'
 					);
 					await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
+				} );
+				const confirmNameAndCreateLocator = driverHelper.createTextLocator(
+					By.css( '.wp-block-template-part__placeholder-create-new__title-form button' ),
+					'Create'
+				);
+				await driverHelper.clickWhenClickable( this.driver, confirmNameAndCreateLocator );
 
-					// Wait for this template part to load its new content.
+				// Wait for this template part to load its new content.
+				await editor.runInCanvas( async () => {
 					await driverHelper.waitUntilElementLocated(
 						this.driver,
 						By.css( `#${ blockId }.block-editor-block-list__layout` )
@@ -751,9 +766,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			it( 'Tracks "wpcom_block_editor_template_part_choose_existing"', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				// Undo the template part creation to go back to the placeholder.  Use store api to
-				// trigger undo since the UI is not present in mobile viewport.
-				await this.driver.executeScript( `return window.wp.data.dispatch( 'core' ).undo()` );
+
+				await editor.addBlock( 'Header', 'template-part\\/header', 'Block: Template Part' );
 
 				await editor.runInCanvas( async () => {
 					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
@@ -765,7 +779,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( '.wp-block-template-part__selection-preview-item' )
+					By.css( '.wp-block-template-part__selection-preview-item-title' )
 				);
 
 				const eventsStack = await getEventsStack( this.driver );
@@ -862,15 +876,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Templates'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
 
 				const templateMenuItemLocator = driverHelper.createTextLocator(
 					By.css( '.edit-site-navigation-panel__template-item-title' ),
-					'404'
+					'Index'
 				);
 				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
 
@@ -881,8 +890,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template' );
-				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//404' );
-				assert.strictEqual( editEventData.item_slug, '404' );
+				assert.strictEqual( editEventData.item_id, 'pub/blockbase//index' );
+				assert.strictEqual( editEventData.item_slug, 'index' );
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_add" when creating a new template', async function () {
@@ -955,7 +964,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template_part' );
-				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( editEventData.item_id, 'pub/blockbase//header' );
 			} );
 
 			it( 'make sure back to dashboard button exists', async function () {
@@ -991,7 +1000,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'page' );
-				assert.strictEqual( editEventData.item_slug, 'home' );
+				assert(
+					editEventData.item_slug.startsWith( 'home' ),
+					'wpcom_block_editor_nav_sidebar_item_edit content event has expected itemSlug'
+				);
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a category item (type = taxonomy_category)', async function () {
@@ -1149,7 +1161,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					);
 				} );
 				const quickInserterSearchInputLocator = By.css(
-					'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+					'.block-editor-inserter__quick-inserter .components-search-control__input'
 				);
 				const blockItemLocator = By.css(
 					'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item'
@@ -1167,7 +1179,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( insertedEvents.length, 1 );
 				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
-				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/blockbase//header' );
 			} );
 
 			it( 'For "wpcom_block_moved_*" events', async function () {
@@ -1188,7 +1200,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const matchesContext = events.filter(
 					( event ) =>
 						event[ 1 ].entity_context === 'core/template-part/header' &&
-						event[ 1 ].template_part_id === 'pub/tt1-blocks//header'
+						event[ 1 ].template_part_id === 'pub/blockbase//header'
 				);
 				assert.strictEqual( matchesContext.length, 2 );
 			} );
@@ -1210,7 +1222,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( events.length, 1 );
 				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
-				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/blockbase//header' );
 			} );
 		} );
 

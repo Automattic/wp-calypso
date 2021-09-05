@@ -1,18 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { CardCvcElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { CardCvcElement } from 'react-stripe-elements';
 import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
+import { Input } from 'calypso/my-sites/domains/components/form';
+import CVVImage from './cvv-image';
 import {
 	GridRow,
 	Label,
@@ -20,8 +15,6 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
-import { Input } from 'calypso/my-sites/domains/components/form';
-import CVVImage from './cvv-image';
 
 export default function CreditCardCvvField( {
 	handleStripeFieldChange,

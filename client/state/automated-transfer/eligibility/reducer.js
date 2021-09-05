@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { property, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE } from 'calypso/state/action-types';
 import { withPersistence } from 'calypso/state/utils';
 

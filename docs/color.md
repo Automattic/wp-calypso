@@ -55,7 +55,7 @@ Each theme property can be suffixed with `-rgb`. Those have been defined with tr
 --color-primary-rgb: var( --studio-blue-50-rgb );
 
 .my-selector {
-  border-color: rgba( var( --color-primary-rgb ), 0.5 );
+	border-color: rgba( var( --color-primary-rgb ), 0.5 );
 }
 ```
 
@@ -63,10 +63,14 @@ When creating an alpha gradient for a single color, don’t use `transparent`. R
 
 ```css
 .long-content-fade {
-  /* Improper use */
-  background: linear-gradient( to right, var( --color-surface ), transparent );
-  /* Proper use */
-  background: linear-gradient( to right, var( --color-surface ), rgba( var( --color-surface-rgb ), 0 ) );
+	/* Improper use */
+	background: linear-gradient( to right, var( --color-surface ), transparent );
+	/* Proper use */
+	background: linear-gradient(
+		to right,
+		var( --color-surface ),
+		rgba( var( --color-surface-rgb ), 0 )
+	);
 }
 ```
 

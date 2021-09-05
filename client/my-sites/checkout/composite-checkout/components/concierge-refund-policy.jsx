@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { REFUNDS } from 'calypso/lib/url/support';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { hasConciergeSession } from 'calypso/lib/cart-values/cart-items';
+import { REFUNDS } from 'calypso/lib/url/support';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

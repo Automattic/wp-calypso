@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, keys, difference } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import steps from 'calypso/signup/config/steps-pure';
 
 export function assertValidDependencies( stepName, providedDependencies ) {

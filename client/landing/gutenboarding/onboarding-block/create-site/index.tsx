@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
+import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelect } from '@wordpress/data';
+import * as React from 'react';
 import { useInterval } from '../../../../lib/interval/use-interval';
-
-/**
- * Internal dependencies
- */
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { STORE_KEY } from '../../stores/onboard';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // Total time to perform "loading"

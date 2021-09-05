@@ -1,27 +1,25 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import page from 'page';
+import { Card, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
-import { Card, ProgressBar } from '@automattic/components';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import EmptyContent from 'calypso/components/empty-content';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
+import EmptyContent from 'calypso/components/empty-content';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+	getAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
+import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -32,13 +30,7 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-	getAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class PluginUpload extends React.Component {
 	state = {

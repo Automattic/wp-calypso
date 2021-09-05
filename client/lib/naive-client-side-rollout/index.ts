@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { getCurrentUser } from '@automattic/calypso-analytics';
 
 /**

@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .post-relative-time-status {
 	display: inline-block;
 
@@ -32,7 +34,7 @@ a.post-relative-time-status__link {
 .post-relative-time-status__time,
 .post-relative-time-status__status {
 	display: inline-block;
-	margin-right: ( 11 / 12 ) * 1em;
+	margin-right:  math.div( 11, 12 )  * 1em;
 }
 
 .post-relative-time-status__time-text,

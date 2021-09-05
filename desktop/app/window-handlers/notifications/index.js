@@ -1,26 +1,15 @@
-/**
- * External Dependencies
- */
-const { debounce } = require( 'lodash' );
-const { ipcMain: ipc, Notification } = require( 'electron' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
-
-/**
- * Internal dependencies
- */
-const Settings = require( '../../lib/settings' );
-const Platform = require( '../../lib/platform' );
-const ViewModel = require( '../../lib/notifications/viewmodel' );
-const log = require( '../../lib/logger' )( 'desktop:notifications' );
+const { ipcMain: ipc, Notification } = require( 'electron' );
+const { debounce } = require( 'lodash' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );
+const log = require( '../../lib/logger' )( 'desktop:notifications' );
+const ViewModel = require( '../../lib/notifications/viewmodel' );
+const Platform = require( '../../lib/platform' );
+const Settings = require( '../../lib/settings' );
 
 const webBase = Config.baseURL();
 
-/**
- *
- * Module dependencies
- */
 const delay = promisify( setTimeout );
 
 let notificationBadgeCount = 0;

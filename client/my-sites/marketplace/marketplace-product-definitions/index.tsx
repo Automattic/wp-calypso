@@ -1,41 +1,51 @@
-/**
- * External dependencies
- */
-import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { YOAST_PREMIUM, YOAST_FREE, WOO_UPS_SHIPPING } from '@automattic/calypso-products';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import {
 	IProductDefinition,
 	IProductCollection,
 	IProductGroupCollection,
 } from 'calypso/my-sites/marketplace/types';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 
 /**
  * A set of logical product groups, grouped by actual products, to be shown in one product (group) page
  * i.e. : YOAST_PREMIUM, YOAST_FREE are 2 products that belong to the product group YOAST
- * */
+ */
 export const YOAST = 'YOAST';
+export const WOO = 'WOO';
 
-// TODO: Integrate this data structure with marketplace code
 export const productGroups: IProductGroupCollection = {
 	[ YOAST ]: {
 		products: {
 			[ YOAST_PREMIUM ]: {
+				productName: 'Yoast Premium',
 				defaultPluginSlug: 'wordpress-seo',
 				pluginsToBeInstalled: [ 'wordpress-seo-premium', 'wordpress-seo', 'yoast-test-helper' ],
 				isPurchasableProduct: true,
 			},
 			[ YOAST_FREE ]: {
+				productName: 'Yoast Free',
 				defaultPluginSlug: 'wordpress-seo',
 				pluginsToBeInstalled: [ 'wordpress-seo' ],
 				isPurchasableProduct: false,
 			},
 		},
 	},
+	[ WOO ]: {
+		products: {
+			[ WOO_UPS_SHIPPING ]: {
+				productName: 'UPS Shipping',
+				defaultPluginSlug: 'woocommerce-shipping-ups',
+				pluginsToBeInstalled: [ 'woocommerce-shipping-ups', 'woocommerce' ],
+				isPurchasableProduct: true,
+			},
+		},
+	},
 };
+
+export const getAllProducts = (): IProductCollection =>
+	Object.values( productGroups )
+		.map( ( productGroup ) => productGroup.products )
+		.reduce( ( productsMap, curr ) => ( { ...productsMap, ...curr } ), {} );
 
 /**
  * Provides the plugin that needs to be installed for a given product
@@ -101,6 +111,23 @@ export function getProductDefinition(
 		marketplaceDebugger(
 			`Product does not exist for provided parameters: ${ productGroupSlug }, ${ productSlug }`
 		);
+		return null;
+	}
+	return productDefinition;
+}
+
+/**
+ * Do a simple search of all the products for a given product slug
+ *
+ * @param {string} productSlug The product slug
+ * @returns {string} The product details
+ */
+export function findProductDefinition(
+	productSlug: keyof IProductCollection
+): IProductDefinition | null {
+	const productDefinition = getAllProducts()[ productSlug ];
+	if ( ! productDefinition ) {
+		marketplaceDebugger( `Product does not exist for provided parameters: ${ productSlug }` );
 		return null;
 	}
 	return productDefinition;

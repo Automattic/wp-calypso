@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
-import { addQueryArgs } from 'calypso/lib/url';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useTranslate } from 'i18n-calypso';
 
 function DownFlow( { confirmHref, backHref, site, recordTracksEvent: tracks } ) {
 	const translate = useTranslate();

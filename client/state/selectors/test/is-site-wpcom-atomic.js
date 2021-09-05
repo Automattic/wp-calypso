@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 describe( 'isSiteWpcomAtomic()', () => {

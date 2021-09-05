@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { TreeSelect } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const TreeSelectExample = () => {
 	const [ selection, setSelection ] = useState( '' );

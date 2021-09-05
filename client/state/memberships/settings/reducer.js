@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-
 import { MEMBERSHIPS_SETTINGS_RECEIVE } from '../../action-types';
 
 export default ( state = {}, action ) => {

@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import versionCompare from 'calypso/lib/version-compare';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export default ( state ) => {
 	const hasDocument = 'undefined' !== typeof document;

@@ -1,13 +1,10 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { get } from 'lodash';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/http/actions';
 import {
 	startPollAppPushAuth,
 	stopPollAppPushAuth,
@@ -20,11 +17,6 @@ import {
 	getTwoFactorPushToken,
 	getTwoFactorUserId,
 } from 'calypso/state/login/selectors';
-import { http } from 'calypso/state/http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Module constants

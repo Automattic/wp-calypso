@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 
 describe( 'getCurrentRouteParameterized()', () => {

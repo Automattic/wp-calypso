@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import React, { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
-import type { Plan } from 'calypso/state/plans/types';
 import type { Product } from '@automattic/calypso-products';
+import type { Plan } from 'calypso/state/plans/types';
 
 type Site = {
 	ID: number;

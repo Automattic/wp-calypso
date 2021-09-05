@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 const debug = debugFactory( 'calypso:stats:action-page' );
 

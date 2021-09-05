@@ -1,15 +1,8 @@
-/**
- * External Dependencies
- */
-const { app } = require( 'electron' );
-const path = require( 'path' );
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
-
-/**
- * Internal dependencies
- */
-const Config = require( '../config' );
+const path = require( 'path' );
+const { app } = require( 'electron' );
 const log = require( '../../lib/logger' )( 'desktop:settings' );
+const Config = require( '../config' );
 
 let firstRun = false;
 

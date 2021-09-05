@@ -2,20 +2,16 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import MediaLibrary from '..';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
+import MediaLibrary from '..';
 
 jest.mock( 'calypso/components/data/query-preferences', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/components/data/query-site-features', () =>
 	require( 'calypso/components/empty-component' )
 );
 jest.mock( 'calypso/my-sites/media-library/content', () =>
@@ -49,11 +45,16 @@ describe( 'MediaLibrary', () => {
 		subscribe: () => false,
 	};
 
+	const site = {
+		ID: 123,
+	};
+
 	beforeEach( () => {
 		requestStub.resetHistory();
 	} );
 
-	const getItem = ( source ) => mount( <MediaLibrary store={ store } source={ source } /> );
+	const getItem = ( source ) =>
+		mount( <MediaLibrary site={ site } store={ store } source={ source } /> );
 
 	describe( 'keyring request', () => {
 		test( 'is issued when component mounted and viewing an external source', () => {

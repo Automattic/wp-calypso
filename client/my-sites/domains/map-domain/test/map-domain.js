@@ -1,21 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import pageSpy from 'page';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { MapDomain } from '..';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import HeaderCake from 'calypso/components/header-cake';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { MapDomain } from '..';
 
 jest.mock( 'page', () => {
 	const sinon = require( 'sinon' );

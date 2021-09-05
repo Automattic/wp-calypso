@@ -1,20 +1,8 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
 import { string, node } from 'prop-types';
+import React from 'react';
+import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export function PreferencesHelper() {

@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
+import React, { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Gridicon from 'calypso/components/gridicon';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import Main from 'calypso/components/main';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import Gridicon from 'calypso/components/gridicon';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 
-/**
- * Asset dependencies
- */
-import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import './style.scss';
 
 export default function WPCOMScanUpsellPage(): ReactElement {

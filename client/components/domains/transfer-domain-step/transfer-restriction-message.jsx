@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';

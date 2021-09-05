@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { combineReducers, registerStore } from '@wordpress/data';
-import type { Reducer } from 'redux';
-import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
 import { actions, Action } from './actions';
 import { STORE_KEY } from './constants';
+import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
+import type { Reducer } from 'redux';
 
 const opened: Reducer< boolean, Action > = ( state = false, action ) => {
 	switch ( action.type ) {

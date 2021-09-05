@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
-import { registerPlugin } from '@wordpress/plugins';
-import { withDispatch, withSelect, select } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import registerStore from './src/store';
-import registerDOMUpdater from './src/dom-updater';
-import GlobalStylesSidebar from './src/global-styles-sidebar';
+import { withDispatch, withSelect, select } from '@wordpress/data';
+import { registerPlugin } from '@wordpress/plugins';
 import {
 	FONT_BASE,
 	FONT_BASE_DEFAULT,
@@ -20,6 +10,9 @@ import {
 	FONT_OPTIONS,
 	SITE_NAME,
 } from './src/constants';
+import registerDOMUpdater from './src/dom-updater';
+import GlobalStylesSidebar from './src/global-styles-sidebar';
+import registerStore from './src/store';
 
 // Tell Webpack to compile this into CSS
 import './editor.scss';

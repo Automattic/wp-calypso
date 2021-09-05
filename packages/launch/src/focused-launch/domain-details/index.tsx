@@ -24,7 +24,6 @@ const DomainDetails: React.FunctionComponent = () => {
 	const { getCurrentLaunchFlowUrl, redirectTo } = React.useContext( LaunchContext );
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
-
 	const { siteSubdomain } = useSiteDomains();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
@@ -36,7 +35,7 @@ const DomainDetails: React.FunctionComponent = () => {
 
 	const launchFlowUrl = getCurrentLaunchFlowUrl();
 	const redirectToUseDomainFlow = (): void => {
-		const useYourDomainUrl = `/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSubdomain?.domain }&source=${ launchFlowUrl }`;
+		const useYourDomainUrl = `/start/launch-site/domains-launch/use-your-domain?siteSlug=${ siteSubdomain?.domain }&source=${ launchFlowUrl }`;
 		redirectTo( useYourDomainUrl );
 	};
 

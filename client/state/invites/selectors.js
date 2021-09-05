@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import treeSelect from '@automattic/tree-select';
+import { get, find } from 'lodash';
 
 import 'calypso/state/invites/init';
 

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Path, SVG } from '@wordpress/components';
 
 // For now, this icon shows a font style picker. Once we add colors, we'll want colors.

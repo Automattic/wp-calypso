@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import wp from 'calypso/lib/wp';
+import { createAccount } from '../payment-method-helpers';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import type { PaymentProcessorOptions } from '../types/payment-processors';
-import { createAccount } from '../payment-method-helpers';
-import wp from 'calypso/lib/wp';
 
 export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,

@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { NavigationLink } from '../';
 import Gridicon from 'calypso/components/gridicon';
+import { NavigationLink } from '../';
+const signupUtils = require( 'calypso/signup/utils' );
 
 jest.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: jest.fn(),
@@ -18,7 +12,6 @@ jest.mock( 'calypso/signup/utils', () => ( {
 } ) );
 
 const noop = () => {};
-const signupUtils = require( 'calypso/signup/utils' );
 const { getStepUrl, getFilteredSteps, getPreviousStepName, isFirstStepInFlow } = signupUtils;
 
 describe( 'NavigationLink', () => {

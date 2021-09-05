@@ -1,70 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import debugModule from 'debug';
-import { connect } from 'react-redux';
-import { flowRight, get, includes, startsWith } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AuthFormHeader from './auth-form-header';
-import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import config from '@automattic/calypso-config';
-import Disclaimer from './disclaimer';
+import { Button, Card } from '@automattic/components';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { flowRight, get, includes, startsWith } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
 import Gridicon from 'calypso/components/gridicon';
-import HelpButton from './help-button';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import JetpackConnectHappychatButton from './happychat-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import MainWrapper from './main-wrapper';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import Spinner from 'calypso/components/spinner';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { addQueryArgs } from 'calypso/lib/route';
-import { navigate } from 'calypso/lib/navigate';
-import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import {
-	isFetchingSitePurchases,
-	siteHasJetpackProductPurchase,
-} from 'calypso/state/purchases/selectors';
-import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
-import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
-import {
-	ALREADY_CONNECTED,
-	ALREADY_CONNECTED_BY_OTHER_USER,
-	DEFAULT_AUTHORIZE_ERROR,
-	RETRY_AUTH,
-	RETRYING_AUTH,
-	SECRET_EXPIRED,
-	SITE_BLOCKED,
-	USER_IS_ALREADY_CONNECTED_TO_SITE,
-	XMLRPC_ERROR,
-} from './connection-notice-types';
-import {
-	clearPlan,
-	isCalypsoStartedConnection,
-	isSsoApproved,
-	retrieveMobileRedirect,
-	retrievePlan,
-} from './persistence-utils';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
@@ -78,8 +37,42 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
 } from 'calypso/state/jetpack-connect/selectors';
+import {
+	isFetchingSitePurchases,
+	siteHasJetpackProductPurchase,
+} from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import AuthFormHeader from './auth-form-header';
+import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	DEFAULT_AUTHORIZE_ERROR,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	SITE_BLOCKED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	XMLRPC_ERROR,
+} from './connection-notice-types';
+import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import Disclaimer from './disclaimer';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import JetpackConnectHappychatButton from './happychat-button';
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import MainWrapper from './main-wrapper';
+import {
+	clearPlan,
+	isCalypsoStartedConnection,
+	isSsoApproved,
+	retrieveMobileRedirect,
+	retrievePlan,
+} from './persistence-utils';
+import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 
 /**
@@ -273,7 +266,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
+			[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ].includes( from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -335,14 +328,11 @@ export class JetpackAuthorize extends Component {
 	isWooRedirect = ( props = this.props ) => {
 		const { from } = props.authQuery;
 		return (
-			includes(
-				[
-					'woocommerce-services-auto-authorize',
-					'woocommerce-setup-wizard',
-					'woocommerce-onboarding',
-				],
-				from
-			) || this.getWooDnaConfig( props ).isWooDnaFlow()
+			[
+				'woocommerce-services-auto-authorize',
+				'woocommerce-setup-wizard',
+				'woocommerce-onboarding',
+			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
 

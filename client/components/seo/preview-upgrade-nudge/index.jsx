@@ -1,24 +1,3 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import QueryPlans from 'calypso/components/data/query-plans';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { preventWidows } from 'calypso/lib/formatting';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import FeatureExample from 'calypso/components/feature-example';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	findFirstSimilarPlanKey,
 	TERM_ANNUALLY,
@@ -26,12 +5,22 @@ import {
 	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
 } from '@automattic/calypso-products';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryPlans from 'calypso/components/data/query-plans';
+import FeatureExample from 'calypso/components/feature-example';
+import Gridicon from 'calypso/components/gridicon';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { preventWidows } from 'calypso/lib/formatting';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import upgradeNudgeImage from './preview-upgrade-nudge.png';
+
+import './style.scss';
 
 export const SeoPreviewNudge = ( {
 	canCurrentUserUpgrade,

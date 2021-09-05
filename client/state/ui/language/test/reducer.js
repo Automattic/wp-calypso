@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { LOCALE_SET } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'returns default state with undefined state and empty action', () => {

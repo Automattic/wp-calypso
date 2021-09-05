@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import actions from '../state/actions';
-import Filters from './filters';
-import getFilterName from '../state/selectors/get-filter-name';
-import noteHasFilteredRead from '../state/selectors/note-has-filtered-read';
 import { bumpStat } from '../rest-client/bump-stat';
 import { store } from '../state';
+import actions from '../state/actions';
+import getFilterName from '../state/selectors/get-filter-name';
+import noteHasFilteredRead from '../state/selectors/note-has-filtered-read';
+import Filters from './filters';
 
 function FilterBarController( refreshFunction ) {
 	if ( ! ( this instanceof FilterBarController ) ) {

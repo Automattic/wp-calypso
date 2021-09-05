@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { isEqual, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { ROUTE_SET } from 'calypso/state/action-types';
 
 const timestamped = ( query ) => ( {

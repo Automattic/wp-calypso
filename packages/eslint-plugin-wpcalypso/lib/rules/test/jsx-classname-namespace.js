@@ -9,9 +9,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../jsx-classname-namespace' );
-const formatMessage = require( '../../../test-utils/format-message' );
 const { RuleTester } = require( 'eslint' );
+const formatMessage = require( '../../../test-utils/format-message' );
+const rule = require( '../jsx-classname-namespace' );
 
 //------------------------------------------------------------------------------
 // Constants

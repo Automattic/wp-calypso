@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { getStreamType } from 'calypso/reader/utils';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -12,7 +10,6 @@ import {
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { getStream } from 'calypso/state/reader/streams/selectors';
-import { getStreamType } from 'calypso/reader/utils';
 
 import 'calypso/state/data-layer/wpcom/read/streams';
 

@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useState } from 'react';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { MembershipSubscription } from 'calypso/lib/purchases/types';
-import SiteIcon from 'calypso/blocks/site-icon';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/style.scss';
 
 const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {

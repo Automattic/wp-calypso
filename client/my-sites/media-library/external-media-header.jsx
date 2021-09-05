@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
+import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import { debounce } from 'lodash';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import MediaLibraryScale from './scale';
-import { Card, Button } from '@automattic/components';
 import StickyPanel from 'calypso/components/sticky-panel';
-import { addExternalMedia, fetchNextMediaPage } from 'calypso/state/media/thunks';
 import { changeMediaSource } from 'calypso/state/media/actions';
+import { addExternalMedia, fetchNextMediaPage } from 'calypso/state/media/thunks';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+import MediaLibraryScale from './scale';
 
 const DEBOUNCE_TIME = 250;
 

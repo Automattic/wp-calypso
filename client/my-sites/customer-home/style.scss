@@ -137,3 +137,97 @@ body.is-section-home {
 .is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
 	border-right-color: var( --studio-white );
 }
+
+.primary__customer-home-location-content {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	margin-bottom: 16px;
+
+	// We add margin here to the direct children and strip it away from the
+	// outer edges of child elements.
+	// This lets us align the edges of the pager controls with text & images
+	// from the cards while also giving the checklist the freedom to reach the
+	// edges of the space with it's inner list.
+	.card, .task {
+		margin: 32px;
+	}
+
+	// Extend the checklist to the edge of the primary content area
+	.site-setup-list__nav {
+		margin: 0;
+	}
+
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
+
+	@include breakpoint-deprecated( '>660px' ) {
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	}
+
+}
+
+.primary__customer-home-location-content .dot-pager__controls {
+	// The bottom margin is handled by the card
+	margin: 32px 32px 0;
+}
+
+.primary__customer-home-location-content .task {
+	box-shadow: none;
+
+	.task__text, .task__illustration {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	// Flush against the left and right
+	& > :first-child {
+		padding-left: 0;
+		margin-left: 0;
+	}
+
+	& > :last-child {
+		padding-right: 0;
+		margin-right: 0;
+	}
+
+	.task__illustration {
+		text-align: right;
+	}
+
+	// 32px spacing for everything except the space before the CTA (48px)
+	.task__text {
+		gap: 32px;
+
+		& > * {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.task__actions {
+			// The extra space before the Call to Action
+			margin-top: 16px;
+		}
+	}
+}
+
+.primary__customer-home-location-content .card.site-setup-list {
+	// The checklist here goes flush against the top, bottom & right
+	margin: 0;
+	box-shadow: none;
+
+	.site-setup-list__task {
+		margin: 0;
+		padding: 32px 8px 32px 32px;
+
+		// When the list switches to a single-column
+		@include breakpoint-deprecated( '<960px' ) {
+			// Less space at the top because the nav-item contributes
+			padding: 16px 32px 32px;
+		}
+	}
+}
+
+.primary__is-urgent {
+	background: var( --color-neutral-80 );
+	color: var( --color-neutral-0 );
+}

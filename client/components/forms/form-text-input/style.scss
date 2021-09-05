@@ -13,6 +13,7 @@
 		input[type='url']#{&},
 		input[type='password']#{&},
 		input[type='email']#{&} {
+			text-align: left;
 			/*!rtl:ignore*/
 			direction: ltr;
 		}

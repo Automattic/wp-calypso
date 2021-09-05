@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { availableTimes } from '../reducer';
 import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'calypso/state/action-types';
+import { availableTimes } from '../reducer';
 
 describe( 'concierge/availableTimes/reducer', () => {
 	const mockInitial = {

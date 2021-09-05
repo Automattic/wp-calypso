@@ -1,33 +1,24 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
+import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
 import page from 'page';
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
-import { render, act, fireEvent, screen, within } from '@testing-library/react';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import CompositeCheckout from '../composite-checkout';
 
-/**
- * Mocked dependencies
- */
 jest.mock( 'calypso/state/sites/selectors' );
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
@@ -365,26 +356,34 @@ describe( 'CompositeCheckout', () => {
 			};
 		} );
 
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => (
-			<ReduxProvider store={ store }>
-				<ShoppingCartProvider
-					cartKey={ 'foo.com' }
-					setCart={ mockSetCartEndpoint }
-					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
-					{ ...additionalCartProps }
-				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CompositeCheckout
-							siteId={ siteId }
-							siteSlug={ 'foo.com' }
-							getStoredCards={ async () => [] }
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
-					</StripeHookProvider>
-				</ShoppingCartProvider>
-			</ReduxProvider>
-		);
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+			const managerClient = createShoppingCartManagerClient( {
+				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
+				setCart: mockSetCartEndpoint,
+			} );
+			const mainCartKey = 'foo.com';
+			return (
+				<ReduxProvider store={ store }>
+					<ShoppingCartProvider
+						managerClient={ managerClient }
+						options={ {
+							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+						} }
+						{ ...additionalCartProps }
+					>
+						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+							<CompositeCheckout
+								siteId={ siteId }
+								siteSlug={ 'foo.com' }
+								getStoredCards={ async () => [] }
+								overrideCountryList={ countryList }
+								{ ...additionalProps }
+							/>
+						</StripeHookProvider>
+					</ShoppingCartProvider>
+				</ReduxProvider>
+			);
+		};
 	} );
 
 	afterEach( () => {
@@ -393,125 +392,104 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the line items with prices', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
 	} );
 
 	it( 'renders the tax amount', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'Tax' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Tax' ).map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
 	} );
 
 	it( 'renders the total amount', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'Total' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Total' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$156' )
-		);
 	} );
 
 	it( 'renders the paypal payment method option', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'PayPal' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when partial credits are available', async () => {
-		let renderResult;
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the paypal payment method option when partial credits are available', async () => {
-		let renderResult;
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'PayPal' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
-		let renderResult;
 		const cartChanges = {
 			sub_total_integer: 0,
 			sub_total_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the other payment method options when full credits are available', async () => {
-		let renderResult;
 		const cartChanges = {
 			sub_total_integer: 0,
 			sub_total_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the paypal payment method option when the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = {
 			sub_total_integer: 0,
 			sub_total_display: '0',
@@ -522,134 +500,119 @@ describe( 'CompositeCheckout', () => {
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the free payment method option when the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Free Purchase' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Free Purchase' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect(
+				screen.queryByText( /Enter your (billing|contact) information/ )
+			).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /Enter your (billing|contact) information/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
 		} );
-		const { getByText, queryByText } = renderResult;
-		expect( getByText( 'Postal code' ) ).toBeInTheDocument();
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( queryByText( 'Phone' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'Email' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'City' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'State' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 		} );
-		const { getByText, queryByText } = renderResult;
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
-		expect( queryByText( 'Address' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'City' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'State' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
 		} );
-		const { getByText, getByLabelText } = renderResult;
-		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
-		expect( getByText( 'Address' ) ).toBeInTheDocument();
-		expect( getByText( 'City' ) ).toBeInTheDocument();
-		expect( getByText( 'State' ) ).toBeInTheDocument();
-		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Address' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'City' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'State' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
 		} );
-		const { getByText, queryByText, getByLabelText } = renderResult;
-		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'CW' } } );
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
-		expect( queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'renders the checkout summary', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
+			expect( page.redirect ).not.toHaveBeenCalled();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
-		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [
@@ -818,10 +781,10 @@ describe( 'CompositeCheckout', () => {
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( () => {
+			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 		} );
-		expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it outside of edit mode', async () => {
@@ -835,17 +798,15 @@ describe( 'CompositeCheckout', () => {
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( async () => {
+			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 		} );
-		expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		await act( async () => {
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
@@ -854,17 +815,15 @@ describe( 'CompositeCheckout', () => {
 		);
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( () => {
+			expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-		expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		await act( async () => {
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
@@ -873,87 +832,81 @@ describe( 'CompositeCheckout', () => {
 		);
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( async () => {
+			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
 		const cartChanges = { products: [] };
-		await act( async () => {
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( async () => {
+			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
-		await act( async () => {
-			render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			expect( page.redirect ).not.toHaveBeenCalled();
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the aliased plan to the cart when the url has a plan alias', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
-		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
 		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+		} );
 	} );
 
 	it( 'adds the product to the cart when the url has a jetpack product', async () => {
 		isJetpackSite.mockImplementation( () => true );
 		isAtomicSite.mockImplementation( () => false );
 
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
-		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$41' )
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
 		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Jetpack Scan Daily' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$41' ) );
+		} );
 	} );
 
 	it( 'adds two products to the cart when the url has two jetpack products', async () => {
 		isJetpackSite.mockImplementation( () => true );
 		isAtomicSite.mockImplementation( () => false );
 
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Jetpack Scan Daily' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$41' ) );
+			screen
+				.getAllByLabelText( 'Jetpack Backup (Daily)' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$42' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$41' )
-		);
-		getAllByLabelText( 'Jetpack Backup (Daily)' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$42' )
-		);
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
@@ -969,22 +922,20 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			screen
+				.getAllByLabelText( 'Support Session' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$49' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		getAllByLabelText( 'Support Session' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$49' )
-		);
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
@@ -1000,22 +951,20 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			screen
+				.getAllByLabelText( 'Premium Theme: Ovation' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$69' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		getAllByLabelText( 'Premium Theme: Ovation' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$69' )
-		);
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
@@ -1031,138 +980,106 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			screen
+				.getAllByLabelText( 'bar.com' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$0' ) );
 		} );
-		const { getAllByLabelText, getAllByText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-		getAllByLabelText( 'bar.com' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$0' )
-		);
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
-		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
 		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+		} );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain registration', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 		} );
-		const { getAllByText } = renderResult;
-		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
-		const { getAllByText } = renderResult;
-		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = {
 			productAliasFromUrl: 'domain_map:bar.com,domain_reg:bar.com',
 			purchaseId: '12345,54321',
 		};
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( () => {
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 		} );
-		const { getAllByText } = renderResult;
-		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = {
 			couponCode: 'MYCOUPONCODE',
 			coupon_savings_total_integer: 10,
 			coupon_savings_total_display: '$R10',
 		};
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			screen
+				.getAllByLabelText( 'Coupon: MYCOUPONCODE' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$10' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$10' )
-		);
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
-		let renderResult;
-		const additionalCartProps = { cartKey: undefined };
 		await act( async () => {
-			renderResult = render(
-				<MyCheckout additionalCartProps={ additionalCartProps } />,
-				container
-			);
+			render( <MyCheckout useUndefinedCartKey={ true } />, container );
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
-	} );
-
-	it( 'does not display loading when old cart store has pending updates and then they complete', async () => {
-		let renderResult;
-		let additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
-		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		const { queryByText, rerender } = renderResult;
-		additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: false } };
-		await act( async () => {
-			rerender( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		expect( queryByText( 'Loading checkout' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
 } );
 

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { setCurrentUser } from '../actions';
 import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import { setCurrentUser } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setCurrentUser()', () => {

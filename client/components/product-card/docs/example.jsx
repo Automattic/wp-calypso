@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Fragment, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import ProductCard from '../index';
+import React, { Fragment, useState } from 'react';
 import ProductCardAction from '../action';
-import ProductCardPromoNudge from '../promo-nudge';
+import ProductCard from '../index';
 import ProductCardOptions from '../options';
+import ProductCardPromoNudge from '../promo-nudge';
 
 const purchase = {
 	active: true,

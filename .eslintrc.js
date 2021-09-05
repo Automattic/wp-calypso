@@ -1,6 +1,6 @@
+const path = require( 'path' );
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
-const path = require( 'path' );
 
 module.exports = {
 	root: true,
@@ -167,59 +167,11 @@ module.exports = {
 				'no-unused-vars': 'off',
 				'react/jsx-no-undef': 'off',
 				'react/react-in-jsx-scope': 'off',
-				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
-			},
-		},
-		{
-			files: [
-				'client/sections-filter.js',
-				'client/sections-helper.js',
-				'client/sections-middleware.js',
-				'client/sections-preloaders.js',
-				'client/sections.js',
-				'client/support/**/*',
-				'client/types.ts',
-				'client/webpack.config.desktop.js',
-				'client/webpack.config.js',
-				'client/webpack.config.node.js',
-				'desktop/webpack.config.js',
-				'packages/accessible-focus/**/*',
-				'packages/babel-plugin-i18n-calypso/**/*',
-				'packages/calypso-config/**/*',
-				'packages/calypso-e2e/**/*',
-				'packages/calypso-products/**/*',
-				'packages/calypso-stripe/**/*',
-				'packages/components/**/*',
-				'packages/composite-checkout/**/*',
-				'packages/create-calypso-config/**/*',
-				'packages/data-stores/**/*',
-				'packages/domain-picker/**/*',
-				'packages/js-utils/**/*',
-				'packages/launch/**/*',
-				'packages/mocha-debug-reporter/**/*',
-				'packages/plans-grid/**/*',
-				'packages/spec-junit-reporter/**/*',
-				'packages/spec-xunit-reporter/**/*',
-				'packages/wpcom-checkout/**/*',
-				'test/e2e/**/*',
-			],
-			rules: {
-				'wpcalypso/import-docblock': 'off',
-				'import/order': [
-					'error',
-					{
-						'newlines-between': 'never',
-						alphabetize: {
-							order: 'asc',
-						},
-						groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
-					},
-				],
 			},
 		},
 	],
@@ -408,6 +360,16 @@ module.exports = {
 		'import/namespace': 'error',
 		'import/default': 'error',
 		'import/no-duplicates': 'error',
+		'import/order': [
+			'error',
+			{
+				'newlines-between': 'never',
+				alphabetize: {
+					order: 'asc',
+				},
+				groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
+			},
+		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',

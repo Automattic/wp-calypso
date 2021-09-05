@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import WooCommerceLogo from './woocommerce-logo';
 

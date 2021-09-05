@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
+import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { requestAdminMenu } from '../../state/admin-menu/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import buildFallbackResponse from './static-data/fallback-menu';
-import allSitesMenu from './static-data/all-sites-menu';
-import jetpackMenu from './static-data/jetpack-fallback-menu';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { requestAdminMenu } from '../../state/admin-menu/actions';
+import allSitesMenu from './static-data/all-sites-menu';
+import buildFallbackResponse from './static-data/fallback-menu';
+import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
@@ -55,6 +48,10 @@ const useSiteMenuItems = () => {
 		canCurrentUser( state, selectedSiteId, 'edit_theme_options' )
 	);
 
+	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
+
+	const shouldShowBetaTesting = ! isJetpack && ! isP2;
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
@@ -78,6 +75,7 @@ const useSiteMenuItems = () => {
 		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
+		shouldShowBetaTesting,
 	};
 
 	return menuItems ?? buildFallbackResponse( fallbackDataOverides );

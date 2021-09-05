@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
-const rcopy = require( 'recursive-copy' );
-const mkdirp = require( 'mkdirp' );
 const path = require( 'path' );
+const mkdirp = require( 'mkdirp' );
+const rcopy = require( 'recursive-copy' );
 const yargs = require( 'yargs' );
 
 const args = yargs

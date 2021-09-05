@@ -675,6 +675,66 @@
 	}
 }
 
+.jetpack-checkout-siteless-thank-you-completed {
+	&.main.is-wide-layout {
+		max-width: 660px;
+	}
+	.jetpack-checkout-siteless-thank-you-completed__card {
+		padding: 0;
+		box-shadow: 0 0 40px 0 #00000014;
+
+		width: 100%;
+		max-width: none;
+
+		> div.jetpack-checkout-siteless-thank-you-completed__card-main {
+			box-sizing: border-box;
+			padding: 26px;
+			@include break-mobile {
+				padding: 76px;
+			}
+		}
+
+		.jetpack-logo {
+			margin-bottom: 48px;
+		}
+
+		h1 {
+			@include break-mobile {
+				font-size: $font-headline-medium;
+			}
+		}
+		p {
+			@include break-mobile {
+				font-size: 18px; /* stylelint-disable-line */
+				line-height: 1.75rem;
+			}
+		}
+
+		a.jetpack-checkout-siteless-thank-you-completed__link,
+		a.jetpack-checkout-siteless-thank-you-completed__feature-link {
+			text-decoration: underline;
+			color: var( --color-studio-black );
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		.jetpack-checkout-siteless-thank-you-completed__main-message {
+			font-size: 2.25rem;
+			font-weight: 700;
+			margin-bottom: 56px;
+			line-height: 1;
+			@include break-mobile {
+				font-size: 3rem;
+			}
+		}
+
+		.jetpack-checkout-siteless-thank-you-completed__main-message-loading {
+			@include placeholder( --color-neutral-20 );
+		}
+	}
+}
+
 .jetpack-checkout-siteless-thank-you {
 	.jetpack-checkout-siteless-thank-you__card {
 		display: flex;
@@ -772,7 +832,6 @@
 		.jetpack-checkout-siteless-thank-you__form-group {
 			display: flex;
 			flex-direction: column;
-			padding-bottom: 1.5em;
 			@include break-mobile {
 				display: flex;
 				flex-direction: row;
@@ -790,6 +849,15 @@
 			.button.jetpack-checkout-siteless-thank-you__form-submit {
 				margin: 0;
 				&.is-primary {
+					&.is-busy {
+						background-image: linear-gradient(
+							-45deg,
+							var( --studio-jetpack-green-40 ) 28%,
+							var( --studio-jetpack-green-50 ) 28%,
+							var( --studio-jetpack-green-50 ) 72%,
+							var( --studio-jetpack-green-40 ) 72%
+						);
+					}
 					background-color: var( --studio-jetpack-green-50 );
 					border-color: var( --studio-jetpack-green-50 );
 					&:hover {
@@ -910,5 +978,19 @@
 	.jetpack-checkout-thank-you__sub-message-loading,
 	.jetpack-checkout-thank-you__email-message-loading {
 		@include placeholder( --color-neutral-20 );
+	}
+}
+
+.checkout-thank-you__domains .thank-you__body {
+	& > div {
+		width: 690px;
+	}
+
+	div {
+		justify-content: space-between;
+	}
+
+	.domain-mapping-thank-you__button {
+		width: 100%;
 	}
 }

@@ -9,9 +9,9 @@ It is meant to be helpful for projects developed inside the [Calypso monorepo](h
 To use stores from the package, import and register the relevant store to obtain its key:
 
 ```tsx
-import React from 'react';
-import { useSelect } from '@wordpress/data';
 import { Verticals } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
+import React from 'react';
 
 const VERTICALS_STORE = Verticals.register();
 

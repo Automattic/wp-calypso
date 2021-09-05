@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import Main from 'calypso/components/main';
-import SiteSelector from 'calypso/components/site-selector';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import VisitSite from 'calypso/blocks/visit-site';
 import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Sites extends Component {
@@ -38,6 +27,14 @@ class Sites extends Component {
 	}
 
 	filterSites = ( site ) => {
+		// only show Jetpack sites with the full Plugin
+		if (
+			site?.options?.jetpack_connection_active_plugins &&
+			! site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
+		) {
+			return false;
+		}
+
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
@@ -45,9 +42,9 @@ class Sites extends Component {
 			return ! site.jetpack || site.options.is_automated_transfer;
 		}
 
-		// Plans are for not Jetpack or Jetpack upgradeable sites.
+		// If a site is Jetpack, plans are available only when it is upgradeable.
 		if ( /^\/plans/.test( path ) ) {
-			return ! site.jetpack || site.isSiteUpgradeable;
+			return ! site.jetpack || site.capabilities.manage_options;
 		}
 
 		if ( /^\/hosting-config/.test( path ) ) {

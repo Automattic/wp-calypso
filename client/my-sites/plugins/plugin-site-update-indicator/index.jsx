@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import {
 	getPluginOnSite,
 	getPluginStatusesByType,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
-import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginSiteUpdateIndicator extends React.Component {

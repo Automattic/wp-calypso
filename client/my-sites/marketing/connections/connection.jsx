@@ -1,25 +1,20 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * Internal dependencies
- */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { ScreenReaderText } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Gridicon from 'calypso/components/gridicon';
 import useUsersQuery from 'calypso/data/users/use-users-query';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ScreenReaderText } from '@automattic/components';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class SharingConnection extends Component {
 	static propTypes = {
@@ -51,6 +46,7 @@ class SharingConnection extends Component {
 		userId: 0,
 		defaultServiceIcon: {
 			google_my_business: 'institution',
+			slack: 'link',
 		},
 	};
 
@@ -100,6 +96,7 @@ class SharingConnection extends Component {
 			this.state.isSavingSitewide &&
 			this.props.connection.shared !== prevProps.connection.shared
 		) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { isSavingSitewide: false } );
 		}
 	}
@@ -110,6 +107,7 @@ class SharingConnection extends Component {
 				<img
 					src={ this.props.connection.external_profile_picture }
 					alt={ this.props.connection.label }
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					className="sharing-connection__account-avatar"
 				/>
 			);
@@ -138,6 +136,7 @@ class SharingConnection extends Component {
 			this.props.userId === this.props.connection.keyring_connection_user_ID
 		) {
 			return (
+				// eslint-disable-next-line
 				<a onClick={ this.refresh } className="sharing-connection__account-action reconnect">
 					<Gridicon icon="notice" size={ 18 } />
 					{ this.props.translate( 'Reconnect' ) }
@@ -152,6 +151,7 @@ class SharingConnection extends Component {
 
 		if ( this.props.showDisconnect && userCanDelete ) {
 			return (
+				// eslint-disable-next-line
 				<a onClick={ this.disconnect } className="sharing-connection__account-action disconnect">
 					{ this.props.translate( 'Disconnect' ) }
 				</a>

@@ -2,16 +2,9 @@
 // disabled CSS class rule due to existing code already
 // that users the non-conformant classnames
 
-/**
- * WordPress dependencies
- */
+import { Button, DateTimePicker, Dropdown, Placeholder } from '@wordpress/components';
 import { dateI18n, __experimentalGetSettings } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
-import { Button, DateTimePicker, Dropdown, Placeholder } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { EventCountdownIcon } from './icon';
 
 const edit = ( { attributes, setAttributes, className } ) => {

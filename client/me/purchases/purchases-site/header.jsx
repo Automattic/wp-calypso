@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
+import { CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import { getSite } from 'calypso/state/sites/selectors';
-import QuerySites from 'calypso/components/data/query-sites';
+import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import QuerySites from 'calypso/components/data/query-sites';
+import Gridicon from 'calypso/components/gridicon';
+import { getSite } from 'calypso/state/sites/selectors';
+import { isJetpackTemporarySitePurchase } from '../utils';
 
-/**
- * Style dependencies
- */
 import './header.scss';
 
 class PurchaseSiteHeader extends Component {
 	static propTypes = {
+		isJetpackTemporarySite: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		siteId: PropTypes.number,
 		name: PropTypes.string,
@@ -52,15 +43,21 @@ class PurchaseSiteHeader extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, siteId, site, name, domain } = this.props;
+		const { isJetpackTemporarySite, isPlaceholder, siteId, site } = this.props;
 		let header;
+
+		// Both the domain and name of a Jetpack temporary site don't provide any
+		// meaningful information to the user.
+		if ( isJetpackTemporarySite ) {
+			return null;
+		}
 
 		if ( isPlaceholder ) {
 			header = <SitePlaceholder />;
 		} else if ( site ) {
 			header = <Site isCompact site={ site } indicator={ false } />;
 		} else {
-			header = this.renderFauxSite( name, domain );
+			header = this.renderFauxSite();
 		}
 
 		return (
@@ -72,6 +69,7 @@ class PurchaseSiteHeader extends Component {
 	}
 }
 
-export default connect( ( state, { siteId } ) => ( {
+export default connect( ( state, { domain, siteId } ) => ( {
 	site: getSite( state, siteId ),
+	isJetpackTemporarySite: isJetpackTemporarySitePurchase( domain ),
 } ) )( PurchaseSiteHeader );

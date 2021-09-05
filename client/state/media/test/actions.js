@@ -1,18 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import {
-	receiveMedia,
-	deleteMedia,
-	requestMediaItem,
-	successMediaItemRequest,
-	failMediaItemRequest,
-} from 'calypso/state/media/actions';
 import {
 	MEDIA_DELETE,
 	MEDIA_ITEM_REQUEST,
@@ -20,6 +6,13 @@ import {
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_RECEIVE,
 } from 'calypso/state/action-types';
+import {
+	receiveMedia,
+	deleteMedia,
+	requestMediaItem,
+	successMediaItemRequest,
+	failMediaItemRequest,
+} from 'calypso/state/media/actions';
 
 describe( 'media - actions - sync', () => {
 	describe( 'receiveMedia()', () => {

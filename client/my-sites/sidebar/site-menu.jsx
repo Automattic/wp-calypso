@@ -1,25 +1,25 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
+import { compact, omit, reduce, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, omit, reduce, get, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import SidebarItem from 'calypso/layout/sidebar/item';
-import { getPostTypes } from 'calypso/state/post-types/selectors';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
-import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
 import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
+import SidebarItem from 'calypso/layout/sidebar/item';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import { decodeEntities } from 'calypso/lib/formatting';
 import compareProps from 'calypso/lib/compare-props';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { SIDEBAR_SECTION_SITE } from 'calypso/my-sites/sidebar/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import { expandMySitesSidebarSection as expandSection } from 'calypso/state/my-sites/sidebar/actions';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { canCurrentUser as canCurrentUserStateSelector } from 'calypso/state/selectors/can-current-user';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
 	getSite,
 	getSiteAdminUrl,
@@ -27,15 +27,7 @@ import {
 	isJetpackSite,
 	isSingleUserSite,
 } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
-import { canCurrentUser as canCurrentUserStateSelector } from 'calypso/state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { SIDEBAR_SECTION_SITE } from 'calypso/my-sites/sidebar/constants';
-import { expandMySitesSidebarSection as expandSection } from 'calypso/state/my-sites/sidebar/actions';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -120,7 +112,7 @@ class SiteMenu extends PureComponent {
 	}
 
 	onNavigate = ( postType ) => () => {
-		if ( ! includes( [ 'post', 'page' ], postType ) ) {
+		if ( ! [ 'post', 'page' ].includes( postType ) ) {
 			bumpStat( 'calypso_publish_menu_click', postType );
 		}
 		this.props.recordTracksEvent( 'calypso_mysites_site_sidebar_item_clicked', {
@@ -270,7 +262,7 @@ export default connect(
 	( state, { siteId } ) => ( {
 		allSingleSites: areAllSitesSingleUser( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
+		canCurrentUser: ( capability ) => canCurrentUserStateSelector( state, siteId, capability ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),

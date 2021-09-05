@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { formatCreditCard, maskField, unmaskField } from '../masking';
 
 describe( 'Masking', () => {

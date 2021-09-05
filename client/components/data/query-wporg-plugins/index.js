@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
+import { useDispatch } from 'react-redux';
 import { fetchPluginsList } from 'calypso/state/plugins/wporg/actions';
 
 export default function QueryWporgPlugins( { category, page, searchTerm } ) {

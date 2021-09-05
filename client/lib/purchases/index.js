@@ -1,19 +1,3 @@
-/**
- * External dependencies
- */
-import { find, includes } from 'lodash';
-import moment from 'moment';
-import page from 'page';
-import i18n from 'i18n-calypso';
-import debugFactory from 'debug';
-import { encodeProductForUrl } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
-import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import {
 	getPlan,
 	isMonthly as isMonthlyPlan,
@@ -33,6 +17,15 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
+import { encodeProductForUrl } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import { find } from 'lodash';
+import moment from 'moment';
+import page from 'page';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
@@ -108,7 +101,6 @@ function getName( purchase ) {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta;
 	}
-
 	return purchase.productName;
 }
 
@@ -285,7 +277,7 @@ function isExpired( purchase ) {
 }
 
 function isExpiring( purchase ) {
-	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
+	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
 function isIncludedWithPlan( purchase ) {
@@ -559,7 +551,7 @@ function isRenewal( purchase ) {
 }
 
 function isRenewing( purchase ) {
-	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
+	return [ 'active', 'autoRenewing' ].includes( purchase.expiryStatus );
 }
 
 function isWithinIntroductoryOfferPeriod( purchase ) {

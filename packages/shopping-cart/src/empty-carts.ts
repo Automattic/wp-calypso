@@ -1,7 +1,4 @@
-/**
- * Internal dependencies
- */
-import type { ResponseCart, ResponseCartProduct } from './shopping-cart-endpoint';
+import type { ResponseCart, ResponseCartProduct } from './types';
 
 export function getEmptyResponseCart(): ResponseCart {
 	return {

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import { throttle } from 'lodash';
 

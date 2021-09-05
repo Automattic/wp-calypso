@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get, merge } from 'lodash';
 import { decorrelatedJitter as defaultDelay } from './delays';
 import { default as defaultPolicy } from './policies';

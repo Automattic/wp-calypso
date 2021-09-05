@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	JETPACK_SCAN_HISTORY_UPDATE,
 	JETPACK_SCAN_HISTORY_REQUEST,
 	JETPACK_SCAN_HISTORY_REQUEST_SUCCESS,
 	JETPACK_SCAN_HISTORY_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { formatScanThreat } from 'calypso/state/data-layer/wpcom/sites/scan';
 
 const formatScanHistoryRawResponse = ( { threats, ...rest } ) => ( {

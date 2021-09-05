@@ -1,35 +1,28 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { ToggleControl } from '@wordpress/components';
+import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-import classnames from 'classnames';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
-import { Dialog } from '@automattic/components';
+import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
-import Notice from 'calypso/components/notice';
-import SectionNav from 'calypso/components/section-nav';
-import SectionNavTabs from 'calypso/components/section-nav/tabs';
-import SectionNavTabItem from 'calypso/components/section-nav/item';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * @typedef {[string, number] CurrencyMinimum

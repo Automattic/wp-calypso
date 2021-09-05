@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 import { isCriteoEnabled } from './constants';
 import { recordPlansViewInCriteo } from './criteo';

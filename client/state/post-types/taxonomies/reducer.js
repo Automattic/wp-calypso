@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { merge } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,

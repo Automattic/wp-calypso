@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 describe( 'getPreviousPath()', () => {

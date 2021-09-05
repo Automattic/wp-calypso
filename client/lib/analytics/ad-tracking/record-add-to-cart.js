@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import {
 	debug,
@@ -12,9 +9,9 @@ import {
 	isPinterestEnabled,
 	TRACKING_IDS,
 } from './constants';
-import { loadTrackingScripts } from './load-tracking-scripts';
-import { recordParamsInFloodlightGtag } from './floodlight';
 import { recordInCriteo } from './criteo';
+import { recordParamsInFloodlightGtag } from './floodlight';
+import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
 import './setup';

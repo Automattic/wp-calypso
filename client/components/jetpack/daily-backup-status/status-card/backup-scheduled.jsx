@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import cloudScheduleIcon from './icons/cloud-schedule.svg';
+
+import './style.scss';
 
 const BackupScheduled = ( { lastBackupDate } ) => {
 	const translate = useTranslate();

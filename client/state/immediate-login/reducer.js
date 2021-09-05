@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { withStorageKey } from '@automattic/state-utils';
 import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 

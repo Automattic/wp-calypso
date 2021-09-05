@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { map, chunk } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ComponentPlayground from 'calypso/devdocs/design/component-playground';
+import React from 'react';
 import LazyRender from 'react-lazily-render';
-import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
-import { camelCaseToSlug, getComponentName } from 'calypso/devdocs/docs-example/util';
 import ReadmeViewer from 'calypso/components/readme-viewer';
+import ComponentPlayground from 'calypso/devdocs/design/component-playground';
 import Placeholder from 'calypso/devdocs/devdocs-async-load/placeholder';
+import { camelCaseToSlug, getComponentName } from 'calypso/devdocs/docs-example/util';
+import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 const shouldShowInstance = ( example, filter, component ) => {

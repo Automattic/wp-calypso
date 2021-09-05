@@ -43,6 +43,7 @@ describe.skip( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @par
 
 	it( 'Can log in and navigate to Invite People page', async function () {
 		await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
+
 		const peoplePage = await PeoplePage.Expect( this.driver );
 		return await peoplePage.inviteUser();
 	} );

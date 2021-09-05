@@ -1,37 +1,18 @@
-/**
- * External dependencies
- */
-
+import { Dialog } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { sample } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { sample } from 'lodash';
 import store from 'store';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * WordPress dependencies
- */
-import { Button } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { Dialog } from '@automattic/components';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
-
-/**
- * Image dependencies
- */
 import wordpressLogoImage from 'calypso/assets/images/illustrations/logo-jpc.svg';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

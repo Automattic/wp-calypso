@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Inserter } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';

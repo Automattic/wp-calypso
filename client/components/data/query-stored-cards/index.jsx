@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isFetchingStoredCards } from 'calypso/state/stored-cards/selectors';
 import { fetchStoredCards } from 'calypso/state/stored-cards/actions';
+import { isFetchingStoredCards } from 'calypso/state/stored-cards/selectors';
 
 class QueryStoredCards extends Component {
 	UNSAFE_componentWillMount() {

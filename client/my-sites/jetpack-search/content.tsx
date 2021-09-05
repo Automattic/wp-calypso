@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ReactNode, Fragment } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import JetpackUpsell from 'calypso/components/jetpack/upsell';
+import React, { FunctionComponent, ReactNode, Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackUpsell from 'calypso/components/jetpack/upsell';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 interface Props {
 	bodyText: TranslateResult | ReactNode;

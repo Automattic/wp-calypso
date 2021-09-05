@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import ButtonsPreviewAction from './preview-action';
 
 class SharingButtonsPreviewPlaceholder extends React.Component {

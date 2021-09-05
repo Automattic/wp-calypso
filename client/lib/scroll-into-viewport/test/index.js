@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { recursivelyWalkAndSum } from '../index';
 
 describe( 'recursivelyWalkAndSum', () => {

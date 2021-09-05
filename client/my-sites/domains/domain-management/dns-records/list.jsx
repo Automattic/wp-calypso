@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './list.scss';
 
 export default function DnsRecordList( { children, className } ) {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	isAdRollEnabled,
 	isBingEnabled,
@@ -20,7 +17,6 @@ import {
 	ADROLL_PURCHASE_PIXEL_URL_2,
 	TRACKING_IDS,
 } from './constants';
-
 import { setupGtag } from './setup-gtag';
 
 if ( typeof window !== 'undefined' ) {

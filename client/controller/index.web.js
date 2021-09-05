@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import page from 'page';
-import { QueryClient, QueryClientProvider } from 'react-query';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-import Layout from 'calypso/layout';
-import LayoutLoggedOut from 'calypso/layout/logged-out';
-import EmptyContent from 'calypso/components/empty-content';
+import page from 'page';
+import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import EmptyContent from 'calypso/components/empty-content';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
-import { login } from 'calypso/lib/paths';
+import Layout from 'calypso/layout';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
-import { makeLayoutMiddleware } from './shared.js';
+import { login } from 'calypso/lib/paths';
+import { getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
-import { getSiteFragment } from 'calypso/lib/route';
+import { makeLayoutMiddleware } from './shared.js';
 import { render, hydrate } from './web-util.js';
 
 /**

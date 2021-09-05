@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
-import { ConnectedThemesSelection } from './themes-selection';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
-
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
 	areRecommendedThemesLoading,
 	getRecommendedThemesFilter,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ConnectedThemesSelection } from './themes-selection';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
-		if ( ! this.props.recommendedThemes.length ) {
+		if ( ! this.props.customizedThemesList.length ) {
 			this.fetchThemes();
 		}
 	}
@@ -39,11 +32,7 @@ class RecommendedThemes extends React.Component {
 	}
 
 	render() {
-		return (
-			<>
-				<ConnectedThemesSelection { ...this.props } />
-			</>
-		);
+		return <ConnectedThemesSelection { ...this.props } />;
 	}
 }
 
@@ -52,7 +41,7 @@ const ConnectedRecommendedThemes = connect(
 		const siteId = getSelectedSiteId( state );
 		const filter = getRecommendedThemesFilter( state, siteId );
 		return {
-			recommendedThemes: getRecommendedThemesSelector( state, filter ),
+			customizedThemesList: getRecommendedThemesSelector( state, filter ),
 			isLoading: areRecommendedThemesLoading( state, filter ),
 			filter,
 		};

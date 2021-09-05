@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-product-for-cart' );
 

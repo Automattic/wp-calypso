@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { getGSuiteUsers } from 'calypso/state/gsuite-users/actions';
 import isRequestingGSuiteUsers from 'calypso/state/selectors/is-requesting-gsuite-users';
 

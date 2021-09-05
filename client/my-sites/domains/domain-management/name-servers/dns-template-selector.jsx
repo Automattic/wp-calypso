@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
 class DnsTemplateSelector extends React.PureComponent {

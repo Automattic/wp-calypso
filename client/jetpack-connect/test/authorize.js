@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { JetpackAuthorize } from '../authorize';
 
 const noop = () => {};

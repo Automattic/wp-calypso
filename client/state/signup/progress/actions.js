@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { includes, isEmpty, reduce, snakeCase } from 'lodash';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
+import { isEmpty, reduce, snakeCase } from 'lodash';
+import { assertValidDependencies } from 'calypso/lib/signup/asserts';
 import {
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
@@ -16,9 +10,8 @@ import {
 	SIGNUP_PROGRESS_REMOVE_STEP,
 	SIGNUP_PROGRESS_ADD_STEP,
 } from 'calypso/state/action-types';
-import { assertValidDependencies } from 'calypso/lib/signup/asserts';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 import 'calypso/state/signup/init';
 
@@ -50,7 +43,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			// Ensure we don't capture identifiable user data we don't need.
-			if ( includes( [ 'email' ], propName ) ) {
+			if ( propName === 'email' ) {
 				propName = `user_entered_${ propName }`;
 				propValue = !! propValue;
 			}
@@ -61,7 +54,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 					.join( ',' );
 			}
 
-			if ( includes( [ 'selected_design' ], propName ) ) {
+			if ( propName === 'selected_design' ) {
 				propValue = propValue.slug;
 			}
 

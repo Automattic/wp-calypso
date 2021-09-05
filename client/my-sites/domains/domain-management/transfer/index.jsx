@@ -1,33 +1,27 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React from 'react';
-import PropTypes from 'prop-types';
-/**
- * Internal Dependencies
- */
-import { get } from 'lodash';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementEdit,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function Transfer( props ) {
 	const {

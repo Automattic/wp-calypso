@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { defer } from 'lodash';
 
 export default {

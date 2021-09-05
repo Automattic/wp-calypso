@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 describe( 'isVipSite()', () => {

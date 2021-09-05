@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-
-/**
- * Internal dependencies
- */
 import Gridicon from '../templates/gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
 

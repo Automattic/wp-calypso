@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import EducationalContent from '../educational-content';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-export const EDUCATION_EARN = 'home-education-earn';
-
-/**
- * Image dependencies
- */
 import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import EducationalContent from '../educational-content';
+
+export const EDUCATION_EARN = 'home-education-earn';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();

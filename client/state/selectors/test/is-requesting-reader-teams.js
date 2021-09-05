@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isRequestingReaderTeams } from 'calypso/state/teams/selectors';
 
 describe( 'isRequestingReaderTeams()', () => {

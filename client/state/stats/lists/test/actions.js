@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receiveSiteStats, requestSiteStats } from '../actions';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { receiveSiteStats, requestSiteStats } from '../actions';
 
 const SITE_ID = 2916284;
 const STAT_TYPE = 'statsStreak';

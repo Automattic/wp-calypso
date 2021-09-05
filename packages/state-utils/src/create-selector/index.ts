@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { memoize } from 'lodash';
-
-/**
- * WordPress dependencies
- */
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import warn from '@wordpress/warning';
+import { memoize } from 'lodash';
 
 /**
  * Constants

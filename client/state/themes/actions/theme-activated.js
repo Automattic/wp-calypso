@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
+import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import {
 	getActiveTheme,
 	getLastThemeQuery,

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { mapValues, omit, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
+import { mapValues, omit, map } from 'lodash';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
-import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -17,6 +10,9 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
+	TRENDING_THEMES_FAIL,
+	TRENDING_THEMES_FETCH,
+	TRENDING_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -38,7 +34,7 @@ import {
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 } from 'calypso/state/themes/action-types';
-import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
@@ -47,7 +43,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 
 /**
  * Returns the updated active theme state after an action has been
@@ -335,7 +331,13 @@ const queriesReducer = ( state = {}, action ) => {
 				siteId,
 				// Always 'patch' to avoid overwriting existing fields when receiving
 				// from a less rich endpoint such as /mine
-				( m ) => m.receive( map( themes, fromApi ), { query, found, patch: true } ),
+				( m ) =>
+					m.receive( map( themes, fromApi ), {
+						query,
+						found,
+						patch: true,
+						dontShareQueryResultsWhenQueriesAreDifferent: true,
+					} ),
 				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}
@@ -491,6 +493,27 @@ export function recommendedThemes( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns updated state for trending themes after
+ * corresponding actions have been dispatched.
+ *
+ * @param   {object} state  Current state
+ * @param   {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function trendingThemes( state = {}, action ) {
+	switch ( action.type ) {
+		case TRENDING_THEMES_FETCH:
+			return { ...state, isLoading: true, themes: [] };
+		case TRENDING_THEMES_SUCCESS:
+			return { ...state, isLoading: false, themes: action.payload.themes };
+		case TRENDING_THEMES_FAIL:
+			return { ...state, isLoading: false, themes: [] };
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -509,6 +532,7 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
+	trendingThemes,
 	themeHasAutoLoadingHomepageWarning,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );

@@ -23,8 +23,7 @@ This rule forbids the former approach and can auto-fix it to the latter.
 The following patterns are considered incorrect:
 
 ```jsx
-import config from 'config';
-import * as stats from 'reader/stats';
+/* eslint-disable import/order */
 import { localizeUrl } from 'lib/i18n-utils';
 export { default as ActionCard } from 'components/action-card/docs/example';
 export * from 'components/AppBar';
@@ -37,8 +36,7 @@ const component = <AsyncLoad require="config" />;
 The following patterns are correct
 
 ```jsx
-import config from '@automattic/calypso-config';
-import * as stats from 'calypso/reader/stats';
+/* eslint-disable import/order */
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export * from 'calypso/components/AppBar';

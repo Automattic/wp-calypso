@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
-import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import { Field, styled } from '@automattic/wpcom-checkout';
 import {
 	isDomainProduct,
 	isDomainTransfer,
 	isDomainMapping,
 	getDomain,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { useSelect, useDispatch } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { Field, styled } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import getCountries from 'calypso/state/selectors/get-countries';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
 	isValid,
 } from '../types/wpcom-store-state';
-import type { CountryListItem } from '../types/country-list-item';
-import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
-import getCountries from 'calypso/state/selectors/get-countries';
-import { useSelector } from 'react-redux';
+import TaxFields from './tax-fields';
+import type { CountryListItem } from '../types/country-list-item';
+import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;
@@ -77,6 +70,9 @@ export default function ContactDetailsContainer( {
 		} );
 	};
 
+	const getIsFieldRequired = ( field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' > ) =>
+		contactInfo[ field ]?.isRequired ?? false;
+
 	switch ( contactDetailsType ) {
 		case 'domain':
 			return (
@@ -91,6 +87,8 @@ export default function ContactDetailsContainer( {
 						contactDetails={ contactDetails }
 						contactDetailsErrors={ contactDetailsErrors }
 						updateDomainContactFields={ updateDomainContactRelatedData }
+						updateRequiredDomainFields={ updateRequiredDomainFields }
+						getIsFieldRequired={ getIsFieldRequired }
 						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getUrlParts } from '@automattic/calypso-url';
 
 /**

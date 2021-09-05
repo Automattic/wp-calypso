@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import { keyBy, some, get } from 'lodash';
-
-/**
- * Internal depedencies
- */
 import treeSelect from '@automattic/tree-select';
+import { keyBy, some, get } from 'lodash';
 import { keyToString, keyForPost } from 'calypso/reader/post-key';
-
 import 'calypso/state/reader/init';
 
 /**

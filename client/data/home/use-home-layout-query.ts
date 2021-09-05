@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { useQuery, UseQueryResult, QueryKey } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { useHomeLayoutQueryParams, HomeLayoutQueryParams } from './use-home-layout-query-params';
 

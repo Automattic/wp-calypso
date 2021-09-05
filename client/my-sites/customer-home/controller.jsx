@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import CustomerHome from './main';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import React from 'react';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CustomerHome from './main';
 
 export default async function ( context, next ) {
 	const state = await context.store.getState();

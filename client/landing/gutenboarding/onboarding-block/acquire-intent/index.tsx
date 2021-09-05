@@ -1,30 +1,20 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@wordpress/react-i18n';
-import { SkipButton, NextButton } from '@automattic/onboarding';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY } from '../../stores/onboard';
-import VerticalSelect from './vertical-select';
-import SiteTitle from './site-title';
-import { useTrackStep } from '../../hooks/use-track-step';
-import useStepNavigation from '../../hooks/use-step-navigation';
-import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
-import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
-import Arrow from './arrow';
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import { SkipButton, NextButton } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
+import * as React from 'react';
+import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
+import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import { useIsAnchorFm } from '../../path';
+import { STORE_KEY } from '../../stores/onboard';
+import Arrow from './arrow';
+import SiteTitle from './site-title';
+import VerticalSelect from './vertical-select';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {

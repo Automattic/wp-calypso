@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { receiveRestoreSuccess } from '../';
 import { getRewindRestoreProgress } from 'calypso/state/activity-log/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { receiveRestoreSuccess } from '../';
 
 const siteId = 77203074;
 const timestamp = 1496768464;

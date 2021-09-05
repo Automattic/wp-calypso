@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import languages from '@automattic/languages';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
-
-/**
- * Internal dependencies
- */
-import languages from '@automattic/languages';
 import jsonp from './jsonp';
 
 const debug = debugFactory( 'wporg' );

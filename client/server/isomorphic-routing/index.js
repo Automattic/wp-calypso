@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
 import { setSectionMiddleware } from 'calypso/controller';
+import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
 import { setRoute } from 'calypso/state/route/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {

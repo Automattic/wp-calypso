@@ -2,7 +2,6 @@
 /** @format */
 
 const { By } = require( 'selenium-webdriver' );
-
 const AsyncBaseContainer = require( '../async-base-container' );
 const driverHelper = require( '../driver-helper' );
 

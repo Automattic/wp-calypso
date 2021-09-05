@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	HELP_CONTACT_FORM_SITE_SELECT,
 	HELP_LINKS_RECEIVE,
@@ -11,7 +8,9 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/help/search';
-import 'calypso/state/data-layer/wpcom/help/support-history';
+// Support History data needs to be disabled temporarily to avoid rate-limiting with our Zendesk API.
+// It is only used for non-essential read-only operations right now.
+// import 'calypso/state/data-layer/wpcom/help/support-history';
 import 'calypso/state/help/init';
 
 export const selectSiteId = ( siteId ) => ( {

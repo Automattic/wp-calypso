@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
+import debugFactory from 'debug';
+import page from 'page';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
-import { getUrlParts } from '@automattic/calypso-url';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setRoute } from 'calypso/state/route/actions';
 

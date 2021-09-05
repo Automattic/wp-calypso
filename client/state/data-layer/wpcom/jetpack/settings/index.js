@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-import { get, omit, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { get, omit, startsWith } from 'lodash';
+import { trailingslashit } from 'calypso/lib/route';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'calypso/state/action-types';
-import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import {
+	saveJetpackSettingsSuccess,
+	updateJetpackSettings,
+} from 'calypso/state/jetpack/settings/actions';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
 } from 'calypso/state/jetpack/settings/utils';
-import {
-	saveJetpackSettingsSuccess,
-	updateJetpackSettings,
-} from 'calypso/state/jetpack/settings/actions';
-import { trailingslashit } from 'calypso/lib/route';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 

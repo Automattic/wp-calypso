@@ -1,16 +1,8 @@
-/* global localStorage */
-/**
- * Internal dependencies
- */
+import repliesCache from '../comment-replies-cache';
 import { store } from '../state';
 import actions from '../state/actions';
-
 import getAllNotes from '../state/selectors/get-all-notes';
-
-import repliesCache from '../comment-replies-cache';
-
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
-
 const debug = require( 'debug' )( 'notifications:rest-client' );
 
 const settings = {

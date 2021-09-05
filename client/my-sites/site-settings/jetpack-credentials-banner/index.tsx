@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import Banner from 'calypso/components/banner';
 import { savePreference } from 'calypso/state/preferences/actions';
 import {

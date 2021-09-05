@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { addQueryArgs } from '@wordpress/url';
-import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
-import type { FontPair } from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY } from '../../stores/onboard';
-import { useFontPairings } from '../../fonts';
+import { useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
+import * as React from 'react';
 import { useAnchorFmParams } from '../../../gutenboarding/path';
+import { useFontPairings } from '../../fonts';
+import { STORE_KEY } from '../../stores/onboard';
 import type { Viewport } from './types';
+import type { FontPair } from '@automattic/design-picker';
 
 function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
 	const baseURL = 'https://fonts.googleapis.com/css2';

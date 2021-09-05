@@ -1,26 +1,18 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleHeader from '../stats-module/header';
-import { Card } from '@automattic/components';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsList from '../stats-list';
+import StatsListLegend from '../stats-list/legend';
+import StatsModuleHeader from '../stats-module/header';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
 const StatModuleVideoDetails = ( props ) => {
 	const { data, query, requesting, siteId, translate } = props;

@@ -1,13 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
 
-/**
- * Internal dependencies
- */
 import {
 	getExternalBackUrl,
 	backUrlExternalSourceStepsOverrides,

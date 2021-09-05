@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { AppState } from 'calypso/types';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/data-layer/wpcom/sites/scan';
 
 export type JetpackScanThreatCounts = {

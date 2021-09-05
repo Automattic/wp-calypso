@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCategoryWithFallbacks } from '.';
 
 jest.mock( '@wordpress/blocks', () => ( {

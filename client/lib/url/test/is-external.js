@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import isExternal from '../is-external';
 
 describe( 'isExternal', () => {

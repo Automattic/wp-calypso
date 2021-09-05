@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import { requestRecommendedSites, addRecommendedSites, fromApi } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestRecommendedSites as requestRecommendedSitesAction,
 	receiveRecommendedSites,
 } from 'calypso/state/reader/recommended-sites/actions';
+import { requestRecommendedSites, addRecommendedSites, fromApi } from '../';
 
 const algorithm = 'chicken-recs/es1';
 const seed = 42;

@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import RelatedContentPreview from './related-content-preview';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import RelatedContentPreview from './related-content-preview';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const RelatedPosts = ( {

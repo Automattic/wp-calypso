@@ -16,6 +16,10 @@ export {
 	getRecommendedThemes,
 	receiveRecommendedThemes,
 } from 'calypso/state/themes/actions/recommended-themes';
+export {
+	getTrendingThemes,
+	receiveTrendingThemes,
+} from 'calypso/state/themes/actions/trending-themes';
 export { requestActiveTheme } from 'calypso/state/themes/actions/request-active-theme';
 export { requestTheme } from 'calypso/state/themes/actions/request-theme';
 export { requestThemeFilters } from 'calypso/state/themes/actions/request-theme-filters';

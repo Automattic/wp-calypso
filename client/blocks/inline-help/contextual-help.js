@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { compact, get } from 'lodash';
 import i18n, { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { RESULT_TOUR, RESULT_VIDEO } from './constants';
+import { compact, get } from 'lodash';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 /**
  * Module variables
@@ -684,15 +677,6 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
-			post_id: 12112,
-			title: translate( 'Premium Themes' ),
-			description: translate(
-				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
-					'no extra cost, as many times as you’d like.'
-			),
-		},
-		{
 			link: localizeUrl(
 				'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/child-themes/'
 			),
@@ -712,15 +696,6 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'A theme controls the general look and feel of your site including things like ' +
 					'page layout, widget locations, and default font.'
-			),
-		},
-		{
-			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
-			post_id: 12112,
-			title: translate( 'Premium Themes' ),
-			description: translate(
-				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
-					'no extra cost, as many times as you’d like.'
 			),
 		},
 		{

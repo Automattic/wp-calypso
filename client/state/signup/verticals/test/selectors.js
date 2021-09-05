@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getVerticals } from '../selectors';
 
 describe( 'state/signup/verticals/selectors', () => {

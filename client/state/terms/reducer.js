@@ -1,13 +1,8 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { mapValues, merge } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { mapValues, merge } from 'lodash';
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
 	TERM_REMOVE,
 	TERMS_RECEIVE,
@@ -16,9 +11,8 @@ import {
 	TERMS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
-import TermQueryManager from 'calypso/lib/query-manager/term';
-import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
+import { getSerializedTermsQuery } from './utils';
 
 /**
  * Returns the updated terms query requesting state after an action has been

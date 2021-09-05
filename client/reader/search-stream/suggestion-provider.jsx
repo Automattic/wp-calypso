@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
 import { map, sampleSize, times } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';

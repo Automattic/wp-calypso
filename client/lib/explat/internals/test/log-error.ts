@@ -1,8 +1,8 @@
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import * as Logger from 'calypso/server/lib/logger';
 import { logError } from '../log-error';
+
+jest.mock( 'calypso/lib/wp' );
 
 jest.mock( 'calypso/server/lib/logger', () => {
 	const logger = jest.fn();
@@ -58,16 +58,17 @@ describe( 'logError', () => {
 	} );
 	it( 'should log to the server in the browser', () => {
 		logError( { message: 'asdf', foo: 'bar' } );
-		expect( mockWindow.fetch.mock.calls ).toMatchInlineSnapshot( `
+		expect( wpcom.req.post.mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
-		    "https://public-api.wordpress.com/rest/v1.1/js-error",
 		    Object {
-		      "body": FormData {
+		      "apiNamespace": "rest/v1.1",
+		      "body": Object {
 		        "error": "{\\"message\\":\\"asdf\\",\\"properties\\":{\\"foo\\":\\"bar\\",\\"context\\":\\"explat\\",\\"explat_client\\":\\"calypso\\",\\"message\\":\\"asdf\\"}}",
 		      },
-		      "method": "POST",
+		      "path": "/js-error",
 		    },
+		    [Function],
 		  ],
 		]
 	` );

@@ -255,15 +255,14 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	$patterns_sources = array( 'block_patterns' );
+	$editor_type = 'block_editor';
 
-	// While we're still testing the FSE patterns, limit activation via a filter.
-	if ( $is_site_editor && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
-		$patterns_sources[] = 'fse_block_patterns';
+	if ( $is_site_editor ) {
+		$editor_type = 'site_editor';
 	}
 
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	$block_patterns_from_api = new Block_Patterns_From_API( $patterns_sources );
+	$block_patterns_from_api = new Block_Patterns_From_API( $editor_type );
 	$block_patterns_from_api->register_patterns();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
@@ -325,3 +324,19 @@ function load_error_reporting() {
 	require_once __DIR__ . '/error-reporting/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
+
+/**
+ * Universal themes.
+ */
+function load_universal_themes() {
+	require_once __DIR__ . '/wpcom-universal-themes/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_universal_themes', 11 ); // load just after the Gutenberg plugin.
+
+/**
+ * Tags Education
+ */
+function load_tags_education() {
+	require_once __DIR__ . '/tags-education/class-tags-education.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import { take, values } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { take, values } from 'lodash';
 
 const TAGS_TO_SHOW = 5;
 

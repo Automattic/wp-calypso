@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAINS_SITE_REDIRECT_FETCH,

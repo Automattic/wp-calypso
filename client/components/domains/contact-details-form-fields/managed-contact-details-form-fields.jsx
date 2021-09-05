@@ -1,39 +1,28 @@
-/**
- * External dependencies
- *
- */
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { camelCase, deburr } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import { camelCase, deburr } from 'lodash';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getCountryStates } from 'calypso/state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
-import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
+import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import { getCountryPostalCodeSupport } from './helper';
+
+import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
 
@@ -260,9 +249,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		return (
 			<>
 				<div className="contact-details-form-fields__row">
-					{ this.createEmailField(
-						translate( "You'll use this email address to access your account later" )
-					) }
+					{ this.createEmailField() }
 
 					{ this.createField(
 						'phone',
@@ -318,6 +305,8 @@ export class ManagedContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: translate( '+ Add organization name' ),
+							toggled:
+								form.organization?.value || this.props.getIsFieldRequired?.( 'organization' ),
 						},
 						{
 							customErrorMessage: this.props.contactDetailsErrors?.organization,

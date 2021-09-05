@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
-import { localize } from 'i18n-calypso';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
-import SuggestionSearch from 'calypso/components/suggestion-search';
-import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
 import QueryVerticals from 'calypso/components/data/query-verticals';
+import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
+import SuggestionSearch from 'calypso/components/suggestion-search';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getVerticals } from 'calypso/state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class SiteVerticalsSuggestionSearch extends Component {

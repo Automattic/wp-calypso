@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
 
 describe( 'canCurrentUserEditPost()', () => {

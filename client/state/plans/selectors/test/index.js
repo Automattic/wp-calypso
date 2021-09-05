@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getDiscountedRawPrice, getPlanRawPrice } from '../';
 
 describe( 'selectors', () => {

@@ -14,9 +14,7 @@
 		"node_modules"
 	],
 	"license": "GPL-2.0-or-later",
-	"bin": {
-		"effective-module-tree": "./cli.js"
-	},
+	"bin": "./cli.js",
 	"dependencies": {
 		"debug": "^4.1.1",
 		"object-treeify": "^1.1.23",

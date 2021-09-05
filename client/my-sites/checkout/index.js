@@ -1,32 +1,40 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import { recordSiftScienceUser } from 'calypso/lib/siftscience';
+import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
 	checkout,
 	checkoutPending,
 	checkoutSiteless,
 	checkoutThankYou,
-	upsellNudge,
-	redirectToSupportSession,
-	redirectJetpackLegacyPlans,
 	jetpackCheckoutThankYou,
+	jetpackCheckoutThankYouCompleted,
+	redirectJetpackLegacyPlans,
+	redirectToSupportSession,
+	upsellNudge,
 } from './controller';
 import { noop } from './utils';
-import { recordSiftScienceUser } from 'calypso/lib/siftscience';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
-import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
-import { isEnabled } from '@automattic/calypso-config';
 
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
 	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
+		page(
+			'/checkout/jetpack/schedule-happiness-appointment',
+			noSite,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
 		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you-completed/no-site/:product',
+			noSite,
+			jetpackCheckoutThankYouCompleted,
+			makeLayout,
+			clientRender
+		);
 		page(
 			'/checkout/jetpack/thank-you/no-site/:product',
 			noSite,
@@ -193,7 +201,7 @@ export default function () {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', isEnabled( 'jetpack-cloud/connect' ) ? '/plans' : '/pricing' );
+	page( '/checkout', '/plans' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',

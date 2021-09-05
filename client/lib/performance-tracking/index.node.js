@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import EmptyComponent from 'calypso/components/empty-component';
 
 export const performanceTrackerStart = () => null;

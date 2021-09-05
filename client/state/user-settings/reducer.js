@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
 import { withStorageKey } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
 import {
 	USER_SETTINGS_SAVE,
 	USER_SETTINGS_UNSAVED_CLEAR,

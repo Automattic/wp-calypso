@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { setLocale, setLocaleRawData } from '../actions';
 import { LOCALE_SET } from 'calypso/state/action-types';
+import { setLocale, setLocaleRawData } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'setLocale', () => {

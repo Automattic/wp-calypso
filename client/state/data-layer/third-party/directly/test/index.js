@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { askQuestion, initialize } from '..';
 import * as directly from 'calypso/lib/directly';
 import {
 	DIRECTLY_ASK_QUESTION,
@@ -15,6 +7,7 @@ import {
 } from 'calypso/state/action-types';
 import * as analytics from 'calypso/state/analytics/actions/record';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { askQuestion, initialize } from '..';
 
 describe( 'Directly data layer', () => {
 	let store;

@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
-
-import { startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { startsWith } from 'lodash';
 import page from 'page';
+import React from 'react';
 
 class CartEmpty extends React.Component {
 	render() {

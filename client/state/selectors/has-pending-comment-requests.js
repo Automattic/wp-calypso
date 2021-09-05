@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get, some } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/comments/init';
 
 /**

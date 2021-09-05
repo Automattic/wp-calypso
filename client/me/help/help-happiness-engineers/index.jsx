@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function HelpHappinessEngineers( { translate } ) {

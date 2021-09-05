@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-import debugFactory from 'debug';
-import { forEach, includes, throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { isDefaultLocale, getLanguage } from './utils';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
+import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import { forEach, throttle } from 'lodash';
+import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -66,7 +59,7 @@ export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
  * @returns {string} A language file URL.
  */
 export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
 
@@ -141,7 +134,7 @@ export function getLanguageManifestFileUrl( {
 	targetBuild = 'evergreen',
 	hash = null,
 } = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
 
@@ -201,7 +194,7 @@ export function getTranslationChunkFileUrl( {
 	targetBuild = 'evergreen',
 	hash = null,
 } = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
 
@@ -463,7 +456,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		return;
 	}
 
-	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+	if ( ! [ 'current', 'waiting' ].includes( translationStatus ) ) {
 		return;
 	}
 

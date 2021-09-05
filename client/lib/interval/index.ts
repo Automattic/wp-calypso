@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { TimeoutMS } from 'calypso/types';
 
 export { Interval } from './interval';

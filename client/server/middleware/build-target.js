@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { matchesUA } from 'browserslist-useragent';
 
 /**
@@ -8,11 +5,15 @@ import { matchesUA } from 'browserslist-useragent';
  *
  * @param {string} userAgentString The user agent string.
  * @param {string} environment The `browserslist` environment.
- *
  * @returns {boolean} Whether the user agent is included in the browser list.
  */
 function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
-	return matchesUA( userAgentString, {
+	// The desktop app sends a UserAgent including WordPress, Electron and Chrome.
+	// We need to check if the chrome portion is supported, but the UA library
+	// will select WordPress and Electron before Chrome, giving a result not
+	// based on the chrome version.
+	const sanitizedUA = userAgentString.replace( / (WordPressDesktop|Electron)\/[.\d]+/g, '' );
+	return matchesUA( sanitizedUA, {
 		env: environment,
 		ignorePatch: true,
 		ignoreMinor: true,

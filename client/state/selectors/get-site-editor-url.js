@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 

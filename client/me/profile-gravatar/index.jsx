@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import Animate from 'calypso/components/animate';
 import Gravatar from 'calypso/components/gravatar';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // use imgSize = 400 for caching

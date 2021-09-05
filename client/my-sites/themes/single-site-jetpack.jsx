@@ -1,37 +1,22 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { PLAN_JETPACK_SECURITY_REALTIME } from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
-import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	PLAN_JETPACK_SECURITY_REALTIME,
-} from '@automattic/calypso-products';
-import ThemeShowcase from './theme-showcase';
-import ThemesSelection from './themes-selection';
-import { addTracking } from './helpers';
-import {
-	getCurrentPlan,
-	hasFeature,
-	isRequestingSitePlans,
-} from 'calypso/state/sites/plans/selectors';
+import Main from 'calypso/components/main';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { addTracking } from './helpers';
+import { connectOptions } from './theme-options';
+import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
+import ThemesSelection from './themes-selection';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -60,7 +45,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		vertical,
 		tier,
 		translate,
-		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
 		siteSlug,
 	} = props;
@@ -72,12 +56,12 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			<SidebarNavigation />
 			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
+			{ ! requestingSitePlans && currentPlan && ! isPartnerPlan && (
 				<UpsellNudge
 					forceDisplay
-					title={ translate( 'Get unlimited premium themes' ) }
+					title={ translate( 'Upload your own themes' ) }
 					description={ translate(
-						'In addition to our collection of premium themes, get comprehensive WordPress' +
+						'In addition to uploading your own themes, get comprehensive WordPress' +
 							' security, real-time backups, and unlimited video hosting.'
 					) }
 					event="themes_plans_free_personal_premium"
@@ -97,7 +81,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							origin="wpcom"
 							defaultOption={ 'activate' }
 							secondaryOption={ 'tryandcustomize' }
-							noMarginBeforeHeader={ true }
 							search={ search }
 							tier={ tier }
 							filter={ filter }
@@ -149,7 +132,6 @@ export default connect( ( state, { siteId, tier } ) => {
 		showWpcomThemesList,
 		emptyContent,
 		isMultisite,
-		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
 		siteSlug,
 	};

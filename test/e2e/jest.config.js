@@ -1,6 +1,6 @@
 module.exports = {
 	cacheDirectory: '<rootDir>/../../.cache/jest',
-	testMatch: [ '<rootDir>/specs/**/*.js' ],
+	testMatch: [ '<rootDir>/specs/**/*.[jt]s' ],
 	setupFilesAfterEnv: [ '<rootDir>/lib/jest/setup.js' ],
 	verbose: true,
 	transform: {

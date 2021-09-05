@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getTermDuration } from '@automattic/calypso-products';
+import { get } from 'lodash';
+import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
 import { getProductsList } from './get-products-list';
 import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
-import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
 
 /**
  * Turns a list of plan slugs into a list of plan objects, corresponding

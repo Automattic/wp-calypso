@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	READER_THUMBNAIL_REQUEST,
 	READER_THUMBNAIL_REQUEST_SUCCESS,

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import GSuiteFeatures from 'calypso/components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'calypso/components/gsuite/gsuite-learn-more';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class GSuiteCancellationFeatures extends Component {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { clone, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import QueryKey from './key';
 
 /**
@@ -253,6 +246,7 @@ export default class QueryManager {
 	 * @param  {boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {boolean}        options.mergeQuery Add to existing query set
+	 * @param  {boolean}        options.dontShareQueryResultsWhenQueriesAreDifferent When storing results for one query, results for that query should not be shared with different queries
 	 * @param  {number}         options.found      Total found items for query
 	 * @returns {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
@@ -368,6 +362,10 @@ export default class QueryManager {
 				if ( isReceivedQueryKey && ( isNewlyReceivedQueryKey || ! options.mergeQuery ) ) {
 					// We can save the effort testing against received items in
 					// the current query, since we know they'll match
+					return memo;
+				}
+
+				if ( ! isReceivedQueryKey && options.dontShareQueryResultsWhenQueriesAreDifferent ) {
 					return memo;
 				}
 

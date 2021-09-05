@@ -1,14 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import { mount } from 'enzyme';
 
-/**
- * Internal dependencies
- */
+import { mount } from 'enzyme';
 import { renderTransactionAmount, transactionIncludesTax } from '../utils';
 
 const translate = ( x ) => x;

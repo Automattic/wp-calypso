@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
 
 describe( 'hasNextMediaPage', () => {

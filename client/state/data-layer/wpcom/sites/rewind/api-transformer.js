@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { camelCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 
@@ -25,6 +18,7 @@ const transformDownload = ( data ) =>
 	Object.assign(
 		{
 			downloadId: data.downloadId,
+			bytesFormatted: data.bytesFormatted,
 			rewindId: data.rewindId,
 			backupPoint: new Date( data.backupPoint * 1000 ),
 			startedAt: new Date( data.startedAt * 1000 ),

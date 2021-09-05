@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { key, clear, setItem, getItem, removeItem, length } from '..';
 
 describe( 'localstorage-bypass', () => {

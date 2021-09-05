@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
+import { pick } from 'lodash';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
-import wrapSettingsForm from '../wrap-settings-form';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wrapSettingsForm from '../wrap-settings-form';
 import GoogleAnalyticsJetpackForm from './form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from './form-google-analytics-simple';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const validateGoogleAnalyticsCode = ( code ) =>
@@ -130,9 +120,6 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-const getFormSettings = partialRight( pick, [ 'wga' ] );
+const getFormSettings = ( settings ) => pick( settings, [ 'wga' ] );
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( GoogleAnalyticsForm );
+export default connectComponent( wrapSettingsForm( getFormSettings )( GoogleAnalyticsForm ) );

@@ -1,31 +1,17 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import moment from 'moment';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import InputChrono from 'calypso/components/input-chrono';
-import DatePicker from 'calypso/components/date-picker';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import DatePicker from 'calypso/components/date-picker';
 import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
+import InputChrono from 'calypso/components/input-chrono';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-
-/**
- * Local dependencies
- */
 import Clock from './clock';
 import Header from './header';
 import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

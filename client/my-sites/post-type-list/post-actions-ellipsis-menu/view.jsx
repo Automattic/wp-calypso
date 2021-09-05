@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { isSitePreviewable } from 'calypso/state/sites/selectors';
-import { setAllSitesPreviewSiteId, setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { bumpStatGenerator } from './utils';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {
@@ -67,7 +59,7 @@ class PostActionsEllipsisMenuView extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ includes( [ 'publish', 'private' ], status )
+				{ [ 'publish', 'private' ].includes( status )
 					? translate( 'View', { context: 'verb' } )
 					: translate( 'Preview', { context: 'verb' } ) }
 			</PopoverMenuItem>

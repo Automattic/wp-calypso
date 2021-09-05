@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
-import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 describe( 'isUpdatingJetpackSettings()', () => {
 	const siteId = 12345678;

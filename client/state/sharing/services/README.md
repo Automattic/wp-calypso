@@ -12,8 +12,8 @@ Get a list of keyring services.
 
 ```js
 import { connect } from 'react-redux';
-import { isKeyringServicesFetching } from 'calypso/state/sharing/services/selectors';
 import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
+import { isKeyringServicesFetching } from 'calypso/state/sharing/services/selectors';
 
 class QueryKeyringServices extends Component {
 	componentWillMount() {

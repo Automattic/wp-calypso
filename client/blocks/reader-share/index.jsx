@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { defer } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { defer } from 'lodash';
-import config from '@automattic/calypso-config';
-import classnames from 'classnames';
-import PropTypes from 'prop-types';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Gridicon from 'calypso/components/gridicon';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SiteSelector from 'calypso/components/site-selector';
 import SocialLogo from 'calypso/components/social-logo';
+import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import SiteSelector from 'calypso/components/site-selector';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { Button } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

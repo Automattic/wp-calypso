@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import url from 'url';
-
-/**
- * Internal dependencies
- */
 import { statsdTimingUrl, statsdCountingUrl } from '../statsd-utils';
 
 describe( 'StatsD Analytics Utils', () => {

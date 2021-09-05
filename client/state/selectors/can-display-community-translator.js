@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
 import { canBeTranslated } from 'calypso/lib/i18n-utils';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 

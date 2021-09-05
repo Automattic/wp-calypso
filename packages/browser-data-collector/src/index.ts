@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
 

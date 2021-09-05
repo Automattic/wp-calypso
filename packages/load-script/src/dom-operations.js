@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-const debug = debugFactory( 'lib/load-script/dom-operations' );
-
-/**
- * Internal dependencies
- */
 import { handleRequestError, handleRequestSuccess } from './callback-handler';
+
+const debug = debugFactory( 'lib/load-script/dom-operations' );
 
 export function createScriptElement( url ) {
 	debug( `Creating script element for "${ url }"` );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import debug from './debug';
 
 // For better load performance, these routes are excluded from loading ads.

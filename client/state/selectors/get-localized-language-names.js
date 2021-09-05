@@ -1,11 +1,5 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/i18n/init';
 
 /**

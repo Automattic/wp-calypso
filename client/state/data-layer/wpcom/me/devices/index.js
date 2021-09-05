@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
 import { keyBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { USER_DEVICES_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { USER_DEVICES_REQUEST } from 'calypso/state/action-types';
-import { userDevicesAdd } from 'calypso/state/user-devices/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { userDevicesAdd } from 'calypso/state/user-devices/actions';
 
 const devicesFromApi = ( devices ) =>
 	keyBy(

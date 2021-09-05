@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
-/**
- * Internal dependencies
- */
+
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,

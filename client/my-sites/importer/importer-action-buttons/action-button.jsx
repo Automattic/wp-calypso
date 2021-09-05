@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classnames from 'classnames';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './action-button.scss';
 
 const ImporterActionButton = ( { className, ...props } ) => (

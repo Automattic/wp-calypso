@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Filters from './filters';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import getFilterName from '../state/selectors/get-filter-name';
+import Filters from './filters';
 
 export class FilterBar extends Component {
 	selectFilter = ( event ) => {

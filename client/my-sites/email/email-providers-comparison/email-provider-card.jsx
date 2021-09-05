@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { Button } from '@automattic/components';
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import { useBreakpoint } from '@automattic/viewport-react';
-
-/**
- * Internal dependencies
- */
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';

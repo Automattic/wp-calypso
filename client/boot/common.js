@@ -1,60 +1,52 @@
-/**
- * External dependencies
- */
+import accessibleFocus from '@automattic/accessible-focus';
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import page from 'page';
 import React from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
-import accessibleFocus from '@automattic/accessible-focus';
-
-/**
- * Internal dependencies
- */
-import { setupLocale } from './locale';
-import config from '@automattic/calypso-config';
-import { ProviderWrappedLayout } from 'calypso/controller';
-import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
-import Logger from 'calypso/lib/catch-js-errors';
-import { hasTouch } from 'calypso/lib/touch-detect';
-import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
-import { setupRoutes } from 'calypso/sections-middleware';
-import { checkFormHandler } from 'calypso/lib/protect-form';
-import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
-import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
-import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
-import { tracksEvents } from 'calypso/lib/analytics/tracks';
+import { ProviderWrappedLayout } from 'calypso/controller';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import getSuperProps from 'calypso/lib/analytics/super-props';
+import { tracksEvents } from 'calypso/lib/analytics/tracks';
+import Logger from 'calypso/lib/catch-js-errors';
+import DesktopListeners from 'calypso/lib/desktop-listeners';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { attachLogmein } from 'calypso/lib/logmein';
+import { getToken } from 'calypso/lib/oauth-token';
+import { checkFormHandler } from 'calypso/lib/protect-form';
+import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
 import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { isOutsideCalypso } from 'calypso/lib/url';
+import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
+import { onDisablePersistence } from 'calypso/lib/user/store';
+import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
+import { setupRoutes } from 'calypso/sections-middleware';
+import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';
+import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
-import { setRoute } from 'calypso/state/route/actions';
-import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
-import { createReduxStore } from 'calypso/state';
-import initialReducer from 'calypso/state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
-import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
-import { onDisablePersistence } from 'calypso/lib/user/store';
-import { isOutsideCalypso } from 'calypso/lib/url';
-import { getUrlParts } from '@automattic/calypso-url';
-import { setStore } from 'calypso/state/redux-store';
+import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
-import DesktopListeners from 'calypso/lib/desktop-listeners';
-import { attachLogmein } from 'calypso/lib/logmein';
+import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
+import { setRoute } from 'calypso/state/route/actions';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
@@ -163,10 +155,6 @@ function authorizePath() {
 const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
-
-		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
-			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
-		}
 
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
@@ -283,7 +271,6 @@ function setupErrorLogger( reduxStore ) {
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	setupRoutes();
@@ -351,7 +338,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
-			if ( ! config.isEnabled( 'jetpack-cloud/connect' ) && '/plans' === context.pathname ) {
+			if ( '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					window.location =
@@ -432,7 +419,7 @@ const boot = ( currentUser, registerRoutes ) => {
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer, currentUser?.ID );
 		const reduxStore = createReduxStore( initialState, initialReducer );
-		setStore( reduxStore );
+		setStore( reduxStore, currentUser?.ID );
 		onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 		setupLocale( currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );

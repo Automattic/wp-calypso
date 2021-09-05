@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { isRequesting } from 'calypso/state/login/selectors';
-import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
+import { isRequesting } from 'calypso/state/login/selectors';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {

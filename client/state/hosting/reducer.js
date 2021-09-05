@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const sftpUsers = ( state = {}, { type, users } ) => {
 	if ( type === HOSTING_SFTP_USERS_SET ) {

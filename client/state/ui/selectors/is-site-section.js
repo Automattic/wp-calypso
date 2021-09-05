@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getSectionGroup from './get-section-group';
 
 /**
@@ -15,5 +7,5 @@ import getSectionGroup from './get-section-group';
  * @returns {boolean}       Whether current section is site-specific
  */
 export default function isSiteSection( state ) {
-	return includes( [ 'sites', 'editor', 'gutenberg' ], getSectionGroup( state ) );
+	return [ 'sites', 'editor', 'gutenberg' ].includes( getSectionGroup( state ) );
 }

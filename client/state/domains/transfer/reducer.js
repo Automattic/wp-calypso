@@ -1,9 +1,3 @@
-/**
- * Internal dependencies
- */
-import initialDomainState from './initial';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { domainTransferSchema } from './schema';
 import {
 	DOMAIN_TRANSFER_ACCEPT,
 	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
@@ -19,6 +13,9 @@ import {
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import initialDomainState from './initial';
+import { domainTransferSchema } from './schema';
 
 function updateDomainState( state, domain, data ) {
 	return Object.assign( {}, state, {

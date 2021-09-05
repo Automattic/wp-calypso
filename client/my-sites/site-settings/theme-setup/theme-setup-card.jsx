@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import ActionPanelFigure from 'calypso/components/action-panel/figure';
-import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
-import ActiveThemeScreenshot from './active-theme-screenshot';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import Notice from 'calypso/components/notice';
 import ThemeSetupDialog from 'calypso/my-sites/site-settings/theme-setup-dialog';
+import ActiveThemeScreenshot from './active-theme-screenshot';
 
 const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 	<ActionPanel>

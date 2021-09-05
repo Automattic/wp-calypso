@@ -8,7 +8,7 @@ div.wpnc__user {
     width: $wpnc__icon-size-detail;
     float: left;
     margin: $wpnc__user-margin-adjustment $wpnc__padding-medium 0 0;
-    border-radius: $wpnc__icon-size-detail/2;
+    border-radius: $wpnc__icon-size-detail*0.5;
   }
 
   p {
@@ -71,5 +71,5 @@ div.wpnc__user {
 .wpnc__reblog .wpnc__body div.wpnc__user img {
   height: $wpnc__icon-size;
   width: $wpnc__icon-size;
-  border-radius: $wpnc__icon-size/2;
+  border-radius: $wpnc__icon-size*0.5;
 }

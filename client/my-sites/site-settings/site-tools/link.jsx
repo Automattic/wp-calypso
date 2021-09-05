@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import { CompactCard } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 
 const noop = () => {};
 

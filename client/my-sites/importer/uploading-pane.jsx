@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import { ProgressBar } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { truncate } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { includes, truncate } from 'lodash';
+import DropZone from 'calypso/components/drop-zone';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import TextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import { startMappingAuthors, startUpload } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
 	getUploadPercentComplete,
 } from 'calypso/state/imports/uploads/selectors';
-import DropZone from 'calypso/components/drop-zone';
-import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
-import TextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { ProgressBar } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './uploading-pane.scss';
 
 const noop = () => {};
@@ -39,7 +29,7 @@ class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
 
 	static propTypes = {
-		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+		description: PropTypes.node,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 		} ),
@@ -154,7 +144,7 @@ class UploadingPane extends React.PureComponent {
 		const { importerState } = this.props.importerStatus;
 		const { READY_FOR_UPLOAD, UPLOAD_FAILURE } = appStates;
 
-		return includes( [ READY_FOR_UPLOAD, UPLOAD_FAILURE ], importerState );
+		return [ READY_FOR_UPLOAD, UPLOAD_FAILURE ].includes( importerState );
 	}
 
 	openFileSelector = () => {
@@ -173,7 +163,9 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	validateUrl = ( urlInput ) => {
-		return ! urlInput || urlInput === '' || this.props.optionalUrl.validate( urlInput );
+		const validationFn = this.props?.optionalUrl?.validate;
+
+		return ! urlInput || urlInput === '' || ( validationFn ? validationFn( urlInput ) : true );
 	};
 
 	setUrl = ( event ) => {

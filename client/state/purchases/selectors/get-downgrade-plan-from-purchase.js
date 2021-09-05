@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { getPlan, findPlansKeys, TYPE_PERSONAL } from '@automattic/calypso-products';
 
 import 'calypso/state/purchases/init';

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Gridicon from './gridicons';
-import noticon2gridicon from '../utils/noticon2gridicon';
-import actions from '../state/actions';
-import ImagePreloader from './image-loader';
-import { html } from '../indices-to-html';
 import { recordTracksEvent } from '../helpers/stats';
+import { html } from '../indices-to-html';
+import actions from '../state/actions';
+import noticon2gridicon from '../utils/noticon2gridicon';
+import Gridicon from './gridicons';
+import ImagePreloader from './image-loader';
 
 export class SummaryInList extends React.Component {
 	handleClick = ( event ) => {

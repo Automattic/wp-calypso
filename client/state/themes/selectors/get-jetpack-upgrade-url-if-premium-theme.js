@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	PLAN_JETPACK_SECURITY_REALTIME,
-} from '@automattic/calypso-products';
+import { PLAN_JETPACK_SECURITY_REALTIME } from '@automattic/calypso-products';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
 import 'calypso/state/themes/init';
@@ -20,11 +13,7 @@ import 'calypso/state/themes/init';
  * @returns {?string}         Plan purchase URL
  */
 export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
-	if (
-		isJetpackSite( state, siteId ) &&
-		isThemePremium( state, themeId ) &&
-		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-	) {
+	if ( isJetpackSite( state, siteId ) && isThemePremium( state, themeId ) ) {
 		return `/checkout/${ getSiteSlug( state, siteId ) }/${ PLAN_JETPACK_SECURITY_REALTIME }`;
 	}
 	return null;

@@ -1,6 +1,8 @@
+import fs from 'fs/promises';
+import os from 'os';
 import path from 'path';
 import config from 'config';
-import { getLocale, getViewportName } from './browser-helper';
+import { getTimestamp } from './data-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -41,59 +43,63 @@ export function getVideoDir(): string {
 }
 
 /**
- * Returns a descriptive file name for the requested artifact type.
+ * Creates a temporary test file by cloning a source file under a new name.
  *
- * @param {{[key: string]: string}} param0 Object assembled by the caller.
- * @param {string} param0.name Name of the test suite or step that failed.
- * @param {string} param0.type Target type of the file name.
- * @returns {string} A Path-like string.
- * @throws {Error} If target type is not one of supported types.
+ * @param {{[key: string]: string}} param0 Parameter object.
+ * @param {string} param0.sourceFileName Basename of the source file to be cloned.
+ * @param {string} [param0.testFileName] Basename of the test file to be generated.
+ * @returns {Promise<string>} Full path to the generated test file.
  */
-export function getFileName( {
-	name,
-	type,
+export async function createTestFile( {
+	sourceFileName,
+	testFileName,
 }: {
-	name: string;
-	type: 'video' | 'screenshot';
-} ): string {
-	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const viewportName = getViewportName().toUpperCase();
-	const locale = getLocale().toUpperCase();
-	const date = getDateString();
-	const fileName = `FAILED-${ locale }-${ viewportName }-${ suiteName }-${ date }`;
-
-	let dir;
-	let extension;
-
-	if ( type.toLowerCase() === 'screenshot' ) {
-		dir = getScreenshotDir();
-		extension = 'png';
-	} else if ( type.toLowerCase() === 'video' ) {
-		dir = getVideoDir();
-		extension = 'webm';
-	} else {
-		throw new Error( `Unsupported type specified, received ${ type }` );
+	sourceFileName: string;
+	testFileName?: string;
+} ): Promise< string > {
+	let fileName = getTimestamp();
+	// If the output `testFileName` is defined, use that as part of the final filename.
+	if ( testFileName ) {
+		fileName += `-${ testFileName }`;
 	}
-	return `${ dir }/${ fileName }.${ extension }`;
+
+	// Reassign the variable with the final name to be used, including the extension.
+	fileName = `${ fileName }.${ sourceFileName.split( '.' ).pop() }`;
+
+	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
+	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
+
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e-' ) );
+	const testFilePath = path.join( tempDir, fileName );
+
+	await fs.copyFile( sourceFilePath, testFilePath );
+
+	return testFilePath;
 }
 
 /**
- * Returns the current date as a time stamp.
+ * Returns the path to a generated temporary JPEG image file.
  *
- * @returns {string} Date represented as a timestamp.
+ * @returns {Promise<string>} Full path on disk to the generated test file.
  */
-export function getDateString(): string {
-	return new Date().getTime().toString();
+export async function createTestImage(): Promise< string > {
+	return await createTestFile( { sourceFileName: 'image0.jpg' } );
 }
 
 /**
- * Generates a valid filanem using the test name and a time stamp
+ * Returns the path to a generated temporary MP3 audio file.
  *
- * @param {string} testName The test name.
- * @returns The filename.
+ * @returns {string} Full path on disk to the generated test file.
  */
-export function getTestNameWithTime( testName: string ): string {
-	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	return `${ currentTestName }-${ dateTime }`;
+export async function createTestAudio(): Promise< string > {
+	return await createTestFile( { sourceFileName: 'bees.mp3' } );
+}
+
+/**
+ * Returns the path to an unsupported file.
+ *
+ * @returns {string} Full path on disk to the generated test file.
+ */
+export async function createInvalidFile(): Promise< string > {
+	return await createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
 }

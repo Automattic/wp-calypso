@@ -1,23 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer, {
-	isRequesting,
-	isFormDisabled,
-	isRequestingTwoFactorAuth,
-	requestError,
-	requestNotice,
-	requestSuccess,
-	twoFactorAuth,
-	twoFactorAuthRequestError,
-	socialAccount,
-	socialAccountLink,
-} from '../reducer';
 import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
@@ -40,6 +21,18 @@ import {
 	ROUTE_SET,
 	CURRENT_USER_RECEIVE,
 } from 'calypso/state/action-types';
+import reducer, {
+	isRequesting,
+	isFormDisabled,
+	isRequestingTwoFactorAuth,
+	requestError,
+	requestNotice,
+	requestSuccess,
+	twoFactorAuth,
+	twoFactorAuthRequestError,
+	socialAccount,
+	socialAccountLink,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

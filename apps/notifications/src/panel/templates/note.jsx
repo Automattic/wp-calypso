@@ -1,21 +1,12 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { getActions } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteRead from '../state/selectors/get-is-note-read';
-
+import NoteBody from './body';
 import SummaryInList from './summary-in-list';
 import SummaryInSingle from './summary-in-single';
-import NoteBody from './body';
-
-import { getActions } from '../helpers/notes';
 
 const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );

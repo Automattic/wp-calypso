@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import Banner from 'calypso/components/banner';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class FreeDomainExplainer extends React.Component {

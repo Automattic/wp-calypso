@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 const log = require( '../../lib/logger' )( 'desktop:ipc' );
 
 module.exports = {

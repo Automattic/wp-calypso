@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-
-/**
- * Local dependencies
- */
 import ShortcodeFrame from './frame';
 
 function useRenderedShortcode( siteId, shortcode ) {
@@ -22,20 +11,16 @@ function useRenderedShortcode( siteId, shortcode ) {
 	useEffect( () => {
 		// set the result to `null` and remember what `siteId` and `shortcode` are we requesting
 		setRequestState( { siteId, shortcode, result: null } );
-		wpcom
-			.undocumented()
-			.site( siteId )
-			.shortcodes( { shortcode } )
-			.then( ( result ) =>
-				setRequestState( ( prevState ) => {
-					// if the response doesn't match the request, ignore it (race condition)
-					if ( prevState.siteId !== siteId || prevState.shortcode !== shortcode ) {
-						return prevState;
-					}
-					// store the matching response into `result`
-					return { siteId, shortcode, result };
-				} )
-			);
+		wpcom.req.get( `/sites/${ siteId }/shortcodes/render`, { shortcode } ).then( ( result ) =>
+			setRequestState( ( prevState ) => {
+				// if the response doesn't match the request, ignore it (race condition)
+				if ( prevState.siteId !== siteId || prevState.shortcode !== shortcode ) {
+					return prevState;
+				}
+				// store the matching response into `result`
+				return { siteId, shortcode, result };
+			} )
+		);
 	}, [ siteId, shortcode ] );
 
 	return requestState.result;

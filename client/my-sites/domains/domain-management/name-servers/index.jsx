@@ -1,48 +1,38 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import CustomNameserversForm from './custom-nameservers-form';
-import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
-import DnsTemplates from './dns-templates';
-import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
+import Notice from 'calypso/components/notice';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import {
-	WPCOM_DEFAULT_NAMESERVERS,
-	WPCOM_DEFAULT_NAMESERVERS_REGEX,
-	CLOUDFLARE_NAMESERVERS_REGEX,
-} from './constants';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import FetchError from './fetch-error';
-import Notice from 'calypso/components/notice';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
+import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
+import {
+	WPCOM_DEFAULT_NAMESERVERS,
+	WPCOM_DEFAULT_NAMESERVERS_REGEX,
+	CLOUDFLARE_NAMESERVERS_REGEX,
+} from './constants';
+import CustomNameserversForm from './custom-nameservers-form';
+import DnsTemplates from './dns-templates';
+import FetchError from './fetch-error';
 import withDomainNameservers from './with-domain-nameservers';
+import WpcomNameserversToggle from './wpcom-nameservers-toggle';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class NameServers extends React.Component {

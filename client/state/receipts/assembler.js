@@ -1,8 +1,5 @@
 // @ts-check
 
-/**
- * External dependencies
- */
 import { flatten } from 'lodash';
 
 /**

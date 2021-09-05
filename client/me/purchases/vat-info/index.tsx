@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { CompactCard, Button, Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import Layout from 'calypso/components/layout';
-import Column from 'calypso/components/layout/column';
+import { useTranslate } from 'i18n-calypso';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import useVatDetails from './use-vat-details';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import type { VatDetails, UpdateError } from './use-vat-details';
-import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import useVatDetails from './use-vat-details';
+import type { VatDetails, UpdateError } from './use-vat-details';
 
 import './style.scss';
 

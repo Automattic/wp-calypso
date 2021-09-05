@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
 import { find, startsWith } from 'lodash';
 import { CSSProperties } from 'react';
-
-/**
- * Internal dependencies
- */
 import scrollTo from 'calypso/lib/scroll-to';
 import { Coordinate, DialogPosition, ArrowPosition } from './types';
 

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
@@ -25,10 +22,7 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
@@ -36,9 +30,8 @@ import {
 	ITEM_TYPE_PLAN,
 } from './constants';
 import { getForCurrentCROIteration, Iterations } from './iterations';
-import { SelectorProduct } from './types';
-import buildCardFeaturesFromItem from './build-card-features-from-item';
 import objectIsPlan from './object-is-plan';
+import { SelectorProduct } from './types';
 
 function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 	return slug in JETPACK_SITE_PRODUCTS_WITH_FEATURES;

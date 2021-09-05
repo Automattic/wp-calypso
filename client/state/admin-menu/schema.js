@@ -3,6 +3,7 @@ const commonItemPropsSchema = {
 	title: { type: 'string' },
 	type: { type: 'string' },
 	url: { type: 'string' },
+	badge: { type: 'string' },
 };
 
 const menuItemsSite = {

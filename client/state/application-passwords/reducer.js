@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { reject } from 'lodash';
 import {
 	APPLICATION_PASSWORD_CREATE_SUCCESS,
 	APPLICATION_PASSWORD_DELETE_SUCCESS,

@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
+import page from 'page';
+import React from 'react';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
+import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsInsights from './stats-insights';
+import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
-import StatsSummary from './summary';
+import StatsInsights from './stats-insights';
 import StatsPostDetail from './stats-post-detail';
-import StatsCommentFollows from './comment-follows';
+import StatsSummary from './summary';
 import WordAds from './wordads';
 
 function rangeOfPeriod( period, date ) {
@@ -250,7 +242,6 @@ export function site( context, next ) {
 	const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
 	bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
-	recordPlaceholdersTiming();
 
 	const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';

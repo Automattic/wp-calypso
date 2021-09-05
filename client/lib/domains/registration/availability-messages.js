@@ -1,22 +1,15 @@
 /* eslint-disable no-case-declarations */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { getTld } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN,
 } from 'calypso/lib/url/support';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
@@ -58,8 +51,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			break;
 		case domainAvailability.REGISTERED_OTHER_SITE_SAME_USER:
 			message = translate(
-				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to move it to this site? ' +
-					'{{a}}Yes, move it to this site.{{/a}}',
+				'{{strong}}%(domain)s{{/strong}} is already registered on your site %(site)s. Do you want to {{a}}move it to this site{{/a}}?',
 				{
 					args: { domain, site },
 					components: {
@@ -378,6 +370,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					components: {
 						strong: <strong />,
 						a: <a rel="noopener noreferrer" href={ domainMapping( site, domain ) } />,
+					},
+				}
+			);
+			break;
+
+		case 'blocked':
+			const supportURL = 'https://wordpress.com/error-report/?url=495@' + ( site?.slug || '' );
+			message = translate(
+				"You're blocked from purchasing domains on WordPress.com. Please {{a}}contact our support{{/a}} to find out why.",
+				{
+					components: {
+						a: <a rel="noopener noreferrer" href={ supportURL } />,
 					},
 				}
 			);

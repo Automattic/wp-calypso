@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
-/**
- * Internal dependencies
- */
 import {
 	isRemovable,
 	isCancelable,
@@ -19,7 +12,6 @@ import {
 	handleRenewMultiplePurchasesClick,
 	shouldRenderMonthlyRenewalOption,
 } from '../index';
-
 import data from './data';
 const {
 	DOMAIN_PURCHASE,
@@ -368,16 +360,16 @@ describe( 'index', () => {
 				expect(
 					shouldRenderMonthlyRenewalOption( {
 						...purchase,
-						...{ expiryStatus: 'expiring', expiryDate: moment().add( 90, 'days' ).format() },
+						...{ expiryStatus: 'expiring', expiryDate: moment().add( 89, 'days' ).format() },
 					} )
 				).toBe( true );
 			} );
 
-			test( 'when auto renew is on and plan is more than 30 days away from expiry', () => {
+			test( 'when auto renew is on and plan is less than 30 days away from expiry', () => {
 				expect(
 					shouldRenderMonthlyRenewalOption( {
 						...purchase,
-						...{ expiryDate: moment().add( 30, 'days' ).format() },
+						...{ expiryDate: moment().add( 29, 'days' ).format() },
 					} )
 				).toBe( true );
 			} );

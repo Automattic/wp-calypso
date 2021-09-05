@@ -1,34 +1,23 @@
-/**
- * External dependencies
- */
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import Main from 'calypso/components/main';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySites from 'calypso/components/data/query-sites';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import getViewTrackerPath from './get-view-tracker-path';
-import ProductGrid from './product-grid';
-import buildCheckoutURL from './build-checkout-url';
-import { managePurchase } from 'calypso/me/purchases/paths';
+import QuerySites from 'calypso/components/data/query-sites';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import buildCheckoutURL from './build-checkout-url';
+import getViewTrackerPath from './get-view-tracker-path';
 import { getForCurrentCROIteration, Iterations } from './iterations';
-
-/**
- * Type dependencies
- */
+import ProductGrid from './product-grid';
 import type {
 	Duration,
 	ScrollCardIntoViewCallback,

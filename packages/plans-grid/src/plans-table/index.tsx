@@ -11,9 +11,6 @@ import type {
 } from './types';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {

@@ -20,7 +20,6 @@ export const FEATURE_SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';
 export const FEATURE_FREE_THEMES = 'free-themes';
-export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
@@ -65,7 +64,6 @@ export const FEATURE_ALL_PERSONAL_FEATURES_JETPACK = 'all-personal-features-jetp
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
 export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
-export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
@@ -82,6 +80,7 @@ export const FEATURE_HOSTING = 'hosting';
 export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
+export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

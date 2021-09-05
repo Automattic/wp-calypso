@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items, requesting, updating } from '../reducer';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -17,6 +9,7 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items, requesting, updating } from '../reducer';
 
 // mock the real selectors with the same names
 function isRequestingSiteMonitorSettings( state, siteId ) {

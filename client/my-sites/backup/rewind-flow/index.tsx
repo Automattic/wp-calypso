@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useEffect } from 'react';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import Spinner from 'calypso/components/spinner';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { getHttpData, DataState } from 'calypso/state/data-layer/http-data';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getRequestActivityId, requestActivity } from 'calypso/state/data-getters';
+import { getHttpData, DataState } from 'calypso/state/data-layer/http-data';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { RewindFlowPurpose } from './types';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import BackupDownloadFlow from './download';
-import BackupRestoreFlow from './restore';
-import DocumentHead from 'calypso/components/data/document-head';
-import Error from './error';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import BackupDownloadFlow from './download';
+import Error from './error';
 import Loading from './loading';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import Spinner from 'calypso/components/spinner';
+import BackupRestoreFlow from './restore';
+import { RewindFlowPurpose } from './types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

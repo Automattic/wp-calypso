@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import {
-	setDocumentHeadTitle,
-	setDocumentHeadLink,
-	setDocumentHeadMeta,
-	setDocumentHeadUnreadCount,
-} from '../actions';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'calypso/state/action-types';
+import {
+	setDocumentHeadTitle,
+	setDocumentHeadLink,
+	setDocumentHeadMeta,
+	setDocumentHeadUnreadCount,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setDocumentHeadTitle()', () => {

@@ -176,15 +176,17 @@
 				margin-bottom: 0;
 			}
 
-			.titan-new-mailbox-list__actions {
-				justify-content: space-between;
-			}
-
 			.email-providers-comparison__gsuite-user-list-action-continue {
 				margin-top: 1em;
 
 				@include break-mobile {
 					margin-top: 0;
+				}
+			}
+
+			.email-providers-comparison__titan-mailbox-action-continue {
+				@include break-mobile {
+					margin-left: auto;
 				}
 			}
 		}

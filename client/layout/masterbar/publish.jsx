@@ -1,28 +1,23 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import MasterbarItem from './item';
-import { preloadEditor } from 'calypso/sections-preloaders';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
-import MasterbarDrafts from './drafts';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { navigate } from 'calypso/lib/navigate';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
+import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
 import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSectionGroup from 'calypso/state/ui/selectors/get-section-group';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
-import { navigate } from 'calypso/lib/navigate';
+import MasterbarDrafts from './drafts';
+import MasterbarItem from './item';
+import { WriteIcon } from './write-icon';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -90,14 +85,16 @@ class MasterbarItemNew extends React.Component {
 	}
 
 	render() {
-		const classes = classNames( this.props.className );
+		const classes = classNames( this.props.className, {
+			'has-drafts': this.props.draftCount > 0,
+		} );
 
 		return (
 			<div className="masterbar__publish">
 				<MasterbarItem
 					ref={ this.postButtonRef }
 					url={ this.props.editorUrl }
-					icon="create"
+					icon={ <WriteIcon /> }
 					onClick={ this.onClick }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
@@ -106,7 +103,7 @@ class MasterbarItemNew extends React.Component {
 				>
 					{ this.props.children }
 				</MasterbarItem>
-				<MasterbarDrafts />
+				<MasterbarDrafts draftCount={ this.props.draftCount } />
 				{ this.renderPopover() }
 			</div>
 		);
@@ -123,6 +120,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSitesGroup = getSectionGroup( state ) === 'sites';
 		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;
+		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
 
 		// the selector is shown only if it's not 100% clear which site we are on.
 		// I.e, when user has more than one site, is outside the My Sites group,
@@ -134,7 +132,7 @@ export default connect(
 		const siteId = selectedSiteId || getPrimarySiteId( state );
 		const editorUrl = getEditorUrl( state, siteId, null, 'post' );
 
-		return { shouldOpenSiteSelector, editorUrl };
+		return { shouldOpenSiteSelector, editorUrl, draftCount };
 	},
 	{ openEditor }
 )( MasterbarItemNew );

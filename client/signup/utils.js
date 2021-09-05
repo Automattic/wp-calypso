@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import steps from 'calypso/signup/config/steps-pure';
+import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import flows from 'calypso/signup/config/flows';
+import steps from 'calypso/signup/config/steps-pure';
 
 const { defaultFlowName } = flows;
 
@@ -215,4 +209,8 @@ export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
 export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 	const flow = flows.getFlow( flowName, userLoggedIn );
 	return !! flow && flow.forceLogin;
+};
+
+export const isReskinnedFlow = ( flowName ) => {
+	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
 };

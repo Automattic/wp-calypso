@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import MeProfileLinks from './me.settings.profile-links';
 import MeSettingsPassword from './me.settings.password';
+import MeProfileLinks from './me.settings.profile-links';
 
 /**
  * `MeSettings` constructor.

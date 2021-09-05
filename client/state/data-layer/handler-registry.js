@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 
 /** Stores lists of handlers by action type */

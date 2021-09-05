@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
+import { Button, Card, ProgressBar } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty, map } from 'lodash';
+import moment from 'moment';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import moment from 'moment';
-import { get, isEmpty, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card, ProgressBar } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
-import FormLabel from 'calypso/components/forms/form-label';
-import MaterialIcon from 'calypso/components/material-icon';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { isAtomicSiteLogAccessEnabled } from 'calypso/state/selectors/is-atomic-site-log-access-enabled';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const WebServerLogsCard = ( props ) => {

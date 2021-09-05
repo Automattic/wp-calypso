@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { createContext } from 'react';
+import type { ShoppingCartManagerClient } from './types';
 
-/**
- * Internal dependencies
- */
-import type { ShoppingCartManager } from './types';
-
-const ShoppingCartContext = createContext< ShoppingCartManager | undefined >( undefined );
+const ShoppingCartContext = createContext< ShoppingCartManagerClient | undefined >( undefined );
 export default ShoppingCartContext;

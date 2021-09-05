@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import wp from 'calypso/lib/wp';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import getDomainDetails from '../lib/get-domain-details';
+import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
+import { createAccount } from '../payment-method-helpers';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
 import type { PayPalExpressEndpointRequestPayload } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
-import type { PaymentProcessorOptions } from '../types/payment-processors';
-import getDomainDetails from '../lib/get-domain-details';
-import { createAccount } from '../payment-method-helpers';
-import wp from 'calypso/lib/wp';
-import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:paypal-express-processor' );
 
@@ -73,8 +66,15 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
-	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
-		return createAccount().then( ( response ) => {
+	const isJetpackUserLessCheckout =
+		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
+
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
+		const createAccountOptions = isJetpackUserLessCheckout
+			? { signupFlowName: 'jetpack-userless-checkout' }
+			: { signupFlowName: 'onboarding-registrationless' };
+
+		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
@@ -87,7 +87,6 @@ async function wpcomPayPalExpress(
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
-					create_new_blog: false,
 				},
 			};
 

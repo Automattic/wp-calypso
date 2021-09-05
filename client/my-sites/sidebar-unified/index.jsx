@@ -5,39 +5,32 @@
  *   into state.adminMenu in a data layer.
  *
  *   Currently experimental/WIP.
- **/
-
-/**
- * External dependencies
  */
+
+import { translate } from 'i18n-calypso';
 import React, { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
+import Spinner from 'calypso/components/spinner';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarRegion from 'calypso/layout/sidebar/region';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import { isExternal } from 'calypso/lib/url';
 import CurrentSite from 'calypso/my-sites/current-site';
+import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import AddNewSite from './add-new-site';
+import CollapseSidebar from './collapse-sidebar';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
-import CollapseSidebar from './collapse-sidebar';
-import AddNewSite from './add-new-site';
-import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
-import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import Sidebar from 'calypso/layout/sidebar';
-import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import SidebarRegion from 'calypso/layout/sidebar/region';
-import 'calypso/state/admin-menu/init';
-import Spinner from 'calypso/components/spinner';
+import useSiteMenuItems from './use-site-menu-items';
 import { itemLinkMatches } from './utils';
-import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import { isExternal } from 'calypso/lib/url';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import 'calypso/state/admin-menu/init';
 
 import './style.scss';
 
@@ -153,7 +146,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					icon="dashicons-admin-collapse"
 				/>
 			</Sidebar>
-			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
 			<AsyncLoad
 				require="calypso/my-sites/sidebar-unified/external-link-dialog"
 				isVisible={ showDialog }

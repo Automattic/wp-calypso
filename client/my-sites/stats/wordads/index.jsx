@@ -1,45 +1,34 @@
-/**
- * External dependencies
- */
-
-import page from 'page';
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import { localize, translate, numberFormat } from 'i18n-calypso';
-import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { find } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import EmptyContent from 'calypso/components/empty-content';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
-import StatsPeriodNavigation from '../stats-period-navigation';
-import DatePicker from '../stats-date-picker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import WordAdsChartTabs from '../wordads-chart-tabs';
+import page from 'page';
+import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import WordAdsEarnings from './earnings';
+import Main from 'calypso/components/main';
+import StickyPanel from 'calypso/components/sticky-panel';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { canCurrentUserUseAds } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { canCurrentUserUseAds } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
-import StickyPanel from 'calypso/components/sticky-panel';
+import DatePicker from '../stats-date-picker';
+import StatsPeriodNavigation from '../stats-period-navigation';
+import WordAdsChartTabs from '../wordads-chart-tabs';
+import WordAdsEarnings from './earnings';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { isExceedingSiteMaxUploadSize } from 'calypso/lib/media/utils/is-exceeding-site-max-upload-size';
 import { isSupportedFileTypeForSite } from 'calypso/lib/media/utils/is-supported-file-type-for-site';

@@ -1,0 +1,56 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.titan-new-mailbox-list__main {
+	.form-fieldset .form-label {
+		margin-bottom: 0;
+	}
+
+	.titan-new-mailbox-list__actions {
+		display: flex;
+		flex-direction: column-reverse;
+
+		@include break-mobile {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+
+		> .button:not( :last-child ) {
+			margin-top: 1em;
+
+			@include break-mobile {
+				margin-top: 0;
+				margin-right: 1.5em;
+			}
+		}
+	}
+
+	.titan-new-mailbox-list__supplied-actions {
+		display: flex;
+		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
+		> .button:not( :first-child ) {
+			margin-top: 1em;
+
+			@include break-mobile {
+				margin-top: 0;
+				margin-left: 1.5em;
+			}
+		}
+	}
+}
+
+.titan-new-mailbox-list__numbered-heading.card-heading {
+	color: var( --color-text-subtle );
+	line-height: 2;
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.titan-new-mailbox-list__separator {
+	margin-top: 1.5em;
+}

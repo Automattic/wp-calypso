@@ -31,13 +31,6 @@ function isEnabled( flag ) {
 
 /* harmony default export */ const config = ({ isEnabled });
 
-;// CONCATENATED MODULE: ./default-import/config/module.js
-
-
-// Should be replaced with true
-if ( true ) {
-}
-
 ;// CONCATENATED MODULE: ./default-import/config/function.js
 
 
@@ -47,11 +40,11 @@ function fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./default-import/config/wrong-flag.js
+;// CONCATENATED MODULE: ./default-import/config/module.js
 
 
-// Should NOT be replaced with true.
-if ( config.isEnabled( 'bar' ) ) {
+// Should be replaced with true
+if ( true ) {
 }
 
 ;// CONCATENATED MODULE: ./default-import/config/rename.js
@@ -59,13 +52,6 @@ if ( config.isEnabled( 'bar' ) ) {
 
 // Should be replaced with true
 if ( true ) {
-}
-
-;// CONCATENATED MODULE: ./default-import/config/wrong-path.js
-
-
-// Should NOT be replaced with true
-if ( default_import_config_namespaceObject.default.isEnabled( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./default-import/config/shadowed-by-param.js
@@ -85,6 +71,20 @@ function shadowed_by_var_fn() {
 	// Should NOT be replaced with true
 	if ( config.isEnabled( 'foo' ) ) {
 	}
+}
+
+;// CONCATENATED MODULE: ./default-import/config/wrong-flag.js
+
+
+// Should NOT be replaced with true.
+if ( config.isEnabled( 'bar' ) ) {
+}
+
+;// CONCATENATED MODULE: ./default-import/config/wrong-path.js
+
+
+// Should NOT be replaced with true
+if ( default_import_config_namespaceObject.default.isEnabled( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./default-import/config/index.js
@@ -157,13 +157,6 @@ if ( config.isEnabled( 'bar' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./named-import/config/module.js
-
-
-// Should be replaced with true
-if ( true ) {
-}
-
 ;// CONCATENATED MODULE: ./named-import/config/function.js
 
 
@@ -173,11 +166,11 @@ function config_function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./named-import/config/wrong-flag.js
+;// CONCATENATED MODULE: ./named-import/config/module.js
 
 
-// Should NOT be replaced with true.
-if ( isEnabled( 'bar' ) ) {
+// Should be replaced with true
+if ( true ) {
 }
 
 ;// CONCATENATED MODULE: ./named-import/config/rename.js
@@ -185,14 +178,6 @@ if ( isEnabled( 'bar' ) ) {
 
 // Should be replaced with true
 if ( true ) {
-}
-
-;// CONCATENATED MODULE: ./named-import/config/wrong-path.js
-// eslint-disable-next-line import/named
-
-
-// Should NOT be replaced with true
-if ( (0,named_import_config_namespaceObject.isEnabled)( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./named-import/config/shadowed-by-param.js
@@ -212,6 +197,21 @@ function config_shadowed_by_var_fn() {
 	// Should NOT be replaced with true
 	if ( isEnabled( 'foo' ) ) {
 	}
+}
+
+;// CONCATENATED MODULE: ./named-import/config/wrong-flag.js
+
+
+// Should NOT be replaced with true.
+if ( isEnabled( 'bar' ) ) {
+}
+
+;// CONCATENATED MODULE: ./named-import/config/wrong-path.js
+// eslint-disable-next-line import/named
+
+
+// Should NOT be replaced with true
+if ( (0,named_import_config_namespaceObject.isEnabled)( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./named-import/config/index.js
@@ -284,13 +284,6 @@ if ( isEnabled( 'bar' ) ) {
 
 
 
-;// CONCATENATED MODULE: ./namespace-import/config/module.js
-
-
-// Should be replaced with true
-if ( true ) {
-}
-
 ;// CONCATENATED MODULE: ./namespace-import/config/function.js
 
 
@@ -300,11 +293,11 @@ function namespace_import_config_function_fn() {
 	}
 }
 
-;// CONCATENATED MODULE: ./namespace-import/config/wrong-flag.js
+;// CONCATENATED MODULE: ./namespace-import/config/module.js
 
 
-// Should NOT be replaced with true.
-if ( isEnabled( 'bar' ) ) {
+// Should be replaced with true
+if ( true ) {
 }
 
 ;// CONCATENATED MODULE: ./namespace-import/config/rename.js
@@ -312,14 +305,6 @@ if ( isEnabled( 'bar' ) ) {
 
 // Should be replaced with true
 if ( true ) {
-}
-
-;// CONCATENATED MODULE: ./namespace-import/config/wrong-path.js
-/* eslint-disable import/namespace */
-
-
-// Should NOT be replaced with true
-if ( namespace_import_config_namespaceObject.isEnabled( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./namespace-import/config/shadowed-by-param.js
@@ -339,6 +324,21 @@ function namespace_import_config_shadowed_by_var_fn() {
 	// Should NOT be replaced with true
 	if ( config.isEnabled( 'foo' ) ) {
 	}
+}
+
+;// CONCATENATED MODULE: ./namespace-import/config/wrong-flag.js
+
+
+// Should NOT be replaced with true.
+if ( isEnabled( 'bar' ) ) {
+}
+
+;// CONCATENATED MODULE: ./namespace-import/config/wrong-path.js
+/* eslint-disable import/namespace */
+
+
+// Should NOT be replaced with true
+if ( namespace_import_config_namespaceObject.isEnabled( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./namespace-import/config/index.js

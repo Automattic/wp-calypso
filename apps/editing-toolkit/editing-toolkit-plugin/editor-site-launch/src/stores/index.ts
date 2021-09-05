@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import 'a8c-fse-common-data-stores';
 
 export const SITE_STORE = 'automattic/site';

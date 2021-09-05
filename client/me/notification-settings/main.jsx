@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import Navigation from './navigation';
-import BlogsSettings from './blogs-settings';
-import PushNotificationSettings from './push-notification-settings';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryUserDevices from 'calypso/components/data/query-user-devices';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { fetchSettings, toggle, saveSettings } from 'calypso/state/notification-settings/actions';
 import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
-import FormattedHeader from 'calypso/components/formatted-header';
+import BlogsSettings from './blogs-settings';
+import Navigation from './navigation';
+import PushNotificationSettings from './push-notification-settings';
 
 class NotificationSettings extends Component {
 	componentDidMount() {

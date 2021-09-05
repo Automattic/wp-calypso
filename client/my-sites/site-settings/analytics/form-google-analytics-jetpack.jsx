@@ -1,38 +1,29 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { find } from 'lodash';
-import { CompactCard } from '@automattic/components';
 import {
 	FEATURE_GOOGLE_ANALYTICS,
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
+import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
-import SupportInfo from 'calypso/components/support-info';
+import { find } from 'lodash';
+import React, { useEffect } from 'react';
+import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import FormAnalyticsStores from '../form-analytics-stores';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SupportInfo from 'calypso/components/support-info';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormAnalyticsStores from '../form-analytics-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const GoogleAnalyticsJetpackForm = ( {
@@ -145,14 +136,12 @@ const GoogleAnalyticsJetpackForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<ExternalLink
-									icon
-									href="https://support.google.com/analytics/answer/1032385?hl=en"
-									target="_blank"
-									rel="noopener noreferrer"
+								<InlineSupportLink
+									supportPostId={ 98905 }
+									supportLink="https://wordpress.com/support/google-analytics/#get-your-measurement-id"
 								>
 									{ translate( 'Where can I find my Measurement ID?' ) }
-								</ExternalLink>
+								</InlineSupportLink>
 							</FormFieldset>
 							<FormFieldset>
 								<ToggleControl

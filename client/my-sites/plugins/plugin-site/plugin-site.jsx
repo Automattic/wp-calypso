@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PluginSiteJetpack from 'calypso/my-sites/plugins/plugin-site-jetpack';
 import PluginSiteNetwork from 'calypso/my-sites/plugins/plugin-site-network';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -36,7 +28,7 @@ function mergeProps( stateProps, dispatchProps, ownProps ) {
 	const pluginSlug = get( ownProps, 'plugin.slug' );
 	let overrides = {};
 
-	if ( includes( [ 'jetpack', 'vaultpress' ], pluginSlug ) && stateProps.isAutomatedTransfer ) {
+	if ( [ 'jetpack', 'vaultpress' ].includes( pluginSlug ) && stateProps.isAutomatedTransfer ) {
 		overrides = {
 			allowedActions: {
 				activation: false,

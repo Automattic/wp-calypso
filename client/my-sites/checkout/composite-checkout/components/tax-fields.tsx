@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Field, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-import { Field, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { LeftColumn, RightColumn } from './ie-fallback';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
+import { LeftColumn, RightColumn } from './ie-fallback';
 import type { CountryListItem } from '../types/country-list-item';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const GridRow = styled.div`
 	display: -ms-grid;

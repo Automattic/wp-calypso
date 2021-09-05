@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import MediaLibraryDataSource from 'calypso/my-sites/media-library/data-source';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
@@ -21,7 +14,7 @@ const noop = () => {};
 
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children
-jest.mock( 'calypso/components/popover/menu', () => {
+jest.mock( 'calypso/components/popover-menu', () => {
 	return ( props ) => <div>{ props.children }</div>;
 } );
 // only enable the external-media options, enabling everything causes an

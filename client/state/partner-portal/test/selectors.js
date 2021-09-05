@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
+
 import * as selectors from 'calypso/state/partner-portal/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**

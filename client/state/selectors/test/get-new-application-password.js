@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getNewApplicationPassword from 'calypso/state/selectors/get-new-application-password';
 
 describe( 'getNewApplicationPassword()', () => {

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import getRequest from '../get-request';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import getRequest from '../get-request';
 
 test( 'should return default state even before initialization', () => {
 	const state = { dataRequests: {} };
