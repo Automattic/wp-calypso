@@ -81,13 +81,8 @@ export class PlansPage {
 	 *
 	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
-	async clickNavigationTab( targetTab: PlansPageTab ): Promise< void > {
+	async clickTab( targetTab: PlansPageTab ): Promise< void > {
 		await clickNavTab( this.page, targetTab );
-
-		// Close the dropdown manually due to https://github.com/Automattic/wp-calypso/issues/56038.
-		if ( getTargetDeviceName() === 'mobile' ) {
-			await this.page.click( selectors.mobileNavTabsToggle );
-		}
 	}
 
 	/**

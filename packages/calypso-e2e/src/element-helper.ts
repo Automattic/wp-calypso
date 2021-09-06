@@ -4,7 +4,6 @@ import { getTargetDeviceName } from './browser-helper';
 const selectors = {
 	// clickNavTab
 	navTab: ( tab: string ) => `.section-nav-tab:has-text("${ tab }")`,
-	selectedNavTab: ( tab: string ) => `li.section-nav-tab.is-selected:has-text("${ tab }")`,
 	mobileNavTabsToggle: 'button.section-nav__mobile-header',
 };
 
@@ -52,24 +51,27 @@ export async function waitForElementEnabled(
 export async function clickNavTab( page: Page, name: string ): Promise< void > {
 	const targetDevice = getTargetDeviceName();
 
+	// Mobile view - navtabs become a dropdown.
 	if ( targetDevice === 'mobile' ) {
-		// Mobile view - navtabs become a dropdown.
 		await page.click( selectors.mobileNavTabsToggle );
-		await page.click( selectors.navTab( name ) );
-	} else {
-		// Desktop view - navtabs are constantly visible tabs.
-		await page.click( selectors.navTab( name ) );
 	}
 
-	// Check that intended tab is now selected.
-	// Instead of using `waitForSelector`, this appraoch of manually checking
-	// the attribute in classList is preferable as it works across all scenarios.
-	// See https://github.com/Automattic/wp-calypso/issues/56038.
-	const elementHandle = await page.$( selectors.selectedNavTab( name ) );
-	const isSelected = await elementHandle
-		?.getAttribute( 'class' )
-		.then( ( classes ) => classes?.includes( 'is-selected' ) );
-	if ( ! isSelected ) {
-		throw new Error( `Failed to select tab ${ name }.` );
+	// Get the current active tab, then check against the intended target.
+	// If active tab and intended tab are same, short circuit the operation.
+	// If target device is mobile, close the NavTab dropdown.
+	const currentTab = await page
+		.waitForSelector( 'a[aria-current="true"]' )
+		.then( ( element ) => element.innerText() );
+
+	if ( currentTab === name ) {
+		if ( targetDevice === 'mobile' ) {
+			await page.click( selectors.mobileNavTabsToggle );
+		}
+		return;
 	}
+
+	// Click on the intended NavTab and wait for navigation to finish.
+	// This implicitly checks whether the intended tab is now active.
+	const elementHandle = await page.waitForSelector( selectors.navTab( name ) );
+	await Promise.all( [ page.waitForNavigation(), elementHandle.click() ] );
 }
