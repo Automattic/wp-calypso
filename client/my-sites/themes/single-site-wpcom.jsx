@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
 import React from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -22,10 +22,11 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	if ( displayUpsellBanner ) {
 		upsellBanner = (
 			<UpsellNudge
-				plan={ PLAN_BUSINESS }
 				className="themes__showcase-banner"
-				title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
 				event="calypso_themes_list_install_themes"
+				feature={ FEATURE_UPLOAD_THEMES }
+				plan={ PLAN_BUSINESS }
+				title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
 				forceHref={ true }
 				showIcon={ true }
 			/>
