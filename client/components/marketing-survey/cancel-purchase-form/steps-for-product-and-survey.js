@@ -28,7 +28,7 @@ export default function stepsForProductAndSurvey(
 	precancellationChatAvailable,
 	downgradePossible
 ) {
-	if ( survey.fullscreen && isPlan( product ) ) {
+	if ( survey?.fullscreen && isPlan( product ) ) {
 		return [ steps.FEEDBACK_STEP ];
 	}
 
