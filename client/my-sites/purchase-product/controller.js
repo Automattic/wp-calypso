@@ -110,7 +110,7 @@ export function redirectToSitelessCheckout( context, next ) {
 
 	if (
 		config.isEnabled( 'jetpack/siteless-checkout' ) &&
-		[ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( planSlug )
+		! [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( planSlug )
 	) {
 		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
 		return;
