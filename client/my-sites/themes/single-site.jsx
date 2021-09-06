@@ -2,14 +2,14 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isThemeActive } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
 import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
-	const { isJetpack, siteId, translate } = props;
+	const { isJetpack, isAtomic, siteId, translate } = props;
 
 	// If we've only just switched from single to multi-site, there's a chance
 	// this component is still being rendered with site unset, so we need to guard
@@ -18,7 +18,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 		return <Main fullWidthLayout className="themes" />;
 	}
 
-	if ( isJetpack ) {
+	if ( isJetpack && ! isAtomic ) {
 		return (
 			<SingleSiteThemeShowcaseJetpack
 				{ ...props }
@@ -49,7 +49,6 @@ export default connect( ( state ) => {
 	return {
 		siteId: selectedSiteId,
 		isJetpack: isJetpackSite( state, selectedSiteId ),
-		getScreenshotOption: ( themeId ) =>
-			isThemeActive( state, themeId, selectedSiteId ) ? 'customize' : 'info',
+		isAtomic: isAtomicSite( state, selectedSiteId ),
 	};
 } )( localize( SingleSiteThemeShowcaseWithOptions ) );
