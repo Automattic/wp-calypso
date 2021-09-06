@@ -35,7 +35,6 @@ describe( 'filterListBySearchTerm()', () => {
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
-				key: 'The best section',
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
@@ -49,7 +48,6 @@ describe( 'filterListBySearchTerm()', () => {
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
-				key: 'The best section',
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
@@ -63,7 +61,6 @@ describe( 'filterListBySearchTerm()', () => {
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
-				key: 'The best section',
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
