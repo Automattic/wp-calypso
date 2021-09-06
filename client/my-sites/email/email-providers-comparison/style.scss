@@ -211,6 +211,14 @@
 	flex-direction: column;
 	margin-top: $container-top-margin;
 
+	/**
+	* These breakpoints are required because `GSuiteNewUserList` uses them and
+	* goes from mobile -> desktop (480px) -> mobile (660px) -> desktop (800px)
+	* layouts.
+	*
+	* @TODO: Replace this with new breakpoint mixins when `GSuiteNewUserList` is
+	* also updated to use them
+	*/
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 		margin-top: 0;
@@ -219,8 +227,8 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: column;
-		margin-left: 0;
 		margin-top: 0;
+		margin-left: 0;
 	}
 
 	@include breakpoint-deprecated( '>800px' ) {
@@ -238,8 +246,8 @@
 		}
 
 		@include breakpoint-deprecated( '>660px' ) {
-			margin-left: 0;
 			margin-top: $child-top-margin;
+			margin-left: 0;
 		}
 
 		@include breakpoint-deprecated( '>800px' ) {
