@@ -106,7 +106,7 @@ function HelpSearchResults( {
 	};
 
 	const renderHelpLink = ( result, type ) => {
-		const { link, title, icon = 'domains', post_id } = result;
+		const { link, title, icon, post_id } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
 
@@ -140,7 +140,7 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							{ type === SUPPORT_TYPE_ADMIN_SECTION && <Gridicon icon={ icon } size={ 18 } /> }
+							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
 					</div>
