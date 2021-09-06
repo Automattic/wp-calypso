@@ -7,16 +7,15 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
-	const { requestingSitePlans, siteId, isVip, siteSlug, translate, isJetpack } = props;
+	const { requestingSitePlans, siteId, isVip, siteSlug, translate } = props;
 
 	const displayUpsellBanner = ! requestingSitePlans && ! isVip;
-	const bannerLocationBelowSearch = ! isJetpack;
 
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
@@ -42,7 +41,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			<ThemeShowcase
 				{ ...props }
 				upsellUrl={ upsellUrl }
-				upsellBanner={ bannerLocationBelowSearch ? upsellBanner : null }
+				upsellBanner={ upsellBanner }
 				siteId={ siteId }
 			/>
 		</Main>
@@ -50,7 +49,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 } );
 
 export default connect( ( state, { siteId } ) => ( {
-	isJetpack: isJetpackSite( state, siteId ),
 	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),
