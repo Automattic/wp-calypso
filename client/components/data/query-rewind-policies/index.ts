@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestDisplayRules } from 'calypso/state/activity-log/display-rules/actions';
-import isRequestingActivityLogDisplayRules from 'calypso/state/selectors/is-requesting-activity-log-display-rules';
+import { requestPolicies } from 'calypso/state/rewind/policies/actions';
+import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import type { AppState } from 'calypso/types';
 
-const useRequestActivityLogDisplayRules = ( siteId: number ) => {
+export const useRequestRewindPolicies = ( siteId: number ): void => {
 	const dispatch = useDispatch();
 	const requesting = useSelector( ( state: AppState ) =>
-		isRequestingActivityLogDisplayRules( state, siteId )
+		isRequestingRewindPolicies( state, siteId )
 	);
 
 	useEffect(
@@ -16,7 +16,7 @@ const useRequestActivityLogDisplayRules = ( siteId: number ) => {
 				return;
 			}
 
-			dispatch( requestDisplayRules( siteId ) );
+			dispatch( requestPolicies( siteId ) );
 		},
 
 		// `requesting` is technically a dependency but we exclude it here;
@@ -28,14 +28,14 @@ const useRequestActivityLogDisplayRules = ( siteId: number ) => {
 };
 
 // TODO: Remove this component once ActivityCardList can call hooks,
-// then extract `useRequestActivityLogDisplayRules` into its own file
+// then extract `useRequestRewindPolicies` into its own file
 type OwnProps = {
 	siteId: number;
 };
 
-const QueryActivityLogDisplayRules: React.FC< OwnProps > = ( { siteId } ) => {
-	useRequestActivityLogDisplayRules( siteId );
+const QueryRewindPolicies: React.FC< OwnProps > = ( { siteId } ) => {
+	useRequestRewindPolicies( siteId );
 	return null;
 };
 
-export default QueryActivityLogDisplayRules;
+export default QueryRewindPolicies;
