@@ -314,18 +314,24 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
-	if ( isEmpty( themeSlugWithRepo ) ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, selectedDesign } ) {
+	let theme = '';
+
+	if ( themeSlugWithRepo ) {
+		theme = themeSlugWithRepo.split( '/' )[ 1 ];
+	} else if ( selectedDesign ) {
+		theme = selectedDesign.theme;
+	}
+
+	if ( ! theme ) {
 		defer( callback );
 
 		return;
 	}
 
-	wpcom
-		.undocumented()
-		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function ( errors ) {
-			callback( isEmpty( errors ) ? undefined : [ errors ] );
-		} );
+	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
