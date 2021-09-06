@@ -36,7 +36,7 @@ class GSuiteCancellationFeatures extends Component {
 						googleMailService,
 					},
 					comment:
-						'%(domainName) is the name of the domain, e.g. example.com; ' +
+						'%(domainName) is the name of the domain (e.g. example.com) ' +
 						'%(googleMailService)s can be either "G Suite" or "Google Workspace" ',
 					components: {
 						strong: <strong />,
