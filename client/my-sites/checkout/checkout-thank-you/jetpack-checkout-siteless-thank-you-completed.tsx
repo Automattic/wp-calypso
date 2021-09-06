@@ -78,7 +78,7 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 						productName,
 					},
 			  } );
-	}, [ productName ] );
+	}, [ automaticTransferSucceeded, productName, translate ] );
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
