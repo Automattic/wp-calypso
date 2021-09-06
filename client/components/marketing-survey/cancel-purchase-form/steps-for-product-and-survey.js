@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -29,7 +28,7 @@ export default function stepsForProductAndSurvey(
 	precancellationChatAvailable,
 	downgradePossible
 ) {
-	if ( config.isEnabled( 'purchases/cancel-plan-fullscreen-form' ) && isPlan( product ) ) {
+	if ( survey.fullscreen && isPlan( product ) ) {
 		return [ steps.FEEDBACK_STEP ];
 	}
 
