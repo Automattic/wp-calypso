@@ -10,7 +10,7 @@ import { Input } from 'calypso/my-sites/domains/components/form';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepsHeadingAdvanced, stepsHeadingSuggested, stepSlug } from './constants';
+import { modeType, stepsHeadingOwnershipVerification, stepSlug } from './constants';
 
 import './style.scss';
 
@@ -106,12 +106,10 @@ function ConnectDomainStepLogin( {
 		</div>
 	);
 
-	const heading = modeType.SUGGESTED === mode ? stepsHeadingSuggested : stepsHeadingAdvanced;
-
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ heading }
+			heading={ stepsHeadingOwnershipVerification }
 			mode={ mode }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }

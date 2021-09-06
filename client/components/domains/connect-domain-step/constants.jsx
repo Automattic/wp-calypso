@@ -41,3 +41,4 @@ export const defaultDomainSetupInfo = {
 
 export const stepsHeadingSuggested = __( 'Suggested setup' );
 export const stepsHeadingAdvanced = __( 'Advanced setup' );
+export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );

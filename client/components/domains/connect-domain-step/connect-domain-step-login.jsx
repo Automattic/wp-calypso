@@ -3,9 +3,15 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepsHeadingAdvanced, stepsHeadingSuggested, stepSlug } from './constants';
+import {
+	modeType,
+	stepsHeadingAdvanced,
+	stepsHeadingOwnershipVerification,
+	stepsHeadingSuggested,
+	stepSlug,
+} from './constants';
 
 import './style.scss';
 
@@ -19,6 +25,22 @@ export default function ConnectDomainStepLogin( {
 	progressStepList,
 } ) {
 	const { __ } = useI18n();
+	const [ heading, setHeading ] = useState();
+
+	useEffect( () => {
+		switch ( mode ) {
+			case modeType.SUGGESTED:
+				setHeading( stepsHeadingSuggested );
+				return;
+			case modeType.ADVANCED:
+				setHeading( stepsHeadingAdvanced );
+				return;
+			case modeType.OWNERSHIP_VERIFICATION:
+				setHeading( stepsHeadingOwnershipVerification );
+				return;
+		}
+	}, [ mode ] );
+
 	const stepContent = (
 		<div className={ className + '__login' }>
 			{ isOwnershipVerificationFlow && (
@@ -51,8 +73,6 @@ export default function ConnectDomainStepLogin( {
 			</Button>
 		</div>
 	);
-
-	const heading = modeType.SUGGESTED === mode ? stepsHeadingSuggested : stepsHeadingAdvanced;
 
 	return (
 		<ConnectDomainStepWrapper
