@@ -83,7 +83,6 @@ export function WPOrderReviewLineItems( {
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<NonProductLineItem
-						coupon
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
 						hasDeleteButton={ ! isSummary }
