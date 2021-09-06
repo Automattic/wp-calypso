@@ -7,6 +7,6 @@ import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subsc
  * @returns {boolean} - true if the domain is under our management, false otherwise
  */
 export function hasGSuiteWithUs( domain ) {
-	const domainStatus = getGSuiteSubscriptionStatus( domain );
-	return ! [ '', 'no_subscription', 'other_provider' ].includes( domainStatus );
+	const status = getGSuiteSubscriptionStatus( domain );
+	return ! [ '', 'no_subscription', 'other_provider' ].includes( status );
 }

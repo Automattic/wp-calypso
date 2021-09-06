@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -6,8 +5,10 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import GSuiteFeatures from 'calypso/components/gsuite/gsuite-features';
 import GSuiteLearnMore from 'calypso/components/gsuite/gsuite-learn-more';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { getGoogleMailServiceFamily, getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 class GSuiteCancellationFeatures extends Component {
 	componentDidMount() {
@@ -19,16 +20,16 @@ class GSuiteCancellationFeatures extends Component {
 	};
 
 	getAccessMessage = () => {
-		const { googleSubscriptionStatus, purchase, translate } = this.props;
+		const { selectedDomain, purchase, translate } = this.props;
 		const { meta: domainName, productSlug } = purchase;
-
 		const googleMailService = getGoogleMailServiceFamily( productSlug );
+		const googleSubscriptionStatus = getGSuiteSubscriptionStatus( selectedDomain );
 
 		if ( [ 'suspended', '' ].includes( googleSubscriptionStatus ) ) {
 			return translate(
 				'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
 					'your %(googleMailService)s features immediately{{/strong}}, and you will ' +
-					'need to purchase a new subscription with Google if you wish to regain access to the features.',
+					'need to purchase a new subscription with Google if you wish to regain access to them.',
 				{
 					args: {
 						domainName,
@@ -46,18 +47,18 @@ class GSuiteCancellationFeatures extends Component {
 
 		return translate(
 			'If you cancel your subscription for %(domainName)s now, {{strong}}you will lose access to all of ' +
-				'your %(googleMailService)s features in %(days)s days{{/strong}}. After that time, ' +
-				'you will need to purchase a new subscription with Google.',
+				'your %(googleMailService)s features in %(days)d days{{/strong}}. After that time, ' +
+				'you will need to purchase a new subscription with Google if you wish to regain access to them.',
 			{
 				args: {
 					domainName,
 					googleMailService,
-					days: '30',
+					days: 30,
 				},
 				comment:
-					'%(domainName) is the name of the domain, e.g. example.com; ' +
+					'%(domainName) is the name of the domain (e.g. example.com) ' +
 					'%(googleMailService)s can be either "G Suite" or "Google Workspace" ' +
-					'and %(days)s is a number of days which will generally be 30, and will always be at least 10',
+					"and %(days)s is a number of days (usually '30')",
 				components: {
 					strong: <strong />,
 				},
@@ -66,7 +67,7 @@ class GSuiteCancellationFeatures extends Component {
 	};
 
 	render() {
-		const { googleSubscriptionStatus, purchase, translate } = this.props;
+		const { purchase, translate } = this.props;
 		const { meta: domainName, productSlug } = purchase;
 
 		return (
@@ -75,11 +76,9 @@ class GSuiteCancellationFeatures extends Component {
 					{ translate( 'Are you sure?' ) }
 				</CardHeading>
 
-				<p className={ classNames( { placeholder: googleSubscriptionStatus === '' } ) }>
-					{ this.getAccessMessage() }
-				</p>
+				<p>{ this.getAccessMessage() }</p>
 
-				<CardHeading tagName="h3" size={ 24 }>
+				<CardHeading tagName="h3" size={ 20 }>
 					{ translate( "Here’s what you'll be missing:" ) }
 				</CardHeading>
 
@@ -92,12 +91,21 @@ class GSuiteCancellationFeatures extends Component {
 }
 
 GSuiteCancellationFeatures.propTypes = {
-	googleSubscriptionStatus: PropTypes.string,
 	purchase: PropTypes.object.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( GSuiteCancellationFeatures ) );
+export default connect(
+	( state, { purchase } ) => {
+		return {
+			selectedDomain: getSelectedDomain( {
+				domains: getDomainsBySiteId( state, purchase.siteId ),
+				selectedDomainName: purchase.meta,
+			} ),
+		};
+	},
+	{
+		recordTracksEvent,
+	}
+)( localize( GSuiteCancellationFeatures ) );

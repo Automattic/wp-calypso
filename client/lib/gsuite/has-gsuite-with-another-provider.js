@@ -7,7 +7,7 @@ import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subsc
  * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
 export function hasGSuiteWithAnotherProvider( domain ) {
-	const domainStatus = getGSuiteSubscriptionStatus( domain );
+	const status = getGSuiteSubscriptionStatus( domain );
 
-	return 'other_provider' === domainStatus;
+	return 'other_provider' === status;
 }

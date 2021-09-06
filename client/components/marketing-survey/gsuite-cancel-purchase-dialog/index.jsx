@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import { getName } from 'calypso/lib/purchases';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
@@ -15,7 +13,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
 import * as steps from './steps';
@@ -197,7 +194,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, onClose, purchase, selectedDomain } = this.props;
+		const { isVisible, onClose, purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText, isRemoving } = this.state;
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
@@ -209,10 +206,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 					onClose={ onClose }
 				>
 					{ steps.GSUITE_INITIAL_STEP === this.state.step ? (
-						<GSuiteCancellationFeatures
-							googleSubscriptionStatus={ getGSuiteSubscriptionStatus( selectedDomain ) }
-							purchase={ purchase }
-						/>
+						<GSuiteCancellationFeatures purchase={ purchase } />
 					) : (
 						<GSuiteCancellationSurvey
 							disabled={ isRemoving }
@@ -240,15 +234,11 @@ GSuiteCancelPurchaseDialog.propTypes = {
 };
 
 export default connect(
-	( state, { purchase, site } ) => {
+	( state, { purchase } ) => {
 		return {
 			domain: purchase.meta,
 			productName: getName( purchase ),
 			purchasesError: getPurchasesError( state ),
-			selectedDomain: getSelectedDomain( {
-				domains: getDomainsBySiteId( state, site.ID ),
-				selectedDomainName: purchase.meta,
-			} ),
 			userId: getCurrentUserId( state ),
 		};
 	},
