@@ -118,11 +118,8 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme; coupon?: boolean } >`
-	position: absolute;
-	padding: 10px;
-	right: -50px;
-	top: ${ ( props ) => ( props.coupon ? '0px' : '7px' ) };
+const DeleteButton = styled( Button )< { theme?: Theme } >`
+	padding: 0 0 0 10px;
 
 	:hover rect {
 		fill: ${ ( props ) => props.theme.colors.error };
@@ -130,11 +127,6 @@ const DeleteButton = styled( Button )< { theme?: Theme; coupon?: boolean } >`
 
 	svg {
 		opacity: 1;
-	}
-
-	.rtl & {
-		right: auto;
-		left: -50px;
 	}
 `;
 
