@@ -5,10 +5,10 @@ import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domai
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 
-export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {} ) => (
-	dispatch,
-	getState
-) => {
+export const connectDomainAction = (
+	{ domain, selectedSite, verificationData },
+	onDone = () => {}
+) => ( dispatch, getState ) => {
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 
 	if ( selectedSite.is_vip ) {
@@ -23,7 +23,7 @@ export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {}
 	} else if ( siteHasPaidPlan ) {
 		wpcom
 			.site( selectedSite.ID )
-			.addDomainMapping( domain )
+			.addDomainMapping( domain, verificationData )
 			.then( () => {
 				dispatch(
 					successNotice(
@@ -38,7 +38,7 @@ export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {}
 			} )
 			.catch( ( error ) => {
 				dispatch( errorNotice( error.message ) );
-				onDone();
+				onDone( error );
 			} );
 	} else {
 		page( '/checkout/' + selectedSite.slug + '/domain-mapping:' + domain );

@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { connectDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
-import wpcom from 'calypso/lib/wp';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -27,16 +26,36 @@ function ConnectDomainStepLogin( {
 } ) {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
-	const [ authCodeCheckInProgress, setAuthCodeCheckInProgress ] = useState( false );
 	const [ connectInProgress, setConnectInProgress ] = useState( false );
 	const [ authCodeError, setAuthCodeError ] = useState( null );
+
+	const getVerificationData = () => {
+		return {
+			ownership_verification_data: {
+				verification_type: 'auth_code',
+				verification_data: authCode,
+			},
+		};
+	};
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
 		setConnectInProgress( true );
 
 		const connectHandler = onConnect ?? defaultConnectHandler;
-		connectHandler( { domain, selectedSite }, () => setConnectInProgress( false ) );
+		connectHandler(
+			{
+				domain,
+				selectedSite,
+				verificationData: getVerificationData(),
+			},
+			( error ) => {
+				if ( error ) {
+					setAuthCodeError( error.message );
+				}
+				setConnectInProgress( false );
+			}
+		);
 	};
 
 	const onAuthCodeChange = ( event ) => {
@@ -50,23 +69,9 @@ function ConnectDomainStepLogin( {
 			return;
 		}
 
-		setAuthCodeCheckInProgress( true );
 		setAuthCodeError( null );
 
-		wpcom
-			.domains()
-			.authCodeCheck( domain, authCode )
-			.then( ( result ) => {
-				if ( true === result.success ) {
-					handleConnect();
-				} else {
-					setAuthCodeError(
-						__( 'Sorry, that authorization code is incorrect. Please try again.' )
-					);
-				}
-			} )
-			.catch( ( error ) => setAuthCodeError( error.message ) )
-			.finally( () => setAuthCodeCheckInProgress( false ) );
+		handleConnect();
 	};
 
 	const stepContent = (
@@ -96,8 +101,8 @@ function ConnectDomainStepLogin( {
 				) }
 			</p>
 			<Button
-				busy={ authCodeCheckInProgress || connectInProgress }
-				disabled={ authCodeCheckInProgress || connectInProgress }
+				busy={ connectInProgress }
+				disabled={ connectInProgress }
 				onClick={ checkAuthCode }
 				primary
 			>
