@@ -23,7 +23,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { isWpComProductRenewal, getSublabel, getLabel } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
@@ -850,18 +849,3 @@ function WPLineItem( {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
-
-WPLineItem.propTypes = {
-	siteId: PropTypes.number,
-	allowVariants: PropTypes.bool,
-	className: PropTypes.string,
-	total: PropTypes.bool,
-	tax: PropTypes.bool,
-	subtotal: PropTypes.bool,
-	isSummary: PropTypes.bool,
-	hasDeleteButton: PropTypes.bool,
-	removeProductFromCart: PropTypes.func,
-	product: PropTypes.object.isRequired,
-	onChangePlanLength: PropTypes.func,
-	createUserAndSiteBeforeTransaction: PropTypes.bool,
-};
