@@ -1,3 +1,4 @@
+import { Card, Button } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
@@ -9,7 +10,6 @@ import parselyIcon from 'calypso/assets/images/icons/parsely-logo.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -21,6 +21,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -139,6 +140,10 @@ class StatsSite extends Component {
 			page.show( `${ window.location.pathname }?${ updatedQs }` );
 		}
 	};
+
+	parselyClick() {
+		this.props.recordTracksEvent( 'calypso_stats_parsely_banner_click' );
+	}
 
 	renderStats() {
 		const { date, siteId, slug, isJetpack } = this.props;
@@ -284,26 +289,35 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
-				<Banner
-					className="stats__parsely-banner"
-					callToAction={ translate( 'Learn more' ) }
-					description={ preventWidows(
-						translate(
-							"Parse.ly Analytics makes it easy to understand the full impact of your content. {{br/}} Measure what's driving awareness, engagement, and conversions.",
-							{
-								components: {
-									br: <br />,
-								},
-							}
-						)
-					) }
-					event="calypso_stats_parsely_banner_view"
-					href="http://parse.ly"
-					iconPath={ parselyIcon }
-					title={ translate( 'Discover more stats with Parse.ly Analytics' ) }
-					tracksImpressionName="calypso_stats_parsely_banner_view"
-					tracksClickName="calypso_stats_parsely_banner_click"
-				/>
+				<Card className="stats__parsely-banner">
+					<TrackComponentView eventName="calypso_stats_parsely_banner_view" />
+					<img src={ parselyIcon } alt="" />
+					<div>
+						<FormattedHeader
+							brandFont
+							className="stats__parsely-banner-header"
+							headerText={ preventWidows(
+								translate( 'Discover more stats with Parse.ly Analytics' )
+							) }
+							align="left"
+						/>
+						<p>
+							{ preventWidows(
+								translate(
+									"Need deeper insights? Parse.ly Analytics makes it easy to understand the full impact of your content. {{br/}}Measure what's driving awareness, engagement, and conversions.",
+									{
+										components: {
+											br: <br />,
+										},
+									}
+								)
+							) }
+						</p>
+					</div>
+					<Button primary href="https://parse.ly" onClick={ this.parselyClick() }>
+						{ translate( 'Learn more' ) }
+					</Button>
+				</Card>
 				<JetpackColophon />
 			</>
 		);
@@ -371,5 +385,5 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
 	},
-	{ recordGoogleEvent, enableJetpackStatsModule }
+	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
 )( localize( StatsSite ) );

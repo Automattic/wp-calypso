@@ -123,21 +123,30 @@
 	}
 }
 
-.stats__parsely-banner.banner.card {
-	padding: 16px;
+.stats__parsely-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 30px;
 	margin-top: 16px;
-	
-	.banner__icons {
-		margin-right: 12px;
+
+	img {
+		margin-right: 30px;
+		width: 45px;
+		height: auto;
 	}
-	.banner__icon-circle {
-		background-color: transparent;
-		padding-left: 0;
-		width: 100%;
+
+	p {
+		margin: 0;
+		color: var( --color-text-subtle );
 	}
-	.banner__action {
-		margin-right: 4px;
-		margin-top: 0;
-		top: 2px;
+
+	.button {
+		margin-left: 30px;
+		justify-self: flex-end;
+	}
+
+	&::after {
+		display: none;
 	}
 }
