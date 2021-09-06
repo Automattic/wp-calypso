@@ -780,18 +780,6 @@ function WPLineItem( {
 					isSummary={ isSummary }
 				/>
 			</span>
-			{ sublabel && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
-			) }
-			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-			{ isGSuite && <GSuiteUsersList product={ product } /> }
-			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -836,6 +824,19 @@ function WPLineItem( {
 					/>
 				</>
 			) }
+
+			{ sublabel && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<DomainDiscountCallout product={ product } />
+					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+			{ isGSuite && <GSuiteUsersList product={ product } /> }
+			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 
 			{ shouldShowVariantSelector && onChangePlanLength && (
 				<ItemVariationPicker
