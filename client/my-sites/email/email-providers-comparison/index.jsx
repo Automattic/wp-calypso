@@ -314,7 +314,10 @@ class EmailProvidersComparison extends React.Component {
 			gSuiteProduct,
 			hasCartDomain,
 			isGSuiteSupported,
+			onSkipClick,
 			selectedDomainName,
+			showSkipButton,
+			skipButtonLabel,
 			translate,
 		} = this.props;
 
@@ -352,7 +355,9 @@ class EmailProvidersComparison extends React.Component {
 				? newUsers( selectedDomainName )
 				: this.state.googleUsers;
 
-		const buttonLabel = this.isUpgrading()
+		const buttonLabel = this.isUpgrading() ? translate( 'Upgrade' ) : translate( 'Add' );
+
+		const expandButtonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
@@ -379,14 +384,21 @@ class EmailProvidersComparison extends React.Component {
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
-						<Button
-							className="email-providers-comparison__gsuite-user-list-action-continue"
-							primary
-							busy={ this.state.addingToCart }
-							onClick={ this.onGoogleConfirmNewUsers }
-						>
-							{ buttonLabel }
-						</Button>
+						<div className="email-providers-comparison__gsuite-user-list-actions-container">
+							<Button
+								primary
+								busy={ this.state.addingToCart }
+								onClick={ this.onGoogleConfirmNewUsers }
+							>
+								{ buttonLabel }
+							</Button>
+
+							{ showSkipButton && (
+								<Button busy={ this.state.addingToCart } onClick={ onSkipClick }>
+									{ skipButtonLabel }
+								</Button>
+							) }
+						</div>
 					</GSuiteNewUserList>
 				</FormFieldset>
 			) : null;
@@ -407,7 +419,7 @@ class EmailProvidersComparison extends React.Component {
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ buttonLabel }
+				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
 			/>
 		);
@@ -448,7 +460,9 @@ class EmailProvidersComparison extends React.Component {
 			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 		);
 
-		const buttonLabel = this.isUpgrading()
+		const buttonLabel = this.isUpgrading() ? translate( 'Upgrade' ) : translate( 'Add' );
+
+		const expandButtonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(titanProductName)s', {
 					args: {
 						titanProductName: getTitanProductName(),
@@ -482,7 +496,15 @@ class EmailProvidersComparison extends React.Component {
 					{ buttonLabel }
 				</Button>
 
-				{ showSkipButton && <Button onClick={ onSkipClick }>{ skipButtonLabel }</Button> }
+				{ showSkipButton && (
+					<Button
+						className="email-providers-comparison__titan-mailbox-action-skip"
+						busy={ this.state.addingToCart }
+						onClick={ onSkipClick }
+					>
+						{ skipButtonLabel }
+					</Button>
+				) }
 			</TitanNewMailboxList>
 		);
 
@@ -501,7 +523,7 @@ class EmailProvidersComparison extends React.Component {
 				discount={ discount }
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ buttonLabel }
+				expandButtonLabel={ expandButtonLabel }
 				features={ getTitanFeatures() }
 			/>
 		);
@@ -587,11 +609,11 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderHeaderSkipButton() {
-		const { showSkipButton, onSkipClick, translate } = this.props;
+		const { showSkipButton, onSkipClick, skipButtonLabel } = this.props;
 
 		return showSkipButton ? (
 			<Button compact borderless onClick={ onSkipClick }>
-				{ translate( 'Skip' ) }
+				{ skipButtonLabel }
 				<Gridicon icon={ 'arrow-right' } size={ 18 } />
 			</Button>
 		) : null;
