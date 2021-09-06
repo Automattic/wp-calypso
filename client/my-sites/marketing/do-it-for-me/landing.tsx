@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -14,6 +14,7 @@ import phsych from 'calypso/assets/images/difm/phsych-1.png';
 import restaurant from 'calypso/assets/images/difm/restaurant-1.png';
 import treeremoval from 'calypso/assets/images/difm/tree-removal.png';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const VerticalsGrid = styled.div`
@@ -40,6 +41,22 @@ const VerticalHeading = styled.h1`
 	height: 4.25em;
 	border-bottom: 1px solid var( --color-border-subtle );
 	box-sizing: border-box;
+`;
+
+const ImageContainer = styled.div`
+	height: 250px;
+	overflow: hidden;
+	margin: 10px 0px;
+	@media ( min-width: 480px ) {
+		height: auto;
+	}
+`;
+
+const ButtonContainer = styled.div`
+	width: 100%;
+	@media ( min-width: 480px ) {
+		width: 200px;
+	}
 `;
 
 export default function DoItForMeLandingPage(): JSX.Element {
@@ -78,52 +95,52 @@ export default function DoItForMeLandingPage(): JSX.Element {
 						{ translate( 'Professional Services' ) } <br /> { translate( 'Local Business' ) }
 					</VerticalHeading>
 					<VerticalsGrid>
-						<div>
+						<ImageContainer>
 							<img src={ consult1 } width="100%" alt="WordPress logo" />
-						</div>
-						<div>
+						</ImageContainer>
+						<ImageContainer>
 							<img src={ consult2 } width="100%" alt="WordPress logo" />
-						</div>
-
-						<div>
+						</ImageContainer>
+						<ImageContainer>
 							<img src={ treeremoval } width="100%" alt="WordPress logo" />
-						</div>
+						</ImageContainer>
 					</VerticalsGrid>
 				</Vertical>
 				<Vertical>
 					<VerticalHeading>{ translate( 'Restaurants' ) }</VerticalHeading>
 					<VerticalsGrid>
-						<div>
+						<ImageContainer>
 							<img src={ restaurant } width="100%" alt="WordPress logo" />
-						</div>
-						<div>
+						</ImageContainer>
+						<ImageContainer>
 							<img src={ dietician } width="100%" alt="WordPress logo" />
-						</div>
-						<div>
+						</ImageContainer>
+						<ImageContainer>
 							<img src={ IT } width="100%" alt="WordPress logo" />
-						</div>
+						</ImageContainer>
 					</VerticalsGrid>
 				</Vertical>
 				<Vertical>
 					<VerticalHeading>{ translate( 'Creatives & Portfolio' ) }</VerticalHeading>
 
 					<VerticalsGrid>
-						<div>
+						<ImageContainer>
 							<img src={ photography } width="100%" alt="WordPress logo" />
-						</div>
-						<div>
+						</ImageContainer>
+						<ImageContainer>
 							<img src={ musician } width="100%" alt="WordPress logo" />
-						</div>
-						<div>
+						</ImageContainer>
+						<ImageContainer>
 							<img src={ phsych } width="100%" alt="WordPress logo" />
-						</div>
+						</ImageContainer>
 					</VerticalsGrid>
 				</Vertical>
 			</VerticalsGrid>
-
-			<Button primary onClick={ onInterestedSelected }>
-				{ translate( 'I am interested' ) }
-			</Button>
+			<ButtonContainer>
+				<FullWidthButton primary onClick={ onInterestedSelected }>
+					{ translate( 'I am interested' ) }
+				</FullWidthButton>
+			</ButtonContainer>
 		</Card>
 	);
 }
