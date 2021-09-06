@@ -416,7 +416,10 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 	const urlQueryArgs = context.query;
 
-	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
+	if (
+		config.isEnabled( 'jetpack/siteless-checkout' ) &&
+		! [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( planSlug )
+	) {
 		if ( ! urlQueryArgs?.checkoutBackUrl ) {
 			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
 		}
