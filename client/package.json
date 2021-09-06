@@ -47,7 +47,7 @@
 		"@automattic/popup-monitor": "^1.0.0",
 		"@automattic/react-virtualized": "^9.22.3",
 		"@automattic/request-external-access": "^1.0.0",
-		"@automattic/shopping-cart": "^1.0.0",
+		"@automattic/shopping-cart": "^2.0.0",
 		"@automattic/social-previews": "^1.0.1",
 		"@automattic/state-utils": "^1.0.0-alpha.4",
 		"@automattic/tree-select": "^1.0.3",
