@@ -166,7 +166,6 @@ function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string 
 
 function WPNonProductLineItem( {
 	lineItem,
-	coupon,
 	className = null,
 	isSummary,
 	hasDeleteButton,
@@ -174,7 +173,6 @@ function WPNonProductLineItem( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	lineItem: LineItemType;
-	coupon?: boolean;
 	className?: string | null;
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
@@ -217,7 +215,6 @@ function WPNonProductLineItem( {
 			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
-						coupon={ coupon }
 						className="checkout-line-item__remove-product"
 						buttonType="borderless"
 						disabled={ isDisabled }
