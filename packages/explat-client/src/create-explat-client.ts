@@ -59,7 +59,6 @@ export class MissingExperimentAssignmentError extends Error {
  * Create an ExPlat Client
  *
  * @param config Configuration object
- *
  */
 export function createExPlatClient( config: Config ): ExPlatClient {
 	if ( typeof window === 'undefined' ) {
@@ -136,7 +135,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return fetchedExperimentAssignment;
 			} catch ( initialError ) {
 				safeLogError( {
-					message: initialError.message,
+					message: ( initialError as Error ).message,
 					experimentName,
 					source: 'loadExperimentAssignment-initialError',
 				} );
@@ -158,7 +157,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return fallbackExperimentAssignment;
 			} catch ( fallbackError ) {
 				safeLogError( {
-					message: fallbackError.message,
+					message: ( fallbackError as Error ).message,
 					experimentName,
 					source: 'loadExperimentAssignment-fallbackError',
 				} );
@@ -198,7 +197,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return storedExperimentAssignment;
 			} catch ( error ) {
 				safeLogError( {
-					message: error.message,
+					message: ( error as Error ).message,
 					experimentName,
 					source: 'dangerouslyGetExperimentAssignment-error',
 				} );

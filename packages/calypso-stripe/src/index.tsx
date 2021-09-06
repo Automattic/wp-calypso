@@ -249,7 +249,7 @@ export async function createStripeSetupIntent(
 		} );
 	} catch ( error ) {
 		// Some errors are thrown by handleCardSetup and not returned as an error
-		throw new StripeSetupIntentError( error );
+		throw new StripeSetupIntentError( error as Error );
 	}
 	debug( 'setup intent creation complete', stripeResponse );
 	if ( stripeResponse?.error || ! stripeResponse?.setupIntent ) {
