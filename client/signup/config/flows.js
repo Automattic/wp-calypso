@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -54,12 +55,16 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( dependencies ) {
-	if ( 'no-site' === dependencies.siteSlug ) {
+function getSignupDestination( { siteSlug } ) {
+	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
 
-	return `/home/${ dependencies.siteSlug }`;
+	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
+		return addQueryArgs( { siteSlug }, '/start/setup-site' );
+	}
+
+	return `/home/${ siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
@@ -89,14 +94,6 @@ function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
 	);
 }
 
-function getSetupSiteDestination( { siteSlug } ) {
-	if ( 'no-site' === siteSlug ) {
-		return '/home';
-	}
-
-	return addQueryArgs( { siteSlug }, '/start/setup-site' );
-}
-
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -106,7 +103,6 @@ const flows = generateFlows( {
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getImportDestination,
-	getSetupSiteDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
