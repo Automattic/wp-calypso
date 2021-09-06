@@ -34,7 +34,6 @@ import {
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
 import { useGetProductVariants } from '../hooks/product-variants';
-import deleteIcon from './delete-icon.svg';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -118,15 +117,10 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
-	padding: 0 0 0 10px;
-
-	:hover rect {
-		fill: ${ ( props ) => props.theme.colors.error };
-	}
-
-	svg {
-		opacity: 1;
-	}
+	order: 1;
+	font-size: 0.75rem;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	margin-top: 4px;
 `;
 
 function LineItemPrice( {
@@ -153,16 +147,6 @@ function LineItemPrice( {
 	);
 }
 
-function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string } ) {
-	const translate = useTranslate();
-	const text = String(
-		translate( 'Remove %s from cart', {
-			args: product,
-		} )
-	);
-	return <img id={ uniqueID } alt={ text } src={ deleteIcon } />;
-}
-
 function WPNonProductLineItem( {
 	lineItem,
 	className = null,
@@ -185,7 +169,6 @@ function WPNonProductLineItem( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const deleteButtonId = `checkout-delete-button-${ id }`;
 	const translate = useTranslate();
 	const isPwpoUser = useSelector(
 		( state ) =>
@@ -211,17 +194,22 @@ function WPNonProductLineItem( {
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
 			</span>
-			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
+			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButton
 						className="checkout-line-item__remove-product"
-						buttonType="borderless"
+						buttonType={ 'text-button' }
+						aria-label={ String(
+							translate( 'Remove %s from cart', {
+								args: label,
+							} )
+						) }
 						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
 						} }
 					>
-						<DeleteIcon uniqueID={ deleteButtonId } product={ label } />
+						{ translate( 'Remove from cart' ) }
 					</DeleteButton>
 
 					<CheckoutModal
@@ -716,7 +704,6 @@ function WPLineItem( {
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
-	const deleteButtonId = `checkout-delete-button-${ id }-${ isSummary ? 'summary' : 'edit' }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const isPwpoUser = useSelector(
 		( state ) =>
@@ -755,12 +742,6 @@ function WPLineItem( {
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
 
-	const deleteButtonText = String(
-		translate( 'Remove %s from cart', {
-			args: label,
-		} )
-	);
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -779,12 +760,16 @@ function WPLineItem( {
 					isSummary={ isSummary }
 				/>
 			</span>
-			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
+			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButton
 						className="checkout-line-item__remove-product"
-						aria-label={ deleteButtonText }
-						buttonType="borderless"
+						buttonType={ 'text-button' }
+						aria-label={ String(
+							translate( 'Remove %s from cart', {
+								args: label,
+							} )
+						) }
 						disabled={ isDisabled }
 						onClick={ () => {
 							setIsModalVisible( true );
@@ -796,7 +781,7 @@ function WPLineItem( {
 							} );
 						} }
 					>
-						<DeleteIcon uniqueID={ deleteButtonId } product={ label } />
+						{ translate( 'Remove from cart' ) }
 					</DeleteButton>
 
 					<CheckoutModal
