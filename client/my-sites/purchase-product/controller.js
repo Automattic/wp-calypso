@@ -11,7 +11,6 @@ import page from 'page';
 import React from 'react';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';
@@ -100,21 +99,5 @@ export function purchase( context, next ) {
 			url={ query.url }
 		/>
 	);
-	next();
-}
-
-export function redirectToSitelessCheckout( context, next ) {
-	const { type, interval } = context.params;
-
-	const planSlug = getPlanSlugFromFlowType( type, interval );
-
-	if (
-		config.isEnabled( 'jetpack/siteless-checkout' ) &&
-		! [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( planSlug )
-	) {
-		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
-		return;
-	}
-
 	next();
 }
