@@ -24,7 +24,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 		upsellBanner = (
 			<UpsellNudge
 				plan={ PLAN_BUSINESS }
-				customerType="business"
 				className="themes__showcase-banner"
 				title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
 				event="calypso_themes_list_install_themes"
