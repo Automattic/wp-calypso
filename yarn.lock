@@ -3491,14 +3491,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:0.10.7":
-  version: 0.10.7
-  resolution: "@es-joy/jsdoccomment@npm:0.10.7"
+"@es-joy/jsdoccomment@npm:0.10.8":
+  version: 0.10.8
+  resolution: "@es-joy/jsdoccomment@npm:0.10.8"
   dependencies:
-    comment-parser: 1.2.3
+    comment-parser: 1.2.4
     esquery: ^1.4.0
     jsdoc-type-pratt-parser: 1.1.1
-  checksum: ec80201116b2a54c9ab5cdc2d2fa973adacdf9448d8931409c88838d5bd635c3d67dd27756c8466dfe9e751b86f88f5645b9d148b2a67672b15af92a4d94c799
+  checksum: 708de082d2b6c97e9a5b4bef14bdac7c632ffb01f237e15ce44b1050ffc4c7de9f3d0b0c4177a76e601852814b7a58e4fc9c60b29c2aaefe3a221ea83e4da13d
   languageName: node
   linkType: hard
 
@@ -7068,6 +7068,13 @@ __metadata:
   version: 7.0.9
   resolution: "@types/json-schema@npm:7.0.9"
   checksum: 46a9e92b7922495a50f55632d802f7e7ab2dffd76b3f894baf7b28012e73983df832977bedd748aa9a2bc8400c6e8659ca39faf6ccd93d71d41d5b0293338a0e
+  languageName: node
+  linkType: hard
+
+"@types/json5@npm:^0.0.29":
+  version: 0.0.29
+  resolution: "@types/json5@npm:0.0.29"
+  checksum: 6bf5337bc447b706bb5b4431d37686aa2ea6d07cfd6f79cc31de80170d6ff9b1c7384a9c0ccbc45b3f512bae9e9f75c2e12109806a15331dc94e8a8db6dbb4ac
   languageName: node
   linkType: hard
 
@@ -13996,10 +14003,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"comment-parser@npm:1.2.3":
-  version: 1.2.3
-  resolution: "comment-parser@npm:1.2.3"
-  checksum: b56907a3f2db2b4fdab164165003e6061e66787b0669139d8aca843999b1f7df02bd0c83475eabe8a4eb2f2a82d5db73ea62be8ce4fe9d4ce79653dd36b5b498
+"comment-parser@npm:1.2.4":
+  version: 1.2.4
+  resolution: "comment-parser@npm:1.2.4"
+  checksum: ff25ad318ead37621476cf7348dfab0991bc0f249fcc82deec99e9accf941f3dca764fb76ac5570950fbb3642bd9875cfaad9ec57661eec56bbc5c08e85e3dc9
   languageName: node
   linkType: hard
 
@@ -17517,9 +17524,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:^2.22.1, eslint-plugin-import@npm:^2.24.1":
-  version: 2.24.1
-  resolution: "eslint-plugin-import@npm:2.24.1"
+"eslint-plugin-import@npm:^2.22.1, eslint-plugin-import@npm:^2.24.2":
+  version: 2.24.2
+  resolution: "eslint-plugin-import@npm:2.24.2"
   dependencies:
     array-includes: ^3.1.3
     array.prototype.flat: ^1.2.4
@@ -17535,10 +17542,10 @@ __metadata:
     pkg-up: ^2.0.0
     read-pkg-up: ^3.0.0
     resolve: ^1.20.0
-    tsconfig-paths: ^3.10.1
+    tsconfig-paths: ^3.11.0
   peerDependencies:
     eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0
-  checksum: 967e4b7075b8cbd6e55d1d9ae0b62794c1588b91e389d66bd4950ef92cbec182e12267ec71cad0eb314dc5c3f0d31cf780c52d30484d2872570df07068ba9481
+  checksum: ba13337759b0d97566eb0363a704e40c856e86ec4e7d3dbd9dd5e50d7d9cab606162907272b443cdf9da4289efd1cfdc73218eb166f11a8604cf491529d08906
   languageName: node
   linkType: hard
 
@@ -17583,12 +17590,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^36.0.7":
-  version: 36.0.7
-  resolution: "eslint-plugin-jsdoc@npm:36.0.7"
+"eslint-plugin-jsdoc@npm:^36.0.8":
+  version: 36.0.8
+  resolution: "eslint-plugin-jsdoc@npm:36.0.8"
   dependencies:
-    "@es-joy/jsdoccomment": 0.10.7
-    comment-parser: 1.2.3
+    "@es-joy/jsdoccomment": 0.10.8
+    comment-parser: 1.2.4
     debug: ^4.3.2
     esquery: ^1.4.0
     jsdoc-type-pratt-parser: ^1.1.1
@@ -17598,7 +17605,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0
-  checksum: 9d432eb1784a72fba5800a3d915ee85aad52622aa5ea514faf2085ffc1bc8481f446edcecc2f8afcec551745391183e8ed73155ac6ff85ef3c6a5a608e741bf5
+  checksum: 86dcba0df4a6852cb3d74e29c0f3fd9ba0637c61e5c4459e6b540154840f4af994a2e35ac0031846dacf7a021511bf14ecde6ee3368c1e94b29bddea1313952f
   languageName: node
   linkType: hard
 
@@ -17685,13 +17692,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.22.0, eslint-plugin-react@npm:^7.24.0":
-  version: 7.24.0
-  resolution: "eslint-plugin-react@npm:7.24.0"
+"eslint-plugin-react@npm:^7.22.0, eslint-plugin-react@npm:^7.25.1":
+  version: 7.25.1
+  resolution: "eslint-plugin-react@npm:7.25.1"
   dependencies:
     array-includes: ^3.1.3
     array.prototype.flatmap: ^1.2.4
     doctrine: ^2.1.0
+    estraverse: ^5.2.0
     has: ^1.0.3
     jsx-ast-utils: ^2.4.1 || ^3.0.0
     minimatch: ^3.0.4
@@ -17703,7 +17711,7 @@ __metadata:
     string.prototype.matchall: ^4.0.5
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7
-  checksum: 865a53420281fd4616f05bbf03c2f90371cf595f7e9a029f9f4fdc2ab69fc091acb6e4ea02bb0dfc402e29de70c08d3461d7763774a68e08a5952bdca7f07863
+  checksum: 19fbb1f07a8ced7da6e2e17b754e7de10f768b00898160552c3bf1309cdf8997a947a63bbbaef8850ae1bd8f2c620ed9f1ba7894b0d6d2fd9822f349b0e6e3c4
   languageName: node
   linkType: hard
 
@@ -17719,7 +17727,7 @@ __metadata:
     "@babel/core": ">=7.15.0"
     eslint: ">=7.32.0"
     eslint-plugin-inclusive-language: ^2.1.1
-    eslint-plugin-jsdoc: ^36.0.7
+    eslint-plugin-jsdoc: ^36.0.8
     eslint-plugin-react-hooks: ^4.2.0
   languageName: unknown
   linkType: soft
@@ -24701,7 +24709,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.1.1, json5@npm:^2.1.2, json5@npm:^2.1.3, json5@npm:^2.2.0":
+"json5@npm:^2.1.1, json5@npm:^2.1.2, json5@npm:^2.1.3":
   version: 2.2.0
   resolution: "json5@npm:2.2.0"
   dependencies:
@@ -38194,14 +38202,15 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"tsconfig-paths@npm:^3.10.1":
-  version: 3.10.1
-  resolution: "tsconfig-paths@npm:3.10.1"
+"tsconfig-paths@npm:^3.11.0":
+  version: 3.11.0
+  resolution: "tsconfig-paths@npm:3.11.0"
   dependencies:
-    json5: ^2.2.0
+    "@types/json5": ^0.0.29
+    json5: ^1.0.1
     minimist: ^1.2.0
     strip-bom: ^3.0.0
-  checksum: 7e55b9971a146bf1fdd1c9fce20306ba0d8f70c5b51314168ea74b40d61f217d9f04e4681daa3fea70b3d00bbb6fe59f733578d0fffc5fca55647be7dca614f5
+  checksum: 91fc8e1c3ce784e4677860eb526465fdbcfbb8488937db0e232ad4a4454abd1ecf6021c83a1ca404b81ed1d9efff80b5b194e6d6f103815649843f42c341d2c9
   languageName: node
   linkType: hard
 
@@ -40385,15 +40394,15 @@ typescript@^4.3.5:
     eslint: ^7.32.0
     eslint-config-prettier: ^8.3.0
     eslint-nibble: ^7.0.0
-    eslint-plugin-import: ^2.24.1
+    eslint-plugin-import: ^2.24.2
     eslint-plugin-inclusive-language: ^2.1.1
     eslint-plugin-jest: ^24.4.0
-    eslint-plugin-jsdoc: ^36.0.7
+    eslint-plugin-jsdoc: ^36.0.8
     eslint-plugin-jsx-a11y: ^6.4.1
     eslint-plugin-md: ^1.0.19
     eslint-plugin-mocha: ^9.0.0
     eslint-plugin-prettier: ^3.4.1
-    eslint-plugin-react: ^7.24.0
+    eslint-plugin-react: ^7.25.1
     eslint-plugin-react-hooks: ^4.2.0
     eslint-plugin-wpcalypso: ^5.1.0
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
