@@ -20,10 +20,8 @@ export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
 export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
-export const PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY = 'jetpack_videopress_t1_yearly';
-export const PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY = 'jetpack_videopress_t1_monthly';
-export const PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY = 'jetpack_videopress_t2_yearly';
-export const PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY = 'jetpack_videopress_t2_monthly';
+export const PRODUCT_JETPACK_VIDEOPRESS = 'jetpack_videopress';
+export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
 
 // Legacy Products
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -80,10 +78,8 @@ export const JETPACK_CRM_FREE_PRODUCTS = <const>[
 
 // VideoPress
 export const JETPACK_VIDEOPRESS_PRODUCTS = <const>[
-	PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY,
-	PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY,
-	PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY,
-	PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 ];
 
 export const JETPACK_PRODUCTS_LIST = <const>[
@@ -135,12 +131,8 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		monthly: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	},
 	{
-		yearly: PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY,
-		monthly: PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY,
-	},
-	{
-		yearly: PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY,
-		monthly: PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY,
+		yearly: PRODUCT_JETPACK_VIDEOPRESS,
+		monthly: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
@@ -172,12 +164,8 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 		relatedProduct: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 		ratio: 12,
 	},
-	[ PRODUCT_JETPACK_VIDEOPRESS_T1_YEARLY ]: {
-		relatedProduct: PRODUCT_JETPACK_VIDEOPRESS_T1_MONTHLY,
-		ratio: 12,
-	},
-	[ PRODUCT_JETPACK_VIDEOPRESS_T2_YEARLY ]: {
-		relatedProduct: PRODUCT_JETPACK_VIDEOPRESS_T2_MONTHLY,
+	[ PRODUCT_JETPACK_VIDEOPRESS ]: {
+		relatedProduct: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 		ratio: 12,
 	},
 };

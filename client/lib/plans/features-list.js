@@ -63,8 +63,7 @@ import {
 	FEATURE_INSTANT_EMAIL_V2,
 	FEATURE_JETPACK_ADVANCED,
 	FEATURE_JETPACK_ESSENTIAL,
-	FEATURE_JETPACK_VIDEOPRESS_T1,
-	FEATURE_JETPACK_VIDEOPRESS_T2,
+	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
@@ -1328,14 +1327,9 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate( 'Live chat is available 24/7.' ),
 	},
 
-	[ FEATURE_JETPACK_VIDEOPRESS_T1 ]: {
-		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_T1,
-		getTitle: () => i18n.translate( 'Up to 500GB of video storage.' ),
-	},
-
-	[ FEATURE_JETPACK_VIDEOPRESS_T2 ]: {
-		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_T2,
-		getTitle: () => i18n.translate( 'Up to 5TB of video storage.' ),
+	[ FEATURE_JETPACK_VIDEOPRESS ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
+		getTitle: () => i18n.translate( 'Up to 1TB of video storage.' ),
 	},
 };
 
