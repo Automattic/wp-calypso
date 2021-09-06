@@ -141,9 +141,9 @@ class StatsSite extends Component {
 		}
 	};
 
-	parselyClick() {
+	parselyClick = () => {
 		this.props.recordTracksEvent( 'calypso_stats_parsely_banner_click' );
-	}
+	};
 
 	renderStats() {
 		const { date, siteId, slug, isJetpack } = this.props;
@@ -314,7 +314,7 @@ class StatsSite extends Component {
 							) }
 						</p>
 					</div>
-					<Button primary href="https://parse.ly" onClick={ this.parselyClick() }>
+					<Button primary href="https://parse.ly" onClick={ this.parselyClick }>
 						{ translate( 'Learn more' ) }
 					</Button>
 				</Card>
