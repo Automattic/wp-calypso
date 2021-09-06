@@ -487,12 +487,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.store ).toEqual( theStore );
 	} );
 
-	it( 'sets the evergreen for evergreen browsers check', async () => {
-		app.withEvergreenBrowser();
-		const { request } = await app.run();
-		expect( request.context.addEvergreenCheck ).toEqual( true );
-	} );
-
 	describe( 'sets the target in production mode', () => {
 		beforeEach( () => {
 			app.withMockedVariable( process.env, 'NODE_ENV', 'production' );

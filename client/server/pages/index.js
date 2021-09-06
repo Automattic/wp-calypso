@@ -142,8 +142,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck:
-			request.query.bypassTargetRedirection !== 'true' && calypsoEnv !== 'development',
 		target: 'evergreen',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
