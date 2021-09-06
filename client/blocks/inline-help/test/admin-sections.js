@@ -35,11 +35,9 @@ describe( 'filterListBySearchTerm()', () => {
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
-				key: 'The best section',
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
-				support_type: 'admin_section',
 			},
 		] );
 	} );
@@ -50,11 +48,9 @@ describe( 'filterListBySearchTerm()', () => {
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
-				key: 'The best section',
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
-				support_type: 'admin_section',
 			},
 		] );
 	} );
@@ -65,11 +61,9 @@ describe( 'filterListBySearchTerm()', () => {
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
-				key: 'The best section',
 				link: '/best/section/eva',
 				synonyms: [ 'yolo', 'gud' ],
 				title: 'The best section',
-				support_type: 'admin_section',
 			},
 		] );
 	} );
