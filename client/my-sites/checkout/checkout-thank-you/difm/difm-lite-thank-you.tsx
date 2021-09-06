@@ -1,110 +1,53 @@
-import { ThemeProvider } from 'emotion-theming';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ThankYou } from 'calypso/components/thank-you';
-import Item from 'calypso/layout/masterbar/item';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
-import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import theme from 'calypso/my-sites/marketplace/theme';
-import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import React from 'react';
+import supportImage from 'calypso/assets/images/illustrations/dotcom-support.svg';
+import Main from 'calypso/components/main';
 
-function DIFMLiteThankYou() {
-	const [ pollCount, setPollCount ] = useState( 0 );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+import './style.scss';
+
+export default function DIFMLiteThankYou(): JSX.Element {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const menuItems = useSiteMenuItems();
-	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const { url: postsPageUrl } =
-		menuItems.find( ( { slug }: { slug: string } ) => slug === 'edit-php' ) ?? {};
-
-	const { url: yoastSeoPageUrl } =
-		menuItems.find( ( { slug }: { slug: string } ) => slug === 'wpseo_dashboard' ) ?? {};
-
-	useEffect( () => {
-		if ( ! postsPageUrl || ! yoastSeoPageUrl ) {
-			selectedSiteId && dispatch( requestAdminMenu( selectedSiteId ) );
-		}
-	}, [ dispatch, postsPageUrl, selectedSiteId, yoastSeoPageUrl ] );
-
-	/* TODO: Make all these items product-dependent */
-	const thankYouImage = {
-		alt: 'DIFM logo',
-		src: 'https://wpcom.files.wordpress.com/2020/10/built-by-hero-image.png',
-	};
-
-	const difmSetupSection = {
-		sectionKey: 'difm_next_step',
-		sectionTitle: translate( 'What’s next?' ),
-		nextSteps: [
-			{
-				stepKey: 'difm_site_build',
-				stepTitle: 'Site building',
-				stepDescription: translate(
-					'Our team will build an initial version of the site with the theme you selected'
-				),
-				stepCta: (
-					<FullWidthButton
-						href={ yoastSeoPageUrl }
-						primary
-						busy={ isRequestingMenu }
-						disabled={ ! yoastSeoPageUrl }
-					>
-						Talk to one of our experts
-					</FullWidthButton>
-				),
-			},
-			{
-				stepKey: 'difm_browse_themes',
-				stepTitle: 'Find other themes',
-				stepDescription:
-					'Browse even more themes from our theme library which you can switch to any time',
-				stepCta: (
-					<FullWidthButton
-						href={ postsPageUrl }
-						busy={ isRequestingMenu }
-						disabled={ ! yoastSeoPageUrl }
-					>
-						Browse Themes
-					</FullWidthButton>
-				),
-			},
-		],
-	};
 
 	return (
-		<>
-			<Masterbar>
-				<Item
-					icon="cross"
-					onClick={ () =>
-						page( `/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }` )
-					}
-					tooltip={ translate( 'Go to plugin' ) }
-					tipTarget="close"
-				/>
-			</Masterbar>
-			<ThankYou
-				containerClassName="difm-thank-you"
-				sections={ [ difmSetupSection ] }
-				showSupportSection={ true }
-				thankYouImage={ thankYouImage }
-				thankYouTitle={ 'DIFM Project initiated' }
-			/>
-		</>
-	);
-}
+		<Main className="difm-lite-thank-you">
+			<Card>
+				<div className="difm-lite-thank-you__header">
+					<div className="difm-lite-thank-you__header-icon">
+						<img src="/calypso/images/upgrades/thank-you.svg" alt="" />
+					</div>
+					<div className="difm-lite-thank-you__header-content">
+						<div className="difm-lite-thank-you__header-copy">
+							<h1 className="difm-lite-thank-you__header-heading">
+								{ translate( 'Thank you for your purchase!' ) }
+							</h1>
 
-export default function DIFMLiteThankYouWrapper(): JSX.Element {
-	return (
-		<ThemeProvider theme={ theme }>
-			<DIFMLiteThankYou />
-		</ThemeProvider>
+							<h2 className="difm-lite-thank-you__header-text">
+								{ translate(
+									'Our Built By WordPress.com team will be in touch with you within 1-2 days when your site is ready to be transferred to your account and launched.'
+								) }
+							</h2>
+						</div>
+					</div>
+				</div>
+			</Card>
+			<Card className="difm-lite-thank-you__footer">
+				<div className="difm-lite-thank-you">
+					<div className="difm-lite-thank-you__image">
+						<div className="difm-lite-thank-you__icon">
+							<img alt="" src={ supportImage } />
+						</div>
+					</div>
+
+					<div className="difm-lite-thank-you__text">
+						<h3 className="difm-lite-thank-you__heading">{ translate( 'Questions?' ) }</h3>
+						<p className="difm-lite-thank-you__description">
+							{ translate( 'Email us at ' ) }
+							<a href="mailto:builtby@wordpress.com">builtby@wordpress.com</a>
+						</p>
+					</div>
+				</div>
+			</Card>
+		</Main>
 	);
 }

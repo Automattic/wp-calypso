@@ -1,0 +1,96 @@
+.difm-lite-thank-you {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
+	}
+}
+
+.difm-lite-thank-you.is-placeholder {
+	.difm-lite-thank-you__heading,
+	.difm-lite-thank-you__text {
+		@include placeholder( --color-text-subtle );
+	}
+
+	.difm-lite-thank-you__heading {
+		width: 78%;
+	}
+
+	.difm-lite-thank-you__text {
+		width: 82%;
+	}
+
+	.difm-lite-thank-you__image {
+		display: none;
+	}
+
+	.difm-lite-thank-you__buttons {
+		.button {
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}
+
+.difm-lite-thank-you__heading {
+	color: var( --color-text-subtle );
+	clear: none;
+	font-size: $font-title-small;
+}
+
+.difm-lite-thank-you__description {
+	color: var( --color-text-subtle );
+	margin-bottom: 16px;
+	margin-top: 16px;
+}
+
+.difm-lite-thank-you__image {
+	flex-shrink: 0;
+	width: 128px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		width: 178px;
+	}
+}
+
+.difm-lite-thank-you__icon {
+	margin-bottom: 20px;
+	@include breakpoint-deprecated( '>660px' ) {
+		width: auto;
+	}
+}
+
+.difm-lite-thank-you__text {
+	margin-bottom: 20px;
+	width: 100%;
+	@include breakpoint-deprecated( '>660px' ) {
+		width: auto;
+	}
+}
+
+.difm-lite-thank-you__buttons {
+	width: 100%;
+
+	.button {
+		@include breakpoint-deprecated( '<480px' ) {
+			display: block;
+		}
+
+		@include breakpoint-deprecated( '>480px' ) {
+			&:first-of-type {
+				margin-right: 16px;
+				margin-bottom: 6px;
+			}
+		}
+	}
+
+	.difm-lite-thank-you__support-button {
+		padding-bottom: 11px;
+		padding-top: 2px;
+
+		@include breakpoint-deprecated( '<480px' ) {
+			margin-top: 16px;
+		}
+	}
+}
