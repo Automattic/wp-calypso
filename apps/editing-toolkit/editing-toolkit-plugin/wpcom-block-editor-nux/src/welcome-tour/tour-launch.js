@@ -5,6 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+import useFocus from './hooks/use-focus';
 import useKeyboardNavigation from './hooks/use-keyboard-navigation';
 import maximize from './icons/maximize';
 import WelcomeTourCard from './tour-card';
@@ -60,6 +61,8 @@ function KeyboardNavigation( { onMinimize, onNextCardProgression, onPreviousCard
 }
 
 function WelcomeTourFrame() {
+	const ref = useRef( null );
+	const isTourFocused = useFocus( ref );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
@@ -68,12 +71,6 @@ function WelcomeTourFrame() {
 	const cardContent = getTourContent( localeSlug );
 	const lastCardIndex = cardContent.length - 1;
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
-
-	// Some editor menus close when they lose focus (onblur), but when the tour is open or minimized the user should
-	// be able to interact with menus (ex: the Block Inserter). To make that happen we capture the onMouseDown event
-	// const captureWelcomeTourFrameClick = ( e ) => {
-	// 	e.preventDefault();
-	// };
 
 	const handleDismiss = ( source ) => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
@@ -115,17 +112,16 @@ function WelcomeTourFrame() {
 	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
 
 	return (
-		<div
-			className="wpcom-editor-welcome-tour-frame"
-			// onMouseDownCapture={ captureWelcomeTourFrameClick }
-		>
+		<div className="wpcom-editor-welcome-tour-frame" ref={ ref }>
 			{ ! isMinimized ? (
 				<>
-					<KeyboardNavigation
-						onMinimize={ handleMinimize }
-						onNextCardProgression={ handleNextCardProgression }
-						onPreviousCardProgression={ handlePreviousCardProgression }
-					/>
+					{ isTourFocused && (
+						<KeyboardNavigation
+							onMinimize={ handleMinimize }
+							onNextCardProgression={ handleNextCardProgression }
+							onPreviousCardProgression={ handlePreviousCardProgression }
+						/>
+					) }
 					<WelcomeTourCard
 						cardContent={ cardContent[ currentCardIndex ] }
 						currentCardIndex={ currentCardIndex }
