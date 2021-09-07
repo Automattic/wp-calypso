@@ -257,8 +257,6 @@ const webpackConfig = {
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
 
-			// Node polyfills
-			process: 'process/browser',
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),
 	},
@@ -275,8 +273,9 @@ const webpackConfig = {
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
 		} ),
+		// Node polyfills
 		new webpack.ProvidePlugin( {
-			process: 'process/browser',
+			process: 'process/browser.js',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
