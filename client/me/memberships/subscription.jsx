@@ -19,7 +19,7 @@ import {
 	getSubscription,
 	getStoppingStatus,
 } from 'calypso/state/memberships/subscriptions/selectors';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { purchasesRoot } from '../purchases/paths';
 import MembershipSiteHeader from './header';
 
@@ -36,7 +36,6 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 			dispatch(
 				errorNotice( translate( 'There was a problem while stopping your subscription' ) )
 			);
-			return;
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
 			dispatch(
@@ -45,8 +44,6 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 					{ displayOnNextPage: true }
 				)
 			);
-
-			// TODO: refactor to work on site level subscriptions
 			page( purchasesRoot );
 		}
 	}, [ stoppingStatus, dispatch, translate ] );
