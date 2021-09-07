@@ -47,7 +47,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 			} );
 
 			return { timeRemainingNumber, unitOfTime };
-		} else if ( timeRemaining.weeks() >= 1 ) {
+		} else if ( timeRemaining.weeks() > 1 ) {
 			const timeRemainingNumber = timeRemaining.weeks();
 			const unitOfTime = translate( 'week', 'weeks', {
 				count: timeRemainingNumber,
