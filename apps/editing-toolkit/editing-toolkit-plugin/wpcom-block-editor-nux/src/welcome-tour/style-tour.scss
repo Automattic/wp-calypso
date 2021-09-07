@@ -155,7 +155,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 	.wpcom-editor-welcome-tour-frame:hover &,
 	.wpcom-editor-welcome-tour-frame:focus-within &,
-	&-controls-visible {
+	&.welcome-tour-card__overlay-controls-visible {
 		.components-button {
 			opacity: 0.7;
 
