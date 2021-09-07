@@ -5,12 +5,12 @@ import {
 	isJetpackScanSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import JetpackBenefits from 'calypso/blocks/jetpack-benefits';
 import JetpackGeneralBenefits from 'calypso/blocks/jetpack-benefits/general-benefits';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -28,11 +28,12 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, productSlug )
 	) as ResponseCartProduct | null;
+	const moment = useLocalizedMoment();
 
 	const getTimeRemainingForSubscription = ( purchase: Purchase ) => {
-		const purchaseExpiryDate = moment( purchase.expiryDate );
+		const purchaseExpiryDate = moment.utc( purchase.expiryDate );
 
-		return moment.duration( purchaseExpiryDate.diff( moment( purchase.mostRecentRenewDate ) ) );
+		return moment.duration( purchaseExpiryDate.diff( moment.utc() ) );
 	};
 
 	const getTimeRemainingTranslatedPeriod = ( purchase: Purchase ) => {
