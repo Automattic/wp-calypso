@@ -236,17 +236,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						onButtonClick={ scrollToComparison }
 					/>
 				</div>
-				<ul className="product-grid__asterisk-list">
-					<li className="product-grid__asterisk-item">
-						{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
-					</li>
-					<li className="product-grid__asterisk-item">
-						{ translate( 'Monthly plans are 7-day money back guarantee.' ) }
-					</li>
-					<li className="product-grid__asterisk-item">
-						{ translate( 'All paid products and plans include priority support.' ) }
-					</li>
-				</ul>
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
@@ -282,6 +271,17 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</div>
 			</ProductGridSection>
 			<StoreFooter />
+			<ul className="product-grid__asterisk-list">
+				<li className="product-grid__asterisk-item">
+					{ translate( '* Monthly plans are 7-day money back guarantee.' ) }
+				</li>
+				<li className="product-grid__asterisk-item">
+					{ translate( '✢ Discount is for first term only, all renewals are at full price.' ) }
+				</li>
+				<li className="product-grid__asterisk-item">
+					{ translate( 'All paid products and plans include priority support.' ) }
+				</li>
+			</ul>
 		</>
 	);
 };
