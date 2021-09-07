@@ -45,7 +45,7 @@ export type StripeLoadingError = undefined | null | Error;
 
 export interface StripeData {
 	stripe: null | Stripe;
-	stripeConfiguration: undefined | null | StripeConfiguration;
+	stripeConfiguration: null | StripeConfiguration;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	reloadStripeConfiguration: ReloadStripeConfiguration;
@@ -318,7 +318,7 @@ function getValidationErrorsFromStripeError(
  * @returns {UseStripeJs} The Stripe data
  */
 function useStripeJs(
-	stripeConfiguration: StripeConfiguration | undefined,
+	stripeConfiguration: StripeConfiguration | null,
 	stripeConfigurationError: undefined | Error,
 	locale: string | undefined = undefined
 ): UseStripeJs {
@@ -394,15 +394,15 @@ function useStripeConfiguration(
 	fetchStripeConfiguration: GetStripeConfiguration,
 	requestArgs?: undefined | null | GetStripeConfigurationArgs
 ): {
-	stripeConfiguration: StripeConfiguration | undefined;
+	stripeConfiguration: StripeConfiguration | null;
 	stripeConfigurationError: undefined | Error;
 	reloadStripeConfiguration: ReloadStripeConfiguration;
 } {
 	const [ stripeReloadCount, setReloadCount ] = useState< number >( 0 );
 	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
-	const [ stripeConfiguration, setStripeConfiguration ] = useState<
-		undefined | StripeConfiguration
-	>();
+	const [ stripeConfiguration, setStripeConfiguration ] = useState< null | StripeConfiguration >(
+		null
+	);
 	const reloadStripeConfiguration = useCallback(
 		() => setReloadCount( ( count ) => count + 1 ),
 		[]
@@ -434,7 +434,7 @@ function useStripeConfiguration(
 					);
 				}
 				debug( 'stripe configuration received', configuration );
-				setStripeConfiguration( configuration );
+				setStripeConfiguration( configuration ?? null );
 			} )
 			.catch( ( error ) => {
 				setStripeConfigurationError( error );
