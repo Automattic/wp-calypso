@@ -16,3 +16,5 @@ export * from './invite-people-page';
 export * from './people-page';
 export * from './reader-page';
 export * from './user-signup-page';
+export * from './account-settings-page';
+export * from './account-closed-page';

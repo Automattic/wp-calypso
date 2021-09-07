@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import type { Plans } from '../../types';
 
-export type Plans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type Features =
 	| 'Custom domains'
 	| 'Store'
