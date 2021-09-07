@@ -1,5 +1,4 @@
 import i18n, { translate } from 'i18n-calypso';
-import { compact, get } from 'lodash';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 
@@ -1460,15 +1459,15 @@ export function getContextResults( section ) {
 
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
-	const video = get( videosForSection, section )?.[ 0 ];
-	const tour = get( toursForSection, section )?.[ 0 ];
-	const links = get( contextLinksForSection, section, fallbackLinks );
+	const video = videosForSection[ section ]?.[ 0 ];
+	const tour = toursForSection[ section ]?.[ 0 ];
+	const links = contextLinksForSection[ section ] ?? fallbackLinks;
 
 	// If true, still display fallback links in addition (as opposed to instead
 	// of) the other context links.
 	if ( section === 'home' ) {
-		return compact( [ tour, video, ...getFallbackLinks(), ...links ] );
+		return [ tour, video, ...getFallbackLinks(), ...links ].filter( Boolean );
 	}
 
-	return compact( [ tour, video, ...links ] );
+	return [ tour, video, ...links ].filter( Boolean );
 }

@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { speak } from '@wordpress/a11y';
 import { useTranslate } from 'i18n-calypso';
-import { debounce, isEmpty } from 'lodash';
+import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useEffect } from 'react';
@@ -81,7 +81,7 @@ function HelpSearchResults( {
 		errorSpeak.cancel();
 
 		// If there's no query, then we don't need to announce anything.
-		if ( isEmpty( searchQuery ) ) {
+		if ( ! searchQuery ) {
 			return;
 		}
 
