@@ -17,7 +17,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
@@ -120,7 +120,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish'
 	describe( 'Delete user account', function () {
 		it( 'Navigate to Me > Account Settings', async function () {
 			const navbarComponent = new NavbarComponent( page );
-			await navbarComponent.clickAccountSettings();
+			await navbarComponent.clickMe();
 			const meSidebarComponent = new MeSidebarComponent( page );
 			await meSidebarComponent.navigate( 'Account Settings' );
 		} );
