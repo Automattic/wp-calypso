@@ -79,13 +79,7 @@ const twoPartPostalCodes: Record<
 	US: {
 		length: [ 9 ],
 		delimiter: '-',
-		formatter: ( postalCodeInput: string, delimiter: string ) => {
-			return (
-				postalCodeInput.substring( 0, postalCodeInput.length - 4 ) +
-				delimiter +
-				postalCodeInput.substring( postalCodeInput.length - 4 )
-			);
-		},
+		partLength: 5,
 	},
 };
 
@@ -114,15 +108,15 @@ export function tryToGuessPostalCodeFormat(
 		return postalCode;
 	}
 
-	const postalCodeWithoutDelimeters = postalCode.replace( /[\s-]/g, '' );
+	const postalCodeWithoutDelimiters = postalCode.replace( /[\s-]/g, '' );
 
-	if ( countryCodeData.length.includes( postalCodeWithoutDelimeters.length ) ) {
+	if ( countryCodeData.length.includes( postalCodeWithoutDelimiters.length ) ) {
 		if ( isCountryCodeDataWithFormatter( countryCodeData ) ) {
-			return countryCodeData.formatter( postalCodeWithoutDelimeters, countryCodeData.delimiter );
+			return countryCodeData.formatter( postalCodeWithoutDelimiters, countryCodeData.delimiter );
 		}
 
 		return defaultFormatter(
-			postalCodeWithoutDelimeters,
+			postalCodeWithoutDelimiters,
 			countryCodeData.delimiter,
 			countryCodeData.partLength
 		);
