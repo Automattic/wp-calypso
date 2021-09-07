@@ -14,7 +14,7 @@ const DisableHEICImages = createHigherOrderComponent( ( MediaPlaceholder ) => {
 				Object.values( files ).filter( ( file ) => {
 					const filename = file.name;
 					const extension = filename
-						.substring( filename.lastIndexOf( '.' ) + 1, filename.length )
+						.split('.').pop();
 						.toLowerCase();
 
 					if (
