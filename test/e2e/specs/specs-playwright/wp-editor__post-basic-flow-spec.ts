@@ -20,7 +20,7 @@ const tag = 'test-tag';
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
-	let settingsSidebar: EditorSettingsSidebarComponent;
+	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let previewComponent: PreviewComponent;
 	let publishedPostPage: PublishedPostPage;
 	const user = BrowserHelper.targetGutenbergEdge()
@@ -54,29 +54,29 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Open editor settings sidebar for post', async function () {
 			await gutenbergEditorPage.openSettings();
 			const frame = await gutenbergEditorPage.getEditorFrame();
-			settingsSidebar = new EditorSettingsSidebarComponent( frame, page );
-			await settingsSidebar.clickTab( 'Post' );
+			editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
+			await editorSettingsSidebarComponent.clickTab( 'Post' );
 		} );
 
 		it( 'Add post category', async function () {
-			await settingsSidebar.expandSectionIfCollapsed( 'Categories' );
-			await settingsSidebar.clickCategory( category );
+			await editorSettingsSidebarComponent.expandSectionIfCollapsed( 'Categories' );
+			await editorSettingsSidebarComponent.clickCategory( category );
 		} );
 
 		it( 'Add post tag', async function () {
-			await settingsSidebar.expandSectionIfCollapsed( 'Tags' );
-			await settingsSidebar.enterTag( tag );
+			await editorSettingsSidebarComponent.expandSectionIfCollapsed( 'Tags' );
+			await editorSettingsSidebarComponent.enterTag( tag );
 		} );
 	} );
 
 	describe( 'Preview post', function () {
 		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional
 		it( 'Close settings sidebar', async function () {
-			await settingsSidebar.closeSidebar();
+			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
 		it( 'Launch preview', async function () {
-			await gutenbergEditorPage.launchPreview();
+			await gutenbergEditorPage.preview();
 			previewComponent = new PreviewComponent( page );
 			await previewComponent.previewReady();
 		} );

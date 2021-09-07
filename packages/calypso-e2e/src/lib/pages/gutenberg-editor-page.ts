@@ -298,7 +298,7 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<void} No return value.
 	 */
-	async launchPreview(): Promise< void > {
+	async preview(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.previewButton );
 	}

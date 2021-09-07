@@ -53,7 +53,7 @@ export class PreviewComponent {
 	}
 
 	/**
-	 * Get the Iframe element handle for the preview content.
+	 * Get the Iframe element handle for the preview content. This frame is the one located within the preview popup.
 	 *
 	 * @returns {Frame} Handle for the preview content Iframe
 	 */
