@@ -350,13 +350,12 @@ class RemovePurchase extends Component {
 	}
 
 	renderJetpackDialog() {
-		const { purchase, site } = this.props;
+		const { purchase } = this.props;
 
 		return (
 			<CancelJetpackForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }

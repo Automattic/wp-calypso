@@ -23,7 +23,6 @@ import './style.scss';
 interface Props {
 	disableButtons?: boolean;
 	purchase: Purchase;
-	selectedSite: { slug: string; ID: number };
 	isVisible: boolean;
 	onClose: () => void;
 	onClickFinalConfirm: () => void;
@@ -32,14 +31,14 @@ interface Props {
 	recordTracksEvent: ( name: string, data: Record< string, unknown > ) => void;
 }
 
-const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite, ...props } ) => {
+const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ...props } ) => {
 	const translate = useTranslate();
 	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
 
 	const isAtomicSite = useSelector( ( state ) =>
-		isSiteAutomatedTransfer( state, selectedSite.ID )
+		isSiteAutomatedTransfer( state, purchase.siteId )
 	);
 
 	/**
@@ -54,7 +53,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 
 	// Record an event for Tracks
 	const recordEvent = ( name: string, properties = {} ) => {
-		const { purchase, flowType } = props;
+		const { flowType } = props;
 
 		recordTracksEvent( name, {
 			cancellation_flow: flowType,
@@ -116,7 +115,6 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 
 	const onSubmit = () => {
 		if ( surveyAnswerId ) {
-			const { purchase } = props;
 			const surveyData = {
 				'why-cancel': {
 					response: surveyAnswerId,
@@ -127,7 +125,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 
 			submitSurvey(
 				'calypso-cancel-jetpack',
-				selectedSite.ID,
+				purchase.siteId,
 				enrichedSurveyData( surveyData, purchase )
 			);
 		}
@@ -222,7 +220,6 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 	 * @returns current step {string|null}
 	 */
 	const renderCurrentStep = () => {
-		const { purchase } = props;
 		const productName = getName( purchase );
 
 		// Step 1: what will be lost by cancelling
@@ -231,7 +228,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 			// this differs a bit depending on the product/ what JP modules are active
 			return (
 				<JetpackBenefitsStep
-					siteId={ selectedSite.ID }
+					siteId={ purchase.siteId }
 					purchase={ purchase }
 					productSlug={ purchase.productSlug }
 				/>
