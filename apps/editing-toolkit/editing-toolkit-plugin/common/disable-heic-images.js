@@ -7,22 +7,15 @@ const DisableHEICImages = createHigherOrderComponent( ( MediaPlaceholder ) => {
 	return ( props ) => {
 		props.onFilesPreUpload = ( files ) => {
 			if ( files ) {
-				const error = __(
-					'HEIC images are not viewable in the editor. Please convert to a JPG, PNG, or GIF and try again.',
-					'full-site-editing'
-				);
-				Object.values( files ).filter( ( file ) => {
+				Object.values( files ).forEach( ( file ) => {
 					const filename = file.name;
-					const extension = filename
-						.split('.').pop();
-						.toLowerCase();
+					const extension = filename.split( '.' ).pop().toLowerCase();
 
-					if (
-						'image/heic' === file.type ||
-						'image/heif' === file.type ||
-						'heic' === extension ||
-						'heif' === extension
-					) {
+					if ( 'heic' === extension || 'heif' === extension ) {
+						const error = __(
+							'HEIC images are not viewable in the editor. Please convert to a JPG, PNG, or GIF and try again.',
+							'full-site-editing'
+						);
 						props.onError( error );
 						throw Error( error );
 					}
