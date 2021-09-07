@@ -29,7 +29,6 @@
 	"features": {
 		"activity-log/display-rules": false,
 		"activity-log/v2": true,
-		"ad-tracking": false,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
