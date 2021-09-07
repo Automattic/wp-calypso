@@ -571,7 +571,7 @@ __metadata:
     "@automattic/i18n-utils": ^1.0.0
     "@automattic/onboarding": ^1.0.0
     "@automattic/plans-grid": ^1.0.0-alpha.0
-    "@automattic/shopping-cart": ^1.0.0
+    "@automattic/shopping-cart": ^2.0.0
     "@automattic/typography": ^1.0.0
     "@testing-library/react": ^12.0.0
     "@wordpress/base-styles": ^3.4.3
@@ -881,7 +881,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/shopping-cart@^1.0.0, @automattic/shopping-cart@workspace:packages/shopping-cart":
+"@automattic/shopping-cart@^2.0.0, @automattic/shopping-cart@workspace:packages/shopping-cart":
   version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
@@ -1121,7 +1121,7 @@ __metadata:
     "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
     "@automattic/composite-checkout": ^1.0.0
-    "@automattic/shopping-cart": ^1.0.0
+    "@automattic/shopping-cart": ^2.0.0
     "@emotion/styled": ^11.3.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
@@ -12624,7 +12624,7 @@ __metadata:
     "@automattic/popup-monitor": ^1.0.0
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": ^1.0.0
-    "@automattic/shopping-cart": ^1.0.0
+    "@automattic/shopping-cart": ^2.0.0
     "@automattic/social-previews": ^1.0.1
     "@automattic/state-utils": ^1.0.0-alpha.4
     "@automattic/tree-select": ^1.0.3
