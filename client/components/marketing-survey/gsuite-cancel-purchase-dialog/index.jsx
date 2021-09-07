@@ -196,6 +196,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	render() {
 		const { isVisible, onClose, purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText, isRemoving } = this.state;
+
 		return (
 			// By checking isVisible here we prevent rendering a "reset" dialog state before it closes
 			isVisible && (

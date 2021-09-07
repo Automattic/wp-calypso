@@ -8,5 +8,6 @@ import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subsc
  */
 export function hasGSuiteWithUs( domain ) {
 	const status = getGSuiteSubscriptionStatus( domain );
+
 	return ! [ '', 'no_subscription', 'other_provider' ].includes( status );
 }
