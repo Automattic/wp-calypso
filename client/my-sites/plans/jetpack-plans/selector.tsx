@@ -94,7 +94,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		isUpgradeableToYearly = false,
 		purchase
 	) => {
-		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+		if ( 'externalUrl' in product ) {
 			return product.externalUrl || '';
 		}
 		if ( purchase && isUpgradeableToYearly ) {

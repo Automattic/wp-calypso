@@ -17,11 +17,14 @@ import {
 	objectIsProduct,
 	Plan,
 	Product,
+	PRODUCT_JETPACK_VIDEOPRESS,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	PRODUCTS_LIST,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
@@ -94,6 +97,10 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
+		const isVideoPress =
+			PRODUCT_JETPACK_VIDEOPRESS === item.product_slug ||
+			PRODUCT_JETPACK_VIDEOPRESS_MONTHLY === item.product_slug;
+
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
 
 		return {
@@ -122,6 +129,14 @@ function itemToSelectorProduct(
 						)
 					) || [],
 			},
+			// We need to hack VideoPress a bit as it has a free option.
+			...( isVideoPress && {
+				isFree: true,
+				externalUrl: 'https://jetpack.com/features/design/video-hosting',
+				belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s', {
+					args: { minPrice: '$0', maxPrice: '$10' },
+				} ),
+			} ),
 		};
 	} else if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();

@@ -258,7 +258,7 @@ export const getJetpackProductsDescriptions = () => {
 	);
 
 	const videoPressDescription = translate(
-		'We host and serve your video content using our customizable and clean video player.'
+		'High-quality, ad-free video built specifically for WordPress.'
 	);
 
 	const antiSpamDescription = translate(

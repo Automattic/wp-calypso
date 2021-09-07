@@ -64,6 +64,10 @@ import {
 	FEATURE_JETPACK_ADVANCED,
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_JETPACK_VIDEOPRESS,
+	FEATURE_JETPACK_VIDEOPRESS_EDITOR,
+	FEATURE_JETPACK_VIDEOPRESS_MODERN,
+	FEATURE_JETPACK_VIDEOPRESS_STATS,
+	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
@@ -1329,7 +1333,27 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
-		getTitle: () => i18n.translate( 'Up to 1TB of video storage.' ),
+		getTitle: () => i18n.translate( '1 video and 1GB for free.' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_EDITOR ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_EDITOR,
+		getTitle: () => i18n.translate( 'Built into WordPress editor.' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_UNBRANDED ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
+		getTitle: () => i18n.translate( 'Ad-free and unbranded.' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_MODERN ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_MODERN,
+		getTitle: () => i18n.translate( 'Customizable player.' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_STATS ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_STATS,
+		getTitle: () => i18n.translate( 'Multiple playback speeds.' ),
 	},
 };
 
