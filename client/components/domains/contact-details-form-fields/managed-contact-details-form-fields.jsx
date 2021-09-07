@@ -297,6 +297,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 		const countryCode = form.countryCode?.value ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
+		const isOrganizationFieldRequired = form.extra?.value?.ca?.legalType === 'CCO';
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -307,8 +308,7 @@ export class ManagedContactDetailsFormFields extends Component {
 						{
 							label: translate( 'Organization' ),
 							text: translate( '+ Add organization name' ),
-							toggled:
-								form.organization?.value || this.props.getIsFieldRequired?.( 'organization' ),
+							toggled: form.organization?.value || isOrganizationFieldRequired,
 						},
 						{
 							customErrorMessage: this.props.contactDetailsErrors?.organization,
