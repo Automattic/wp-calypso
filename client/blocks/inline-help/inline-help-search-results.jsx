@@ -9,10 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getSectionName } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import {
 	SUPPORT_TYPE_ADMIN_SECTION,
 	SUPPORT_TYPE_API_HELP,
@@ -35,6 +37,17 @@ const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
 
 const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
+const filterManagePurchaseLink = ( hasPurchases, section ) => ( { post_id } ) => {
+	if (
+		post_id === 111349 &&
+		! hasPurchases &&
+		! [ 'purchases', 'site-purchases' ].includes( section )
+	) {
+		return false;
+	}
+	return true;
+};
+
 function HelpSearchResults( {
 	externalLinks = false,
 	onSelect,
@@ -46,9 +59,18 @@ function HelpSearchResults( {
 	const dispatch = useDispatch();
 
 	const currentUserId = useSelector( getCurrentUserId );
-	const contextualResults = useSelector( getContextualHelpResults );
+	const sectionName = useSelector( getSectionName );
+	const hasPurchases = useSelector( ( state ) =>
+		hasCancelableUserPurchases( state, currentUserId )
+	);
+	const rawContextualResults = useSelector( getContextualHelpResults );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
+	const contextualResults = rawContextualResults.filter(
+		// Unless searching with Inline Help or on the Purchases section, hide the
+		// "Managing Purchases" documentation link for users who have not made a purchase.
+		filterManagePurchaseLink( hasPurchases, sectionName )
+	);
 	const { data: searchResults = [], isLoading: isSearching } = useInlineHelpSearchQuery(
 		searchQuery
 	);
