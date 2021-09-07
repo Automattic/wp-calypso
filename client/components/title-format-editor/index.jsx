@@ -235,17 +235,24 @@ export class TitleFormatEditor extends Component {
 			<div className={ editorClassNames }>
 				<div className="title-format-editor__header">
 					<span className="title-format-editor__title">{ type.label }</span>
-					{ Object.entries( tokens ).map( ( [ name, title ] ) => (
+					{ Object.entries( tokens ).map( ( [ name, title ] ) => {
+						if ( 'archives' === type.value && 'date' === name ) {
+							// [date] is tokenized, but we no longer show the button to insert a [date].
+							// [archive_title] is a more generic option that supports non date-based archives.
+							return null;
+						}
 						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-						<span
-							key={ name }
-							className="title-format-editor__button"
-							onClick={ disabled ? noop : this.addToken( title, name ) }
-						>
-							{ title }
-						</span>
+						return (
+							<span
+								key={ name }
+								className="title-format-editor__button"
+								onClick={ disabled ? noop : this.addToken( title, name ) }
+							>
+								{ title }
+							</span>
+						);
 						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-					) ) }
+					} ) }
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
