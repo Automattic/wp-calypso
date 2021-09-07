@@ -1322,38 +1322,38 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
 		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
-		getDescription: () => i18n.translate( 'Live chat is available 24/7.' ),
+		getDescription: () => i18n.translate( 'Live chat is available 24/7' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
-		getTitle: () => i18n.translate( '1 video and 1GB for free.' ),
+		getTitle: () => i18n.translate( '1 video and 1GB for free' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS_EDITOR ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_EDITOR,
-		getTitle: () => i18n.translate( 'Built into WordPress editor.' ),
+		getTitle: () => i18n.translate( 'Built into WordPress editor' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS_UNBRANDED ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
-		getTitle: () => i18n.translate( 'Ad-free and unbranded.' ),
+		getTitle: () => i18n.translate( 'Ad-free and unbranded' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS_MODERN ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_MODERN,
-		getTitle: () => i18n.translate( 'Customizable player.' ),
+		getTitle: () => i18n.translate( 'Customizable player' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS_STATS ]: {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_STATS,
-		getTitle: () => i18n.translate( 'Multiple playback speeds.' ),
+		getTitle: () => i18n.translate( 'Multiple playback speeds' ),
 	},
 };
 

@@ -133,7 +133,7 @@ function itemToSelectorProduct(
 			...( isVideoPress && {
 				isFree: true,
 				externalUrl: 'https://jetpack.com/features/design/video-hosting',
-				belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s', {
+				belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s/month', {
 					args: { minPrice: '$0', maxPrice: '$10' },
 				} ),
 			} ),
