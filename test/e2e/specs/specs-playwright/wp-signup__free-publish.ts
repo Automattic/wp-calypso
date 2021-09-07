@@ -17,7 +17,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
