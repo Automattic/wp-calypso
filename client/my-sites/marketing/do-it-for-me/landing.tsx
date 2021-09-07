@@ -13,7 +13,6 @@ import photography from 'calypso/assets/images/difm/photography-1.png';
 import phsych from 'calypso/assets/images/difm/phsych-1.png';
 import restaurant from 'calypso/assets/images/difm/restaurant-1.png';
 import treeremoval from 'calypso/assets/images/difm/tree-removal.png';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -37,26 +36,39 @@ const Vertical = styled.h1`
 const VerticalHeading = styled.h1`
 	font-size: 1.25rem;
 	text-align: center;
-	margin: 2.25em 0;
+	margin: 1em 0 1em 0;
 	height: 4.25em;
 	border-bottom: 1px solid var( --color-border-subtle );
 	box-sizing: border-box;
 `;
 
 const ImageContainer = styled.div`
-	height: 250px;
+	height: 150px;
 	overflow: hidden;
 	margin: 10px 0px;
-	@media ( min-width: 480px ) {
+	@media ( min-width: 960px ) {
 		height: auto;
 	}
 `;
 
 const ButtonContainer = styled.div`
+	margin: 0 15px;
 	width: 100%;
 	@media ( min-width: 480px ) {
 		width: 200px;
 	}
+`;
+
+const Paragraph = styled.p`
+	margin: 16px;
+	font-size: 1rem;
+	text-align: justify;
+`;
+
+const Heading = styled.h2`
+	font-size: 1.5rem;
+	margin: 15px 15px 0;
+	padding: 0;
 `;
 
 export default function DoItForMeLandingPage(): JSX.Element {
@@ -69,25 +81,20 @@ export default function DoItForMeLandingPage(): JSX.Element {
 
 	return (
 		<Card>
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Your Site Built By WordPress' ) }
-				subHeaderText={ translate(
-					'You want the website of your dreams. Our experts can create it for you.'
-				) }
-				align="left"
-			/>
+			<Heading className="do-it-for-me__header formatted-header__title wp-brand-font">
+				{ translate( 'Your Site Built By WordPress.com' ) }
+			</Heading>
 
-			<p>
+			<Paragraph>
 				{ translate(
-					'Need a professionally designed website for your business fast? Choose from our custom designed templates below, add your content and media, and in just 1-2 days your website will be ready to launch, for just US$500. The one-time fee includes a 5-page website, a 30-minute Quick Start Zoom orientation about your site it’s complete. '
+					'Need a professionally designed website for your business fast? Choose from our custom designed templates below, add your content and media, and in just 1-2 days your website will be ready to launch, for just US$500. The one-time fee includes a 5-page website, a 30-minute Quick Start Zoom orientation about your site when it’s complete.'
 				) }
-			</p>
-			<p>
+			</Paragraph>
+			<Paragraph>
 				{ translate(
 					'You’ll need to have content for 5 pages (Home, About, Contact, and 2 other pages based on your selected template). You can add that content in the submission form.'
 				) }
-			</p>
+			</Paragraph>
 
 			<VerticalsGrid>
 				<Vertical>
