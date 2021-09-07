@@ -1148,7 +1148,7 @@ class CancelPurchaseForm extends React.Component {
 			return;
 		}
 
-		loadExperimentAssignment( 'fullscreen_precancellation_survey' ).then(
+		loadExperimentAssignment( 'fullscreen_precancellation_survey_v2' ).then(
 			( experimentAssignment ) => {
 				if ( 'treatment' === experimentAssignment?.variationName ) {
 					this.setState( { fullscreen: true } );
