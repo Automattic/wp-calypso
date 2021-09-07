@@ -219,7 +219,7 @@ export class GutenbergEditorPage {
 		await frame.fill( selectors.blockSearch, blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `*[aria-label="Block: ${ blockName }"].is-selected` );
+		return await frame.waitForSelector( `.is-selected` );
 	}
 
 	/**
