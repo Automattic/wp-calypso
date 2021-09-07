@@ -104,7 +104,7 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 	} catch ( e ) {
 		// e.g. no connection, or JSON parsing error
 		return receiveDomainSuggestionsError(
-			e.message || ( translate( 'Error while fetching server response' ) as string )
+			( e as Error ).message || ( translate( 'Error while fetching server response' ) as string )
 		);
 	}
 }

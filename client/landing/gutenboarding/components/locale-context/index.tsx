@@ -13,6 +13,7 @@ import {
 } from '../../../../lib/i18n-utils/switch-locale';
 import { recordOnboardingError } from '../../lib/analytics';
 import { USER_STORE } from '../../stores/user';
+import type { ErrorParameters } from '../../lib/analytics/types';
 import type { User } from '@automattic/data-stores';
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
@@ -66,7 +67,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 				setLocale( localeData );
 			}
 		} catch ( error ) {
-			recordOnboardingError( error );
+			recordOnboardingError( error as ErrorParameters );
 			setLocale( undefined );
 		}
 	};
