@@ -13,20 +13,6 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		this.editorCanvasiFrameLocator = By.css( 'iframe[name="editor-canvas"]' );
 	}
 
-	static async Expect( driver, editorType ) {
-		const page = new this( driver, null, editorType );
-		await page._expectInit();
-		return page;
-	}
-
-	async _preInit() {
-		if ( this.editorType !== 'iframe' ) {
-			return;
-		}
-		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
-	}
-
 	async runInCanvas( fn ) {
 		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editorCanvasiFrameLocator );
 		const result = await fn();
