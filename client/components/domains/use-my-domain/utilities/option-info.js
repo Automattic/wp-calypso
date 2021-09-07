@@ -15,8 +15,8 @@ export const optionInfo = {
 		topText: __( 'Manage your domain directly on WordPress.com' ),
 		learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 		benefits: [
-			__( 'Manage everything you need in one place' ),
 			__( "We'll renew your domain for another year" ),
+			__( 'Manage everything you need in one place' ),
 			__( 'Private domain registration and SSL certificate included for free' ),
 		],
 	},
