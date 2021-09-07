@@ -44,6 +44,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { isExternal } from 'calypso/lib/url';
+import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
@@ -421,7 +422,9 @@ export class CheckoutThankYou extends React.Component {
 
 		if ( wasDIFMProduct ) {
 			return (
-				<AsyncLoad require="calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you" />
+				<Main className="checkout-thank-you">
+					<DIFMLiteThankYou />
+				</Main>
 			);
 		}
 
