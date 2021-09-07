@@ -305,16 +305,8 @@ export async function setWhenSettable(
 			try {
 				const element = await driver.findElement( locator );
 				await highlightElement( driver, element );
-				let currentValue = await element.getAttribute( 'value' );
 
-				// Some inputs might not be actual input els, but another element
-				// with the `contentEditable` attribute set to `true`. In this case,
-				// getting the text through the `value` attribute won't work, and
-				// the `textContent` property should be used instead. `getAttribute`
-				// should return `null` when the attribute doesn't exist.
-				if ( currentValue === null ) {
-					currentValue = await element.getProperty( 'textContent' );
-				}
+				const currentValue = await getInputText( element );
 
 				if ( currentValue === value ) {
 					// Do nothing if given value is already set
@@ -560,6 +552,32 @@ export async function isImageVisible( driver, locator ) {
 export async function numberOfOpenWindows( driver ) {
 	const handles = await driver.getAllWindowHandles();
 	return handles.length;
+}
+
+/**
+ * Returns the valye/text from an input or input-like element.
+ *
+ * Some inputs might not be real input elements, but elements
+ * with `contentediable` set to `true`.
+ *
+ * @param {WebElement} element The element to be highlighted
+ * @returns {string} the value for the input or the textContent property
+ * for `contenteditable` elements.
+ */
+export async function getInputText( element ) {
+	const value = await element.getAttribute( 'value' );
+	if ( typeof value === 'string' ) {
+		return value;
+	}
+
+	const isContentEditable = ( await element.getAttribute( 'contenteditable' ) ) === 'true';
+	if ( isContentEditable ) {
+		return await element.getText();
+	}
+
+	throw new Error(
+		'Element is not an input element nor an element with `contenteditable` set to `true`.'
+	);
 }
 
 /**

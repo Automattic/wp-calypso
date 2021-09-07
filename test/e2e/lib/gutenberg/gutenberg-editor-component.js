@@ -90,9 +90,9 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	}
 
 	async getTitle() {
-		return await this.driver
-			.findElement( By.css( '.editor-post-title__input' ) )
-			.getProperty( 'textContent' );
+		return await driverHelper.getInputText(
+			this.driver.findElement( By.css( '.editor-post-title__input' ) )
+		);
 	}
 
 	async enterText( text ) {
@@ -424,8 +424,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	async titleShown() {
 		const titleLocator = By.css( '.editor-post-title__input' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
-		const element = await this.driver.findElement( titleLocator );
-		return await element.getProperty( 'textContent' );
+		return driverHelper.getInputText( await this.driver.findElement( titleLocator ) );
 	}
 
 	async addImage( fileDetails ) {
