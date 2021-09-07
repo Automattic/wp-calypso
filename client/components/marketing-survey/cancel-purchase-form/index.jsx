@@ -34,6 +34,7 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -168,6 +169,7 @@ class CancelPurchaseForm extends React.Component {
 			importQuestionText: '',
 			isSubmitting: false,
 			upsell: '',
+			fullscreen: false,
 		};
 	}
 
@@ -1141,11 +1143,23 @@ class CancelPurchaseForm extends React.Component {
 	}
 
 	componentDidMount() {
-		this.initSurveyState();
+		if ( ! isPlan( this.props.purchase ) ) {
+			this.initSurveyState();
+			return;
+		}
+
+		loadExperimentAssignment( 'fullscreen_precancellation_survey_v2' ).then(
+			( experimentAssignment ) => {
+				if ( 'treatment' === experimentAssignment?.variationName ) {
+					this.setState( { fullscreen: true } );
+				}
+				this.initSurveyState();
+			}
+		);
 	}
 
 	render() {
-		const { surveyStep } = this.state;
+		const { fullscreen, surveyStep } = this.state;
 		if ( ! surveyStep ) {
 			return null;
 		}
@@ -1160,7 +1174,7 @@ class CancelPurchaseForm extends React.Component {
 			translate,
 		} = this.props;
 
-		if ( config.isEnabled( 'purchases/cancel-plan-fullscreen-form' ) && isPlan( purchase ) ) {
+		if ( fullscreen && isPlan( purchase ) ) {
 			return (
 				<>
 					<QueryPlans />
