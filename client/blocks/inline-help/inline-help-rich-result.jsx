@@ -1,7 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get, omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,15 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
-import {
-	RESULT_ARTICLE,
-	RESULT_DESCRIPTION,
-	RESULT_LINK,
-	RESULT_TITLE,
-	RESULT_TOUR,
-	RESULT_TYPE,
-	RESULT_VIDEO,
-} from './constants';
+import { RESULT_ARTICLE, RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 class InlineHelpRichResult extends Component {
 	static propTypes = {
@@ -49,15 +40,12 @@ class InlineHelpRichResult extends Component {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { type, tour, link, searchQuery, postId } = this.props;
 
-		const tracksData = omitBy(
-			{
-				search_query: searchQuery,
-				tour,
-				result_url: link,
-				location: 'inline-help-popover',
-			},
-			( data ) => typeof data === 'undefined'
-		);
+		const tracksData = {
+			search_query: searchQuery,
+			location: 'inline-help-popover',
+			...( link && { result_url: link } ),
+			...( tour && { tour } ),
+		};
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
 		this.props.closePopover();
@@ -82,8 +70,8 @@ class InlineHelpRichResult extends Component {
 
 	render() {
 		const { type, title, description, link } = this.props;
-		const buttonLabel = get( this.buttonLabels, type, '' );
-		const buttonIcon = get( this.buttonIcons, type );
+		const buttonLabel = this.buttonLabels[ type ] ?? '';
+		const buttonIcon = this.buttonIcons[ type ];
 		const classes = classNames( 'inline-help__richresult__title' );
 
 		return (
@@ -102,14 +90,8 @@ class InlineHelpRichResult extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { result } ) => ( {
+const mapStateToProps = ( state ) => ( {
 	searchQuery: getSearchQuery( state ),
-	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
-	title: get( result, RESULT_TITLE ),
-	link: get( result, RESULT_LINK ),
-	description: get( result, RESULT_DESCRIPTION ),
-	tour: get( result, RESULT_TOUR ),
-	postId: get( result, 'post_id' ),
 } );
 
 const mapDispatchToProps = {

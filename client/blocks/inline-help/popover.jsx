@@ -11,7 +11,16 @@ import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-supp
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import {
+	VIEW_CONTACT,
+	VIEW_RICH_RESULT,
+	RESULT_ARTICLE,
+	RESULT_DESCRIPTION,
+	RESULT_LINK,
+	RESULT_TITLE,
+	RESULT_TOUR,
+	RESULT_TYPE,
+} from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -139,6 +148,7 @@ class InlineHelpPopover extends Component {
 
 	renderSecondaryView = () => {
 		const { onClose, setDialogState } = this.props;
+		const { selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
@@ -158,9 +168,14 @@ class InlineHelpPopover extends Component {
 						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
-								result={ this.state.selectedResult }
 								setDialogState={ setDialogState }
 								closePopover={ onClose }
+								type={ selectedResult?.[ RESULT_TYPE ] ?? RESULT_ARTICLE }
+								title={ selectedResult?.[ RESULT_TITLE ] }
+								link={ selectedResult?.[ RESULT_LINK ] }
+								description={ selectedResult?.[ RESULT_DESCRIPTION ] }
+								tour={ selectedResult?.[ RESULT_TOUR ] }
+								postId={ selectedResult?.post_id }
 							/>
 						),
 					}[ this.state.activeSecondaryView ]
