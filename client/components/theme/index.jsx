@@ -1,4 +1,4 @@
-import { Card, Ribbon, Button } from '@automattic/components';
+import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

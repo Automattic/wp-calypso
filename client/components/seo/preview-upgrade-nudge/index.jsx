@@ -5,6 +5,7 @@ import {
 	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -12,7 +13,6 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryPlans from 'calypso/components/data/query-plans';
 import FeatureExample from 'calypso/components/feature-example';
-import Gridicon from 'calypso/components/gridicon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Card, CompactCard, Button } from '@automattic/components';
+import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get, has } from 'lodash';
@@ -15,7 +15,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
 import Notice from 'calypso/components/notice';

@@ -1,11 +1,10 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import QuerySites from 'calypso/components/data/query-sites';
-import Gridicon from 'calypso/components/gridicon';
 import { getSite } from 'calypso/state/sites/selectors';
 import { isJetpackTemporarySitePurchase } from '../utils';
 

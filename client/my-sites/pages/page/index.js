@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';

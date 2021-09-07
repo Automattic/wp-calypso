@@ -1,8 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 

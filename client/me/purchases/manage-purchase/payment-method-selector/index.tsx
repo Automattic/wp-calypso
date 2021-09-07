@@ -1,5 +1,5 @@
 import { useStripe } from '@automattic/calypso-stripe';
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
@@ -11,7 +11,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';

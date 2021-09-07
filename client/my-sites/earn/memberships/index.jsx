@@ -3,7 +3,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_JETPACK_PERSONAL,
 } from '@automattic/calypso-products';
-import { Card, Button, Dialog } from '@automattic/components';
+import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
@@ -18,7 +18,6 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';

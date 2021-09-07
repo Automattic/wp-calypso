@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
+import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
@@ -51,7 +52,6 @@ import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
 import Gravatar from 'calypso/components/gravatar/docs/example';
-import Gridicon from 'calypso/components/gridicon/docs/example';
 import GSuiteExamples from 'calypso/components/gsuite/docs/example';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'calypso/components/header-button/docs/example';

@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useState, FormEventHandler } from 'react';
 import { useDispatch } from 'react-redux';
@@ -10,7 +10,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import type {
 	ThankYouNextStepProps,

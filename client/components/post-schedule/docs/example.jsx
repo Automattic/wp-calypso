@@ -1,12 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PostSchedule from 'calypso/components/post-schedule';
 import Timezone from 'calypso/components/timezone';

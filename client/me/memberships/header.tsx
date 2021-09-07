@@ -1,6 +1,5 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

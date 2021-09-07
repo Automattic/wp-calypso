@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import ConnectedListItem from 'calypso/blocks/reader-list-item/connected';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	recordAction,
 	recordTrackWithRailcar,

@@ -2,11 +2,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import accept from 'calypso/lib/accept';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

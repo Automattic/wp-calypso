@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -6,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

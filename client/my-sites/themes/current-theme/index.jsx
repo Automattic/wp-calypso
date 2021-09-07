@@ -1,4 +1,4 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map, pickBy } from 'lodash';
@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import Gridicon from 'calypso/components/gridicon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';

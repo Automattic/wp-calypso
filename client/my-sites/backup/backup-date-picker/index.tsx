@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
-import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';

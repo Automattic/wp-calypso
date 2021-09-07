@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -8,7 +9,6 @@ import { connect } from 'react-redux';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

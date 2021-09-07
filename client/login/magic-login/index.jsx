@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -6,7 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import GlobalNotices from 'calypso/components/global-notices';
-import Gridicon from 'calypso/components/gridicon';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';

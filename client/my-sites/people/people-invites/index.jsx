@@ -1,4 +1,4 @@
-import { Card, Button, Dialog } from '@automattic/components';
+import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';

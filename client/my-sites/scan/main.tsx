@@ -1,4 +1,4 @@
-import { Button, Card, ProgressBar } from '@automattic/components';
+import { Button, Card, ProgressBar, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -9,7 +9,6 @@ import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';

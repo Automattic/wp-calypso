@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get, omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
