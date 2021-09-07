@@ -51,8 +51,9 @@
 		"grunt-cli": "^1.2.0",
 		"grunt-concurrent": "^2.3.0",
 		"grunt-shell": "^1.1.2",
-		"jest": "^27.0.6",
+		"jest": "^26.6.3",
 		"jest-environment-node": "^26.6.2",
+		"jest-runner-groups": "^2.1.0",
 		"jest-teamcity": "^1.9.0",
 		"junit-viewer": "^4.9.6",
 		"lodash": "^4.17.20",
@@ -78,5 +79,9 @@
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0",
 		"xunit-viewer": "^5.1.8"
+	},
+	"peerDependencies": {
+		"jest-docblock": "*",
+		"jest-runner": "*"
 	}
 }
