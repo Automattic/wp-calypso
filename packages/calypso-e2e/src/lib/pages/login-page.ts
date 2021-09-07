@@ -17,7 +17,7 @@ const selectors = {
 	requestMagicLoginLink: 'a[data-e2e-link="magic-login-link"]',
 	magicLinkUserInput: 'input[name="usernameOrEmail"]',
 	requestMagicLoginButton: 'button:text("Request Email")',
-	magicLinkSentMessage: ':text("We just emailed you a link.")',
+	magicLinkSentMessage: ':text-matches("We just emailed")',
 	magicLinkContinueLoginButton: ':text("Continue to WordPress.com")',
 };
 

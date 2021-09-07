@@ -6,13 +6,15 @@ import {
 	NewPostFlow,
 	setupHooks,
 	UserSignupPage,
+	SignupPickPlanPage,
 	AccountSettingsPage,
 	AccountClosedPage,
 	BrowserManager,
 	EmailClient,
 	NavbarComponent,
+	MeSidebarComponent,
+	BrowserHelper,
 } from '@automattic/calypso-e2e';
-import { SignupPickPlanPage } from '@automattic/calypso-e2e/src/lib/pages/signup-pick-plan-page';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), function () {
@@ -73,8 +75,14 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), f
 		} );
 
 		it( 'Return to Home dashboard', async function () {
-			await gutenbergEditorPage.toggleSidebar();
-			await gutenbergEditorPage.returnToDashboard();
+			// Temporary workaround due to https://github.com/Automattic/wp-calypso/issues/51162.
+			// Conditional can be removed once fixed.
+			if ( BrowserHelper.getViewportName() === 'mobile' ) {
+				await page.goBack();
+			} else {
+				await gutenbergEditorPage.toggleSidebar();
+				await gutenbergEditorPage.returnToDashboard();
+			}
 		} );
 	} );
 
@@ -88,14 +96,18 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), f
 		it( 'Request magic link', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
-			await loginPage.requestMagicLink( username );
+			await loginPage.requestMagicLink( email );
 		} );
 
 		it( 'Magic link is received', async function () {
 			const emailClient = new EmailClient();
-			const message = await emailClient.getLastEmail( { inboxId: inboxId, emailAddress: email } );
+			const message = await emailClient.getLastEmail( {
+				inboxId: inboxId,
+				emailAddress: email,
+				subject: 'Log in to WordPress.com',
+			} );
 			const links = await emailClient.getLinksFromMessage( message );
-			magicLink = links.find( ( link: string ) => link.includes( 'accept-invite' ) ) as string;
+			magicLink = links.find( ( link: string ) => link.includes( 'wpcom_email_click' ) ) as string;
 			expect( magicLink ).toBeDefined();
 		} );
 
@@ -106,9 +118,14 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish' ), f
 	} );
 
 	describe( 'Delete user account', function () {
-		it( 'Delete user account', async function () {
+		it( 'Navigate to Me > Account Settings', async function () {
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.clickAccountSettings();
+			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.navigate( 'Account Settings' );
+		} );
+
+		it( 'Delete user account', async function () {
 			const accountSettingsPage = new AccountSettingsPage( page );
 			await accountSettingsPage.closeAccount();
 		} );

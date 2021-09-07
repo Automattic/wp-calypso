@@ -31,6 +31,7 @@ export class SignupPickPlanPage {
 			await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.freePlan ) ] );
 		} else {
 			await Promise.all( [
+				// Extend timeout in case the site creation step takes longer than expected.
 				this.page.waitForNavigation( { timeout: 60000, waitUntil: 'load' } ),
 				this.page.click( selectors.paidPlan( name ) ),
 			] );

@@ -32,7 +32,7 @@ export class AccountSettingsPage {
 	 */
 	async closeAccount(): Promise< void > {
 		await this.page.click( selectors.closeAccountLink );
-		await this.page.click( selectors.closeAccountLink );
+		await this.page.click( selectors.closeAccountButton );
 		await this.page.click( selectors.modalContinueButton );
 		const username = await this.page
 			.waitForSelector( selectors.usernameSpan )
