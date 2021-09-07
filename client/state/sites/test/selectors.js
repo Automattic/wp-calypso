@@ -1540,7 +1540,7 @@ describe( 'selectors', () => {
 			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
-		test( 'should convert site name, tagline and date for archives title type', () => {
+		test( 'should convert site name, tagline, date, and archive title for archives title type', () => {
 			const seoTitle = getSeoTitle(
 				{
 					sites: {
@@ -1568,6 +1568,13 @@ describe( 'selectors', () => {
 											{
 												value: 'date',
 											},
+											{
+												type: 'string',
+												value: ' | ',
+											},
+											{
+												value: 'archiveTitle',
+											},
 										],
 									},
 								},
@@ -1582,11 +1589,14 @@ describe( 'selectors', () => {
 						name: 'Site Title',
 						description: 'Site Tagline',
 					},
-					date: 'January 2000',
+					date: 'Example Archive Title/Date',
+					archiveTitle: 'Example Archive Title/Date',
 				}
 			);
 
-			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
+			chaiExpect( seoTitle ).to.eql(
+				'Site Title | Site Tagline > Example Archive Title/Date | Example Archive Title/Date'
+			);
 		} );
 
 		test( 'should default to empty string for archives title type if no other title is set', () => {
