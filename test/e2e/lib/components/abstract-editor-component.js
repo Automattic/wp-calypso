@@ -72,17 +72,16 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissNuxWelcomeModalIfDisplayed() {
-		const element = await this.driver
-			.findElement( By.css( '.wpcom-editor-welcome-tour-frame' ) )
-			.catch( () => false );
-
-		const isNuxWelcomeDialogDisplayed = element && ( await element.isDisplayed() );
+		const isNuxWelcomeDialogDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			By.css( '.wpcom-editor-welcome-tour-frame' ),
+			1000
+		);
 
 		if ( isNuxWelcomeDialogDisplayed ) {
-			// Click the 'Skip' button to get rid of it.
 			await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( '.components-card-footer button.is-tertiary' )
+				driverHelper.createTextLocator( By.css( 'button' ), 'Skip' )
 			);
 		}
 	}
