@@ -30,6 +30,7 @@ export default function useSteps(): Array< StepType > {
 		steps = [
 			Step.IntentGathering,
 			Step.Domains,
+			Step.BetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Features,
@@ -38,6 +39,7 @@ export default function useSteps(): Array< StepType > {
 	} else {
 		steps = [
 			Step.IntentGathering,
+			Step.BetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Domains,
@@ -49,6 +51,11 @@ export default function useSteps(): Array< StepType > {
 	// Remove the Style (fonts) step from the Site Editor flow.
 	if ( isEnabled( 'gutenboarding/site-editor' ) || hasSelectedDesignWithoutFonts ) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
+	}
+
+	// Remove the FSE Beta Opt In if not in a configured environment
+	if ( ! isEnabled( 'full-site-editing/beta-opt-in' ) ) {
+		steps = steps.filter( ( step ) => step !== Step.BetaOptIn );
 	}
 
 	// Logic necessary to skip Domains or Plans steps

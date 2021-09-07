@@ -18,6 +18,7 @@ import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import AcquireIntent from './acquire-intent';
 import AnchorError from './anchor-error';
+import BetaOptIn from './beta-opt-in';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
 import Designs from './designs';
@@ -198,6 +199,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
+				</Route>
+
+				<Route path={ makePath( Step.BetaOptIn ) }>
+					<BetaOptIn />
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>
