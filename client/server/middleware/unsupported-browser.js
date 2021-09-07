@@ -44,7 +44,8 @@ export default () => ( req, res, next ) => {
 		return;
 	}
 
-	if ( isSupportedBrowser( req ) ) {
+	const forceRedirect = config.isEnabled( 'redirect-fallback-browsers/test' );
+	if ( ! forceRedirect && isSupportedBrowser( req ) ) {
 		next();
 		return;
 	}
