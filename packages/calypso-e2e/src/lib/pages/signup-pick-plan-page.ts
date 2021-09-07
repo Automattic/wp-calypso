@@ -28,7 +28,10 @@ export class SignupPickPlanPage {
 	 */
 	async selectPlan( name: Plans ): Promise< void > {
 		if ( name === 'Free' ) {
-			await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.freePlan ) ] );
+			await Promise.all( [
+				this.page.waitForNavigation( { timeout: 60000, waitUntil: 'load' } ),
+				this.page.click( selectors.freePlan ),
+			] );
 		} else {
 			await Promise.all( [
 				// Extend timeout in case the site creation step takes longer than expected.
