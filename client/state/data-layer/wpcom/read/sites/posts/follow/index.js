@@ -1,20 +1,13 @@
 /**
  */
 
-/**
- * External Dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { READER_CONVERSATION_FOLLOW } from 'calypso/state/reader/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { READER_CONVERSATION_FOLLOW } from 'calypso/state/reader/action-types';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const requestConversationFollow = ( action ) => {
 	return http(

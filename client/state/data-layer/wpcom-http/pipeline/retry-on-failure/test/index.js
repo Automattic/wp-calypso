@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { merge } from 'lodash';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { retryOnFailure as rof } from '../';
-import { noRetry, exponentialBackoff } from '../policies';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
+import { retryOnFailure as rof } from '../';
+import { noRetry, exponentialBackoff } from '../policies';
 
 const retryOnFailure = rof();
 const retryWithDelay = ( delay ) => rof( () => delay );

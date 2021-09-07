@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { cloneDeep, concat, find, mergeWith, reduce, reject } from 'lodash';
 
 function mergeMetadataEdits( edits, nextEdits ) {

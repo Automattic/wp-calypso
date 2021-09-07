@@ -5,9 +5,6 @@ import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
 import type { ReactNode } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Props = {

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import {
 	IMPORTER_NUX_SITE_DETAILS_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const urlInputValue = ( state = '', action ) => {
 	switch ( action.type ) {

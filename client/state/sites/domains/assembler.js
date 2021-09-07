@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import { camelCase, mapKeys } from 'lodash';
 import {
 	getDomainRegistrationAgreementUrl,
 	getDomainType,
 	getGdprConsentStatus,
 	getTransferStatus,
 } from 'calypso/lib/domains/utils';
-import { camelCase, mapKeys } from 'lodash';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	if ( ! googleAppsSubscription ) {

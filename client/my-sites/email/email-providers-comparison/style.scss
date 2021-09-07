@@ -176,15 +176,15 @@
 				margin-bottom: 0;
 			}
 
-			.titan-new-mailbox-list__actions {
-				justify-content: space-between;
+			.email-providers-comparison__titan-mailbox-action-continue {
+				@include break-mobile {
+					margin-left: auto;
+				}
 			}
 
-			.email-providers-comparison__gsuite-user-list-action-continue {
-				margin-top: 1em;
-
+			.email-providers-comparison__titan-mailbox-action-skip {
 				@include break-mobile {
-					margin-top: 0;
+					margin-left: 1em;
 				}
 			}
 		}
@@ -197,6 +197,62 @@
 				margin-left: 2em;
 				margin-top: 0;
 			}
+		}
+	}
+}
+
+.email-providers-comparison__gsuite-user-list-actions-container {
+	$container-top-margin: 1em;
+	$container-left-margin: 1em;
+	$child-top-margin: 1em;
+	$child-left-margin: 1em;
+
+	display: flex;
+	flex-direction: column;
+	margin-top: $container-top-margin;
+
+	/**
+	* These breakpoints are required because `GSuiteNewUserList` uses them and
+	* goes from mobile -> desktop (480px) -> mobile (660px) -> desktop (800px)
+	* layouts.
+	*
+	* @TODO: Replace this with new breakpoint mixins when `GSuiteNewUserList` is
+	* also updated to use them
+	*/
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+		margin-top: 0;
+		margin-left: $container-left-margin;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: column;
+		margin-top: 0;
+		margin-left: 0;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
+		flex-direction: row;
+		margin-top: 0;
+		margin-left: $container-left-margin;
+	}
+
+	> .button + .button {
+		margin-top: $child-top-margin;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin-top: 0;
+			margin-left: $child-left-margin;
+		}
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-top: $child-top-margin;
+			margin-left: 0;
+		}
+
+		@include breakpoint-deprecated( '>800px' ) {
+			margin-top: 0;
+			margin-left: $child-left-margin;
 		}
 	}
 }

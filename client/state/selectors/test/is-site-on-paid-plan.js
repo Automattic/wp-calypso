@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import isSiteOnPaidPlan from '../is-site-on-paid-plan';
 import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
@@ -15,7 +5,10 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_FREE,
 } from '@automattic/calypso-products';
+import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import isSiteOnPaidPlan from '../is-site-on-paid-plan';
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getCurrentPlan: require( 'sinon' ).stub(),
 } ) );

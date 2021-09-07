@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import store from 'store';
-
-/**
- * Internal dependencies
- */
 import { clearStorage } from 'calypso/lib/browser-storage';
 
 /**

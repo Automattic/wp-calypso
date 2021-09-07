@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	USER_PROFILE_LINKS_ADD,
 	USER_PROFILE_LINKS_ADD_DUPLICATE,

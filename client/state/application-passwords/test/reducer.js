@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items, newPassword } from '../reducer';
 import {
 	APPLICATION_PASSWORD_CREATE_SUCCESS,
 	APPLICATION_PASSWORD_DELETE_SUCCESS,
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 } from 'calypso/state/action-types';
+import reducer, { items, newPassword } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getWordadsSettings from 'calypso/state/selectors/get-wordads-settings';
 
 describe( 'getWordadsSettings()', () => {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { canDomainAddGSuite } from './can-domain-add-gsuite';
 import { getGSuiteSupportedDomains } from './gsuite-supported-domain';
 

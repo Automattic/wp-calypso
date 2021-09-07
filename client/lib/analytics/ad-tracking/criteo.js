@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import { clone, cloneDeep } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
-
 import { getCurrentUser } from '@automattic/calypso-analytics';
+import { clone, cloneDeep } from 'lodash';
+import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 import { debug, isCriteoEnabled, TRACKING_IDS } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
 

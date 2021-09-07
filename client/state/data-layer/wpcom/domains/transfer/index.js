@@ -1,11 +1,12 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import {
+	DOMAIN_TRANSFER_ACCEPT,
+	DOMAIN_TRANSFER_CANCEL_REQUEST,
+	DOMAIN_TRANSFER_CODE_REQUEST,
+	DOMAIN_TRANSFER_DECLINE,
+	DOMAIN_TRANSFER_IPS_TAG_SAVE,
+} from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
@@ -18,16 +19,8 @@ import {
 	requestDomainTransferCodeFailed,
 	updateDomainTransfer,
 } from 'calypso/state/domains/transfer/actions';
-import {
-	DOMAIN_TRANSFER_ACCEPT,
-	DOMAIN_TRANSFER_CANCEL_REQUEST,
-	DOMAIN_TRANSFER_CODE_REQUEST,
-	DOMAIN_TRANSFER_DECLINE,
-	DOMAIN_TRANSFER_IPS_TAG_SAVE,
-} from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	getCancelTransferErrorMessage,
 	getCancelTransferSuccessMessage,

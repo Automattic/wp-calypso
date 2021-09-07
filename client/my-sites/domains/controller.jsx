@@ -215,6 +215,10 @@ const transferDomainPrecheck = ( context, next ) => {
 	const domain = get( context, 'params.domain', '' );
 
 	const handleGoBack = () => {
+		if ( context.query.goBack === 'use-my-domain' ) {
+			page( domainUseMyDomain( siteSlug, domain ) );
+			return;
+		}
 		page( domainManagementTransferIn( siteSlug, domain ) );
 	};
 	context.primary = (

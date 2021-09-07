@@ -1,13 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
+
 import { findIndex } from 'lodash';
-/**
- * Internal dependencies
- */
-import status from './status/reducer';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -21,7 +14,9 @@ import {
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginsSchema } from './schema';
+import status from './status/reducer';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.

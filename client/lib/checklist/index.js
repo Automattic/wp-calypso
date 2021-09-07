@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { memoize, pick } from 'lodash';
 
 class WpcomTaskList {

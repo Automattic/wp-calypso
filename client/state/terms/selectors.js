@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, range } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { get, range } from 'lodash';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
 import 'calypso/state/terms/init';

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
 
 describe( 'getSiteMonitorSettings()', () => {

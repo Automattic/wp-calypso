@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteOptions } from 'calypso/state/sites/selectors';
 
 const userState = {

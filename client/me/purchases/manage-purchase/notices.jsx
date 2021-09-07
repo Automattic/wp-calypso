@@ -1,18 +1,20 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import {
+	isDomainTransfer,
+	isConciergeSession,
+	isPlan,
+	isDomainRegistration,
+	isMonthly,
+} from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import { isEmpty, merge, minBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { isEmpty, merge, minBy } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import config from '@automattic/calypso-config';
-import { getAddNewPaymentMethodPath } from '../utils';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -33,23 +35,11 @@ import {
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
-import {
-	isDomainTransfer,
-	isConciergeSession,
-	isPlan,
-	isDomainRegistration,
-	isMonthly,
-} from '@automattic/calypso-products';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getAddNewPaymentMethodPath } from '../utils';
 
-/**
- * Style dependencies
- */
 import './notices.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'individual-purchase' } );

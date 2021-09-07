@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isRequestingSharingButtons from 'calypso/state/selectors/is-requesting-sharing-buttons';
 
 describe( 'isRequestingSharingButtons()', () => {

@@ -1,19 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import '@testing-library/jest-dom/extend-expect';
-import { render, screen } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
 import { createReduxStore } from 'calypso/state';
 import PurchaseNotice from '../notices';
+import '@testing-library/jest-dom/extend-expect';
 
 describe( 'PurchaseNotice', () => {
 	const store = createReduxStore();

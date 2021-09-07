@@ -27,7 +27,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Open Settings page', async function () {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
+			await sidebarComponent.navigate( 'Settings', 'General' );
 		} );
 
 		it( 'Open support popover', async function () {
@@ -82,7 +82,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Open Settings page', async function () {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
+			await sidebarComponent.navigate( 'Settings', 'General' );
 		} );
 
 		it( 'Open support popover', async function () {

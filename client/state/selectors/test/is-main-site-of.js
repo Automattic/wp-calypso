@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isMainSiteOf from 'calypso/state/selectors/is-main-site-of';
 
 describe( 'isMainSiteOf()', () => {

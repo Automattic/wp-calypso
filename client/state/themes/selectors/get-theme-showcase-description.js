@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
 

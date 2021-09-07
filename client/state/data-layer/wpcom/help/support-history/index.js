@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
+import { SUPPORT_HISTORY_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { SUPPORT_HISTORY_REQUEST } from 'calypso/state/action-types';
 import { setSupportHistory } from 'calypso/state/help/actions';
 
 const requestSupportHistory = ( action ) => {

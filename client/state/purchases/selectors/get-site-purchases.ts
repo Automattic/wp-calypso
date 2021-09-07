@@ -1,11 +1,4 @@
-/**
- * Internal dependencies
- */
 import { getPurchases } from './get-purchases';
-
-/**
- * Type dependencies
- */
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
@@ -22,6 +14,7 @@ import {
 	P2_CONNECTION_DELETE,
 	P2_CONNECTION_DELETE_FAILURE,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/sharing/init';
 

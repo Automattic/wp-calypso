@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { initialSiteState } from 'calypso/state/sites/plans/reducer';
 
 export function getPlansBySite( state, site ) {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 describe( 'getPastBillingTransactions()', () => {

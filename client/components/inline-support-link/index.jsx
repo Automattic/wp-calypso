@@ -98,7 +98,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ ( event ) => openDialog( event, supportPostId, supportLink ) }
+				onClick={ ( event ) => openDialog( event, supportPostId, url ) }
 				onMouseEnter={
 					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
 						? this.loadAlternates

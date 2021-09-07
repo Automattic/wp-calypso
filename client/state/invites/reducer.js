@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
+import { withStorageKey } from '@automattic/state-utils';
 import { includes, map, pick, zipObject } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -20,6 +12,7 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { inviteItemsSchema, inviteLinksSchema } from './schema';
 
 /**

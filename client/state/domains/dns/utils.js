@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { filter, mapValues } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {

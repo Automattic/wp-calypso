@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getConciergeAppointmentDetails from 'calypso/state/selectors/get-concierge-appointment-details';
 
 describe( 'getConciergeAppointmentDetails()', () => {

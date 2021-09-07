@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import { translate } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
 import { create, supported } from '@github/webauthn-json';
+import { translate } from 'i18n-calypso';
+import wpcom from 'calypso/lib/wp';
 
 const POST = 'POST';
 

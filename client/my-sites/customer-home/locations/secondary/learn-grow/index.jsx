@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
@@ -70,8 +72,15 @@ const LearnGrow = () => {
 function useLearnGrowCards() {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
+	const { localeSlug } = useTranslate();
 
-	const allCards = layout?.[ 'secondary.learn-grow' ] ?? [];
+	let allCards = layout?.[ 'secondary.learn-grow' ] ?? [];
+
+	const isEnglish = config( 'english_locales' ).includes( localeSlug );
+
+	if ( ! isEnglish ) {
+		allCards = allCards.filter( ( card ) => card !== EDUCATION_WPCOURSES );
+	}
 
 	// Remove cards we don't know how to deal with on the client-side
 	return allCards.filter( ( card ) => !! cardComponents[ card ] );

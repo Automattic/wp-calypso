@@ -1,6 +1,9 @@
-/**
- * Internal dependencies
- */
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import {
+	saveUserSettingsSuccess,
+	clearUnsavedUserSettings,
+} from 'calypso/state/user-settings/actions';
 import {
 	requestUserSettings,
 	storeFetchedUserSettings,
@@ -8,12 +11,6 @@ import {
 	userSettingsSave,
 	userSettingsSaveSuccess,
 } from '../';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import {
-	saveUserSettingsSuccess,
-	clearUnsavedUserSettings,
-} from 'calypso/state/user-settings/actions';
-import { successNotice } from 'calypso/state/notices/actions';
 
 jest.mock( 'calypso/state/current-user/actions', () => ( {
 	fetchCurrentUser: jest.fn(),

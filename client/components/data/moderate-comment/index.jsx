@@ -1,7 +1,3 @@
-/**
- * External dependencies
- *
- */
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';

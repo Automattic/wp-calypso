@@ -10,9 +10,9 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
+import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import { ThemeProvider } from '@emotion/react';
 import debugFactory from 'debug';
-import { ThemeProvider } from 'emotion-theming';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback, useMemo } from 'react';
@@ -26,7 +26,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -49,7 +49,6 @@ import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from './hooks/use-stored-cards';
 import { useWpcomStore } from './hooks/wpcom-store';
-import doesValueExist from './lib/does-value-exist';
 import existingCardProcessor from './lib/existing-card-processor';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
@@ -72,7 +71,6 @@ import {
 } from './types/wpcom-store-state';
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
-import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -152,17 +150,6 @@ export default function CompositeCheckout( {
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
-			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ) )
-			);
-		},
-		[ reduxDispatch, translate ]
-	);
-
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
 			debug( 'error', error );
@@ -174,22 +161,6 @@ export default function CompositeCheckout( {
 			);
 		},
 		[ reduxDispatch, translate ]
-	);
-
-	const showInfoMessage = useCallback(
-		( message ) => {
-			debug( 'info', message );
-			reduxDispatch( infoNotice( message ) );
-		},
-		[ reduxDispatch ]
-	);
-
-	const showSuccessMessage = useCallback(
-		( message ) => {
-			debug( 'success', message );
-			reduxDispatch( successNotice( message ) );
-		},
-		[ reduxDispatch ]
 	);
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
@@ -299,13 +270,13 @@ export default function CompositeCheckout( {
 	useCachedDomainContactDetails( updateLocation );
 
 	// Record errors adding products to the cart
-	useActOnceOnStrings( [ cartProductPrepError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
 		);
 	} );
 
-	useActOnceOnStrings( [ cartLoadingError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ cartLoadingError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
 		);
@@ -318,7 +289,7 @@ export default function CompositeCheckout( {
 		cartLoadingError,
 		stripeLoadingError?.message,
 		cartProductPrepError,
-	].filter( doesValueExist );
+	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
 			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
@@ -327,7 +298,7 @@ export default function CompositeCheckout( {
 
 	const errors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
-		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
+		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
 
 	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
@@ -344,7 +315,7 @@ export default function CompositeCheckout( {
 		Boolean( isLoggedOutCart )
 	);
 
-	useActOnceOnStrings( [ storedCardsError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
 		);
@@ -532,6 +503,8 @@ export default function CompositeCheckout( {
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
 		} );
+	} else {
+		debug( 'no longer loading' );
 	}
 
 	useRecordCheckoutLoaded( {
@@ -559,12 +532,25 @@ export default function CompositeCheckout( {
 	} );
 
 	const handlePaymentComplete = useCallback(
-		( args: PaymentCompleteCallbackArguments ) => {
+		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 		},
 		[ onPaymentComplete, onAfterPaymentComplete ]
 	);
+
+	const handlePaymentError = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
+		},
+		[ reduxDispatch, translate ]
+	);
+
+	const handlePaymentRedirect = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -575,6 +561,7 @@ export default function CompositeCheckout( {
 			isInitialCartLoading,
 		} )
 	) {
+		debug( 'rendering empty cart page' );
 		const goToPlans = () => {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
@@ -623,9 +610,8 @@ export default function CompositeCheckout( {
 				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
+				onPaymentError={ handlePaymentError }
+				onPaymentRedirect={ handlePaymentRedirect }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }

@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
-import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
-import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'calypso/state/plugins/upload/actions';
+import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';

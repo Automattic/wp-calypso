@@ -113,16 +113,16 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetupMailbox(
+			paths.emailManagementTitanSetUpMailbox(
 				':site',
 				':domain',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanSetupMailbox( ':site', ':domain' ),
+			paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
-			controller.emailManagementTitanSetupMailbox,
+			controller.emailManagementTitanSetUpMailbox,
 			makeLayout,
 			clientRender,
 		],
@@ -143,17 +143,17 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetupThankYou(
+			paths.emailManagementTitanSetUpThankYou(
 				':site',
 				':domain',
 				null,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanSetupThankYou( ':site', ':domain' ),
+			paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
-			controller.emailManagementTitanSetupThankYou,
+			controller.emailManagementTitanSetUpThankYou,
 			makeLayout,
 			clientRender,
 		],

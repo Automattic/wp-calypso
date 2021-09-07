@@ -1,5 +1,4 @@
 import config from 'config';
-import EnterADomainComponent from '../../lib/components/enter-a-domain-component';
 import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
@@ -14,7 +13,7 @@ const host = dataHelper.getJetpackHost();
 describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
-	const blogName = 'nature.com';
+	const domainToMap = 'nature.com';
 
 	before( 'Log in and go to Domains page', async function () {
 		await new LoginFlow( this.driver ).loginAndSelectDomains();
@@ -32,11 +31,6 @@ describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @paralle
 
 	it( 'Buy domain mapping', async function () {
 		const myOwnDomainPage = await MyOwnDomainPage.Expect( this.driver );
-		await myOwnDomainPage.selectBuyDomainMapping();
-	} );
-
-	it( 'Enter domain name', async function () {
-		const enterADomainComponent = await EnterADomainComponent.Expect( this.driver );
-		await enterADomainComponent.enterADomain( blogName );
+		await myOwnDomainPage.selectAddDomainMapping( domainToMap );
 	} );
 } );

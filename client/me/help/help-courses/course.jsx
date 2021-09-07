@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import CourseScheduleItem from './course-schedule-item';
-import HelpTeaserButton from '../help-teaser-button';
-import CourseVideo from './course-video';
+import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import HelpTeaserButton from '../help-teaser-button';
+import CourseScheduleItem from './course-schedule-item';
+import CourseVideo from './course-video';
 
 class Course extends Component {
 	componentDidMount() {

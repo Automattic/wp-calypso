@@ -12,6 +12,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import { type } from 'calypso/lib/domains/constants';
@@ -98,7 +99,7 @@ export class List extends React.Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, translate } = this.props;
+		const { selectedSite, domains, currentRoute, translate, isAtomicSite } = this.props;
 		const { settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
@@ -114,7 +115,14 @@ export class List extends React.Component {
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ translate( 'Site Domains' ) }
-						subHeaderText={ translate( 'Manage the domains connected to your site.' ) }
+						subHeaderText={ translate(
+							'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+								},
+							}
+						) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">
@@ -152,6 +160,7 @@ export class List extends React.Component {
 				{ wpcomDomain && (
 					<WpcomDomainItem
 						key="wpcom-domain-item"
+						isAtomicSite={ isAtomicSite }
 						currentRoute={ currentRoute }
 						domain={ wpcomDomain }
 						disabled={ disabled }

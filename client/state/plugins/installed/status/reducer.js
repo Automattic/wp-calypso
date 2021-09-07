@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,

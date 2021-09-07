@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
 import config from '@automattic/calypso-config';
-import wpcomSupport from 'calypso/lib/wp/support';
-import { injectLocalization } from './localization';
-import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
-import * as oauthToken from 'calypso/lib/oauth-token';
-import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
+import debugFactory from 'debug';
 import wpcomProxyRequest from 'wpcom-proxy-request';
+import * as oauthToken from 'calypso/lib/oauth-token';
+import wpcomSupport from 'calypso/lib/wp/support';
+import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
+import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
+import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
+import { injectLocalization } from './localization';
 
 const debug = debugFactory( 'calypso:wp' );
 

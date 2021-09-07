@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { findThemeFilterTerm } from 'calypso/state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 

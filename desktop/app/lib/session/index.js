@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const EventEmitter = require( 'events' ).EventEmitter;
-
-/**
- * Internal Dependencies
- */
 const keychain = require( '../../lib/keychain' );
 const log = require( '../../lib/logger' )( 'desktop:session' );
 

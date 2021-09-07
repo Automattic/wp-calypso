@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCTS_LIST,
@@ -11,10 +8,9 @@ import {
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noop = () => {};
 

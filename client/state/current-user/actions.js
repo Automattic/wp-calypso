@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { filterUserObject, getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
 import {
 	clearStore,
 	disablePersistence,
@@ -12,7 +10,6 @@ import {
 	CURRENT_USER_RECEIVE,
 	CURRENT_USER_SET_EMAIL_VERIFIED,
 } from 'calypso/state/action-types';
-import { filterUserObject, getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**

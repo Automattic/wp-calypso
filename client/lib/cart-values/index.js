@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { hasRenewalItem } from './cart-items';
 import {
 	isCredits,
 	isDomainRedemption,
 	allowedProductAttributes,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
+import { hasRenewalItem } from './cart-items';
 
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {

@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSite,
 	getSiteCollisions,
@@ -52,9 +48,6 @@ import {
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from '@automattic/calypso-config';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
@@ -3161,6 +3154,55 @@ describe( 'selectors', () => {
 
 			chaiExpect( customizerUrl ).to.equal(
 				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline'
+			);
+		} );
+
+		test( 'should prepend guide parameter for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: false,
+							},
+						},
+					},
+				},
+				77203199,
+				'identity',
+				null,
+				'test-guide'
+			);
+
+			chaiExpect( customizerUrl ).to.equal( '/customize/identity/example.com?guide=test-guide' );
+		} );
+
+		test( 'should prepend guide parameter for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'identity',
+				null,
+				'test-guide'
+			);
+
+			chaiExpect( customizerUrl ).to.equal(
+				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline&guide=test-guide'
 			);
 		} );
 

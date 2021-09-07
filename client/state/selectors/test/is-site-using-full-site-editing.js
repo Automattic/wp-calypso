@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteUsingFullSiteEditing from '../is-site-using-full-site-editing';
 
 describe( 'isSiteUsingFullSiteEditing', () => {

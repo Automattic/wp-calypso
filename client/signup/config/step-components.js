@@ -71,6 +71,7 @@ const stepNameToModuleName = {
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
 	design: 'design-picker',
+	'design-setup-site': 'design-picker',
 };
 
 export function getStepModuleName( stepName ) {

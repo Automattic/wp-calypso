@@ -1,4 +1,4 @@
-import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
+import { YOAST_PREMIUM, YOAST_FREE, WOO_UPS_SHIPPING } from '@automattic/calypso-products';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -11,7 +11,7 @@ import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
-import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -79,6 +79,10 @@ export default function MarketplaceTest(): JSX.Element {
 		{
 			name: 'Yoast Free Details Page',
 			path: `/marketplace/product/details/${ YOAST }/${ YOAST_FREE }`,
+		},
+		{
+			name: 'UPS Shipping Details Page',
+			path: `/marketplace/product/details/${ WOO }/${ WOO_UPS_SHIPPING }`,
 		},
 		{ name: 'Loading Page', path: '/marketplace/product/setup' },
 		{ name: 'Domains Page', path: '/marketplace/domain' },

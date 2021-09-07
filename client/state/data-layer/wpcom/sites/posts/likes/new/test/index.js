@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
-
-/**
- * Internal Dependencies
- */
-import { fetch, fromApi, onSuccess, onError } from '../';
-import { unlike, addLiker } from 'calypso/state/posts/likes/actions';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { unlike, addLiker } from 'calypso/state/posts/likes/actions';
+import { fetch, fromApi, onSuccess, onError } from '../';
 
 describe( 'fromApi', () => {
 	test( 'transforms to standard output', () => {

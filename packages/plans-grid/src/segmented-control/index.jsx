@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import SegmentedControlItem from './item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class SegmentedControl extends React.Component {

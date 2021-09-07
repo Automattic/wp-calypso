@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { POST_EDIT } from 'calypso/state/action-types';
 
 import 'calypso/state/posts/init';

@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { withEnhancers } from 'calypso/state/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Module variables

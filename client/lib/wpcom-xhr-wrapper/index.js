@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { clearStore } from 'calypso/lib/user/store';
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
+import { clearStore } from 'calypso/lib/user/store';
 
 export default async function ( params, callback ) {
 	const xhr = ( await import( /* webpackChunkName: "wpcom-xhr-request" */ 'wpcom-xhr-request' ) )

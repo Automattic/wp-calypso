@@ -4,9 +4,6 @@
  * It needs to be loaded using require and npm package.
  */
 
-/**
- * External dependencies
- */
 import { loadjQueryDependentScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 const debug = debugFactory( 'lib/load-jquery-dependent-script-desktop-wrapper' );

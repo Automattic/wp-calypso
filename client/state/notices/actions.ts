@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 import type {
 	NoticeActionCreator,

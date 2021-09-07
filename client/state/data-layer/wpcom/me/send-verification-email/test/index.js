@@ -1,7 +1,4 @@
-/**
- * Internal dependencies
- */
-import { requestEmailVerification, handleSuccess, handleError } from '../';
+import { translate } from 'i18n-calypso';
 import {
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
@@ -13,7 +10,7 @@ import {
 	successNotice,
 	removeNotice,
 } from 'calypso/state/notices/actions';
-import { translate } from 'i18n-calypso';
+import { requestEmailVerification, handleSuccess, handleError } from '../';
 
 describe( 'send-email-verification', () => {
 	describe( '#requestEmailVerification', () => {

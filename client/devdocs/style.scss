@@ -157,7 +157,7 @@ $devdocs-max-width: 720px;
 		.docs-example__wrapper-content-centering {
 			display: table;
 			margin: auto;
-			min-width: ( $devdocs-max-width / 2 );
+			min-width: ( $devdocs-max-width * 0.5 );
 			width: 100%;
 		}
 

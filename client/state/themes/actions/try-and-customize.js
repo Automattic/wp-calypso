@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';

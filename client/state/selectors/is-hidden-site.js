@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 /**

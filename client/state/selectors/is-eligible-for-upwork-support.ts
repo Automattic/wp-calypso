@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 
 export const UPWORK_LOCALES = [
 	'de',

@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
 import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
-import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
-import { setupGtag } from './setup-gtag';
 import config from '@automattic/calypso-config';
+import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
+import { setupGtag } from './setup-gtag';
 
 // Ensure setup has run.
 import './setup';

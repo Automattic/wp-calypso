@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import {
-	createPlaceholderComment,
-	dispatchNewCommentRequest,
-	updatePlaceholderComment,
-	handleWriteCommentFailure,
-} from '../utils';
 import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
@@ -21,6 +8,12 @@ import {
 } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
+import {
+	createPlaceholderComment,
+	dispatchNewCommentRequest,
+	updatePlaceholderComment,
+	handleWriteCommentFailure,
+} from '../utils';
 
 describe( 'utility functions', () => {
 	useFakeTimers();

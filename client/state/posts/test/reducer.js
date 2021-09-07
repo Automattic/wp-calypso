@@ -1,20 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, {
-	items,
-	queryRequests,
-	queries,
-	allSitesQueries,
-	siteRequests,
-	edits,
-} from '../reducer';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	EDITOR_START,
@@ -37,6 +22,14 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, {
+	items,
+	queryRequests,
+	queries,
+	allSitesQueries,
+	siteRequests,
+	edits,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

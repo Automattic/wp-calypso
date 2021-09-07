@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isActive } from '../selectors/is-automated-transfer-active';
 import { transferStates } from '../constants';
+import { isActive } from '../selectors/is-automated-transfer-active';
 
 describe( 'Automated Transfer', () => {
 	describe( 'isActive()', () => {

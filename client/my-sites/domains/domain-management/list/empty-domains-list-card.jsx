@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
+import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -49,7 +49,7 @@ function EmptyDomainsListCard( {
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
-		secondaryActionURL = domainUseYourDomain( selectedSite.slug );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
 		contentType = 'paid_plan_with_no_free_domain_credits';
 	}
 
@@ -61,7 +61,7 @@ function EmptyDomainsListCard( {
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
-		secondaryActionURL = domainUseYourDomain( selectedSite.slug );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
 		contentType = 'free_domain_credit';
 	}
 

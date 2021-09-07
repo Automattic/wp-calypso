@@ -7,9 +7,6 @@ import * as React from 'react';
 import SegmentedControl from '../segmented-control';
 import type { Plans } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const PopupMessages: React.FunctionComponent = ( { children } ) => {

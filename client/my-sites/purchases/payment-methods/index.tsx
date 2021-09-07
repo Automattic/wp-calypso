@@ -1,12 +1,14 @@
 import config from '@automattic/calypso-config';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
-import { useTranslate } from 'i18n-calypso';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
+import i18nCalypso, { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -18,7 +20,6 @@ import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-
 import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
-import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -65,7 +66,22 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 				brandFont
 				className="payment-methods__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate( 'Add or delete payment methods for your account.' ) }
+				subHeaderText={
+					i18nCalypso.hasTranslation(
+						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+					)
+						? translate(
+								'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="payment_methods" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate( 'Add or delete payment methods for your account.' )
+				}
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
@@ -97,7 +113,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		shouldShowTaxFields: true,
 		activePayButtonText: translate( 'Save card' ),
 	} );
-	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( doesValueExist ), [
+	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
 		stripeMethod,
 	] );
 	const reduxDispatch = useDispatch();

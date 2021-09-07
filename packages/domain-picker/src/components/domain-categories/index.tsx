@@ -7,9 +7,6 @@ import classNames from 'classnames';
 import * as React from 'react';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {

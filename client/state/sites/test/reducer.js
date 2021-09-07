@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../reducer';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE_RECEIVE,
@@ -25,9 +17,10 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 } from 'calypso/state/action-types';
-import { serialize, deserialize } from 'calypso/state/utils';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

@@ -17,9 +17,6 @@ import type {
 } from '../plans-table/types';
 import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;

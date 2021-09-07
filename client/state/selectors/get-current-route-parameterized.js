@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 

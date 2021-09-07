@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCurrentUserCurrencyCode } from '../selectors';
 
 describe( 'getCurrentUserCurrencyCode', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SELECTED_SITE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';

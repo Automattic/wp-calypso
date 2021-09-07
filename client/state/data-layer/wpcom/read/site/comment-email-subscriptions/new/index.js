@@ -1,19 +1,11 @@
-/**
- * External Dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'calypso/state/reader/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { unsubscribeToNewCommentEmail } from 'calypso/state/reader/follows/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'calypso/state/reader/action-types';
+import { unsubscribeToNewCommentEmail } from 'calypso/state/reader/follows/actions';
 
 export function requestCommentEmailSubscription( action ) {
 	return http(

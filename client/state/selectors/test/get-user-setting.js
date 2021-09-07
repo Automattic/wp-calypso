@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 describe( 'getUserSetting()', () => {

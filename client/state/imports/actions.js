@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpLib from 'calypso/lib/wp';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
@@ -17,13 +14,10 @@ import {
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
+import { fromApi, toApi } from './api';
 import { appStates } from './constants';
 import { isImporterLocked } from './selectors';
-import { fromApi, toApi } from './api';
 
-/**
- * Redux dependencies
- */
 import 'calypso/state/imports/init';
 
 const wpcom = wpLib.undocumented();

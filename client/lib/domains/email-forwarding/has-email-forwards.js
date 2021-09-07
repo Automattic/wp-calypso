@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getEmailForwardsCount } from 'calypso/lib/domains/email-forwarding/get-email-forwards-count';
 
 /**

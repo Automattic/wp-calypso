@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-
 import i18n from 'i18n-calypso';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const fetchFilters = ( action ) =>
 	http(

@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	POST_REVISION_AUTHORS_RECEIVE,
 	POST_REVISIONS_AUTHORS_REQUEST,

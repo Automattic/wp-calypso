@@ -56,7 +56,7 @@
 		$padding: 16px; // .card’s padding
 		$icon-height: 24px; // Gridicon’s intrinsic height
 		$text-height: $title-size * 1.2; // formatted-header__title’s line-height (without em)
-		top: $padding - ( $icon-height - $text-height ) / 2;
+		top: $padding - ( $icon-height - $text-height ) * 0.5;
 		left: $padding;
 	}
 

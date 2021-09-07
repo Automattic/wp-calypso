@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { shouldReportOmitBlogId, hashPii } from '../utils';
 
 describe( 'hashPii', () => {

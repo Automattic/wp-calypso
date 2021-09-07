@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
+import { normalizePluginData, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import {
 	fetchPluginInformation,
 	fetchPluginsList as fetchWporgPluginsList,
 } from 'calypso/lib/wporg';
-import { normalizePluginData, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import {
 	PLUGINS_WPORG_LIST_RECEIVE,
 	PLUGINS_WPORG_LIST_REQUEST,

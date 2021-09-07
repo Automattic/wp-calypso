@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { get } from 'lodash';
 import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import {
 	getErrorFromHTTPError,
 	getSMSMessageFromResponse,
 	postLoginRequest,
 } from 'calypso/state/login/utils';
-
-import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 
 import 'calypso/state/login/init';
 

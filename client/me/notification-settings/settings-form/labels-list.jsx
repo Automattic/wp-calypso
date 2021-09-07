@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { getLabelForSetting } from './locales';
 
 export default class extends React.Component {

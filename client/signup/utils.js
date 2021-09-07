@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import flows from 'calypso/signup/config/flows';
@@ -208,4 +209,8 @@ export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
 export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 	const flow = flows.getFlow( flowName, userLoggedIn );
 	return !! flow && flow.forceLogin;
+};
+
+export const isReskinnedFlow = ( flowName ) => {
+	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
 };

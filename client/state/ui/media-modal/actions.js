@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';

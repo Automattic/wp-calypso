@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { find, size } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { find, size } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StreamHeader from './stream-header';
 import DeviceSelector from './device-selector';
+import StreamHeader from './stream-header';
 import StreamOptions from './stream-options';
 
 class NotificationSettingsFormStream extends PureComponent {

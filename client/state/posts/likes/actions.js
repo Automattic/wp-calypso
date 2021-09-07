@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	POST_LIKES_RECEIVE,
 	POST_LIKES_REQUEST,

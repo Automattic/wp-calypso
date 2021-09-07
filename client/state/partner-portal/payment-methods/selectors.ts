@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { State } from 'calypso/state/partner-portal/payment-methods/reducer';
 
 // Required for modular state.

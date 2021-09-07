@@ -419,7 +419,7 @@ const boot = ( currentUser, registerRoutes ) => {
 	loadAllState().then( () => {
 		const initialState = getInitialState( initialReducer, currentUser?.ID );
 		const reduxStore = createReduxStore( initialState, initialReducer );
-		setStore( reduxStore );
+		setStore( reduxStore, currentUser?.ID );
 		onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 		setupLocale( currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );

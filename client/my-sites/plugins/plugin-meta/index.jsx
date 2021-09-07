@@ -7,7 +7,7 @@ import {
 	isEcommerce,
 	isEnterprise,
 } from '@automattic/calypso-products';
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes, some } from 'lodash';
@@ -32,7 +32,6 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import { addSiteFragment } from 'calypso/lib/route';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { userCan } from 'calypso/lib/site/utils';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
@@ -44,7 +43,7 @@ import PluginInformation from 'calypso/my-sites/plugins/plugin-information';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import WpcomPluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button-wpcom';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
-import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/selectors';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import {
@@ -556,9 +555,6 @@ export class PluginMeta extends Component {
 			plugin = this.getPluginForSite( this.props.selectedSite.ID );
 		}
 
-		const path =
-			( ! this.props.selectedSite || plugin.active ) && getExtensionSettingsPath( plugin );
-
 		return (
 			<div className="plugin-meta">
 				{ this.props.atEnabled && this.props.selectedSite && (
@@ -580,15 +576,6 @@ export class PluginMeta extends Component {
 						{ this.renderActions() }
 					</div>
 				</Card>
-
-				{ path && (
-					<CompactCard
-						className="plugin-meta__settings-link"
-						href={ addSiteFragment( path, this.props.slug ) }
-					>
-						{ this.props.translate( 'Edit plugin settings' ) }
-					</CompactCard>
-				) }
 
 				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) && (
 					<PluginInformation

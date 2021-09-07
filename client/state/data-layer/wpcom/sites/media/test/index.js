@@ -1,14 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	requestMediaItem,
-	receiveMediaItem,
-	receiveMediaItemError,
-	requestMedia,
-	requestMediaError,
-	requestMediaSuccess,
-} from '../';
 import { MEDIA_ITEM_REQUEST } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -19,6 +8,14 @@ import {
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
+import {
+	requestMediaItem,
+	receiveMediaItem,
+	receiveMediaItemError,
+	requestMedia,
+	requestMediaError,
+	requestMediaSuccess,
+} from '../';
 
 describe( 'media request', () => {
 	test( 'should dispatch SUCCESS action when request completes', () => {

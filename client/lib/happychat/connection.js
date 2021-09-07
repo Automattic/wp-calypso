@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import IO from 'socket.io-client';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import IO from 'socket.io-client';
 import {
 	receiveAccept,
 	receiveConnect,

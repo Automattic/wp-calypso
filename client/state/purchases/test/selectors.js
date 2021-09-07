@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import {
 	getByPurchaseId,

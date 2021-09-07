@@ -11,7 +11,6 @@ import Version from 'calypso/components/version';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import versionCompare from 'calypso/lib/version-compare';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
 
 import './style.scss';
 
@@ -170,11 +169,6 @@ class PluginInformation extends React.Component {
 
 	getActionLinks = ( plugin ) => {
 		if ( ! get( plugin, 'active' ) ) {
-			return null;
-		}
-
-		if ( getExtensionSettingsPath( plugin ) ) {
-			// We have a Calypso UI for this plugin, so let's hide the wp-admin action links.
 			return null;
 		}
 

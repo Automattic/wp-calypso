@@ -1,11 +1,4 @@
-/**
- * Internal dependencies
- */
 import { ARIA_STATES, ARIA_PROPERTIES } from './constants';
-
-/**
- * Types
- */
 import type {
 	AriaProps,
 	AriaAttributes,

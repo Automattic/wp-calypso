@@ -83,24 +83,23 @@
 
 	// New post button
 	.masterbar__item-new {
-		padding: 0 10px;
+		padding: 0 8px;
 		font-size: $nav-unification-masterbar-font-size;
+		background: var( --studio-white );
+		color: $nav-unification-primary;
 
 		&:hover {
-			background: #e9e9ea;
-			color: $nav-unification-primary;
+			background: var( --studio-white );
+
+			// Dim button contents, not the button itself
+			> * {
+				opacity: 0.8;
+			}
 		}
 
 		.masterbar__item-content {
 			color: $nav-unification-primary;
-		}
-		.gridicon {
-			fill: $nav-unification-primary;
-			transform: translateX( 1px );
-
-			+ .masterbar__item-content {
-				padding: 0 1px 0 5px;
-			}
+			font-weight: 500;
 		}
 	}
 
@@ -109,18 +108,25 @@
 	.masterbar__toggle-drafts.button.is-borderless {
 		height: 24px;
 		margin: 4px 8px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 5px;
 	}
 
 	.masterbar__toggle-drafts.button.is-borderless {
-		margin-left: -20px;
+		margin-left: -8px;
+		color: $nav-unification-primary;
+		background: #fafafa;
+		font-size: $nav-unification-masterbar-font-size;
 
-		&:hover {
-			background-color: #e9e9ea;
+		.gridicon {
+			width: 14px;
+			color: var( --studio-gray-20 );
+			transform: translateY( -1px );
+		}
 
-			.count {
-				border-color: $nav-unification-primary;
+		&:hover,
+		&[aria-expanded='true'] {
+			background: var( --studio-white );
+
+			.gridicon {
 				color: $nav-unification-primary;
 			}
 		}
@@ -133,12 +139,10 @@
 			height: 34px;
 			margin-top: 6px;
 			margin-right: 9px;
-			padding: 0 16px 0 14px;
 		}
 
 		.masterbar__toggle-drafts.button.is-borderless {
-			padding: 0 14px 0 8px;
-			margin-left: -26px;
+			margin-left: -9px;
 		}
 	}
 
@@ -152,7 +156,7 @@
 		}
 
 		.masterbar__toggle-drafts.button.is-borderless {
-			margin-left: -18px;
+			margin-left: -9px;
 		}
 	}
 

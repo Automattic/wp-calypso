@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { bumpStat } from 'calypso/state/analytics/actions';
 
 export function recordEditorStat( action ) {

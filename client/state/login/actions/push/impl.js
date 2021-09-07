@@ -1,12 +1,8 @@
-/**
- * Internal dependencies
- */
 import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 } from 'calypso/state/action-types';
-
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 
 import 'calypso/state/data-layer/wpcom/login-2fa';

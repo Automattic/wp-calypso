@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items, requesting } from '../reducer';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -15,6 +7,7 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

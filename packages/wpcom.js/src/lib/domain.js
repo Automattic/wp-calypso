@@ -175,6 +175,19 @@ class Domain {
 	mappingStatus( query, fn ) {
 		return this.wpcom.req.get( root + this._id + '/mapping-status', query, fn );
 	}
+
+	/**
+	 * Update the connection mode used to connect this domain and retrieve its mapping status.
+	 *
+	 * @param {string} mode - connection mode used to connect this domain (can be "suggested" or "advanced")
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	updateConnectionModeAndGetMappingStatus( mode, query, fn ) {
+		const body = { mode };
+		return this.wpcom.req.post( root + this._id + '/mapping-status', query, body, fn );
+	}
 }
 
 /**

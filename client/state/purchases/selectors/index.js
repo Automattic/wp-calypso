@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import 'calypso/state/purchases/init';
 
 export {

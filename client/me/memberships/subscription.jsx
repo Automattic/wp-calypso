@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
+import { Card, CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { Card, CompactCard } from '@automattic/components';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
-import HeaderCake from 'calypso/components/header-cake';
-import { purchasesRoot } from '../purchases/paths';
-import MembershipSiteHeader from './header';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
-import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
-import Notice from 'calypso/components/notice';
+import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import titles from 'calypso/me/purchases/titles';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
 import {
 	getSubscription,
 	getStoppingStatus,
 } from 'calypso/state/memberships/subscriptions/selectors';
-import titles from 'calypso/me/purchases/titles';
-import FormattedHeader from 'calypso/components/formatted-header';
+import { purchasesRoot } from '../purchases/paths';
+import MembershipSiteHeader from './header';
 
-/**
- * Style dependencies
- */
 import './subscription.scss';
 
 class Subscription extends React.Component {

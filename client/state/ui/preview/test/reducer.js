@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { currentPreviewSiteId } from '../reducer';
 import { PREVIEW_SITE_SET } from 'calypso/state/action-types';
+import { currentPreviewSiteId } from '../reducer';
 
 describe( '#currentPreviewSiteId()', () => {
 	test( 'should update currentPreviewSiteId', () => {

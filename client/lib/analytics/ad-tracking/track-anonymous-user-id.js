@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import cookie from 'cookie';
 
 // Ensure setup has run.

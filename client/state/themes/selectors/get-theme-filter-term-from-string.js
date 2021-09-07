@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 
 import 'calypso/state/themes/init';

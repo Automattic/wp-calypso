@@ -165,7 +165,7 @@ body.has-nux-launch-modal {
 
 		// Use padding to create width
 		// (18px left padding + 24px icon width + 18px right padding = 60px width)
-		padding: 0 #{( $onboarding-header-height - 24px ) / 2};
+		padding: 0 #{( $onboarding-header-height - 24px ) * 0.5};
 		height: $onboarding-header-height;
 
 		// Vertically align icon

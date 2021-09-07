@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { REWIND_BACKUPS_REQUEST } from 'calypso/state/action-types';
-import { setRewindBackups } from 'calypso/state/rewind/backups/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { setRewindBackups } from 'calypso/state/rewind/backups/actions';
 
 export const fetchBackups = ( action ) => {
 	return http(

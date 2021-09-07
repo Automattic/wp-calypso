@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { camelCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 

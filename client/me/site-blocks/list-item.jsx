@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import ExternalLink from 'calypso/components/external-link';
 import { Button } from '@automattic/components';
-import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
+import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
 class SiteBlockListItem extends Component {
 	unblockSite = () => {

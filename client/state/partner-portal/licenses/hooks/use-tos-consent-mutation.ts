@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
-
-/**
- * Internal dependencies
- */
-import { APIPartner, ToSConsent } from 'calypso/state/partner-portal/types';
 import wpcom from 'calypso/lib/wp';
+import { APIPartner, ToSConsent } from 'calypso/state/partner-portal/types';
 
 function mutationTOSConsent(): Promise< APIPartner > {
 	return wpcom.req.post( {

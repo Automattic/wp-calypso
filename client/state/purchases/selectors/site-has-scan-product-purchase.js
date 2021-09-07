@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { isJetpackScan } from '@automattic/calypso-products';
+import { some } from 'lodash';
 import { getSitePurchases } from './get-site-purchases';
 
 import 'calypso/state/purchases/init';

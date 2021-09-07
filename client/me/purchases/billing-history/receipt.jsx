@@ -1,43 +1,39 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { connect, useDispatch } from 'react-redux';
-import { localize, useTranslate } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-import FormLabel from 'calypso/components/forms/form-label';
-import TextareaAutosize from 'calypso/components/textarea-autosize';
+import classNames from 'classnames';
+import { localize, useTranslate } from 'i18n-calypso';
+import page from 'page';
+import React, { useState, useCallback } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormLabel from 'calypso/components/forms/form-label';
+import HeaderCake from 'calypso/components/header-cake';
+import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
+import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
+import titles from 'calypso/me/purchases/titles';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
+import {
+	clearBillingTransactionError,
+	requestBillingTransaction,
+} from 'calypso/state/billing-transactions/individual-transactions/actions';
+import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
-import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
-import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
-import {
-	clearBillingTransactionError,
-	requestBillingTransaction,
-} from 'calypso/state/billing-transactions/individual-transactions/actions';
-import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
-import titles from 'calypso/me/purchases/titles';
-import FormattedHeader from 'calypso/components/formatted-header';
-import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+
+import './style.scss';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -318,7 +314,9 @@ function ReceiptLineItems( { transaction } ) {
 				<tfoot>
 					<tr>
 						<td className="billing-history__receipt-desc">
-							<strong>{ translate( 'Total' ) }:</strong>
+							<strong>
+								{ translate( 'Total paid:', { comment: 'Total amount paid for product' } ) }
+							</strong>
 						</td>
 						<td
 							className={
@@ -356,14 +354,29 @@ function ReceiptDetails( { transaction } ) {
 }
 
 function EmptyReceiptDetails() {
+	// When the content of the text area is empty, hide the "Billing Details" label for printing.
+	const [ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ] = useState( true );
+	const onChange = useCallback(
+		( e ) => {
+			const value = e.target.value.trim();
+			if ( hideDetailsLabelOnPrint && value.length > 0 ) {
+				setHideDetailsLabelOnPrint( false );
+			} else if ( ! hideDetailsLabelOnPrint && value.length === 0 ) {
+				setHideDetailsLabelOnPrint( true );
+			}
+		},
+		[ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ]
+	);
+
 	return (
 		<li className="billing-history__billing-details">
-			<ReceiptLabels />
+			<ReceiptLabels hideDetailsLabelOnPrint={ hideDetailsLabelOnPrint } />
 			<TextareaAutosize
 				className="billing-history__billing-details-editable"
 				aria-labelledby="billing-history__billing-details-description"
 				id="billing-history__billing-details-textarea"
 				rows="1"
+				onChange={ onChange }
 			/>
 		</li>
 	);
@@ -385,7 +398,7 @@ export function ReceiptPlaceholder() {
 	);
 }
 
-function ReceiptLabels() {
+function ReceiptLabels( { hideDetailsLabelOnPrint } ) {
 	const translate = useTranslate();
 
 	let labelContent = translate(
@@ -398,7 +411,10 @@ function ReceiptLabels() {
 	}
 	return (
 		<div>
-			<FormLabel htmlFor="billing-history__billing-details-textarea">
+			<FormLabel
+				htmlFor="billing-history__billing-details-textarea"
+				className={ classNames( { 'receipt__no-print': hideDetailsLabelOnPrint } ) }
+			>
 				{ translate( 'Billing Details' ) }
 			</FormLabel>
 			<div

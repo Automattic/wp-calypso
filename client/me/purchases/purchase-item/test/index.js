@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
+import i18n from 'i18n-calypso';
 import moment from 'moment';
 import React from 'react';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { createStore } from 'redux';
 import PurchaseItem from '../';
-import i18n from 'i18n-calypso';
 
 describe( 'PurchaseItem', () => {
 	describe( 'a purchase that expired < 24 hours ago', () => {

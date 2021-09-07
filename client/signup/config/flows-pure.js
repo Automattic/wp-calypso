@@ -412,6 +412,16 @@ export function generateFlows( {
 			lastModified: '2021-03-29',
 			showRecaptcha: true,
 		},
+		{
+			name: 'setup-site',
+			steps: [ 'design-setup-site' ],
+			destination: getChecklistThemeDestination,
+			description:
+				'Sets up a site that has already been created and paid for (if purchases were made)',
+			lastModified: '2021-09-02',
+			providesDependenciesInQuery: [ 'siteSlug' ],
+			pageTitle: translate( 'Setup your site' ),
+		},
 	];
 
 	// convert the array to an object keyed by `name`

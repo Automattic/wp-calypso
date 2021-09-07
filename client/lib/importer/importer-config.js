@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
@@ -185,9 +178,6 @@ function getConfig( { siteTitle = '' } = {} ) {
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
 				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
-			validate: ( urlInput ) => {
-				return /^https:\/\/[\w-]+\.substack\.com\/?$/.test( urlInput.trim() );
-			},
 		},
 		weight: 0,
 	};

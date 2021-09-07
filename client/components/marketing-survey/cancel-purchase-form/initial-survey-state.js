@@ -5,7 +5,8 @@
  */
 export default function initialSurveyState() {
 	return {
-		questionOneRadio: null,
-		questionTwoRadio: null,
+		questionOneRadio: '',
+		questionTwoRadio: '',
+		importQuestionRadio: '',
 	};
 }

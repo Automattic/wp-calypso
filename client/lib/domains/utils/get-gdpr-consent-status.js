@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { gdprConsentStatus } from 'calypso/lib/domains/constants';
 
 export function getGdprConsentStatus( domainFromApi ) {

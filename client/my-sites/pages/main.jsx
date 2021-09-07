@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -65,7 +66,8 @@ class PagesMain extends React.Component {
 	render() {
 		const { siteId, search, status, translate, queryType, author } = this.props;
 		const postStatus = mapPostStatus( status );
-
+		/* Check if All Sites Mode */
+		const isAllSites = siteId ? 1 : 0;
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
@@ -89,17 +91,21 @@ class PagesMain extends React.Component {
 					brandFont
 					className="pages__page-heading"
 					headerText={ translate( 'Pages' ) }
-					subHeaderText={
-						siteId
-							? translate( 'Create, edit, and manage the pages on your site.' )
-							: translate( 'Create, edit, and manage the pages on your sites.' )
-					}
+					subHeaderText={ translate(
+						'Create, edit, and manage the pages on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Create, edit, and manage the pages on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							count: isAllSites,
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="pages" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
-
 				{ /* ExPlat's Evergreen A/A Test Experiment:
 				 *
 				 * This continually starts a new experiment every week that doesn't render anything and
@@ -115,6 +121,12 @@ class PagesMain extends React.Component {
 					name={ `explat_test_aa_weekly_calypso_${ moment
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+					defaultExperience={ null }
+					treatmentExperience={ null }
+					loadingExperience={ null }
+				/>
+				<Experiment
+					name={ 'explat_test_aaaaa_2021_08_26_18_59' }
 					defaultExperience={ null }
 					treatmentExperience={ null }
 					loadingExperience={ null }

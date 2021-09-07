@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { generateSubjectFromMessage } from '../utils';
 
 describe( 'utils', () => {

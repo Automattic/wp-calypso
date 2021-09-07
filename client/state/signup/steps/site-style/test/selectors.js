@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteStyle } from '../selectors';
 
 describe( 'getSiteStyle()', () => {

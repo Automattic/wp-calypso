@@ -1,4 +1,4 @@
-import type { RequestCartProduct, MinimalRequestCartProduct } from './shopping-cart-endpoint';
+import type { RequestCartProduct, MinimalRequestCartProduct } from './types';
 
 export default function createRequestCartProduct(
 	properties: MinimalRequestCartProduct

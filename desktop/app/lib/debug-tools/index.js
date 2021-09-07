@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 const { dialog } = require( 'electron' );
 
 module.exports = {

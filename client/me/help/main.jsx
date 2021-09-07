@@ -1,49 +1,35 @@
-/**
- * External dependencies
- */
+import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { Button, CompactCard, Card } from '@automattic/components';
 import debugModule from 'debug';
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Button, CompactCard, Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import HelpResult from './help-results/item';
-import HelpSearch from './help-search';
-import HelpUnverifiedWarning from './help-unverified-warning';
-import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-/**
- * Images
- */
+import React from 'react';
+import { connect } from 'react-redux';
+import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
 import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
 import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
-import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
-import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
+import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import HelpResult from './help-results/item';
+import HelpSearch from './help-search';
+import HelpUnverifiedWarning from './help-unverified-warning';
+
+import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

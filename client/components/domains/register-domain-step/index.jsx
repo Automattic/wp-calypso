@@ -79,6 +79,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getDomainsSuggestions,
@@ -86,7 +87,7 @@ import {
 } from 'calypso/state/domains/suggestions/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-import SearchWithTyper from './search';
+import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
 import './style.scss';
@@ -152,6 +153,7 @@ class RegisterDomainStep extends React.Component {
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
 		promoTlds: PropTypes.array,
+		showAlreadyOwnADomain: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -405,7 +407,7 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
-		const { isSignupStep } = this.props;
+		const { isSignupStep, showAlreadyOwnADomain } = this.props;
 
 		const {
 			availabilityError,
@@ -440,41 +442,44 @@ class RegisterDomainStep extends React.Component {
 		} );
 
 		return (
-			<div className={ containerDivClassName }>
-				<StickyPanel className={ searchBoxClassName }>
-					<CompactCard className="register-domain-step__search-card">
-						{ this.renderSearchBar() }
-					</CompactCard>
-				</StickyPanel>
-				{ ! isSignupStep && isQueryInvalid && (
-					<Notice
-						className="register-domain-step__notice"
-						text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
-						status={ `is-info` }
-						showDismiss={ false }
-					/>
-				) }
-				{ availabilityMessage && (
-					<Notice
-						className="register-domain-step__notice"
-						text={ availabilityMessage }
-						status={ `is-${ availabilitySeverity }` }
-						showDismiss={ false }
-					/>
-				) }
-				{ suggestionMessage && availabilityError !== suggestionError && (
-					<Notice
-						className="register-domain-step__notice"
-						text={ suggestionMessage }
-						status={ `is-${ suggestionSeverity }` }
-						showDismiss={ false }
-					/>
-				) }
-				{ this.renderFilterContent() }
-				{ this.renderSideContent() }
-				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
-				<QueryContactDetailsCache />
-			</div>
+			<>
+				<div className={ containerDivClassName }>
+					<StickyPanel className={ searchBoxClassName }>
+						<CompactCard className="register-domain-step__search-card">
+							{ this.renderSearchBar() }
+						</CompactCard>
+					</StickyPanel>
+					{ ! isSignupStep && isQueryInvalid && (
+						<Notice
+							className="register-domain-step__notice"
+							text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
+							status={ `is-info` }
+							showDismiss={ false }
+						/>
+					) }
+					{ availabilityMessage && (
+						<Notice
+							className="register-domain-step__notice"
+							text={ availabilityMessage }
+							status={ `is-${ availabilitySeverity }` }
+							showDismiss={ false }
+						/>
+					) }
+					{ suggestionMessage && availabilityError !== suggestionError && (
+						<Notice
+							className="register-domain-step__notice"
+							text={ suggestionMessage }
+							status={ `is-${ suggestionSeverity }` }
+							showDismiss={ false }
+						/>
+					) }
+					{ this.renderFilterContent() }
+					{ this.renderSideContent() }
+					{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
+					<QueryContactDetailsCache />
+				</div>
+				{ showAlreadyOwnADomain && <AlreadyOwnADomain onClick={ this.useYourDomainFunction() } /> }
+			</>
 		);
 	}
 
@@ -511,7 +516,6 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderSearchBar() {
-		const { isSignupStep } = this.props;
 		const componentProps = {
 			className: this.state.clickedExampleSuggestion ? 'is-refocused' : undefined,
 			autoFocus: true,
@@ -531,18 +535,9 @@ class RegisterDomainStep extends React.Component {
 			isReskinned: this.props.isReskinned,
 		};
 
-		if ( isSignupStep ) {
-			return (
-				<>
-					<Search { ...componentProps }></Search>
-					{ this.renderSearchFilters() }
-				</>
-			);
-		}
-
 		return (
 			<>
-				<SearchWithTyper { ...componentProps }></SearchWithTyper>
+				<Search { ...componentProps }></Search>
 				{ this.renderSearchFilters() }
 			</>
 		);
@@ -1405,6 +1400,13 @@ class RegisterDomainStep extends React.Component {
 		}
 	};
 
+	useYourDomainFunction = () => {
+		const { lastDomainStatus } = this.state;
+		return domainAvailability.MAPPED === lastDomainStatus
+			? this.goToTransferDomainStep
+			: this.goToUseYourDomainStep;
+	};
+
 	renderSearchResults() {
 		const {
 			exactMatchDomain,
@@ -1435,11 +1437,6 @@ class RegisterDomainStep extends React.Component {
 			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
 			! this.state.loadingResults;
 
-		const useYourDomainFunction =
-			domainAvailability.MAPPED === lastDomainStatus
-				? this.goToTransferDomainStep
-				: this.goToUseYourDomainStep;
-
 		const isFreeDomainExplainerVisible =
 			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
 			this.props.isPlanSelectionAvailableInFlow;
@@ -1458,7 +1455,7 @@ class RegisterDomainStep extends React.Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				onClickUseYourDomain={ useYourDomainFunction }
+				onClickUseYourDomain={ this.useYourDomainFunction() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }
@@ -1466,6 +1463,7 @@ class RegisterDomainStep extends React.Component {
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerUnavailableOption={ this.props.offerUnavailableOption }
+				showAlreadyOwnADomain={ this.props.showAlreadyOwnADomain }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
 				showStrikedOutPrice={
@@ -1543,10 +1541,12 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.useYourDomainUrl ) {
 			useYourDomainUrl = this.props.useYourDomainUrl;
 		} else {
-			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 			if ( this.props.selectedSite ) {
-				useYourDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
+				useYourDomainUrl = domainUseMyDomain(
+					this.props.selectedSite.slug,
+					this.state.lastQuery.trim()
+				);
 			}
 		}
 

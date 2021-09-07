@@ -1,20 +1,12 @@
 /**
  */
 
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'calypso/state/reader/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'calypso/state/reader/action-types';
 
 export function requestSiteDismiss( action ) {
 	return http(

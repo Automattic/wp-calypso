@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	removeUnsavedUserSetting,

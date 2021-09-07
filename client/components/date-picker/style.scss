@@ -107,7 +107,7 @@ $date-picker_nav_button_size: 20px;
 	width: $date-picker_nav_button_size;
 	height: $date-picker_nav_button_size;
 	line-height: $date-picker_nav_button_size;
-	top: ( $date-picker_caption_height - $date-picker_nav_button_size ) / 2;
+	top: ( $date-picker_caption_height - $date-picker_nav_button_size ) * 0.5;
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: contain;

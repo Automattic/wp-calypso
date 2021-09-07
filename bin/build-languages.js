@@ -1,14 +1,13 @@
-const _ = require( 'lodash' );
-const fs = require( 'fs' );
-const glob = require( 'glob' );
-const path = require( 'path' );
-const https = require( 'https' );
 const crypto = require( 'crypto' );
-const mkdirp = require( 'mkdirp' );
+const fs = require( 'fs' );
+const https = require( 'https' );
+const path = require( 'path' );
 const readline = require( 'readline' );
-const parse = require( 'gettext-parser' ).po.parse;
-
 const languages = require( '@automattic/languages' );
+const parse = require( 'gettext-parser' ).po.parse;
+const glob = require( 'glob' );
+const _ = require( 'lodash' );
+const mkdirp = require( 'mkdirp' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';

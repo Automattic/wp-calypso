@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 
 	it( 'Navigate to Themes', async function () {
 		sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
+		await sidebarComponent.navigate( 'Appearance', 'Themes' );
 	} );
 
 	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
@@ -42,7 +42,6 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
-		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

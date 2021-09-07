@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 
 /**

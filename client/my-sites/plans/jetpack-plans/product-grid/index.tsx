@@ -1,12 +1,15 @@
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -96,6 +99,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_jetpack_pricing_page_without_monthly'
+	);
 
 	// Retrieve and cache the plans array, which might be already translated.
 	useEffect( () => {
@@ -149,8 +155,20 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		}
 	};
 
-	const filterBar = useMemo(
-		() => (
+	const filterBar = useMemo( () => {
+		if ( isLoadingExperimentAssignment ) {
+			return (
+				<div className="product-grid__filter-bar-placeholder">
+					<div></div>
+				</div>
+			);
+		}
+
+		if ( experimentAssignment?.variationName === 'treatment' ) {
+			return null;
+		}
+
+		return (
 			<div className="product-grid__filter-bar">
 				<PlansFilterBar
 					showDiscountMessage
@@ -158,9 +176,20 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					duration={ duration }
 				/>
 			</div>
-		),
-		[ onDurationChange, duration ]
-	);
+		);
+	}, [
+		onDurationChange,
+		duration,
+		isLoadingExperimentAssignment,
+		experimentAssignment?.variationName,
+	] );
+
+	const featuredPlans = getForCurrentCROIteration( {
+		[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
+			PLAN_JETPACK_SECURITY_T1_YEARLY,
+			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		],
+	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
 	return (
 		<>
@@ -189,10 +218,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								isAligned={ ! shouldWrapGrid }
-								featuredPlans={ [
-									PLAN_JETPACK_SECURITY_DAILY,
-									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-								] }
+								featuredPlans={ featuredPlans }
 								scrollCardIntoView={ scrollCardIntoView }
 								createButtonURL={ createButtonURL }
 							/>

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { keyToString } from 'calypso/reader/post-key';
 import {
 	isRequestingSupportArticleAlternates,

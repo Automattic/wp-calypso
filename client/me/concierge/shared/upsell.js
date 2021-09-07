@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { Button, CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
-import PrimaryHeader from './primary-header';
 import Site from 'calypso/blocks/site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PrimaryHeader from './primary-header';
 
 class Upsell extends Component {
 	static propTypes = {

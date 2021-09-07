@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, isEqual, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	CURRENT_USER_RECEIVE,
 	CURRENT_USER_SET_EMAIL_VERIFIED,
@@ -13,9 +6,9 @@ import {
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
-import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
+import gravatarStatus from './gravatar-status/reducer';
+import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
 
 /**
  * Tracks the current user ID.

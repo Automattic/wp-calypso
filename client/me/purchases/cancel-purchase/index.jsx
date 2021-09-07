@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
+import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-
-/**
- * Internal Dependencies
- */
-import { Card, CompactCard } from '@automattic/components';
-import CancelPurchaseButton from './button';
-import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
-import CancelPurchaseRefundInformation from './refund-information';
+import { connect } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import HeaderCake from 'calypso/components/header-cake';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getName,
 	purchaseType,
@@ -23,27 +17,23 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
+import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
+import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
+import ProductLink from 'calypso/me/purchases/product-link';
+import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
-import HeaderCake from 'calypso/components/header-cake';
-import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
-import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import ProductLink from 'calypso/me/purchases/product-link';
-import titles from 'calypso/me/purchases/titles';
-import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
+import CancelPurchaseButton from './button';
+import CancelPurchaseRefundInformation from './refund-information';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CancelPurchase extends React.Component {

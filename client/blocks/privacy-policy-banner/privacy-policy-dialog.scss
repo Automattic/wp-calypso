@@ -1,4 +1,6 @@
 // dialog
+@use 'sass:math';
+
 .dialog.card.privacy-policy-banner__dialog {
 	max-width: 700px;
 	font-size: $font-body-small;
@@ -31,7 +33,7 @@
 }
 
 .privacy-policy-banner__dialog-header-image {
-	width: (149 / 482) * 100%;
+	width: math.div( 149, 482 ) * 100%;
 	margin-right: 20px;
 }
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isGoogleMyBusinessLocationConnected from '../is-google-my-business-location-connected';
 
 describe( 'isGoogleMyBusinessLocationConnected()', () => {

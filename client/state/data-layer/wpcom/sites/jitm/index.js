@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
+import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import schema from './schema.json';
-import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import moment from 'moment/moment';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import schema from './schema.json';
 
 const noop = () => {};
 
@@ -46,6 +43,8 @@ const transformApiRequest = ( { data: jitms } ) =>
 		id: jitm.id,
 		isDismissible: jitm.is_dismissible,
 		messageExpiration: jitm.message_expiration ? moment( jitm.message_expiration ) : null,
+		title: unescapeDecimalEntities( jitm.content.title || '' ),
+		disclaimer: jitm.content.disclaimer.map( unescapeDecimalEntities ),
 	} ) );
 
 /**

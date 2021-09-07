@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
 import { map, mapValues } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
 import { timezonesReceive } from 'calypso/state/timezones/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noop = () => {};
 

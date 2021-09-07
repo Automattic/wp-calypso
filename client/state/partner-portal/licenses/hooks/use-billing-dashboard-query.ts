@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
+import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 
 // API interfaces.
 interface APIBillingCounts {

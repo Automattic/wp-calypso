@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { filter, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { filter, get } from 'lodash';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/sharing/init';

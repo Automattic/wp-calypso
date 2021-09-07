@@ -1,17 +1,12 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
+import { Button, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import SectionHeader from 'calypso/components/section-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
@@ -20,13 +15,7 @@ import {
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
 } from 'calypso/state/stored-cards/selectors';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import SectionHeader from 'calypso/components/section-header';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 class PaymentMethodList extends Component {

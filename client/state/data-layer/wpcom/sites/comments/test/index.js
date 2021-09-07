@@ -1,10 +1,14 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
+import { COMMENTS_EDIT, NOTICE_REMOVE, COMMENTS_RECEIVE } from 'calypso/state/action-types';
+import {
+	requestComment as requestCommentAction,
+	editComment as editCommentAction,
+	receiveComments as receiveCommentsAction,
+	receiveCommentsError as receiveCommentsErrorAction,
+} from 'calypso/state/comments/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import {
 	addComments,
 	announceEditFailure,
@@ -15,17 +19,6 @@ import {
 	receiveCommentError,
 	receiveCommentSuccess,
 } from '../';
-import { COMMENTS_EDIT, NOTICE_REMOVE, COMMENTS_RECEIVE } from 'calypso/state/action-types';
-import {
-	requestComment as requestCommentAction,
-	editComment as editCommentAction,
-	receiveComments as receiveCommentsAction,
-	receiveCommentsError as receiveCommentsErrorAction,
-} from 'calypso/state/comments/actions';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const query = {
 	siteId: 1337,

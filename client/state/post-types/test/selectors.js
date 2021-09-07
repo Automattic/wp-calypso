@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getPostTypes, getPostType, postTypeSupports, isPostTypeSupported } from '../selectors';
 
 describe( 'selectors', () => {

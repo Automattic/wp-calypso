@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -15,7 +9,6 @@ import {
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
 
 import 'calypso/state/stored-cards/init';
 

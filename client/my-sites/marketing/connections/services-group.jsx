@@ -140,7 +140,7 @@ const SharingServicesGroup = ( {
 SharingServicesGroup.propTypes = {
 	isFetching: PropTypes.bool,
 	services: PropTypes.array,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.node.isRequired,
 	type: PropTypes.string.isRequired,
 	expandedService: PropTypes.string,
 };
@@ -159,7 +159,7 @@ const mapStateToProps = ( state, { type } ) => {
 		services: getEligibleKeyringServices( state, siteId, type ),
 		expandedService: getExpandedService( state ),
 		isJetpack: isJetpackSite( state, siteId ),
-		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize' ),
+		isPublicizeActive: isJetpackModuleActive( state, siteId, 'publicize', true ),
 	};
 };
 

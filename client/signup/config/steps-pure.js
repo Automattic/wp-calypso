@@ -711,6 +711,14 @@ export function generateSteps( {
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 		},
+
+		'design-setup-site': {
+			stepName: 'design-setup-site',
+			apiRequestFunction: setThemeOnSite,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+		},
 	};
 }
 

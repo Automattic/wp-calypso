@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSiteStatsForQuery,
 	getSiteStatsPostStreakData,
@@ -14,7 +8,6 @@ import {
 	getSiteStatsCSVData,
 	hasSiteStatsQueryFailed,
 } from '../selectors';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

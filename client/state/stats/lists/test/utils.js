@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import {
 	buildExportArray,
 	getChartLabels,

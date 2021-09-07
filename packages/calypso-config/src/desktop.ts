@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/import-docblock */
 import type { ConfigData } from '@automattic/create-calypso-config';
 
 // TODO: Revisit whether it is useful for the Desktop app to override the following properties:

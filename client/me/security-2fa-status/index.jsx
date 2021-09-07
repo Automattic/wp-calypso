@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:me:security:2fa-status' );

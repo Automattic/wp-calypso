@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import warn from '@wordpress/warning';
+import deepFreeze from 'deep-freeze';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import {
 	keyedReducer,
@@ -17,11 +11,6 @@ import {
 	serialize,
 	deserialize,
 } from 'calypso/state/utils';
-
-/**
- * WordPress dependencies
- */
-import warn from '@wordpress/warning';
 
 jest.mock( '@wordpress/warning', () => jest.fn() );
 

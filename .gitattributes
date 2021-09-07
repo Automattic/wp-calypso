@@ -1,1 +1,2 @@
 package-lock.json merge=npm-merge-driver
+.yarn/**/* linguist-vendored

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import signupSurveyReducer from '../reducer';
 import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
+import signupSurveyReducer from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should update the survey', () => {

@@ -1,19 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	receivePost,
-	receivePosts,
-	requestSitePosts,
-	requestSitePost,
-	requestAllSitesPosts,
-	editPost,
-	savePost,
-	trashPost,
-	deletePost,
-	restorePost,
-} from 'calypso/state/posts/actions';
-import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -33,6 +17,19 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import {
+	receivePost,
+	receivePosts,
+	requestSitePosts,
+	requestSitePost,
+	requestAllSitesPosts,
+	editPost,
+	savePost,
+	trashPost,
+	deletePost,
+	restorePost,
+} from 'calypso/state/posts/actions';
+import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
 import useNock from 'calypso/test-helpers/use-nock';
 
 jest.mock( 'calypso/state/posts/actions/save-post-success', () => ( {

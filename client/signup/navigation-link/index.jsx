@@ -28,11 +28,13 @@ export class NavigationLink extends Component {
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
 		rel: PropTypes.string,
+		borderless: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labelText: '',
 		allowBackFirstStep: false,
+		borderless: true,
 	};
 
 	getPreviousStep( flowName, signupProgress, currentStepName ) {
@@ -123,7 +125,7 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
-		const { translate, labelText } = this.props;
+		const { translate, labelText, borderless } = this.props;
 
 		if (
 			this.props.positionInFlow === 0 &&
@@ -160,7 +162,7 @@ export class NavigationLink extends Component {
 
 		return (
 			<Button
-				borderless
+				borderless={ borderless }
 				className={ buttonClasses }
 				href={ this.getBackUrl() }
 				onClick={ this.handleClick }

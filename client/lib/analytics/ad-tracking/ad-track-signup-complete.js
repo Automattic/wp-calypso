@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import {
 	costToUSD,
 	isAdTrackingAllowed,
 	refreshCountryCodeCookieGdpr,
 } from 'calypso/lib/analytics/utils';
-
-import { getCurrentUser } from '@automattic/calypso-analytics';
 import {
 	debug,
 	isFacebookEnabled,
@@ -26,8 +18,8 @@ import {
 	TRACKING_IDS,
 	ICON_MEDIA_SIGNUP_PIXEL_URL,
 } from './constants';
-import { loadTrackingScripts } from './load-tracking-scripts';
 import { recordParamsInFloodlightGtag } from './floodlight';
+import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
 import './setup';

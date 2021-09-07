@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { CONCIERGE_INITIAL_REQUEST } from 'calypso/state/action-types';
+import { updateConciergeInitial } from 'calypso/state/concierge/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { updateConciergeInitial } from 'calypso/state/concierge/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { CONCIERGE_INITIAL_REQUEST } from 'calypso/state/action-types';
 import fromApi from './from-api';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetchConciergeInitial = ( action ) =>
 	http(

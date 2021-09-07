@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
 import { BackButton } from '@automattic/onboarding';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,102 +14,66 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
 import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
+import ConnectDomainSteps from './connect-domain-steps';
 import { modeType, stepType, stepSlug, defaultDomainSetupInfo } from './constants';
-import {
-	defaultStepsDefinition,
-	getPageSlug,
-	getProgressStepList,
-	getStepsDefinition,
-} from './page-definitions';
-/**
- * Style dependencies
- */
+import { connectADomainStepsDefinition } from './page-definitions.js';
+
 import './style.scss';
 
 function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialStep, showErrors } ) {
-	const [ mode, setMode ] = useState( modeType.SUGGESTED );
-	const [ step, setStep ] = useState( stepType.START );
-	const [ currentPageSlug, setCurrentPageSlug ] = useState( stepSlug.SUGGESTED_START );
-	const [ progressStepList, setProgressStepList ] = useState( {} );
+	const { __ } = useI18n();
+	const [ pageSlug, setPageSlug ] = useState( stepSlug.SUGGESTED_START );
 	const [ verificationStatus, setVerificationStatus ] = useState( {} );
 	const [ verificationInProgress, setVerificationInProgress ] = useState( false );
 	const [ domainSetupInfo, setDomainSetupInfo ] = useState( defaultDomainSetupInfo );
 	const [ domainSetupInfoError, setDomainSetupInfoError ] = useState( {} );
 	const [ loadingDomainSetupInfo, setLoadingDomainSetupInfo ] = useState( false );
-	const [ stepsDefinition, setStepsDefinition ] = useState( defaultStepsDefinition );
 
 	const baseClassName = 'connect-domain-step';
-	const StepsComponent = stepsDefinition?.[ currentPageSlug ].component;
-	const isStepStart = stepType.START === step;
+	const isStepStart = stepType.START === connectADomainStepsDefinition[ pageSlug ].step;
+	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
+	const step = connectADomainStepsDefinition[ pageSlug ].step;
 
 	const statusRef = useRef( {} );
 
-	const setPage = useCallback(
-		( pageStepSlug ) => {
-			setCurrentPageSlug( pageStepSlug );
-			setStep( stepsDefinition[ pageStepSlug ].step );
-			setMode( stepsDefinition[ pageStepSlug ].mode );
-		},
-		[ stepsDefinition ]
-	);
-
-	const setNextStep = () => {
-		const next = stepsDefinition[ currentPageSlug ]?.next;
-		next && setPage( next );
-	};
-
-	const switchToSuggestedSetup = () => {
-		setPage( stepSlug.SUGGESTED_START );
-	};
-
-	const switchToAdvancedSetup = () => {
-		setPage( stepSlug.ADVANCED_START );
-	};
-
-	useEffect( () => {
-		setStepsDefinition( getStepsDefinition( selectedSite, domain, domainSetupInfo ) );
-	}, [ domain, domainSetupInfo, selectedSite ] );
-
-	useEffect( () => {
-		setCurrentPageSlug( getPageSlug( mode, step, stepsDefinition ) );
-	}, [ mode, step, stepsDefinition ] );
-
 	useEffect( () => {
 		if ( initialStep && Object.values( stepSlug ).includes( initialStep ) ) {
-			setPage( initialStep );
+			setPageSlug( initialStep );
 		}
-	}, [ initialStep, setPage ] );
-
-	useEffect( () => {
-		setProgressStepList( getProgressStepList( mode, stepsDefinition ) );
-	}, [ mode, stepsDefinition ] );
+	}, [ initialStep, setPageSlug ] );
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
 			setVerificationStatus( {} );
 			setVerificationInProgress( true );
+
+			const connectedSlug =
+				modeType.SUGGESTED === mode ? stepSlug.SUGGESTED_CONNECTED : stepSlug.ADVANCED_CONNECTED;
+			const verifyingSlug =
+				modeType.SUGGESTED === mode ? stepSlug.SUGGESTED_VERIFYING : stepSlug.ADVANCED_VERIFYING;
+
 			wpcom
 				.domain( domain )
-				.mappingStatus()
+				.updateConnectionModeAndGetMappingStatus( mode )
 				.then( ( data ) => {
 					setVerificationStatus( { data } );
 					if ( setStepAfterVerify ) {
 						if ( isMappingVerificationSuccess( mode, data ) ) {
-							setStep( stepType.CONNECTED );
+							setPageSlug( connectedSlug );
 						} else {
-							setStep( stepType.VERIFYING );
+							setPageSlug( verifyingSlug );
 						}
 					}
 				} )
 				.catch( ( error ) => {
 					setVerificationStatus( { error } );
 					if ( setStepAfterVerify ) {
-						setStep( stepType.VERIFYING );
+						setPageSlug( verifyingSlug );
 					}
 				} )
 				.finally( () => setVerificationInProgress( false ) );
 		},
-		[ mode, domain ]
+		[ domain, mode ]
 	);
 
 	useEffect( () => {
@@ -147,10 +106,10 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	}, [ showErrors, verifyConnection ] );
 
 	const goBack = () => {
-		const prevPageSlug = stepsDefinition[ currentPageSlug ]?.prev;
+		const prevPageSlug = connectADomainStepsDefinition[ pageSlug ]?.prev;
 
 		if ( prevPageSlug ) {
-			setPage( prevPageSlug );
+			setPageSlug( prevPageSlug );
 		} else {
 			page( domainManagementList( selectedSite.slug ) );
 		}
@@ -174,21 +133,17 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 				headerText={ headerText }
 				align="left"
 			/>
-			<StepsComponent
-				className={ baseClassName }
+			<ConnectDomainSteps
+				baseClassName={ baseClassName }
 				domain={ domain }
-				step={ step }
-				mode={ mode }
-				onNextStep={ setNextStep }
+				initialPageSlug={ pageSlug }
+				stepsDefinition={ connectADomainStepsDefinition }
+				onSetPage={ setPageSlug }
 				onVerifyConnection={ verifyConnection }
 				verificationInProgress={ verificationInProgress }
 				verificationStatus={ verificationStatus || {} }
 				domainSetupInfo={ domainSetupInfo }
 				domainSetupInfoError={ domainSetupInfoError }
-				onSwitchToAdvancedSetup={ switchToAdvancedSetup }
-				onSwitchToSuggestedSetup={ switchToSuggestedSetup }
-				progressStepList={ progressStepList }
-				currentPageSlug={ currentPageSlug }
 				showErrors={ showErrors }
 			/>
 			{ isStepStart && <DomainTransferRecommendation /> }
@@ -197,9 +152,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 				baseClassName={ baseClassName }
 				currentMode={ mode }
 				currentStep={ step }
-				setPage={ setPage }
-				onSwitchToAdvancedSetup={ switchToAdvancedSetup }
-				onSwitchToSuggestedSetup={ switchToSuggestedSetup }
+				setPage={ setPageSlug }
 			/>
 		</>
 	);

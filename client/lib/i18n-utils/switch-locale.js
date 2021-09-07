@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-import debugFactory from 'debug';
-import { forEach, throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { isDefaultLocale, getLanguage } from './utils';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
+import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import { forEach, throttle } from 'lodash';
+import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 

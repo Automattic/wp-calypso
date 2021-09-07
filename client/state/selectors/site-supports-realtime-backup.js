@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import {
 	planHasFeature,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
+import { some } from 'lodash';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 
 /**
  * Module variables

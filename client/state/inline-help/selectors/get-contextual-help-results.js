@@ -1,8 +1,5 @@
-/**
- * Internal Dependencies
- */
-import { getSectionName } from 'calypso/state/ui/selectors';
 import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/inline-help/init';
 

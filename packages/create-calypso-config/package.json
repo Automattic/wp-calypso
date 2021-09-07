@@ -35,5 +35,8 @@
 	"dependencies": {
 		"cookie": "^0.4.0",
 		"tslib": "^2.3.0"
+	},
+	"devDependencies": {
+		"typescript": "^4.3.5"
 	}
 }

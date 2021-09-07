@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
+import { withStorageKey } from '@automattic/state-utils';
 import debugFactory from 'debug';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
-import { settingsSchema, systemSchema } from './schema';
-
 import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_AUTHORIZE,
@@ -21,6 +11,8 @@ import {
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import { settingsSchema, systemSchema } from './schema';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 

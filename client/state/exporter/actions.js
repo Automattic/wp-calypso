@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -17,7 +14,6 @@ import {
 	EXPORT_MEDIA_REQUEST,
 	SET_MEDIA_EXPORT_DATA,
 } from 'calypso/state/action-types';
-
 import { prepareExportRequest } from './selectors';
 
 import 'calypso/state/data-layer/wpcom/sites/exports/media';

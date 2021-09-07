@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import menuFixture from './fixture/menu-fixture';
 import { getAdminMenu } from '../selectors';
+import menuFixture from './fixture/menu-fixture';
 
 const frozenFixture = deepFreeze( menuFixture );
 

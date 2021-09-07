@@ -20,9 +20,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
 import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';

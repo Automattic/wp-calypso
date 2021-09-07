@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import closest from 'component-closest';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SelectDropdown from 'calypso/components/select-dropdown';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setApp, setDate } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionAppFilterValues from 'calypso/state/selectors/get-billing-transaction-app-filter-values';

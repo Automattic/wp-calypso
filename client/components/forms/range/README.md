@@ -16,7 +16,7 @@ Refer to the following code snippet for a typical usage example:
 	value={ this.state.rangeValue }
 	onChange={ this.onChange }
 	showValueLabel
-/>
+/>;
 ```
 
 The Range component does not track its own value state, much like any other form input in React. Refer to the <a href="http://facebook.github.io/react/docs/forms.html">React Forms documentation</a> for more guidance on tracking form value state.

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/data-layer/wpcom/sites/scan/history';
 
 /**

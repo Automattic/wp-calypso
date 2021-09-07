@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { omitBy, some, isEqual, partial } from 'lodash';
+import { omitBy, some, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -154,6 +154,6 @@ class EditorMediaModalGallery extends React.Component {
 }
 
 export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	onReturnToList: () => setEditorMediaModalView( ModalViews.LIST ),
 	getMediaItem,
 } )( localize( EditorMediaModalGallery ) );

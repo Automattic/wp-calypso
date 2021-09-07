@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
+
 import * as selectors from 'calypso/state/partner-portal/partner/selectors';
 
 describe( 'selectors', () => {

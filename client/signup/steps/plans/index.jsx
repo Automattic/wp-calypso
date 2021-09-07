@@ -12,15 +12,16 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { Experiment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
@@ -190,6 +191,49 @@ export class PlansStep extends Component {
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
 
+	getSubHeaderTextForExperiment() {
+		const { hideFreePlan, flowName, translate } = this.props;
+		const defaultSubHeaderText = this.getSubHeaderText();
+		const refundWindow = 'yearly' === this.getIntervalType() ? 14 : 7;
+
+		if ( ! isDesktop() || 'onboarding' !== flowName ) {
+			return defaultSubHeaderText;
+		}
+
+		let emphasizedRefundPolicyText = '';
+		if ( hideFreePlan ) {
+			emphasizedRefundPolicyText = translate(
+				'Try risk-free with a %(days)s-day money back guarantee on all plans.',
+				{
+					args: {
+						days: refundWindow,
+					},
+				}
+			);
+		} else {
+			emphasizedRefundPolicyText = translate(
+				'Try risk-free with a %(days)s-day money back guarantee on all plans. Or {{link}}start with a free site{{/link}}.',
+				{
+					components: {
+						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+					},
+					args: {
+						days: refundWindow,
+					},
+				}
+			);
+		}
+
+		return (
+			<Experiment
+				name="emphasizing_refund_policy_v2"
+				defaultExperience={ defaultSubHeaderText }
+				treatmentExperience={ emphasizedRefundPolicyText }
+				loadingExperience={ '\u00A0' } // &nbsp;
+			/>
+		);
+	}
+
 	plansFeaturesSelection() {
 		const {
 			flowName,
@@ -201,7 +245,7 @@ export class PlansStep extends Component {
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText = this.getSubHeaderText();
+		const subHeaderText = this.getSubHeaderTextForExperiment();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl;

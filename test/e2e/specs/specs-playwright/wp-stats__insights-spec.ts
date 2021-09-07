@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 
 		it( 'Navigate to Stats', async function () {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.gotoMenu( { item: 'Stats' } );
+			await sidebarComponent.navigate( 'Stats' );
 		} );
 
 		it( 'Click on Insights tab', async function () {

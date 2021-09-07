@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { clone, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import QueryKey from './key';
 
 /**

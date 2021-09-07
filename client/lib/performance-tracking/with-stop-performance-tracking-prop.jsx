@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { stopPerformanceTracking } from './lib';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { stopPerformanceTracking } from './lib';
 
 export const withStopPerformanceTrackingProp = ( () => {
 	return connect( null, {

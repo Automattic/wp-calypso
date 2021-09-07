@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 
 describe( 'getLocalizedLanguageNames()', () => {

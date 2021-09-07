@@ -1,6 +1,12 @@
+import '@emotion/react';
 import { DataRegistry } from '@wordpress/data';
 import { ReactElement } from 'react';
-import { Theme } from './lib/theme';
+import { Theme as ThemeType } from './lib/theme';
+
+declare module '@emotion/react' {
+	// eslint-disable-next-line @typescript-eslint/no-empty-interface
+	export interface Theme extends ThemeType {}
+}
 
 export interface CheckoutStepProps {
 	stepId: string;
@@ -95,15 +101,14 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	  };
 
 export interface CheckoutProviderProps {
-	theme?: Theme;
+	theme?: ThemeType;
 	registry?: DataRegistry;
 	total?: LineItem;
 	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
-	onPaymentComplete: PaymentCompleteCallback;
-	showErrorMessage: ShowNoticeFunction;
-	showInfoMessage: ShowNoticeFunction;
-	showSuccessMessage: ShowNoticeFunction;
+	onPaymentComplete?: PaymentEventCallback;
+	onPaymentRedirect?: PaymentEventCallback;
+	onPaymentError?: PaymentErrorCallback;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
@@ -113,15 +118,17 @@ export interface CheckoutProviderProps {
 	children: React.ReactNode;
 }
 
-export type ShowNoticeFunction = ( message: string ) => void;
-
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-export type PaymentCompleteCallback = ( args: PaymentCompleteCallbackArguments ) => void;
+export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
+export type PaymentErrorCallback = ( args: {
+	paymentMethodId: string | null;
+	transactionError: string | null;
+} ) => void;
 
-export type PaymentCompleteCallbackArguments = {
+export type PaymentEventCallbackArguments = {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 };

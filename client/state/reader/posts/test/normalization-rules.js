@@ -1,18 +1,11 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { forEach } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DISPLAY_TYPES from '../display-types';
-import { classifyPost } from '../normalization-rules';
 import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import DISPLAY_TYPES from '../display-types';
+import { classifyPost } from '../normalization-rules';
 
 function verifyClassification( post, displayTypes ) {
 	classifyPost( post );

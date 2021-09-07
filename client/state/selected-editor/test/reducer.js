@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { EDITOR_TYPE_SET } from 'calypso/state/action-types';
 import selectedEditor from '../reducer';
 

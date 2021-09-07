@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { login } from '..';
 
 describe( 'login', () => {

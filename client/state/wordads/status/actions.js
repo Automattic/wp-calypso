@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
 import { pick } from 'lodash';
+import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/wordads/status';
 import 'calypso/state/wordads/init';

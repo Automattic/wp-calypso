@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import WPCOM from 'wpcom';
-import inherits from 'inherits';
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
+import inherits from 'inherits';
+import WPCOM from 'wpcom';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
-
-/**
- * Internal dependencies.
- */
-import config from '@automattic/calypso-config';
 
 /**
  * Create an UndocumentedMe instance
@@ -45,10 +38,6 @@ UndocumentedMe.prototype.getReceipt = function ( receiptId, queryOrCallback ) {
 		},
 		queryOrCallback
 	);
-};
-
-UndocumentedMe.prototype.purchases = function ( callback ) {
-	return this.wpcom.req.get( '/me/purchases', callback );
 };
 
 UndocumentedMe.prototype.sendSMSValidationCode = function ( callback ) {
@@ -114,7 +103,6 @@ UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback
  *
  * @param {object} [cardToken] Payment key
  * @param {object} [additionalData] Any additional data to send in the request
- *
  * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.storedCardAdd = function ( cardToken, additionalData = {} ) {
@@ -259,17 +247,6 @@ UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function ( callback
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.deletePurchase = function ( purchaseId, fn ) {
-	debug( '/me/purchases/{purchaseId}/delete' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/me/purchases/${ purchaseId }/delete`,
-		},
-		fn
-	);
-};
-
 /**
  * Connect the current account with a social service (e.g. Google/Facebook).
  *
@@ -280,8 +257,43 @@ UndocumentedMe.prototype.deletePurchase = function ( purchaseId, fn ) {
  *  {string} user_name - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} user_email - (Optional) The user name associated with this connection, in case it's not part of id_token.
  *  {string} redirect_to - The URL to redirect to after connecting.
+ * @param An.access_token
+ * @param An.service
+ * @param An.access_token
+ * @param An.service
+ * @param An.access_token
+ * @param An.service
+ * @param An.access_token
+ * @param An.service
+ * @param An.access_token
+ * @param An.service
+ * @param An.access_token
+ * @param An.service
  * @param {Function} fn - The callback for the request.
- *
+ * @param An.id_token
+ * @param An.user_name
+ * @param An.user_email
+ * @param An.redirect_to
+ * @param An.id_token
+ * @param An.user_name
+ * @param An.user_email
+ * @param An.redirect_to
+ * @param An.id_token
+ * @param An.user_name
+ * @param An.user_email
+ * @param An.redirect_to
+ * @param An.id_token
+ * @param An.user_name
+ * @param An.user_email
+ * @param An.redirect_to
+ * @param An.id_token
+ * @param An.user_name
+ * @param An.user_email
+ * @param An.redirect_to
+ * @param An.id_token
+ * @param An.user_name
+ * @param An.user_email
+ * @param An.redirect_to
  * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialConnect = function (
@@ -324,7 +336,6 @@ UndocumentedMe.prototype.socialConnect = function (
  *
  * @param {string} service - Social service associated with token, e.g. google.
  * @param {Function} fn - callback
- *
  * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialDisconnect = function ( service, fn ) {

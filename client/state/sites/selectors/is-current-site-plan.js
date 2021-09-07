@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSitePlan from './get-site-plan';
 
 /**

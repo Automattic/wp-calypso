@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { CONVERSATION_FOLLOW_STATUS } from './follow-status';
 
 /* eslint-disable quote-props */

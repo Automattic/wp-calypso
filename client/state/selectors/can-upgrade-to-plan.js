@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
@@ -15,9 +6,11 @@ import {
 	isWpComEcommercePlan,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { get } from 'lodash';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Whether a given site can be upgraded to a specific plan.

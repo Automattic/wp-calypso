@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { zip } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	receiveMedia,
 	successMediaItemRequest,
 	failMediaItemRequest,
 } from 'calypso/state/media/actions';
-import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 
 const noop = () => {};
 

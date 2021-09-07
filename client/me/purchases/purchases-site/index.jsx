@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import AsyncLoad from 'calypso/components/async-load';
-import { getSite } from 'calypso/state/sites/selectors';
 import {
 	isJetpackPlan,
 	isJetpackProduct,
 	JETPACK_PLANS,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QuerySites from 'calypso/components/data/query-sites';
-import PurchaseItem from '../purchase-item';
+import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
+import PurchaseItem from '../purchase-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PurchasesSite = ( {

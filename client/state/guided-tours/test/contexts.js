@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { isUserNewerThan } from '../contexts';
 
 jest.mock( 'calypso/layout/guided-tours/config', () => {

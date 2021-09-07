@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getEmailForwards, getEmailForwardsFailure, getEmailForwardsSuccess } from '../';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { isErrorNotice } from '../../test-utils';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getEmailForwards, getEmailForwardsFailure, getEmailForwardsSuccess } from '../';
+import { isErrorNotice } from '../../test-utils';
 
 describe( 'wpcom-api', () => {
 	describe( 'email forwarding get forwards request', () => {

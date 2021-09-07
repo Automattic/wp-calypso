@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { deleteApplicationPassword } from 'calypso/state/application-passwords/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ApplicationPasswordsItem extends React.Component {

@@ -23,10 +23,6 @@ class HeaderCart extends React.Component {
 		} );
 	};
 
-	componentDidMount() {
-		this.props.shoppingCartManager.reloadFromServer();
-	}
-
 	render() {
 		const isCartEmpty = getAllCartItems( this.props.cart ).length === 0;
 		if ( isCartEmpty ) {

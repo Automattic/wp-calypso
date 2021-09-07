@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, listItems, updatedLists, subscribedLists } from '../reducer';
 import {
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
@@ -15,6 +7,7 @@ import {
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
+import { items, listItems, updatedLists, subscribedLists } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

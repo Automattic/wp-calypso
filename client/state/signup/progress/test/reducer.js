@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -10,6 +6,7 @@ import {
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 // Mock necessary for testing certain utils
 jest.mock( 'calypso/signup/config/flows-pure', () => ( {

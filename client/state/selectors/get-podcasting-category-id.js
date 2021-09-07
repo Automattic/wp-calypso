@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { get } from 'lodash';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { flowRight, partialRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
@@ -152,19 +152,18 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = partialRight( pick, [
-	'amp_is_enabled',
-	'amp_is_supported',
-	'instant_search_enabled',
-	'jetpack_search_enabled',
-	'jetpack_search_supported',
-	'lazy-images',
-	'photon',
-	'photon-cdn',
-] );
+const getFormSettings = ( settings ) =>
+	pick( settings, [
+		'amp_is_enabled',
+		'amp_is_supported',
+		'instant_search_enabled',
+		'jetpack_search_enabled',
+		'jetpack_search_supported',
+		'lazy-images',
+		'photon',
+		'photon-cdn',
+	] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsPerformance );
+export default connectComponent(
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsPerformance ) )
+);

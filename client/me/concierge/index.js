@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import controller from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
+import controller from './controller';
 
 const redirectToBooking = ( context ) => {
 	page.redirect( `/me/quickstart/${ context.params.siteSlug }/book` );

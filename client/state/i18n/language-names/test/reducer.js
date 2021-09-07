@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer, { items } from '../reducer';
 import { I18N_LANGUAGE_NAMES_ADD } from 'calypso/state/action-types';
+import reducer, { items } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

@@ -1,8 +1,3 @@
-/**
- * Internal dependencies
- */
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { items as itemsSchema } from './schema';
 import {
 	WORDADS_SETTINGS_RECEIVE,
 	WORDADS_SETTINGS_SAVE,
@@ -10,6 +5,8 @@ import {
 	WORDADS_SETTINGS_SAVE_SUCCESS,
 	WORDADS_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { items as itemsSchema } from './schema';
 
 /**
  * Returns the updated items state after an action has been dispatched. The

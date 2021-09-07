@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { setCurrentFlowName } from '../actions';
 import { SIGNUP_CURRENT_FLOW_NAME_SET } from 'calypso/state/action-types';
+import { setCurrentFlowName } from '../actions';
 
 describe( 'setCurrentFlowName()', () => {
 	test( 'should return the expected action object', () => {

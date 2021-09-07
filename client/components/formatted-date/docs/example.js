@@ -1,8 +1,3 @@
-/**
- * External dependencies
- *
- */
-
 import moment from 'moment';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';

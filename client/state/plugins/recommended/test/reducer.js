@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import {
 	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
 	PLUGINS_RECOMMENDED_RECEIVE,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 const EXAMPLE_SITE_ID = 77203074;
 

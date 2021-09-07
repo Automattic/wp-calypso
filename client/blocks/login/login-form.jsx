@@ -16,7 +16,7 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
-import TextControl from 'calypso/extensions/woocommerce/components/text-control';
+import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

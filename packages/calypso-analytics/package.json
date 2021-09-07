@@ -39,5 +39,8 @@
 		"lodash": "^4.17.21",
 		"tslib": "^2.3.0",
 		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"typescript": "^4.3.5"
 	}
 }

@@ -1,8 +1,8 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const webpack = require( 'webpack' );
 const WebpackRTLPlugin = require( '../src' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 
 const baseConfig = {
 	mode: 'development',

@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import {
-	requestCommentEmailUnsubscription,
-	receiveCommentEmailUnsubscription,
-	receiveCommentEmailUnsubscriptionError,
-} from '../';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
 } from 'calypso/state/reader/follows/actions';
+import {
+	requestCommentEmailUnsubscription,
+	receiveCommentEmailUnsubscription,
+	receiveCommentEmailUnsubscriptionError,
+} from '../';
 
 describe( 'comment-email-subscriptions', () => {
 	describe( 'requestCommentEmailUnsubscription', () => {

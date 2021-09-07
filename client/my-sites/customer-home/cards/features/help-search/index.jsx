@@ -13,7 +13,6 @@ import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-res
 import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 
 import './style.scss';
@@ -87,7 +86,6 @@ const HelpSearch = ( { searchQuery, track } ) => {
 
 const mapStateToProps = ( state ) => ( {
 	searchQuery: getSearchQuery( state ),
-	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
 
 const mapDispatchToProps = {

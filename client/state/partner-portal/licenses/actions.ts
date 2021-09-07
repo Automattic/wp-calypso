@@ -1,18 +1,16 @@
-/**
- * External dependencies
- */
 import { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
+import {
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_RECEIVE,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 } from 'calypso/state/action-types';
-import { ReduxDispatch } from 'calypso/state/redux-store';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import {
 	HttpAction,
 	License,
@@ -20,12 +18,7 @@ import {
 	PaginatedItems,
 	PartnerPortalThunkAction,
 } from 'calypso/state/partner-portal/types';
-import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
-import {
-	LicenseFilter,
-	LicenseSortDirection,
-	LicenseSortField,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { ReduxDispatch } from 'calypso/state/redux-store';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';

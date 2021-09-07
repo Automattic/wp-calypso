@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { requestReadSite } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestSite } from 'calypso/state/reader/sites/actions';
+import { requestReadSite } from '../';
 
 describe( 'read-sites-site', () => {
 	describe( 'requestReadSite', () => {

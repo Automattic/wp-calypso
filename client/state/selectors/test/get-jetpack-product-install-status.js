@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
 
 describe( '#getJetpackProductInstallStatus', () => {

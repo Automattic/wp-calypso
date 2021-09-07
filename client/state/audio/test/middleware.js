@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import middleware from '../middleware';
 import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'calypso/state/action-types';
+import middleware from '../middleware';
 
 describe( 'Audio Middleware', () => {
 	let next;

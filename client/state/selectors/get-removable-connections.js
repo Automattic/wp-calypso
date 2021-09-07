@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 import { getRemovableConnections as getRemovablePublicizeConnections } from 'calypso/state/sharing/publicize/selectors';

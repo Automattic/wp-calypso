@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 import {
 	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_RECEIVE,
@@ -10,6 +6,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#requestBillingTransaction', () => {

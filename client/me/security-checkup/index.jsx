@@ -1,20 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
+import VerticalNav from 'calypso/components/vertical-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import SecurityCheckupAccountEmail from './account-email';
 import SecurityCheckupAccountRecoveryEmail from './account-recovery-email';
 import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
@@ -23,12 +18,7 @@ import SecurityCheckupPassword from './password';
 import SecurityCheckupSocialLogins from './social-logins';
 import SecurityCheckupTwoFactorAuthentication from './two-factor-authentication';
 import SecurityCheckupTwoFactorBackupCodes from './two-factor-backup-codes';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import VerticalNav from 'calypso/components/vertical-nav';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SecurityCheckupComponent extends React.Component {

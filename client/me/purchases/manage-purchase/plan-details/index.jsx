@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
+import { isJetpackPlan, isFreeJetpackPlan } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { Card } from '@automattic/components';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import SectionHeader from 'calypso/components/section-header';
-import PlanBillingPeriod from './billing-period';
-import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import { getName, isExpired, isPartnerPurchase } from 'calypso/lib/purchases';
+import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
 import {
 	getByPurchaseId,
 	hasLoadedSitePurchasesFromServer,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getName, isExpired, isPartnerPurchase } from 'calypso/lib/purchases';
-import { isJetpackPlan, isFreeJetpackPlan } from '@automattic/calypso-products';
-import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
+import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import PlanBillingPeriod from './billing-period';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PurchasePlanDetails extends Component {

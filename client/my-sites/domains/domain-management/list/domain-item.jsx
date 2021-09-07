@@ -10,7 +10,7 @@ import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InfoPopover from 'calypso/components/info-popover';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import {
 	canCurrentUserAddEmail,
@@ -178,7 +178,7 @@ class DomainItem extends PureComponent {
 				>
 					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem icon="domains" onClick={ this.makePrimary }>
-							{ translate( 'Make primary domain' ) }
+							{ translate( 'Make primary address' ) }
 						</PopoverMenuItem>
 					) }
 					{ this.canRenewDomain() && (
