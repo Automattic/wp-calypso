@@ -125,10 +125,25 @@
 
 .stats__parsely-banner {
 	display: flex;
-	align-items: center;
+	font-size: $font-body-small;
+	flex-wrap: wrap;
+	align-items: flex-start;
 	justify-content: space-between;
 	padding: 30px;
 	margin-top: 16px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.formatted-header.is-left-align {
+		margin: 0 0 16px;
+	}
+
+	& > div {
+		flex: 1;
+	}
 
 	img {
 		margin-right: 30px;
@@ -142,8 +157,13 @@
 	}
 
 	.button {
-		margin-left: 30px;
+		margin-top: 16px;
+		margin-left: auto;
 		justify-self: flex-end;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			margin-left: 30px;
+		}
 	}
 
 	&::after {
