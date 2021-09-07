@@ -1143,6 +1143,11 @@ class CancelPurchaseForm extends React.Component {
 	}
 
 	componentDidMount() {
+		if ( ! isPlan( this.props.purchase ) ) {
+			this.initSurveyState();
+			return;
+		}
+
 		loadExperimentAssignment( 'fullscreen_precancellation_survey' ).then(
 			( experimentAssignment ) => {
 				if ( 'treatment' === experimentAssignment?.variationName ) {
