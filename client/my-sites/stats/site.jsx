@@ -291,7 +291,7 @@ class StatsSite extends Component {
 				</div>
 				<Card className="stats__parsely-banner">
 					<TrackComponentView eventName="calypso_stats_parsely_banner_view" />
-					<img src={ parselyIcon } alt="" />
+					<img src={ parselyIcon } alt="" aria-hidden="true" />
 					<div>
 						<FormattedHeader
 							brandFont
@@ -314,7 +314,7 @@ class StatsSite extends Component {
 							) }
 						</p>
 					</div>
-					<Button primary href="https://parse.ly" onClick={ this.parselyClick }>
+					<Button primary href="https://parse.ly" onClick={ this.parselyClick } target="_blank">
 						{ translate( 'Learn more' ) }
 					</Button>
 				</Card>
