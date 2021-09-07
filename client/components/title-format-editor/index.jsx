@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -272,17 +271,15 @@ export class TitleFormatEditor extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const { translate } = ownProps;
-	const formattedDate = moment()
-		.locale( site?.lang ?? '' )
-		.format( 'MMMM YYYY' );
 
-	// Add example content for post/page title, tag name and archive dates
+	// Add example content for post/page title, tag name and archive title.
 	return {
 		titleData: {
 			site,
 			post: { title: translate( 'Example Title' ) },
 			tag: translate( 'Example Tag' ),
-			date: formattedDate,
+			date: translate( 'Example Archive Title/Date' ),
+			archiveTitle: translate( 'Example Archive Title/Date' ),
 		},
 	};
 };
