@@ -4,10 +4,10 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import type {
 	Stripe,
 	StripeConfiguration,
-	StripePaymentRequest,
 	PaymentRequestOptions,
 } from '@automattic/calypso-stripe';
 import type { LineItem } from '@automattic/composite-checkout';
+import type { PaymentRequest } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'wpcom-checkout:web-pay-utils' );
 
@@ -52,7 +52,7 @@ export function usePaymentRequestOptions(
 }
 
 export interface PaymentRequestState {
-	paymentRequest: StripePaymentRequest | undefined;
+	paymentRequest: PaymentRequest | undefined | null;
 	canMakePayment: boolean;
 	isLoading: boolean;
 }
@@ -95,7 +95,7 @@ export function useStripePaymentRequest( {
 		}
 		let isSubscribed = true;
 		debug( 'creating stripe payment request', paymentRequestOptions );
-		const request = stripe.paymentRequest( paymentRequestOptions );
+		const request: PaymentRequest = stripe.paymentRequest( paymentRequestOptions );
 		request
 			.canMakePayment()
 			.then( ( result ) => {
