@@ -74,7 +74,7 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import DomainMappingThankYou from './domains/domain-mapping-thank-you';
+import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -386,7 +386,7 @@ export class CheckoutThankYou extends React.Component {
 		let wasEcommercePlanPurchased = false;
 		let wasMarketplaceProduct = false;
 		let delayedTransferPurchase = false;
-		let wasDomainMappingOnlyProduct = false;
+		let wasDomainMappingOrTransferProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
@@ -395,7 +395,11 @@ export class CheckoutThankYou extends React.Component {
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
-			wasDomainMappingOnlyProduct = purchases.length === 1 && purchases.some( isDomainMapping );
+			wasDomainMappingOrTransferProduct =
+				purchases.length === 1 &&
+				purchases.some(
+					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
+				);
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -468,10 +472,18 @@ export class CheckoutThankYou extends React.Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainMappingOnlyProduct ) {
-			const [ , domainName ] = findPurchaseAndDomain( purchases, isDomainMapping );
+		} else if ( wasDomainMappingOrTransferProduct ) {
+			const [ purchaseType, predicate ] = purchases.some( isDomainMapping )
+				? [ 'MAPPING', isDomainMapping ]
+				: [ 'TRANSFER', isDomainTransfer ];
+			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 			return (
-				<DomainMappingThankYou domainName={ domainName } selectedSite={ this.props.selectedSite } />
+				<DomainThankYou
+					email={ this.props.user?.email }
+					type={ purchaseType }
+					domain={ domainName }
+					selectedSiteSlug={ this.props.selectedSiteSlug }
+				/>
 			);
 		}
 
