@@ -1,3 +1,8 @@
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
+
 import { DataHelper, LoginFlow, SidebarComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
