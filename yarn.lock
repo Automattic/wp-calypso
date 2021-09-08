@@ -6471,14 +6471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.15.0":
-  version: 1.16.0
-  resolution: "@stripe/stripe-js@npm:1.16.0"
-  checksum: 0d3c24eda28976bdd0796b8f59f32733988106f2e063d375e116e9520f31ddbe26afb9342ebc277888ac62579a7667d817272eef72c9620685e200f369a3925b
-  languageName: node
-  linkType: hard
-
-"@stripe/stripe-js@npm:^1.17.1":
+"@stripe/stripe-js@npm:^1.15.0, @stripe/stripe-js@npm:^1.17.1":
   version: 1.17.1
   resolution: "@stripe/stripe-js@npm:1.17.1"
   checksum: 6302ff0406997f16ca29ab86c38d8e1fc0b97fce75ad64da0457be72721bf91e8b25478f1686b47f01702a15ab8fc05f3f99cb6a83cbc50c55c5df5527686221
