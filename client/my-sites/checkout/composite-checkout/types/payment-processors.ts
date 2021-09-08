@@ -4,6 +4,7 @@ import type { ReactStandardAction } from '../types/analytics';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { StripeCardNumberElement } from '@stripe/stripe-js';
 
 export interface PaymentProcessorOptions {
 	includeDomainDetails: boolean;
@@ -17,4 +18,5 @@ export interface PaymentProcessorOptions {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	contactDetails: ManagedContactDetails | undefined;
+	cardNumberElement: StripeCardNumberElement | undefined;
 }
