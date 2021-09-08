@@ -9,7 +9,7 @@ const DisableHEICImages = createHigherOrderComponent( ( MediaPlaceholder ) => {
 			if ( files ) {
 				Object.values( files ).forEach( ( file ) => {
 					const filename = file.name;
-					const extension = filename.split( '.' ).pop().toLowerCase();
+					const extension = filename.split( '.' ).pop()?.toLowerCase();
 
 					if ( 'heic' === extension || 'heif' === extension ) {
 						const error = __(
