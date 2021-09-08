@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { requestSize } from 'calypso/state/rewind/size/actions';
+import type { AppState } from 'calypso/types';
 
 export const useQueryRewindSize = ( siteId: number ): void => {
-	const requesting = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 	const dispatch = useDispatch();
+	const requesting = useSelector( ( state: AppState ) => isRequestingRewindSize( state, siteId ) );
 
 	useEffect( () => {
 		if ( requesting ) {
