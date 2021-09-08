@@ -35,6 +35,9 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	viewButton: '.editor-post-publish-panel a:has-text("View")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
+
+	// Welcome tour
+	welcomeTourSkipButton: '.welcome-tour-card button:has-text("Skip")',
 };
 
 /**
@@ -180,6 +183,16 @@ export class GutenbergEditorPage {
 
 		// Strip out falsey values.
 		return lines.filter( Boolean ).join( '\n' );
+	}
+
+	/**
+	 * Dismisses the Welcome Tour (card) if it is present.
+	 */
+	async dismissWelcomeTourIfPresent(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		if ( await frame.isVisible( selectors.welcomeTourSkipButton ) ) {
+			await frame.click( selectors.welcomeTourSkipButton );
+		}
 	}
 
 	/**
