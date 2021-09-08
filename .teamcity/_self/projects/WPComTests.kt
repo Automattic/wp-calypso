@@ -272,14 +272,6 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
                     shopt -s globstar
                     set -x
 
-                    chmod +x ./bin/get-calypso-live-url.sh
-                    URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-                    if [[ ${'$'}? -ne 0 ]]; then
-                        // Command failed. URL contains stderr
-                        echo ${'$'}URL
-                        exit 1
-                    fi
-
                     cd test/e2e
                     mkdir temp
 
@@ -287,16 +279,18 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
                     export NODE_CONFIG_ENV=test
                     export PLAYWRIGHT_BROWSERS_PATH=0
                     export TEAMCITY_VERSION=2021
+					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
+					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
+					export URL=%URL%
+					export VIEWPORT_NAME=$viewportName
+                    export LOCALE=en
+                    export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+                    export DEBUG=pw:api
 
                     # Decrypt config
                     openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
                     # Run the test
-                    export VIEWPORT_NAME=$viewportName
-                    export LOCALE=en
-                    export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-                    export DEBUG=pw:api
-
                     xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
                 """.trimIndent()
                 dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
