@@ -275,7 +275,6 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
 					cd test/e2e
 					mkdir temp
 
-					export LIVEBRANCHES=true
 					export NODE_CONFIG_ENV=test
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
