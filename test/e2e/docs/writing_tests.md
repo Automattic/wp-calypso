@@ -23,7 +23,7 @@ Refer to the [Playwright style guide](docs/style-guide-playwright.md) for more i
 
 Tests can be written in both TypeScript and JavaScript.
 
-1. create a spec file, following the structure:
+### 1. Create a spec file, following the structure:
 
 ```
 test/e2e/specs/specs-playwright/wp-<major feature>__<subfeature>.ts
@@ -34,7 +34,24 @@ This is for multiple reasons:
 - grouping of test specs by feature.
 - separation of subfeatures into separate files to take advantage of parallelization.
 
-2. import the basics:
+### 2. Assign the spec file to the appropriate suites
+
+Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**  
+To add your spec file to suites, add a jsdoc block at the top of the file, and use the `@group` tag for each suite.
+
+```typescript
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
+```
+
+The current suites used are...
+- `calypso-pr` - tests run pre-merge on every Calypso PR.
+- `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
+
+
+### 3. Import the basics:
 
 ```typescript
 import { setupHooks, DataHelper, LoginFlow } from '@automattic/calypso-e2e';
