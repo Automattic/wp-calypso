@@ -394,7 +394,7 @@ class RemovePurchase extends Component {
 		}
 
 		// Jetpack Plan or Product Cancellation
-		if ( this.props.isJetpack && config.isEnabled( 'jetpack/product-cancellation-flow' ) ) {
+		if ( this.props.isJetpack ) {
 			return this.renderJetpackDialog();
 		}
 

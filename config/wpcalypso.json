@@ -70,7 +70,6 @@
 		"jetpack/features-section/simple": true,
 		"jetpack/happychat": true,
 		"jetpack/only-realtime-products": false,
-		"jetpack/product-cancellation-flow": false,
 		"jetpack/siteless-checkout": true,
 		"jetpack/user-licensing-m1": false,
 		"jetpack/userless-checkout": true,
