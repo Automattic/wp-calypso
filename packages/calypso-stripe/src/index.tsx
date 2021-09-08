@@ -462,6 +462,7 @@ function StripeHookProviderInnerWrapper( {
 } ): JSX.Element {
 	return <StripeContext.Provider value={ stripeData }>{ children }</StripeContext.Provider>;
 }
+
 export function StripeHookProvider( {
 	children,
 	fetchStripeConfiguration,
