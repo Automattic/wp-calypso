@@ -56,7 +56,7 @@ export default function WpcomDomainItem( {
 					disabled={ disabled }
 					busy={ isBusy }
 				>
-					Manage
+					{ __( 'Manage' ) }
 					<Gridicon icon="chevron-down" />
 				</Button>
 			) }
