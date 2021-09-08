@@ -47,6 +47,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
+	const legacyPlan = planRecommendation ? planRecommendation[ 0 ] : null;
 
 	useEffect( () => {
 		dispatch(
@@ -57,6 +58,17 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			} )
 		);
 	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_pricing_legacy_redirect', {
+				site: siteSlug,
+				path: viewTrackerPath,
+				root_path: rootUrl,
+				legacy_plan: legacyPlan,
+			} )
+		);
+	}, [ legacyPlan, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
 	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
