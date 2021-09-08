@@ -4,6 +4,12 @@ import { createEbanxToken } from 'calypso/lib/store-transactions';
 import wp from 'calypso/lib/wp';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type {
+	Stripe,
+	StripeCardNumberElement,
+	StripeError,
+	PaymentMethod,
+} from '@stripe/stripe-js';
 
 jest.mock( 'calypso/lib/wp' );
 jest.mock( 'calypso/lib/store-transactions', () => ( {
@@ -15,32 +21,45 @@ async function createMockStripeToken( {
 	card,
 	billing_details,
 }: {
-	type: string;
-	card: unknown;
-	billing_details: Record< string, unknown >;
-} ) {
+	type: 'card';
+	card: StripeCardNumberElement;
+	billing_details: PaymentMethod.BillingDetails;
+} ): Promise< { paymentMethod: PaymentMethod } | { error: StripeError } > {
+	const makeError = ( message: string ): StripeError => ( { type: 'card_error', message } );
+
 	if ( type !== 'card' ) {
-		return { error: new Error( 'stripe error: unknown type: ' + type ) };
+		return { error: makeError( 'stripe error: unknown type: ' + type ) };
 	}
 	if ( ! card ) {
-		return { error: new Error( 'stripe error: missing card element' ) };
+		return { error: makeError( 'stripe error: missing card element' ) };
 	}
 	if ( ! billing_details ) {
-		return { error: new Error( 'stripe error: missing billing_details' ) };
+		return { error: makeError( 'stripe error: missing billing_details' ) };
 	}
 	if ( ! billing_details.name ) {
-		return { error: new Error( 'stripe error: missing billing_details.name' ) };
+		return { error: makeError( 'stripe error: missing billing_details.name' ) };
 	}
 	if ( ! billing_details.address ) {
-		return { error: new Error( 'stripe error: missing billing_details.address' ) };
+		return { error: makeError( 'stripe error: missing billing_details.address' ) };
 	}
-	if ( ! ( billing_details.address as Record< string, string > )?.country ) {
-		return { error: new Error( 'stripe error: missing billing_details.address.country' ) };
+	if ( ! billing_details.address?.country ) {
+		return { error: makeError( 'stripe error: missing billing_details.address.country' ) };
 	}
-	if ( ! ( billing_details.address as Record< string, string > )?.postal_code ) {
-		return { error: new Error( 'stripe error: missing billing_details.address.postal_code' ) };
+	if ( ! billing_details.address?.postal_code ) {
+		return { error: makeError( 'stripe error: missing billing_details.address.postal_code' ) };
 	}
-	return { paymentMethod: { id: 'stripe-token' } };
+	return {
+		paymentMethod: {
+			id: 'stripe-token',
+			object: 'payment_method',
+			billing_details,
+			created: 0,
+			customer: null,
+			livemode: false,
+			metadata: {},
+			type: 'test',
+		},
+	};
 }
 
 async function createMockEbanxToken( requestType: string, cardDetails: Record< string, string > ) {
@@ -72,7 +91,7 @@ describe( 'multiPartnerCardProcessor', () => {
 	const stripeConfiguration = {
 		processor_id: 'IE',
 		js_url: 'https://stripe-js-url',
-		public_key: 'stripe-public-key',
+		public_key: 'pk_test_1234567890',
 		setup_intent_id: null,
 	};
 	const product = getEmptyResponseCartProduct();
@@ -82,6 +101,7 @@ describe( 'multiPartnerCardProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
+
 	const mockCardNumberElement = () => <div>mock card number</div>;
 	mockCardNumberElement.mount = () => undefined;
 	mockCardNumberElement.blur = () => undefined;
@@ -93,23 +113,6 @@ describe( 'multiPartnerCardProcessor', () => {
 	mockCardNumberElement.off = () => mockCardNumberElement;
 	mockCardNumberElement.once = () => mockCardNumberElement;
 	mockCardNumberElement.update = () => undefined;
-	const options: PaymentProcessorOptions = {
-		cardNumberElement: mockCardNumberElement,
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
-		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
-		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
-	};
-	const stripe = {
-		createPaymentMethod: createMockStripeToken,
-	};
 
 	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
 	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
@@ -214,6 +217,26 @@ describe( 'multiPartnerCardProcessor', () => {
 		transactions: transactionsEndpoint,
 	};
 	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
+
+	const stripe = {
+		createPaymentMethod: createMockStripeToken,
+	} as Stripe;
+
+	const options: PaymentProcessorOptions = {
+		cardNumberElement: mockCardNumberElement,
+		includeDomainDetails: false,
+		includeGSuiteDetails: false,
+		createUserAndSiteBeforeTransaction: false,
+		stripe,
+		stripeConfiguration,
+		recordEvent: () => null,
+		reduxDispatch: () => null,
+		responseCart: cart,
+		getThankYouUrl: () => '',
+		siteSlug: undefined,
+		siteId: undefined,
+		contactDetails: undefined,
+	};
 
 	beforeEach( () => {
 		transactionsEndpoint.mockClear();
