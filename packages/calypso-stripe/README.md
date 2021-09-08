@@ -2,7 +2,7 @@
 
 This is a library of components and functions for using Stripe for credit card processing in Calypso.
 
-This uses [Stripe elements](https://stripe.com/payments/elements), but with [an older version of the npm package](https://github.com/stripe/react-stripe-elements). We plan to migrate to [the newer version](https://github.com/stripe/react-stripe-js) eventually.
+This uses [Stripe elements](https://stripe.com/payments/elements).
 
 ## StripeHookProvider
 
