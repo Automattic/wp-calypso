@@ -275,17 +275,17 @@ fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): Bui
                     cd test/e2e
                     mkdir temp
 
-                    export LIVEBRANCHES=true
-                    export NODE_CONFIG_ENV=test
-                    export PLAYWRIGHT_BROWSERS_PATH=0
-                    export TEAMCITY_VERSION=2021
+					export LIVEBRANCHES=true
+					export NODE_CONFIG_ENV=test
+					export PLAYWRIGHT_BROWSERS_PATH=0
+					export TEAMCITY_VERSION=2021
 					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
 					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 					export URL=%URL%
 					export VIEWPORT_NAME=$viewportName
-                    export LOCALE=en
-                    export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-                    export DEBUG=pw:api
+					export LOCALE=en
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+					export DEBUG=pw:api
 
                     # Decrypt config
                     openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
