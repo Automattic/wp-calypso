@@ -96,6 +96,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
 			stripeConfiguration,
+			cardNumberElement: undefined,
 			contactDetails: {
 				countryCode: wrapValueInManagedValue( countryCode ),
 				postalCode: wrapValueInManagedValue( postalCode ),
