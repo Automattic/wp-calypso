@@ -116,11 +116,15 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 	}
 `;
 
+const DeleteButtonWrapper = styled.div`
+	width: 100%;
+	order: 1;
+`;
+
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	display: inline-block;
 	width: auto;
 	text-align: left;
-	order: 1;
 	font-size: 0.75rem;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	margin-top: 4px;
@@ -203,21 +207,23 @@ function WPNonProductLineItem( {
 			</span>
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButton
-						className="checkout-line-item__remove-product"
-						buttonType={ 'text-button' }
-						aria-label={ String(
-							translate( 'Remove %s from cart', {
-								args: label,
-							} )
-						) }
-						disabled={ isDisabled }
-						onClick={ () => {
-							setIsModalVisible( true );
-						} }
-					>
-						{ translate( 'Remove from cart' ) }
-					</DeleteButton>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType={ 'text-button' }
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: label,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
 
 					<CheckoutModal
 						isVisible={ isModalVisible }
@@ -769,27 +775,29 @@ function WPLineItem( {
 			</span>
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButton
-						className="checkout-line-item__remove-product"
-						buttonType={ 'text-button' }
-						aria-label={ String(
-							translate( 'Remove %s from cart', {
-								args: label,
-							} )
-						) }
-						disabled={ isDisabled }
-						onClick={ () => {
-							setIsModalVisible( true );
-							onEvent( {
-								type: 'a8c_checkout_delete_product_press',
-								payload: {
-									product_name: label,
-								},
-							} );
-						} }
-					>
-						{ translate( 'Remove from cart' ) }
-					</DeleteButton>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType={ 'text-button' }
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: label,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+								onEvent( {
+									type: 'a8c_checkout_delete_product_press',
+									payload: {
+										product_name: label,
+									},
+								} );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
 
 					<CheckoutModal
 						isVisible={ isModalVisible }
