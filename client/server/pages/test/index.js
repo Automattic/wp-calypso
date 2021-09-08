@@ -1449,6 +1449,7 @@ describe( 'main app', () => {
 			const customApp = buildApp( 'development' );
 			customApp.withRenderJSX( 'content' );
 			customApp.withEvergreenBrowser();
+			customApp.withMockFilesystem();
 
 			const { response } = await customApp.run( {
 				request: {
