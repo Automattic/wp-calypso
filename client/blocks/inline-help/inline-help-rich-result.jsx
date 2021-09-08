@@ -24,10 +24,16 @@ class InlineHelpRichResult extends Component {
 		tour: PropTypes.string,
 	};
 
-	buttonLabels = {
-		article: this.props.translate( 'Read more' ),
-		video: this.props.translate( 'Watch a video' ),
-		tour: this.props.translate( 'Start Tour' ),
+	getButtonLabel = ( type ) => {
+		const { translate } = this.props;
+
+		const labels = {
+			article: translate( 'Read more' ),
+			video: translate( 'Watch a video' ),
+			tour: translate( 'Start Tour' ),
+		};
+
+		return labels[ type ];
 	};
 
 	buttonIcons = {
@@ -70,7 +76,7 @@ class InlineHelpRichResult extends Component {
 
 	render() {
 		const { type, title, description, link } = this.props;
-		const buttonLabel = this.buttonLabels[ type ] ?? '';
+		const buttonLabel = this.getButtonLabel( type );
 		const buttonIcon = this.buttonIcons[ type ];
 		const classes = classNames( 'inline-help__richresult__title' );
 
