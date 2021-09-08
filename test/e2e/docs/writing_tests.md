@@ -23,7 +23,7 @@ Refer to the [Playwright style guide](docs/style-guide-playwright.md) for more i
 
 Tests can be written in both TypeScript and JavaScript.
 
-### 1. Create a spec file, following the structure:
+### 1. Create a spec file with the following structure
 
 ```
 test/e2e/specs/specs-playwright/wp-<major feature>__<subfeature>.ts
@@ -51,7 +51,7 @@ The current suites used are...
 - `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
 
 
-### 3. Import the basics:
+### 3. Import the basics
 
 ```typescript
 import { setupHooks, DataHelper, LoginFlow } from '@automattic/calypso-e2e';
