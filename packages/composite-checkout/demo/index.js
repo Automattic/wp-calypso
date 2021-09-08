@@ -21,11 +21,8 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-	createStripeMethod,
-	createStripePaymentMethodStore,
-} from '../src/lib/stripe-credit-card-fields-demo';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
+import { createPayPalMethod } from './pay-pal';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
@@ -212,16 +209,9 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration ] );
 
-	const stripeStore = useMemo( () => createStripePaymentMethodStore(), [] );
-
-	const stripeMethod = useMemo( () => {
-		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
-			return null;
-		}
-		return createStripeMethod( { store: stripeStore } );
-	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
-
-	const paymentMethods = [ stripeMethod ].filter( Boolean );
+	const payPalMethod = useMemo( () => {
+		return createPayPalMethod();
+	}, [] );
 
 	return (
 		<CheckoutProvider
@@ -231,9 +221,9 @@ function MyCheckout() {
 			onPaymentComplete={ onPaymentComplete }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
-			paymentMethods={ paymentMethods }
+			paymentMethods={ [ payPalMethod ] }
 			paymentProcessors={ { card: stripeCardProcessor } }
-			initiallySelectedPaymentMethodId={ paymentMethods[ 0 ]?.id }
+			initiallySelectedPaymentMethodId={ payPalMethod }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>
