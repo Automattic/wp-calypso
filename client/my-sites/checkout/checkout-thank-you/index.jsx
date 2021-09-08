@@ -391,7 +391,7 @@ export class CheckoutThankYou extends React.Component {
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainMappingOrTransferProduct = false;
-		let wasTitanEmailProductOnly = false;
+		let wasTitanEmailOnlyProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
@@ -406,7 +406,7 @@ export class CheckoutThankYou extends React.Component {
 					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
 				);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
-			wasTitanEmailProductOnly = purchases.length === 1 && purchases.some( isTitanMail );
+			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -499,7 +499,7 @@ export class CheckoutThankYou extends React.Component {
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 				/>
 			);
-		} else if ( wasTitanEmailProductOnly ) {
+		} else if ( wasTitanEmailOnlyProduct ) {
 			return (
 				<TitanSetUpThankYou
 					domainName={ purchases[ 0 ].meta }
