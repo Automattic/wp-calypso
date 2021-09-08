@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get, filter, find } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/site-keyrings/init';
 
 /**

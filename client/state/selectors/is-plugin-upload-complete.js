@@ -1,9 +1,4 @@
-/**
- * Internal dependencies
- */
-
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
-
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 
 /**

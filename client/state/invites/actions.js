@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { get, truncate } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { acceptedNotice } from 'calypso/my-sites/invites/utils';
-import { getInviteForSite } from 'calypso/state/invites/selectors';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { receiveSite } from 'calypso/state/sites/actions';
+import wpcom from 'calypso/lib/wp';
+import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -26,6 +15,10 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { getInviteForSite } from 'calypso/state/invites/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 
 import 'calypso/state/invites/init';
 

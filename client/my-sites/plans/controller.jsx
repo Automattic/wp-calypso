@@ -4,14 +4,16 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
+import { default as getIsJetpackProductSite } from 'calypso/state/sites/selectors/is-jetpack-product-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Plans from './plans';
 
 function showJetpackPlans( context ) {
 	const getState = context.store.getState();
 	const siteId = getSelectedSiteId( getState );
+	const isJetpackProductSite = getIsJetpackProductSite( getState, siteId );
 	const isWpcom = isSiteWpcom( getState, siteId );
-	return ! isWpcom;
+	return ! isWpcom || isJetpackProductSite;
 }
 
 export function plans( context, next ) {

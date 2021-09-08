@@ -7,9 +7,6 @@ const mockUseTranslate = () => ( text ) => text;
 const mockUseCanGoToDate = () => () => true;
 const mockIsEnabled = () => true;
 
-/**
- * Mock dependencies
- */
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	useTranslate: jest.fn(),

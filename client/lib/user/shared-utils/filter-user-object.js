@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
 import { getComputedAttributes } from './get-computed-attributes';
 

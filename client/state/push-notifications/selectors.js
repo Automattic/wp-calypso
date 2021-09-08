@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/push-notifications/init';
 
 // `getState().pushNotifications.system`

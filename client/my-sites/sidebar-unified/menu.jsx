@@ -3,7 +3,7 @@
  *
  * Renders a top level menu item with children.
  * This item can be expanded and collapsed by clicking.
- **/
+ */
 
 import { isWithinBreakpoint } from '@automattic/viewport';
 import PropTypes from 'prop-types';

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,

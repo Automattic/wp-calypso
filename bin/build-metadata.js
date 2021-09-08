@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const request = require( 'request' );
+const fs = require( 'fs' );
+const path = require( 'path' );
 const vm = require( 'vm' );
 const _ = require( 'lodash' );
-const path = require( 'path' );
-const fs = require( 'fs' );
+const request = require( 'request' );
 
 const areaCodes = {
 	CA: [

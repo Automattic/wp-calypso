@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';

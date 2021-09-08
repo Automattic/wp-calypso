@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MAILCHIMP_LISTS_LIST, MAILCHIMP_LISTS_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/mailchimp';

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
 import 'calypso/state/signup/init';

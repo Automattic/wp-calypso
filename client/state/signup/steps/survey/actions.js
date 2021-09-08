@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SIGNUP_STEPS_SURVEY_SET } from 'calypso/state/action-types';
 import {
 	composeAnalytics,

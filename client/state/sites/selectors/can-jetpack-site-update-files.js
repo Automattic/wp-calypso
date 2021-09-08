@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteOption from './get-site-option';
 import isJetpackSite from './is-jetpack-site';
 import isJetpackSiteSecondaryNetworkSite from './is-jetpack-site-secondary-network-site';

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { queries, queryRequests } from '../reducer';
 import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
 	TERM_REMOVE,
@@ -18,6 +10,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { queries, queryRequests } from '../reducer';
 
 /**
  * Test Data

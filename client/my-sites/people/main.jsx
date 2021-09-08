@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -55,16 +56,34 @@ class People extends React.Component {
 			default:
 				return isWPForTeamsSite
 					? this.getSubheaderTextForP2()
-					: translate( 'Invite contributors to your site and manage their access settings.' );
+					: translate(
+							'Invite contributors to your site and manage their access settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="team" showIcon={ false } />,
+								},
+							}
+					  );
 		}
 	}
 
 	getSubheaderTextForP2() {
 		const { isP2HubSite, translate } = this.props;
+		const translateArgs = {
+			components: {
+				learnMoreLink: <InlineSupportLink supportContext="team" showIcon={ false } />,
+			},
+		};
 		if ( isP2HubSite ) {
-			return translate( 'Invite members to your P2 and manage their access setting.' );
+			return translate(
+				'Invite members to your P2 and manage their access setting.',
+				translateArgs
+			);
 		}
-		return translate( 'Invite members and guests to this space and manage their access settings.' );
+		return translate(
+			'Invite members and guests to this space and manage their access settings.',
+			translateArgs
+		);
 	}
 
 	renderHeaderText() {

@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.Component {

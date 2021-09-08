@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { isLegacyRoute } from '../legacy-routes';
-import config from '@automattic/calypso-config';
 
 let features = [];
 

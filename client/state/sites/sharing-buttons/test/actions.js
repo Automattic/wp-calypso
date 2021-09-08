@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import {
-	receiveSharingButtons,
-	requestSharingButtons,
-	saveSharingButtons,
-	updateSharingButtons,
-} from '../actions';
 import {
 	SHARING_BUTTONS_RECEIVE,
 	SHARING_BUTTONS_REQUEST,
@@ -25,6 +12,12 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import {
+	receiveSharingButtons,
+	requestSharingButtons,
+	saveSharingButtons,
+	updateSharingButtons,
+} from '../actions';
 
 describe( 'actions', () => {
 	let spy;

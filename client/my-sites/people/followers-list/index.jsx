@@ -8,9 +8,6 @@ import useRemoveFollowerMutation from 'calypso/data/followers/use-remove-followe
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import Followers from './followers';
 
-/**
- * Stylesheet dependencies
- */
 import './style.scss';
 
 const useErrorNotice = ( type, error, refetch ) => {

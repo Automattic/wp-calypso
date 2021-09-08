@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { NOTIFICATIONS_PANEL_TOGGLE } from '../../state/action-types';
-
 import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET } from '../../state/desktop/window-events';
 
 /**

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	READER_TAG_IMAGES_RECEIVE,
 	READER_TAG_IMAGES_REQUEST,

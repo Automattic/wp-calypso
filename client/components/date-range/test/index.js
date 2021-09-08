@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { Popover } from '@automattic/components';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
@@ -11,7 +12,6 @@ import DatePicker from 'calypso/components/date-picker';
 import DateRangeHeader from 'calypso/components/date-range/header';
 import DateRangeInputs from 'calypso/components/date-range/inputs';
 import DateRangeTrigger from 'calypso/components/date-range/trigger';
-import Popover from 'calypso/components/popover';
 import { DateRange } from '../index.js';
 
 function dateToLocaleString( date ) {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteBlocksLastPage } from 'calypso/state/reader/site-blocks/selectors';
 
 describe( 'getSiteBlocksLastPage()', () => {

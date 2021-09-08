@@ -18,7 +18,7 @@ This component displays a WordPress.com site preview, used by the signup journey
 	resize={ true }
 	scrolling={ false }
 	className="sophisticated"
-/>
+/>;
 ```
 
 ## Props

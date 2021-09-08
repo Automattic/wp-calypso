@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import type { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
 import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
@@ -13,8 +5,9 @@ import {
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
 	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 } from 'calypso/state/action-types';
-import { MARKETPLACE_ASYNC_PROCESS_STATUS, IPurchaseFlowState } from '../types';
 import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-types';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS, IPurchaseFlowState } from '../types';
+import type { AnyAction } from 'redux';
 
 export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,

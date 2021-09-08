@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Falsy } from 'utility-types';
 
 interface Stringable {

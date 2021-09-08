@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 
-/**
- *
- * Style dependencies
- */
 import './style.scss';
 
 class DomainsLandingHeader extends Component {

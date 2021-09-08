@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,

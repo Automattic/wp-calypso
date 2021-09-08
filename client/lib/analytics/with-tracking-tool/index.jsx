@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { createHigherOrderComponent } from '@wordpress/compose';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 
 export default ( trackingTool ) =>

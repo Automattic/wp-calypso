@@ -1,11 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_EXTRA_LICENSE_SLUG,
-} from 'calypso/lib/gsuite/constants';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	formatProduct,
 	isCustomDesign,
@@ -42,8 +34,14 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from '@automattic/calypso-products';
+import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_EXTRA_LICENSE_SLUG,
+} from 'calypso/lib/gsuite/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 
 /**
  * Retrieves all the items in the specified shopping cart.
@@ -670,16 +668,6 @@ export function updatePrivacyForDomain( item, value ) {
  */
 function isPartialCredits( cartItem ) {
 	return cartItem.product_slug === 'wordpress-com-credits';
-}
-
-/**
- * Determines whether a cart item is a renewal
- *
- * @param {{extra?: import('@automattic/shopping-cart').ResponseCartProductExtra}} cartItem - object with `extra` property
- * @returns {boolean} true if item is a renewal
- */
-export function isRenewal( cartItem ) {
-	return cartItem.extra && cartItem.extra.purchaseType === 'renewal';
 }
 
 /**

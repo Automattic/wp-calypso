@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import update from 'immutability-helper';
 import {
 	camelCase,
 	debounce,
@@ -13,7 +11,6 @@ import {
 	property,
 	some,
 } from 'lodash';
-import update from 'immutability-helper';
 import { v4 as uuid } from 'uuid';
 
 function Controller( options ) {

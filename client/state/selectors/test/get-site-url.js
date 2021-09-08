@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 describe( 'getSiteUrl()', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteOption from './get-site-option';
 
 const MINUTE_IN_MS = 60 * 1000;

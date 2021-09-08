@@ -5,11 +5,11 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-    - [Table of contents](#table-of-contents)
-    - [What is this?](#what-is-this)
-    - [Our Goals](#our-goals)
-    - [Technology](#technology)
-    - [What is tested?](#what-is-tested)
+  - [Table of contents](#table-of-contents)
+  - [What is this?](#what-is-this)
+  - [Our Goals](#our-goals)
+  - [Technology](#technology)
+  - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
 

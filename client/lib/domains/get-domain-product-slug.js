@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getTld } from './get-tld';
 
 export function getDomainProductSlug( domain ) {

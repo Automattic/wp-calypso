@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import { READER_LIST_ITEM_ADD_FEED } from 'calypso/state/reader/action-types';
 import { receiveAddReaderListFeed } from 'calypso/state/reader/lists/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 	[ READER_LIST_ITEM_ADD_FEED ]: [

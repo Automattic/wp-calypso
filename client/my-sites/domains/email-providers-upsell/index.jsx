@@ -35,6 +35,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 					comment,
 				} ) }
 				selectedDomainName={ domain }
+				skipButtonLabel={ translate( 'Skip' ) }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

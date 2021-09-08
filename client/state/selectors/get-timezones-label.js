@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 
 import 'calypso/state/timezones/init';

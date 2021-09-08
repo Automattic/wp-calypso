@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

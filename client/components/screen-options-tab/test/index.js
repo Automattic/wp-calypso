@@ -9,11 +9,6 @@ import jetpack from 'calypso/state/jetpack/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import ScreenOptionsTab from '../index';
 
-jest.mock( 'calypso/state/preferences/selectors', () => ( {
-	hasReceivedRemotePreferences: jest.fn( () => true ),
-	getPreference: jest.fn( () => true ),
-} ) );
-
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn( () => () => {} ),

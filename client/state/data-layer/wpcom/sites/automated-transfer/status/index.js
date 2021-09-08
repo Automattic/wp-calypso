@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
 import { delay } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { AUTOMATED_TRANSFER_STATUS_REQUEST } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { requestSite } from 'calypso/state/sites/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	fetchAutomatedTransferStatus,
 	setAutomatedTransferStatus,
 	automatedTransferStatusFetchingFailure,
 } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestSite } from 'calypso/state/sites/actions';
 
 export const requestStatus = ( action ) =>
 	http(

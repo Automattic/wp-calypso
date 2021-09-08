@@ -1,3 +1,4 @@
+const childProcess = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 
@@ -22,11 +23,6 @@ function hasImports( f ) {
 	return zero;
 }
 
-/**
- *
- * @param {string} f
- * @param {string} name
- */
 function hasNonCompliantToplevelSelectors( f, name ) {
 	let topLevelSelectors;
 	const re = /^\.([\w_\-.]+)/gm;
@@ -51,7 +47,6 @@ function hasNonCompliantToplevelSelectors( f, name ) {
 	return zero;
 }
 
-const childProcess = require( 'child_process' );
 function overridenByOthers( f, name, componentPath ) {
 	const results = childProcess.spawnSync(
 		'git',

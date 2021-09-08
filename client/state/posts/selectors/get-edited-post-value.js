@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getEditedPost } from 'calypso/state/posts/selectors/get-edited-post';
 
 import 'calypso/state/posts/init';

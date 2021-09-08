@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
 import { StoredItems } from './types';
 
 const debug = debugModule( 'calypso:support-user' );

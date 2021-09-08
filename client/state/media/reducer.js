@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { isEmpty, mapValues, omit, pickBy, without, merge, isEqual } from 'lodash';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
+import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	MEDIA_DELETE,
 	MEDIA_ERRORS_CLEAR,
@@ -26,12 +23,8 @@ import {
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
-import isTransientMediaId from 'calypso/lib/media/utils/is-transient-media-id';
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
-import MediaQueryManager from 'calypso/lib/query-manager/media';
-import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
+import { combineReducers } from 'calypso/state/utils';
 
 const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );

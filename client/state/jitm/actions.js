@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { JITM_DISMISS, JITM_FETCH, JITM_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/jitm';

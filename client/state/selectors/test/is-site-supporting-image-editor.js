@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isSiteSupportingImageEditor from 'calypso/state/selectors/is-site-supporting-image-editor';
 
 describe( 'isSiteSupportingImageEditor()', () => {

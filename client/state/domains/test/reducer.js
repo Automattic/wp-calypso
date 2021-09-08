@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import reducer from '../reducer';
 
 describe( 'reducer', () => {

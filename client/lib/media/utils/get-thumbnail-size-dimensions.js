@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ThumbnailSizeDimensions } from 'calypso/lib/media/constants';
 
 /**

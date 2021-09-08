@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import siteSupportsRealtimeBackup from 'calypso/state/selectors/site-supports-realtime-backup';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -12,6 +8,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
+import siteSupportsRealtimeBackup from 'calypso/state/selectors/site-supports-realtime-backup';
 
 describe( 'siteSupportsRealtimeBackup()', () => {
 	test( 'should return false when no data is available', () => {

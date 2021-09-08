@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/themes/init';

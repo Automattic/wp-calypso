@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, includes, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -133,6 +126,13 @@ export function getSignupUrl(
 			oauth2_redirect: redirectTo,
 		} );
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+	}
+
+	if ( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) {
+		const params = new URLSearchParams( {
+			redirect_to: redirectTo,
+		} );
+		signupUrl = `/start/account?${ params.toString() }`;
 	}
 
 	return signupUrl;

@@ -1,11 +1,5 @@
-/**
- * External Dependencies
- */
 import { filter, map } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
@@ -14,7 +8,6 @@ import {
 	READER_SITE_UPDATE,
 } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
-import wpcom from 'calypso/lib/wp';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 
 import 'calypso/state/reader/init';

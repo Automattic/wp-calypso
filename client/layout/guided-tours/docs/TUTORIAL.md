@@ -67,7 +67,6 @@ For `index.js`, this is the essential boilerplate, which comprises the imports a
 
 ```javascript
 import React from 'react';
-import meta from './meta';
 import {
 	makeTour,
 	Tour,
@@ -81,6 +80,7 @@ import {
 	isEnabled,
 	isSelectedSitePreviewable,
 } from 'calypso/state/guided-tours/contexts';
+import meta from './meta';
 
 export const TutorialSitePreviewTour = makeTour();
 ```

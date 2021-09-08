@@ -20,7 +20,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
-import { emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -112,7 +112,7 @@ class EmailManagementHome extends React.Component {
 			domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount > 0 &&
 			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
 		) {
-			page( emailManagementTitanSetupMailbox( selectedSite.slug, selectedSite.domain ) );
+			page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedSite.domain ) );
 		}
 
 		return this.renderContentWithHeader(

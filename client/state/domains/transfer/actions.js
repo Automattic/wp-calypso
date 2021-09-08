@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	DOMAIN_TRANSFER_ACCEPT,
 	DOMAIN_TRANSFER_ACCEPT_COMPLETED,

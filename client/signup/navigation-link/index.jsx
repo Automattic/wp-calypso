@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -28,11 +27,13 @@ export class NavigationLink extends Component {
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
 		rel: PropTypes.string,
+		borderless: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labelText: '',
 		allowBackFirstStep: false,
+		borderless: true,
 	};
 
 	getPreviousStep( flowName, signupProgress, currentStepName ) {
@@ -123,7 +124,7 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
-		const { translate, labelText } = this.props;
+		const { translate, labelText, borderless } = this.props;
 
 		if (
 			this.props.positionInFlow === 0 &&
@@ -160,7 +161,7 @@ export class NavigationLink extends Component {
 
 		return (
 			<Button
-				borderless
+				borderless={ borderless }
 				className={ buttonClasses }
 				href={ this.getBackUrl() }
 				onClick={ this.handleClick }

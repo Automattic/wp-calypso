@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { get, find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getVerticals } from 'calypso/state/signup/verticals/selectors';
 import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
+import { getVerticals } from 'calypso/state/signup/verticals/selectors';
 
 import 'calypso/state/signup/init';
 

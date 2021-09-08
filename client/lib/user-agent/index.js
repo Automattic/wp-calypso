@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import UserAgent from 'express-useragent';
 
 /*

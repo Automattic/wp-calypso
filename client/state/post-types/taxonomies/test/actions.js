@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receivePostTypeTaxonomies, requestPostTypeTaxonomies } from '../actions';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
@@ -15,6 +7,7 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { receivePostTypeTaxonomies, requestPostTypeTaxonomies } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

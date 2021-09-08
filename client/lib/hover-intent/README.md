@@ -32,8 +32,8 @@ Default `interval: 700`
 ## Example
 
 ```javascript
-import HoverIntent from 'calypso/lib/hover-intent';
 import classnames from 'classnames';
+import HoverIntent from 'calypso/lib/hover-intent';
 
 class App extends Component {
 	constructor() {

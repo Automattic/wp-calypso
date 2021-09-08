@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { saveSiteSettings, updateSiteSettings } from 'calypso/state/site-settings/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { addMedia } from 'calypso/state/media/thunks/add-media';
 import { createTransientMediaId } from 'calypso/lib/media/utils';
+import { addMedia } from 'calypso/state/media/thunks/add-media';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { saveSiteSettings, updateSiteSettings } from 'calypso/state/site-settings/actions';
 
 const updateSiteIcon = ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } );
 

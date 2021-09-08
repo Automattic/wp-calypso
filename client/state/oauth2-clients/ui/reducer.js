@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import { ROUTE_SET } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const currentClientId = ( state = null, action ) => {
 	switch ( action.type ) {

@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -7,7 +7,6 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

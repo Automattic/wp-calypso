@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -10,7 +9,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import Gridicon from 'calypso/components/gridicon';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
 
 import './style.scss';
@@ -18,7 +16,6 @@ import './style.scss';
 const noop = () => {};
 
 const TitanNewMailbox = ( {
-	onMailboxRemove,
 	onMailboxValueChange,
 	onReturnKeyPress = noop,
 	mailbox: {
@@ -31,7 +28,6 @@ const TitanNewMailbox = ( {
 	},
 	showAllErrors = false,
 	showLabels = true,
-	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -87,22 +83,12 @@ const TitanNewMailbox = ( {
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
 					</FormFieldset>
-
-					{ showTrashButton && (
-						<Button
-							className="titan-new-mailbox__remove-mailbox-button"
-							onClick={ onMailboxRemove }
-						>
-							<Gridicon icon="trash" />
-							<span>{ translate( 'Remove mailbox' ) }</span>
-						</Button>
-					) }
 				</div>
 				<FormFieldset>
 					<FormLabel>
 						{ showLabels && translate( 'Email address' ) }
 						<FormTextInputWithAffixes
-							placeholder={ translate( 'Email' ) }
+							placeholder={ translate( 'Email address' ) }
 							value={ mailbox }
 							isError={ hasMailboxError }
 							onChange={ ( event ) => {
@@ -182,19 +168,16 @@ const TitanNewMailbox = ( {
 					) }
 				</FormFieldset>
 			</div>
-			<hr className="titan-new-mailbox__separator" />
 		</>
 	);
 };
 
 TitanNewMailbox.propTypes = {
-	onMailboxRemove: PropTypes.func.isRequired,
 	onMailboxValueChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func.isRequired,
 	mailbox: getMailboxPropTypeShape(),
 	showAllErrors: PropTypes.bool,
 	showLabels: PropTypes.bool.isRequired,
-	showTrashButton: PropTypes.bool,
 };
 
 export default TitanNewMailbox;

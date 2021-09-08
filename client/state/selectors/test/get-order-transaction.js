@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 
 describe( 'getOrderTransaction()', () => {

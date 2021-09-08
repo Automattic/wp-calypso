@@ -1,15 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	clearNewApplicationPassword,
-	createApplicationPassword,
-	createApplicationPasswordSuccess,
-	deleteApplicationPassword,
-	deleteApplicationPasswordSuccess,
-	receiveApplicationPasswords,
-	requestApplicationPasswords,
-} from '../actions';
 import {
 	APPLICATION_PASSWORD_CREATE,
 	APPLICATION_PASSWORD_CREATE_SUCCESS,
@@ -19,6 +7,15 @@ import {
 	APPLICATION_PASSWORDS_RECEIVE,
 	APPLICATION_PASSWORDS_REQUEST,
 } from 'calypso/state/action-types';
+import {
+	clearNewApplicationPassword,
+	createApplicationPassword,
+	createApplicationPasswordSuccess,
+	deleteApplicationPassword,
+	deleteApplicationPasswordSuccess,
+	receiveApplicationPasswords,
+	requestApplicationPasswords,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( 'requestApplicationPasswords()', () => {

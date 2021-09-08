@@ -7,14 +7,13 @@ import page from 'page';
 import React, { ReactChild } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import EligibilityWarnings from '..';
 
 import '@testing-library/jest-dom/extend-expect';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
-
-import EligibilityWarnings from '..';
 
 function renderWithStore( element: ReactChild, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );

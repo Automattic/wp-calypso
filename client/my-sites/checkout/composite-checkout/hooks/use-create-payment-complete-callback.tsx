@@ -39,8 +39,8 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
-	PaymentCompleteCallback,
-	PaymentCompleteCallbackArguments,
+	PaymentEventCallback,
+	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
@@ -71,8 +71,8 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug: string | undefined;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
-} ): PaymentCompleteCallback {
-	const { responseCart } = useShoppingCart();
+} ): PaymentEventCallback {
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -95,7 +95,7 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 
 	return useCallback(
-		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
+		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 
@@ -195,6 +195,7 @@ export default function useCreatePaymentCompleteCallback( {
 					fetchSitesAndUser(
 						domainName,
 						() => {
+							reloadCart();
 							performRedirect( url );
 						},
 						reduxStore
@@ -226,9 +227,11 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
+			reloadCart();
 			performRedirect( url );
 		},
 		[
+			reloadCart,
 			siteSlug,
 			adminUrl,
 			redirectTo,
@@ -257,6 +260,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 function performRedirect( url: string ): void {
 	try {
+		window.scrollTo( 0, 0 );
 		page( url );
 	} catch ( err ) {
 		window.location.href = url;

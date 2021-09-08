@@ -1,17 +1,8 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-import page from 'page';
-import { compact } from 'lodash';
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import i18n from 'i18n-calypso';
+import { compact } from 'lodash';
+import page from 'page';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
@@ -21,12 +12,14 @@ import {
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
-import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
+import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
 const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =

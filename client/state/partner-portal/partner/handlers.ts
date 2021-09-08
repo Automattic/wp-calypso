@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
+import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receivePartnerError, receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import {
 	APIError,
 	DispatchRequest,
 	Partner,
 	PartnerPortalThunkAction,
 } from 'calypso/state/partner-portal/types';
-import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { receivePartnerError, receivePartner } from 'calypso/state/partner-portal/partner/actions';
-import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 
 export function fetchPartnerHandler( action: AnyAction ): AnyAction {
 	return http(

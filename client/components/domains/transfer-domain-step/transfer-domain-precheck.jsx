@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -9,7 +9,6 @@ import migratingHostImage from 'calypso/assets/images/illustrations/migrating-ho
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import {
 	CALYPSO_CONTACT,

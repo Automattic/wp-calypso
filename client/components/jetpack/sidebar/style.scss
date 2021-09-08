@@ -34,20 +34,35 @@
 			color: var( --color-sidebar-menu-hover-text );
 		}
 
-		.sidebar__menu-icon {
+		.sidebar__menu-icon path {
 			fill: var( --color-sidebar-menu-selected-gridicon-fill );
 		}
 
 		&:hover {
-			.sidebar__menu-icon {
+			.sidebar__menu-icon path {
 				fill: var( --color-sidebar-menu-selected-gridicon-fill );
 			}
 		}
 	}
 
+	.current-site__switch-sites .button.is-borderless {
+		padding-left: 55px;
+
+		.gridicon {
+			left: 19px;
+		}
+	}
+
+	.site__content {
+		padding: 16px 14px;
+	}
+
+	.site .site-icon {
+		margin-right: 9px;
+	}
+
 	.sidebar__menu-link {
-		padding-top: 14px;
-		padding-bottom: 14px;
+		padding: 14px 16px;
 
 		&:hover {
 			background-color: var( --color-sidebar-menu-hover-background );

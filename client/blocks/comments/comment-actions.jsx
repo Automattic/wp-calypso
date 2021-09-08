@@ -1,12 +1,12 @@
+import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import Gridicon from 'calypso/components/gridicon';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { changeCommentStatus } from 'calypso/state/comments/actions';
 import CommentApproveAction from './comment-approve-action';
 import CommentLikeButtonContainer from './comment-likes';

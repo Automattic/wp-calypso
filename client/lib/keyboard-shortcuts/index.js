@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
 import { flatMap } from 'lodash';
+import Emitter from 'calypso/lib/mixins/emitter';
+import KEY_BINDINGS from './key-bindings';
 
 // only require keymaster if this is a browser environment
 const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' );
 const defaultFilter = keymaster ? keymaster.filter : undefined;
-
-/**
- * Internal dependencies
- */
-import Emitter from 'calypso/lib/mixins/emitter';
-import KEY_BINDINGS from './key-bindings';
 
 // Flatten the key-bindings object to create an array of key-bindings. `_.flatMap` converts
 // object in shape `{ c1: [ k1, k2 ], c2: [ k3, k4 ] }` to `[ k1, k2, k3, k4 ]`, i.e., flat-maps

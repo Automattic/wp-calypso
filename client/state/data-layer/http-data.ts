@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
 import { Reducer, AnyAction, Dispatch, Action, StoreEnhancerStoreCreator } from 'redux';
-
-/**
- * Internal dependencies
- */
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'calypso/state/action-types';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-
-/**
- * Types
- */
 import { Lazy, TimestampMS, TimerHandle } from 'calypso/types';
 
 export enum DataState {

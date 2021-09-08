@@ -1,22 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { isRequesting, plugins } from '../reducer';
-import {
-	initSite,
-	installingSite,
-	activatingSite,
-	configuringSite,
-	finishedPluginSite,
-	siteWithError,
-} from './examples';
-
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 	PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
@@ -27,6 +10,15 @@ import {
 	PLUGIN_SETUP_ERROR,
 } from 'calypso/state/action-types';
 import { serialize } from 'calypso/state/utils';
+import { isRequesting, plugins } from '../reducer';
+import {
+	initSite,
+	installingSite,
+	activatingSite,
+	configuringSite,
+	finishedPluginSite,
+	siteWithError,
+} from './examples';
 
 describe( 'premium reducer', () => {
 	describe( 'isRequesting', () => {

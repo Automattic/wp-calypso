@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { flowRight, partialRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -118,18 +118,17 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = partialRight( pick, [
-	'akismet',
-	'protect',
-	'jetpack_protect_global_whitelist',
-	'sso',
-	'jetpack_sso_match_by_email',
-	'jetpack_sso_require_two_step',
-	'wordpress_api_key',
-] );
+const getFormSettings = ( settings ) =>
+	pick( settings, [
+		'akismet',
+		'protect',
+		'jetpack_protect_global_whitelist',
+		'sso',
+		'jetpack_sso_match_by_email',
+		'jetpack_sso_require_two_step',
+		'wordpress_api_key',
+	] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormSecurity );
+export default connectComponent(
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsFormSecurity ) )
+);

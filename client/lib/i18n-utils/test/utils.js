@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import {
 	addLocaleToPath,
 	getLanguage,

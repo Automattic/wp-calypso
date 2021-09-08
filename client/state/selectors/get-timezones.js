@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
 import 'calypso/state/timezones/init';

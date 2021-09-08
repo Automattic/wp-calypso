@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
-import { SESSION_NONE, SESSION_ACTIVE, SESSION_EXPIRED } from '../constants';
 import { SUPPORT_SESSION_TRANSITION } from 'calypso/state/action-types';
+import { SESSION_NONE, SESSION_ACTIVE, SESSION_EXPIRED } from '../constants';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#isSupportSession', () => {

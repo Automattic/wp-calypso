@@ -1,19 +1,15 @@
-import { Button } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import Gridicon from 'calypso/components/gridicon';
-import Popover from 'calypso/components/popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
+import { resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
@@ -33,14 +29,15 @@ class InlineHelpPopover extends Component {
 	};
 
 	state = {
-		showSecondaryView: false,
-		activeSecondaryView: '',
+		activeSecondaryView: null,
+		selectedResult: null,
 	};
 
 	secondaryViewRef = React.createRef();
 
-	openResultView = ( event ) => {
+	openResultView = ( event, result ) => {
 		event.preventDefault();
+		this.setState( { selectedResult: result } );
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
@@ -59,17 +56,12 @@ class InlineHelpPopover extends Component {
 		} );
 	};
 
-	setSecondaryViewKey = ( secondaryViewKey ) => {
-		this.setState( { activeSecondaryView: secondaryViewKey } );
-	};
-
 	openSecondaryView = ( secondaryViewKey ) => {
-		this.setSecondaryViewKey( secondaryViewKey );
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
 			location: 'inline-help-popover',
 		} );
 		// Focus the secondary popover contents after the state is set
-		this.setState( { showSecondaryView: true }, () => {
+		this.setState( { activeSecondaryView: secondaryViewKey }, () => {
 			const contentTitle = this.secondaryViewRef.current.querySelector( 'h2' );
 
 			if ( contentTitle ) {
@@ -79,13 +71,14 @@ class InlineHelpPopover extends Component {
 	};
 
 	closeSecondaryView = () => {
-		this.setSecondaryViewKey( '' );
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide`, {
 			location: 'inline-help-popover',
 		} );
-		this.props.selectResult( -1 );
 		this.props.resetContactForm();
-		this.setState( { showSecondaryView: false } );
+		this.setState( {
+			activeSecondaryView: null,
+			selectedResult: null,
+		} );
 	};
 
 	openContactView = () => {
@@ -130,9 +123,8 @@ class InlineHelpPopover extends Component {
 				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
-						onSelect={ this.openResultView }
 						query={ this.props.searchQuery }
-						isVisible={ ! this.state.showSecondaryView }
+						isVisible={ ! this.state.activeSecondaryView }
 					/>
 					<InlineHelpSearchResults
 						onSelect={ this.openResultView }
@@ -146,11 +138,12 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderSecondaryView = () => {
-		const { onClose, selectedResult, setDialogState } = this.props;
+		const { onClose, setDialogState } = this.props;
 		const classes = classNames(
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
+
 		return (
 			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
@@ -165,7 +158,7 @@ class InlineHelpPopover extends Component {
 						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
-								result={ selectedResult }
+								result={ this.state.selectedResult }
 								setDialogState={ setDialogState }
 								closePopover={ onClose }
 							/>
@@ -178,7 +171,7 @@ class InlineHelpPopover extends Component {
 
 	render() {
 		const popoverClasses = {
-			'is-secondary-view-active': this.state.showSecondaryView,
+			'is-secondary-view-active': this.state.activeSecondaryView,
 		};
 
 		return (
@@ -199,17 +192,14 @@ class InlineHelpPopover extends Component {
 function mapStateToProps( state ) {
 	return {
 		searchQuery: getSearchQuery( state ),
-		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	};
 }
 
 const mapDispatchToProps = {
 	recordTracksEvent,
-	selectResult,
 	resetContactForm: resetInlineHelpContactForm,
 };
 
-export default compose(
-	localize,
-	connect( mapStateToProps, mapDispatchToProps )
-)( withMobileBreakpoint( InlineHelpPopover ) );
+export default withMobileBreakpoint(
+	connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpPopover ) )
+);

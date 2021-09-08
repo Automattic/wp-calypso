@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
 import { chunk, times } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { POST_REVISION_AUTHORS_RECEIVE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	receivePostRevisionAuthors,
+	requestPostRevisionAuthors,
+} from 'calypso/state/posts/revisions/authors/actions';
 import {
 	DEFAULT_PER_PAGE,
 	fetchPostRevisionAuthors,
 	normalizeUser,
 	receivePostRevisionAuthorsSuccess,
 } from '../';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import {
-	receivePostRevisionAuthors,
-	requestPostRevisionAuthors,
-} from 'calypso/state/posts/revisions/authors/actions';
-import { POST_REVISION_AUTHORS_RECEIVE } from 'calypso/state/action-types';
 
 describe( '#normalizeRevision', () => {
 	test( 'should rename `id`, `name` and `slug`', () => {

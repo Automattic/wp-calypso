@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { once, defer } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
@@ -14,19 +8,18 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
-import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
-import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
 import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
 } from 'calypso/state/immediate-login/utils';
-import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
 import { successNotice } from 'calypso/state/notices/actions';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Notifies user about the fact that they were automatically logged in

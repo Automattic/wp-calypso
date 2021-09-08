@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { isEmpty, partial } from 'lodash';
+import { isEmpty } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -168,7 +168,7 @@ export default connect(
 		};
 	},
 	{
-		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
+		trackEvent: ( event ) => recordGoogleEvent( 'Site Settings', event ),
 		updateSiteMonitorSettings,
 	}
 )( localize( SiteSettingsFormJetpackMonitor ) );

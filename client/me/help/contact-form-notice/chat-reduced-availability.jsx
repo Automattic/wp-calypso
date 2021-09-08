@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { translate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
-
-/**
- * Internal dependencies
- */
-import ContactFormNotice from 'calypso/me/help/contact-form-notice/index';
+import { translate } from 'i18n-calypso';
+import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import ContactFormNotice from 'calypso/me/help/contact-form-notice/index';
 
 const DATE_FORMAT = 'LLL';
 

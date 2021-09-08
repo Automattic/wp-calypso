@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import type { Context } from './types';
+import React from 'react';
+import BusinessATSwitch from 'calypso/components/jetpack/business-at-switch';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import BusinessATSwitch from 'calypso/components/jetpack/business-at-switch';
+import type { Context } from './types';
 
 export default function upsellSwitch( UpsellComponent: typeof React.Component ): Function {
 	return ( context: Context, next: Function ) => {

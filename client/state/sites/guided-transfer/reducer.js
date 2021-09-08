@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,

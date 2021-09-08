@@ -11,12 +11,12 @@ import {
 	calculateMonthlyPriceForPlan,
 	getBillingMonthsForPlan,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { canRemoveFromCart } from 'calypso/lib/cart-values';

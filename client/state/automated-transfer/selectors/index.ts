@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { flowRight as compose, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
 
 import 'calypso/state/automated-transfer/init';

@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { items as itemSchemas } from './schema';
+import { includes } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
@@ -20,6 +11,8 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { items as itemSchemas } from './schema';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

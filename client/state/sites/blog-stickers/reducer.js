@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { includes, concat, compact, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	SITES_BLOG_STICKER_LIST_RECEIVE,
 	SITES_BLOG_STICKER_ADD,

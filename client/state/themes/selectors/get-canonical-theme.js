@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
 import 'calypso/state/themes/init';

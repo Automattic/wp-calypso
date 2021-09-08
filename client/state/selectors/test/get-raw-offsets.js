@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getRawOffsets from 'calypso/state/selectors/get-raw-offsets';
 
 describe( 'getRawOffsets()', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**

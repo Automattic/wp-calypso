@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { forEach } from 'lodash';
 
 function matches( element, selector ) {

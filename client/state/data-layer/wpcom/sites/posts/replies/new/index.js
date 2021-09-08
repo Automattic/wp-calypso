@@ -1,16 +1,11 @@
-/**
- * Internal dependencies
- */
-
 import { COMMENTS_WRITE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	dispatchNewCommentRequest,
 	updatePlaceholderComment,
 	handleWriteCommentFailure,
 } from 'calypso/state/data-layer/wpcom/sites/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const writePostComment = ( action ) =>
 	dispatchNewCommentRequest(

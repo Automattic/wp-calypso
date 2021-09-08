@@ -5,17 +5,10 @@
 /* eslint-disable jest/no-conditional-expect */
 /* eslint-disable jest/valid-title */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import { render, screen } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import PaymentInfoBlock from '../payment-info-block';
+import '@testing-library/jest-dom/extend-expect';
 
 describe( 'PaymentInfoBlock', () => {
 	describe.each( [

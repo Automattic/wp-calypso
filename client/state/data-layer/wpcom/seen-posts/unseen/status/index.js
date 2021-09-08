@@ -1,11 +1,8 @@
-/**
- * Internal Dependencies
- */
+import { READER_UNSEEN_STATUS_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { receiveUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
-import { READER_UNSEEN_STATUS_REQUEST } from 'calypso/state/action-types';
 
 export function fetch( action ) {
 	return http(

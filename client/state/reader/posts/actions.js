@@ -1,19 +1,12 @@
-/**
- * External Dependencies
- */
-import { v4 as uuid } from 'uuid';
 import { filter, forEach, compact, partition, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
-import { runFastRules, runSlowRules } from './normalization-rules';
+import { v4 as uuid } from 'uuid';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import { keyForPost, keyToString } from 'calypso/reader/post-key';
-import { hasPostBeenSeen } from './selectors';
 import { receiveLikes } from 'calypso/state/posts/likes/actions';
-import { bumpStat } from 'calypso/lib/analytics/mc';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
+import { runFastRules, runSlowRules } from './normalization-rules';
+import { hasPostBeenSeen } from './selectors';
 
 import 'calypso/state/reader/init';
 

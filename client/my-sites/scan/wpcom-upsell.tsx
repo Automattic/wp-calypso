@@ -1,11 +1,11 @@
 import { isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
@@ -17,9 +17,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
 import './style.scss';
 
 export default function WPCOMScanUpsellPage(): ReactElement {

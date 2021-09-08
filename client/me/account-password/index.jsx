@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, isEmpty } from 'lodash';
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { protectForm } from 'calypso/lib/protect-form';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { errorNotice } from 'calypso/state/notices/actions';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { generatePassword } from 'calypso/lib/generate-password';
+import { protectForm } from 'calypso/lib/protect-form';
+import wp from 'calypso/lib/wp';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	hasUserSettingsRequestFailed,
 	isPendingPasswordChange,
 } from 'calypso/state/user-settings/selectors';
-import { generatePassword } from 'calypso/lib/generate-password';
-import wp from 'calypso/lib/wp';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class AccountPassword extends React.Component {

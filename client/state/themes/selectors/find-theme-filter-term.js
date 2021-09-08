@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { filter, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
+import { filter, get } from 'lodash';
 import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 
 import 'calypso/state/themes/init';
 

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { EventEmitter } from 'events';
-
-/**
- * Internal dependencies
- */
 import {
 	receiveAccept,
 	receiveConnect,

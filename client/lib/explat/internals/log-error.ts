@@ -1,11 +1,4 @@
-/**
- * WordPress dependencies
- */
 import wpcom from 'calypso/lib/wp';
-
-/**
- * Internal dependencies
- */
 import { getLogger } from 'calypso/server/lib/logger';
 import { isDevelopmentMode } from './misc';
 

@@ -1,12 +1,5 @@
-/*
- * External dependencies
- */
-const url = require( 'url' );
 const EventEmitter = require( 'events' ).EventEmitter;
-
-/*
- * Internal dependencies
- */
+const url = require( 'url' );
 const WPNotificationsAPI = require( '../../../lib/notifications/api' );
 
 // Parses raw note data from the API into a notification for display,

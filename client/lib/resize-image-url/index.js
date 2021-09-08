@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { mapValues } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import safeImageUrl from 'calypso/lib/safe-image-url';
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { mapValues } from 'lodash';
+import safeImageUrl from 'calypso/lib/safe-image-url';
 
 /**
  * Pattern matching valid http(s) URLs

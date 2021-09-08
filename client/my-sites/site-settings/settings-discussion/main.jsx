@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -21,7 +22,14 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 			brandFont
 			className="settings-discussion__page-heading"
 			headerText={ translate( 'Discussion Settings' ) }
-			subHeaderText={ translate( 'Control how people interact with your site through comments.' ) }
+			subHeaderText={ translate(
+				'Control how people interact with your site through comments. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="discussion" showIcon={ false } />,
+					},
+				}
+			) }
 			align="left"
 			hasScreenOptions
 		/>

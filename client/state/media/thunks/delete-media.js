@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { deleteMediaItem } from 'calypso/state/media/actions';
 
 const debug = debugFactory( 'calypso:media' );

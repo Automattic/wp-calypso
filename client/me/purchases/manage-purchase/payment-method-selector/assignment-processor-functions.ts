@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
 import { createStripeSetupIntent } from '@automattic/calypso-stripe';
-import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import {
 	makeRedirectResponse,
 	makeSuccessResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import wp from 'calypso/lib/wp';
-import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
+import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = (

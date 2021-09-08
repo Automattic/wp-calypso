@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
@@ -20,6 +11,7 @@ import {
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'calypso/state/themes/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const uploadedThemeId = ( state = {}, action ) => {
 	switch ( action.type ) {

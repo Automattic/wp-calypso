@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteOption } from 'calypso/state/sites/selectors';
 
 /**

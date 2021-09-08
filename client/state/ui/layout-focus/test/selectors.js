@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getCurrentLayoutFocus } from '../../layout-focus/selectors';
 
 describe( 'selectors', () => {

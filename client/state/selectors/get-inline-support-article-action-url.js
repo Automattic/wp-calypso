@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/inline-support-article/init';
 
 /**

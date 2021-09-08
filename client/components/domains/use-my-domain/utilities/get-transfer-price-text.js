@@ -1,10 +1,4 @@
-/**
- * External dependencies
- */
 import { __, sprintf } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
 import { isDomainBundledWithPlan, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { getDomainPrice, getDomainProductSlug } from 'calypso/lib/domains';
 

@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import QueryPosts from 'calypso/components/data/query-posts';
-import Popover from 'calypso/components/popover';
 import { newPost } from 'calypso/lib/paths';
 import Draft from 'calypso/my-sites/draft';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { format, getUrlParts, getUrlFromParts, determineUrlType } from '@automattic/calypso-url';
 
 const IMAGE_SCALE_FACTOR =

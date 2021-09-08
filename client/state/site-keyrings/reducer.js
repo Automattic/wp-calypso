@@ -1,9 +1,4 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { siteKeyrings as siteKeyringsSchema } from './schema';
 import {
 	SITE_KEYRINGS_REQUEST,
 	SITE_KEYRINGS_REQUEST_FAILURE,
@@ -14,6 +9,8 @@ import {
 	SITE_KEYRINGS_DELETE_SUCCESS,
 	SITE_KEYRINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { siteKeyrings as siteKeyringsSchema } from './schema';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

@@ -1,16 +1,24 @@
-/**
- * External dependencies
- */
+import {
+	getPlan,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	JETPACK_LEGACY_PLANS,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
+	getProductFromSlug,
+} from '@automattic/calypso-products';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { times } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import UserItem from 'calypso/components/user';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
 	isExpired,
@@ -26,31 +34,16 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
+import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import AutoRenewToggle from './auto-renew-toggle';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
-import UserItem from 'calypso/components/user';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
-import {
-	getPlan,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
-	JETPACK_LEGACY_PLANS,
-	isDomainRegistration,
-	isDomainTransfer,
-	isConciergeSession,
-	isJetpackPlan,
-	isJetpackProduct,
-	getProductFromSlug,
-} from '@automattic/calypso-products';
-import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import AutoRenewToggle from './auto-renew-toggle';
 import PaymentInfoBlock from './payment-info-block';
-import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 export default function PurchaseMeta( {
 	purchaseId = false,

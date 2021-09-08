@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
+
 import {
 	get,
 	set,
@@ -15,13 +13,8 @@ import {
 	mapValues,
 	mapKeys,
 } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import PostQueryManager from 'calypso/lib/query-manager/post';
-import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -41,9 +34,12 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
 import revisions from './revisions/reducer';
+import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
 import {
 	appendToPostEditsLog,
 	getSerializedPostsQuery,
@@ -56,8 +52,6 @@ import {
 	mergePostEdits,
 	normalizePostForState,
 } from './utils';
-import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-import { getFeaturedImageId } from 'calypso/state/posts/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.

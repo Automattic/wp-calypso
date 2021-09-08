@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import { getIsPluginInstalledDuringPurchase } from 'calypso/state/marketplace/purchase-flow/selectors';
-import { defaultState } from 'calypso/state/marketplace/purchase-flow/reducer';
-import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import { IPurchaseFlowState } from 'state/marketplace/types';
+import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { defaultState } from 'calypso/state/marketplace/purchase-flow/reducer';
+import { getIsPluginInstalledDuringPurchase } from 'calypso/state/marketplace/purchase-flow/selectors';
 
 describe( 'Purchase Flow selectors test suite', () => {
 	const defaultTestSuiteState = {

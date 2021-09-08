@@ -16,7 +16,7 @@ export function generateFlows( {
 		{
 			name: 'account',
 			steps: [ 'user' ],
-			destination: '/',
+			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2020-08-12',
 			pageTitle: translate( 'Create an account' ),
@@ -411,6 +411,16 @@ export function generateFlows( {
 			description: 'Default onboarding experience with design picker as the last step',
 			lastModified: '2021-03-29',
 			showRecaptcha: true,
+		},
+		{
+			name: 'setup-site',
+			steps: [ 'design-setup-site' ],
+			destination: getChecklistThemeDestination,
+			description:
+				'Sets up a site that has already been created and paid for (if purchases were made)',
+			lastModified: '2021-09-02',
+			providesDependenciesInQuery: [ 'siteSlug' ],
+			pageTitle: translate( 'Setup your site' ),
 		},
 	];
 

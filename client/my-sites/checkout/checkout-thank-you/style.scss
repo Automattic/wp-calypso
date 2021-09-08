@@ -675,6 +675,28 @@
 	}
 }
 
+@mixin jetpack-primary-button() {
+	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
+	background-color: var( --studio-jetpack-green-50 );
+	border-color: var( --studio-jetpack-green-50 );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		background-color: var( --studio-jetpack-green-60 );
+		border-color: var( --studio-jetpack-green-60 );
+		color: var( --color-text-inverted );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+}
+
 .jetpack-checkout-siteless-thank-you-completed {
 	&.main.is-wide-layout {
 		max-width: 660px;
@@ -709,6 +731,11 @@
 				line-height: 1.75rem;
 			}
 		}
+		.jetpack-checkout-siteless-thank-you-completed__button,
+		.jetpack-checkout-siteless-thank-you-completed__button:visited {
+			border-radius: 2px;
+			@include jetpack-primary-button;
+		}
 
 		a.jetpack-checkout-siteless-thank-you-completed__link,
 		a.jetpack-checkout-siteless-thank-you-completed__feature-link {
@@ -733,6 +760,10 @@
 			@include placeholder( --color-neutral-20 );
 		}
 	}
+}
+
+.jetpack-checkout-siteless-thank-you-completed__site-name {
+	white-space: nowrap;
 }
 
 .jetpack-checkout-siteless-thank-you {
@@ -953,30 +984,26 @@
 		.jetpack-checkout-thank-you__button,
 		.jetpack-checkout-thank-you__button:visited {
 			border-radius: calc( 2px * 2 );
-			// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
-			background-color: var( --studio-jetpack-green-50 );
-			border-color: var( --studio-jetpack-green-50 );
-			color: var( --color-text-inverted );
-
-			&:hover,
-			&:focus {
-				background-color: var( --studio-jetpack-green-60 );
-				border-color: var( --studio-jetpack-green-60 );
-				color: var( --color-text-inverted );
-			}
-
-			&[disabled],
-			&:disabled,
-			&.disabled {
-				color: var( --color-neutral-20 );
-				background-color: var( --color-surface );
-				border-color: var( --color-neutral-5 );
-			}
+			@include jetpack-primary-button;
 		}
 	}
 
 	.jetpack-checkout-thank-you__sub-message-loading,
 	.jetpack-checkout-thank-you__email-message-loading {
 		@include placeholder( --color-neutral-20 );
+	}
+}
+
+.checkout-thank-you__domains .thank-you__body {
+	& > div {
+		width: 690px;
+	}
+
+	div {
+		justify-content: space-between;
+	}
+
+	.domain-mapping-thank-you__button {
+		width: 100%;
 	}
 }

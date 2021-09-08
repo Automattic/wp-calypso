@@ -1,9 +1,3 @@
-/**
- * Internal dependencies
- */
-
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
-
 import {
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
 	AUTOMATED_TRANSFER_STATUS_SET,
@@ -13,6 +7,7 @@ import {
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const uploadedPluginId = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {

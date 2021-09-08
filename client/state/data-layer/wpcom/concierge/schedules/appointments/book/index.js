@@ -1,19 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import {
-	CONCIERGE_APPOINTMENT_CREATE,
-	CONCIERGE_APPOINTMENT_RESCHEDULE,
-} from 'calypso/state/action-types';
 import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
@@ -21,11 +6,18 @@ import {
 	CONCIERGE_ERROR_NO_AVAILABLE_STAFF,
 	CONCIERGE_ERROR_ALREADY_HAS_APPOINTMENT,
 } from 'calypso/me/concierge/constants';
+import {
+	CONCIERGE_APPOINTMENT_CREATE,
+	CONCIERGE_APPOINTMENT_RESCHEDULE,
+} from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import fromApi from './from-api';
 import toApi from './to-api';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const bookConciergeAppointment = ( action ) => {
 	return [

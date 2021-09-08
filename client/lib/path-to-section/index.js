@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { filter, get, maxBy, startsWith } from 'lodash';
 import { getSections } from 'calypso/sections-helper';
 

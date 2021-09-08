@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,

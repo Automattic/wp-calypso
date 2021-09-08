@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index 20a5464d3b119ab26874a27ed976a40a76502433..5969605e7a798259a031704b95fa9e36e86cba6a 100644
+--- a/package.json
++++ b/package.json
+@@ -12,8 +12,7 @@
+     "prod": "cross-env NODE_ENV=production gulp playground && cross-env NODE_ENV=production gulp server",
+     "lint": "eslint .",
+     "lint-fix": "eslint . --fix",
+-    "test": "npm run lint && npm run build:dev",
+-    "postinstall": "node -e \"console.log('\\u001b[35m\\u001b[1mLove Swiper? Support Vladimir\\'s work by donating or pledging on patreon:\\u001b[22m\\u001b[39m\\n > \\u001b[32mhttps://patreon.com/vladimirkharlampidi\\u001b[0m\\n')\""
++    "test": "npm run lint && npm run build:dev"
+   },
+   "files": [
+     "dist",

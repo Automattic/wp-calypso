@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isJetpackRemoteInstallComplete from 'calypso/state/selectors/is-jetpack-remote-install-complete';
 
 const url = 'https://yourgroovydomain.com';

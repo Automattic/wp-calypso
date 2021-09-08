@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,9 +10,9 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import Gridicon from 'calypso/components/gridicon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	requestSiteAddressChange,
 	requestSiteAddressAvailability,
@@ -268,6 +268,7 @@ export class SiteAddressChanger extends Component {
 			siteId,
 			selectedSiteSlug,
 			translate,
+			isAtomicSite,
 		} = this.props;
 
 		const { domainFieldValue, newDomainSuffix } = this.state;
@@ -295,6 +296,15 @@ export class SiteAddressChanger extends Component {
 									components: { strong: <strong /> },
 								}
 						  ) }
+				</div>
+			);
+		}
+
+		if ( isAtomicSite ) {
+			return (
+				<div className="site-address-changer site-address-changer__only-owner-info">
+					<Gridicon icon="info-outline" />
+					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
 				</div>
 			);
 		}
@@ -367,6 +377,7 @@ export default connect(
 		return {
 			siteId,
 			selectedSiteSlug: getSiteSlug( state, siteId ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			isAvailable: isSiteAddressValidationAvailable( state, siteId ),
 			isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 			isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { localize } from 'i18n-calypso';
-import { Button } from '@automattic/components';
-import Confirmation from '../shared/confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Confirmation from '../shared/confirmation';
 
 class ConfirmationStep extends Component {
 	componentDidMount() {

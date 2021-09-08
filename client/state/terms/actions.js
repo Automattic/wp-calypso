@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { filter, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
@@ -16,8 +9,8 @@ import {
 	TERMS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { editPost } from 'calypso/state/posts/actions';
-import { updateSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSitePostsByTerm } from 'calypso/state/posts/selectors';
+import { updateSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getTerm, getTerms } from './selectors';
 

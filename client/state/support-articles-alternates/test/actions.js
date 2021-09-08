@@ -1,6 +1,9 @@
-/**
- * Internal dependencies
- */
+import {
+	SUPPORT_ARTICLE_ALTERNATES_RECEIVE,
+	SUPPORT_ARTICLE_ALTERNATES_REQUEST,
+	SUPPORT_ARTICLE_ALTERNATES_REQUEST_SUCCESS,
+	SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import {
 	fetchAlternatesReceive,
 	fetchAlternatesRequest,
@@ -8,12 +11,6 @@ import {
 	fetchAlternatesRequestFailure,
 	fetchAlternates,
 } from '../actions';
-import {
-	SUPPORT_ARTICLE_ALTERNATES_RECEIVE,
-	SUPPORT_ARTICLE_ALTERNATES_REQUEST,
-	SUPPORT_ARTICLE_ALTERNATES_REQUEST_SUCCESS,
-	SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
 
 const mockSupportAlternates = jest.fn( () => Promise.resolve() );
 

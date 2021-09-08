@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import page from 'page';

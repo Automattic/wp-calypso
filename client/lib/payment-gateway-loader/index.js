@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import { loadScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:payment-gateway' );
-
-/**
- * Internal dependencies
- */
-import { loadScript } from '@automattic/load-script';
 
 /**
  * PaymentGatewayLoader component

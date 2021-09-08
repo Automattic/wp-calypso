@@ -1,18 +1,13 @@
-/**
- * External dependencies
- */
-
-import { isEmpty, mapValues } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEmpty, mapValues } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import {
 	clearUnsavedUserSettings,
 	fetchUserSettingsFailure,
@@ -20,10 +15,6 @@ import {
 	saveUserSettingsSuccess,
 	saveUserSettingsFailure,
 } from 'calypso/state/user-settings/actions';
-import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /*
  * Decodes entities in those specific user settings properties

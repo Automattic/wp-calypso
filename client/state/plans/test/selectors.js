@@ -25,15 +25,8 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	} ),
 } ) );
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { getPlans, isRequestingPlans, getPlan, getPlanRawPrice, getPlanSlug } from '../selectors';
 import { PLANS, getStateInstance } from './fixture';
 

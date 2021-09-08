@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { appointmentTimespan } from '../reducer';
 import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'calypso/state/action-types';
+import { appointmentTimespan } from '../reducer';
 
 describe( 'concierge/appointmentTimespan/reducer', () => {
 	test( 'should be defaulted as null.', () => {

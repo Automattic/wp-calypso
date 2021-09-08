@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import { get, keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import versionCompare from 'calypso/lib/version-compare';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import versionCompare from 'calypso/lib/version-compare';
+import wpcom from 'calypso/lib/wp';
 import {
 	PLUGIN_INSTALL_REQUEST,
 	PLUGIN_INSTALL_REQUEST_FAILURE,
@@ -223,17 +216,11 @@ function configure( site, plugin, dispatch ) {
 	}
 
 	const saveOption = () => {
-		const query = {
-			option_name: option,
-			option_value: optionValue,
-			site_option: false,
-			is_array: false,
-		};
-
-		return wpcom
-			.undocumented()
-			.site( site.ID )
-			.setOption( query, ( error, data ) => {
+		return wpcom.req.post(
+			`/sites/${ site.ID }/option`,
+			{ option_name: option },
+			{ option_value: optionValue },
+			( error, data ) => {
 				if (
 					! error &&
 					'vaultpress' === plugin.slug &&
@@ -258,7 +245,8 @@ function configure( site, plugin, dispatch ) {
 					siteId: site.ID,
 					slug: plugin.slug,
 				} );
-			} );
+			}
+		);
 	};
 
 	// We don't need to check for VaultPress
@@ -266,10 +254,10 @@ function configure( site, plugin, dispatch ) {
 		return saveOption();
 	}
 
-	return wpcom
-		.undocumented()
-		.site( site.ID )
-		.getOption( { option_name: option }, ( getError, getData ) => {
+	return wpcom.req.get(
+		`/sites/${ site.ID }/option`,
+		{ option_name: option },
+		( getError, getData ) => {
 			if ( get( getData, 'option_value' ) === optionValue ) {
 				// Already registered with this key
 				dispatch( {
@@ -291,7 +279,8 @@ function configure( site, plugin, dispatch ) {
 				return;
 			}
 			return saveOption();
-		} );
+		}
+	);
 }
 
 export function fetchInstallInstructions( siteId ) {

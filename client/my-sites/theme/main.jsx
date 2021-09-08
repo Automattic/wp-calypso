@@ -1,11 +1,6 @@
 import config from '@automattic/calypso-config';
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_UPLOAD_THEMES,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-} from '@automattic/calypso-products';
-import { Button, Card } from '@automattic/components';
+import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -23,8 +18,8 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
@@ -501,11 +496,24 @@ class ThemeSheet extends React.Component {
 					<Card className="theme__sheet-card-support">
 						<Gridicon icon="notice-outline" size={ 48 } />
 						<div className="theme__sheet-card-support-details">
-							{ translate( 'This theme is unsupported' ) }
+							{ translate(
+								'Help and support for this theme is not offered by WordPress.com. {{InlineSupportLink/}}',
+								{
+									components: {
+										InlineSupportLink: (
+											<InlineSupportLink
+												showIcon={ false }
+												supportPostId={ 174865 }
+												supportLink={ localizeUrl(
+													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
+												) }
+											/>
+										),
+									},
+								}
+							) }
 							<small>
-								{ translate( "Maybe it's a custom theme? Sorry about that.", {
-									context: 'Support message when we no support links are available',
-								} ) }
+								{ translate( 'Contact the theme developer directly for help with this theme.' ) }
 							</small>
 						</div>
 					</Card>
@@ -635,7 +643,6 @@ class ThemeSheet extends React.Component {
 			isWpcomTheme,
 			isVip,
 			translate,
-			hasUnlimitedPremiumThemes,
 			canUserUploadThemes,
 			previousRoute,
 		} = this.props;
@@ -681,8 +688,7 @@ class ThemeSheet extends React.Component {
 
 		let pageUpsellBanner;
 		let previewUpsellBanner;
-		const hasWpComThemeUpsellBanner =
-			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
+		const hasWpComThemeUpsellBanner = ! isJetpack && isPremium && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =
 			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
@@ -848,7 +854,6 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

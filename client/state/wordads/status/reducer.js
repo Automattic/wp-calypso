@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
 import { keyedReducer, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { wordadsStatusSchema } from './schema';

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,

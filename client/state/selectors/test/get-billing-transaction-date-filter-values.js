@@ -1,7 +1,5 @@
-/**
- * Internal dependencies
- */
 import getBillingTransactionDateFilterValues from 'calypso/state/selectors/get-billing-transaction-date-filter-values';
+const moment = require( 'moment' );
 
 jest.mock( 'i18n-calypso', () => {
 	return {
@@ -9,7 +7,6 @@ jest.mock( 'i18n-calypso', () => {
 	};
 } );
 
-const moment = require( 'moment' );
 moment.now = () => new Date( 2018, 4, 24 ); // May 24, 2018
 
 describe( 'getBillingTransactionDateFilterValues()', () => {

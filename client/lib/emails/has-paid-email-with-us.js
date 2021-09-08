@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 

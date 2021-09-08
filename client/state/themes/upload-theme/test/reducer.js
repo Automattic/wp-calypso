@@ -1,18 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import {
-	uploadedThemeId,
-	uploadError,
-	progressLoaded,
-	progressTotal,
-	inProgress,
-} from '../reducer';
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
@@ -25,6 +11,13 @@ import {
 	THEME_TRANSFER_INITIATE_PROGRESS,
 	THEME_TRANSFER_INITIATE_REQUEST,
 } from 'calypso/state/themes/action-types';
+import {
+	uploadedThemeId,
+	uploadError,
+	progressLoaded,
+	progressTotal,
+	inProgress,
+} from '../reducer';
 
 const themeId = 'twentysixteen';
 

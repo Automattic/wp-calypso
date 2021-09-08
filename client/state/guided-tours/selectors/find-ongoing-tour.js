@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { findLast } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getActionLog } from 'calypso/state/ui/action-log/selectors';
 import { GUIDED_TOUR_UPDATE } from 'calypso/state/action-types';
+import { getActionLog } from 'calypso/state/ui/action-log/selectors';
 
 import 'calypso/state/guided-tours/init';
 

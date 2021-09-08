@@ -1,8 +1,3 @@
-/**
- * External dependencies
- *
- */
-
 import { MomentInput, Moment } from 'moment';
 import React, { FunctionComponent, useCallback } from 'react';
 import { useSelector } from 'react-redux';

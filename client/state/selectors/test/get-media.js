@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import getMedia from 'calypso/state/selectors/get-media';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
+import getMedia from 'calypso/state/selectors/get-media';
 
 describe( 'getMedia()', () => {
 	const query = {

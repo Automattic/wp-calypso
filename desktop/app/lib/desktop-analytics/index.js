@@ -1,5 +1,5 @@
-const log = require( '../../lib/logger' )( 'desktop:analytics' );
 const fetch = require( 'electron-fetch' ).default;
+const log = require( '../../lib/logger' )( 'desktop:analytics' );
 
 function buildQuerystring( group, name ) {
 	let uriComponent = '';

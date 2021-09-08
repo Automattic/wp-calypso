@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isRequestingSiteConnectionStatus from 'calypso/state/selectors/is-requesting-site-connection-status';
 
 describe( 'isRequestingSiteConnectionStatus()', () => {

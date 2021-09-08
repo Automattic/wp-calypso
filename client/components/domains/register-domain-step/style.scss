@@ -76,6 +76,10 @@
 			background: var( --color-surface );
 		}
 	}
+
+	.card.register-domain-step__search-card {
+		background-color: var( --color-surface );
+	}
 }
 
 .register-domain-step__search {
@@ -256,5 +260,26 @@ body.is-section-signup.is-white-signup {
 				padding: 0.65em 2.8em;
 			}
 		}
+	}
+}
+
+.already-own-a-domain {
+	font-size: $font-body-small;
+	color: var( --color-text-subtle );
+	display: flex;
+	align-items: center;
+	margin-top: 26px;
+	svg {
+		align-self: flex-start;
+		width: 16px;
+		height: 16px;
+		fill: var( --color-text-subtle );
+		margin: 3px 8px 0;
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+	.button-plain {
+		color: var( --color-link );
 	}
 }

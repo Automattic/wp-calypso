@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as actions from 'calypso/state/partner-portal/payment-methods/actions';
 
 describe( 'actions', () => {

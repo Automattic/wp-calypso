@@ -4,8 +4,8 @@
 /* eslint-disable no-process-exit*/
 /* eslint-disable import/no-nodejs-modules*/
 
-const path = require( 'path' );
 const { execSync } = require( 'child_process' );
+const path = require( 'path' );
 
 const CALYPSO_SECRETS_ENCRYPTION_KEY = process.env.CALYPSO_SECRETS_ENCRYPTION_KEY;
 if ( ! CALYPSO_SECRETS_ENCRYPTION_KEY ) {

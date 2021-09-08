@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { sample } from 'lodash';
@@ -6,7 +7,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-images';
-import Gridicon from 'calypso/components/gridicon';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { decodeEntities } from 'calypso/lib/formatting';
 import resizeImageUrl from 'calypso/lib/resize-image-url';

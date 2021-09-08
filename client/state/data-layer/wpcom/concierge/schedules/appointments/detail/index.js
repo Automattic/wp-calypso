@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'calypso/state/action-types';
+import { updateConciergeAppointmentDetails } from 'calypso/state/concierge/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { updateConciergeAppointmentDetails } from 'calypso/state/concierge/actions';
-import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'calypso/state/action-types';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import fromApi from './from-api';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetchAppointmentDetails = ( action ) => {
 	const { appointmentId, scheduleId } = action;

@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Count from 'calypso/components/count';
-import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import DropdownItem from './item';
 import DropdownLabel from './label';

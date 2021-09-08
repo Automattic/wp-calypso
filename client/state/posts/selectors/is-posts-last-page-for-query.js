@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { DEFAULT_POST_QUERY } from 'calypso/state/posts/constants';
 import { getPostsLastPageForQuery } from 'calypso/state/posts/selectors/get-posts-last-page-for-query';
 

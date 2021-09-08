@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { set } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 

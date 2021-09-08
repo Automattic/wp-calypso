@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 
 /**

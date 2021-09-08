@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	PLANS_RECEIVE,
 	SITE_PLANS_FETCH_COMPLETED,

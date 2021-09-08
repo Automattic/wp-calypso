@@ -74,6 +74,7 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
+import DomainMappingThankYou from './domains/domain-mapping-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -385,6 +386,7 @@ export class CheckoutThankYou extends React.Component {
 		let wasEcommercePlanPurchased = false;
 		let wasMarketplaceProduct = false;
 		let delayedTransferPurchase = false;
+		let wasDomainMappingOnlyProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
@@ -393,6 +395,7 @@ export class CheckoutThankYou extends React.Component {
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
+			wasDomainMappingOnlyProduct = purchases.length === 1 && purchases.some( isDomainMapping );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -464,6 +467,11 @@ export class CheckoutThankYou extends React.Component {
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
+			);
+		} else if ( wasDomainMappingOnlyProduct ) {
+			const [ , domainName ] = findPurchaseAndDomain( purchases, isDomainMapping );
+			return (
+				<DomainMappingThankYou domainName={ domainName } selectedSite={ this.props.selectedSite } />
 			);
 		}
 

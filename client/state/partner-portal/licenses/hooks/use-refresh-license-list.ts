@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { Context, useContext } from 'react';
-
-/**
- * Internal dependencies
- */
-import { LicenseListContext, PartnerPortalThunkAction } from 'calypso/state/partner-portal/types';
 import { fetchLicenses } from 'calypso/state/partner-portal/licenses/actions';
+import { LicenseListContext, PartnerPortalThunkAction } from 'calypso/state/partner-portal/types';
 
 export default function useRefreshLicenseList(
 	context: Context< LicenseListContext >

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { requestFeedSearch, SORT_BY_LAST_UPDATED } from '../actions';
 import queryKey from '../query-key';
 

@@ -1,24 +1,48 @@
 /**
  * @jest-environment jsdom
  */
-
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
-import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
+import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
+import {
+	render,
+	fireEvent,
+	screen,
+	within,
+	waitFor,
+	act,
+	waitForElementToBeRemoved,
+} from '@testing-library/react';
+import nock from 'nock';
 import page from 'page';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 import '@testing-library/jest-dom/extend-expect';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import CompositeCheckout from '../composite-checkout';
+import {
+	siteId,
+	domainProduct,
+	domainTransferProduct,
+	planWithBundledDomain,
+	planWithoutDomain,
+	fetchStripeConfiguration,
+	mockSetCartEndpoint,
+	mockGetCartEndpointWith,
+	getActivePersonalPlanDataForType,
+	getPersonalPlanForInterval,
+	getBusinessPlanForInterval,
+	getVariantItemTextForInterval,
+	getPlansItemsState,
+	createTestReduxStore,
+	countryList,
+	gSuiteProduct,
+	caDomainProduct,
+} from './util';
 
-/**
- * Mocked dependencies
- */
+/* eslint-disable jest/no-conditional-expect */
+
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
@@ -26,180 +50,6 @@ jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
-
-const siteId = 13579;
-
-const domainProduct = {
-	product_name: '.cash Domain',
-	product_slug: 'domain_reg',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
-	},
-	free_trial: false,
-	meta: 'foo.cash',
-	product_id: 6,
-	volume: 1,
-	is_domain_registration: true,
-	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
-	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
-};
-
-const domainTransferProduct = {
-	product_name: '.cash Domain',
-	product_slug: 'domain_transfer',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
-	},
-	free_trial: false,
-	meta: 'foo.cash',
-	product_id: 6,
-	volume: 1,
-	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
-	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
-};
-
-const planWithBundledDomain = {
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-		domain_to_bundle: 'foo.cash',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1009,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planWithoutDomain = {
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1009,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planWithoutDomainMonthly = {
-	product_name: 'WordPress.com Personal Monthly',
-	product_slug: 'personal-bundle-monthly',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1019,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planWithoutDomainBiannual = {
-	product_name: 'WordPress.com Personal 2 Year',
-	product_slug: 'personal-bundle-2y',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1029,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planLevel2 = {
-	product_name: 'WordPress.com Business',
-	product_slug: 'business-bundle',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1008,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planLevel2Monthly = {
-	product_name: 'WordPress.com Business Monthly',
-	product_slug: 'business-bundle-monthly',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1018,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planLevel2Biannual = {
-	product_name: 'WordPress.com Business 2 Year',
-	product_slug: 'business-bundle-2y',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1028,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const fetchStripeConfiguration = async () => {
-	return {
-		public_key: 'abc123',
-		js_url: 'https://js.stripe.com/v3/',
-	};
-};
 
 describe( 'CompositeCheckout', () => {
 	let container;
@@ -240,145 +90,36 @@ describe( 'CompositeCheckout', () => {
 			coupon_discounts_integer: [],
 		};
 
-		const countryList = [
-			{
-				code: 'US',
-				name: 'United States',
-				has_postal_codes: true,
-			},
-			{
-				code: 'CW',
-				name: 'Curacao',
-				has_postal_codes: false,
-			},
-			{
-				code: 'AU',
-				name: 'Australia',
-				has_postal_codes: true,
-			},
-		];
+		const store = createTestReduxStore();
 
-		const store = applyMiddleware( thunk )( createStore )( () => {
-			return {
-				plans: {
-					items: getPlansItemsState(),
-				},
-				sites: { items: {} },
-				siteSettings: { items: {} },
-				ui: { selectedSiteId: siteId },
-				productsList: {
-					items: {
-						[ planWithoutDomain.product_slug ]: {
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomain.item_subtotal_display,
-							currency_code: planWithoutDomain.currency,
-						},
-						[ planWithoutDomainMonthly.product_slug ]: {
-							product_id: planWithoutDomainMonthly.product_id,
-							product_slug: planWithoutDomainMonthly.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomainMonthly.item_subtotal_display,
-							currency_code: planWithoutDomainMonthly.currency,
-						},
-						[ planWithoutDomainBiannual.product_slug ]: {
-							product_id: planWithoutDomainBiannual.product_id,
-							product_slug: planWithoutDomainBiannual.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomainBiannual.item_subtotal_display,
-							currency_code: planWithoutDomainBiannual.currency,
-						},
-						[ planLevel2.product_slug ]: {
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomain.item_subtotal_display,
-							currency_code: planWithoutDomain.currency,
-						},
-						[ planLevel2Monthly.product_slug ]: {
-							product_id: planLevel2Monthly.product_id,
-							product_slug: planLevel2Monthly.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planLevel2Monthly.item_subtotal_display,
-							currency_code: planLevel2Monthly.currency,
-						},
-						[ planLevel2Biannual.product_slug ]: {
-							product_id: planLevel2Biannual.product_id,
-							product_slug: planLevel2Biannual.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planLevel2Biannual.item_subtotal_display,
-							currency_code: planLevel2Biannual.currency,
-						},
-						domain_map: {
-							product_id: 5,
-							product_name: 'Product',
-							product_slug: 'domain_map',
-						},
-						domain_reg: {
-							product_id: 6,
-							product_name: 'Product',
-							product_slug: 'domain_reg',
-						},
-						premium_theme: {
-							product_id: 39,
-							product_name: 'Product',
-							product_slug: 'premium_theme',
-						},
-						'concierge-session': {
-							product_id: 371,
-							product_name: 'Product',
-							product_slug: 'concierge-session',
-						},
-						jetpack_backup_daily: {
-							product_id: 2100,
-							product_name: 'Jetpack Backup (Daily)',
-							product_slug: 'jetpack_backup_daily',
-						},
-						jetpack_scan: {
-							product_id: 2106,
-							product_name: 'Jetpack Scan Daily',
-							product_slug: 'jetpack_scan',
-						},
-					},
-				},
-				purchases: {},
-				countries: { payments: countryList, domains: countryList },
-			};
-		} );
-
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => (
-			<ReduxProvider store={ store }>
-				<ShoppingCartProvider
-					cartKey={ 'foo.com' }
-					setCart={ mockSetCartEndpoint }
-					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
-					{ ...additionalCartProps }
-				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CompositeCheckout
-							siteId={ siteId }
-							siteSlug={ 'foo.com' }
-							getStoredCards={ async () => [] }
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
-					</StripeHookProvider>
-				</ShoppingCartProvider>
-			</ReduxProvider>
-		);
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+			const managerClient = createShoppingCartManagerClient( {
+				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
+				setCart: mockSetCartEndpoint,
+			} );
+			const mainCartKey = 'foo.com';
+			return (
+				<ReduxProvider store={ store }>
+					<ShoppingCartProvider
+						managerClient={ managerClient }
+						options={ {
+							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+						} }
+						{ ...additionalCartProps }
+					>
+						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+							<CompositeCheckout
+								siteId={ siteId }
+								siteSlug={ 'foo.com' }
+								getStoredCards={ async () => [] }
+								overrideCountryList={ countryList }
+								{ ...additionalProps }
+							/>
+						</StripeHookProvider>
+					</ShoppingCartProvider>
+				</ReduxProvider>
+			);
+		};
 	} );
 
 	afterEach( () => {
@@ -601,6 +342,148 @@ describe( 'CompositeCheckout', () => {
 			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
 		} );
 	} );
+
+	it( 'does not complete the contact step when the contact step button has not been clicked', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+		} );
+		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		{ complete: 'does', valid: 'valid', name: 'plan', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'domain', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'domain', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'gsuite', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'gsuite', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'plan', email: 'passes', logged: 'out' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'passes', logged: 'out' },
+		{ complete: 'does not', valid: 'valid', name: 'domain', email: 'fails', logged: 'out' },
+	] )(
+		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
+		async ( { complete, valid, name, email, logged } ) => {
+			const product = ( () => {
+				switch ( name ) {
+					case 'plan':
+						return planWithoutDomain;
+					case 'domain':
+						return caDomainProduct;
+					case 'gsuite':
+						return gSuiteProduct;
+				}
+			} )();
+			const endpointPath = ( () => {
+				switch ( name ) {
+					case 'plan':
+						return '/rest/v1.1/me/tax-contact-information/validate';
+					case 'domain':
+						return '/rest/v1.2/me/domain-contact-information/validate';
+					case 'gsuite':
+						return '/rest/v1.1/me/google-apps/validate';
+				}
+			} )();
+			const validContactDetails = {
+				postal_code: '10001',
+				country_code: 'US',
+				email: 'test@example.com',
+			};
+			nock.cleanAll();
+			const messages = ( () => {
+				if ( valid === 'valid' ) {
+					return undefined;
+				}
+				if ( name === 'domain' ) {
+					return {
+						postal_code: [ 'Postal code error message' ],
+						'extra.ca.cira_agreement_accepted': [ 'Missing CIRA agreement' ],
+					};
+				}
+				return {
+					postal_code: [ 'Postal code error message' ],
+				};
+			} )();
+			nock( 'https://public-api.wordpress.com' )
+				.post( endpointPath, ( body ) => {
+					if (
+						body.contact_information.postal_code === validContactDetails.postal_code &&
+						body.contact_information.country_code === validContactDetails.country_code
+					) {
+						if ( name === 'domain' ) {
+							return (
+								body.contact_information.email === validContactDetails.email &&
+								body.domain_names[ 0 ] === product.meta
+							);
+						}
+						if ( name === 'gsuite' ) {
+							return body.domain_names[ 0 ] === product.meta;
+						}
+						return true;
+					}
+				} )
+				.reply( 200, {
+					success: valid === 'valid',
+					messages,
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
+					return (
+						body.locale === 'en' &&
+						body.is_from_registrationless_checkout === true &&
+						body.email === validContactDetails.email
+					);
+				} )
+				.reply( 200, {
+					success: email === 'passes',
+				} );
+
+			render(
+				<MyCheckout
+					cartChanges={ { products: [ product ] } }
+					additionalProps={ { isLoggedOutCart: logged === 'out' } }
+				/>,
+				container
+			);
+
+			// Wait for the cart to load
+			await screen.findByText( 'Country' );
+
+			// Fill in the contact form
+			if ( name === 'domain' || logged === 'out' ) {
+				fireEvent.change( screen.getByLabelText( 'Email' ), {
+					target: { value: validContactDetails.email },
+				} );
+			}
+			fireEvent.change( screen.getByLabelText( 'Country' ), {
+				target: { value: validContactDetails.country_code },
+			} );
+			fireEvent.change( screen.getByLabelText( /(Postal|ZIP) code/i ), {
+				target: { value: validContactDetails.postal_code },
+			} );
+			fireEvent.click( await screen.findByText( 'Continue' ) );
+
+			// Wait for the validation to complete
+			await waitForElementToBeRemoved( () => screen.queryByText( 'Updating cart…' ) );
+
+			if ( complete === 'does' ) {
+				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+			} else {
+				// This is a little tricky because we need to verify something never happens,
+				// even after some time passes, so we use this slightly convoluted technique:
+				// https://stackoverflow.com/a/68318058/2615868
+				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
+				// Make sure the error message is displayed
+				if ( valid !== 'valid' ) {
+					expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					if ( name === 'domain' ) {
+						expect( screen.getByText( 'Missing CIRA agreement' ) ).toBeInTheDocument();
+					}
+				}
+			}
+		}
+	);
 
 	it( 'renders the checkout summary', async () => {
 		render( <MyCheckout />, container );
@@ -1071,333 +954,9 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
-		const additionalCartProps = { cartKey: undefined };
 		await act( async () => {
-			render( <MyCheckout additionalCartProps={ additionalCartProps } />, container );
+			render( <MyCheckout useUndefinedCartKey={ true } />, container );
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
 } );
-
-async function mockSetCartEndpoint( _, requestCart ) {
-	const {
-		products: requestProducts,
-		currency: requestCurrency,
-		coupon: requestCoupon,
-		locale: requestLocale,
-	} = requestCart;
-	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
-
-	const taxInteger = products.reduce( ( accum, current ) => {
-		return accum + current.item_tax;
-	}, 0 );
-
-	const totalInteger = products.reduce( ( accum, current ) => {
-		return accum + current.item_subtotal_integer;
-	}, taxInteger );
-
-	return {
-		products,
-		locale: requestLocale,
-		currency: requestCurrency,
-		credits_integer: 0,
-		credits_display: '0',
-		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
-		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
-		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
-		savings_total_integer: requestCoupon ? 1000 : 0,
-		total_tax_display: 'R$7',
-		total_tax_integer: taxInteger,
-		total_cost_display: 'R$156',
-		total_cost_integer: totalInteger,
-		sub_total_display: 'R$149',
-		sub_total_integer: totalInteger - taxInteger,
-		coupon: requestCoupon,
-		is_coupon_applied: true,
-		coupon_discounts_integer: [],
-		tax: { location: {}, display_taxes: true },
-	};
-}
-
-function convertRequestProductToResponseProduct( currency ) {
-	return ( product ) => {
-		const { product_id } = product;
-
-		switch ( product_id ) {
-			case 1009: // WPCOM Personal Bundle
-				return {
-					product_id: 1009,
-					product_name: 'WordPress.com Personal',
-					product_slug: 'personal-bundle',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 14400,
-					item_original_cost_display: 'R$144',
-					item_subtotal_integer: 14400,
-					item_subtotal_display: 'R$144',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 5:
-				return {
-					product_id: 5,
-					product_name: 'Domain Mapping',
-					product_slug: 'domain_map',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 0,
-					item_original_cost_display: 'R$0',
-					item_subtotal_integer: 0,
-					item_subtotal_display: 'R$0',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 6:
-				return {
-					product_id: 6,
-					product_name: 'Domain Registration',
-					product_slug: 'domain_reg',
-					currency: currency,
-					is_domain_registration: true,
-					item_original_cost_integer: 70,
-					item_original_cost_display: 'R$70',
-					item_subtotal_integer: 70,
-					item_subtotal_display: 'R$70',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 39:
-				return {
-					product_id: 39,
-					product_name: 'Premium Theme: Ovation',
-					product_slug: 'premium_theme',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 69,
-					item_original_cost_display: 'R$69',
-					item_subtotal_integer: 69,
-					item_subtotal_display: 'R$69',
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 371:
-				return {
-					product_id: 371,
-					product_name: 'Support Session',
-					product_slug: 'concierge-session',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 49,
-					item_original_cost_display: 'R$49',
-					item_subtotal_integer: 49,
-					item_subtotal_display: 'R$49',
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 2106:
-				return {
-					product_id: 2106,
-					product_name: 'Jetpack Scan Daily',
-					product_slug: 'jetpack_scan',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 4100,
-					item_original_cost_display: 'R$41',
-					item_subtotal_integer: 4100,
-					item_subtotal_display: 'R$41',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 2100:
-				return {
-					product_id: 2100,
-					product_name: 'Jetpack Backup (Daily)',
-					product_slug: 'jetpack_backup_daily',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 4200,
-					item_original_cost_display: 'R$42',
-					item_subtotal_integer: 4200,
-					item_subtotal_display: 'R$42',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-		}
-
-		return {
-			product_id: product_id,
-			product_name: `Unknown mocked product: ${ product_id }`,
-			product_slug: 'unknown',
-			currency: currency,
-			is_domain_registration: false,
-			savings_total_display: '$0',
-			savings_total_integer: 0,
-			item_subtotal_display: '$0',
-			item_subtotal_integer: 0,
-			item_tax: 0,
-		};
-	};
-}
-
-function mockGetCartEndpointWith( initialCart ) {
-	return async () => {
-		return initialCart;
-	};
-}
-
-function getActivePersonalPlanDataForType( type ) {
-	switch ( type ) {
-		case 'none':
-			return null;
-		case 'monthly':
-			return [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			];
-		case 'yearly':
-			return [
-				{
-					interval: 365,
-					productSlug: planWithoutDomain.product_slug,
-					currentPlan: true,
-				},
-			];
-		case 'two-year':
-			return [
-				{
-					interval: 730,
-					productSlug: planWithoutDomainBiannual.product_slug,
-					currentPlan: true,
-				},
-			];
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getPersonalPlanForInterval( type ) {
-	switch ( type ) {
-		case 'monthly':
-			return planWithoutDomainMonthly;
-		case 'yearly':
-			return planWithoutDomain;
-		case 'two-year':
-			return planWithoutDomainBiannual;
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getBusinessPlanForInterval( type ) {
-	switch ( type ) {
-		case 'monthly':
-			return planLevel2Monthly;
-		case 'yearly':
-			return planLevel2;
-		case 'two-year':
-			return planLevel2Biannual;
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getVariantItemTextForInterval( type ) {
-	switch ( type ) {
-		case 'monthly':
-			return 'One month';
-		case 'yearly':
-			return 'One year';
-		case 'two-year':
-			return 'Two years';
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getPlansItemsState() {
-	return [
-		{
-			product_id: planWithoutDomain.product_id,
-			product_slug: planWithoutDomain.product_slug,
-			bill_period: 365,
-			product_type: 'bundle',
-			available: true,
-			price: '$48',
-			formatted_price: '$48',
-			raw_price: 48,
-		},
-		{
-			product_id: planWithoutDomainMonthly.product_id,
-			product_slug: planWithoutDomainMonthly.product_slug,
-			bill_period: 30,
-			product_type: 'bundle',
-			available: true,
-			price: '$7',
-			formatted_price: '$7',
-			raw_price: 7,
-		},
-		{
-			product_id: planWithoutDomainBiannual.product_id,
-			product_slug: planWithoutDomainBiannual.product_slug,
-			bill_period: 730,
-			product_type: 'bundle',
-			available: true,
-			price: '$84',
-			formatted_price: '$84',
-			raw_price: 84,
-		},
-		{
-			product_id: planLevel2.product_id,
-			product_slug: planLevel2.product_slug,
-			bill_period: 365,
-			product_type: 'bundle',
-			available: true,
-			price: '$300',
-			formatted_price: '$300',
-			raw_price: 300,
-		},
-		{
-			product_id: planLevel2Monthly.product_id,
-			product_slug: planLevel2Monthly.product_slug,
-			bill_period: 30,
-			product_type: 'bundle',
-			available: true,
-			price: '$33',
-			formatted_price: '$33',
-			raw_price: 33,
-		},
-		{
-			product_id: planLevel2Biannual.product_id,
-			product_slug: planLevel2Biannual.product_slug,
-			bill_period: 730,
-			product_type: 'bundle',
-			available: true,
-			price: '$499',
-			formatted_price: '$499',
-			raw_price: 499,
-		},
-	];
-}

@@ -1,37 +1,27 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight as compose } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import withFormBase from 'calypso/me/form-base/with-form-base';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { protectForm } from 'calypso/lib/protect-form';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
-import SectionHeader from 'calypso/components/section-header';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import { protectForm } from 'calypso/lib/protect-form';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import FormattedHeader from 'calypso/components/formatted-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Profile extends React.Component {

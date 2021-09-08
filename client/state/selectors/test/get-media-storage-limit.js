@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 
 describe( 'getMediaStorageLimit()', () => {

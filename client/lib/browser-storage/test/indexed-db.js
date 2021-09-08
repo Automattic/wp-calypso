@@ -2,14 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import 'fake-indexeddb/auto'; // Polyfill indexedDB for this set of tests.
 
-/**
- * Internal dependencies
- */
 import {
 	supportsIDB,
 	clearStorage,

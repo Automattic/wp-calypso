@@ -41,7 +41,13 @@ class DesignPickerStep extends Component {
 
 	renderDesignPicker() {
 		// props.locale obtained via `localize` HoC
-		return <DesignPicker theme="dark" locale={ this.props.locale } onSelect={ this.pickDesign } />;
+		return (
+			<DesignPicker
+				theme={ this.props.isReskinned ? 'light' : 'dark' }
+				locale={ this.props.locale }
+				onSelect={ this.pickDesign }
+			/>
+		);
 	}
 
 	headerText() {
@@ -56,6 +62,7 @@ class DesignPickerStep extends Component {
 	}
 
 	render() {
+		const { isReskinned } = this.props;
 		const headerText = this.headerText();
 		const subHeaderText = this.subHeaderText();
 
@@ -66,6 +73,8 @@ class DesignPickerStep extends Component {
 				fallbackSubHeaderText={ subHeaderText }
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderDesignPicker() }
+				align={ isReskinned ? 'left' : 'center' }
+				skipButtonAlign={ isReskinned ? 'top-right' : 'bottom' }
 				{ ...this.props }
 			/>
 		);

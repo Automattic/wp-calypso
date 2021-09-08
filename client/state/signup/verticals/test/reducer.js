@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { SIGNUP_VERTICALS_SET } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'state/signup/verticals/reducer', () => {
 	test( 'should default to an empty object', () => {

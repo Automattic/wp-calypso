@@ -1,7 +1,3 @@
-/**
- * External dependencies
- *
- */
 import { createHigherOrderComponent } from '@wordpress/compose';
 import React from 'react';
 import { SiteOffsetContext, contextTypeLoaded } from './context';

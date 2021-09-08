@@ -1,12 +1,8 @@
-/**
- * Internal dependencies
- */
 import {
 	ORDER_TRANSACTION_FETCH,
 	ORDER_TRANSACTION_FETCH_ERROR,
 	ORDER_TRANSACTION_SET,
 } from 'calypso/state/action-types';
-
 import { items, isFetching, errors } from '../reducer';
 
 describe( 'state/order-transactions/reducer', () => {

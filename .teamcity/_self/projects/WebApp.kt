@@ -31,7 +31,6 @@ object BuildDockerImage : BuildType({
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
-		text("calypso_live_url", "")
 	}
 
 	vcs {
@@ -104,40 +103,6 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
-			name = "Generate calypso.live URL"
-			scriptContent = """
-				#!/usr/bin/env bash
-				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%";
-				MAX_LOOP=10
-				COUNTER=0
-
-				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
-				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
-					COUNTER=${'$'}((COUNTER+1))
-					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
-					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
-
-					# 202 means the image is being downloaded, retry in a few seconds
-					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
-						sleep 5
-						continue
-					fi
-
-					break
-				done
-
-				if [[ -z "${'$'}URL" ]]; then
-					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
-					echo "Curl response: ${'$'}{REDIRECT}" >&2
-					exit 1
-				fi
-
-				echo "##teamcity[setParameter name='calypso_live_url' value='${'$'}URL']"
-				echo "Calypso.live URL is: ${'$'}URL$"
-			"""
-		}
-
-		script {
 			name = "Post PR comment with link"
 			scriptContent = """
 				#!/usr/bin/env bash
@@ -148,7 +113,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to Calypso live: %calypso_live_url%
+				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
 				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
 				EOF
 			"""
@@ -220,13 +185,15 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				# Duplicated packages
-				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
-				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+				if ! DUPLICATED_PACKAGES=${'$'}(
+					set +e
+					yarn dedupe --check
+				); then
 					echo "Repository contains duplicated packages: "
 					echo ""
 					echo "${'$'}DUPLICATED_PACKAGES"
 					echo ""
-					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "To fix them, you need to checkout the branch, run 'yarn dedupe',"
 					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
 					exit 1
 				else
@@ -495,10 +462,18 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests (desktop)"
+				name = "Run e2e tests ($viewportName)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
+
+					chmod +x ./bin/get-calypso-live-url.sh
+					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ ${'$'}? -ne 0 ]]; then
+						// Command failed. URL contains stderr
+						echo ${'$'}URL
+						exit 1
+					fi
 
 					cd test/e2e
 					mkdir temp
@@ -511,8 +486,6 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 					# mocha-teamcity-reporter to work.
 					export MAGELLANDEBUG=true
-
-					URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -611,9 +584,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 		uuid = buildUuid
 		name = "Playwright E2E Tests ($viewportName)"
 		description = "Runs Calypso e2e tests in $viewportName size using Playwright"
-		params {
-			param("use_cached_node_modules", "false")
-		}
 
 		artifactRules = """
 			reports => reports
@@ -642,10 +612,18 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests (desktop)"
+				name = "Run e2e tests ($viewportName)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
+
+					chmod +x ./bin/get-calypso-live-url.sh
+					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ ${'$'}? -ne 0 ]]; then
+						// Command failed. URL contains stderr
+						echo ${'$'}URL
+						exit 1
+					fi
 
 					cd test/e2e
 					mkdir temp
@@ -654,8 +632,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					export NODE_CONFIG_ENV=test
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
-
-					URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -669,7 +645,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 			}
 			bashNodeScript {
 				name = "Collect results"

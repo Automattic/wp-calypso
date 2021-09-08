@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SIGNUP_CURRENT_FLOW_NAME_SET,
 	SIGNUP_PREVIOUS_FLOW_NAME_SET,

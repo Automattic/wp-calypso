@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
-
-/**
- * Internal dependencies
- */
-import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import wpcom from 'calypso/lib/wp';
+import { APIProductFamily } from 'calypso/state/partner-portal/types';
 
 function queryProducts(): Promise< APIProductFamily[] > {
 	return wpcom.req

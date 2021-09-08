@@ -1,12 +1,11 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { map, partial } from 'lodash';
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import Gridicon from 'calypso/components/gridicon';
 import { keyForPost } from 'calypso/reader/post-key';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
@@ -20,21 +19,21 @@ function dismissPostAnalytics( uiIndex, storeId, post ) {
 	recordAction( 'in_stream_rec_dismiss' );
 }
 
-function handleSiteClick( uiIndex, post ) {
+const handleSiteClick = ( uiIndex ) => ( post ) => {
 	recordTrackForPost( 'calypso_reader_recommended_site_clicked', post, {
 		recommendation_source: 'in-stream',
 		ui_position: uiIndex,
 	} );
 	recordAction( 'in_stream_rec_site_click' );
-}
+};
 
-function handlePostClick( uiIndex, post ) {
+const handlePostClick = ( uiIndex ) => ( post ) => {
 	recordTrackForPost( 'calypso_reader_recommended_post_clicked', post, {
 		recommendation_source: 'in-stream',
 		ui_position: uiIndex,
 	} );
 	recordAction( 'in_stream_rec_post_click' );
-}
+};
 
 export class RecommendedPosts extends React.PureComponent {
 	static propTypes = {
@@ -81,8 +80,8 @@ export class RecommendedPosts extends React.PureComponent {
 								</div>
 								<RelatedPostCard
 									post={ post }
-									onPostClick={ partial( handlePostClick, uiIndex ) }
-									onSiteClick={ partial( handleSiteClick, uiIndex ) }
+									onPostClick={ handlePostClick( uiIndex ) }
+									onSiteClick={ handleSiteClick( uiIndex ) }
 									followSource={ this.props.followSource }
 								/>
 							</li>

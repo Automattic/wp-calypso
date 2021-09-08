@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { requesting, items, counts, requestingResend, deleting } from '../reducer';
 import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
@@ -20,6 +12,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requesting, items, counts, requestingResend, deleting } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#requesting()', () => {

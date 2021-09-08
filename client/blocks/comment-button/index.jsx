@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
 import './style.scss';

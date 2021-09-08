@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**

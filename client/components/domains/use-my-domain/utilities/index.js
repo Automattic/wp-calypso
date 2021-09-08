@@ -1,3 +1,4 @@
+export { connectDomainAction } from './connect-domain-action';
 export { getAvailabilityErrorMessage } from './get-availability-error-message';
 export { getDomainNameValidationErrorMessage } from './get-domain-name-validation-error-message';
 export { getMappingFreeText } from './get-mapping-free-text';
@@ -8,3 +9,4 @@ export { getTransferPriceText } from './get-transfer-price-text';
 export { getTransferSalePriceText } from './get-transfer-sale-price-text';
 export { isFreeTransfer } from './is-free-transfer';
 export { optionInfo } from './option-info';
+export { transferDomainAction } from './transfer-domain-action';

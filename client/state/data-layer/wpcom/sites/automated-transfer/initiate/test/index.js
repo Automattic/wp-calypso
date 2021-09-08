@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	pluginUploadError,
+	updatePluginUploadProgress,
+} from 'calypso/state/plugins/upload/actions';
 import {
 	initiateTransferWithPluginZip,
 	receiveResponse,
 	receiveError,
 	updateUploadProgress,
 } from '../';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import {
-	pluginUploadError,
-	updatePluginUploadProgress,
-} from 'calypso/state/plugins/upload/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const siteId = 1916284;
 

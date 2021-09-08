@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import nock from 'nock';
-
-/**
- * Internal dependencies
- */
-import { requestRelatedPosts } from '../actions';
 import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
+import { requestRelatedPosts } from '../actions';
 
 jest.mock( 'calypso/state/reader/posts/actions', () => ( {
 	receivePosts( posts ) {

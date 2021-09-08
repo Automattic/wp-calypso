@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 
 function generateUrl( featureSlug: string, eventType: string, eventValue: string ) {

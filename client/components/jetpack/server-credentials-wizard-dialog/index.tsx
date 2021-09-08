@@ -1,10 +1,9 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

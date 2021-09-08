@@ -1,6 +1,8 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
 
+type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
+
 const selectors = {
 	// iframe and editor
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
@@ -30,6 +32,7 @@ const selectors = {
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
 	viewButton: '.editor-post-publish-panel a:has-text("View")',
+	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 };
 
 /**
@@ -54,7 +57,7 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		const frame = await this.getEditorFrame();
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
 		await frame.waitForSelector( selectors.editorBody );
 		return frame;
 	}
@@ -265,9 +268,20 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Creates a new page/post using the post-publish panel.
+	 *
+	 * @param options will be forwarded to the button click action
+	 */
+	async postPublishAddNewItem( options: ClickOptions = {} ): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.waitForSelector( selectors.publishPanel );
+		await frame.click( selectors.addNewButton, options );
+	}
+
+	/**
 	 * Saves the currently open post as draft.
 	 */
-	async saveDraft() {
+	async saveDraft(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
 		await frame.click( selectors.saveDraftButton );

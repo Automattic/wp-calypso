@@ -5,14 +5,14 @@ on: [push]
 jobs:
   build:
     name: Build ICFY stats
-
     runs-on: ubuntu-latest
-
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '^16.5.0'
+          node-version: '^16.7.0'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Fetch git history
@@ -32,7 +32,6 @@ jobs:
           NODE_ENV: production
           BROWSERSLIST_ENV: defaults
           WORKERS: 2
-          WEBPACK_OPTIONS: --progress=profile
         run: yarn run analyze-icfy
       - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
       - uses: actions/upload-artifact@v1

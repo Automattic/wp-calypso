@@ -1,10 +1,10 @@
+import { Gridicon } from '@automattic/components';
 import { get, map, take, values } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
-import Gridicon from 'calypso/components/gridicon';
 import TimeSince from 'calypso/components/time-since';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getSiteName } from 'calypso/reader/get-helpers';

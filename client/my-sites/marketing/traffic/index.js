@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { flowRight, partialRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
@@ -106,21 +106,20 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = partialRight( pick, [
-	'stats',
-	'admin_bar',
-	'hide_smile',
-	'count_roles',
-	'roles',
-	'jetpack_relatedposts_allowed',
-	'jetpack_relatedposts_enabled',
-	'jetpack_relatedposts_show_headline',
-	'jetpack_relatedposts_show_thumbnails',
-	'blog_public',
-] );
+const getFormSettings = ( settings ) =>
+	pick( settings, [
+		'stats',
+		'admin_bar',
+		'hide_smile',
+		'count_roles',
+		'roles',
+		'jetpack_relatedposts_allowed',
+		'jetpack_relatedposts_enabled',
+		'jetpack_relatedposts_show_headline',
+		'jetpack_relatedposts_show_thumbnails',
+		'blog_public',
+	] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsTraffic );
+export default connectComponent(
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsTraffic ) )
+);

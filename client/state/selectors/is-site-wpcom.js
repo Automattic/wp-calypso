@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 /**
  * Return true if the questioned site is a WPCOM site ( Atomic or Simple ).

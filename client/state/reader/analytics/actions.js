@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 

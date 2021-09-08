@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { AppState } from 'calypso/types';
 
 import 'calypso/state/rewind/init';

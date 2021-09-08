@@ -1,7 +1,3 @@
-/**
- *  External Dependencies
- *
- */
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';

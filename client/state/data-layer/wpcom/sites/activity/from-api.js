@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import apiResponseSchema from './schema';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { parseBlock } from 'calypso/lib/notifications/note-block-parser';
+import apiResponseSchema from './schema';
 
 /**
  * Module constants

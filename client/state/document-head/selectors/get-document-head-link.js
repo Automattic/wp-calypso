@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/document-head/init';
 
 /**

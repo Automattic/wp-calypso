@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	READER_RECOMMENDED_SITES_REQUEST,
 	READER_RECOMMENDED_SITES_RECEIVE,

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isJetpackModuleActive from './is-jetpack-module-active';
 import isJetpackSite from './is-jetpack-site';
 

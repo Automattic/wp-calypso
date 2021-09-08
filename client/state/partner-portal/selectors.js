@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import startsWith from 'lodash/startsWith';
-
-/**
- * Internal dependencies
- */
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 // Required for modular state.

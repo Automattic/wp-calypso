@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -8,10 +8,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import Gridicon from 'calypso/components/gridicon';
 import PodcastIndicator from 'calypso/components/podcast-indicator';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import Tooltip from 'calypso/components/tooltip';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';

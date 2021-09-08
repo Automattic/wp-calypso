@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/themes/init';

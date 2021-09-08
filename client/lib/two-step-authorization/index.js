@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-import { get as webauthn_auth } from '@github/webauthn-json';
-
-const debug = debugFactory( 'calypso:two-step-authorization' );
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { bumpStat } from 'calypso/lib/analytics/mc';
 import config from '@automattic/calypso-config';
+import { get as webauthn_auth } from '@github/webauthn-json';
+import debugFactory from 'debug';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import emitter from 'calypso/lib/mixins/emitter';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import wp from 'calypso/lib/wp';
 import { requestConnectedApplications } from 'calypso/state/connected-applications/actions';
 import { requestUserProfileLinks } from 'calypso/state/profile-links/actions';
-import wp from 'calypso/lib/wp';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
+const debug = debugFactory( 'calypso:two-step-authorization' );
 const wpcom = wp.undocumented();
 
 /*

@@ -1,20 +1,16 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { CONCIERGE_APPOINTMENT_CANCEL } from 'calypso/state/action-types';
 import {
 	CONCIERGE_STATUS_CANCELLED,
 	CONCIERGE_STATUS_CANCELLING,
 	CONCIERGE_STATUS_CANCELLING_ERROR,
 } from 'calypso/me/concierge/constants';
-import fromApi from './from-api';
+import { CONCIERGE_APPOINTMENT_CANCEL } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-
+import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import fromApi from './from-api';
 
 export const cancelConciergeAppointment = ( action ) => {
 	return [

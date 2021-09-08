@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { Button } from '@automattic/components';
-
-/**
- * Internal Dependencies
- */
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import {
 	isExpired,
 	isExpiring,

@@ -1,5 +1,4 @@
 import debug from 'debug';
-import { partial } from 'lodash';
 import nock from 'nock';
 
 export { nock };
@@ -12,7 +11,7 @@ const log = debug( 'calypso:test:use-nock' );
  */
 export const useNock = ( setupCallback ) => {
 	if ( setupCallback ) {
-		beforeAll( partial( setupCallback, nock ) );
+		beforeAll( () => setupCallback( nock ) );
 	}
 	afterAll( () => {
 		log( 'Cleaning up nock' );

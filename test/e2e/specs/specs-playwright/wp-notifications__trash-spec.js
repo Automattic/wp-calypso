@@ -7,6 +7,7 @@ import {
 	CommentsComponent,
 	NavbarComponent,
 	NotificationsComponent,
+	CookieBannerComponent,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
@@ -16,7 +17,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
-	const comment = DataHelper.randomPhrase() + ' TBD';
+	const comment = DataHelper.getRandomPhrase() + ' TBD';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -45,6 +46,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	it( 'Clear cookies', async function () {
 		await BrowserManager.clearAuthenticationState( page );
+		const cookieBannerComponent = new CookieBannerComponent( page );
+		await cookieBannerComponent.acceptCookie();
 	} );
 
 	it( `Log in as ${ notificationsUser }`, async function () {

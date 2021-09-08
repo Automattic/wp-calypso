@@ -1,9 +1,8 @@
-import { Button, ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import React, { FunctionComponent } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
-import Gridicon from 'calypso/components/gridicon';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

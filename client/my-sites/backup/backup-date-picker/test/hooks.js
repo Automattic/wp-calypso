@@ -1,6 +1,3 @@
-/**
- * Mock dependencies
- */
 jest.mock( 'react', () => ( {
 	...jest.requireActual( 'react' ),
 	useCallback: jest.fn( ( fn ) => fn ),

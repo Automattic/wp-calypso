@@ -17,7 +17,9 @@ describe( 'useTranslate()', () => {
 
 	beforeEach( () => {
 		// reset to default locale
-		i18n.setLocale();
+		act( () => {
+			i18n.setLocale();
+		} );
 
 		// create container
 		container = document.createElement( 'div' );
@@ -68,9 +70,11 @@ describe( 'useTranslate()', () => {
 
 	test( 'rerenders after update of current locale translations', () => {
 		// set some locale data
-		i18n.setLocale( {
-			'': { localeSlug: 'cs' },
-			'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
+		act( () => {
+			i18n.setLocale( {
+				'': { localeSlug: 'cs' },
+				'hook (%(lang)s)': [ 'háček (%(lang)s)' ],
+			} );
 		} );
 
 		// render the Label component

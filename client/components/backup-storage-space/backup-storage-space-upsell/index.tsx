@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import { preventWidows } from 'calypso/lib/formatting';
-import Gridicon from 'calypso/components/gridicon';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent, useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export type BackupStorageSpaceUpsellOptions =

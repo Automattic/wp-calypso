@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import formatCurrency from '@automattic/format-currency';
 
 /**

@@ -30,19 +30,26 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/search": "^1.0.0",
-		"@babel/runtime": "^7.14.8",
+		"@babel/runtime": "^7.15.3",
 		"@wordpress/base-styles": "^3.4.3",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/i18n": "^3.20.0",
 		"@wordpress/react-i18n": "^1.0.3"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "^4.27.3",
+		"@wp-g2/create-styles": "^0.0.154",
 		"react": "^16.8",
-		"react-dom": "^16.8"
+		"react-dom": "^16.12.0",
+		"react-native": "^0.63.4",
+		"reakit-utils": "^0.15.1"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.2"
 	}
 }

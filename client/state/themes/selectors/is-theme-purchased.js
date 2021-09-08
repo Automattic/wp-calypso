@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 import 'calypso/state/themes/init';

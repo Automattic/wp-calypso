@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getBillingTransactions from 'calypso/state/selectors/get-billing-transactions';
 
 import 'calypso/state/billing-transactions/init';

@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import React from 'react';
 import HelpResult from './item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.PureComponent {

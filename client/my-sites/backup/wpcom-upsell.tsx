@@ -1,11 +1,11 @@
 import { isFreePlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -20,9 +20,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
 import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';

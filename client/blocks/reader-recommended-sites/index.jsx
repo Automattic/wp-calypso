@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { map, partial, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import ConnectedListItem from 'calypso/blocks/reader-list-item/connected';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	recordAction,
 	recordTrackWithRailcar,
@@ -30,14 +29,6 @@ export class RecommendedSites extends React.PureComponent {
 		this.props.dismissSite( siteId );
 	};
 
-	handleSiteClick = ( siteId, uiIndex ) => {
-		recordTrackWithRailcar( 'calypso_reader_recommended_site_clicked', this.props.railcar, {
-			ui_position: uiIndex,
-			siteId,
-		} );
-		recordAction( 'calypso_reader_recommended_site_clicked' );
-	};
-
 	render() {
 		const { followSource } = this.props;
 		const placeholders = [ {}, {} ];
@@ -59,7 +50,7 @@ export class RecommendedSites extends React.PureComponent {
 					{ this.props.translate( 'Recommended sites' ) }
 				</h2>
 				<ul className="reader-recommended-sites__list">
-					{ map( sites, ( site, index ) => {
+					{ sites.map( ( site, index ) => {
 						const siteId = site.siteId || site.blogId;
 						return (
 							<li
@@ -71,7 +62,7 @@ export class RecommendedSites extends React.PureComponent {
 										<Button
 											borderless
 											title={ this.props.translate( 'Dismiss this recommendation' ) }
-											onClick={ partial( this.handleSiteDismiss, siteId, index ) }
+											onClick={ () => this.handleSiteDismiss( siteId, index ) }
 										>
 											<Gridicon icon="cross" size={ 18 } />
 										</Button>

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isRequestingPostStats, getPostStat, getPostStats } from '../selectors';
 
 describe( 'selectors', () => {

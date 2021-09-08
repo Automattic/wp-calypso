@@ -29,9 +29,6 @@ import {
 } from './domain-suggestion-item';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;

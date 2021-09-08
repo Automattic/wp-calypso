@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isSitePreviewVisible } from '../selectors';
 
 describe( 'state/signup/preview/selectors', () => {

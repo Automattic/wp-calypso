@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
-import PrimaryHeader from '../shared/primary-header';
+import React, { Component } from 'react';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import PrimaryHeader from '../shared/primary-header';
 
 class Skeleton extends Component {
 	render() {

@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
+import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
@@ -49,6 +49,9 @@ function getRedirectToAfterLoginUrl( {
 		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
 		return initialContext.query.oauth2_redirect;
+	}
+	if ( initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
+		return initialContext.query.redirect_to;
 	}
 
 	const stepAfterRedirect =
@@ -255,6 +258,8 @@ export class UserStep extends Component {
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
+		} else if ( data.queryArgs.redirect_to ) {
+			dependencies.redirect = data.queryArgs.redirect_to;
 		}
 
 		this.props.submitSignupStep(
