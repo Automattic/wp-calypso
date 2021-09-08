@@ -427,6 +427,7 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
+			stripe,
 			cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 		} ),
 		[
@@ -439,6 +440,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
+			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
 			elements,
