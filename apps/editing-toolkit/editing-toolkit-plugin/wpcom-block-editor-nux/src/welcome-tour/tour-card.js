@@ -5,7 +5,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { __, hasTranslation } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -37,7 +37,6 @@ function WelcomeTourCard( {
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastCard = currentCardIndex === lastCardIndex;
-	const ref = useRef( null );
 
 	// Ensure tracking is recorded once per slide view
 	useEffectOnlyOnce( () => {
@@ -55,12 +54,8 @@ function WelcomeTourCard( {
 		} );
 	} );
 
-	useEffect( () => {
-		ref?.current && ref.current.focus();
-	}, [] );
-
 	return (
-		<Card className="welcome-tour-card" isElevated ref={ ref }>
+		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
 				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />

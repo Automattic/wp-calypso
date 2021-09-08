@@ -4,11 +4,11 @@
 import { useEffect, useCallback, useState } from '@wordpress/element';
 
 /**
- * Returns true/false whether ref is focused either by tab-ing or clicking into any of its children.
+ * A hook that returns true/false if ref node is focused either by tabbing or clicking into any of its children.
  *
  * @param ref React.MutableRefObject< null | HTMLElement >
  */
-const useFocus = ( ref: React.MutableRefObject< null | HTMLElement > ): boolean => {
+const useFocusHandler = ( ref: React.MutableRefObject< null | HTMLElement > ): boolean => {
 	const [ hasFocus, setHasFocus ] = useState( false );
 
 	const handleFocus = useCallback( () => {
@@ -44,11 +44,11 @@ const useFocus = ( ref: React.MutableRefObject< null | HTMLElement > ): boolean 
 	);
 
 	useEffect( () => {
-		document.addEventListener( 'focus', handleFocus );
+		document.addEventListener( 'focusin', handleFocus );
 		document.addEventListener( 'mousedown', handleMousedown );
 		document.addEventListener( 'keyup', handleKeyup );
 		return () => {
-			document.removeEventListener( 'focus', handleFocus );
+			document.removeEventListener( 'focusin', handleFocus );
 			document.removeEventListener( 'mnousedown', handleMousedown );
 			document.removeEventListener( 'keyup', handleKeyup );
 		};
@@ -57,4 +57,4 @@ const useFocus = ( ref: React.MutableRefObject< null | HTMLElement > ): boolean 
 	return hasFocus;
 };
 
-export default useFocus;
+export default useFocusHandler;

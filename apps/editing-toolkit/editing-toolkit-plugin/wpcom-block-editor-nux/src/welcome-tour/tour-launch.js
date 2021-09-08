@@ -11,7 +11,8 @@ import { Icon } from '@wordpress/icons';
 /**
  * Internal Dependencies
  */
-import useKeyboardNavigation from './hooks/use-keyboard-navigation';
+import useFocusHandler from './hooks/use-focus-handler';
+import useKeydownHandler from './hooks/use-keydown-handler';
 import maximize from './icons/maximize';
 import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
@@ -64,10 +65,17 @@ function KeyboardNavigation( {
 	onMinimize,
 	onNextCardProgression,
 	onPreviousCardProgression,
-	boundRef,
+	focusRef,
+	isMinimized,
 } ) {
-	useKeyboardNavigation( onMinimize, onNextCardProgression, onPreviousCardProgression, boundRef );
-	return null;
+	function KeydownHandler() {
+		useKeydownHandler( onMinimize, onNextCardProgression, onPreviousCardProgression );
+		return null;
+	}
+
+	const isTourFocused = useFocusHandler( focusRef );
+
+	return isTourFocused && ! isMinimized ? <KeydownHandler /> : null;
 }
 
 function WelcomeTourFrame() {
@@ -121,34 +129,37 @@ function WelcomeTourFrame() {
 	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
 
 	return (
-		<div className="wpcom-editor-welcome-tour-frame" ref={ ref }>
-			{ ! isMinimized ? (
-				<>
-					<KeyboardNavigation
-						onMinimize={ handleMinimize }
-						onNextCardProgression={ handleNextCardProgression }
-						onPreviousCardProgression={ handlePreviousCardProgression }
-						boundRef={ ref }
-					/>
-					<WelcomeTourCard
-						cardContent={ cardContent[ currentCardIndex ] }
-						currentCardIndex={ currentCardIndex }
-						justMaximized={ justMaximized }
-						key={ currentCardIndex }
-						lastCardIndex={ lastCardIndex }
-						onDismiss={ handleDismiss }
-						onMinimize={ handleMinimize }
-						setJustMaximized={ setJustMaximized }
-						setCurrentCardIndex={ setCurrentCardIndex }
-						onNextCardProgression={ handleNextCardProgression }
-						onPreviousCardProgression={ handlePreviousCardProgression }
-						isGutenboarding={ isGutenboarding }
-					/>
-				</>
-			) : (
-				<WelcomeTourMinimized onMaximize={ handleMaximize } />
-			) }
-		</div>
+		<>
+			<KeyboardNavigation
+				onMinimize={ handleMinimize }
+				onNextCardProgression={ handleNextCardProgression }
+				onPreviousCardProgression={ handlePreviousCardProgression }
+				focusRef={ ref }
+				isMinimized={ isMinimized }
+			/>
+			<div className="wpcom-editor-welcome-tour-frame" ref={ ref }>
+				{ ! isMinimized ? (
+					<>
+						<WelcomeTourCard
+							cardContent={ cardContent[ currentCardIndex ] }
+							currentCardIndex={ currentCardIndex }
+							justMaximized={ justMaximized }
+							key={ currentCardIndex }
+							lastCardIndex={ lastCardIndex }
+							onDismiss={ handleDismiss }
+							onMinimize={ handleMinimize }
+							setJustMaximized={ setJustMaximized }
+							setCurrentCardIndex={ setCurrentCardIndex }
+							onNextCardProgression={ handleNextCardProgression }
+							onPreviousCardProgression={ handlePreviousCardProgression }
+							isGutenboarding={ isGutenboarding }
+						/>
+					</>
+				) : (
+					<WelcomeTourMinimized onMaximize={ handleMaximize } />
+				) }
+			</div>
+		</>
 	);
 }
 
