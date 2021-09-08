@@ -25,6 +25,7 @@ export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) 
 interface BasePageProps {
 	rootUrl: string;
 	urlQueryArgs: QueryArgs;
+	nav?: ReactNode;
 	header: ReactNode;
 	footer?: ReactNode;
 }

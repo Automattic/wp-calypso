@@ -25,7 +25,6 @@ function stringToDuration( duration?: string ): Duration | undefined {
  * slug, otherwise, return null.
  *
  * @param {string} productSlug the slug of a Jetpack product
- *
  * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
  */
 function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
@@ -66,6 +65,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 			siteSlug={ siteParam || context.query.site }
 			urlQueryArgs={ urlQueryArgs }
 			highlightedProducts={ highlightedProducts }
+			nav={ context.nav }
 			header={ context.header }
 			footer={ context.footer }
 			planRecommendation={ planRecommendation }
