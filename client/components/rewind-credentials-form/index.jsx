@@ -1,8 +1,7 @@
 /**
  * External dependendies
  */
-import { Button } from '@automattic/components';
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';

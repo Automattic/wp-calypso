@@ -1,8 +1,7 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
-import { Button, Card } from '@automattic/components';
-import { Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
