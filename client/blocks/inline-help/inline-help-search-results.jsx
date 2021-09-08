@@ -37,15 +37,11 @@ const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
 
 const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
-const filterManagePurchaseLink = ( hasPurchases, section ) => ( { post_id } ) => {
-	if (
-		post_id === 111349 &&
-		! hasPurchases &&
-		! [ 'purchases', 'site-purchases' ].includes( section )
-	) {
-		return false;
+const filterManagePurchaseLink = ( hasPurchases, isPurchasesSection ) => {
+	if ( hasPurchases || isPurchasesSection ) {
+		return () => true;
 	}
-	return true;
+	return ( { post_id } ) => post_id !== 111349;
 };
 
 function HelpSearchResults( {
@@ -59,9 +55,11 @@ function HelpSearchResults( {
 	const dispatch = useDispatch();
 
 	const currentUserId = useSelector( getCurrentUserId );
-	const sectionName = useSelector( getSectionName );
 	const hasPurchases = useSelector( ( state ) =>
 		hasCancelableUserPurchases( state, currentUserId )
+	);
+	const isPurchasesSection = useSelector( ( state ) =>
+		[ 'purchases', 'site-purchases' ].includes( getSectionName( state ) )
 	);
 	const rawContextualResults = useSelector( getContextualHelpResults );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
@@ -69,7 +67,7 @@ function HelpSearchResults( {
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
-		filterManagePurchaseLink( hasPurchases, sectionName )
+		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 	const { data: searchResults = [], isLoading: isSearching } = useInlineHelpSearchQuery(
 		searchQuery
