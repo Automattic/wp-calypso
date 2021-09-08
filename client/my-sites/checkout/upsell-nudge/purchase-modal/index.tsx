@@ -73,7 +73,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 		isComingFromUpsell: true,
 		siteSlug: props.siteSlug,
 	} );
-	const { stripeConfiguration } = useStripe();
+	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
 	const { responseCart } = useShoppingCart();
 	const selectedSite = useSelector( getSelectedSite );
@@ -95,6 +95,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			responseCart,
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
+			stripe,
 			stripeConfiguration,
 			cardNumberElement: undefined,
 			contactDetails: {
@@ -107,6 +108,7 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			postalCode,
 			includeDomainDetails,
 			includeGSuiteDetails,
+			stripe,
 			stripeConfiguration,
 			reduxDispatch,
 			selectedSite,
