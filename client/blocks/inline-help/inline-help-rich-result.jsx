@@ -43,8 +43,8 @@ class InlineHelpRichResult extends Component {
 		const tracksData = {
 			search_query: searchQuery,
 			location: 'inline-help-popover',
-			...( link && { result_url: link } ),
-			...( tour && { tour } ),
+			result_url: link,
+			tour,
 		};
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
