@@ -98,6 +98,10 @@ class EmailProvidersComparison extends React.Component {
 		titanMailProduct: PropTypes.object,
 	};
 
+	static defaultProps = {
+		comparisonContext: 'email-purchase',
+	};
+
 	isMounted = false;
 
 	constructor( props ) {
@@ -122,12 +126,6 @@ class EmailProvidersComparison extends React.Component {
 
 	componentWillUnmount() {
 		this.isMounted = false;
-	}
-
-	getComparisonContext() {
-		const { comparisonContext = 'email-purchase' } = this.props;
-
-		return comparisonContext;
 	}
 
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
@@ -173,7 +171,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { domain, domainName, hasCartDomain } = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -185,7 +183,7 @@ class EmailProvidersComparison extends React.Component {
 			: getCurrentUserCannotAddEmailReason( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
-			context: this.getComparisonContext(),
+			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
@@ -244,14 +242,14 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { domain, gSuiteProduct, hasCartDomain } = this.props;
+		const { comparisonContext, domain, gSuiteProduct, hasCartDomain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
-			context: this.getComparisonContext(),
+			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: 'google',
@@ -644,7 +642,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderDomainEligibilityNotice() {
-		const { domain, domainName } = this.props;
+		const { comparisonContext, domain, domainName } = this.props;
 
 		if ( this.isDomainEligibleForEmail( domain ) ) {
 			return null;
@@ -660,7 +658,7 @@ class EmailProvidersComparison extends React.Component {
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_domain_not_eligible_error_impression"
 					eventProperties={ {
-						context: this.getComparisonContext(),
+						context: comparisonContext,
 						domain: domainName,
 						error_code: cannotAddEmailReason.code,
 					} }
@@ -674,6 +672,7 @@ class EmailProvidersComparison extends React.Component {
 
 	render() {
 		const {
+			comparisonContext,
 			domainsWithForwards,
 			hideEmailForwardingCard,
 			isGSuiteSupported,
@@ -707,7 +706,7 @@ class EmailProvidersComparison extends React.Component {
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_view"
 					eventProperties={ {
-						context: this.getComparisonContext(),
+						context: comparisonContext,
 						is_gsuite_supported: isGSuiteSupported,
 						layout: 'stacked',
 					} }
