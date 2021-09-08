@@ -60,14 +60,16 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_pricing_legacy_redirect', {
-				site: siteSlug,
-				path: viewTrackerPath,
-				root_path: rootUrl,
-				legacy_plan: legacyPlan,
-			} )
-		);
+		if ( legacyPlan ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_pricing_legacy_redirect', {
+					site: siteSlug,
+					path: viewTrackerPath,
+					root_path: rootUrl,
+					legacy_plan: legacyPlan,
+				} )
+			);
+		}
 	}, [ legacyPlan, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
