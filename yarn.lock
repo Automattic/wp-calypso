@@ -12713,6 +12713,7 @@ __metadata:
     enzyme: ^3.11.0
     events: ^3.1.0
     express: ^4.17.1
+    express-async-handler: ^1.1.4
     express-useragent: ^1.0.15
     fake-indexeddb: ^3.1.3
     fast-json-stable-stringify: ^2.1.0
@@ -18319,6 +18320,13 @@ __metadata:
     loader-utils: ^1.1.0
     source-map: 0.5.0
   checksum: 364087b572d4370f4032131bebbe18e32ffb31bfcc62a09aa215c58d6c70736245cc335062c10670301852a5268fe18749a69a236ca95612dc8cc64b83eabb41
+  languageName: node
+  linkType: hard
+
+"express-async-handler@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "express-async-handler@npm:1.1.4"
+  checksum: 4b48fdf4d3e716a3dba0502186b2f4bc842cea782fde3be351edf5237b936229de036fdc8efd462fd5f0f175d2fb7201f3a5bdea3a957a84b72001ef36b4376e
   languageName: node
   linkType: hard
 

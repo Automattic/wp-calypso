@@ -1,11 +1,11 @@
-import fs from 'fs';
+import { readFile } from 'fs/promises';
 import path from 'path';
+import asyncHandler from 'express-async-handler';
 import { defaults, groupBy, flatten } from 'lodash';
 
 const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
+const ASSETS_FILE = path.join( ASSETS_PATH, `assets-evergreen.json` );
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
-
-const getAssetsPath = () => path.join( ASSETS_PATH, `assets-evergreen.json` );
 
 const getAssetType = ( asset ) => {
 	if ( asset.endsWith( '.rtl.css' ) ) {
@@ -26,20 +26,27 @@ const getChunkById = ( assets, chunkId ) => assets.chunks.find( ( chunk ) => chu
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
 export default () => {
-	return ( req, res, next ) => {
-		req.getAssets = () => {
-			return JSON.parse( fs.readFileSync( getAssetsPath(), 'utf8' ) );
-		};
+	let assetsFile;
+	async function readAssets() {
+		if ( ! assetsFile ) {
+			assetsFile = JSON.parse( await readFile( ASSETS_FILE, 'utf8' ) );
+		}
+		return assetsFile;
+	}
+
+	return asyncHandler( async ( req, res, next ) => {
+		const assets = await readAssets();
+
+		req.getAssets = () => assets;
 
 		req.getFilesForEntrypoint = ( name ) => {
-			const entrypointAssets = req
-				.getAssets()
-				.entrypoints[ name ].assets.filter( ( asset ) => ! asset.startsWith( 'manifest' ) );
+			const entrypointAssets = assets.entrypoints[ name ].assets.filter(
+				( asset ) => ! asset.startsWith( 'manifest' )
+			);
 			return groupAssetsByType( entrypointAssets );
 		};
 
 		req.getFilesForChunk = ( chunkName ) => {
-			const assets = req.getAssets();
 			const chunk = getChunkByName( assets, chunkName );
 
 			if ( ! chunk ) {
@@ -61,5 +68,5 @@ export default () => {
 		req.getEmptyAssets = () => EMPTY_ASSETS;
 
 		next();
-	};
+	} );
 };
