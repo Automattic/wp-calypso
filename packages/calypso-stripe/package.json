@@ -39,9 +39,9 @@
 	"dependencies": {
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
-		"react-dom": "^16.12.0",
 		"debug": "^4.1.1",
-		"react": "^16.12.0"
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0"
 	},
 	"devDependencies": {
 		"typescript": "^4.4.2"

@@ -200,11 +200,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-stripe@workspace:packages/calypso-stripe"
   dependencies:
-    "@automattic/load-script": ^1.0.0
+    "@stripe/react-stripe-js": ^1.4.1
+    "@stripe/stripe-js": ^1.17.1
     debug: ^4.1.1
     react: ^16.12.0
     react-dom: ^16.12.0
-    react-stripe-elements: ^4.0.2
     typescript: ^4.4.2
   languageName: unknown
   linkType: soft
@@ -273,7 +273,6 @@ __metadata:
     prop-types: ^15.7.2
     react: ^16.12.0
     react-dom: ^16.12.0
-    react-stripe-elements: ^4.0.2
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     typescript: ^4.4.2
@@ -6459,10 +6458,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stripe/react-stripe-js@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@stripe/react-stripe-js@npm:1.4.1"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    "@stripe/stripe-js": ^1.13.0
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  checksum: 3b28ccd0daea717c06c8371fabee5aa42cbf7eac0fc47a20f5205e3faf2cbc9fe062a22365ba68b7787b60ad1bf914bcb18b17bddbefbe5315636f92ae6ed176
+  languageName: node
+  linkType: hard
+
 "@stripe/stripe-js@npm:^1.15.0":
   version: 1.16.0
   resolution: "@stripe/stripe-js@npm:1.16.0"
   checksum: 0d3c24eda28976bdd0796b8f59f32733988106f2e063d375e116e9520f31ddbe26afb9342ebc277888ac62579a7667d817272eef72c9620685e200f369a3925b
+  languageName: node
+  linkType: hard
+
+"@stripe/stripe-js@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "@stripe/stripe-js@npm:1.17.1"
+  checksum: 6302ff0406997f16ca29ab86c38d8e1fc0b97fce75ad64da0457be72721bf91e8b25478f1686b47f01702a15ab8fc05f3f99cb6a83cbc50c55c5df5527686221
   languageName: node
   linkType: hard
 
@@ -12641,6 +12660,8 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
+    "@stripe/react-stripe-js": ^1.4.1
+    "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
     "@testing-library/react-hooks": 7.0.1
@@ -12784,7 +12805,6 @@ __metadata:
     react-redux: ^7.2.4
     react-router-dom: ^5.1.2
     react-spring: ^8.0.27
-    react-stripe-elements: ^4.0.2
     react-test-renderer: ^16.12.0
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
@@ -32532,18 +32552,6 @@ fsevents@~2.1.2:
     react: ">= 16.8.0"
     react-dom: ">= 16.8.0"
   checksum: fbd5f38dcaa066770b92ff60206e5e62dc6a9bda2fd811c7e542e601ad8f935b412139d2e29714f5c3424c94d59abbd82af8bbc6a1dca59cac7cce2d444967ab
-  languageName: node
-  linkType: hard
-
-"react-stripe-elements@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "react-stripe-elements@npm:4.0.2"
-  dependencies:
-    prop-types: ^15.5.10
-  peerDependencies:
-    react: ^15.5.4 || ^16.0.0-0
-    react-dom: ^15.5.4 || ^16.0.0-0
-  checksum: 378e8ce474e63bd46c4b957d25e62a45bdcac7fcf7944ebba711743171a74e29d7bd5faa0db6533d3cd22ba47bebf0101b661a2fdc06c0a73840c2c4005e1bdd
   languageName: node
   linkType: hard
 
