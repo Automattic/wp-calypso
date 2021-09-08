@@ -1,3 +1,6 @@
+/**
+ * External Dependencies
+ */
 import { useEffect, useCallback, useState } from '@wordpress/element';
 
 /**

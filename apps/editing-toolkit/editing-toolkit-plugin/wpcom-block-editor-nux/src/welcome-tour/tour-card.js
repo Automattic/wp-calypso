@@ -1,3 +1,6 @@
+/**
+ * External Dependencies
+ */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
@@ -6,6 +9,9 @@ import { useEffect, useRef } from '@wordpress/element';
 import { __, hasTranslation } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
+/**
+ * Internal Dependencies
+ */
 import minimize from './icons/minimize';
 import thumbsDown from './icons/thumbs_down';
 import thumbsUp from './icons/thumbs_up';

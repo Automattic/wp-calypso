@@ -1,3 +1,6 @@
+/**
+ * External Dependencies
+ */
 import { useEffect, useCallback } from '@wordpress/element';
 
 const useKeyboardNavigation = (

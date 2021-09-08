@@ -1,3 +1,6 @@
+/**
+ * External Dependencies
+ */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Flex } from '@wordpress/components';
@@ -5,6 +8,9 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+/**
+ * Internal Dependencies
+ */
 import useFocus from './hooks/use-focus';
 import useKeyboardNavigation from './hooks/use-keyboard-navigation';
 import maximize from './icons/maximize';
