@@ -117,12 +117,17 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
-	width: 100%;
-	text-align: right;
+	display: inline-block;
+	width: auto;
+	text-align: left;
 	order: 1;
 	font-size: 0.75rem;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	margin-top: 4px;
+
+	.rtl & {
+		text-align: right;
+	}
 `;
 
 function LineItemPrice( {
