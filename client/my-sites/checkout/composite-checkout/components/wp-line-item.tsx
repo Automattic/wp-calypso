@@ -124,14 +124,9 @@ const DeleteButtonWrapper = styled.div`
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	display: inline-block;
 	width: auto;
-	text-align: left;
 	font-size: 0.75rem;
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	margin-top: 4px;
-
-	.rtl & {
-		text-align: right;
-	}
 `;
 
 function LineItemPrice( {
