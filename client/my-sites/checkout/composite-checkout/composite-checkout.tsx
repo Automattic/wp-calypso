@@ -12,6 +12,7 @@ import {
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from '@emotion/react';
+import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -410,6 +411,7 @@ export default function CompositeCheckout( {
 		[ addProductsToCart, products, recordEvent ]
 	);
 
+	const elements = useElements();
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -425,6 +427,7 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
+			cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 		} ),
 		[
 			contactDetails,
@@ -438,6 +441,7 @@ export default function CompositeCheckout( {
 			siteId,
 			stripeConfiguration,
 			updatedSiteSlug,
+			elements,
 		]
 	);
 
