@@ -1,3 +1,8 @@
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
+
 import {
 	BrowserHelper,
 	DataHelper,
