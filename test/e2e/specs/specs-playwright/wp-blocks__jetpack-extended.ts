@@ -1,40 +1,11 @@
-import {
-	GutenbergEditorPage,
-	DataHelper,
-	LoginFlow,
-	setupHooks,
-	NewPostFlow,
-	InstagramBlock,
-} from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { InstagramBlockFlow, BlockFlow } from '@automattic/calypso-e2e';
+import { createBlockTests } from './shared-specs/block-testing';
 
-describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () => {
-	let gutenbergEditorPage: GutenbergEditorPage;
-	let instagramBlock: InstagramBlock;
-	let page: Page;
+const blockFlows: BlockFlow[] = [
+	new InstagramBlockFlow( {
+		embedUrl: 'https://www.instagram.com/p/BlDOZMil933/',
+		expectedPostText: 'woocommerce',
+	} ),
+];
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-
-	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-		await loginFlow.logIn();
-	} );
-
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-	} );
-
-	it( 'Insert Instagram block', async function () {
-		instagramBlock = new InstagramBlock( page, {
-			embedUrl: 'https://www.instagram.com/p/BlDOZMil933/',
-			expectedPostText: 'woocommerce',
-		} );
-
-		await gutenbergEditorPage.addBlock( instagramBlock.blockName );
-		await instagramBlock.configure();
-	} );
-} );
+createBlockTests( 'Core blocks extended by Jetpack', blockFlows );

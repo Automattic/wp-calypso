@@ -18,6 +18,7 @@ const selectors = {
 	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
+	blockWarning: '.block-editor-warning',
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
@@ -186,16 +187,6 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
-	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		if ( await frame.isVisible( selectors.welcomeTourCloseButton ) ) {
-			await frame.click( selectors.welcomeTourCloseButton );
-		}
-	}
-
-	/**
 	 * Given a name, adds the Gutenberg block matching the name.
 	 *
 	 * The name is expected to be formatted in the same manner as it
@@ -207,8 +198,9 @@ export class GutenbergEditorPage {
 	 * 		- SyntaxHighlighter Code
 	 *
 	 * @param {string} blockName Name of the block to be inserted.
+	 * @param blockEditorSelector Selector to find the parent block element (".wp-block") in the editor
 	 */
-	async addBlock( blockName: string ): Promise< ElementHandle > {
+	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
 
 		// Click on the editor title. This has the effect of dismissing the block inserter
@@ -219,7 +211,7 @@ export class GutenbergEditorPage {
 		await frame.fill( selectors.blockSearch, blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `.is-selected` );
+		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
 	}
 
 	/**
@@ -314,6 +306,16 @@ export class GutenbergEditorPage {
 	async preview(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.previewButton );
+	}
+
+	/**
+	 * Checks whether the editor has any block warnings/errors displaying
+	 *
+	 * @returns True if there are block warnings/errors, false otherwise
+	 */
+	async editorHasBlockWarnings(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.isVisible( selectors.blockWarning );
 	}
 
 	/**
