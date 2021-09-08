@@ -1,6 +1,5 @@
 /**
  * @group gutenberg
- * @group coblocks
  */
 
 import {
