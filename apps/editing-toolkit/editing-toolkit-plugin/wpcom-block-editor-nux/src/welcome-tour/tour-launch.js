@@ -11,7 +11,6 @@ import { Icon } from '@wordpress/icons';
 /**
  * Internal Dependencies
  */
-import useFocus from './hooks/use-focus';
 import useKeyboardNavigation from './hooks/use-keyboard-navigation';
 import maximize from './icons/maximize';
 import WelcomeTourCard from './tour-card';
@@ -61,14 +60,18 @@ function LaunchWpcomWelcomeTour() {
 	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
 
-function KeyboardNavigation( { onMinimize, onNextCardProgression, onPreviousCardProgression } ) {
-	useKeyboardNavigation( onMinimize, onNextCardProgression, onPreviousCardProgression );
+function KeyboardNavigation( {
+	onMinimize,
+	onNextCardProgression,
+	onPreviousCardProgression,
+	boundRef,
+} ) {
+	useKeyboardNavigation( onMinimize, onNextCardProgression, onPreviousCardProgression, boundRef );
 	return null;
 }
 
 function WelcomeTourFrame() {
 	const ref = useRef( null );
-	const isTourFocused = useFocus( ref );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
@@ -121,13 +124,12 @@ function WelcomeTourFrame() {
 		<div className="wpcom-editor-welcome-tour-frame" ref={ ref }>
 			{ ! isMinimized ? (
 				<>
-					{ isTourFocused && (
-						<KeyboardNavigation
-							onMinimize={ handleMinimize }
-							onNextCardProgression={ handleNextCardProgression }
-							onPreviousCardProgression={ handlePreviousCardProgression }
-						/>
-					) }
+					<KeyboardNavigation
+						onMinimize={ handleMinimize }
+						onNextCardProgression={ handleNextCardProgression }
+						onPreviousCardProgression={ handlePreviousCardProgression }
+						boundRef={ ref }
+					/>
 					<WelcomeTourCard
 						cardContent={ cardContent[ currentCardIndex ] }
 						currentCardIndex={ currentCardIndex }

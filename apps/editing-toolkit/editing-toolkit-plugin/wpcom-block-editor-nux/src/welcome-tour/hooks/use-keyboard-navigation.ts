@@ -1,15 +1,31 @@
+/* eslint-disable jsdoc/require-param */
 /**
  * External Dependencies
  */
-import { useEffect, useCallback } from '@wordpress/element';
+import { useEffect, useCallback, useRef } from '@wordpress/element';
+import useFocus from './use-focus';
 
+/**
+ * A hook the applies the respective callbacks in response to keydown events.
+ * If a ref object is passed then it reacts when the reference node or any of its
+ * children are focused by clicking or tabbing into (see `useFocus` hook).
+ */
 const useKeyboardNavigation = (
 	onEscape: () => void,
 	onArrowRight: () => void,
-	onArrowLeft: () => void
+	onArrowLeft: () => void,
+	ref: React.MutableRefObject< null | HTMLElement > | undefined
 ): void => {
+	const nullRef = useRef( null );
+	const isReferenceFocused = useFocus( ref || nullRef );
 	const handleKeydown = useCallback(
 		( event: KeyboardEvent ) => {
+			const onFocusReference = typeof ref === 'object';
+
+			if ( onFocusReference && ! isReferenceFocused ) {
+				return;
+			}
+
 			let handled = false;
 
 			switch ( event.key ) {
@@ -34,7 +50,7 @@ const useKeyboardNavigation = (
 				event.stopPropagation();
 			}
 		},
-		[ onEscape, onArrowRight, onArrowLeft ]
+		[ ref, isReferenceFocused, onEscape, onArrowRight, onArrowLeft ]
 	);
 
 	useEffect( () => {
