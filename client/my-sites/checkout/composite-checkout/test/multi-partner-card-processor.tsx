@@ -1,33 +1,43 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import React from 'react';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import wp from 'calypso/lib/wp';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 
 jest.mock( 'calypso/lib/wp' );
 jest.mock( 'calypso/lib/store-transactions', () => ( {
 	createEbanxToken: jest.fn(),
 } ) );
 
-async function createMockStripeToken(
-	type: string,
-	args: { billing_details: Record< string, unknown > }
-) {
+async function createMockStripeToken( {
+	type,
+	card,
+	billing_details,
+}: {
+	type: string;
+	card: unknown;
+	billing_details: Record< string, unknown >;
+} ) {
 	if ( type !== 'card' ) {
-		return { error: new Error( 'stripe error: unknown type' ) };
+		return { error: new Error( 'stripe error: unknown type: ' + type ) };
 	}
-	if ( ! args.billing_details ) {
+	if ( ! card ) {
+		return { error: new Error( 'stripe error: missing card element' ) };
+	}
+	if ( ! billing_details ) {
 		return { error: new Error( 'stripe error: missing billing_details' ) };
 	}
-	if ( ! args.billing_details.name ) {
+	if ( ! billing_details.name ) {
 		return { error: new Error( 'stripe error: missing billing_details.name' ) };
 	}
-	if ( ! args.billing_details.address ) {
+	if ( ! billing_details.address ) {
 		return { error: new Error( 'stripe error: missing billing_details.address' ) };
 	}
-	if ( ! ( args.billing_details.address as Record< string, string > )?.country ) {
+	if ( ! ( billing_details.address as Record< string, string > )?.country ) {
 		return { error: new Error( 'stripe error: missing billing_details.address.country' ) };
 	}
-	if ( ! ( args.billing_details.address as Record< string, string > )?.postal_code ) {
+	if ( ! ( billing_details.address as Record< string, string > )?.postal_code ) {
 		return { error: new Error( 'stripe error: missing billing_details.address.postal_code' ) };
 	}
 	return { paymentMethod: { id: 'stripe-token' } };
@@ -72,7 +82,19 @@ describe( 'multiPartnerCardProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const mockCardNumberElement = () => <div>mock card number</div>;
+	mockCardNumberElement.mount = () => undefined;
+	mockCardNumberElement.blur = () => undefined;
+	mockCardNumberElement.clear = () => undefined;
+	mockCardNumberElement.destroy = () => undefined;
+	mockCardNumberElement.focus = () => undefined;
+	mockCardNumberElement.unmount = () => undefined;
+	mockCardNumberElement.on = () => mockCardNumberElement;
+	mockCardNumberElement.off = () => mockCardNumberElement;
+	mockCardNumberElement.once = () => mockCardNumberElement;
+	mockCardNumberElement.update = () => undefined;
+	const options: PaymentProcessorOptions = {
+		cardNumberElement: mockCardNumberElement,
 		includeDomainDetails: false,
 		includeGSuiteDetails: false,
 		createUserAndSiteBeforeTransaction: false,
