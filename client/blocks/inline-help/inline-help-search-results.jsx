@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { speak } from '@wordpress/a11y';
 import { useTranslate } from 'i18n-calypso';
 import { debounce, isEmpty } from 'lodash';
@@ -6,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

@@ -2,6 +2,7 @@ export {
 	Button,
 	Card,
 	CompactCard,
+	Gridicon,
 	Popover,
 	ProgressBar,
 	Ribbon,
@@ -68,7 +69,6 @@ export { default as FormTextInputWithAffixes } from 'calypso/components/forms/fo
 export { default as Gauge } from 'calypso/components/gauge';
 export { default as GlobalNotices } from 'calypso/components/global-notices';
 export { default as Gravatar } from 'calypso/components/gravatar';
-export { default as Gridicon } from 'calypso/components/gridicon';
 export { default as HeaderCake } from 'calypso/components/header-cake';
 export { default as HeaderButton } from 'calypso/components/header-button';
 export { default as ImagePreloader } from 'calypso/components/image-preloader';

@@ -1,10 +1,9 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

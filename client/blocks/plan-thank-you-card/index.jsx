@@ -130,7 +130,7 @@ PlanThankYouCard.propTypes = {
 	/**
 	 * Description can be either a string or object to allow either a bare
 	 * string or a description that contains HTML and other components.
-	 **/
+	 */
 	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	heading: PropTypes.string,
 	plan: PropTypes.object,

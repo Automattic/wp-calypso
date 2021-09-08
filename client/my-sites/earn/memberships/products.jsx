@@ -1,11 +1,10 @@
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';

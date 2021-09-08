@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
-import Gridicon from 'calypso/components/gridicon';
 import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ActionButtons from './actions';

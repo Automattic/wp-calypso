@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
-import Gridicon from 'calypso/components/gridicon';
 import User from 'calypso/components/user';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

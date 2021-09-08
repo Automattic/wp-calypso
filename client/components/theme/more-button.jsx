@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';

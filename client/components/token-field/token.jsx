@@ -1,7 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import Tooltip from 'calypso/components/tooltip';
 
 export default class extends React.PureComponent {

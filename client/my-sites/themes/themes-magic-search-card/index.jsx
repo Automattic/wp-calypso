@@ -1,4 +1,4 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search from 'calypso/components/search';
 import StickyPanel from 'calypso/components/sticky-panel';

@@ -259,7 +259,7 @@ module.exports = {
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Prevent importing Redux's combineReducers.
 					{

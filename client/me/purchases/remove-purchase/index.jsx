@@ -10,7 +10,7 @@ import {
 	isJetpackSearch,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { Dialog, Button, CompactCard } from '@automattic/components';
+import { Dialog, Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import Gridicon from 'calypso/components/gridicon';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';

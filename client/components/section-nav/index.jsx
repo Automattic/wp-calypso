@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import Search from 'calypso/components/search';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';

@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -5,7 +6,6 @@ import { debounce, filter, get, has, last, map, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import TextDiff from 'calypso/components/text-diff';
 import scrollTo from 'calypso/lib/scroll-to';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

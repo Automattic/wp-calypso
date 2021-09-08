@@ -1,5 +1,5 @@
+import { Gridicon } from '@automattic/components';
 import React, { FunctionComponent } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 interface Props {
 	icon?: string;

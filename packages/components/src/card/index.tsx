@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import React from 'react';
+import Gridicon from '../gridicon';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
 import './style.scss';

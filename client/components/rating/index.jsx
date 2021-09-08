@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

@@ -1,9 +1,8 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { Button, ProductIcon } from '@automattic/components';
+import { Button, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { createElement, ReactNode, useEffect, useRef } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';

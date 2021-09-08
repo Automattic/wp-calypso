@@ -1,9 +1,8 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import ProductCardPriceGroup from './price-group';
 
 import './style.scss';

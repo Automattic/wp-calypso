@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import wpcom from 'calypso/lib/wp';
 

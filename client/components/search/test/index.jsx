@@ -9,7 +9,6 @@ import sinon from 'sinon';
 import searchClass from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {} ) );
-jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'Search', () => {
 	describe( 'initialValue', () => {

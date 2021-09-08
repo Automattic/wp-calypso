@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import { addQueryArgs } from 'calypso/lib/route';
