@@ -16,6 +16,7 @@ import {
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { StripeCardNumberElement } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
@@ -66,12 +67,18 @@ async function stripeCardProcessor(
 		responseCart,
 		siteId,
 		contactDetails,
+		cardNumberElement,
 	} = transactionOptions;
+
+	if ( ! cardNumberElement ) {
+		throw new Error( 'Required purchase element data is missing' );
+	}
 
 	let paymentMethodToken;
 	try {
 		const tokenResponse = await createStripePaymentMethodToken( {
 			...submitData,
+			element: cardNumberElement,
 			country: contactDetails?.countryCode?.value,
 			postalCode: getPostalCode( contactDetails ),
 		} );
@@ -80,7 +87,7 @@ async function stripeCardProcessor(
 		debug( 'transaction failed' );
 		// Errors here are "expected" errors, meaning that they (hopefully) come
 		// from stripe and not from some bug in the frontend code.
-		return makeErrorResponse( error.message );
+		return makeErrorResponse( ( error as Error ).message );
 	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
@@ -110,7 +117,7 @@ async function stripeCardProcessor(
 				// 3DS authentication required
 				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
-					submitData.stripeConfiguration,
+					submitData.stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
 			}
@@ -159,7 +166,7 @@ async function ebanxCardProcessor(
 		debug( 'transaction failed' );
 		// Errors here are "expected" errors, meaning that they (hopefully) come
 		// from Ebanx and not from some bug in the frontend code.
-		return makeErrorResponse( error.message );
+		return makeErrorResponse( ( error as Error ).message );
 	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
@@ -244,16 +251,18 @@ function isValidEbanxCardTransactionData(
 
 function createStripePaymentMethodToken( {
 	stripe,
+	element,
 	name,
 	country,
 	postalCode,
 }: {
 	stripe: Stripe;
+	element: StripeCardNumberElement;
 	name: string | undefined;
 	country: string | undefined;
 	postalCode: string | undefined;
 } ) {
-	return createStripePaymentMethod( stripe, {
+	return createStripePaymentMethod( stripe, element, {
 		name,
 		address: {
 			country,
