@@ -12,6 +12,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
@@ -34,7 +35,18 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 		if ( stoppingStatus === 'fail' ) {
 			// run is-error notice to contact support
 			dispatch(
-				errorNotice( translate( 'There was a problem while stopping your subscription' ) )
+				errorNotice(
+					translate(
+						'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+						{
+							components: {
+								a: <a href={ CALYPSO_CONTACT } />,
+								br: <br />,
+								strong: <strong />,
+							},
+						}
+					)
+				)
 			);
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
