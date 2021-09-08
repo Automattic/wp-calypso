@@ -77,7 +77,7 @@ PaymentRequestButton.propTypes = {
 };
 
 interface PaymentRequestButtonProps {
-	paymentRequest?: PaymentRequest;
+	paymentRequest?: PaymentRequest | null;
 	paymentType: string;
 	disabled?: boolean;
 	disabledReason?: string;
