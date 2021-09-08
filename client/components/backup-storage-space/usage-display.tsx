@@ -1,4 +1,5 @@
 import { ProgressBar } from '@automattic/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -15,10 +16,11 @@ const PROGRESS_BAR_CLASS_NAMES = {
 };
 
 type OwnProps = {
+	loading?: boolean;
 	usageLevel: StorageUsageLevels;
 };
 
-const UsageDisplay: React.FC< OwnProps > = ( { usageLevel } ) => {
+const UsageDisplay: React.FC< OwnProps > = ( { loading = false, usageLevel } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const translate = useTranslate();
@@ -26,22 +28,27 @@ const UsageDisplay: React.FC< OwnProps > = ( { usageLevel } ) => {
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 	const storageUsageText = useStorageUsageText( bytesUsed, bytesAvailable );
-
-	if ( bytesUsed === undefined ) {
-		return null;
-	}
+	const loadingText = translate( 'Calculating…', {
+		comment: 'Loading text displayed while storage usage is being calculated',
+	} );
 
 	return (
-		<div className="backup-storage-space__progress-bar-container">
+		<div
+			className={ classnames( 'backup-storage-space__progress-bar-container', {
+				'is-loading': loading,
+			} ) }
+		>
 			<div className="backup-storage-space__progress-heading">{ translate( 'Storage space' ) }</div>
 			<div className="backup-storage-space__progress-bar">
 				<ProgressBar
 					className={ PROGRESS_BAR_CLASS_NAMES[ usageLevel ] }
-					value={ bytesUsed }
+					value={ bytesUsed ?? 0 }
 					total={ bytesAvailable ?? Infinity }
 				/>
 			</div>
-			<div className="backup-storage-space__progress-usage-text">{ storageUsageText }</div>
+			<div className="backup-storage-space__progress-usage-text">
+				{ loading ? loadingText : storageUsageText }
+			</div>
 		</div>
 	);
 };

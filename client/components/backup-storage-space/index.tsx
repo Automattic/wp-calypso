@@ -29,23 +29,24 @@ const BackupStorageSpace: React.FC = () => {
 	const showUpsell = usageLevel > StorageUsageLevels.Normal;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const requesting = useSelector(
-		( state ) =>
-			isRequestingRewindSize( state, siteId ) || isRequestingRewindPolicies( state, siteId )
+	const requestingPolicies = useSelector( ( state ) =>
+		isRequestingRewindPolicies( state, siteId )
 	);
-	if ( requesting ) {
-		return null;
+	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
+
+	if ( requestingPolicies ) {
+		return <Card className="backup-storage-space__loading" />;
 	}
 
-	// Don't render this component if we don't have data
-	// on how much storage space is available to be used
+	// Sites without a storage policy don't have a notion of "bytes available,"
+	// so this value will be undefined; if so, don't render
 	if ( bytesAvailable === undefined ) {
 		return null;
 	}
 
 	return (
 		<Card className="backup-storage-space">
-			<UsageDisplay usageLevel={ usageLevel } />
+			<UsageDisplay loading={ requestingSize } usageLevel={ usageLevel } />
 			{ showUpsell && (
 				<>
 					<div className="backup-storage-space__divider"></div>
