@@ -28,7 +28,7 @@
 		"checkout/google-pay": true,
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
-		"difm-lite-pilot": false,
+		"difm-lite-pilot": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
