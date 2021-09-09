@@ -7,20 +7,34 @@ import './style.scss';
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
 
+const useSteps = ( flowName, { hasPaidDomain } ) => {
+	const { __ } = useI18n();
+	let steps = [];
+
+	switch ( flowName ) {
+		case 'launch-site':
+			steps = [ __( 'Your site will be live shortly.' ) ]; // copy from 'packages/launch/src/focused-launch/success'
+			break;
+		case 'setup-site':
+			steps = [ __( 'Applying design' ) ];
+			break;
+		default:
+			steps = [
+				__( 'Building your site' ),
+				hasPaidDomain && __( 'Getting your domain' ),
+				__( 'Applying design' ),
+			].filter( Boolean );
+	}
+
+	return React.useRef( steps );
+};
+
 // This component is cloned from the CreateSite component of Gutenboarding flow
 // to work with the onboarding signup flow.
 export default function ReskinnedProcessingScreen( { flowName, hasPaidDomain } ) {
 	const { __ } = useI18n();
 
-	const steps = React.useRef(
-		flowName === 'launch-site'
-			? [ __( 'Your site will be live shortly.' ) ] // copy from 'packages/launch/src/focused-launch/success'
-			: [
-					__( 'Building your site' ),
-					hasPaidDomain && __( 'Getting your domain' ),
-					__( 'Applying design' ),
-			  ].filter( Boolean )
-	);
+	const steps = useSteps( flowName, { hasPaidDomain } );
 	const totalSteps = steps.current.length;
 
 	const [ currentStep, setCurrentStep ] = React.useState( 0 );
