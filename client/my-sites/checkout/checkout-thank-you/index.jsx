@@ -50,6 +50,7 @@ import {
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
+import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -390,6 +391,7 @@ export class CheckoutThankYou extends React.Component {
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainMappingOrTransferProduct = false;
+		let wasTitanEmailOnlyProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
@@ -404,6 +406,7 @@ export class CheckoutThankYou extends React.Component {
 					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
 				);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
+			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -494,6 +497,14 @@ export class CheckoutThankYou extends React.Component {
 					type={ purchaseType }
 					domain={ domainName }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
+				/>
+			);
+		} else if ( wasTitanEmailOnlyProduct ) {
+			return (
+				<TitanSetUpThankYou
+					domainName={ purchases[ 0 ].meta }
+					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
+					title={ translate( 'Congratulations on your purchase!' ) }
 				/>
 			);
 		}
