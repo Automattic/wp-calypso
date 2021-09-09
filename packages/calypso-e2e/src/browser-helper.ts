@@ -1,5 +1,11 @@
 import config from 'config';
-import type { viewportName, localeCode, viewportSize } from './types';
+import { devices } from 'playwright';
+import { LaunchOptions } from './browser-manager';
+import { getVideoDir } from './media-helper';
+import type { TargetDevice } from './types';
+import type { BrowserContextOptions, ViewportSize, Logger } from 'playwright';
+
+export type LocaleCode = `${ string }${ string }`;
 
 /**
  * Returns the target screen size for tests to run against.
@@ -7,12 +13,12 @@ import type { viewportName, localeCode, viewportSize } from './types';
  * If the environment variable BROWSERSIZE is set, this will override all configuration
  * values. Otherwise, the default path contained in the configuration file is returned.
  *
- * @returns {viewportName} Target screen size.
+ * @returns {TargetDevice} Target screen size.
  */
-export function getViewportName(): viewportName {
+export function getTargetDeviceName(): TargetDevice {
 	return (
-		process.env.VIEWPORT_NAME || config.get( 'viewportName' )!
-	).toLowerCase() as viewportName;
+		process.env.TARGET_DEVICE || config.get( 'viewportName' )!
+	).toLowerCase() as TargetDevice;
 }
 
 /**
@@ -21,33 +27,61 @@ export function getViewportName(): viewportName {
  * If the environment variable BROWSERLOCALE is set, this will override all configuration
  * values. Otherwise, the default path contained in the configuration file is returned.
  *
- * @returns {localeCode} Target locale code.
+ * @returns {LocaleCode} Target locale code.
  */
-export function getLocale(): localeCode {
-	return ( process.env.LOCALE || config.get( 'locale' )! ).toLowerCase() as localeCode;
+export function getLocale(): LocaleCode {
+	return ( process.env.LOCALE || config.get( 'locale' )! ).toLowerCase() as LocaleCode;
 }
 
 /**
- * Returns a set of screen dimensions in numbers.
+ * Returns launch configuration of a device mapping to the target device.
  *
- * This function takes the output of `getViewportName` and returns an
- * object key/value mapping of the screen diemensions represented by
- * the output.
- *
- * @param {viewportName} [target] Target display size to use, overriding defaults.
- * @returns {viewportSize} Object with key/value mapping of screen dimensions.
- * @throws {Error} If target screen size was not set.
+ * @param {TargetDevice} name Name of the target device.
+ * @returns {BrowserContextOptions} Launch configuration of the device.
  */
-export function getViewportSize( target?: viewportName ): viewportSize {
-	if ( ! target ) {
-		target = getViewportName();
+export function getDevice( name: TargetDevice ): BrowserContextOptions {
+	if ( name === 'mobile' ) {
+		return devices[ 'Pixel 4a (5G)' ];
 	}
+	if ( name === 'desktop' ) {
+		return devices[ 'Desktop Chrome HiDPI' ];
+	}
+	throw new Error( 'Unknown target device.' );
+}
 
-	const sizes: { [ key: string ]: viewportSize } = config.get( 'viewportSize' );
-	if ( ! Object.keys( sizes ).includes( target ) ) {
-		throw new Error( `Unsupported viewport: ${ target }` );
-	}
-	return sizes[ target ];
+/**
+ * Builds the launch configuration that match the target device.
+ *
+ * Generated launch configuration will be based on Playwright's pre-defined set of devices,
+ * however with certain customizations.
+ *
+ * @param {string} chromeVersion Chrome version to be used as part of user agent string.
+ * @param options Options to pass to `browser.newContext()`.
+ * @param {Logger} options.logger Logger sink for Playwright logging.
+ * @returns {BrowserContextOptions} Customized launch configuration for the target.
+ */
+export function getLaunchConfiguration(
+	chromeVersion: string,
+	{ logger }: LaunchOptions
+): BrowserContextOptions {
+	const videoDir = getVideoDir();
+	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
+
+	// Obtain the target device. Currently supported are devices are listed in types.
+	const targetDevice = getTargetDeviceName();
+	// Get Playwright's pre-defined device that maps to the target device.
+	const config = getDevice( targetDevice );
+
+	// Overwrite predefined user agent string with our custom one.
+	config.userAgent = userAgent;
+	// Explicitly resize captured video resolution to the viewport size.
+	config.recordVideo = { dir: videoDir, size: config.viewport as ViewportSize };
+	// Custom logger sink.
+	config.logger = {
+		isEnabled: ( name ) => name === 'api',
+		log: logger,
+	};
+	return config;
 }
 
 /**

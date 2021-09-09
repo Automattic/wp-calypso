@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 
 		it( 'Click on the "My Plan" tab', async function () {
 			plansPage = new PlansPage( page );
-			await plansPage.clickNavigationTab( 'My Plan' );
+			await plansPage.clickTab( 'My Plan' );
 		} );
 
 		it( 'The Premium plan is listed as current plan on "My Plan" tab', async function () {
@@ -46,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		} );
 
 		it( 'Click on the "Plans" navigation tab', async function () {
-			await plansPage.clickNavigationTab( 'Plans' );
+			await plansPage.clickTab( 'Plans' );
 		} );
 	} );
 

@@ -1,12 +1,8 @@
 import path from 'path';
 import { ElementHandle, Page } from 'playwright';
-import { waitForElementEnabled } from '../../element-helper';
+import { waitForElementEnabled, clickNavTab } from '../../element-helper';
 
 const selectors = {
-	// Navigation tabs
-	navTabs: '.section-nav-tabs',
-	navTabsDropdownOptions: '.select-dropdown__option',
-
 	// Gallery view
 	gallery: '.media-library__content',
 	items: '.media-library__list-item',
@@ -44,6 +40,20 @@ export class MediaPage {
 	}
 
 	/**
+	 * Waits until the Media page gallery is loaded and ready.
+	 */
+	async waitUntilLoaded(): Promise< ElementHandle > {
+		// Wait for all placeholders to disappear.
+		// Alternatively, waiting for `networkidle` will achieve the same objective
+		// at the cost of much longer resolving time (~20s).
+		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+
+		const gallery = await this.page.waitForSelector( selectors.gallery );
+		await gallery.waitForElementState( 'stable' );
+		return gallery;
+	}
+
+	/**
 	 * Given a 1-indexed number `n`, click and select the nth item in the media gallery.
 	 *
 	 * Note that if the media gallery has been filtered (eg. Images only), this method
@@ -74,28 +84,8 @@ export class MediaPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
-		const navTabs = await this.page.waitForSelector( selectors.navTabs );
-		const gallery = await this.page.waitForSelector( selectors.gallery );
-
-		// Similar to Marketing Page, in the mobile viewport this is compressed down to a pseudo-dropdown.
-		const isDropdown = await navTabs
-			.getAttribute( 'class' )
-			.then( ( value ) => value?.includes( 'is-dropdown' ) );
-
-		if ( isDropdown ) {
-			// Mobile view - navtabs become a dropdown.
-			await navTabs.click();
-			await this.page.click( `${ selectors.navTabsDropdownOptions } >> text=${ name }` );
-		} else {
-			// Desktop view - navtabs are constantly visible tabs.
-			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
-		}
-
-		// Wait for all placeholders to disappear.
-		// Alternatively, waiting for `networkidle` will achieve the same objective
-		// at the cost of much longer resolving time (~20s).
-		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		await gallery.waitForElementState( 'stable' );
+		await this.waitUntilLoaded();
+		await clickNavTab( this.page, name );
 	}
 
 	/**
@@ -104,6 +94,8 @@ export class MediaPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async editImage(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await this.page.click( selectors.editButton );
 		await this.page.click( selectors.mediaModalEditButton );
 		await this.page.waitForSelector( selectors.imageEditorCanvas );
@@ -138,6 +130,8 @@ export class MediaPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async upload( fullPath: string ): Promise< ElementHandle > {
+		await this.waitUntilLoaded();
+
 		const filename = path.basename( fullPath );
 		const itemSelector = `figure[title="${ filename }"]`;
 
