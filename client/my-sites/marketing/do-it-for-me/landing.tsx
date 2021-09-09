@@ -52,9 +52,9 @@ const ImageContainer = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-	margin: 0 15px;
 	width: 100%;
 	@media ( min-width: 480px ) {
+		margin: 0 15px;
 		width: 200px;
 	}
 `;
@@ -87,12 +87,12 @@ export default function DoItForMeLandingPage(): JSX.Element {
 
 			<Paragraph>
 				{ translate(
-					'Need a professionally designed website for your business fast? Choose from our custom designed templates below, add your content and media, and in just 1-2 days your website will be ready to launch, for just US$500. The one-time fee includes a 5-page website, a 30-minute Quick Start Zoom orientation about your site when it’s complete.'
+					'Need a professionally designed website for your business fast? Choose from our custom designed templates below, add your content and media, and in just 2-4 days your website will be ready to launch, for just US$500. The one-time fee includes a 5-page website, a 30-minute Quick Start Zoom orientation about your site when it’s complete.'
 				) }
 			</Paragraph>
 			<Paragraph>
 				{ translate(
-					'You’ll need to have content for 5 pages (Home, About, Contact, and 2 other pages based on your selected template). You can add that content in the submission form.'
+					'You’ll need to have content for 4 pages (Home, About, Contact, and one other page based on your selected template). You can add that content in the submission form.'
 				) }
 			</Paragraph>
 
