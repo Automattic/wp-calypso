@@ -247,6 +247,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale, translate } = this.props;
 
 		if ( config( 'forum_locales' ).includes( currentUserLocale ) ) {
+			// eslint-disable-next-line wpcalypso/i18n-no-variables
 			return translate( message, args );
 		}
 
@@ -549,7 +550,7 @@ class HelpContact extends React.Component {
 			case SUPPORT_UPWORK_TICKET:
 				return (
 					! config( 'upwork_support_locales' ).includes( currentUserLocale ) &&
-					! currentUserLocale === 'en'
+					currentUserLocale !== 'en'
 				);
 
 			default:
