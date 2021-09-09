@@ -3,21 +3,21 @@ import { BlockFlow, EditorContext, PublishedPostContext } from '..';
 
 interface ConfigurationData {
 	embedUrl: string;
-	expectedPostText: string;
+	expectedTweetText: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Instagram URL")';
+const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Twitter URL")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	editorInstagramIframe: `iframe[title="Embedded content from instagram.com"]`,
-	publishedInstagramIframe: `iframe.instagram-media`,
+	editorTwitterIframe: `iframe[title="Embedded content from twitter"]`,
+	publishedTwitterIframe: `iframe[title="Twitter Tweet"]`,
 };
 
 /**
- * Class representing the flow of using an Instagram block in the editor
+ * Class representing the flow of using a Twitter block in the editor
  */
-export class InstagramBlockFlow implements BlockFlow {
+export class TwitterBlockFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 
 	/**
@@ -29,7 +29,7 @@ export class InstagramBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Instagram';
+	blockSidebarName = 'Twitter';
 	blockEditorSelector = blockParentSelector;
 
 	/**
@@ -41,21 +41,21 @@ export class InstagramBlockFlow implements BlockFlow {
 		await context.editorIframe.fill( selectors.embedUrlInput, this.configurationData.embedUrl );
 		await context.editorIframe.click( selectors.embedButton );
 		// We should make sure the actual Iframe loads, because it takes a second.
-		await context.editorIframe.waitForSelector( selectors.editorInstagramIframe );
+		await context.editorIframe.waitForSelector( selectors.editorTwitterIframe );
 	}
 
 	/**
 	 * Validate the block in the published post
 	 *
-	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
+	 * @param context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const instagramIframeElement = await context.page.waitForSelector(
-			selectors.publishedInstagramIframe
+		const twitterIframeElement = await context.page.waitForSelector(
+			selectors.publishedTwitterIframe
 		);
-		const instagramIframeHandle = ( await instagramIframeElement.contentFrame() ) as Frame;
-		await instagramIframeHandle.waitForSelector(
-			`text=${ this.configurationData.expectedPostText }`
+		const twitterIframeHandle = ( await twitterIframeElement.contentFrame() ) as Frame;
+		await twitterIframeHandle.waitForSelector(
+			`text=${ this.configurationData.expectedTweetText }`
 		);
 	}
 }

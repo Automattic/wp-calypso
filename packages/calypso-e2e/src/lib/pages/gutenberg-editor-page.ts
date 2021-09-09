@@ -187,7 +187,7 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Given a name, adds the Gutenberg block matching the name.
+	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
@@ -197,8 +197,12 @@ export class GutenbergEditorPage {
 	 * 		- Pay with Paypal
 	 * 		- SyntaxHighlighter Code
 	 *
+	 * The block editor selector should select the top level element of a block in the editor.
+	 * For reference, this element will almost always have the ".wp-block" class.
+	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
+	 *
 	 * @param {string} blockName Name of the block to be inserted.
-	 * @param blockEditorSelector Selector to find the parent block element (".wp-block") in the editor
+	 * @param {string} blockEditorSelector Selector to find the parent block element in the editor.
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
