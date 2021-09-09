@@ -14,9 +14,9 @@ import {
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { StripeCardNumberElement } from '@stripe/stripe-js';
+import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 

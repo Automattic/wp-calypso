@@ -1,13 +1,9 @@
 import { useLineItems } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import type {
-	Stripe,
-	StripeConfiguration,
-	PaymentRequestOptions,
-} from '@automattic/calypso-stripe';
+import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
 import type { LineItem } from '@automattic/composite-checkout';
-import type { PaymentRequest } from '@stripe/stripe-js';
+import type { PaymentRequest, Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'wpcom-checkout:web-pay-utils' );
 

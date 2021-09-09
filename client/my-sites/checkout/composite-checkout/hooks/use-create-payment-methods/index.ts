@@ -39,8 +39,9 @@ import {
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { StoredCard } from '../../types/stored-cards';
-import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
+import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
 

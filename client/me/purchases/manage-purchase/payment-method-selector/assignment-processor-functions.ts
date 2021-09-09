@@ -10,9 +10,9 @@ import { useDispatch } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
-import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
+import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { StripeCardNumberElement } from '@stripe/stripe-js';
+import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const wpcom = wp.undocumented();

@@ -4,9 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-payment-method-api';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
+import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { StripeCardNumberElement } from '@stripe/stripe-js';
+import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 
 interface Props {
 	useAsPrimaryPaymentMethod?: boolean;
