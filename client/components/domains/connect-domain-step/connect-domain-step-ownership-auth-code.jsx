@@ -83,7 +83,7 @@ function ConnectDomainStepLogin( {
 			</p>
 			<div className={ className + '__authorization-code' }>
 				<Input
-					placeholder={ __( 'Enter your authorization code' ) }
+					placeholder={ __( 'Enter authorization code' ) }
 					onChange={ onAuthCodeChange }
 					value={ authCode }
 					isError={ !! authCodeError }
@@ -101,7 +101,7 @@ function ConnectDomainStepLogin( {
 				onClick={ checkAuthCode }
 				primary
 			>
-				{ __( 'Check authorization code' ) }
+				{ __( 'Check my authorization code' ) }
 			</Button>
 		</div>
 	);
