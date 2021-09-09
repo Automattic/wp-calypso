@@ -12777,6 +12777,7 @@ __metadata:
     react-day-picker: ^7.4.0
     react-dom: ^16.12.0
     react-element-to-jsx-string: ^14.1.0
+    react-intersection-observer: ^8.32.1
     react-lazily-render: ^1.2.0
     react-live: ^1.12.0
     react-modal: ^3.11.1
@@ -32242,6 +32243,15 @@ fsevents@~2.1.2:
   peerDependencies:
     react: ^16.8.4 || ^17.0.0
   checksum: 64282953f1e9318501ae9ff64dc955845fce0b543577fcc5b6a5cf786d9a1872edadc5df5821d830a8510ecf629e9a220b323e5cd45b091508939f71ea332239
+  languageName: node
+  linkType: hard
+
+"react-intersection-observer@npm:^8.32.1":
+  version: 8.32.1
+  resolution: "react-intersection-observer@npm:8.32.1"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: a555a32c581361dc71954df47329f007f5cc8280b79c24377b5b03622e036749fd4a8cc80489f6956a084faf49532621af8715a540c42d7bb37686951359f661
   languageName: node
   linkType: hard
 
