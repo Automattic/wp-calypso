@@ -50,7 +50,7 @@ function ConnectDomainStepLogin( {
 				verificationData: getVerificationData(),
 			},
 			( error ) => {
-				if ( error ) {
+				if ( 'ownership_verification_failed' === error.error ) {
 					setAuthCodeError( error.message );
 				}
 				setConnectInProgress( false );

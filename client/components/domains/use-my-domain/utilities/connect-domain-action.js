@@ -37,7 +37,9 @@ export const connectDomainAction = (
 				page( domainMappingSetup( selectedSite.slug, domain ) );
 			} )
 			.catch( ( error ) => {
-				dispatch( errorNotice( error.message ) );
+				if ( 'ownership_verification_failed' !== error.error ) {
+					dispatch( errorNotice( error.message ) );
+				}
 				onDone( error );
 			} );
 	} else {
