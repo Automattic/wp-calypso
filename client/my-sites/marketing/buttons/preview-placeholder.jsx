@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import ButtonsPreviewAction from './preview-action';
 
 class SharingButtonsPreviewPlaceholder extends React.Component {

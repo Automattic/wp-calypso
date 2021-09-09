@@ -4,7 +4,7 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
 } from '@automattic/calypso-products';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -12,7 +12,6 @@ import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import Gridicon from 'calypso/components/gridicon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

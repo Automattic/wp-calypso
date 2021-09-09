@@ -1,5 +1,5 @@
+import { Gridicon } from '@automattic/components';
 import React, { useState } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 function Favicon( props ) {
 	const { site, className, size } = props;

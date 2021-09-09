@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
 import { decodeEntities } from 'calypso/lib/formatting';

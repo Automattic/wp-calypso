@@ -248,7 +248,6 @@ const webpackConfig = {
 		alias: Object.assign( {
 			debug: path.resolve( __dirname, '../node_modules/debug' ),
 			store: 'store/dist/store.modern',
-			gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 			// By using the path of the package we let Webpack parse the package's `package.json`
 			// and use `mainFields` to decide what is the main file.
 			'@wordpress/data': findPackage( '@wordpress/data' ),

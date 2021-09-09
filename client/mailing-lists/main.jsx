@@ -1,9 +1,8 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { preventWidows } from 'calypso/lib/formatting';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { addSubscriber, deleteSubscriber } from './utils';

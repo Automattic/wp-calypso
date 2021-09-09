@@ -571,7 +571,7 @@ __metadata:
     "@automattic/i18n-utils": ^1.0.0
     "@automattic/onboarding": ^1.0.0
     "@automattic/plans-grid": ^1.0.0-alpha.0
-    "@automattic/shopping-cart": ^1.0.0
+    "@automattic/shopping-cart": ^2.0.0
     "@automattic/typography": ^1.0.0
     "@testing-library/react": ^12.0.0
     "@wordpress/base-styles": ^3.4.3
@@ -881,7 +881,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/shopping-cart@^1.0.0, @automattic/shopping-cart@workspace:packages/shopping-cart":
+"@automattic/shopping-cart@^2.0.0, @automattic/shopping-cart@workspace:packages/shopping-cart":
   version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
@@ -1121,7 +1121,7 @@ __metadata:
     "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
     "@automattic/composite-checkout": ^1.0.0
-    "@automattic/shopping-cart": ^1.0.0
+    "@automattic/shopping-cart": ^2.0.0
     "@emotion/styled": ^11.3.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
@@ -12624,7 +12624,7 @@ __metadata:
     "@automattic/popup-monitor": ^1.0.0
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": ^1.0.0
-    "@automattic/shopping-cart": ^1.0.0
+    "@automattic/shopping-cart": ^2.0.0
     "@automattic/social-previews": ^1.0.1
     "@automattic/state-utils": ^1.0.0-alpha.4
     "@automattic/tree-select": ^1.0.3
@@ -12720,6 +12720,7 @@ __metadata:
     enzyme: ^3.11.0
     events: ^3.1.0
     express: ^4.17.1
+    express-async-handler: ^1.1.4
     express-useragent: ^1.0.15
     fake-indexeddb: ^3.1.3
     fast-json-stable-stringify: ^2.1.0
@@ -18331,6 +18332,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"express-async-handler@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "express-async-handler@npm:1.1.4"
+  checksum: 4b48fdf4d3e716a3dba0502186b2f4bc842cea782fde3be351edf5237b936229de036fdc8efd462fd5f0f175d2fb7201f3a5bdea3a957a84b72001ef36b4376e
+  languageName: node
+  linkType: hard
+
 "express-useragent@npm:^1.0.15":
   version: 1.0.15
   resolution: "express-useragent@npm:1.0.15"
@@ -23870,6 +23878,16 @@ fsevents@~2.1.2:
     resolve: ^1.20.0
     slash: ^3.0.0
   checksum: aa54bc1cab0d20cb6197a8d577e1dd8635caf19b7083580e72d3e1fd2788599176adf010d3421ed49fad11efa239031b9b954f7d455c944c055246956a0e8b91
+  languageName: node
+  linkType: hard
+
+"jest-runner-groups@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "jest-runner-groups@npm:2.1.0"
+  peerDependencies:
+    jest-docblock: ">= 24"
+    jest-runner: ">= 24"
+  checksum: 060316eab5df14a67acda32b007ba16097ace77605b1622c55c03e0b268b2c2d377d1942748b94467cc988c26d48ec0474a869826e6393f6984172de64f37c90
   languageName: node
   linkType: hard
 
@@ -40515,7 +40533,10 @@ typescript@^4.4.2:
     grunt-concurrent: ^2.3.0
     grunt-shell: ^1.1.2
     jest: ^27.0.6
+    jest-docblock: ^27.0.6
     jest-environment-node: ^26.6.2
+    jest-runner: ^27.0.6
+    jest-runner-groups: ^2.1.0
     jest-teamcity: ^1.9.0
     junit-viewer: ^4.9.6
     lodash: ^4.17.20

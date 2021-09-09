@@ -1,10 +1,9 @@
-import { Card, Button, ScreenReaderText } from '@automattic/components';
+import { Card, Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import StickyPanel from 'calypso/components/sticky-panel';

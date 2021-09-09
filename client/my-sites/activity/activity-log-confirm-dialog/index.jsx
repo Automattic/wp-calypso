@@ -1,11 +1,10 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
 import HappychatButton from 'calypso/components/happychat/button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActivityIcon from '../activity-log-item/activity-icon';

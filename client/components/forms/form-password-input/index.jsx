@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 import React from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

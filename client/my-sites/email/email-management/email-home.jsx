@@ -76,8 +76,9 @@ class EmailManagementHome extends React.Component {
 			if ( ! domainHasEmail( selectedDomain ) ) {
 				return (
 					<EmailProvidersComparison
-						selectedDomainName={ selectedDomainName }
 						backPath={ domainManagementList( selectedSite.slug, null ) }
+						comparisonContext="email-home-selected-domain"
+						selectedDomainName={ selectedDomainName }
 					/>
 				);
 			}
@@ -99,6 +100,7 @@ class EmailManagementHome extends React.Component {
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
 				<EmailProvidersComparison
+					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 					skipHeaderElement={ true }
 				/>

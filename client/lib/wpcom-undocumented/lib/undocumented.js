@@ -1845,18 +1845,6 @@ Undocumented.prototype.enableAutoRenew = function ( purchaseId, fn ) {
 	);
 };
 
-Undocumented.prototype.cancelAndRefundPurchase = function ( purchaseId, data, fn ) {
-	debug( 'upgrades/{purchaseId}/cancel' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/cancel`,
-			body: data,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
 	debug( '/upgrades/{planId}/cancel-plan-trial' );
 

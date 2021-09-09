@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.0
+
+- Refactor to use a singleton ShoppingCartManagerClient passed to each ShoppingCartProvider.
+- Require cart key to be passed to useShoppingCart and withShoppingCart.
+- Add `defaultCartKey` option.
+
 ## v1.1.0
 
 - Improve offline errors.

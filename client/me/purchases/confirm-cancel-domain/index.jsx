@@ -114,7 +114,7 @@ class ConfirmCancelDomain extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
+		cancelAndRefundPurchase( purchase.id, data, ( error, response ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
@@ -135,22 +135,24 @@ class ConfirmCancelDomain extends React.Component {
 				return;
 			}
 
-			this.props.successNotice(
-				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
-					args: { purchaseName },
-				} ),
-				{ displayOnNextPage: true }
-			);
+			if ( response.status === 'completed' ) {
+				this.props.successNotice(
+					translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+						args: { purchaseName },
+					} ),
+					{ displayOnNextPage: true }
+				);
 
-			this.props.refreshSitePlans( purchase.siteId );
+				this.props.refreshSitePlans( purchase.siteId );
 
-			this.props.clearPurchases();
+				this.props.clearPurchases();
 
-			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
-				product_slug: purchase.productSlug,
-			} );
+				recordTracksEvent( 'calypso_domain_cancel_form_submit', {
+					product_slug: purchase.productSlug,
+				} );
 
-			page.redirect( this.props.purchaseListUrl );
+				page.redirect( this.props.purchaseListUrl );
+			}
 		} );
 	};
 

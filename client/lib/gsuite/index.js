@@ -14,6 +14,7 @@ export {
 export { getGSuiteMailboxCount } from './get-gsuite-mailbox-count';
 export { getGSuiteProductSlug } from './get-gsuite-product-slug';
 export { getGSuiteSubscriptionId } from './get-gsuite-subscription-id';
+export { getGSuiteSubscriptionStatus } from './get-gsuite-subscription-status';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
 export {

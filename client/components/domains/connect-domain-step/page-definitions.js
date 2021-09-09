@@ -3,6 +3,7 @@ import ConnectDomainStepAdvancedRecords from './connect-domain-step-advanced-rec
 import ConnectDomainStepAdvancedStart from './connect-domain-step-advanced-start';
 import ConnectDomainStepDone from './connect-domain-step-done';
 import ConnectDomainStepLogin from './connect-domain-step-login';
+import ConnectDomainStepOwnershipAuthCode from './connect-domain-step-ownership-auth-code';
 import ConnectDomainStepSuggestedRecords from './connect-domain-step-suggested-records';
 import ConnectDomainStepSuggestedStart from './connect-domain-step-suggested-start';
 import { modeType, stepSlug, stepType } from './constants';
@@ -77,6 +78,28 @@ export const connectADomainStepsDefinition = {
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
+	},
+};
+
+export const connectADomainOwnershipVerificationStepsDefinition = {
+	[ 'unused start step' ]: {
+		mode: modeType.OWNERSHIP_VERIFICATION,
+		step: stepType.START,
+		next: stepSlug.OWNERSHIP_VERIFICATION_LOGIN,
+	},
+	[ stepSlug.OWNERSHIP_VERIFICATION_LOGIN ]: {
+		mode: modeType.OWNERSHIP_VERIFICATION,
+		step: stepType.LOG_IN_TO_PROVIDER,
+		name: __( 'Log in to provider' ),
+		component: ConnectDomainStepLogin,
+		next: stepSlug.OWNERSHIP_VERIFICATION_AUTH_CODE,
+	},
+	[ stepSlug.OWNERSHIP_VERIFICATION_AUTH_CODE ]: {
+		mode: modeType.OWNERSHIP_VERIFICATION,
+		step: stepType.ENTER_AUTH_CODE,
+		name: __( 'Verify ownership' ),
+		component: ConnectDomainStepOwnershipAuthCode,
+		prev: stepSlug.OWNERSHIP_VERIFICATION_LOGIN,
 	},
 };
 

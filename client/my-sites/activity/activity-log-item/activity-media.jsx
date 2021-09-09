@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 export default class ActivityMedia extends PureComponent {
 	static propTypes = {

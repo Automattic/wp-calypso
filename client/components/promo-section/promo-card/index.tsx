@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
 import React, { FunctionComponent, ReactElement } from 'react';
@@ -6,7 +7,6 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 import PromoCardCta from './cta';
 
 import './style.scss';

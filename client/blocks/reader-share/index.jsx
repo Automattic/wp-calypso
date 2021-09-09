@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
@@ -7,7 +7,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SiteSelector from 'calypso/components/site-selector';
 import SocialLogo from 'calypso/components/social-logo';

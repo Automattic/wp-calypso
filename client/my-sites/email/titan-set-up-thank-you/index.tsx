@@ -1,7 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { ThankYou } from 'calypso/components/thank-you';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
@@ -24,6 +24,8 @@ import './style.scss';
 type TitanSetUpThankYouProps = {
 	domainName: string;
 	emailAddress?: string;
+	title?: string;
+	subtitle?: string;
 };
 
 const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
@@ -31,7 +33,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const { domainName, emailAddress } = props;
+	const { domainName, emailAddress, subtitle, title } = props;
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
@@ -96,7 +98,8 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }
-			thankYouTitle={ translate( 'Your email is now ready to use' ) }
+			thankYouTitle={ title ?? translate( 'Your email is now ready to use' ) }
+			thankYouSubtitle={ subtitle }
 		/>
 	);
 };

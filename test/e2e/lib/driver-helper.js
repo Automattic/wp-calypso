@@ -20,7 +20,6 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
  * @example
  * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
  * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
- *
  * @param {By|Function} locator The element's locator
  * @param {string|RegExp} text The element's inner text
  * @returns {Function} An element locator function
@@ -306,7 +305,9 @@ export async function setWhenSettable(
 			try {
 				const element = await driver.findElement( locator );
 				await highlightElement( driver, element );
-				const currentValue = await element.getAttribute( 'value' );
+
+				const currentValue = await getInputText( element );
+
 				if ( currentValue === value ) {
 					// Do nothing if given value is already set
 					return element;
@@ -551,6 +552,32 @@ export async function isImageVisible( driver, locator ) {
 export async function numberOfOpenWindows( driver ) {
 	const handles = await driver.getAllWindowHandles();
 	return handles.length;
+}
+
+/**
+ * Returns the valye/text from an input or input-like element.
+ *
+ * Some inputs might not be real input elements, but elements
+ * with `contentediable` set to `true`.
+ *
+ * @param {WebElement} element The element to be highlighted
+ * @returns {string} the value for the input or the textContent property
+ * for `contenteditable` elements.
+ */
+export async function getInputText( element ) {
+	const value = await element.getAttribute( 'value' );
+	if ( typeof value === 'string' ) {
+		return value;
+	}
+
+	const isContentEditable = ( await element.getAttribute( 'contenteditable' ) ) === 'true';
+	if ( isContentEditable ) {
+		return await element.getText();
+	}
+
+	throw new Error(
+		'Element is not an input element nor an element with `contenteditable` set to `true`.'
+	);
 }
 
 /**

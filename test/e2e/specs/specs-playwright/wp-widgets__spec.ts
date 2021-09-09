@@ -1,8 +1,20 @@
-import { DataHelper, LoginFlow, SidebarComponent, setupHooks } from '@automattic/calypso-e2e';
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
+
+import {
+	BrowserHelper,
+	DataHelper,
+	LoginFlow,
+	SidebarComponent,
+	setupHooks,
+} from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const user =
-	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
+const user = BrowserHelper.targetGutenbergEdge()
+	? 'gutenbergSimpleSiteEdgeUser'
+	: 'gutenbergSimpleSiteUser';
 
 describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	let sidebarComponent: SidebarComponent;

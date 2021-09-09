@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import assert from 'assert';
 import {
 	setupHooks,
@@ -6,11 +10,14 @@ import {
 	MediaPage,
 	SidebarComponent,
 	MediaHelper,
+	TestFile,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
+import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, UNSUPPORTED_FILE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
-	let testFiles;
-	let page;
+	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
+	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -18,9 +25,9 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 	beforeAll( async () => {
 		testFiles = {
-			image: await MediaHelper.createTestImage(),
-			audio: await MediaHelper.createTestAudio(),
-			invalid: await MediaHelper.createInvalidFile(),
+			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
+			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
+			unsupported: await MediaHelper.createTestFile( UNSUPPORTED_FILE_PATH ),
 		};
 	} );
 
@@ -30,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'wooCommerceUser' }
 	`( 'Upload media files ($siteType)', ( { user } ) => {
-		let mediaPage;
+		let mediaPage: MediaPage;
 
 		it( 'Log In', async function () {
 			const loginFlow = new LoginFlow( page, user );
@@ -47,18 +54,18 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		} );
 
 		it( 'Upload image and confirm addition to gallery', async () => {
-			const uploadedItem = await mediaPage.upload( testFiles.image );
+			const uploadedItem = await mediaPage.upload( testFiles.image.fullpath );
 			assert.strictEqual( await uploadedItem.isVisible(), true );
 		} );
 
 		it( 'Upload audio and confirm addition to gallery', async () => {
-			const uploadedItem = await mediaPage.upload( testFiles.audio );
+			const uploadedItem = await mediaPage.upload( testFiles.audio.fullpath );
 			assert.strictEqual( await uploadedItem.isVisible(), true );
 		} );
 
 		it( 'Upload an unsupported file type and see the rejection notice', async function () {
 			try {
-				await mediaPage.upload( testFiles.invalid );
+				await mediaPage.upload( testFiles.unsupported.fullpath );
 			} catch ( error ) {
 				assert.match( error.message, /could not be uploaded/i );
 			}
