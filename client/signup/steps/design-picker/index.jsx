@@ -1,4 +1,5 @@
 import DesignPicker from '@automattic/design-picker';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -15,10 +16,12 @@ class DesignPickerStep extends Component {
 		stepName: PropTypes.string.isRequired,
 		locale: PropTypes.string.isRequired,
 		translate: PropTypes.func,
+		largeThumbnails: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		useHeadstart: true,
+		largeThumbnails: false,
 	};
 
 	pickDesign = ( selectedDesign ) => {
@@ -46,6 +49,9 @@ class DesignPickerStep extends Component {
 				theme={ this.props.isReskinned ? 'light' : 'dark' }
 				locale={ this.props.locale }
 				onSelect={ this.pickDesign }
+				className={ classnames( {
+					'design-picker-step__is-large-thumbnails': this.props.largeThumbnails,
+				} ) }
 			/>
 		);
 	}
