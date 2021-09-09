@@ -208,174 +208,167 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 }
 
 fun gutenbergPlaywrightBuildType( viewportName: String, buildUuid: String ): BuildType {
-    return BuildType {
+	return BuildType {
 		id("WPComTests_gutenberg_Playwright_$viewportName")
 		uuid=buildUuid
 		name = "Playwright E2E Tests ($viewportName)"
 		description = "Runs Gutenberg E2E tests in $viewportName size using Playwright"
 
 
-        artifactRules = """
-            reports => reports
-            logs.tgz => logs.tgz
-            screenshots => screenshots
-        """.trimIndent()
+		artifactRules = """
+			reports => reports
+			logs.tgz => logs.tgz
+			screenshots => screenshots
+		""".trimIndent()
 
-        vcs {
-            root(Settings.WpCalypso)
-            cleanCheckout = true
-        }
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
 
-        params {
-            text(
-                name = "URL",
-                value = "https://wordpress.com",
-                label = "Test URL",
-                description = "URL to test against",
-                allowEmpty = false
-            )
-            checkbox(
-                name = "GUTENBERG_EDGE",
-                value = "false",
-                label = "Use gutenberg-edge",
-                description = "Use a blog with gutenberg-edge sticker",
-                checked = "true",
-                unchecked = "false"
-            )
-            checkbox(
-                name = "COBLOCKS_EDGE",
-                value = "false",
-                label = "Use coblocks-edge",
-                description = "Use a blog with coblocks-edge sticker",
-                checked = "true",
-                unchecked = "false"
-            )
-        }
+		params {
+			text(
+				name = "URL",
+				value = "https://wordpress.com",
+				label = "Test URL",
+				description = "URL to test against",
+				allowEmpty = false
+			)
+			checkbox(
+				name = "GUTENBERG_EDGE",
+				value = "false",
+				label = "Use gutenberg-edge",
+				description = "Use a blog with gutenberg-edge sticker",
+				checked = "true",
+				unchecked = "false"
+			)
+			checkbox(
+				name = "COBLOCKS_EDGE",
+				value = "false",
+				label = "Use coblocks-edge",
+				description = "Use a blog with coblocks-edge sticker",
+				checked = "true",
+				unchecked = "false"
+			)
+		}
 
-        steps {
-            bashNodeScript {
-                name = "Prepare environment"
-                scriptContent = """
-                    export NODE_ENV="test"
-                    export PLAYWRIGHT_BROWSERS_PATH=0
+		steps {
+			bashNodeScript {
+				name = "Prepare environment"
+				scriptContent = """
+					export NODE_ENV="test"
+					export PLAYWRIGHT_BROWSERS_PATH=0
 
-                    # Install modules
-                    ${_self.yarn_install_cmd}
+					# Install modules
+					${_self.yarn_install_cmd}
 
-                    # Build packages
-                    yarn workspace @automattic/calypso-e2e build
-                """
-            }
-            bashNodeScript {
-                name = "Run e2e tests ($viewportName)"
-                scriptContent = """
-                    shopt -s globstar
-                    set -x
+					# Build packages
+					yarn workspace @automattic/calypso-e2e build
+				"""
+			}
+			bashNodeScript {
+				name = "Run e2e tests ($viewportName)"
+				scriptContent = """
+					shopt -s globstar
+					set -x
 
-                    chmod +x ./bin/get-calypso-live-url.sh
-                    URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-                    if [[ ${'$'}? -ne 0 ]]; then
-                        // Command failed. URL contains stderr
-                        echo ${'$'}URL
-                        exit 1
-                    fi
+					cd test/e2e
+					mkdir temp
 
-                    cd test/e2e
-                    mkdir temp
+					export NODE_CONFIG_ENV=test
+					export PLAYWRIGHT_BROWSERS_PATH=0
+					export TEAMCITY_VERSION=2021
+					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
+					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
+					export URL=%URL%
+					export VIEWPORT_NAME=$viewportName
+					export LOCALE=en
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+					export DEBUG=pw:api
 
-                    export LIVEBRANCHES=true
-                    export NODE_CONFIG_ENV=test
-                    export PLAYWRIGHT_BROWSERS_PATH=0
-                    export TEAMCITY_VERSION=2021
+					# Decrypt config
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-                    # Decrypt config
-                    openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+					# Run the test
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
+				""".trimIndent()
+				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+			}
+			bashNodeScript {
+				name = "Collect results"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
 
-                    # Run the test
-                    export VIEWPORT_NAME=$viewportName
-                    export LOCALE=en
-                    export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-                    export DEBUG=pw:api
+					mkdir -p screenshots
+					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
-                    xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright-wpcom
-                """.trimIndent()
-                dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
-            }
-            bashNodeScript {
-                name = "Collect results"
-                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-                scriptContent = """
-                    set -x
+					mkdir -p logs
+					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+				""".trimIndent()
+			}
+		}
 
-                    mkdir -p screenshots
-                    find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+		features {
+			perfmon {
+			}
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#gutenberg-e2e"
+					messageFormat = verboseMessageFormat {
+						addBranch = true
+						addStatusText = true
+						maximumNumberOfChanges = 10
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailed = true
+				buildFinishedSuccessfully = true
+			}
+			commitStatusPublisher {
+				vcsRootExtId = "${Settings.WpCalypso.id}"
+				publisher = github {
+					githubUrl = "https://api.github.com"
+					authType = personalToken {
+						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+					}
+				}
+			}
+		}
 
-                    mkdir -p logs
-                    find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-                """.trimIndent()
-            }
-        }
+		failureConditions {
+			executionTimeoutMin = 20
+			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
+			// been muted previously.
+			nonZeroExitCode = false
 
-        features {
-            perfmon {
-            }
-            notifications {
-                notifierSettings = slackNotifier {
-                    connection = "PROJECT_EXT_11"
-                    sendTo = "#gutenberg-e2e"
-                    messageFormat = verboseMessageFormat {
-                        addBranch = true
-                        addStatusText = true
-                        maximumNumberOfChanges = 10
-                    }
-                }
-                branchFilter = "+:<default>"
-                buildFailed = true
-                buildFinishedSuccessfully = true
-            }
-            commitStatusPublisher {
-                vcsRootExtId = "${Settings.WpCalypso.id}"
-                publisher = github {
-                    githubUrl = "https://api.github.com"
-                    authType = personalToken {
-                        token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-                    }
-                }
-            }
-        }
+			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
+			// crashes and no tests are run.
+			failOnMetricChange {
+				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+				threshold = 50
+				units = BuildFailureOnMetric.MetricUnit.PERCENTS
+				comparison = BuildFailureOnMetric.MetricComparison.LESS
+				compareTo = build {
+					buildRule = lastSuccessful()
+				}
+			}
+		}
 
-        failureConditions {
-            executionTimeoutMin = 20
-            // Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-            // been muted previously.
-            nonZeroExitCode = false
-
-            // Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-            // crashes and no tests are run.
-            failOnMetricChange {
-                metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-                threshold = 50
-                units = BuildFailureOnMetric.MetricUnit.PERCENTS
-                comparison = BuildFailureOnMetric.MetricComparison.LESS
-                compareTo = build {
-                    buildRule = lastSuccessful()
-                }
-            }
-        }
-
-        triggers {
-            schedule {
-                schedulingPolicy = daily {
-                    hour = 4
-                }
-                branchFilter = """
-                    +:trunk
-                """.trimIndent()
-                triggerBuild = always()
-                withPendingChangesOnly = false
-            }
-        }
-    }
+		triggers {
+			schedule {
+				schedulingPolicy = daily {
+					hour = 4
+				}
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+				triggerBuild = always()
+				withPendingChangesOnly = false
+			}
+		}
+	}
 }
 
 

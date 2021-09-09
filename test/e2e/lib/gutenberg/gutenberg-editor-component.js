@@ -91,7 +91,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 
 	async getTitle() {
 		return await driverHelper.getInputText(
-			this.driver.findElement( By.css( '.editor-post-title__input' ) )
+			await this.driver.findElement( By.css( '.editor-post-title__input' ) )
 		);
 	}
 

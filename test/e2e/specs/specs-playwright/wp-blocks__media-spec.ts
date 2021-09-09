@@ -1,3 +1,8 @@
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
+
 import path from 'path';
 import {
 	setupHooks,

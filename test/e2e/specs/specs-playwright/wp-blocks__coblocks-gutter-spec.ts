@@ -1,3 +1,7 @@
+/**
+ * @group gutenberg
+ */
+
 import {
 	setupHooks,
 	DataHelper,

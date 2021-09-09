@@ -1,3 +1,7 @@
+/**
+ * @group gutenberg
+ */
+
 import assert from 'assert';
 import {
 	DataHelper,

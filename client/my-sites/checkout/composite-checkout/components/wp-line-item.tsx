@@ -23,7 +23,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { isWpComProductRenewal, getSublabel, getLabel } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
@@ -35,7 +34,6 @@ import {
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
 import { useGetProductVariants } from '../hooks/product-variants';
-import deleteIcon from './delete-icon.svg';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -118,24 +116,17 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme; coupon?: boolean } >`
-	position: absolute;
-	padding: 10px;
-	right: -50px;
-	top: ${ ( props ) => ( props.coupon ? '0px' : '7px' ) };
+const DeleteButtonWrapper = styled.div`
+	width: 100%;
+	order: 1;
+`;
 
-	:hover rect {
-		fill: ${ ( props ) => props.theme.colors.error };
-	}
-
-	svg {
-		opacity: 1;
-	}
-
-	.rtl & {
-		right: auto;
-		left: -50px;
-	}
+const DeleteButton = styled( Button )< { theme?: Theme } >`
+	display: inline-block;
+	width: auto;
+	font-size: 0.75rem;
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	margin-top: 4px;
 `;
 
 function LineItemPrice( {
@@ -162,19 +153,8 @@ function LineItemPrice( {
 	);
 }
 
-function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string } ) {
-	const translate = useTranslate();
-	const text = String(
-		translate( 'Remove %s from cart', {
-			args: product,
-		} )
-	);
-	return <img id={ uniqueID } alt={ text } src={ deleteIcon } />;
-}
-
 function WPNonProductLineItem( {
 	lineItem,
-	coupon,
 	className = null,
 	isSummary,
 	hasDeleteButton,
@@ -182,7 +162,6 @@ function WPNonProductLineItem( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	lineItem: LineItemType;
-	coupon?: boolean;
 	className?: string | null;
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
@@ -196,7 +175,6 @@ function WPNonProductLineItem( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const deleteButtonId = `checkout-delete-button-${ id }`;
 	const translate = useTranslate();
 	const isPwpoUser = useSelector(
 		( state ) =>
@@ -222,19 +200,25 @@ function WPNonProductLineItem( {
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice actualAmount={ actualAmountDisplay } isSummary={ isSummary } />
 			</span>
-			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
+			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButton
-						coupon={ coupon }
-						className="checkout-line-item__remove-product"
-						buttonType="borderless"
-						disabled={ isDisabled }
-						onClick={ () => {
-							setIsModalVisible( true );
-						} }
-					>
-						<DeleteIcon uniqueID={ deleteButtonId } product={ label } />
-					</DeleteButton>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType={ 'text-button' }
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: label,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
 
 					<CheckoutModal
 						isVisible={ isModalVisible }
@@ -728,7 +712,6 @@ function WPLineItem( {
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
-	const deleteButtonId = `checkout-delete-button-${ id }-${ isSummary ? 'summary' : 'edit' }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const isPwpoUser = useSelector(
 		( state ) =>
@@ -767,12 +750,6 @@ function WPLineItem( {
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
 
-	const deleteButtonText = String(
-		translate( 'Remove %s from cart', {
-			args: label,
-		} )
-	);
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -791,37 +768,31 @@ function WPLineItem( {
 					isSummary={ isSummary }
 				/>
 			</span>
-			{ sublabel && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
-			) }
-			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-			{ isGSuite && <GSuiteUsersList product={ product } /> }
-			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
-			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
+			{ hasDeleteButton && removeProductFromCart && (
 				<>
-					<DeleteButton
-						className="checkout-line-item__remove-product"
-						aria-label={ deleteButtonText }
-						buttonType="borderless"
-						disabled={ isDisabled }
-						onClick={ () => {
-							setIsModalVisible( true );
-							onEvent( {
-								type: 'a8c_checkout_delete_product_press',
-								payload: {
-									product_name: label,
-								},
-							} );
-						} }
-					>
-						<DeleteIcon uniqueID={ deleteButtonId } product={ label } />
-					</DeleteButton>
+					<DeleteButtonWrapper>
+						<DeleteButton
+							className="checkout-line-item__remove-product"
+							buttonType={ 'text-button' }
+							aria-label={ String(
+								translate( 'Remove %s from cart', {
+									args: label,
+								} )
+							) }
+							disabled={ isDisabled }
+							onClick={ () => {
+								setIsModalVisible( true );
+								onEvent( {
+									type: 'a8c_checkout_delete_product_press',
+									payload: {
+										product_name: label,
+									},
+								} );
+							} }
+						>
+							{ translate( 'Remove from cart' ) }
+						</DeleteButton>
+					</DeleteButtonWrapper>
 
 					<CheckoutModal
 						isVisible={ isModalVisible }
@@ -848,6 +819,19 @@ function WPLineItem( {
 				</>
 			) }
 
+			{ sublabel && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<DomainDiscountCallout product={ product } />
+					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+			{ isGSuite && <GSuiteUsersList product={ product } /> }
+			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
+
 			{ shouldShowVariantSelector && onChangePlanLength && (
 				<ItemVariationPicker
 					variants={ variants }
@@ -860,18 +844,3 @@ function WPLineItem( {
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
-
-WPLineItem.propTypes = {
-	siteId: PropTypes.number,
-	allowVariants: PropTypes.bool,
-	className: PropTypes.string,
-	total: PropTypes.bool,
-	tax: PropTypes.bool,
-	subtotal: PropTypes.bool,
-	isSummary: PropTypes.bool,
-	hasDeleteButton: PropTypes.bool,
-	removeProductFromCart: PropTypes.func,
-	product: PropTypes.object.isRequired,
-	onChangePlanLength: PropTypes.func,
-	createUserAndSiteBeforeTransaction: PropTypes.bool,
-};

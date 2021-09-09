@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import assert from 'assert';
 import {
 	DataHelper,

@@ -314,7 +314,12 @@ class StatsSite extends Component {
 							) }
 						</p>
 					</div>
-					<Button primary href="https://parse.ly" onClick={ this.parselyClick } target="_blank">
+					<Button
+						primary
+						href="https://www.parse.ly/wordpress-demo?utm_source=wpstats&utm_medium=jitm&utm_campaign=parselywpstatsdemo"
+						onClick={ this.parselyClick }
+						target="_blank"
+					>
 						{ translate( 'Learn more' ) }
 					</Button>
 				</Card>

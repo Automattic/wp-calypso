@@ -143,6 +143,7 @@
 
 	& > div {
 		flex: 1;
+		margin-right: 30px;
 	}
 
 	img {
@@ -152,12 +153,10 @@
 	}
 
 	p {
-		margin: 0;
 		color: var( --color-text-subtle );
 	}
 
 	.button {
-		margin-top: 16px;
 		margin-left: auto;
 		justify-self: flex-end;
 
