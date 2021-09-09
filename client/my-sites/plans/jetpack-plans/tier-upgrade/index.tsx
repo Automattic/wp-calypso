@@ -10,7 +10,7 @@ import { getTieredBackupProducts } from './get-tiered-products';
 export const TierUpgrade = () => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const tieredBackupProducts = getTieredBackupProducts( 'yearly' );
+	const tieredBackupProducts = getTieredBackupProducts( TERM_ANNUALLY );
 
 	const noop = () => {
 		// Do nothing

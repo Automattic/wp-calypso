@@ -1,18 +1,32 @@
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-	// PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-	// PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_MONTHLY,
+	getJetpackStorageAmountDisplays,
+	JetpackSlugsWithStorage,
 } from '@automattic/calypso-products';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { Duration, SelectorProduct } from '../types';
 
+const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
+	const jetpackStorageAmountDisplays = getJetpackStorageAmountDisplays();
+
+	return {
+		...slugToSelectorProduct( slug ),
+		displayName: jetpackStorageAmountDisplays[ slug ],
+	};
+};
+
 export const getTieredBackupProducts = ( billingPeriod: Duration ) => {
-	// TODO: remove (just making linter happy)
-	if ( billingPeriod || ! billingPeriod ) {
-		return [
-			slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T1_YEARLY ),
-			slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T2_YEARLY ),
-		] as SelectorProduct[];
-	}
+	const backupProductsByBillingPeriod: { [ K in Duration ]: JetpackSlugsWithStorage[] } = {
+		[ TERM_ANNUALLY ]: [ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T2_YEARLY ],
+		[ TERM_MONTHLY ]: [ PRODUCT_JETPACK_BACKUP_T1_MONTHLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ],
+	};
+
+	return backupProductsByBillingPeriod[ billingPeriod ].map(
+		getProductWithOverrides
+	) as SelectorProduct[];
 };
