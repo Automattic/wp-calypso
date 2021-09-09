@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-export */
 import {
 	DataHelper,
 	BlockFlow,
