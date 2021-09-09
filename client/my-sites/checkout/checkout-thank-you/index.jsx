@@ -404,7 +404,6 @@ export class CheckoutThankYou extends React.Component {
 					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
 				);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
-			wasDomainMappingOnlyProduct = purchases.length === 1 && purchases.some( isDomainMapping );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
