@@ -35,13 +35,12 @@ export default async function existingCardProcessor(
 	}
 	const {
 		stripe,
-		stripeConfiguration,
 		recordEvent,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
 	} = dataForProcessor;
-	if ( ! stripeConfiguration || ! stripe ) {
+	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
 
