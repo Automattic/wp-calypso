@@ -32,7 +32,6 @@ describe( 'existingCardProcessor', () => {
 		createUserAndSiteBeforeTransaction: false,
 		stripe,
 		stripeConfiguration,
-		cardNumberElement: undefined,
 		recordEvent: () => null,
 		reduxDispatch: () => null,
 		responseCart: cart,
