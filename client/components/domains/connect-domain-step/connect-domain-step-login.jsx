@@ -3,9 +3,15 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepsHeadingAdvanced, stepsHeadingSuggested, stepSlug } from './constants';
+import {
+	modeType,
+	stepsHeadingAdvanced,
+	stepsHeadingOwnershipVerification,
+	stepsHeadingSuggested,
+	stepSlug,
+} from './constants';
 
 import './style.scss';
 
@@ -13,13 +19,35 @@ export default function ConnectDomainStepLogin( {
 	className,
 	pageSlug,
 	domain,
+	isOwnershipVerificationFlow,
 	mode,
 	onNextStep,
 	progressStepList,
 } ) {
 	const { __ } = useI18n();
+	const [ heading, setHeading ] = useState();
+
+	useEffect( () => {
+		switch ( mode ) {
+			case modeType.SUGGESTED:
+				setHeading( stepsHeadingSuggested );
+				return;
+			case modeType.ADVANCED:
+				setHeading( stepsHeadingAdvanced );
+				return;
+			case modeType.OWNERSHIP_VERIFICATION:
+				setHeading( stepsHeadingOwnershipVerification );
+				return;
+		}
+	}, [ mode ] );
+
 	const stepContent = (
 		<div className={ className + '__login' }>
+			{ isOwnershipVerificationFlow && (
+				<p className={ className + '__text' }>
+					{ __( 'We need to confirm that you are authorized to connect this domain.' ) }
+				</p>
+			) }
 			<p className={ className + '__text' }>
 				{ createInterpolateElement(
 					__(
@@ -46,8 +74,6 @@ export default function ConnectDomainStepLogin( {
 		</div>
 	);
 
-	const heading = modeType.SUGGESTED === mode ? stepsHeadingSuggested : stepsHeadingAdvanced;
-
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
@@ -64,7 +90,12 @@ ConnectDomainStepLogin.propTypes = {
 	className: PropTypes.string.isRequired,
 	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	domain: PropTypes.string.isRequired,
+	isOwnershipVerificationFlow: PropTypes.bool,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
+};
+
+ConnectDomainStepLogin.defaultProps = {
+	isOwnershipVerificationFlow: false,
 };
