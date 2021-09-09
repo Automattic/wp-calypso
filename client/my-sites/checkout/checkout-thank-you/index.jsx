@@ -22,6 +22,7 @@ import {
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
 	isMarketplaceProduct,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -43,6 +44,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { isExternal } from 'calypso/lib/url';
+import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
@@ -385,6 +387,7 @@ export class CheckoutThankYou extends React.Component {
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let wasMarketplaceProduct = false;
+		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainMappingOrTransferProduct = false;
 
@@ -400,6 +403,7 @@ export class CheckoutThankYou extends React.Component {
 				purchases.some(
 					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
 				);
+			wasDIFMProduct = purchases.some( isDIFMProduct );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -415,8 +419,15 @@ export class CheckoutThankYou extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
-		// Rebrand Cities thanks page
+		if ( wasDIFMProduct ) {
+			return (
+				<Main className="checkout-thank-you">
+					<DIFMLiteThankYou />
+				</Main>
+			);
+		}
 
+		// Rebrand Cities thanks page
 		if (
 			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
