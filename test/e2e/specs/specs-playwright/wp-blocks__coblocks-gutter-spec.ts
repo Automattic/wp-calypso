@@ -33,7 +33,10 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 	} );
 
 	it( 'Insert Pricing Table block', async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( 'Pricing Table' );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			PricingTableBlock.blockName,
+			PricingTableBlock.blockEditorSelector
+		);
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 	} );
 

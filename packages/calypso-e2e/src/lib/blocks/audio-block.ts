@@ -11,6 +11,7 @@ const selectors = {
  */
 export class AudioBlock {
 	static blockName = 'Audio';
+	static blockEditorSelector = '[aria-label="Block: Audio"]';
 	block: ElementHandle;
 
 	/**
