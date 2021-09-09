@@ -4,7 +4,7 @@
 import { useEffect, useCallback, useState } from '@wordpress/element';
 
 /**
- * A hook that returns true/false if ref node is focused either by tabbing or clicking into any of its children.
+ * A hook that returns true/false if ref node receives focus by either tabbing or clicking into any of its children.
  *
  * @param ref React.MutableRefObject< null | HTMLElement >
  */
