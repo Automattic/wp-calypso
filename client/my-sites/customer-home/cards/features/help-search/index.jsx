@@ -28,8 +28,7 @@ const HelpSearch = ( { searchQuery, track } ) => {
 		}
 
 		const resultLink = getResultLink( result );
-		const type = result.type ?? RESULT_ARTICLE;
-		const tour = result.tour;
+		const { type = RESULT_ARTICLE, tour } = result;
 
 		const tracksData = Object.fromEntries(
 			Object.entries( {

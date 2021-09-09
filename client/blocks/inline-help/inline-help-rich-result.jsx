@@ -24,28 +24,28 @@ class InlineHelpRichResult extends Component {
 		tour: PropTypes.string,
 	};
 
-	getButtonLabel = ( type = 'article' ) => {
+	getButtonLabel = ( type = RESULT_ARTICLE ) => {
 		const { translate } = this.props;
 
 		const labels = {
-			article: translate( 'Read more' ),
-			video: translate( 'Watch a video' ),
-			tour: translate( 'Start Tour' ),
+			[ RESULT_ARTICLE ]: translate( 'Read more' ),
+			[ RESULT_VIDEO ]: translate( 'Watch a video' ),
+			[ RESULT_TOUR ]: translate( 'Start Tour' ),
 		};
 
 		return labels[ type ];
 	};
 
 	buttonIcons = {
-		tour: 'list-ordered',
-		video: 'video',
-		article: 'reader',
+		[ RESULT_TOUR ]: 'list-ordered',
+		[ RESULT_VIDEO ]: 'video',
+		[ RESULT_ARTICLE ]: 'reader',
 	};
 
 	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { searchQuery, result } = this.props;
-		const { type, tour, link, post_id: postId } = result;
+		const { type = RESULT_ARTICLE, tour, link, post_id: postId } = result;
 
 		const tracksData = {
 			search_query: searchQuery,
@@ -60,19 +60,26 @@ class InlineHelpRichResult extends Component {
 		if ( type === RESULT_TOUR ) {
 			event.preventDefault();
 			this.props.requestGuidedTour( tour );
-		} else if ( type === RESULT_VIDEO ) {
+			return;
+		}
+
+		if ( type === RESULT_VIDEO ) {
 			event.preventDefault();
 			this.props.setDialogState( {
 				showDialog: true,
 				dialogType: 'video',
 				videoLink: link,
 			} );
-		} else if ( ( ! type || type === RESULT_ARTICLE ) && postId && isLocaleEnglish ) {
+			return;
+		}
+
+		if ( postId && isLocaleEnglish ) {
 			// Until we can deliver localized inline support article content, we send the
 			// the user to the localized support blog, if one exists.
 			event.preventDefault();
 			this.props.openSupportArticleDialog( { postId, postUrl: link } );
-		} // else falls back on href
+		}
+		// falls back on href
 	};
 
 	render() {
