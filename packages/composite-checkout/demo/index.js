@@ -21,10 +21,7 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import React, { useState, useEffect, useMemo } from 'react';
-import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 import { createPayPalMethod } from './pay-pal';
-
-const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
 const initialItems = [
 	{
@@ -45,23 +42,9 @@ const initialItems = [
 const onPaymentComplete = () => {
 	window.alert( 'Your payment is complete!' );
 };
-const onEvent = ( event ) => window.console.log( 'Event', event );
-const showErrorMessage = ( error ) => {
-	console.log( 'Error:', error ); /* eslint-disable-line no-console */
-	window.alert( 'There was a problem with your payment: ' + error );
-};
 
-async function fetchStripeConfiguration() {
-	// This simulates the network request time
-	await asyncTimeout( 2000 );
-	return {
-		public_key: stripeKey,
-		js_url: 'https://js.stripe.com/v3/',
-	};
-}
-
-async function stripeCardProcessor( data ) {
-	window.console.log( 'Processing stripe transaction with data', data );
+async function payPalProcessor( data ) {
+	window.console.log( 'Processing PayPal transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
 	return makeSuccessResponse( { success: true } );
@@ -179,35 +162,15 @@ const contactFormStep = {
 	completeStepContent: <ContactForm summary />,
 };
 
-export function HostPage() {
-	return (
-		<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-			<MyCheckout />
-		</StripeHookProvider>
-	);
-}
-
-function MyCheckout() {
+export function CheckoutDemo() {
 	const [ items ] = useState( initialItems );
 	const total = useMemo( () => getTotal( items ), [ items ] );
-	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
-		if ( isStripeLoading ) {
-			return;
-		}
-		if ( stripeLoadingError ) {
-			setIsLoading( false );
-			showErrorMessage( stripeLoadingError );
-			return;
-		}
-		if ( ! stripe || ! stripeConfiguration ) {
-			return;
-		}
 		// This simulates an additional loading delay
 		setTimeout( () => setIsLoading( false ), 1500 );
-	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration ] );
+	}, [] );
 
 	const payPalMethod = useMemo( () => {
 		return createPayPalMethod();
@@ -217,12 +180,11 @@ function MyCheckout() {
 		<CheckoutProvider
 			items={ items }
 			total={ total }
-			onEvent={ onEvent }
 			onPaymentComplete={ onPaymentComplete }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ payPalMethod ] }
-			paymentProcessors={ { card: stripeCardProcessor } }
+			paymentProcessors={ { paypal: payPalProcessor } }
 			initiallySelectedPaymentMethodId={ payPalMethod }
 		>
 			<MyCheckoutBody />
@@ -300,5 +262,5 @@ async function asyncTimeout( timeout ) {
 
 export default {
 	title: 'composite-checkout',
-	component: HostPage,
+	component: CheckoutDemo,
 };
