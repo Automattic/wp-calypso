@@ -6,10 +6,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
+import withP2Guests from 'calypso/data/p2/with-p2-guests';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class Team extends React.Component {
 	infiniteList = React.createRef();
@@ -21,6 +25,40 @@ class Team extends React.Component {
 	getPersonRef = ( user ) => 'user-' + user.ID;
 
 	renderLoadingPeople = () => <PeopleListItem key="people-list-item-placeholder" />;
+
+	getP2headerText = () => {
+		const { p2Guests, totalUsers, isP2HubSite, translate } = this.props;
+		const translateOptions = {
+			args: {
+				numberPeople: totalUsers,
+			},
+			count: totalUsers,
+			context: 'A navigation label.',
+		};
+
+		if ( isP2HubSite ) {
+			return translate(
+				'There is %(numberPeople)d members in this workspace',
+				'There are %(numberPeople)d members in this workspace',
+				translateOptions
+			);
+		}
+
+		if ( p2Guests?.total_guests ) {
+			translateOptions.args.numberGuests = p2Guests?.total_guests;
+			return translate(
+				'There is %(numberPeople)d member and %(numberGuests)d guests in this P2',
+				'There are %(numberPeople)d members and %(numberGuests)d guests in this P2',
+				translateOptions
+			);
+		}
+
+		return translate(
+			'There is %(numberPeople)d members in this P2',
+			'There are %(numberPeople)d members in this P2',
+			translateOptions
+		);
+	};
 
 	render() {
 		const {
@@ -34,23 +72,28 @@ class Team extends React.Component {
 			hasNextPage,
 			fetchNextPage,
 			translate,
+			isWPForTeamsSite,
 		} = this.props;
 
 		let people;
 		let headerText;
 
 		if ( totalUsers ) {
-			headerText = translate(
-				'There is %(numberPeople)d person in your team',
-				'There are %(numberPeople)d people in your team',
-				{
-					args: {
-						numberPeople: totalUsers,
-					},
-					count: totalUsers,
-					context: 'A navigation label.',
-				}
-			);
+			if ( isWPForTeamsSite ) {
+				headerText = this.getP2headerText();
+			} else {
+				headerText = translate(
+					'There is %(numberPeople)d person in your team',
+					'There are %(numberPeople)d people in your team',
+					{
+						args: {
+							numberPeople: totalUsers,
+						},
+						count: totalUsers,
+						context: 'A navigation label.',
+					}
+				);
+			}
 		}
 
 		if ( ! users.length && search && ! fetchingUsers ) {
@@ -116,4 +159,13 @@ class Team extends React.Component {
 	}
 }
 
-export default connect( null, { recordGoogleEvent } )( localize( Team ) );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			isP2HubSite: isSiteP2Hub( state, siteId ),
+		};
+	},
+	{ recordGoogleEvent }
+)( localize( withP2Guests( Team ) ) );
