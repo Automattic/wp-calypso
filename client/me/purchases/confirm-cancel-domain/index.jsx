@@ -15,6 +15,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getName as getDomainName } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
@@ -147,11 +148,13 @@ class ConfirmCancelDomain extends React.Component {
 					'We are cancelling %(purchaseName)s and processing your refund. ' +
 						'Please give it some time for changes to take effect. ' +
 						'An email will be sent once the process is complete.',
-					{
-						args: { purchaseName },
-					}
+					{ args: { purchaseName } }
 				);
 			}
+
+			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
+				product_slug: purchase.productSlug,
+			} );
 
 			this.props.successNotice( successMessage, { displayOnNextPage: true } );
 			page.redirect( this.props.purchaseListUrl );
