@@ -31,7 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
+		"@automattic/calypso-analytics": "^1.0.0",
 		"@automattic/data-stores": "^2.0.0",
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
