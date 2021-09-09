@@ -159,6 +159,7 @@ function UseMyDomain( {
 				baseClassName={ 'connect-domain-step' }
 				domain={ domainName }
 				initialPageSlug={ ownershipVerificationFlowPageSlug }
+				isOwnershipVerificationFlow={ true }
 				onConnect={ onConnect }
 				onSetPage={ setOwnershipVerificationFlowPageSlug }
 				stepsDefinition={ connectADomainOwnershipVerificationStepsDefinition }

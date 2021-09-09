@@ -45,7 +45,7 @@ export default function ConnectDomainStepLogin( {
 		<div className={ className + '__login' }>
 			{ isOwnershipVerificationFlow && (
 				<p className={ className + '__text' }>
-					__( 'We need to confirm that you are authorized to connect this domain.' )
+					{ __( 'We need to confirm that you are authorized to connect this domain.' ) }
 				</p>
 			) }
 			<p className={ className + '__text' }>
