@@ -41,7 +41,6 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 						{
 							components: {
 								a: <a href={ CALYPSO_CONTACT } />,
-								br: <br />,
 								strong: <strong />,
 							},
 						}
