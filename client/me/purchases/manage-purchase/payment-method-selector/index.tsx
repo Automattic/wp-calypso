@@ -118,7 +118,7 @@ export default function PaymentMethodSelector( {
 							translate,
 							stripe,
 							stripeConfiguration,
-							element: elements?.getElement( CardNumberElement ) ?? undefined,
+							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
 						},
 						data

@@ -33,7 +33,7 @@ export async function assignNewCardProcessor(
 		translate,
 		stripe,
 		stripeConfiguration,
-		element,
+		cardNumberElement,
 		reduxDispatch,
 	}: {
 		purchase: Purchase | undefined;
@@ -41,7 +41,7 @@ export async function assignNewCardProcessor(
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
-		element: StripeCardNumberElement | undefined;
+		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: ReturnType< typeof useDispatch >;
 	},
 	submitData: unknown
@@ -55,7 +55,7 @@ export async function assignNewCardProcessor(
 		if ( ! stripe || ! stripeConfiguration ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
-		if ( ! element ) {
+		if ( ! cardNumberElement ) {
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
@@ -69,7 +69,7 @@ export async function assignNewCardProcessor(
 		const tokenResponse = await createStripeSetupIntentAsync(
 			formFieldValues,
 			stripe,
-			element,
+			cardNumberElement,
 			stripeConfiguration
 		);
 		const token = tokenResponse.payment_method;
@@ -110,7 +110,7 @@ async function createStripeSetupIntentAsync(
 		postal_code: string | number;
 	},
 	stripe: Stripe,
-	element: StripeCardNumberElement,
+	cardNumberElement: StripeCardNumberElement,
 	stripeConfiguration: StripeConfiguration
 ): Promise< StripeSetupIntent > {
 	const paymentDetailsForStripe = {
@@ -120,7 +120,12 @@ async function createStripeSetupIntentAsync(
 			postal_code,
 		},
 	};
-	return createStripeSetupIntent( stripe, element, stripeConfiguration, paymentDetailsForStripe );
+	return createStripeSetupIntent(
+		stripe,
+		cardNumberElement,
+		stripeConfiguration,
+		paymentDetailsForStripe
+	);
 }
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
