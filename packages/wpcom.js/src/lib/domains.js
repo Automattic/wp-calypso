@@ -63,19 +63,6 @@ class Domains {
 		const path = root + 'supported-states/' + countryCode;
 		return this.wpcom.req.get( path, query, fn );
 	}
-
-	/**
-	 * Get the results of an EPP code (auth-code) check for this domain.
-	 *
-	 * @param {string} domain - The domain name to check.
-	 * @param {string} authCode - The auth code for the given domain to check.
-	 * @param {Function} fn The callback function
-	 * @returns {Promise} A promise that resolves when the request completes
-	 */
-	authCodeCheck( domain, authCode, fn ) {
-		const path = root + encodeURIComponent( domain ) + '/inbound-transfer-check-auth-code';
-		return this.wpcom.req.get( path, { auth_code: authCode }, fn );
-	}
 }
 
 /**
