@@ -103,16 +103,6 @@ describe( 'multiPartnerCardProcessor', () => {
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 
 	const mockCardNumberElement = () => <div>mock card number</div>;
-	mockCardNumberElement.mount = () => undefined;
-	mockCardNumberElement.blur = () => undefined;
-	mockCardNumberElement.clear = () => undefined;
-	mockCardNumberElement.destroy = () => undefined;
-	mockCardNumberElement.focus = () => undefined;
-	mockCardNumberElement.unmount = () => undefined;
-	mockCardNumberElement.on = () => mockCardNumberElement;
-	mockCardNumberElement.off = () => mockCardNumberElement;
-	mockCardNumberElement.once = () => mockCardNumberElement;
-	mockCardNumberElement.update = () => undefined;
 
 	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
 	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
@@ -223,7 +213,6 @@ describe( 'multiPartnerCardProcessor', () => {
 	} as Stripe;
 
 	const options: PaymentProcessorOptions = {
-		cardNumberElement: mockCardNumberElement,
 		includeDomainDetails: false,
 		includeGSuiteDetails: false,
 		createUserAndSiteBeforeTransaction: false,
@@ -251,7 +240,7 @@ describe( 'multiPartnerCardProcessor', () => {
 	} );
 
 	it( 'throws an error if there is an unknown paymentPartner', async () => {
-		const submitData = { paymentPartner: 'unknown' };
+		const submitData = { paymentPartner: 'unknown', cardNumberElement: mockCardNumberElement };
 		await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
 			/Unrecognized card payment partner/
 		);
@@ -259,21 +248,30 @@ describe( 'multiPartnerCardProcessor', () => {
 
 	describe( 'for a stripe paymentPartner', () => {
 		it( 'throws an error if there is no stripe object', async () => {
-			const submitData = { paymentPartner: 'stripe' };
+			const submitData = { paymentPartner: 'stripe', cardNumberElement: mockCardNumberElement };
 			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
 				/requires stripe and none was provided/
 			);
 		} );
 
 		it( 'throws an error if there is no stripeConfiguration object', async () => {
-			const submitData = { paymentPartner: 'stripe', stripe };
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				cardNumberElement: mockCardNumberElement,
+			};
 			await expect( multiPartnerCardProcessor( submitData, options ) ).rejects.toThrowError(
 				/requires stripeConfiguration and none was provided/
 			);
 		} );
 
 		it( 'fails to create a token if the name and address are missing', async () => {
-			const submitData = { paymentPartner: 'stripe', stripe, stripeConfiguration };
+			const submitData = {
+				paymentPartner: 'stripe',
+				stripe,
+				stripeConfiguration,
+				cardNumberElement: mockCardNumberElement,
+			};
 			const expected = {
 				payload: 'stripe error: missing billing_details.name',
 				type: 'ERROR',
@@ -289,6 +287,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = {
 				payload: 'stripe error: missing billing_details.address.country',
@@ -305,6 +304,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = {
 				payload: 'stripe error: missing billing_details.address.postal_code',
@@ -324,6 +324,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = { payload: 'test success', type: 'SUCCESS' };
 			await expect(
@@ -344,6 +345,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 			const expected = { payload: 'test error', type: 'ERROR' };
@@ -364,6 +366,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = { payload: 'test success', type: 'SUCCESS' };
 			await expect(
@@ -395,6 +398,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = { payload: 'test success', type: 'SUCCESS' };
 			await expect(
@@ -437,6 +441,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				stripe,
 				stripeConfiguration,
 				name: 'test name',
+				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = { payload: 'test success', type: 'SUCCESS' };
 			await expect(
