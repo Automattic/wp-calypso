@@ -1,3 +1,7 @@
+/**
+ * @group gutenberg
+ */
+
 import { InstagramBlockFlow, TwitterBlockFlow, BlockFlow } from '@automattic/calypso-e2e';
 import { createBlockTests } from './shared-specs/block-testing';
 
