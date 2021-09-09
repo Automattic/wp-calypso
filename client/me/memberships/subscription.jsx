@@ -51,7 +51,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 			// redirect back to Purchases list
 			dispatch(
 				successNotice(
-					translate( 'This subscription has been stopped. You will not be charged.' ),
+					translate( 'This subscription has been canceled. You will no longer be charged.' ),
 					{ displayOnNextPage: true }
 				)
 			);
