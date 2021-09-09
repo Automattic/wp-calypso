@@ -114,19 +114,25 @@ class GSuiteCancelPurchaseDialog extends Component {
 			return false;
 		}
 
-		this.props.successNotice(
-			translate( '%(productName)s was removed from {{domain/}}.', {
-				args: {
-					productName,
-				},
-				components: {
-					domain: <em>{ domain }</em>,
-				},
-			} ),
-			{
-				isPersistent: true,
-			}
-		);
+		let successMessage;
+		if ( purchase.hasQueuedRemoval ) {
+			successMessage = translate(
+				'We are removing %(productName)s from {{domain/}}. ' +
+					'Please give it some time for changes to take effect. ' +
+					'An email will be sent once the process is complete.',
+				{
+					args: { productName },
+					components: { domain: <em>{ domain }</em> },
+				}
+			);
+		} else {
+			successMessage = translate( '%(productName)s was removed from {{domain/}}.', {
+				args: { productName },
+				components: { domain: <em>{ domain }</em> },
+			} );
+		}
+
+		this.props.successNotice( successMessage, { isPersistent: true } );
 
 		return true;
 	};

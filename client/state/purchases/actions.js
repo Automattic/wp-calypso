@@ -11,6 +11,7 @@ import {
 	PURCHASES_USER_FETCH_FAILED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
+	PURCHASE_REMOVE_QUEUED,
 } from 'calypso/state/action-types';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 
@@ -76,14 +77,28 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 			apiNamespace: 'wpcom/v2',
 		} )
 		.then( ( data ) => {
-			if ( data.status === 'completed' ) {
-				dispatch( {
-					type: PURCHASE_REMOVE_COMPLETED,
-					purchases: data.purchases,
-					userId,
-				} );
+			switch ( data.status ) {
+				case 'completed':
+					dispatch( {
+						type: PURCHASE_REMOVE_COMPLETED,
+						purchases: data.purchases,
+						userId,
+					} );
 
-				dispatch( requestHappychatEligibility() );
+					dispatch( requestHappychatEligibility() );
+					break;
+				case 'queued':
+					dispatch( {
+						type: PURCHASE_REMOVE_QUEUED,
+						purchaseId,
+					} );
+					break;
+				default:
+					dispatch( {
+						type: PURCHASE_REMOVE_FAILED,
+						error: PURCHASE_REMOVE_ERROR_MESSAGE,
+					} );
+					break;
 			}
 		} )
 		.catch( ( error ) => {

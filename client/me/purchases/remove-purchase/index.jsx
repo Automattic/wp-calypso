@@ -117,38 +117,52 @@ class RemovePurchase extends Component {
 		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
 			const productName = getName( purchase );
 			const { purchasesError, purchaseListUrl } = this.props;
+			let successMessage;
 
 			if ( purchasesError ) {
 				this.setState( { isRemoving: false } );
-
 				this.closeDialog();
-
 				this.props.errorNotice( purchasesError );
-			} else {
-				if ( isDomainRegistration( purchase ) ) {
-					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( purchase.siteId );
-						this.props.setAllSitesSelected();
-					}
+				return;
+			}
 
-					this.props.successNotice(
-						translate( 'The domain {{domain/}} was removed from your account.', {
-							components: { domain: <em>{ productName }</em> },
-						} ),
-						{ isPersistent: true }
+			if ( purchase.hasQueuedRemoval ) {
+				if ( isDomainRegistration( purchase ) ) {
+					successMessage = translate(
+						'We are removing the domain {{domain/}} from your account. ' +
+							'Please give it some time for changes to take effect. ' +
+							'An email will be sent once the process is complete.',
+						{ components: { domain: <em>{ productName }</em> } }
 					);
 				} else {
-					this.props.successNotice(
-						translate( '%(productName)s was removed from {{siteName/}}.', {
+					successMessage = translate(
+						'We are removing %(productName)s from {{siteName/}}. ' +
+							'Please give it some time for changes to take effect. ' +
+							'An email will be sent once the process is complete.',
+						{
 							args: { productName },
 							components: { siteName: <em>{ purchase.domain }</em> },
-						} ),
-						{ isPersistent: true }
+						}
 					);
 				}
+			} else if ( isDomainRegistration( purchase ) ) {
+				if ( isDomainOnlySite ) {
+					this.props.receiveDeletedSite( purchase.siteId );
+					this.props.setAllSitesSelected();
+				}
 
-				page( purchaseListUrl );
+				successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+					components: { domain: <em>{ productName }</em> },
+				} );
+			} else {
+				successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+					args: { productName },
+					components: { siteName: <em>{ purchase.domain }</em> },
+				} );
 			}
+
+			this.props.successNotice( successMessage, { isPersistent: true } );
+			page( purchaseListUrl );
 		} );
 	};
 
@@ -387,7 +401,7 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
+		if ( this.props.shouldRevertAtomicSite && ! config.isEnabled( 'atomic/automated-revert' ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
@@ -444,12 +458,14 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { purchase } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+		const isAtomicSite = isSiteAutomatedTransfer( state, purchase.siteId );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
+			isAtomicSite,
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
+			shouldRevertAtomicSite: isAtomicSite && ! isJetpackSearch( purchase ),
 			userId: getCurrentUserId( state ),
 		};
 	},

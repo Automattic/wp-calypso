@@ -11,6 +11,7 @@ import {
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
 	PURCHASES_SITE_RESET_STATE,
+	PURCHASE_REMOVE_QUEUED,
 } from 'calypso/state/action-types';
 
 /**
@@ -24,6 +25,21 @@ const initialState = {
 	hasLoadedSitePurchasesFromServer: false,
 	hasLoadedUserPurchasesFromServer: false,
 };
+
+/**
+ * Updates the purchases in the store that shares the given ID with new data.
+ *
+ * @param {Array} purchases - an array of purchases in the store
+ * @param {number} purchaseId - ID of the purchase to update
+ * @param {Object} purchaseData - new purchase data
+ * @returns {Array} An array of purchases
+ */
+function updatePurchase( purchases, purchaseId, purchaseData ) {
+	return purchases.map( ( purchase ) => ( {
+		...purchase,
+		...( purchase.ID === purchaseId && { ...purchaseData } ),
+	} ) );
+}
 
 /**
  * Overwrites the purchases in the store with the purchases from the new purchases array
@@ -97,6 +113,16 @@ const reducer = ( state = initialState, action ) => {
 			return {
 				...state,
 				data: updatePurchases( state.data, action ),
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			};
+		case PURCHASE_REMOVE_QUEUED:
+			return {
+				...state,
+				data: updatePurchase( state.data, action.purchaseId, { hasQueuedRemoval: true } ),
 				error: null,
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false,

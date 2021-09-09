@@ -12,6 +12,7 @@ import {
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
+	PURCHASE_REMOVE_QUEUED,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { clearPurchases, fetchSitePurchases, fetchUserPurchases, removePurchase } from '../actions';
@@ -86,7 +87,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#removePurchase success', () => {
+	describe( '#removePurchase completed', () => {
 		const response = { status: 'completed', purchases };
 
 		useNock( ( nock ) => {
@@ -104,6 +105,28 @@ describe( 'actions', () => {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases,
 					userId,
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#removePurchase queued', () => {
+		const response = { status: 'queued', purchases };
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( `/wpcom/v2/purchases/${ purchaseId }/delete` )
+				.reply( 200, response );
+		} );
+
+		test( 'should dispatch remove queued actions', () => {
+			return removePurchase(
+				purchaseId,
+				userId
+			)( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PURCHASE_REMOVE_QUEUED,
+					purchaseId,
 				} );
 			} );
 		} );

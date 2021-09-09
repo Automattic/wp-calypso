@@ -164,14 +164,12 @@ class CancelPurchaseButton extends Component {
 				}
 
 				if ( response.status === 'completed' ) {
-					this.props.successNotice( response.message, { displayOnNextPage: true } );
-
 					this.props.refreshSitePlans( purchase.siteId );
-
 					this.props.clearPurchases();
-
-					page.redirect( this.props.purchaseListUrl );
 				}
+
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
@@ -201,14 +199,12 @@ class CancelPurchaseButton extends Component {
 				}
 
 				if ( response.status === 'completed' ) {
-					this.props.successNotice( response.message, { displayOnNextPage: true } );
-
 					this.props.refreshSitePlans( purchase.siteId );
-
 					this.props.clearPurchases();
-
-					page.redirect( this.props.purchaseListUrl );
 				}
+
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
