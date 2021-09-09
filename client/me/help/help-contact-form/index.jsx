@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { resemblesUrl } from 'calypso/lib/url';
-import wpcomLib from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import HelpResults from 'calypso/me/help/help-results';
 import {
 	bumpStat,
@@ -39,11 +39,6 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { generateSubjectFromMessage } from './utils';
 
 import './style.scss';
-
-/**
- * Module variables
- */
-const wpcom = wpcomLib.undocumented();
 
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
@@ -219,8 +214,8 @@ export class HelpContactForm extends React.PureComponent {
 			? config( 'jetpack_support_blog' )
 			: config( 'wpcom_support_blog' );
 
-		wpcom
-			.getQandA( query, site )
+		wpcom.req
+			.get( '/help/qanda', { query, site } )
 			.then( ( qanda ) =>
 				this.setState( {
 					qanda: Array.isArray( qanda ) ? qanda : [],
