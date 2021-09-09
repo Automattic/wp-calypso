@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-/**
- * Internal dependencies
- */
 import Popover from 'calypso/components/popover';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
