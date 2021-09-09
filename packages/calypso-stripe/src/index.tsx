@@ -178,7 +178,6 @@ export async function createStripePaymentMethod(
 	paymentDetails: PaymentDetails
 ): Promise< { id: string } > {
 	debug( 'creating payment method...', paymentDetails );
-	// TODO: add ideal, ideal[bank], and possibly other things?
 	const { paymentMethod, error } = await stripe.createPaymentMethod( {
 		type: 'card',
 		card: element,
