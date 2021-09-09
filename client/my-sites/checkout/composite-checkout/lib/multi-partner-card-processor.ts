@@ -30,6 +30,7 @@ type StripeCardTransactionRequest = {
 	name: string;
 	countryCode: string | undefined;
 	postalCode: string | undefined;
+	cardNumberElement: StripeCardNumberElement;
 };
 
 type EbanxCardTransactionRequest = {
@@ -67,18 +68,12 @@ async function stripeCardProcessor(
 		responseCart,
 		siteId,
 		contactDetails,
-		cardNumberElement,
 	} = transactionOptions;
-
-	if ( ! cardNumberElement ) {
-		throw new Error( 'Required purchase element data is missing' );
-	}
 
 	let paymentMethodToken;
 	try {
 		const tokenResponse = await createStripePaymentMethodToken( {
 			...submitData,
-			element: cardNumberElement,
 			country: contactDetails?.countryCode?.value,
 			postalCode: getPostalCode( contactDetails ),
 		} );
@@ -236,6 +231,9 @@ function isValidStripeCardTransactionData(
 	if ( ! data?.stripeConfiguration ) {
 		throw new Error( 'Transaction requires stripeConfiguration and none was provided' );
 	}
+	if ( ! data.cardNumberElement ) {
+		throw new Error( 'Transaction requires credit card field and none was provided' );
+	}
 	return true;
 }
 
@@ -251,18 +249,18 @@ function isValidEbanxCardTransactionData(
 
 function createStripePaymentMethodToken( {
 	stripe,
-	element,
+	cardNumberElement,
 	name,
 	country,
 	postalCode,
 }: {
 	stripe: Stripe;
-	element: StripeCardNumberElement;
+	cardNumberElement: StripeCardNumberElement;
 	name: string | undefined;
 	country: string | undefined;
 	postalCode: string | undefined;
 } ) {
-	return createStripePaymentMethod( stripe, element, {
+	return createStripePaymentMethod( stripe, cardNumberElement, {
 		name,
 		address: {
 			country,
