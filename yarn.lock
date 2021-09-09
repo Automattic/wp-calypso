@@ -626,9 +626,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newspack-blocks@npm:^1.37.0":
-  version: 1.37.0
-  resolution: "@automattic/newspack-blocks@npm:1.37.0"
+"@automattic/newspack-blocks@npm:^1.37.1":
+  version: 1.37.1
+  resolution: "@automattic/newspack-blocks@npm:1.37.1"
   dependencies:
     "@stripe/stripe-js": ^1.15.0
     "@wordpress/a11y": ^3.2.1
@@ -655,7 +655,7 @@ __metadata:
   dependenciesMeta:
     fsevents:
       optional: true
-  checksum: 9c611da5f815dc9d322e633023fb33f426827fb1a6656c50f8834ca3d9997464e09a20a47c55769f24f10d98c8bfeff4fa0a2e6ce9a4fe8715d6276f0ba90ac8
+  checksum: cb5820fbf1999e4ac1950ae28084f08a3308341620ed3c123d47240c6eb34b04aabe29335a7429812be2b1ccafe002edbfb08bb03b9e7716ff6423c1f12360cb
   languageName: node
   linkType: hard
 
@@ -1150,7 +1150,7 @@ __metadata:
     "@automattic/format-currency": ^1.0.0-alpha.0
     "@automattic/i18n-utils": ^1.0.0
     "@automattic/launch": ^1.0.0
-    "@automattic/newspack-blocks": ^1.37.0
+    "@automattic/newspack-blocks": ^1.37.1
     "@automattic/onboarding": ^1.0.0
     "@automattic/page-pattern-modal": ^1.0.0-alpha.0
     "@automattic/plans-grid": ^1.0.0-alpha.0
