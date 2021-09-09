@@ -39,7 +39,6 @@ function SiteInformationCollection() {
 	return (
 		<ActionPanel>
 			<ActionPanelBody>
-				<button onClick={ onSubmit }>NEXT </button>
 				<FormattedHeader
 					brandFont
 					headerText={ 'Tell us more about your site' }

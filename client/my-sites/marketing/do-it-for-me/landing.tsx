@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -14,6 +15,7 @@ import phsych from 'calypso/assets/images/difm/phsych-1.png';
 import restaurant from 'calypso/assets/images/difm/restaurant-1.png';
 import treeremoval from 'calypso/assets/images/difm/tree-removal.png';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const VerticalsGrid = styled.div`
@@ -74,6 +76,8 @@ const Heading = styled.h2`
 export default function DoItForMeLandingPage(): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
+	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) ) ?? 'USD';
+	const displayCost = formatCurrency( 150, currencyCode, { stripZeros: true } );
 
 	const onInterestedSelected = async () => {
 		page( `/marketing/do-it-for-me/site-info/${ selectedSiteSlug }` );
@@ -87,7 +91,10 @@ export default function DoItForMeLandingPage(): JSX.Element {
 
 			<Paragraph>
 				{ translate(
-					'Need a professionally designed website for your business fast? Choose from our custom designed templates below, add your content and media, and in just 2-4 days your website will be ready to launch, for just US$500. The one-time fee includes a 5-page website, a 30-minute Quick Start Zoom orientation about your site when it’s complete.'
+					'Need a professionally designed website for your business fast? Choose from our custom-designed templates below, add your content and media, and in just 2-4 days your website will be ready to launch for just %(cost)s. The one-time fee includes a 4-page website and a 30-minute Quick Start Zoom orientation about your site when it’s complete.',
+					{
+						args: { cost: displayCost },
+					}
 				) }
 			</Paragraph>
 			<Paragraph>
