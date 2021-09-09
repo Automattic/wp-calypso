@@ -12778,7 +12778,6 @@ __metadata:
     react-dom: ^16.12.0
     react-element-to-jsx-string: ^14.1.0
     react-intersection-observer: ^8.32.1
-    react-lazily-render: ^1.2.0
     react-live: ^1.12.0
     react-modal: ^3.11.1
     react-native: ^0.63.4
@@ -32269,17 +32268,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-lazily-render@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "react-lazily-render@npm:1.2.0"
-  dependencies:
-    scrollparent: ^2.0.1
-  peerDependencies:
-    react: ^16.1.1
-  checksum: d259b7acd2250cbe73fe247879d9972f8a38ecc448b1d291781aabc16a557e74c07c96deddf48efe62f2b92fc2582dee6487227b5fe63898f428bf4e75fa335b
-  languageName: node
-  linkType: hard
-
 "react-lifecycles-compat@npm:^3.0.0, react-lifecycles-compat@npm:^3.0.4":
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
@@ -35146,13 +35134,6 @@ resolve@^2.0.0-next.3:
     ajv: ^6.12.5
     ajv-keywords: ^3.5.2
   checksum: 55a8da802a5f8f0ce6f68b6a139f3261cb423bd23795766da866a0f5738fc40303370fbe0c3eeba60b2a91c569ad7ce5318fea455f8fe866098c5a3a6b9050b0
-  languageName: node
-  linkType: hard
-
-"scrollparent@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "scrollparent@npm:2.0.1"
-  checksum: 1d2e235ba5315725d5bf88946664c72772e32be32bd4555798148f9745e0bc83cd07a2db2faea1c143dee02f84002275338905357cdd43577ec440d5e446de0b
   languageName: node
   linkType: hard
 
