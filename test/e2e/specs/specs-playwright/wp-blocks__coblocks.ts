@@ -2,7 +2,6 @@
  * @group gutenberg
  */
 
-import path from 'path';
 import {
 	setupHooks,
 	DataHelper,
@@ -15,14 +14,16 @@ import {
 	HeroBlock,
 	ClicktoTweetBlock,
 	LogosBlock,
+	TestFile,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { TEST_IMAGE_PATH } from '../constants';
 
-describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
+describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
-	let logoImage: string;
+	let logoImage: TestFile;
 
 	// Test data
 	const pricingTableBlockPrice = 888;
@@ -30,12 +31,12 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	const clicktoTweetBlockTweet =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
 	beforeAll( async () => {
-		logoImage = await MediaHelper.createTestImage();
+		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 	} );
 
 	it( 'Log in', async function () {
@@ -78,7 +79,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock( LogosBlock.blockName );
 		const logosBlock = new LogosBlock( blockHandle );
-		await logosBlock.upload( logoImage );
+		await logosBlock.upload( logoImage.fullpath );
 	} );
 
 	it( 'Publish and visit post', async function () {
@@ -104,6 +105,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	);
 
 	it( `Confirm Logos block is visible in published post`, async () => {
-		await LogosBlock.validatePublishedContent( page, path.parse( logoImage ).name );
+		await LogosBlock.validatePublishedContent( page, [ logoImage.filename ] );
 	} );
 } );
