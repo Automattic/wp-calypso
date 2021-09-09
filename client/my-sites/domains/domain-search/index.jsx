@@ -22,11 +22,9 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
-import { domainMapping } from 'calypso/my-sites/domains/paths';
+import { domainAddEmailUpsell, domainMapping } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -144,20 +142,7 @@ class DomainSearch extends Component {
 			.addProductsToCart( [
 				fillInSingleCartItemAttributes( registration, this.props.productsList ),
 			] )
-			.then( () => {
-				if ( this.props.userCanPurchaseGSuite && canDomainAddGSuite( domain ) ) {
-					page(
-						'/domains/add/' +
-							domain +
-							'/' +
-							getProductType( GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ) +
-							'/' +
-							this.props.selectedSiteSlug
-					);
-				} else {
-					page( '/checkout/' + this.props.selectedSiteSlug );
-				}
-			} );
+			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
 	}
 
 	removeDomain( suggestion ) {

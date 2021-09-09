@@ -23,6 +23,8 @@ const selectors = {
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
+	// there's a hidden button also with the "Preview" text, so using unique class name instead of text selector
+	previewButton: '.edit-post-header .editor-post-preview',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
@@ -33,6 +35,9 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	viewButton: '.editor-post-publish-panel a:has-text("View")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
+
+	// Welcome tour
+	welcomeTourSkipButton: '.welcome-tour-card button:has-text("Skip")',
 };
 
 /**
@@ -67,7 +72,7 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
-	private async getEditorFrame(): Promise< Frame > {
+	async getEditorFrame(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
@@ -181,6 +186,16 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Dismisses the Welcome Tour (card) if it is present.
+	 */
+	async dismissWelcomeTourIfPresent(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		if ( await frame.isVisible( selectors.welcomeTourSkipButton ) ) {
+			await frame.click( selectors.welcomeTourSkipButton );
+		}
+	}
+
+	/**
 	 * Given a name, adds the Gutenberg block matching the name.
 	 *
 	 * The name is expected to be formatted in the same manner as it
@@ -289,6 +304,16 @@ export class GutenbergEditorPage {
 		// are disabled while the post is saved. Wait for the state of
 		// Publish button to return to 'enabled' before proceeding.
 		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+	}
+
+	/**
+	 * Launches editor preview by clicking toolbar preview button.
+	 *
+	 * @returns {Promise<void} No return value.
+	 */
+	async preview(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.previewButton );
 	}
 
 	/**

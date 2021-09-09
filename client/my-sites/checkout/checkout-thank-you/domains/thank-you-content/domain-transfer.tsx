@@ -48,7 +48,7 @@ const domainTransferThankYouProps = ( {
 					stepKey: 'domain_transfer_whats_next_transfer_info',
 					stepTitle: translate( 'Point the domain to your site' ),
 					stepDescription: translate(
-						'Once the transfer is done you can can point %(domain)s to your WordPress.com site.',
+						'Once the transfer is done you can point %(domain)s to your WordPress.com site.',
 						{
 							args: {
 								domain,

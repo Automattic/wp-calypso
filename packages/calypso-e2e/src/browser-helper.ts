@@ -49,3 +49,12 @@ export function getViewportSize( target?: viewportName ): viewportSize {
 	}
 	return sizes[ target ];
 }
+
+/**
+ * Returns boolean indicating whether this test run should target a Gutenberg Edge user and site.
+ *
+ * @returns {boolean} True if should target Gutenberg edge. False otherwise.
+ */
+export function targetGutenbergEdge(): boolean {
+	return !! process.env.GUTENBERG_EDGE;
+}

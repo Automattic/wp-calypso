@@ -32,7 +32,7 @@ export class PublishedPostPage {
 	 *
 	 * @returns {Promise<Frame>} Frame holding the like widget on page.
 	 */
-	private async getFrame(): Promise< Frame > {
+	private async getLikeFrame(): Promise< Frame > {
 		// Obtain the ElementHandle for the widget containing the like/unlike button.
 		const elementHandle = await this.page.waitForSelector( selectors.likeWidget );
 		// Obtain the Frame object from the elementHandleHandle. This represents the widget iframe.
@@ -52,7 +52,7 @@ export class PublishedPostPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async likePost(): Promise< void > {
-		const frame = await this.getFrame();
+		const frame = await this.getLikeFrame();
 		await frame.click( selectors.likeButton );
 		await frame.waitForSelector( selectors.likedText, { state: 'visible' } );
 	}
@@ -66,8 +66,17 @@ export class PublishedPostPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async unlikePost(): Promise< void > {
-		const frame = await this.getFrame();
+		const frame = await this.getLikeFrame();
 		await frame.click( selectors.unlikeButton );
 		await frame.waitForSelector( selectors.notLikedText, { state: 'visible' } );
+	}
+
+	/**
+	 * Validates that the provided text can be found in the post page. Throws if it isn't.
+	 *
+	 * @param {string} text Text to search for in post page
+	 */
+	async validateTextInPost( text: string ): Promise< void > {
+		await this.page.waitForSelector( `text=${ text }` );
 	}
 }

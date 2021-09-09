@@ -15,7 +15,7 @@
 	"rebrand_cities_prefix": "rebrandcitiessite",
 	"bilmur_url": "/wp-content/js/bilmur.min.js",
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/onboarding-call",
-	"difm_typeform_id": "",
+	"difm_typeform_id": "YMiXMYId",
 	"features": {
 		"ad-tracking": true,
 		"async-payments": false,
@@ -30,7 +30,7 @@
 		"current-site/stale-cart-notice": true,
 		"checkout/google-pay": true,
 		"desktop-promo": true,
-		"difm-lite-pilot": false,
+		"difm-lite-pilot": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
