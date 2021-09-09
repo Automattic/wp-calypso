@@ -21,7 +21,7 @@ A React hook that allows access to Stripe.js. This returns an object with the fo
 - `stripeConfiguration: null | StripeConfiguration` The object containing the data returned by the wpcom stripe configuration endpoint. May include a payment intent.
 - `isStripeLoading: boolean` A boolean that is true if stripe is currently being loaded.
 - `stripeLoadingError: undefined | null | Error` An optional object that will be set if there is an error loading stripe.
-- `reloadStripeConfiguration: ReloadStripeConfiguration` A function that can be called with a value to force the stripe configuration to reload.
+- `reloadStripeConfiguration: ReloadStripeConfiguration` A function that can be called to force the stripe configuration to reload.
 
 ## withStripeProps
 

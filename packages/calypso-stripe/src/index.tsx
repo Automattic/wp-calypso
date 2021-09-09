@@ -10,8 +10,6 @@ import type {
 	StripeCardNumberElement,
 } from '@stripe/stripe-js';
 
-export type { Stripe };
-
 const debug = debugFactory( 'calypso-stripe' );
 
 type PaymentDetails = Record< string, unknown >;
