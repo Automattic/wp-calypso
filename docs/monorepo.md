@@ -1,20 +1,20 @@
 # Working with the Monorepo
 
-Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent packages that are published to NPM.
+Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent packages that are published to NPM, apps that are built and deployed as WordPress.com plugins, and other supporting packages.
 
 ## Module Layout
 
 These packages live under the `packages` and `apps` directories, one folder per module.
 
-Two different directories with packages are:
+Directories with packages are:
 
 `/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso. See "Publishing" below.
 `/apps` — WPCOM plugins
-`/desktop` - WP Desktop app. Currently this is not part of the monorepo in the sense that it has its own dependency tree (its own `yarn.lock`)
+`/desktop` - WP Desktop app. Currently this is not part of the monorepo in the sense that it has its own dependency tree (its own `yarn.lock`). The reason is we want a lean `node_modules` because it will be bundled with the WP Desktop app.
 `/client` - Calypso app.
 `/test/e2e` - Package to run e2e tests
 
-Except `/packages/*`, packages are typically not published to NPM.
+Except those inside `/packages/*`, packages are not published to NPM.
 
 Modules should follow our convention for layout:
 
@@ -161,9 +161,9 @@ Note that if you're building with Webpack, you may need to turn off [`resolve.sy
 
 ## Publishing
 
-We use the regular NPM publish flow to publish packages.
+### Preparation
 
-### Make sure changelogs and `package.json` versions are up to date
+#### Make sure changelogs and `package.json` versions are up to date
 
 For all packages that you want to publish, make sure that their `package.json` versions are bumped. Decide carefully whether you want to publish a patch, a minor or a major update of the package. Be mindful about [semantic versioning](https://semver.org/).
 
@@ -171,15 +171,15 @@ Make sure that the `CHANGELOG.md` document contains up-to-date information, with
 
 Create PRs with the necessary changes and merge them to `trunk` before publishing.
 
-### Checkout the latest trunk locally and build the packages
+#### Checkout the latest trunk
 
 Always publish from the latest `trunk` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
 
-### Getting NPM permissions to publish in the `@automattic` scope
+#### Getting NPM permissions to publish in the `@automattic` scope
 
 To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, you can add yourself to the organization, using the credentials found in the secret store.
 
-### Tagging a package
+#### Tagging a package
 
 It is recommended you create a git tag with the package and version you are about to publish. This will help us track where a specific version comes from. For example:
 

@@ -1,6 +1,6 @@
 # Dependency management
 
-This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionallity to manage the monorepo.
+This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
 
 ## Working with sub-packages
 
