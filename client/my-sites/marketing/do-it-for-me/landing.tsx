@@ -1,3 +1,4 @@
+import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
@@ -77,7 +78,7 @@ export default function DoItForMeLandingPage(): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) ) ?? 'USD';
-	const cost = useSelector( ( state ) => getProductCost( state, 'wp_difm_lite' ) ) ?? 500;
+	const cost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) ) ?? 500;
 	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 
 	const onInterestedSelected = async () => {
