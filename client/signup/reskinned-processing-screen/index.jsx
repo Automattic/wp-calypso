@@ -1,5 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
@@ -7,7 +8,7 @@ import './style.scss';
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const useSteps = ( flowName, { hasPaidDomain } ) => {
+const useSteps = ( flowName, { hasPaidDomain, hasSelectedDesign } ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
@@ -16,25 +17,29 @@ const useSteps = ( flowName, { hasPaidDomain } ) => {
 			steps = [ __( 'Your site will be live shortly.' ) ]; // copy from 'packages/launch/src/focused-launch/success'
 			break;
 		case 'setup-site':
-			steps = [ __( 'Applying design' ) ];
+			steps = [ hasSelectedDesign && __( 'Applying design' ) ];
 			break;
 		default:
 			steps = [
 				__( 'Building your site' ),
 				hasPaidDomain && __( 'Getting your domain' ),
 				__( 'Applying design' ),
-			].filter( Boolean );
+			];
 	}
 
-	return React.useRef( steps );
+	return React.useRef( steps.filter( Boolean ) );
 };
 
 // This component is cloned from the CreateSite component of Gutenboarding flow
 // to work with the onboarding signup flow.
-export default function ReskinnedProcessingScreen( { flowName, hasPaidDomain } ) {
+export default function ReskinnedProcessingScreen( {
+	flowName,
+	hasPaidDomain,
+	hasSelectedDesign,
+} ) {
 	const { __ } = useI18n();
 
-	const steps = useSteps( flowName, { hasPaidDomain } );
+	const steps = useSteps( flowName, { hasPaidDomain, hasSelectedDesign } );
 	const totalSteps = steps.current.length;
 
 	const [ currentStep, setCurrentStep ] = React.useState( 0 );
@@ -57,6 +62,10 @@ export default function ReskinnedProcessingScreen( { flowName, hasPaidDomain } )
 		const id = setTimeout( () => setHasStarted( true ), 750 );
 		return () => clearTimeout( id );
 	}, [] );
+
+	if ( totalSteps === 0 ) {
+		return null;
+	}
 
 	return (
 		<div className="reskinned-processing-screen">
@@ -81,3 +90,9 @@ export default function ReskinnedProcessingScreen( { flowName, hasPaidDomain } )
 		</div>
 	);
 }
+
+ReskinnedProcessingScreen.propTypes = {
+	flowName: PropTypes.string,
+	hasPaidDomain: PropTypes.bool,
+	hasSelectedDesign: PropTypes.bool,
+};

@@ -575,11 +575,13 @@ class Signup extends React.Component {
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
+			const selectedDesign = get( this.props, 'signupDependencies.selectedDesign', false );
 
 			return (
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
+					hasSelectedDesign={ !! selectedDesign }
 				/>
 			);
 		}
