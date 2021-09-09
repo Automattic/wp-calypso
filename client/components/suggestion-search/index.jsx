@@ -1,8 +1,7 @@
-import { Suggestions } from '@automattic/components';
+import { Suggestions, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 

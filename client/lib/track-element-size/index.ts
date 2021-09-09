@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useRef, useEffect, useState } from 'react';
 import { throttle } from 'lodash';
+import React, { useRef, useEffect, useState } from 'react';
 
 type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;

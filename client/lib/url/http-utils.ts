@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { URL as TypedURL, SiteSlug } from 'calypso/types';
 import { Falsy } from 'utility-types';
+import { URL as TypedURL, SiteSlug } from 'calypso/types';
 
 const urlWithoutHttpRegex = /^https?:\/\//;
 

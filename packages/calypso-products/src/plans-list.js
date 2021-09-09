@@ -97,7 +97,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -114,7 +113,6 @@ import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
@@ -368,7 +366,6 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -392,7 +389,6 @@ const getPlanEcommerceDetails = () => ( {
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
@@ -421,7 +417,6 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_EARN_AD,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_INSTALL_PLUGINS,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -474,7 +469,6 @@ const getPlanPremiumDetails = () => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -497,14 +491,9 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBlogSignupFeatures: () => [
-		FEATURE_MONETISE,
-		FEATURE_PREMIUM_THEMES,
-		FEATURE_ALL_PERSONAL_FEATURES,
-	],
+	getBlogSignupFeatures: () => [ FEATURE_MONETISE, FEATURE_ALL_PERSONAL_FEATURES ],
 	getPortfolioSignupFeatures: () => [
 		FEATURE_ADVANCED_CUSTOMIZATION,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
@@ -515,7 +504,6 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_EARN_AD,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -535,13 +523,13 @@ const getPlanBusinessDetails = () => ( {
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
-				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' business website with custom plugins and themes,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
+			'Power your business website with custom plugins and themes,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
@@ -557,7 +545,6 @@ const getPlanBusinessDetails = () => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -576,7 +563,6 @@ const getPlanBusinessDetails = () => ( {
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
@@ -606,7 +592,6 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_EARN_AD,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_INSTALL_PLUGINS,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -729,8 +714,7 @@ const getJetpackBusinessDetails = () => ( {
 		].includes( plan ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
-				'and unlimited premium themes.',
+			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
 			plansDescriptionHeadingComponent
 		),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
@@ -757,7 +741,6 @@ const getJetpackBusinessDetails = () => ( {
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_JETPACK_BACKUP_REALTIME,
 			FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 			FEATURE_JETPACK_SCAN_DAILY,
@@ -766,7 +749,6 @@ const getJetpackBusinessDetails = () => ( {
 			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 		] ),
 	getInferiorHiddenFeatures: () => [
@@ -850,7 +832,6 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
@@ -891,7 +872,6 @@ const getPlanJetpackSecurityT1Details = () => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
@@ -932,7 +912,6 @@ const getPlanJetpackSecurityT2Details = () => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
@@ -982,7 +961,6 @@ const getPlanJetpackCompleteDetails = () => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [

@@ -31,11 +31,13 @@ const onUpdateSuccess = ( action, response ) => {
 		{
 			type: JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_REQUEST_SUCCESS,
 			receiptId: action.receiptId,
+			jetpackTemporarySiteId: action.jetpackTemporarySiteId,
 		},
 		{
 			type: JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_RECEIVE,
 			receiptId: action.receiptId,
 			payload: response,
+			jetpackTemporarySiteId: action.jetpackTemporarySiteId,
 		},
 	];
 };

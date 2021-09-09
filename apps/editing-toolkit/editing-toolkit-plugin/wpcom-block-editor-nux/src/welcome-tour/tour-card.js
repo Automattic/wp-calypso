@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { subscribeIsMobile } from '@automattic/viewport';
+import { useLocale } from '@automattic/i18n-utils';
+import { subscribeIsMobile, isMobile } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, hasTranslation } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
 import minimize from './icons/minimize';
@@ -86,9 +87,16 @@ function WelcomeTourCard( {
 }
 
 function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIndex } ) {
+	const localeSlug = useLocale();
+
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
-	const startTourLabel = __( 'Start Tour', 'full-site-editing' );
+	const startTourLabel =
+		localeSlug === 'en' ||
+		localeSlug === 'en-gb' ||
+		hasTranslation( 'Try it out!', 'full-site-editing' )
+			? __( 'Try it out!', 'full-site-editing' )
+			: __( 'Start Tour', 'full-site-editing' );
 	const nextLabel = __( 'Next', 'full-site-editing' );
 	return (
 		<>
@@ -121,10 +129,10 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 }
 
 function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
-	const [ isMobile, setIsMobile ] = useState( false );
+	const [ isMobileView, setIsMobileView ] = useState( isMobile() );
 
 	useEffectOnlyOnce( () => {
-		const unsubscribe = subscribeIsMobile( ( isNarrow ) => setIsMobile( isNarrow ) );
+		const unsubscribe = subscribeIsMobile( ( isNarrow ) => setIsMobileView( isNarrow ) );
 		return function cleanup() {
 			unsubscribe();
 		};
@@ -138,7 +146,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		} );
 	};
 	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls-visible': isMobile,
+		'welcome-tour-card__overlay-controls-visible': isMobileView,
 	} );
 
 	return (

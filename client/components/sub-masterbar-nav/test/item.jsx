@@ -1,7 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import Item from '../item';
 
 describe( 'Item', () => {

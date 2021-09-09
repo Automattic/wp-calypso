@@ -17,7 +17,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	&.components-modal__frame {
 		overflow: visible;
 		height: 50vh;
-		top: calc( 17.5vh - #{$wpcom-modal-footer-height / 2} );
+		top: calc( 17.5vh - #{$wpcom-modal-footer-height * 0.5} );
 		min-height: $wpcom-modal-content-min-height;
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
@@ -30,7 +30,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: 720px;
 			height: $wpcom-modal-content-min-height;
-			top: calc( 50% - #{$wpcom-modal-footer-height / 2} );
+			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
 		}
 	}
 
@@ -124,7 +124,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .modal__text {
 	padding: 1em 2em 1em 0;
 	margin: 0;
-	font-family: $serif;
+	font-family: $sans;
 	font-size: $font-body-small;
 
 	button,a {

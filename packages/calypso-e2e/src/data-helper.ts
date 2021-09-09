@@ -2,6 +2,7 @@ import phrase from 'asana-phrase';
 import config from 'config';
 import { getViewportName } from './browser-helper';
 
+export type DateFormat = 'ISO';
 export { config };
 
 /**
@@ -15,6 +16,37 @@ export function getRandomInteger( min: number, max: number ): number {
 	min = Math.ceil( min );
 	max = Math.floor( max );
 	return Math.floor( Math.random() * ( max - min ) + min );
+}
+
+/**
+ * Returns the current date as a time stamp.
+ *
+ * @returns {string} Date represented as a timestamp.
+ */
+export function getTimestamp(): string {
+	return new Date().getTime().toString();
+}
+
+/**
+ * Returns the date string in the requested format.
+ *
+ * @param {DateFormat} format Date format supported by NodeJS.
+ * @returns {string|null} If valid date format string is supplied, string is returned. Otherwise, null.
+ */
+export function getDateString( format: DateFormat ): string | null {
+	if ( format === 'ISO' ) {
+		return new Date().toISOString();
+	}
+	return null;
+}
+
+/**
+ * Generates a new name for test blog with prefix `e2eflowtesting`.
+ *
+ * @returns {string} Generated blog name.
+ */
+export function getBlogName(): string {
+	return `e2eflowtesting${ getTimestamp() }${ getRandomInteger( 100, 999 ) }`;
 }
 
 /**
@@ -90,6 +122,36 @@ export function getAccountSiteURL(
 }
 
 /**
+ * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
+ *
+ * @param param0 Keyed parameter object.
+ * @param {string} param0.inboxId Existing inbox ID on mailosaur.
+ * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.
+ * @returns {string} Unique test email.
+ */
+export function getTestEmailAddress( {
+	inboxId,
+	prefix = '',
+}: {
+	inboxId: string;
+	prefix: string;
+} ): string {
+	const domain = 'mailosaur.io';
+	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
+	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+}
+
+/**
+ * Adjusts the user invite link to the correct environment.
+ *
+ * @param {string} inviteURL Invitation link.
+ * @returns {string} Adjusted invitation link with the correct hostname.
+ */
+export function adjustInviteLink( inviteURL: string ): string {
+	return inviteURL.replace( 'https://wordpress.com', config.get( 'calypsoBaseURL' ) );
+}
+
+/**
  * Returns the hostname for Jetpack.
  *
  * @returns {string} Hostname to be used. Returns value of JETPACKHOST environment variable if set; WPCOM otherwise.
@@ -121,7 +183,7 @@ export function toTitleCase( words: string[] | string ): string {
  *
  * @returns {string} Generated text.
  */
-export function randomPhrase(): string {
+export function getRandomPhrase(): string {
 	const generated: Array< string > = phrase.default32BitFactory().randomPhrase();
 	return toTitleCase( generated );
 }

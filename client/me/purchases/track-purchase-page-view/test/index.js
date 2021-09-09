@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { shallow } from 'enzyme';
+import React from 'react';
 import { TrackPurchasePageView } from '..';
 
 const baseProps = deepFreeze( {

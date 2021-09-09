@@ -33,7 +33,7 @@ describe( 'index', () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );
 				sinon.stub( analytics.statsd, 'recordCounting' );
 				request.context.sectionName = 'reader';
-				request.context.target = 'fallback';
+				request.context.target = 'evergreen';
 			} );
 
 			afterEach( () => {
@@ -59,7 +59,7 @@ describe( 'index', () => {
 
 				expect( analytics.statsd.recordCounting ).to.have.been.calledWith(
 					'reader',
-					'target.fallback'
+					'target.evergreen'
 				);
 			} );
 

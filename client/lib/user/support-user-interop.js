@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
+import debugModule from 'debug';
 import { bypassPersistentStorage } from 'calypso/lib/browser-storage';
 import localStorageBypass from 'calypso/lib/local-storage-bypass';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Connects the Redux store and the low-level support user functions

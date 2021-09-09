@@ -161,7 +161,7 @@ export const QuickLinks = ( {
 				/>
 			) }
 			<ActionBox
-				href="https://wp.me/logo-maker"
+				href="https://wp.me/logo-maker/?utm_campaign=my_home"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
 				label={

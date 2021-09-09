@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import FormSelect from 'calypso/components/forms/form-select';
-import { getLabelForStream } from './locales';
 import getUserDevices from 'calypso/state/selectors/get-user-devices';
+import { getLabelForStream } from './locales';
 
 class NotificationSettingsFormStreamSelector extends PureComponent {
 	static propTypes = {

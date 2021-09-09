@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -6,7 +6,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { initConnection } from 'calypso/state/happychat/connection/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';

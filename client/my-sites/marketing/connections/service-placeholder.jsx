@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
-import GridIcon from 'calypso/components/gridicon';
 
 class SharingServicePlaceholder extends Component {
 	static propTypes = {
@@ -13,7 +12,7 @@ class SharingServicePlaceholder extends Component {
 	render() {
 		const header = (
 			<div>
-				<GridIcon icon="share" size={ 48 } className="sharing-service__logo" />
+				<Gridicon icon="share" size={ 48 } className="sharing-service__logo" />
 
 				<div className="sharing-service__name">
 					<h2 />

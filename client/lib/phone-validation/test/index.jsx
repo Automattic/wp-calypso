@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
 import phoneValidation from '..';
 
 describe( 'Phone Validation Library', () => {

@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Button, Card, CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Card, CompactCard } from '@automattic/components';
-import { cancelPurchase } from 'calypso/me/purchases/paths';
 import LoadingPlaceholder from 'calypso/me/purchases/components/loading-placeholder';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 
 const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) => {

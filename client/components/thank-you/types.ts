@@ -1,18 +1,16 @@
-/**
- * External dependencies
- */
 import { TranslateResult } from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 
 export type ThankYouNextStepProps = {
 	stepCta: React.ReactNode | React.ReactFragment;
 	stepDescription: TranslateResult;
 	stepKey: string;
 	stepTitle: TranslateResult;
+};
+
+export type ThankYouNoticeProps = {
+	noticeTitle: React.ReactNode | React.ReactFragment;
+	noticeIcon?: string;
 };
 
 export type ThankYouSectionProps = {
@@ -46,4 +44,5 @@ export type ThankYouProps = {
 	};
 	thankYouTitle?: string | TranslateResult;
 	thankYouSubtitle?: string | TranslateResult;
+	thankYouNotice?: ThankYouNoticeProps;
 };

@@ -17,10 +17,13 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	isDotComPlan,
+	WPCOM_DIFM_LITE,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import { CheckoutThankYou } from '../index';
 
 jest.unmock( '@automattic/calypso-products' );
@@ -28,6 +31,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	shouldFetchSitePlans: () => false,
 	isDotComPlan: jest.fn( () => false ),
+	isDIFMProduct: jest.fn( () => false ),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
@@ -230,6 +234,52 @@ describe( 'CheckoutThankYou', () => {
 
 			comp = shallow( <CheckoutThankYou { ...props } /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
+		} );
+	} );
+
+	describe( 'Presence of <DIFMLiteThankYou /> in render() output', () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			selectedSite: {
+				ID: 12,
+			},
+			sitePlans: {
+				hasLoadedFromServer: true,
+			},
+			receipt: {
+				hasLoadedFromServer: true,
+				data: {
+					purchases: [ { productSlug: PLAN_PREMIUM }, { productSlug: WPCOM_DIFM_LITE }, [] ],
+				},
+			},
+			refreshSitePlans: ( selectedSite ) => selectedSite,
+			planSlug: PLAN_PREMIUM,
+		};
+		test( 'Should be there with DIFM product', () => {
+			isDIFMProduct.mockImplementation( () => true );
+			const comp = shallow( <CheckoutThankYou { ...props } /> );
+
+			expect( comp.find( DIFMLiteThankYou ) ).toHaveLength( 1 );
+		} );
+
+		test( 'Should not be there when no DIFM product', () => {
+			isDIFMProduct.mockImplementation( () => false );
+
+			const comp = shallow(
+				<CheckoutThankYou
+					{ ...{
+						...props,
+						receipt: {
+							...props.receipt,
+							data: {
+								purchases: [ { productSlug: PLAN_PREMIUM }, [] ],
+							},
+						},
+					} }
+				/>
+			);
+			expect( comp.find( DIFMLiteThankYou ) ).toHaveLength( 0 );
 		} );
 	} );
 

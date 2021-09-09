@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import MembershipItem from '../membership-item';
 import { MembershipSubscriptionsSite, MembershipSubscription } from 'calypso/lib/purchases/types';
+import MembershipItem from '../membership-item';
 
 export default function MembershipSite( {
 	site,

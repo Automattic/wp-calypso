@@ -1,5 +1,5 @@
 import { isPlan } from '@automattic/calypso-products';
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 import themesImage from 'calypso/assets/images/illustrations/themes.svg';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import {
 	isDomainBundledWithPlan,

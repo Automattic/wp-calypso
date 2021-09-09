@@ -117,9 +117,6 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 		<CheckoutProvider
 			paymentMethods={ [] }
 			onPaymentComplete={ onComplete }
-			showErrorMessage={ noop }
-			showInfoMessage={ noop }
-			showSuccessMessage={ noop }
 			paymentProcessors={ {
 				'existing-card': ( transactionData ) =>
 					existingCardProcessor( transactionData, dataForProcessor ),

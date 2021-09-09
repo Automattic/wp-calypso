@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export default localize( ( props ) => {

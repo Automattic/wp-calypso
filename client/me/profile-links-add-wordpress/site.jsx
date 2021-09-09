@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import Site from 'calypso/blocks/site';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class ProfileLinksAddWordPressSite extends Component {

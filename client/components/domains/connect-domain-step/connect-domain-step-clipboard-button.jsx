@@ -1,23 +1,14 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
+import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { __ } from '@wordpress/i18n';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepClipboardButton( { baseClassName, classes, text } ) {
+	const { __ } = useI18n();
 	const [ copiedText, setCopiedText ] = useState( false );
 	const copied = () => setCopiedText( true );
 	const buttonClasses = classNames( baseClassName + '__clipboard-button', ...classes );

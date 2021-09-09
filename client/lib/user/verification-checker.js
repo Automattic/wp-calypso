@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:user' );
 const storageKey = '__email_verified_signal__';

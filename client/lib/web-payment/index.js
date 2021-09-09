@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
 
 /**

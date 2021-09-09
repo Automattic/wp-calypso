@@ -1,35 +1,28 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
-import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
-import CancelPurchase from './cancel-purchase';
-import ConfirmCancelDomain from './confirm-cancel-domain';
-import Main from 'calypso/components/main';
-import ManagePurchase from './manage-purchase';
-import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import PurchasesList from './purchases-list';
+import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import titles from './titles';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import HeaderCake from 'calypso/components/header-cake';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
+import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import {
 	managePurchase as managePurchaseUrl,
 	purchasesRoot,
 	vatDetails as vatDetailsPath,
 	billingHistory,
 } from 'calypso/me/purchases/paths';
-import FormattedHeader from 'calypso/components/formatted-header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import CancelPurchase from './cancel-purchase';
+import ConfirmCancelDomain from './confirm-cancel-domain';
+import ManagePurchase from './manage-purchase';
+import PurchasesList from './purchases-list';
+import titles from './titles';
 import VatInfoPage from './vat-info';
 
 const PurchasesWrapper = ( { title = null, children } ) => {

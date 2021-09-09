@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { has } from 'lodash';
@@ -7,9 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Popover from 'calypso/components/popover';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
 import DateRangeTrigger from './trigger';

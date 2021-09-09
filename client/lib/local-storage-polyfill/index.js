@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import localStorageBypass from '../local-storage-bypass';
 
 const debug = debugFactory( 'calypso:local-storage' );

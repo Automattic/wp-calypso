@@ -3,14 +3,8 @@
  */
 import '@testing-library/jest-dom/extend-expect';
 
-/**
- * External Dependencies
- */
+import config from '@automattic/calypso-config';
 import { createStore } from 'redux';
-
-/**
- * Internal Dependencies
- */
 import {
 	logmeinUrl,
 	attachLogmein,
@@ -18,7 +12,6 @@ import {
 	logmeinOnRightClick,
 	setLogmeinReduxStore,
 } from '../';
-import config from '@automattic/calypso-config';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => '';
@@ -52,6 +45,10 @@ describe( 'logmein', () => {
 	describe( 'logmeinUrl', () => {
 		it( 'appends logmein', () => {
 			expect( logmeinUrl( 'https://test.blog' ) ).toBe( 'https://test.blog/?logmein=direct' );
+		} );
+
+		it( 'respects protocol', () => {
+			expect( logmeinUrl( 'http://test.blog' ) ).toBe( 'http://test.blog/?logmein=direct' );
 		} );
 
 		it( 'works with other params', () => {
@@ -193,10 +190,6 @@ describe( 'logmein', () => {
 			expect( logmeinUrl( 'https://atomic.domain' ) ).toBe( 'https://atomic.domain' );
 			expect( logmeinUrl( 'https://redirecting.domain' ) ).toBe( 'https://redirecting.domain' );
 			expect( logmeinUrl( 'https://wpcom.store' ) ).toBe( 'https://wpcom.store' );
-		} );
-
-		it( 'replaces http urls with https', () => {
-			expect( logmeinUrl( 'http://test.blog' ) ).toBe( 'https://test.blog/?logmein=direct' );
 		} );
 
 		it( 'fallsback on url input when given relative urls', () => {

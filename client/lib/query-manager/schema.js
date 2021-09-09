@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
 import { cloneDeepWith } from 'lodash';
 

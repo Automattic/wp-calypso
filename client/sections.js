@@ -1,6 +1,3 @@
-const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
-const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
-
 const sections = [
 	{
 		name: 'root',
@@ -502,17 +499,12 @@ const sections = [
 		module: 'calypso/my-sites/woocommerce',
 		group: 'woocommerce-installation',
 	},
+	{
+		name: 'woocommerce',
+		paths: [ '/store' ],
+		module: 'calypso/my-sites/store',
+		group: 'sites',
+	},
 ];
-
-for ( const extension of require( './extensions' ) ) {
-	try {
-		const pkgPath = path.join( __dirname, 'extensions', extension, 'package.json' );
-		const pkg = JSON.parse( fs.readFileSync( pkgPath ) );
-		sections.push( {
-			...pkg.section,
-			envId: pkg.env_id,
-		} );
-	} catch {}
-}
 
 module.exports = sections;

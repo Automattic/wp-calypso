@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,9 +11,7 @@ import {
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
 import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 
 import './style.scss';
@@ -87,7 +85,6 @@ const HelpSearch = ( { searchQuery, track } ) => {
 
 const mapStateToProps = ( state ) => ( {
 	searchQuery: getSearchQuery( state ),
-	selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 } );
 
 const mapDispatchToProps = {

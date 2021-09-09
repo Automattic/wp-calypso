@@ -1,11 +1,10 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
-import Gridicon from 'calypso/components/gridicon';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { login } from 'calypso/lib/paths';
 import {

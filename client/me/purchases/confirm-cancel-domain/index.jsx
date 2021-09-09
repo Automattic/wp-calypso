@@ -1,54 +1,44 @@
-/**
- * External dependencies
- */
-import page from 'page';
+import { isDomainRegistration } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { map, find } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, find } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import cancellationReasons from './cancellation-reasons';
-import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
-import { Card } from '@automattic/components';
-import { clearPurchases } from 'calypso/state/purchases/actions';
-import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 import { connect } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import HeaderCake from 'calypso/components/header-cake';
-import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getName as getDomainName } from 'calypso/lib/purchases';
+import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
+import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getName as getDomainName } from 'calypso/lib/purchases';
-import { isDataLoading } from '../utils';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isDomainRegistration } from '@automattic/calypso-products';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import titles from 'calypso/me/purchases/titles';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isDataLoading } from '../utils';
+import cancellationReasons from './cancellation-reasons';
+import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import FormSelect from 'calypso/components/forms/form-select';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {

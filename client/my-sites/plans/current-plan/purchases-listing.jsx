@@ -15,7 +15,7 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
@@ -25,7 +25,6 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ProductExpiration from 'calypso/components/product-expiration';
 import {

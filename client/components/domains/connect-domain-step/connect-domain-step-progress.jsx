@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default function ConnectDomainStepProgress( { baseClassName, steps, currentPageSlug } ) {
+export default function ConnectDomainStepProgress( { baseClassName, steps, pageSlug } ) {
 	let currentStepNumber = 0;
 
 	return (
@@ -24,7 +14,7 @@ export default function ConnectDomainStepProgress( { baseClassName, steps, curre
 			{ Object.values( steps )
 				.map( ( stepName, index ) => {
 					const stepNumber = index + 1;
-					if ( stepName === steps[ currentPageSlug ] ) {
+					if ( stepName === steps[ pageSlug ] ) {
 						currentStepNumber = stepNumber;
 					}
 
@@ -77,5 +67,5 @@ export default function ConnectDomainStepProgress( { baseClassName, steps, curre
 ConnectDomainStepProgress.propTypes = {
 	baseClassName: PropTypes.string.isRequired,
 	steps: PropTypes.object.isRequired,
-	currentPageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
+	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 };

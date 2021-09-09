@@ -4,6 +4,11 @@
 
 - Droped `cache-loader`, as it is not compatible with Webpack 5.
 - Dropped `cacheDirectory` option in Sass loader
+- Updated dependencies:
+  - sass to ^1.37.5
+  - sass-loader to ^12.1.0
+- Set `quietDeps: true` in dart sass options. This avoids printing deprecation
+  warnings for stylesheets imported from node_modules.
 
 ## 9.0.0
 

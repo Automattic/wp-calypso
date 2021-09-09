@@ -1,12 +1,8 @@
-/**
- * Internal dependencies
- */
-
-import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
 import config from '@automattic/calypso-config';
-import { injectLocalization } from './localization';
-import wpSupportWrapper from 'calypso/lib/wp/support';
 import wpcomXhrRequest from 'wpcom-xhr-request';
+import wpSupportWrapper from 'calypso/lib/wp/support';
+import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
+import { injectLocalization } from './localization';
 
 let wpcom = wpcomUndocumented( wpcomXhrRequest );
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { login } from './login';
 export { lostPassword } from './lost-password';
 

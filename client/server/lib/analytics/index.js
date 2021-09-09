@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { omit, get, has } from 'lodash';
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
@@ -7,7 +6,7 @@ const URL = require( 'url' );
 
 function getUserFromRequest( request ) {
 	// if user has a cookie, lets use that
-	const encodedUserCookie = get( request, 'cookies.wordpress_logged_in', null );
+	const encodedUserCookie = request?.cookies?.wordpress_logged_in ?? null;
 
 	if ( encodedUserCookie ) {
 		try {
@@ -28,7 +27,7 @@ function getUserFromRequest( request ) {
 	// we'll use that, otherwise, we'll just use anonymous.
 
 	// If we have a full identity on query params - use it
-	if ( has( request, 'query._ut' ) && has( request, 'query._ui' ) ) {
+	if ( request?.query?._ut && request?.query?._ui ) {
 		return {
 			_ui: request.query._ui,
 			_ut: request.query._ut,
@@ -82,7 +81,9 @@ const analytics = {
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, ( prop ) => typeof prop === 'undefined' );
+			eventProperties = Object.fromEntries(
+				Object.entries( eventProperties ).filter( ( entry ) => entry[ 1 ] !== undefined )
+			);
 
 			const date = new Date();
 			const acceptLanguageHeader = req.get( 'Accept-Language' ) || '';

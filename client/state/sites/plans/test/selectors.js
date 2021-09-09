@@ -3,7 +3,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	FEATURE_AUDIO_UPLOADS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_ADVANCED_DESIGN,
 	FEATURE_BUSINESS_ONBOARDING,
 } from '@automattic/calypso-products';
 import { expect } from 'chai';
@@ -718,7 +718,7 @@ describe( 'selectors', () => {
 						},
 					},
 					null,
-					FEATURE_UNLIMITED_PREMIUM_THEMES
+					FEATURE_ADVANCED_DESIGN
 				)
 			).to.be.false;
 		} );
@@ -756,7 +756,7 @@ describe( 'selectors', () => {
 						},
 					},
 					2916284,
-					FEATURE_UNLIMITED_PREMIUM_THEMES
+					FEATURE_ADVANCED_DESIGN
 				)
 			).to.be.false;
 		} );
@@ -802,7 +802,7 @@ describe( 'selectors', () => {
 						},
 					},
 					2916284,
-					FEATURE_UNLIMITED_PREMIUM_THEMES
+					FEATURE_ADVANCED_DESIGN
 				)
 			).to.be.true;
 		} );

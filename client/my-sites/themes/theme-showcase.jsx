@@ -289,10 +289,9 @@ class ThemeShowcase extends React.Component {
 			pathName,
 			title,
 			filterString,
-			isMultisite,
 			locale,
 		} = this.props;
-		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
+		const tier = '';
 
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
@@ -385,7 +384,6 @@ class ThemeShowcase extends React.Component {
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (

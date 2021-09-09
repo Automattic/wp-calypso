@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
+import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import getUserDevices from 'calypso/state/selectors/get-user-devices';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
-import getUserDevices from 'calypso/state/selectors/get-user-devices';
 
 /**
  * Module variables

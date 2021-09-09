@@ -1,5 +1,3 @@
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 
 import 'calypso/state/themes/init';
@@ -13,8 +11,5 @@ import 'calypso/state/themes/init';
  * @returns {boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
-	return (
-		isThemePurchased( state, themeId, siteId ) ||
-		hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
-	);
+	return isThemePurchased( state, themeId, siteId );
 }

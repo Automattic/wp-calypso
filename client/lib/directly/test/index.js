@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import nock from 'nock';
 
 jest.mock( '@automattic/load-script', () => ( { loadScript: jest.fn() } ) );

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/url';
 import { addLocaleToPath } from 'calypso/lib/i18n-utils';
+import { addQueryArgs } from 'calypso/lib/url';
 
 export function login( {
 	isJetpack = undefined,
@@ -51,7 +48,9 @@ export function login( {
 	}
 
 	if ( redirectTo ) {
-		url = addQueryArgs( { redirect_to: redirectTo }, url );
+		url = redirectTo.includes( 'jetpack-sso' )
+			? redirectTo
+			: addQueryArgs( { redirect_to: redirectTo }, url );
 	}
 
 	if ( emailAddress ) {

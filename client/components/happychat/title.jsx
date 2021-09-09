@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import GridIcon from 'calypso/components/gridicon';
 
 import './title.scss';
 
@@ -15,7 +15,7 @@ export default function Title( { onCloseChat } ) {
 			<div className="happychat__active-toolbar">
 				<h4>{ translate( 'Support Chat' ) }</h4>
 				<div onClick={ onCloseChat }>
-					<GridIcon icon="cross" />
+					<Gridicon icon="cross" />
 				</div>
 			</div>
 		</div>

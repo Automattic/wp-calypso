@@ -7,24 +7,25 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Table of contents](#table-of-contents)
-    - [Software Environment](#software-environment)
-        - [Required software](#required-software)
-    - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
-        - [Intel architecture](#intel-architecture)
-        - [Apple Silicon architecture](#apple-silicon-architecture)
-    - [Environment Variables](#environment-variables)
-    - [Configuration File](#configuration-file)
-        - [Overview](#overview)
-        - [Quick start](#quick-start)
-        - [Custom configuration](#custom-configuration)
-    - [Credentials File](#credentials-file)
+  - [Table of contents](#table-of-contents)
+  - [Software Environment](#software-environment)
+    - [Required software](#required-software)
+  - [Environment Variables](#environment-variables)
+  - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
+    - [Intel architecture](#intel-architecture)
+    - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
+    - [Apple Silicon arm64](#apple-silicon-arm64)
+  - [Credentials](#credentials)
+  - [Configuration](#configuration)
+    - [Overview](#overview)
+    - [Quick start](#quick-start)
+    - [Custom configs](#custom-configs)
 
 <!-- /TOC -->
 
 ## Software Environment
 
-The provided steps are for macOS 11.0 Big Sur. 
+The provided steps are for macOS 11.0 Big Sur.
 It may work for Linux distributions and/or Windows but no guarantees are provided.
 
 ### Required software
@@ -34,9 +35,24 @@ It may work for Linux distributions and/or Windows but no guarantees are provide
 - [npm](https://www.npmjs.com/get-npm)
 - (optional) [nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Node.js can also be installed using [brew](https://nodejs.dev/learn/how-to-install-nodejs).
+Node.js can also be installed using [Homebrew](https://nodejs.dev/learn/how-to-install-nodejs).
 
 It is strongly recommended to use `nvm` to manage multiple Node.js versions.
+
+## Environment Variables
+
+Environment Variables are values that are defined at the system level to serve as configuration for programs.
+
+For e2e tests, the following are required environment variables:
+
+```
+export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
+export CONFIG_KEY=<decryption_key_from_a8c_store>
+```
+
+Each of these variables serve a specific purpose and will be covered in the next sections.
+
+Additionally, see the full list of other environment variables [here](environment_variables.md).
 
 ## Setup steps (macOS 10.15 and 11.0)
 
@@ -52,12 +68,7 @@ Once installed, open a Terminal instance and execute the following:
 yarn install
 ```
 
-### Apple Silicon architecture
-
-It appears that as of 2021-01, many key NodeJS modules do not support ARM64 yet.
-As with any cutting-edge software, this is subject to change in the coming weeks and months.
-
-To work around compatibility issues, we will install Intel architecture binaries in emulation.
+### Apple Silicon (emulated x86_64)
 
 1. install i386 Homebrew:
 
@@ -111,22 +122,30 @@ arch -x86_64 yarn install --frozen-lockfile
 
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
-## Environment Variables
+### Apple Silicon (arm64)
 
-Environment Variables are values that are defined at the system level to serve as configuration for programs.
+Similar to instructions in macOS Intel architecture, install the arm64 variant of the required software, then follow these steps:
 
-For e2e tests, the following are required environment variables without which e2e tests will not run:
+1. export required environment variables:
 
 ```
-export NODE_CONFIG_ENV=<name_of_decrypted_config_to_use>
-export CONFIG_KEY=<decryption_key_from_a8c_store>
+PUPPETEER_SKIP_DOWNLOAD=true
+CHROMEDRIVER_SKIP_DOWNLOAD=true
 ```
 
-Each of these variables serve a specific purpose and will be covered in the next sections.
+2. install dependencies:
 
-Additionally, see the list of other environment variables [here](environment_variables.md).
+```
+yarn install
+```
 
-## Configuration File
+## Credentials
+
+Within `test/e2e/config` is an encrypted file that holds test account credentials. This must be decrypted prior to use. For instructions on how to decrypt this file, please refer to the Field Guide page.
+
+**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
+
+## Configuration
 
 ### Overview
 
@@ -142,7 +161,7 @@ Under the `tests/e2e/config` directory are JSON files for predefined environment
 
 The default configuration will suffice for most purposes. To use the default configuration, nothing needs to be changed.
 
-### Custom configuration
+### Custom configs
 
 > :warning: **ensure username/passwords and other configuration values are not committed by accident!**
 
@@ -157,9 +176,3 @@ The `local-` prefix ensures that custom configurations will not be commited to t
 Values found in the local configuration file will override ones found in `default.json`.
 
 For the full list of possible configuration values, refer to the following page: [config values](config_values.md).
-
-## Credentials File
-
-Within `test/e2e/config` is an encrypted file that holds test account credentials. This must be decrypted prior to use. For instructions on how to decrypt this file, please refer to the Field Guide page.
-
-**Trialmatticians**: please contact a team member in your Slack chat for the decryption key.

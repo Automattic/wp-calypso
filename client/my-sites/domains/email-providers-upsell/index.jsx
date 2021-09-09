@@ -18,6 +18,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 			<EmailProvidersComparison
 				backPath={ domainAddNew( selectedSiteSlug ) }
 				cartDomainName={ domain }
+				comparisonContext="domain-upsell"
 				headerTitle={ translate( 'Register %(domainName)s', {
 					args: { domainName: domain },
 					comment,
@@ -35,6 +36,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 					comment,
 				} ) }
 				selectedDomainName={ domain }
+				skipButtonLabel={ translate( 'Skip' ) }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

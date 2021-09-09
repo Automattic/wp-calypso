@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 
 describe( 'isWpMobileApp', () => {

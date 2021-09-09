@@ -3,7 +3,6 @@ import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'calypso/sta
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { activationRequesting } from './activation/reducer';
 import { backupRequest, backupProgress } from './backup/reducer';
-import displayRules from './display-rules/reducer';
 import { restoreProgress, restoreRequest } from './restore/reducer';
 
 export const emptyFilter = {
@@ -26,7 +25,6 @@ export const filterState = ( state = emptyFilter, { type, filter } ) => {
 const combinedReducer = combineReducers( {
 	activationRequesting,
 	filter: keyedReducer( 'siteId', filterState ),
-	displayRules,
 	restoreProgress,
 	restoreRequest,
 	backupProgress,

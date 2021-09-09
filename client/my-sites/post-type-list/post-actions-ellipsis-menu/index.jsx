@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Children, cloneElement } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuComments from './comments';
 import PostActionsEllipsisMenuCopyLink from './copy-link';
 import PostActionsEllipsisMenuDuplicate from './duplicate';

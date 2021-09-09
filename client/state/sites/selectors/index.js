@@ -48,6 +48,7 @@ export { default as isCurrentSitePlan } from './is-current-site-plan';
 export { default as isJetpackMinimumVersion } from './is-jetpack-minimum-version';
 export { default as isJetpackModuleActive } from './is-jetpack-module-active';
 export { default as isJetpackSite } from './is-jetpack-site';
+export { default as isJetpackProductSite } from './is-jetpack-product-site';
 export { default as isJetpackSiteMainNetworkSite } from './is-jetpack-site-main-network-site';
 export { default as isJetpackSiteMultiSite } from './is-jetpack-site-multi-site';
 export { default as isJetpackSiteSecondaryNetworkSite } from './is-jetpack-site-secondary-network-site';

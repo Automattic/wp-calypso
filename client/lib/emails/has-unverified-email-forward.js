@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS } from './email-provider-constants';
 
 /**

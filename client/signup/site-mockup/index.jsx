@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { debounce, isEmpty } from 'lodash';
@@ -5,7 +6,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryVerticals from 'calypso/components/data/query-verticals';
-import Gridicon from 'calypso/components/gridicon';
 import SignupSitePreview from 'calypso/components/signup-site-preview';
 import { getPreviewParamClass } from 'calypso/components/signup-site-preview/utils';
 import { getLocaleSlug, getLanguage } from 'calypso/lib/i18n-utils';

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { sprintf } from '@wordpress/i18n';
 import { Card, ProgressBar } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getSiteBackupStorageAvailable,
@@ -21,9 +14,6 @@ import {
 	BackupStorageSpaceUpsellOptions,
 } from './backup-storage-space-upsell';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const upsellLimit1 = 0.6;

@@ -1,9 +1,9 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
+import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-line-item';
 import {
 	MobileHiddenHorizontalRule,
 	FullWidthButton,

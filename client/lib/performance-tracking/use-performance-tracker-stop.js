@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { useLayoutEffect } from 'react';
 import { useSelector, useStore } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { stopPerformanceTracking } from './lib';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { stopPerformanceTracking } from './lib';
 
 export function usePerformanceTrackerStop() {
 	const sectionName = useSelector( getSectionName );

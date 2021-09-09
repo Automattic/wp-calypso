@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { isPlainObject } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import ArrayPreference from './array-preference';
-import ObjectPreference from './object-preference';
 import BooleanPreference from './boolean-preference';
-import StringPreference from './string-preference';
 import NumberPreference from './number-preference';
+import ObjectPreference from './object-preference';
+import StringPreference from './string-preference';
 
 export default function Preference( { name, value } ) {
 	const translate = useTranslate();

@@ -4,8 +4,8 @@
 /* Used to update wp-desktop repository README prior to application deployments */
 
 // External Dependencies
-const path = require( 'path' );
 const https = require( 'https' );
+const path = require( 'path' );
 const { promisify } = require( 'util' );
 const exec = promisify( require( 'child_process' ).exec );
 

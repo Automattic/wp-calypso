@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -13,7 +14,6 @@ import React, {
 } from 'react';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
-import styled from '../lib/styled';
 import theme from '../lib/theme';
 import {
 	getDefaultOrderReviewStep,
@@ -311,6 +311,7 @@ export const CheckoutStep = ( {
 		const completeResult = Promise.resolve( isCompleteCallback() );
 		setFormValidating();
 		const delayedCompleteResult = await completeResult;
+		debug( `isCompleteCallback for step ${ stepNumber } finished with`, delayedCompleteResult );
 		finishIsCompleteCallback( delayedCompleteResult );
 	};
 

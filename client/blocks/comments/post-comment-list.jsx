@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
@@ -7,7 +7,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
-import Gridicon from 'calypso/components/gridicon';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {

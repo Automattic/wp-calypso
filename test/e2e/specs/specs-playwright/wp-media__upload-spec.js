@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import assert from 'assert';
 import {
 	setupHooks,
@@ -9,15 +13,19 @@ import {
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
-	const testFiles = [
-		{ type: 'image', filepath: MediaHelper.createTestImage() },
-		{ type: 'audio', filepath: MediaHelper.createTestAudio() },
-	];
-	const invalidFile = MediaHelper.createInvalidFile();
+	let testFiles;
 	let page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
+	} );
+
+	beforeAll( async () => {
+		testFiles = {
+			image: await MediaHelper.createTestImage(),
+			audio: await MediaHelper.createTestAudio(),
+			invalid: await MediaHelper.createInvalidFile(),
+		};
 	} );
 
 	// Parametrized test.
@@ -42,28 +50,22 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			mediaPage = new MediaPage( page );
 		} );
 
-		it.each( testFiles )(
-			'Upload $type and confirm addition to gallery',
-			async ( { filepath } ) => {
-				const uploadedItem = await mediaPage.upload( filepath );
-				assert.strictEqual( await uploadedItem.isVisible(), true );
-			}
-		);
+		it( 'Upload image and confirm addition to gallery', async () => {
+			const uploadedItem = await mediaPage.upload( testFiles.image );
+			assert.strictEqual( await uploadedItem.isVisible(), true );
+		} );
+
+		it( 'Upload audio and confirm addition to gallery', async () => {
+			const uploadedItem = await mediaPage.upload( testFiles.audio );
+			assert.strictEqual( await uploadedItem.isVisible(), true );
+		} );
 
 		it( 'Upload an unsupported file type and see the rejection notice', async function () {
 			try {
-				await mediaPage.upload( invalidFile );
+				await mediaPage.upload( testFiles.invalid );
 			} catch ( error ) {
 				assert.match( error.message, /could not be uploaded/i );
 			}
 		} );
-	} );
-
-	// Clean up test files.
-	afterAll( () => {
-		for ( const testFile of Object.values( testFiles ) ) {
-			MediaHelper.deleteFile( testFile.filepath );
-		}
-		MediaHelper.deleteFile( invalidFile );
 	} );
 } );

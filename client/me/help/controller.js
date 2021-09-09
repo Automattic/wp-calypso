@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { login } from 'calypso/lib/paths';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import config from '@automattic/calypso-config';
-import HelpComponent from './main';
-import CoursesComponent from './help-courses';
-import ContactComponent from './help-contact';
+import i18n from 'i18n-calypso';
+import React from 'react';
+import { login } from 'calypso/lib/paths';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import ContactComponent from './help-contact';
+import CoursesComponent from './help-courses';
+import HelpComponent from './main';
 
 export function loggedOut( context, next ) {
 	if ( isUserLoggedIn( context.store.getState() ) ) {

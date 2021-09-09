@@ -6,12 +6,12 @@ const selectors = {
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
 	searchInput: '[aria-label="Search"]',
-	spinner: '.spinner',
-	placeholder: '.inline-help__results-placeholder-item',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
+	spinner: '.spinner',
 
 	// Results
+	resultsPlaceholder: '.inline-help__results-placeholder-item',
 	resultsList: '.inline-help__results',
 	results: '.inline-help__results-item',
 
@@ -250,6 +250,8 @@ export class SupportComponent {
 					( response ) => response.url().includes( 'search?' ) && response.status() === 200,
 					{ timeout: 60000 }
 				),
+				this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'detached' } ),
+				this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } ),
 				this.page.fill( selectors.searchInput, text ),
 			] );
 		} else {

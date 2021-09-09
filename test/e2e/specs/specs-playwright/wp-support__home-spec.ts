@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import { DataHelper, LoginFlow, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 

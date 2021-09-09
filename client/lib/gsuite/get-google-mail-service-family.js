@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import {
 	GSUITE_PRODUCT_FAMILY,
 	GOOGLE_WORKSPACE_PRODUCT_FAMILY,

@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 import { select } from '@wordpress/data';
 import { isEqual, some, debounce } from 'lodash';
 import tracksRecordEvent from './tracking/track-record-event';

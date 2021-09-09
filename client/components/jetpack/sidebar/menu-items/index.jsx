@@ -15,6 +15,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import JetpackIcons from './jetpack-icons';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
@@ -44,7 +45,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			{ isAdmin && (
 				<SidebarItem
 					tipTarget="activity"
-					icon={ showIcons ? 'clipboard' : undefined }
+					customIcon={ showIcons && <JetpackIcons icon="activity-log" /> }
 					label={ translate( 'Activity Log', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
@@ -56,8 +57,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			) }
 			{ isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem
-					materialIcon={ showIcons ? 'backup' : undefined }
-					materialIconStyle="filled"
+					customIcon={ showIcons && <JetpackIcons icon="backup" /> }
 					label={ translate( 'Backup', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
@@ -69,8 +69,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			) }
 			{ isAdmin && ! isWPCOM && ! isWPForTeamsSite && (
 				<SidebarItem
-					materialIcon={ showIcons ? 'security' : undefined }
-					materialIconStyle="filled"
+					customIcon={ showIcons && <JetpackIcons icon="scan" /> }
 					label={ translate( 'Scan', {
 						comment: 'Jetpack sidebar menu item',
 					} ) }
@@ -84,7 +83,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			) }
 			<SidebarItem
 				tipTarget="jetpack-search"
-				icon={ showIcons ? 'search' : undefined }
+				customIcon={ showIcons && <JetpackIcons icon="search" /> }
 				label={ translate( 'Search', {
 					comment: 'Jetpack sidebar menu item',
 				} ) }

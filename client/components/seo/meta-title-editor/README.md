@@ -10,7 +10,6 @@ The following are examples of legitimate format strings passed from the server.
 
 // for a post
 '%post_title% on %site_name%';
-
 ```
 
 The format is arbitrary text with zero or more percentage-sign-delineated tokens. There are a defined number of possible tokens for each kind of title: front page, post, page, comment or tag page, archives.

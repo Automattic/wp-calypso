@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class LoadingPlaceholder extends React.Component {

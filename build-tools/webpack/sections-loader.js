@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 const { getOptions } = require( 'loader-utils' );
-
-/**
- * Internal dependencies
- */
 const config = require( '../../client/server/config' );
 
 /*

@@ -1,5 +1,5 @@
+import { Gridicon } from '@automattic/components';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
 class SelectDropdownExample extends React.PureComponent {

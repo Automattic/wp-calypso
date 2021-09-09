@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
-import ReauthRequired from 'calypso/me/reauth-required';
-import RecoveryEmail from './recovery-email';
-import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
-import RecoveryPhone from './recovery-phone';
-import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
-import SecuritySectionNav from 'calypso/me/security-section-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,
@@ -46,12 +36,11 @@ import {
 	shouldPromptAccountRecoveryPhoneValidationNotice,
 } from 'calypso/state/account-recovery/settings/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import FormattedHeader from 'calypso/components/formatted-header';
+import RecoveryEmail from './recovery-email';
+import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
+import RecoveryPhone from './recovery-phone';
+import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SecurityAccountRecovery = ( props ) => (

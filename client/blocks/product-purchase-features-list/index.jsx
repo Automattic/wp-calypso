@@ -34,7 +34,6 @@ import BusinessOnboarding from './business-onboarding';
 import CustomCSS from './custom-css';
 import CustomDomain from './custom-domain';
 import CustomizeTheme from './customize-theme';
-import FindNewTheme from './find-new-theme';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
@@ -86,7 +85,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -151,7 +149,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -289,7 +286,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 
 				{ isEnabled( 'jetpack/concierge-sessions' ) && (
 					<BusinessOnboarding
@@ -317,7 +313,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -338,7 +333,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }

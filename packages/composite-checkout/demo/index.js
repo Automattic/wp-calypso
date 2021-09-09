@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
 	Checkout,
 	CheckoutStepArea,
@@ -6,8 +7,6 @@ import {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutProvider,
-	createStripeMethod,
-	createStripePaymentMethodStore,
 	defaultRegistry,
 	FormStatus,
 	getDefaultOrderSummary,
@@ -17,12 +16,15 @@ import {
 	useIsStepActive,
 	useSelect,
 	useDispatch,
-	useMessages,
 	useFormStatus,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import React, { useState, useEffect, useMemo } from 'react';
+import {
+	createStripeMethod,
+	createStripePaymentMethodStore,
+} from '../src/lib/stripe-credit-card-fields-demo';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
@@ -50,14 +52,6 @@ const onEvent = ( event ) => window.console.log( 'Event', event );
 const showErrorMessage = ( error ) => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
-};
-const showInfoMessage = ( message ) => {
-	console.log( 'Info:', message ); /* eslint-disable-line no-console */
-	window.alert( message );
-};
-const showSuccessMessage = ( message ) => {
-	console.log( 'Success:', message ); /* eslint-disable-line no-console */
-	window.alert( message );
 };
 
 async function fetchStripeConfiguration() {
@@ -224,11 +218,7 @@ function MyCheckout() {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
 			return null;
 		}
-		return createStripeMethod( {
-			store: stripeStore,
-			stripe,
-			stripeConfiguration,
-		} );
+		return createStripeMethod( { store: stripeStore } );
 	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const paymentMethods = [ stripeMethod ].filter( Boolean );
@@ -239,9 +229,6 @@ function MyCheckout() {
 			total={ total }
 			onEvent={ onEvent }
 			onPaymentComplete={ onPaymentComplete }
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ paymentMethods }
@@ -255,7 +242,6 @@ function MyCheckout() {
 
 function MyCheckoutBody() {
 	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
-	const { showErrorMessage: showError } = useMessages();
 
 	return (
 		<Checkout>
@@ -286,7 +272,6 @@ function MyCheckoutBody() {
 							new Promise( ( resolve ) =>
 								setTimeout( () => {
 									if ( country.length === 0 ) {
-										showError( 'The country field is required' );
 										resolve( false );
 										return;
 									}

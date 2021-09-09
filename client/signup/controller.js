@@ -36,6 +36,7 @@ import {
 	getValidPath,
 	getFlowPageTitle,
 	shouldForceLogin,
+	isReskinnedFlow,
 } from './utils';
 
 const debug = debugModule( 'calypso:signup' );
@@ -94,10 +95,7 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if (
-			config( 'reskinned_flows' ).includes( currentFlowName ) &&
-			config.isEnabled( 'signup/reskin' )
-		) {
+		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||

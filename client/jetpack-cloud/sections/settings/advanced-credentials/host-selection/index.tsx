@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-layer/http-data';

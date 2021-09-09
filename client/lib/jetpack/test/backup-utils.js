@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getBackupAttemptsForDate } from '../backup-utils';
 
 describe( 'getBackupAttemptsForDate', () => {

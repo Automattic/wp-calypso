@@ -8,10 +8,6 @@ import InvalidActionPage from './invalid-action';
 import RegistrantVerificationPage from './registrant-verification';
 import TransferAwayConfirmationPage from './transfer-away-confirmation';
 
-/**
- *
- * Style dependencies
- */
 import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
 

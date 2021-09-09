@@ -10,9 +10,6 @@ import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
 import './style.scss';
 
 const JetpackDisconnectedWPCOM: FunctionComponent = () => {

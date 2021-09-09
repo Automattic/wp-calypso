@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import GetAppsBlock from 'calypso/blocks/get-apps';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import GetAppsBlock from 'calypso/blocks/get-apps';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 
 export const GetApps = () => {
 	return (

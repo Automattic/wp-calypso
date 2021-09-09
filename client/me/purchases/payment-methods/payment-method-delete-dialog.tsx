@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, Dialog } from '@automattic/components';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {

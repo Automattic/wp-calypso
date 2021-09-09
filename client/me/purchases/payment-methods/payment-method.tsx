@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ComponentProps } from 'react';
-
-/**
- * Internal dependencies
- */
-import PaymentMethodDetails from './payment-method-details';
 import { CompactCard } from '@automattic/components';
+import React, { FunctionComponent, ComponentProps } from 'react';
+import PaymentMethodDetails from './payment-method-details';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {

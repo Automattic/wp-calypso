@@ -5,15 +5,15 @@ import {
 	isWpComPremiumPlan,
 	isPlan,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useEvents } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import Gridicon from 'calypso/components/gridicon';
 import { HappychatButton as HappychatButtonUnstyled } from 'calypso/components/happychat/button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';

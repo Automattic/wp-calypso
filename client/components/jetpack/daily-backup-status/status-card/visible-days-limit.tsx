@@ -6,7 +6,7 @@ import Button from 'calypso/components/forms/form-button';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
+import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

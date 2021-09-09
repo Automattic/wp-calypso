@@ -50,8 +50,8 @@ Put altogether, a minimalist signup form can be created with:
 
 ```js
 import { User } from '@automattic/data-stores';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Notice, Spinner, TextControl } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import React, { useState } from 'react';
 
 const USER_STORE = User.register(/* app credentials… */);

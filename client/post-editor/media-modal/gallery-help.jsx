@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon, Popover } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,8 +8,6 @@ import { bindActionCreators } from 'redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
-import Popover from 'calypso/components/popover';
 import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';

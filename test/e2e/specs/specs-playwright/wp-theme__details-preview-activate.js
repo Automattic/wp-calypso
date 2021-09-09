@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	setupHooks,
 	DataHelper,
@@ -45,7 +49,6 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
-		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { partialRight } from 'lodash';
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
@@ -81,7 +80,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	isPrimary,
 	hasPlanFeature,
 } ) => {
-	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
+	const ctaBtnProps = ( button: CtaButton ) => buttonProps( button, true === isPrimary );
 	let ctaBtn;
 	const translate = useTranslate();
 	let learnMore = null;

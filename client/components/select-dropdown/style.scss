@@ -89,13 +89,13 @@ $compact-header-height: 35;
 	.is-compact & {
 		height: #{$compact-header-height}px;
 		line-height: #{$compact-header-height - 3}px;
-		padding-right: #{$side-margin / 2}px;
+		padding-right: #{$side-margin * 0.5}px;
 		font-size: $font-body-extra-small;
 
 		.count {
 			border-width: 0;
 			right: 25px;
-			top: #{( $compact-header-height - 18 ) / 2}px;
+			top: #{( $compact-header-height - 18 ) * 0.5}px;
 		}
 	}
 
@@ -128,7 +128,7 @@ $compact-header-height: 35;
 	.count {
 		position: absolute;
 		right: 40px;
-		top: #{( $header-height - 18 - 2 ) / 2}px;
+		top: #{( $header-height - 18 - 2 ) * 0.5}px;
 	}
 }
 
@@ -143,7 +143,7 @@ $compact-header-height: 35;
 	}
 
 	.gridicon {
-		margin-right: #{( $side-margin / 2 )}px;
+		margin-right: #{( $side-margin * 0.5 )}px;
 		vertical-align: text-bottom;
 
 		.is-compact & {
@@ -237,7 +237,7 @@ $compact-header-height: 35;
 	}
 
 	.gridicon {
-		margin-right: #{( $side-margin / 2 )}px;
+		margin-right: #{( $side-margin * 0.5 )}px;
 		vertical-align: text-bottom;
 	}
 }
@@ -250,7 +250,7 @@ $compact-header-height: 35;
 
 	.count {
 		position: absolute;
-		top: #{( $option-height - 18 ) / 2}px;
+		top: #{( $option-height - 18 ) * 0.5}px;
 		right: #{$side-margin}px;
 	}
 }

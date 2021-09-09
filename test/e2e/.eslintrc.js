@@ -27,6 +27,14 @@ module.exports = {
 				step: false,
 			},
 		},
+		{
+			files: [ 'specs/**/*' ],
+			rules: {
+				// We use jest-runner-groups to run spec suites, and these involve a custom doc header tag.
+				// Specs shouldn't have really any other jsdoc headers, so it should be safe to disable tag name checks.
+				'jsdoc/check-tag-names': 'off',
+			},
+		},
 	],
 	rules: {
 		'import/no-nodejs-modules': 'off',

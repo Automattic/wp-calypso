@@ -17,9 +17,7 @@
 		"calypso"
 	],
 	"license": "GPL-2.0-or-later",
-	"bin": {
-		"wp-babel-makepot": "./cli.js"
-	},
+	"bin": "./cli.js",
 	"scripts": {
 		"start": "./cli.js",
 		"test": "npx rimraf test/output && jest"

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debug from 'debug';
-
-/**
- * Internal dependencies
- */
 import {
 	getGoogleAnalyticsDefaultConfig,
 	setupGoogleAnalyticsGtag,

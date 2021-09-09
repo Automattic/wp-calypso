@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import wpcomFactory from 'wpcom';
-import inherits from 'inherits';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import inherits from 'inherits';
+import wpcomFactory from 'wpcom';
 import Undocumented from './lib/undocumented';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented' );
@@ -18,7 +11,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented' );
  *
  * @param {string} [token] - oauth token
  * @param {Function} [reqHandler] - request handler
- * @returns {null} null
+ * @returns {wpcomFactory} WPCOMUndocumented instance
  */
 function WPCOMUndocumented( token, reqHandler ) {
 	if ( ! ( this instanceof WPCOMUndocumented ) ) {

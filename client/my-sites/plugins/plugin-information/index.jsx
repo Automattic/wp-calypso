@@ -1,17 +1,15 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Version from 'calypso/components/version';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import versionCompare from 'calypso/lib/version-compare';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
 
 import './style.scss';
 
@@ -170,11 +168,6 @@ class PluginInformation extends React.Component {
 
 	getActionLinks = ( plugin ) => {
 		if ( ! get( plugin, 'active' ) ) {
-			return null;
-		}
-
-		if ( getExtensionSettingsPath( plugin ) ) {
-			// We have a Calypso UI for this plugin, so let's hide the wp-admin action links.
 			return null;
 		}
 

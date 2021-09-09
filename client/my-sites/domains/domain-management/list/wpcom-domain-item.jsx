@@ -1,12 +1,11 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React, { useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
 
 import './wpcom-domain-item.scss';
@@ -18,10 +17,12 @@ export default function WpcomDomainItem( {
 	isBusy,
 	onMakePrimary,
 	site,
+	isAtomicSite,
 } ) {
 	const [ menuVisibility, setMenuVisibility ] = useState( false );
 	const buttonRef = useRef( null );
 	const canMakePrimary = domain.canSetAsPrimary && ! domain.isPrimary;
+	const shouldShowManageButton = canMakePrimary || ! isAtomicSite;
 	const handleMakePrimary = ( event ) => {
 		event.stopPropagation();
 		onMakePrimary( domain.domain );
@@ -46,17 +47,19 @@ export default function WpcomDomainItem( {
 					{ __( 'Primary site address' ) }
 				</Badge>
 			) }
-			<Button
-				className="wpcom-domain-item__manage-button"
-				compact
-				ref={ buttonRef }
-				onClick={ handleToggleMenu }
-				disabled={ disabled }
-				busy={ isBusy }
-			>
-				Manage
-				<Gridicon icon="chevron-down" />
-			</Button>
+			{ shouldShowManageButton && (
+				<Button
+					className="wpcom-domain-item__manage-button"
+					compact
+					ref={ buttonRef }
+					onClick={ handleToggleMenu }
+					disabled={ disabled }
+					busy={ isBusy }
+				>
+					Manage
+					<Gridicon icon="chevron-down" />
+				</Button>
+			) }
 			<PopoverMenu
 				isVisible={ menuVisibility }
 				onClose={ handleMenuClose }
@@ -65,15 +68,17 @@ export default function WpcomDomainItem( {
 			>
 				{ canMakePrimary && (
 					<PopoverMenuItem icon="domains" onClick={ handleMakePrimary }>
-						{ __( 'Make primary domain' ) }
+						{ __( 'Make primary address' ) }
 					</PopoverMenuItem>
 				) }
-				<PopoverMenuItem
-					icon="reblog"
-					href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
-				>
-					{ __( 'Change site address' ) }
-				</PopoverMenuItem>
+				{ ! isAtomicSite && (
+					<PopoverMenuItem
+						icon="reblog"
+						href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
+					>
+						{ __( 'Change site address' ) }
+					</PopoverMenuItem>
+				) }
 			</PopoverMenu>
 		</div>
 	);

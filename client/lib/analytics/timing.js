@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
+import { getMostRecentUrlPath } from '@automattic/calypso-analytics';
 import { gaRecordTiming } from './ga';
 import { statsdRecordTiming } from './statsd';
-import { getMostRecentUrlPath } from '@automattic/calypso-analytics';
 
 export function recordTiming( eventType, duration, triggerName ) {
 	const urlPath = getMostRecentUrlPath() || 'unknown';

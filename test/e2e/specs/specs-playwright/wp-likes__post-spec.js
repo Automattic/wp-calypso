@@ -1,3 +1,7 @@
+/**
+ * @group gutenberg
+ */
+
 import assert from 'assert';
 import {
 	DataHelper,
@@ -41,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Enter post title', async function () {
 			gutenbergEditorPage = new GutenbergEditorPage( page );
-			const title = DataHelper.randomPhrase();
+			const title = DataHelper.getRandomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );
 
