@@ -24,7 +24,7 @@ class InlineHelpRichResult extends Component {
 		tour: PropTypes.string,
 	};
 
-	getButtonLabel = ( type ) => {
+	getButtonLabel = ( type = 'article' ) => {
 		const { translate } = this.props;
 
 		const labels = {
@@ -44,7 +44,8 @@ class InlineHelpRichResult extends Component {
 
 	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
-		const { type, tour, link, searchQuery, postId } = this.props;
+		const { searchQuery, result } = this.props;
+		const { type, tour, link, post_id: postId } = result;
 
 		const tracksData = {
 			search_query: searchQuery,
@@ -66,7 +67,7 @@ class InlineHelpRichResult extends Component {
 				dialogType: 'video',
 				videoLink: link,
 			} );
-		} else if ( type === RESULT_ARTICLE && postId && isLocaleEnglish ) {
+		} else if ( ( ! type || type === RESULT_ARTICLE ) && postId && isLocaleEnglish ) {
 			// Until we can deliver localized inline support article content, we send the
 			// the user to the localized support blog, if one exists.
 			event.preventDefault();
@@ -75,7 +76,7 @@ class InlineHelpRichResult extends Component {
 	};
 
 	render() {
-		const { type, title, description, link } = this.props;
+		const { type, title, description, link } = this.props.result;
 		const buttonLabel = this.getButtonLabel( type );
 		const buttonIcon = this.buttonIcons[ type ];
 		const classes = classNames( 'inline-help__richresult__title' );
