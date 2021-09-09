@@ -30,10 +30,11 @@ export const useStorageUsageText = (
 		const usedGigabytes = bytesToUnit( bytesUsed, StorageUnits.Gigabyte );
 
 		if ( bytesAvailable === undefined ) {
-			return translate( '%(usedUnitAmount).1fGB used', '%(usedUnitAmount).1fGB used', {
+			return translate( '%(usedGigabytes).1fGB used', '%(usedGigabytes).1fGB used', {
 				count: usedGigabytes,
 				args: { usedGigabytes },
-				comment: 'Describes an amount of storage space in gigabytes; e.g., 15.4GB used',
+				comment:
+					'Must use unit abbreviation; describes an amount of storage space in gigabytes (e.g., 15.4GB used)',
 			} );
 		}
 
