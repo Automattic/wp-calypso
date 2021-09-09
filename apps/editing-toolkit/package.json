@@ -22,7 +22,7 @@
 		"posts-list-block": "BROWSERSLIST_ENV=wpcom calypso-build --env source='posts-list-block'",
 		"dev:posts-list-block": "yarn run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production yarn run posts-list-block",
-		"common": "BROWSERSLIST_ENV=wpcom calypso-build --env source='common','common/data-stores','common/hide-plugin-buttons-mobile'",
+		"common": "BROWSERSLIST_ENV=wpcom calypso-build --env source='common','common/data-stores','common/hide-plugin-buttons-mobile','common/disable-heic-images'",
 		"dev:common": "yarn run common",
 		"build:common": "NODE_ENV=production yarn run common",
 		"editor-site-launch": "npm-run-all --parallel 'editor-site-launch-*'",
