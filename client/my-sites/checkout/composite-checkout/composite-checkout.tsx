@@ -412,6 +412,7 @@ export default function CompositeCheckout( {
 	);
 
 	const elements = useElements();
+	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
@@ -428,7 +429,7 @@ export default function CompositeCheckout( {
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
-			cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
+			cardNumberElement,
 		} ),
 		[
 			contactDetails,
@@ -443,7 +444,7 @@ export default function CompositeCheckout( {
 			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
-			elements,
+			cardNumberElement,
 		]
 	);
 
