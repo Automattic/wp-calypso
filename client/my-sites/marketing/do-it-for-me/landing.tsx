@@ -16,6 +16,7 @@ import restaurant from 'calypso/assets/images/difm/restaurant-1.png';
 import treeremoval from 'calypso/assets/images/difm/tree-removal.png';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const VerticalsGrid = styled.div`
@@ -30,7 +31,6 @@ const VerticalsGrid = styled.div`
 
 const Vertical = styled.h1`
 	margin-bottom: 16px;
-	padding: 16px 20px;
 	margin: 0 auto 10px;
 	padding: 16px;
 `;
@@ -77,7 +77,8 @@ export default function DoItForMeLandingPage(): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) ) ?? 'USD';
-	const displayCost = formatCurrency( 150, currencyCode, { stripZeros: true } );
+	const cost = useSelector( ( state ) => getProductCost( state, 'wp_difm_lite' ) ) ?? 500;
+	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 
 	const onInterestedSelected = async () => {
 		page( `/marketing/do-it-for-me/site-info/${ selectedSiteSlug }` );
