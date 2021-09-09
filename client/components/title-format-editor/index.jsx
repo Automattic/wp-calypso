@@ -4,8 +4,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { buildSeoTitle } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import versionCompare from 'calypso/lib/version-compare';
+import { getSiteOption, buildSeoTitle } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
 
@@ -22,6 +23,9 @@ export class TitleFormatEditor extends Component {
 		type: PropTypes.object.isRequired,
 		tokens: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
+		// Connected props
+		titleData: PropTypes.object,
+		shouldShowSeoArchiveTitleButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -213,7 +217,15 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
-		const { disabled, placeholder, titleData, translate, tokens, type } = this.props;
+		const {
+			disabled,
+			placeholder,
+			titleData,
+			translate,
+			tokens,
+			type,
+			shouldShowSeoArchiveTitleButton,
+		} = this.props;
 
 		const previewText =
 			type.value && editorState.getCurrentContent().hasText()
@@ -235,11 +247,19 @@ export class TitleFormatEditor extends Component {
 				<div className="title-format-editor__header">
 					<span className="title-format-editor__title">{ type.label }</span>
 					{ Object.entries( tokens ).map( ( [ name, title ] ) => {
-						if ( 'archives' === type.value && 'date' === name ) {
-							// [date] is tokenized, but we no longer show the button to insert a [date].
-							// [archive_title] is a more generic option that supports non date-based archives.
-							return null;
+						if ( 'archives' === type.value ) {
+							if ( 'date' === name && shouldShowSeoArchiveTitleButton ) {
+								// [date] is still tokenized, but we no longer show the button to insert a [date] on JP >= 10.2
+								return null;
+							}
+
+							if ( 'archiveTitle' === name && ! shouldShowSeoArchiveTitleButton ) {
+								// [archive_title] provides a more generic option than [date] shown on JP >= 10.2
+								// which supports non date-based archives.
+								return null;
+							}
 						}
+
 						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 						return (
 							<span
@@ -270,7 +290,14 @@ export class TitleFormatEditor extends Component {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 	const { translate } = ownProps;
+
+	let shouldShowSeoArchiveTitleButton = false;
+	const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	if ( jetpackVersion && versionCompare( jetpackVersion, '10.2-alpha', '>=' ) ) {
+		shouldShowSeoArchiveTitleButton = true;
+	}
 
 	// Add example content for post/page title, tag name and archive title.
 	return {
@@ -281,6 +308,7 @@ const mapStateToProps = ( state, ownProps ) => {
 			date: translate( 'Example Archive Title/Date' ),
 			archiveTitle: translate( 'Example Archive Title/Date' ),
 		},
+		shouldShowSeoArchiveTitleButton,
 	};
 };
 
