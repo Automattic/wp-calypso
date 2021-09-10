@@ -1,12 +1,11 @@
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { requestSitePosts } from 'calypso/state/posts/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import {
 	getActiveTheme,
 	getLastThemeQuery,
-	getTheme,
+	getCanonicalTheme,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
@@ -59,9 +58,8 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 		// When switching from a block-based theme to a classic theme and vice versa, the admin
 		// sidebar toggles site editor and customizer menu item visiblity. The admin bar needs to be
 		// refreshed to see the updates.
-		const sourceSiteId = siteId && isJetpackSite( getState(), siteId ) ? siteId : 'wpcom';
-		const previousTheme = getTheme( getState(), sourceSiteId, previousThemeId );
-		const newTheme = getTheme( getState(), sourceSiteId, themeId );
+		const previousTheme = getCanonicalTheme( getState(), siteId, previousThemeId );
+		const newTheme = getCanonicalTheme( getState(), siteId, themeId );
 
 		if (
 			( isClassicTheme( previousTheme ) && isBlockTheme( newTheme ) ) ||
