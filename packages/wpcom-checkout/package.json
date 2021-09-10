@@ -42,6 +42,7 @@
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/shopping-cart": "^2.0.0",
 		"@emotion/styled": "^11.3.0",
+		"@stripe/stripe-js": "^1.17.1",
 		"@wordpress/i18n": "^3.20.0",
 		"@wordpress/react-i18n": "^1.0.3",
 		"debug": "^4.1.1",
