@@ -29,7 +29,6 @@ test-results*.xml
 /client/style.json
 spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
-lerna-debug.log
 /vendor
 
 # added during build
