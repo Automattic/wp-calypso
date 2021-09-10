@@ -1,4 +1,8 @@
-import { PLAN_JETPACK_SECURITY_REALTIME } from '@automattic/calypso-products';
+import {
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_SECURITY_REALTIME,
+} from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -8,6 +12,7 @@ import { isPartnerPurchase } from 'calypso/lib/purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
@@ -38,6 +43,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		emptyContent,
 		filter,
 		getScreenshotOption,
+		isAtomic,
 		purchase,
 		showWpcomThemesList,
 		search,
@@ -51,29 +57,49 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
 
+	const displayUpsellBanner = ! requestingSitePlans && currentPlan;
+
+	let upsellBanner = null;
+	if ( isAtomic ) {
+		upsellBanner = (
+			<UpsellNudge
+				className="themes__showcase-banner"
+				event="calypso_themes_list_install_themes"
+				feature={ FEATURE_UPLOAD_THEMES }
+				plan={ PLAN_BUSINESS }
+				title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
+				forceHref={ true }
+				showIcon={ true }
+			/>
+		);
+	} else {
+		upsellBanner = (
+			<UpsellNudge
+				forceDisplay
+				title={ translate( 'Upload your own themes' ) }
+				description={ translate(
+					'In addition to uploading your own themes, get comprehensive WordPress' +
+						' security, real-time backups, and unlimited video hosting.'
+				) }
+				event="themes_plans_free_personal_premium"
+				showIcon={ true }
+				href={ `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_REALTIME }` }
+			/>
+		);
+	}
+
 	return (
 		<Main fullWidthLayout className="themes">
 			<SidebarNavigation />
 			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && currentPlan && ! isPartnerPlan && (
-				<UpsellNudge
-					forceDisplay
-					title={ translate( 'Upload your own themes' ) }
-					description={ translate(
-						'In addition to uploading your own themes, get comprehensive WordPress' +
-							' security, real-time backups, and unlimited video hosting.'
-					) }
-					event="themes_plans_free_personal_premium"
-					showIcon={ true }
-					href={ `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_REALTIME }` }
-				/>
-			) }
+			{ displayUpsellBanner && ! isAtomic && ! isPartnerPlan && upsellBanner }
 			<ThemeShowcase
 				{ ...props }
 				siteId={ siteId }
 				emptyContent={ showWpcomThemesList ? <div /> : null }
 				isJetpackSite={ true }
+				upsellBanner={ displayUpsellBanner && isAtomic ? upsellBanner : null }
 			>
 				{ showWpcomThemesList && (
 					<div>
@@ -131,6 +157,7 @@ export default connect( ( state, { siteId, tier } ) => {
 		tier,
 		showWpcomThemesList,
 		emptyContent,
+		isAtomic: isAtomicSite( state, siteId ),
 		isMultisite,
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
 		siteSlug,
