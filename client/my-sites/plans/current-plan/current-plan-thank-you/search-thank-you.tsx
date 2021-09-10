@@ -16,7 +16,7 @@ const ThankYouCta: ThankYouCtaType = ( {
 				href={ jetpackSearchCustomizeUrl }
 				onClick={ () => recordThankYouClick( 'search', 'customizer' ) }
 			>
-				{ translate( 'Try Search and customize it now' ) }
+				{ translate( 'Customize Search' ) }
 			</Button>
 			<Button href={ dismissUrl }>{ translate( 'Skip for now' ) }</Button>
 		</>
