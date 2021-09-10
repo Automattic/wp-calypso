@@ -56,11 +56,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -563,33 +559,6 @@ export function p2RedirectToHubPlans( context, next ) {
 		const hubSlug = getSiteSlug( store.getState(), hubId );
 		if ( hubSlug ) {
 			return page.redirect( `/plans/my-plan/${ hubSlug }` );
-		}
-	}
-
-	next();
-}
-
-/**
- * For P2s, we sometimes want to redirect to the hub of a P2 site. If we are on
- * a P2 site under a hub this will redirect to the same path on the hub.
- *
- * @param {object} context -- Middleware context
- * @param {Function} next -- Call next middleware in chain
- */
-export function p2RedirectToHub( context, next ) {
-	const store = context.store;
-	const selectedSite = getSelectedSite( store.getState() );
-
-	if (
-		selectedSite &&
-		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
-		! isSiteP2Hub( store.getState(), selectedSite.ID )
-	) {
-		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
-		const hubSlug = getSiteSlug( store.getState(), hubId );
-		if ( hubSlug ) {
-			const selectedSiteSlug = getSelectedSiteSlug( store.getState() );
-			return page.redirect( context.path.replace( selectedSiteSlug, hubSlug ) );
 		}
 	}
 
