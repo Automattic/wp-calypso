@@ -4,8 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import versionCompare from 'calypso/lib/version-compare';
-import { getSiteOption, buildSeoTitle } from 'calypso/state/sites/selectors';
+import { buildSeoTitle, isJetpackMinimumVersion } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
@@ -294,8 +293,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { translate } = ownProps;
 
 	let shouldShowSeoArchiveTitleButton = false;
-	const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	if ( jetpackVersion && versionCompare( jetpackVersion, '10.2-alpha', '>=' ) ) {
+	if ( isJetpackMinimumVersion( state, siteId, '10.2-alpha' ) ) {
 		shouldShowSeoArchiveTitleButton = true;
 	}
 
