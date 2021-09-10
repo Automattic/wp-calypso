@@ -14,6 +14,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Banner from 'calypso/components/banner';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -54,6 +55,16 @@ class Search extends Component {
 		submitForm: PropTypes.func.isRequired,
 		updateFields: PropTypes.func.isRequired,
 	};
+
+	renderLoadingPlaceholder() {
+		return (
+			<Banner
+				jetpack={ this.props.siteIsJetpack }
+				disableHref
+				description={ this.props.translate( 'Loading your purchases…' ) }
+			/>
+		);
+	}
 
 	renderInfoLink( link ) {
 		return (
@@ -308,9 +319,15 @@ class Search extends Component {
 							: this.props.upgradeLink
 					) }
 				</SettingsSectionHeader>
-				{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
-					this.renderSettingsCard() }
-				{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
+				{ this.props.isLoading ? (
+					this.renderLoadingPlaceholder()
+				) : (
+					<>
+						{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
+							this.renderSettingsCard() }
+						{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
+					</>
+				) }
 			</div>
 		);
 	}
