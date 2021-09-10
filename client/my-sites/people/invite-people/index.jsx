@@ -32,6 +32,7 @@ import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { userCan } from 'calypso/lib/site/utils';
 import wpcom from 'calypso/lib/wp';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
+import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -722,6 +723,7 @@ class InvitePeople extends React.Component {
 						},
 					} ) }
 				</HeaderCake>
+				{ isWPForTeamsSite && <P2TeamBanner context="invite" site={ site } /> }
 				{ this.renderInviteForm() }
 				{ isWPForTeamsSite && (
 					<React.Fragment>

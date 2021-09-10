@@ -8,6 +8,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
 import TeamList from 'calypso/my-sites/people/team-list';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -76,12 +77,12 @@ class People extends React.Component {
 		};
 		if ( isP2HubSite ) {
 			return translate(
-				'Invite members to your P2 and manage their access setting.',
+				'Invite members to your workspace and manage their access settings.',
 				translateArgs
 			);
 		}
 		return translate(
-			'Invite members and guests to this space and manage their access settings.',
+			'Invite members and guests to this P2 and manage their access settings.',
 			translateArgs
 		);
 	}
@@ -91,14 +92,14 @@ class People extends React.Component {
 
 		if ( isWPForTeamsSite ) {
 			if ( isP2HubSite ) {
-				return translate( 'People in %(sitename)s', {
+				return translate( 'People in the %(sitename)s workspace', {
 					args: {
 						sitename: site.name,
 						context: 'People page for P2 hubs.',
 					},
 				} );
 			}
-			return translate( 'People in this space' );
+			return translate( 'People in this P2' );
 		}
 
 		return translate( 'People' );
@@ -115,6 +116,7 @@ class People extends React.Component {
 			filter,
 			isPrivate,
 			translate,
+			isWPForTeamsSite,
 		} = this.props;
 
 		if ( siteId && ! canViewPeople ) {
@@ -160,6 +162,7 @@ class People extends React.Component {
 							site={ site }
 						/>
 					}
+					{ isWPForTeamsSite && <P2TeamBanner context={ filter } site={ site } /> }
 					{ this.renderPeopleList() }
 				</div>
 			</Main>
