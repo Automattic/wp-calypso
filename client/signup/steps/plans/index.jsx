@@ -138,7 +138,16 @@ export class PlansStep extends Component {
 				isInSignup={ true }
 				isLaunchPage={ isLaunchPage }
 				onUpgradeClick={ this.onSelectPlan }
-				plans={ [ 'personal-bundle', 'value_bundle', 'business-bundle', 'ecommerce-bundle' ] }
+				plans={ [
+					'personal-bundle',
+					'value_bundle',
+					'business-bundle',
+					'ecommerce-bundle',
+					'personal-bundle-monthly',
+					'value_bundle_monthly',
+					'business-bundle-monthly',
+					'ecommerce-bundle-monthly',
+				] }
 				planTypes={ planTypes }
 				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
