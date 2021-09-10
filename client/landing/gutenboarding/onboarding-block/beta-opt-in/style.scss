@@ -1,0 +1,34 @@
+.beta-opt-in {
+	&.gutenboarding-page {
+		text-align: center;
+	}
+}
+
+.beta-opt-in__header {
+	background: url( '/calypso/images/signup/fse-beta-enroll.png' ) no-repeat bottom center;
+	background-size: 972px 420px;
+	padding: 2em 0 440px;
+}
+
+.beta-opt-in__content,
+.beta-opt-in .beta-opt-in__actions {
+	max-width: 630px;
+	display: flex;
+	margin: 0 auto;
+}
+
+.beta-opt-in__column {
+	box-sizing: border-box;
+	width: 50%;
+	padding: 1em;
+
+	p {
+		font-size: 0.875rem;
+	}
+
+	h3 {
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin: 0 0 0.67em;
+	}
+}

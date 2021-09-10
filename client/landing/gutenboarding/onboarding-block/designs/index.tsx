@@ -18,7 +18,6 @@ const Designs: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
-
 	const { setSelectedDesign, setFonts, resetFonts } = useDispatch( ONBOARD_STORE );
 	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
 		select( ONBOARD_STORE )
