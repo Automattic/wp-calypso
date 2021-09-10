@@ -2,12 +2,17 @@ import { Page } from 'playwright';
 
 const selectors = {
 	searchInput: `input[aria-label="What would you like your domain name to be?"]`,
-	placeholder: `.is-placeholder`,
-	resultItem: `.domain-suggestion__content`,
+	resultPlaceholder: `.is-placeholder`,
+	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text(${ keyword })`,
 };
 
 /**
- * Component for the domain search feature in Upgrades > Domains.
+ * Component for the domain search feature.
+ *
+ * This class applies to multiple locations within WordPress.com that displays a domain search component.
+ * Examples:
+ * 	- Upgrades > Domains
+ * 	- Signup flow
  */
 export class DomainSearchComponent {
 	private page: Page;
@@ -28,7 +33,7 @@ export class DomainSearchComponent {
 	 */
 	async search( keyword: string ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForSelector( selectors.placeholder, { state: 'detached' } ),
+			this.page.waitForSelector( selectors.resultPlaceholder, { state: 'detached' } ),
 			this.page.fill( selectors.searchInput, keyword ),
 		] );
 	}
@@ -43,8 +48,7 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
-		const selector = `${ selectors.resultItem }:has-text("${ keyword }")`;
-		const targetItem = await this.page.waitForSelector( selector );
+		const targetItem = await this.page.waitForSelector( selectors.resultItem( keyword ) );
 		// Heading element inside a given result contains the full domain name string.
 		const selectedDomain = await targetItem
 			.waitForSelector( 'h3' )

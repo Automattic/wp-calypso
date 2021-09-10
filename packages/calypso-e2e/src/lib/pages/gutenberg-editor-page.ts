@@ -334,9 +334,9 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Opens the Block Editor sidebar (left hand side).
+	 * Opens the Nav Sidebar on the left hand side.
 	 */
-	async toggleSidebar(): Promise< void > {
+	async openNavSidebar(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.openSidebarButton );
 	}

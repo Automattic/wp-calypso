@@ -2,7 +2,6 @@ import { Page } from 'playwright';
 
 const selectors = {
 	accountClosedMessage: ':text("Your account has been closed")',
-	accountClosedSubmessage: ':text("Thanks for flying with WordPress.com")',
 };
 
 /**
@@ -25,6 +24,5 @@ export class AccountClosedPage {
 	 */
 	async confirmAccountClosed(): Promise< void > {
 		await this.page.waitForSelector( selectors.accountClosedMessage );
-		await this.page.waitForSelector( selectors.accountClosedSubmessage );
 	}
 }

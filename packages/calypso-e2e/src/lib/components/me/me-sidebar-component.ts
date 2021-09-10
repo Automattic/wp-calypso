@@ -1,5 +1,10 @@
 import { Page } from 'playwright';
 
+const selectors = {
+	// Menu items
+	menuItem: ( menu: string ) => `.sidebar a:has(span:has-text("${ menu }"))`,
+};
+
 /**
  * Represents the sidebar component on /me endpoint.
  */
@@ -23,7 +28,7 @@ export class MeSidebarComponent {
 	async navigate( menu: string ): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( `a:has(span:has-text("${ menu }") )` ),
+			this.page.click( selectors.menuItem( menu ) ),
 		] );
 	}
 }
