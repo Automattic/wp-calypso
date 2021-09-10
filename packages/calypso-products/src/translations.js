@@ -296,16 +296,26 @@ export const getJetpackStorageAmountDisplays = () => ( {
 		}
 	),
 	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate(
-		'%(numberOfGigabytes)dGB',
-		'%(numberOfGigabytes)dGB',
+		'%(numberOfTerabytes)dTB',
+		'%(numberOfTerabytes)dTB',
 		{
 			comment:
-				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 20,
-			args: { numberOfGigabytes: 20 },
+				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+			count: 1,
+			args: { numberOfTerabytes: 1 },
 		}
 	),
 	[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate(
+		'%(numberOfTerabytes)dTB',
+		'%(numberOfTerabytes)dTB',
+		{
+			comment:
+				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+			count: 1,
+			args: { numberOfTerabytes: 1 },
+		}
+	),
+	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: translate(
 		'%(numberOfGigabytes)dGB',
 		'%(numberOfGigabytes)dGB',
 		{
@@ -315,24 +325,14 @@ export const getJetpackStorageAmountDisplays = () => ( {
 			args: { numberOfGigabytes: 20 },
 		}
 	),
-	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: translate(
-		'%(numberOfTerabytes)dTB',
-		'%(numberOfTerabytes)dTB',
-		{
-			comment:
-				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
-			count: 1,
-			args: { numberOfTerabytes: 1 },
-		}
-	),
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: translate(
-		'%(numberOfTerabytes)dTB',
-		'%(numberOfTerabytes)dTB',
+		'%(numberOfGigabytes)dGB',
+		'%(numberOfGigabytes)dGB',
 		{
 			comment:
-				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
-			count: 1,
-			args: { numberOfTerabytes: 1 },
+				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+			count: 20,
+			args: { numberOfGigabytes: 20 },
 		}
 	),
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: translate(

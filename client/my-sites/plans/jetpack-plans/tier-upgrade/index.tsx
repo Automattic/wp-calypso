@@ -7,6 +7,8 @@ import ProductCard from '../product-card';
 import { SelectorProduct } from '../types';
 import { getTieredBackupProducts } from './get-tiered-products';
 
+import './style.scss';
+
 export const TierUpgrade = () => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -17,7 +19,7 @@ export const TierUpgrade = () => {
 	};
 
 	return (
-		<div>
+		<div className="tier-upgrade">
 			{ tieredBackupProducts.map( ( product: SelectorProduct ) => (
 				<ProductCard
 					item={ product }
