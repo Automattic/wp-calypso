@@ -12,6 +12,7 @@ import {
 	getJetpackStorageAmountDisplays,
 	JetpackSlugsWithStorage,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { Duration, SelectorProduct } from '../types';
 
@@ -21,6 +22,7 @@ const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
 	return {
 		...slugToSelectorProduct( slug ),
 		displayName: jetpackStorageAmountDisplays[ slug ],
+		buttonLabel: translate( 'Upgrade storage' ),
 	};
 };
 

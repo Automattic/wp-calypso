@@ -3,6 +3,9 @@
 	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
 	gap: 24px 16px;
 
+	margin-top: 48px;
+	margin-bottom: 64px;
+
 	.jetpack-product-card__product-name {
 		font-size: 3.375rem;
 	}
