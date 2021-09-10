@@ -38,7 +38,6 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 				gutenbergEditorPage = new GutenbergEditorPage( page );
 				const title = DataHelper.getRandomPhrase();
 				await gutenbergEditorPage.enterTitle( title );
-				await gutenbergEditorPage.dismissWelcomeTourIfPresent();
 			} );
 		} );
 
