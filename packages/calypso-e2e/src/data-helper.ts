@@ -43,6 +43,10 @@ export function getDateString( format: DateFormat ): string | null {
 /**
  * Generates a new name for test blog with prefix `e2eflowtesting`.
  *
+ * Examples:
+ * 	e2eflowtesting16900000102
+ * 	e2eflowtesting14928337999
+ *
  * @returns {string} Generated blog name.
  */
 export function getBlogName(): string {
@@ -139,6 +143,32 @@ export function getTestEmailAddress( {
 	const domain = 'mailosaur.io';
 	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
 	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+}
+
+/**
+ * Returns an object containing test credit card payment information.
+ *
+ * Simulated credit card information is supplied by Stripe. For more information, see https://stripe.com/docs/testing#cards.
+ *
+ * @param {'Visa'|'Mastercard'|'American Express'} issuer Credit card network.
+ * @returns {[key: string]: string} Keyed object containing strings as values.
+ */
+export function getTestPaymentDetails(
+	issuer: 'Visa' | 'Mastercard' | 'American Express'
+): { [ key: string ]: string } {
+	if ( issuer === 'Visa' ) {
+		return {
+			cardholder: 'End to End Testing',
+			number: '4242 4242 4242 4242',
+			expiryMonth: '02',
+			expiryYear: '28',
+			cvv: '999',
+			country: 'TR', // Set to Turkey to force Strip to process payments.
+			postalCode: '06123',
+		};
+	}
+
+	return {}; // stubbed
 }
 
 /**
