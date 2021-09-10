@@ -38,13 +38,13 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0",
 		"@automattic/i18n-utils": "^1.0.0",
-		"@wordpress/components": "^13.0.3",
-		"@wordpress/react-i18n": "^1.0.3",
+		"@wordpress/components": "^17.0.0",
+		"@wordpress/react-i18n": "^3.0.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.27.3",
+		"@wordpress/data": "^6.1.0",
 		"@wp-g2/create-styles": "^0.0.154",
 		"react": "^16.8",
 		"react-dom": "^16.12.0",

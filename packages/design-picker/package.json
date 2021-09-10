@@ -33,9 +33,9 @@
 	"dependencies": {
 		"@automattic/calypso-config": "^1.0.0-alpha.0",
 		"@automattic/onboarding": "^1.0.0",
-		"@wordpress/components": "^13.0.3",
-		"@wordpress/react-i18n": "^1.0.3",
-		"@wordpress/url": "^2.22.2",
+		"@wordpress/components": "^17.0.0",
+		"@wordpress/react-i18n": "^3.0.1",
+		"@wordpress/url": "^3.2.2",
 		"classnames": "^2.3.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0"
@@ -49,9 +49,9 @@
 		"typescript": "^4.4.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.27.3",
-		"@wordpress/element": "^2.20.3",
-		"@wordpress/i18n": "^3.20.0",
+		"@wordpress/data": "^6.1.0",
+		"@wordpress/element": "^4.0.1",
+		"@wordpress/i18n": "^4.2.2",
 		"@wp-g2/create-styles": "^0.0.154",
 		"debug": "^4.1.1",
 		"react": "^16.12.0",

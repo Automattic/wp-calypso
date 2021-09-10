@@ -20,7 +20,7 @@
 	"dependencies": {
 		"@automattic/viewport": "^1.0.0",
 		"@babel/runtime": "^7.15.3",
-		"@wordpress/compose": "^3.25.3"
+		"@wordpress/compose": "^5.0.2"
 	},
 	"peerDependencies": {
 		"react": "^16.13.1",

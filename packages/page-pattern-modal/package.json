@@ -31,11 +31,11 @@
 	"dependencies": {
 		"@automattic/design-picker": "^1.0.0",
 		"@automattic/typography": "1.0.0",
-		"@wordpress/blocks": "^8.0.3",
-		"@wordpress/components": "^13.0.3",
-		"@wordpress/compose": "^3.25.3",
-		"@wordpress/element": "^2.20.3",
-		"@wordpress/i18n": "^3.20.0",
+		"@wordpress/blocks": "^11.1.0",
+		"@wordpress/components": "^17.0.0",
+		"@wordpress/compose": "^5.0.2",
+		"@wordpress/element": "^4.0.1",
+		"@wordpress/i18n": "^4.2.2",
 		"classnames": "^2.3.1",
 		"debug": "^4.1.1",
 		"lodash": "^4.17.21"
@@ -48,7 +48,7 @@
 		"typescript": "^4.4.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.27.3",
+		"@wordpress/data": "^6.1.0",
 		"@wp-g2/create-styles": "^0.0.154",
 		"react": "^16.8",
 		"react-native": "^0.63.4",
