@@ -7582,6 +7582,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/base-styles@npm:^3.5.1, @wordpress/base-styles@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "@wordpress/base-styles@npm:3.6.0"
+  checksum: 71db0b0189d90afdf50d5e1728276e10c1fce8062e284755a5d16f9b8eef2bdacddd0275fac3736bec1f2f0c31fcce3444c96240e5b5bfe1e785d43b17b65133
+  languageName: node
+  linkType: hard
+
 "@wordpress/base-styles@npm:^4.0.0":
   version: 4.0.0
   resolution: "@wordpress/base-styles@npm:4.0.0"
