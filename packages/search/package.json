@@ -56,7 +56,7 @@
 		"css-loader": "^3.4.2",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
-		"react-native": "^0.63.4",
+		"react-native": "^0.64.0",
 		"reakit-utils": "^0.15.1",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.2.1",
