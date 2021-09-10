@@ -72,4 +72,9 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	it( 'Delete comment from notification', async function () {
 		await notificationsComponent.clickNotificationAction( 'Trash' );
 	} );
+
+	it( 'Confirm comment is trashed', async function () {
+		await notificationsComponent.waitForUndoMessage();
+		await notificationsComponent.waitForUndoMessageToDisappear();
+	} );
 } );
