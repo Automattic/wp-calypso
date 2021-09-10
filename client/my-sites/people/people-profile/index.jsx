@@ -226,11 +226,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		if ( p2Guests?.guests && p2Guests.guests.includes( user?.linked_user_ID ?? user?.ID ) ) {
 			p2GuestBadge = (
 				<>
-					<div className="people-profile__role-badge role-p2-guest">
-						{ translate( 'Guest', {
-							context: 'Noun: User is a guest',
-						} ) }
-					</div>
+					<div className="people-profile__role-badge role-p2-guest">{ translate( 'Guest' ) }</div>
 					<div className="people-profile__role-badge-info">
 						<InfoPopover position="top right">
 							{ translate(
