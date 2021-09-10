@@ -8,8 +8,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { sectionify } from 'calypso/lib/route';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -21,10 +19,6 @@ class PlansNavigation extends Component {
 		path: PropTypes.string.isRequired,
 		shouldShowMyPlan: PropTypes.bool,
 		site: PropTypes.object,
-	};
-
-	state = {
-		cartVisible: false,
 	};
 
 	getSectionTitle( path ) {
@@ -50,11 +44,7 @@ class PlansNavigation extends Component {
 
 		return (
 			site && (
-				<SectionNav
-					hasPinnedItems={ hasPinnedItems }
-					selectedText={ sectionTitle }
-					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
-				>
+				<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
 					<NavTabs label="Section" selectedText={ sectionTitle }>
 						{ shouldShowMyPlan && (
 							<NavItem
@@ -73,53 +63,10 @@ class PlansNavigation extends Component {
 							{ translate( 'Plans' ) }
 						</NavItem>
 					</NavTabs>
-					<CartToggleButton
-						site={ this.props.site }
-						toggleCartVisibility={ this.toggleCartVisibility }
-						cartVisible={ this.state.cartVisible }
-						path={ this.props.path }
-					/>
 				</SectionNav>
 			)
 		);
 	}
-
-	toggleCartVisibility = () => {
-		this.setState( { cartVisible: ! this.state.cartVisible } );
-	};
-
-	onMobileNavPanelOpen = () => {
-		this.setState( { cartVisible: false } );
-	};
-}
-
-function CartToggleButton( {
-	site,
-	toggleCartVisibility,
-	cartVisible,
-	path,
-	closeSectionNavMobilePanel,
-} ) {
-	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
-		return null;
-	}
-
-	const onToggle = () => {
-		closeSectionNavMobilePanel();
-		toggleCartVisibility();
-	};
-
-	return (
-		<CalypsoShoppingCartProvider>
-			<PopoverCart
-				selectedSite={ site }
-				onToggle={ onToggle }
-				pinned={ isMobile() }
-				visible={ cartVisible }
-				path={ path }
-			/>
-		</CalypsoShoppingCartProvider>
-	);
 }
 
 export default connect( ( state ) => {
