@@ -1,9 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
-import { subscribeIsMobile, isMobile } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { __, hasTranslation } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -129,15 +128,6 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 }
 
 function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
-	const [ isMobileView, setIsMobileView ] = useState( isMobile() );
-
-	useEffectOnlyOnce( () => {
-		const unsubscribe = subscribeIsMobile( ( isNarrow ) => setIsMobileView( isNarrow ) );
-		return function cleanup() {
-			unsubscribe();
-		};
-	} );
-
 	const handleOnMinimize = () => {
 		onMinimize( true );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
@@ -145,9 +135,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 			slide_number: slideNumber,
 		} );
 	};
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls-visible': isMobileView,
-	} );
+	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
 
 	return (
 		<div className={ buttonClasses }>
