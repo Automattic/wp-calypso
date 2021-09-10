@@ -5,9 +5,8 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, Suspense, lazy } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
@@ -25,13 +24,9 @@ const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
-const InlineHelpPopover = ( props ) => (
-	<AsyncLoad { ...props } require="calypso/blocks/inline-help/popover" placeholder={ null } />
-);
+const InlineHelpPopover = lazy( () => import( 'calypso/blocks/inline-help/popover' ) );
 
-const InlineHelpDialog = ( props ) => (
-	<AsyncLoad { ...props } require="calypso/blocks/inline-help/dialog" placeholder={ null } />
-);
+const InlineHelpDialog = lazy( () => import( 'calypso/blocks/inline-help/dialog' ) );
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -70,7 +65,7 @@ class InlineHelp extends Component {
 	// Preload the async chunk on mouse hover or touch start
 	preload = () => {
 		if ( ! this.preloaded ) {
-			asyncRequire( 'calypso/blocks/inline-help/popover' );
+			import( 'calypso/blocks/inline-help/popover' );
 			this.preloaded = true;
 		}
 	};
@@ -130,11 +125,13 @@ class InlineHelp extends Component {
 					<Gridicon icon={ ! isPopoverVisible ? 'help' : 'cross-circle' } size={ 48 } />
 				</Button>
 				{ isPopoverVisible && (
-					<InlineHelpPopover
-						context={ this.inlineHelpToggle }
-						onClose={ this.closeInlineHelp }
-						showVideoResult={ this.showVideoResult }
-					/>
+					<Suspense fallback={ null }>
+						<InlineHelpPopover
+							context={ this.inlineHelpToggle }
+							onClose={ this.closeInlineHelp }
+							showVideoResult={ this.showVideoResult }
+						/>
+					</Suspense>
 				) }
 				{ isWithinBreakpoint( '<660px' ) && isPopoverVisible && (
 					<RootChild>
@@ -142,7 +139,9 @@ class InlineHelp extends Component {
 					</RootChild>
 				) }
 				{ videoLink && (
-					<InlineHelpDialog videoLink={ videoLink } onClose={ this.closeVideoResult } />
+					<Suspense fallback={ null }>
+						<InlineHelpDialog videoLink={ videoLink } onClose={ this.closeDialog } />
+					</Suspense>
 				) }
 			</div>
 		);

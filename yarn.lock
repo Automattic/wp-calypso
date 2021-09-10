@@ -602,6 +602,35 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/inline-help@workspace:apps/inline-help":
+  version: 0.0.0-use.local
+  resolution: "@automattic/inline-help@workspace:apps/inline-help"
+  dependencies:
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
+    autoprefixer: ^10.2.5
+    calypso: "workspace:^"
+    enzyme: ^3.11.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.2.4
+    postcss: ^8.3.11
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
+    redux: ^4.1.2
+    redux-thunk: ^2.3.0
+    webpack: ^5.63.0
+    webpack-bundle-analyzer: ^4.5.0
+    webpack-dev-server: ^4.7.2
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/interpolate-components@workspace:^, @automattic/interpolate-components@workspace:packages/interpolate-components":
   version: 0.0.0-use.local
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
