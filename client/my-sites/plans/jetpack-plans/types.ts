@@ -59,7 +59,7 @@ export interface JetpackFreeProps {
 	siteId: number | null;
 }
 
-export interface BackupPricingProps {
+export interface StoragePricingProps {
 	defaultDuration: Duration;
 	header: ReactNode;
 	footer: ReactNode;

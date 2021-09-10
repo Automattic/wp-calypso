@@ -4,12 +4,12 @@ import React from 'react';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { BackupPricing } from './backup-pricing';
-import { BackupPricingHeader } from './backup-pricing-header';
 import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-slug-terms';
 import getParamsFromContext from './get-params-from-context';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
+import { StoragePricing } from './storage-pricing';
+import { StoragePricingHeader } from './storage-pricing-header';
 import type { Duration, QueryArgs } from './types';
 
 function stringToDuration( duration?: string ): Duration | undefined {
@@ -82,11 +82,11 @@ export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ):
 	next();
 }
 
-export const jetpackBackupPricing = ( context: PageJS.Context, next: () => void ) => {
+export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void ) => {
 	const { duration } = getParamsFromContext( context );
-	context.header = <BackupPricingHeader />;
+	context.header = <StoragePricingHeader />;
 	context.primary = (
-		<BackupPricing
+		<StoragePricing
 			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }
 			header={ context.header }
 			footer={ context.footer }
