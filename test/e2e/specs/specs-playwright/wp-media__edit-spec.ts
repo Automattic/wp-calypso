@@ -43,11 +43,8 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 			await sidebarComponent.navigate( 'Media' );
 		} );
 
-		it( 'See media gallery', async function () {
-			mediaPage = new MediaPage( page );
-		} );
-
 		it( 'Show only images', async function () {
+			mediaPage = new MediaPage( page );
 			await mediaPage.clickTab( 'Images' );
 		} );
 

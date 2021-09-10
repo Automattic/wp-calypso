@@ -100,7 +100,7 @@
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/launch": "^1.0.0",
-		"@automattic/newspack-blocks": "~1.33.0",
+		"@automattic/newspack-blocks": "^1.37.1",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/page-pattern-modal": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",

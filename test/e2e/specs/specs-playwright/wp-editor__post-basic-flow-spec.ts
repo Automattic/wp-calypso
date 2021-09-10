@@ -63,11 +63,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorSettingsSidebarComponent.clickTab( 'Post' );
 		} );
 
-		// Waiting to do this here as the Welcome Tour won't intefere with adding a title/content, and deferring gives it time to load in completely.
-		it( ' Dismiss Welcome Tour if it is present', async function () {
-			await gutenbergEditorPage.dismissWelcomeTourIfPresent();
-		} );
-
 		it( 'Add post category', async function () {
 			await editorSettingsSidebarComponent.expandSectionIfCollapsed( 'Categories' );
 			await editorSettingsSidebarComponent.clickCategory( category );

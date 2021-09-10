@@ -247,7 +247,6 @@
 		"jest-environment-jsdom": "^27.0.6",
 		"jest-enzyme": "^7.1.2",
 		"jest-junit": "^9.0.0",
-		"lerna": "^4.0.0",
 		"loader-utils": "^1.2.3",
 		"lodash": "^4.17.21",
 		"lunr": "^2.3.8",

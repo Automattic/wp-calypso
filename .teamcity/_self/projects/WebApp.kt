@@ -578,12 +578,12 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 	}
 }
 
-fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
+fun playwrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType {
-		id("Calypso_E2E_Playwright_$viewportName")
+		id("Calypso_E2E_Playwright_$targetDevice")
 		uuid = buildUuid
-		name = "Playwright E2E Tests ($viewportName)"
-		description = "Runs Calypso e2e tests in $viewportName size using Playwright"
+		name = "Playwright E2E Tests ($targetDevice)"
+		description = "Runs Calypso e2e tests as $targetDevice using Playwright"
 
 		artifactRules = """
 			reports => reports
@@ -612,7 +612,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests ($viewportName)"
+				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
@@ -637,7 +637,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 					# Run the test
-					export VIEWPORT_NAME=$viewportName
+					export TARGET_DEVICE=$targetDevice
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api

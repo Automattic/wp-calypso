@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Language' ), function () 
 	describe.each( [
 		{ language: 'Spanish', target: 'es', labelText: 'Mi página web se llama' },
 		{ language: 'Japanese', target: 'ja', labelText: '私のサイトの名前は' },
-		{ language: 'Arabic', target: 'ar', labelText: 'سيكون اسم موقعي' },
+		// { language: 'Arabic', target: 'ar', labelText: 'سيكون اسم موقعي' }, // https://github.com/Automattic/wp-calypso/issues/56006
 		{ language: 'Hebrew', target: 'he', labelText: 'האתר שלי נקרא' },
 		{ language: 'Russian', target: 'ru', labelText: 'Мой сайт называется' },
 	] )( 'Change Language', function ( { language, target, labelText } ) {
