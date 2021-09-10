@@ -42,47 +42,45 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 			} );
 		} );
 
-		describe( 'Add and configure blocks in the editor:', function () {
+		describe( 'Add and configure blocks in the editor', function () {
 			for ( const blockFlow of blockFlows ) {
-				describe( blockFlow.blockSidebarName, function () {
-					it( 'Add the block from the sidebar', async function () {
-						const blockHandle = await gutenbergEditorPage.addBlock(
-							blockFlow.blockSidebarName,
-							blockFlow.blockEditorSelector
-						);
-						editorContext = {
-							page: page,
-							editorIframe: await gutenbergEditorPage.getEditorFrame(),
-							blockHandle: blockHandle,
-						};
-					} );
+				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
+					const blockHandle = await gutenbergEditorPage.addBlock(
+						blockFlow.blockSidebarName,
+						blockFlow.blockEditorSelector
+					);
+					editorContext = {
+						page: page,
+						editorIframe: await gutenbergEditorPage.getEditorFrame(),
+						blockHandle: blockHandle,
+					};
+				} );
 
-					it( 'Configure the block', async function () {
-						await blockFlow.configure( editorContext );
-					} );
+				it( `${ blockFlow.blockSidebarName }: Configure the block`, async function () {
+					await blockFlow.configure( editorContext );
+				} );
 
-					it( 'There are no block warnings or errors in the editor', async function () {
-						expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
-					} );
+				it( `${ blockFlow.blockSidebarName }: There are no block warnings or errors in the editor`, async function () {
+					expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
 				} );
 			}
 		} );
 
-		describe( 'Publishing and validation', function () {
+		describe( 'Publishing the post', function () {
 			it( 'Publish and visit post', async function () {
 				await gutenbergEditorPage.publish( { visit: true } );
 				publishedPostContext = {
 					page: page,
 				};
 			} );
+		} );
 
-			describe( 'Blocks have expected output in published post:', function () {
-				for ( const blockFlow of blockFlows ) {
-					it( blockFlow.blockSidebarName, async function () {
-						await blockFlow.validateAfterPublish( publishedPostContext );
-					} );
-				}
-			} );
+		describe( 'Validating blocks in published post.', function () {
+			for ( const blockFlow of blockFlows ) {
+				it( `${ blockFlow.blockSidebarName }: Expected content is in published post`, async function () {
+					await blockFlow.validateAfterPublish( publishedPostContext );
+				} );
+			}
 		} );
 	} );
 }
