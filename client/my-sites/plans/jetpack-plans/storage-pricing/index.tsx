@@ -5,7 +5,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansFilterBar from '../plans-filter-bar';
-import { TierUpgrade } from '../tier-upgrade';
+import { StorageTierUpgrade } from '../storage-tier-upgrade';
 import { StoragePricingProps, Duration } from '../types';
 
 export const StoragePricing: React.FC< StoragePricingProps > = ( {
@@ -20,7 +20,7 @@ export const StoragePricing: React.FC< StoragePricingProps > = ( {
 		<Main className="storage-pricing__main">
 			{ header }
 			<PlansFilterBar showDiscountMessage duration={ duration } onDurationChange={ setDuration } />
-			<TierUpgrade />
+			<StorageTierUpgrade />
 			{ footer }
 			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
 		</Main>

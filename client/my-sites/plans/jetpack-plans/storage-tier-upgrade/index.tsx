@@ -9,7 +9,7 @@ import { getTieredBackupProducts } from './get-tiered-products';
 
 import './style.scss';
 
-export const TierUpgrade = () => {
+export const StorageTierUpgrade = () => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const tieredBackupProducts = getTieredBackupProducts( TERM_ANNUALLY );
@@ -19,7 +19,7 @@ export const TierUpgrade = () => {
 	};
 
 	return (
-		<div className="tier-upgrade">
+		<div className="storage-tier-upgrade">
 			{ tieredBackupProducts.map( ( product: SelectorProduct ) => (
 				<ProductCard
 					item={ product }
