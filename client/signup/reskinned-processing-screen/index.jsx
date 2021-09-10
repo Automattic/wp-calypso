@@ -8,7 +8,7 @@ import './style.scss';
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const useSteps = ( flowName, { hasPaidDomain, hasSelectedDesign } ) => {
+const useSteps = ( { flowName, hasPaidDomain, hasSelectedDesign } ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
@@ -32,14 +32,10 @@ const useSteps = ( flowName, { hasPaidDomain, hasSelectedDesign } ) => {
 
 // This component is cloned from the CreateSite component of Gutenboarding flow
 // to work with the onboarding signup flow.
-export default function ReskinnedProcessingScreen( {
-	flowName,
-	hasPaidDomain,
-	hasSelectedDesign,
-} ) {
+export default function ReskinnedProcessingScreen( props ) {
 	const { __ } = useI18n();
 
-	const steps = useSteps( flowName, { hasPaidDomain, hasSelectedDesign } );
+	const steps = useSteps( props );
 	const totalSteps = steps.current.length;
 
 	const [ currentStep, setCurrentStep ] = React.useState( 0 );
