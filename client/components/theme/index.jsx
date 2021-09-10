@@ -13,6 +13,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
+import { isFullSiteEditingTheme } from 'calypso/utils';
 import ThemeMoreButton from './more-button';
 
 import './style.scss';
@@ -106,12 +107,6 @@ export class Theme extends Component {
 		const { theme } = this.props;
 		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
 		return some( skillLevels, { slug: 'beginner' } );
-	}
-
-	isFullSiteEditingTheme() {
-		const { theme } = this.props;
-		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
-		return some( features, { slug: 'block-templates' } );
 	}
 
 	renderPlaceholder() {
@@ -245,7 +240,7 @@ export class Theme extends Component {
 					<div className="theme__info">
 						<h2 className="theme__info-title">
 							{ name }
-							{ this.isFullSiteEditingTheme() && (
+							{ isFullSiteEditingTheme( this.props.theme ) && (
 								<Badge type="warning-clear" className="theme__badge-beta">
 									{ translate( 'Beta' ) }
 								</Badge>

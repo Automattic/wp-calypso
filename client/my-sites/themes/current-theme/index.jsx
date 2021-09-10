@@ -1,7 +1,7 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, map, pickBy, some } from 'lodash';
+import { map, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { isFullSiteEditingTheme } from 'calypso/utils';
 import { trackClick } from '../helpers';
 import { connectOptions } from '../theme-options';
 
@@ -47,9 +48,6 @@ class CurrentTheme extends Component {
 				option.icon && ! ( option.hideForTheme && option.hideForTheme( currentThemeId, siteId ) )
 		);
 
-		// TODO: DRY with logic in client/components/theme/index.jsx
-		const features = get( currentTheme, [ 'taxonomies', 'theme_feature' ] );
-		const isFullSiteEditingTheme = some( features, { slug: 'block-templates' } );
 		const showScreenshot = currentTheme && currentTheme.screenshot;
 		// Some themes have no screenshot, so only show placeholder until details loaded
 		const showScreenshotPlaceholder = ! currentTheme;
@@ -71,7 +69,7 @@ class CurrentTheme extends Component {
 							) }
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
-									{ isFullSiteEditingTheme && (
+									{ isFullSiteEditingTheme( currentTheme ) && (
 										<Badge type="warning-clear" className="current-theme__badge-beta">
 											{ translate( 'Beta' ) }
 										</Badge>
