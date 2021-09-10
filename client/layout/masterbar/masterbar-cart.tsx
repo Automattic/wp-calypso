@@ -92,6 +92,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 				<CheckoutSummaryTotal />
 				<div className="masterbar-cart__content-footer">
 					<Button
+						className="masterbar-cart__checkout"
 						buttonType={ 'primary' }
 						fullWidth
 						disabled={ isDisabled }
