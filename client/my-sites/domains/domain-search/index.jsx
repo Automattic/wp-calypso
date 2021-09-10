@@ -24,7 +24,6 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
@@ -236,14 +235,6 @@ class DomainSearch extends Component {
 								}
 								align="left"
 							/>
-							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
-								<div className="domains__header-buttons">
-									<HeaderCart
-										selectedSite={ this.props.selectedSite }
-										currentRoute={ this.props.currentRoute }
-									/>
-								</div>
-							) }
 						</div>
 
 						<EmailVerificationGate
