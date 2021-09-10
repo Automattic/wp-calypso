@@ -5,7 +5,7 @@ import page from 'page';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
-import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
+import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
