@@ -12480,7 +12480,7 @@ __metadata:
     react-day-picker: ^7.4.0
     react-dom: ^16.12.0
     react-element-to-jsx-string: ^14.1.0
-    react-lazily-render: ^1.2.0
+    react-intersection-observer: ^8.32.1
     react-live: ^1.12.0
     react-modal: ^3.11.1
     react-native: ^0.63.4
@@ -31140,6 +31140,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^8.32.1":
+  version: 8.32.1
+  resolution: "react-intersection-observer@npm:8.32.1"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: a555a32c581361dc71954df47329f007f5cc8280b79c24377b5b03622e036749fd4a8cc80489f6956a084faf49532621af8715a540c42d7bb37686951359f661
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0, react-is@npm:^16.13.1, react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1, react-is@npm:^16.8.4, react-is@npm:^16.8.6, react-is@npm:^16.9.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -31151,17 +31160,6 @@ fsevents@~2.1.2:
   version: 17.0.1
   resolution: "react-is@npm:17.0.1"
   checksum: 55b8b31a5904d92764e827e7a8e43bb5141e4f5887e889b47dafb386745402d8bcc78b02b74c26ee91a57e0feeaecbe3fb38d54093e3ed8f1d3d38d15307a6ba
-  languageName: node
-  linkType: hard
-
-"react-lazily-render@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "react-lazily-render@npm:1.2.0"
-  dependencies:
-    scrollparent: ^2.0.1
-  peerDependencies:
-    react: ^16.1.1
-  checksum: d259b7acd2250cbe73fe247879d9972f8a38ecc448b1d291781aabc16a557e74c07c96deddf48efe62f2b92fc2582dee6487227b5fe63898f428bf4e75fa335b
   languageName: node
   linkType: hard
 
@@ -33954,13 +33952,6 @@ resolve@^2.0.0-next.3:
     ajv: ^6.12.5
     ajv-keywords: ^3.5.2
   checksum: 55a8da802a5f8f0ce6f68b6a139f3261cb423bd23795766da866a0f5738fc40303370fbe0c3eeba60b2a91c569ad7ce5318fea455f8fe866098c5a3a6b9050b0
-  languageName: node
-  linkType: hard
-
-"scrollparent@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "scrollparent@npm:2.0.1"
-  checksum: 1d2e235ba5315725d5bf88946664c72772e32be32bd4555798148f9745e0bc83cd07a2db2faea1c143dee02f84002275338905357cdd43577ec440d5e446de0b
   languageName: node
   linkType: hard
 
