@@ -187,6 +187,16 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Dismisses the Welcome Tour (card) if it is present.
+	 */
+	async dismissWelcomeTourIfPresent(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		if ( await frame.isVisible( selectors.welcomeTourCloseButton ) ) {
+			await frame.click( selectors.welcomeTourCloseButton );
+		}
+	}
+
+	/**
 	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
