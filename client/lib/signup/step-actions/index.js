@@ -315,21 +315,24 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 }
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, selectedDesign } ) {
-	let theme = '';
+	const options = {};
 
 	if ( themeSlugWithRepo ) {
-		theme = themeSlugWithRepo.split( '/' )[ 1 ];
+		options.theme = themeSlugWithRepo.split( '/' )[ 1 ];
 	} else if ( selectedDesign ) {
-		theme = selectedDesign.theme;
+		options.theme = selectedDesign.theme;
+		options.template = selectedDesign.template;
+		options.font_base = selectedDesign.fonts?.base;
+		options.font_headings = selectedDesign.fonts?.headings;
 	}
 
-	if ( ! theme ) {
+	if ( ! options.theme ) {
 		defer( callback );
 
 		return;
 	}
 
-	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
+	wpcom.undocumented().changeTheme( siteSlug, options, function ( errors ) {
 		callback( isEmpty( errors ) ? undefined : [ errors ] );
 	} );
 }
