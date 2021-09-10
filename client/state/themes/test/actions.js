@@ -451,6 +451,15 @@ describe( 'actions', () => {
 							search: 'simple, white',
 						},
 					},
+					queries: {},
+				},
+				sites: {
+					items: {
+						197431737: {
+							ID: 197431737,
+							jetpack: false,
+						},
+					},
 				},
 			} );
 
