@@ -415,6 +415,98 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#themeActivated()', () => {
+		// block theme
+		const maylandBlocksTheme = {
+			id: 'mayland-blocks',
+			stylesheet: 'pub/mayland-blocks',
+			taxonomies: {
+				theme_feature: [
+					{
+						name: 'Block Templates',
+						slug: 'block-templates',
+						term_id: '230717188',
+					},
+				],
+			},
+		};
+		// classic themes
+		const millerTheme = {
+			id: 'miller',
+			stylesheet: 'pub/miller',
+			taxonomies: {
+				theme_feature: [
+					{
+						name: 'Auto Loading Homepage',
+						slug: 'auto-loading-homepage',
+						term_id: '687694703',
+					},
+				],
+			},
+		};
+		const twentyfifteenTheme = {
+			id: 'twentyfifteen',
+			stylesheet: 'pub/twentyfifteen',
+			taxonomies: {
+				theme_feature: [
+					{
+						name: 'Auto Loading Homepage',
+						slug: 'auto-loading-homepage',
+						term_id: '687694703',
+					},
+				],
+			},
+		};
+
+		const fakeGetState = () => ( {
+			themes: {
+				activeThemes: {
+					2211667: 'twentyfifteen',
+				},
+				lastQuery: {
+					2211667: {
+						search: 'simple, white',
+					},
+				},
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: {
+							[ maylandBlocksTheme.id ]: maylandBlocksTheme,
+							[ millerTheme.id ]: millerTheme,
+							[ twentyfifteenTheme.id ]: twentyfifteenTheme,
+						},
+					} ),
+				},
+			},
+			sites: {
+				items: {
+					197431737: {
+						ID: 197431737,
+						jetpack: false,
+					},
+				},
+			},
+		} );
+
+		describe( 'when switching between a classic and a block theme', () => {
+			test( 'should dispatch an action to refresh the admin bar', () => {
+				themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetState );
+				expect( spy ).to.have.been.calledWith( {
+					type: 'ADMIN_MENU_REQUEST',
+					siteId: 2211667,
+				} );
+			} );
+		} );
+
+		describe( 'when switching between classic themes', () => {
+			test( 'should not dispatch an action to refresh the admin bar', () => {
+				themeActivated( 'pub/miller', 2211667 )( spy, fakeGetState );
+				expect( spy ).not.to.have.been.calledWith( {
+					type: 'ADMIN_MENU_REQUEST',
+					siteId: 2211667,
+				} );
+			} );
+		} );
+
 		test( 'should return an action object', () => {
 			const expectedActivationSuccess = {
 				meta: {
@@ -440,29 +532,6 @@ describe( 'actions', () => {
 				themeStylesheet: 'pub/twentysixteen',
 				siteId: 2211667,
 			};
-
-			const fakeGetState = () => ( {
-				themes: {
-					activeThemes: {
-						2211667: 'twentyfifteen',
-					},
-					lastQuery: {
-						2211667: {
-							search: 'simple, white',
-						},
-					},
-					queries: {},
-				},
-				sites: {
-					items: {
-						197431737: {
-							ID: 197431737,
-							jetpack: false,
-						},
-					},
-				},
-			} );
-
 			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
