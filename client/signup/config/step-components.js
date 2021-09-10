@@ -20,6 +20,7 @@ const stepNameToModuleName = {
 	'import-preview': 'import-preview',
 	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'import-url': 'import-url-onboarding',
+	'intent-screen': 'intent-screen',
 	launch: 'launch-site',
 	plans: 'plans',
 	'plans-new': 'plans',

@@ -738,6 +738,10 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},
+		'intent-screen': {
+			stepName: 'intent-screen',
+			dependencies: [ 'siteSlug' ],
+		},
 	};
 }
 

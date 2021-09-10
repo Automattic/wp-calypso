@@ -812,6 +812,22 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
+	.signup__step.is-intent {
+		.step-wrapper {
+			display: flex;
+			align-items: flex-start;
+			margin-top: 20%;
+		}
+
+		.step-wrapper__header {
+			margin-top: 0;
+		}
+
+		.step-wrapper__content {
+			margin-left: auto;
+		}
+	}
+
 	button.is-primary {
 		box-shadow: none;
 		border: 0;

@@ -1,12 +1,11 @@
-import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-type IntentFlag = 'build' | 'write';
+import IntentScreen from './intent-screen';
+import type { IntentFlag } from './types';
 
 interface Props {
 	goToNextStep: () => void;
@@ -18,10 +17,10 @@ interface Props {
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { goToNextStep, isReskinned, stepName } = props;
+	const { goToNextStep, stepName } = props;
 
-	const headerText = translate( 'header' );
-	const subHeaderText = translate( 'subheader' );
+	const headerText = translate( 'Where will you start?' );
+	const subHeaderText = translate( 'You can change your mind at any time.' );
 
 	const submitIntent = ( intent: IntentFlag ) => {
 		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
@@ -45,26 +44,15 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		goToNextStep();
 	};
 
-	const content = (
-		<div>
-			<div>
-				<Button onClick={ () => submitIntent( 'write' ) }>{ translate( 'Write' ) }</Button>
-			</div>
-			<div>
-				<Button onClick={ () => submitIntent( 'build' ) }>{ translate( 'Build' ) }</Button>
-			</div>
-		</div>
-	);
-
 	return (
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ content }
-			align={ isReskinned ? 'left' : 'center' }
-			skipButtonAlign={ isReskinned ? 'top-right' : 'bottom' }
+			stepContent={ <IntentScreen onSelect={ submitIntent } /> }
+			align={ 'left' }
+			hideSkip
 			{ ...props }
 		/>
 	);
