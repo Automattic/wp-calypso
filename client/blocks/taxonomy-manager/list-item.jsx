@@ -33,7 +33,6 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
-		isPreviewable: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
 	};
@@ -217,7 +216,6 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const isPreviewable = get( site, 'is_previewable' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
 		const isPodcastingCategory =
@@ -226,7 +224,6 @@ export default connect(
 		return {
 			canSetAsDefault,
 			isDefault,
-			isPreviewable,
 			siteId,
 			siteSlug,
 			siteUrl,

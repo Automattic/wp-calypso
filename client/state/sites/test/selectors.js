@@ -123,7 +123,6 @@ describe( 'selectors', () => {
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
-				is_previewable: true,
 				jetpack: true,
 				canAutoupdateFiles: true,
 				canUpdateFiles: true,
@@ -191,7 +190,6 @@ describe( 'selectors', () => {
 				slug: 'example.wordpress.com',
 				hasConflict: true,
 				jetpack: false,
-				is_previewable: true,
 				options: {
 					unmapped_url: 'https://example.wordpress.com',
 				},
@@ -3353,7 +3351,6 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: false,
 				hasConflict: false,
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
@@ -3392,7 +3389,6 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: true,
 				hasConflict: true,
 				domain: 'unmapped-url.wordpress.com',
 				slug: 'unmapped-url.wordpress.com',
