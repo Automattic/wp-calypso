@@ -9,6 +9,7 @@ import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 import { decodeEntities } from 'calypso/lib/formatting';
 import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { recordTrack } from 'calypso/reader/stats';
@@ -20,6 +21,8 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
+	const { data: p2Guests } = useP2GuestsQuery( siteId );
+
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 
 	const getRole = () => {
@@ -183,6 +186,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		let contractorBadge;
 		let superAdminBadge;
 		let roleBadge;
+		let p2GuestBadge;
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
@@ -219,8 +223,26 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 				</>
 			);
 		}
+		if ( p2Guests?.guests && p2Guests.guests.includes( user?.linked_user_ID ?? user?.ID ) ) {
+			p2GuestBadge = (
+				<>
+					<div className="people-profile__role-badge role-p2-guest">
+						{ translate( 'Guest', {
+							context: 'Noun: User is a guest',
+						} ) }
+					</div>
+					<div className="people-profile__role-badge-info">
+						<InfoPopover position="top right">
+							{ translate(
+								'This user is a member of this P2 as a guest, but not a member of the workspace.'
+							) }
+						</InfoPopover>
+					</div>
+				</>
+			);
+		}
 
-		if ( ! roleBadge && ! superAdminBadge && ! contractorBadge ) {
+		if ( ! roleBadge && ! superAdminBadge && ! contractorBadge && ! p2GuestBadge ) {
 			return;
 		}
 
@@ -229,6 +251,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 				{ superAdminBadge }
 				{ roleBadge }
 				{ contractorBadge }
+				{ p2GuestBadge }
 			</div>
 		);
 	};

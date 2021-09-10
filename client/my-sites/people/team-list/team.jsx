@@ -44,8 +44,8 @@ class Team extends React.Component {
 			);
 		}
 
-		if ( p2Guests?.total_guests ) {
-			translateOptions.args.numberGuests = p2Guests?.total_guests;
+		if ( p2Guests?.found ) {
+			translateOptions.args.numberGuests = p2Guests?.found;
 			return translate(
 				'There is %(numberPeople)d member and %(numberGuests)d guests in this P2',
 				'There are %(numberPeople)d members and %(numberGuests)d guests in this P2',
