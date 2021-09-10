@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +12,7 @@ import { modeType, stepsHeadingOwnershipVerification, stepSlug } from './constan
 
 import './style.scss';
 
-function ConnectDomainStepLogin( {
+const ConnectDomainStepOwnershipAuthCode = ( {
 	className,
 	defaultConnectHandler,
 	domain,
@@ -23,7 +22,7 @@ function ConnectDomainStepLogin( {
 	progressStepList,
 	recordMappingButtonClickInUseYourDomain,
 	selectedSite,
-} ) {
+} ) => {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
 	const [ connectInProgress, setConnectInProgress ] = useState( false );
@@ -121,7 +120,7 @@ function ConnectDomainStepLogin( {
 			stepContent={ stepContent }
 		/>
 	);
-}
+};
 
 const recordMappingButtonClickInUseYourDomain = ( domain_name ) =>
 	recordTracksEvent( 'calypso_use_your_domain_mapping_click', { domain_name } );
@@ -129,9 +128,9 @@ const recordMappingButtonClickInUseYourDomain = ( domain_name ) =>
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ), {
 	defaultConnectHandler: connectDomainAction,
 	recordMappingButtonClickInUseYourDomain,
-} )( localize( ConnectDomainStepLogin ) );
+} )( ConnectDomainStepOwnershipAuthCode );
 
-ConnectDomainStepLogin.propTypes = {
+ConnectDomainStepOwnershipAuthCode.propTypes = {
 	className: PropTypes.string.isRequired,
 	defaultConnectHandler: PropTypes.func,
 	domain: PropTypes.string.isRequired,
