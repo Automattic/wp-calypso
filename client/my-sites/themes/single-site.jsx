@@ -23,7 +23,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 		return <Main fullWidthLayout className="themes" />;
 	}
 
-	if ( isJetpack && ! isAtomic ) {
+	if ( isJetpack ) {
 		return (
 			<SingleSiteThemeShowcaseJetpack
 				{ ...props }
