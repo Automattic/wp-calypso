@@ -1,10 +1,10 @@
+import { Popover } from '@automattic/components';
 import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import Popover from 'calypso/components/popover';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
@@ -65,13 +65,7 @@ function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): J
 }
 
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
-	const {
-		responseCart,
-		removeCoupon,
-		removeProductFromCart,
-		isLoading,
-		isPendingUpdate,
-	} = useShoppingCart();
+	const { removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } = useShoppingCart();
 	const translate = useTranslate();
 	const goToCheckout = () => {
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
@@ -81,7 +75,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 
 	return (
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
-			<CartMessages isLoadingCart={ isLoading } cart={ responseCart } />
+			<CartMessages />
 			<div className="masterbar-cart__content-wrapper">
 				<div className="masterbar-cart__content-header">
 					<h2 className="masterbar-cart__title">{ translate( 'Cart' ) }</h2>
@@ -94,7 +88,6 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 				<WPOrderReviewLineItems
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
-					isCompact
 				/>
 				<CheckoutSummaryTotal />
 				<div className="masterbar-cart__content-footer">
