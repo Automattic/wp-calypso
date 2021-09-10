@@ -884,7 +884,7 @@ const getPlanJetpackSecurityT1Details = () => ( {
 const getPlanJetpackSecurityT2Details = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T2,
-	getTitle: () => translate( 'Security Pro' ),
+	getTitle: () => translate( 'Security' ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(

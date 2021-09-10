@@ -89,7 +89,7 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const backupT1 = translate( 'Backup' );
-	const backupT2 = translate( 'Backup Pro' );
+	const backupT2 = translate( 'Backup' );
 	const search = translate( 'Site Search' );
 	const scan = translate( 'Scan' );
 	const scanRealtime = (
@@ -141,7 +141,7 @@ export const getJetpackProductsCallToAction = () => {
 		</>
 	);
 	const backupT1 = translate( 'Get Backup' );
-	const backupT2 = translate( 'Get Backup Pro' );
+	const backupT2 = translate( 'Get Backup' );
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
 	const antiSpam = translate( 'Get Anti-spam' );
