@@ -37,7 +37,7 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 	const onClose = () => setIsActive( false );
 
 	return (
-		<div className="masterbar-cart__outer-wrapper" ref={ masterbarButtonRef }>
+		<div className="masterbar-cart" ref={ masterbarButtonRef }>
 			<CheckoutErrorBoundary errorMessage="Error">
 				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick }>
 					{ children }
