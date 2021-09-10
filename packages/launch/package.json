@@ -37,7 +37,7 @@
 		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
-		"@automattic/shopping-cart": "^1.0.0",
+		"@automattic/shopping-cart": "^2.0.0",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/icons": "^2.10.3",
 		"@wordpress/react-i18n": "^1.0.3",
@@ -45,7 +45,7 @@
 		"classnames": "^2.3.1",
 		"react-router-dom": "^5.1.2",
 		"tslib": "^2.3.0",
-		"typescript": "^4.3.5",
+		"typescript": "^4.4.2",
 		"use-debounce": "^3.1.0"
 	},
 	"devDependencies": {
@@ -55,7 +55,7 @@
 		"copyfiles": "^2.3.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
-		"typescript": "^4.3.5"
+		"typescript": "^4.4.2"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.27.3",

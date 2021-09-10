@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -6,7 +6,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
-import Gridicon from 'calypso/components/gridicon';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModulePlaceholder from '../stats-module/placeholder';

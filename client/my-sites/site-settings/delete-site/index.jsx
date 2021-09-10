@@ -1,4 +1,4 @@
-import { Button, Dialog } from '@automattic/components';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import ActionPanelTitle from 'calypso/components/action-panel/title';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';

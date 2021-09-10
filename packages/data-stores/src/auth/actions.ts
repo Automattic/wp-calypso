@@ -110,11 +110,11 @@ export function createActions( {
 
 					yield receiveSendLoginEmail( emailResponse );
 				} catch ( err ) {
-					yield receiveSendLoginEmailFailed( err );
+					yield receiveSendLoginEmailFailed( err as SendLoginEmailErrorResponse );
 				}
 			}
 		} catch ( err ) {
-			yield receiveAuthOptionsFailed( err );
+			yield receiveAuthOptionsFailed( err as AuthOptionsErrorResponse );
 		}
 	}
 
@@ -159,8 +159,8 @@ export function createActions( {
 			}
 		} catch ( e ) {
 			const error = {
-				code: e.name,
-				message: e.message,
+				code: ( e as Error ).name,
+				message: ( e as Error ).message,
 			};
 
 			yield receiveWpLoginFailed( {

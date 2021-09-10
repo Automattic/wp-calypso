@@ -138,8 +138,9 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'redirect',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -707,6 +708,14 @@ export function generateSteps( {
 
 		design: {
 			stepName: 'design-picker',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+		},
+
+		'design-setup-site': {
+			stepName: 'design-setup-site',
+			apiRequestFunction: setThemeOnSite,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],

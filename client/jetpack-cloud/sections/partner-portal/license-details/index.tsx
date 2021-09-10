@@ -1,9 +1,8 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { ReactElement } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Gridicon from 'calypso/components/gridicon';
 import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';

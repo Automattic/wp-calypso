@@ -35,7 +35,6 @@ Any component which is a child of `CheckoutProvider` gets access to the followin
 - [useTransactionStatus](#useTransactionStatus)
 - [usePaymentProcessor](#usePaymentProcessor)
 - [usePaymentProcessors](#usePaymentProcessors)
-- [useMessages](#useMessages)
 - [useDispatch](#useDispatch)
 - [useLineItems](#useLineItems)
 - [useLineItemsOfType](#useLineItemsOfType)
@@ -164,10 +163,9 @@ It has the following props.
 - `items: object[]`. An array of [line item objects](#line-items) that will be displayed in the form.
 - `total: object`. A [line item object](#line-items) with the final total to be paid.
 - `theme?: object`. A [theme object](#styles-and-themes).
-- `onPaymentComplete: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id and the transaction response as set by the payment processor function.
-- `showErrorMessage: (string) => null`. A function that will display a message with an "error" type.
-- `showInfoMessage: (string) => null`. A function that will display a message with an "info" type.
-- `showSuccessMessage: (string) => null`. A function that will display a message with a "success" type.
+- `onPaymentComplete?: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for non-redirect payment methods when payment is successful. Passed the current payment method id and the transaction response as set by the payment processor function.
+- `onPaymentRedirect?: ({paymentMethodId: string | null, transactionLastResponse: unknown }) => null`. A function to call for redirect payment methods when payment begins to redirect. Passed the current payment method id and the transaction response as set by the payment processor function.
+- `onPaymentError?: ({paymentMethodId: string | null, transactionError: string | null }) => null`. A function to call for payment methods when payment is not successful.
 - `onEvent?: (action) => null`. A function called for all sorts of events in the code. The callback will be called with a [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action).
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
@@ -442,10 +440,6 @@ A React Hook that will return a two element array where the first element is the
 ### useLineItemsOfType
 
 A React Hook taking one string argument that will return an array of [line items](#line-items) from the cart (derived from the same data returned by [useLineItems](#useLineItems)) whose `type` property matches that string. Only works within [CheckoutProvider](#CheckoutProvider).
-
-### useMessages
-
-A React Hook that will return an object containing the `showErrorMessage`, `showInfoMessage`, and `showSuccessMessage` callbacks as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
 ### usePaymentMethod
 

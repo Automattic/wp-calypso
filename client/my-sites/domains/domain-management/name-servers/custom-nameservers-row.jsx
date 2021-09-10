@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

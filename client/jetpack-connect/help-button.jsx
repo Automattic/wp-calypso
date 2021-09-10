@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

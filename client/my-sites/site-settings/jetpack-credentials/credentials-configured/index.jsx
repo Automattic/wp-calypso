@@ -1,11 +1,10 @@
-import { CompactCard, Button } from '@automattic/components';
+import { CompactCard, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FoldableCard from 'calypso/components/foldable-card';
-import Gridicon from 'calypso/components/gridicon';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
 import { deleteCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';

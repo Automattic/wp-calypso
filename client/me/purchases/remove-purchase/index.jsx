@@ -10,7 +10,7 @@ import {
 	isJetpackSearch,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { Dialog, Button, CompactCard } from '@automattic/components';
+import { Dialog, Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import Gridicon from 'calypso/components/gridicon';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
@@ -208,6 +207,51 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	renderDomainMappingDialog() {
+		const { purchase, site } = this.props;
+
+		return (
+			<CancelPurchaseForm
+				disableButtons={ this.state.isRemoving }
+				defaultContent={ this.renderDomainMappingDialogText() }
+				purchase={ purchase }
+				selectedSite={ site }
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
+		);
+	}
+
+	renderDomainMappingDialogText() {
+		const { purchase, translate } = this.props;
+		const domainName = getName( purchase );
+		const domainProductName = purchase.productName;
+
+		return (
+			<div>
+				<p>
+					{
+						/* translators: "domainName" is the URL of the Domain Connection being removed (example: "mygroovysite.com"). "domainProductName" is a product name (in this case, Domain Connection).  */
+						translate( 'Are you sure you want to remove %(domainName)s from {{site/}}?', {
+							args: { domainName },
+							components: { site: <em>{ purchase.domain }</em> },
+							/* translators:  ^ "site" is the internal WPcom domain i.e. example.wordpress.com */
+						} )
+					}{ ' ' }
+					{ translate(
+						'You will not be able to reuse it again without starting a new %(domainProductName)s subscription.',
+						{
+							args: { domainProductName },
+							comment: "'domainProductName' refers to Domain Mapping in this case.",
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
 	renderPlanDialog() {
 		const { purchase, site } = this.props;
 
@@ -252,10 +296,13 @@ class RemovePurchase extends Component {
 							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						} )
 					}{ ' ' }
-					{ translate(
-						'You will not be able to reuse it again without purchasing a new subscription.',
-						{ comment: "'it' refers to a product purchased by a user" }
-					) }
+					{ isDomainRegistration &&
+						translate(
+							'You will not be able to reuse it again without starting a new subscription.',
+							{
+								comment: "'it' refers to a product purchased by a user",
+							}
+						) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
@@ -302,13 +349,12 @@ class RemovePurchase extends Component {
 	}
 
 	renderJetpackDialog() {
-		const { purchase, site } = this.props;
+		const { purchase } = this.props;
 
 		return (
 			<CancelJetpackForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
-				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
@@ -324,7 +370,11 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return this.renderDomainMappingDialog();
+		}
+
+		if ( isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
@@ -344,7 +394,7 @@ class RemovePurchase extends Component {
 		}
 
 		// Jetpack Plan or Product Cancellation
-		if ( this.props.isJetpack && config.isEnabled( 'jetpack/product-cancellation-flow' ) ) {
+		if ( this.props.isJetpack ) {
 			return this.renderJetpackDialog();
 		}
 

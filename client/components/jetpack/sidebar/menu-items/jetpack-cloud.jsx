@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import JetpackIcons from './jetpack-icons';
 import JetpackSidebarMenuItems from '.';
 
 export default ( { path } ) => {
@@ -40,8 +41,7 @@ export default ( { path } ) => {
 			/>
 			{ shouldShowSettings && (
 				<SidebarItem
-					materialIcon="settings"
-					materialIconStyle="filled"
+					customIcon={ <JetpackIcons icon="settings" /> }
 					label={ translate( 'Settings', {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }

@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { hasConciergeSession } from 'calypso/lib/cart-values/cart-items';
 import { REFUNDS } from 'calypso/lib/url/support';

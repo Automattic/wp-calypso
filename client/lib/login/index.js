@@ -128,5 +128,12 @@ export function getSignupUrl(
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
+	if ( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) {
+		const params = new URLSearchParams( {
+			redirect_to: redirectTo,
+		} );
+		signupUrl = `/start/account?${ params.toString() }`;
+	}
+
 	return signupUrl;
 }

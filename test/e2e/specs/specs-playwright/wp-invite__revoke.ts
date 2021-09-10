@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	DataHelper,
 	EmailClient,
@@ -27,7 +31,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		page = args.page;
 	} );
 
-	it( 'Can log in', async function () {
+	it( 'Log in', async function () {
 		const loginFlow = new LoginFlow( page );
 		await loginFlow.logIn();
 	} );
@@ -52,7 +56,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	it( 'Revoke the invite for test user', async function () {
 		await sidebarComponent.navigate( 'Users', 'All Users' );
 		await peoplePage.clickTab( 'Invites' );
-		await peoplePage.revokeInvite( testEmailAddress );
+		await peoplePage.selectInvitedUser( testEmailAddress );
+		await peoplePage.revokeInvite();
 	} );
 
 	it( `Invite email was received for test user`, async function () {
@@ -62,11 +67,13 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			emailAddress: testEmailAddress,
 		} );
 		const links = await emailClient.getLinksFromMessage( message );
-		const acceptInviteLink = links.find( ( link: string ) => link.includes( 'accept-invite' ) );
-
-		adjustedInviteLink = await DataHelper.adjustInviteLink( acceptInviteLink );
+		const acceptInviteLink = links.find( ( link: string ) =>
+			link.includes( 'accept-invite' )
+		) as string;
 
 		expect( acceptInviteLink ).toBeDefined();
+
+		adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 	} );
 
 	it( `Ensure invite link is no longer valid`, async function () {

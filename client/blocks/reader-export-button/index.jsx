@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
 } from 'calypso/blocks/reader-export-button/constants';
-import Gridicon from 'calypso/components/gridicon';
 import wp from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 

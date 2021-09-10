@@ -1,11 +1,10 @@
-import { ScreenReaderText } from '@automattic/components';
+import { ScreenReaderText, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 const noop = () => {};

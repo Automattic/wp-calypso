@@ -5,47 +5,100 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for contributing to calypso! Pick a clear title and proceed.
+        <br>
+         
+        ### Thanks for contributing! 
+        
+        Please write a clear title, then fill in the fields below and submit.
+        There are only ***3 required fields***, but please provide as much additional information and context as you are able to.
+        
+        Avoid using image hosting services such as Cloudup, Droplr, Imgur, etc., to link to media.
+        Instead, attach screenshot(s) or recording(s) directly in any of the text  areas below: click, then drag and drop.
+                
+        If you have any questions, please ask in: `slack-bug-herders`.
+        
+        <br>
+        
+        ---
+        
+        <br>
+  - type: textarea
+    id: summary
+    attributes:
+        label: Quick summary
+  - type: markdown
+    attributes:
+      value: |
+        <br>
   - type: textarea
     id: steps
     attributes:
-      label: Steps to Reproduce
+      label: Steps to reproduce
       placeholder: |
-        1. Start at /home.
-        2. Click on View Site.
-        3. Click on 'Like' button.
-        ...
+        1. Start at `site-domain.com/blog`.
+        2. Click on any blog post.
+        3. Click on the 'Like' button.
+        4. ...
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
   - type: textarea
     id: expected
     attributes:
-      label: What I expected to happen
+      label: What you expected to happen
       placeholder: |
-        eg. Post should be liked.
+        e.g. The post should be liked.
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
   - type: textarea
     id: actual
     attributes:
       label: What actually happened
       placeholder: |
-        eg. Clicking the button does nothing visibly.
+        e.g. Clicking the button does nothing visibly.
+        
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
   - type: textarea
     id: issue_context
     attributes:
       label: Context
       placeholder: |
-        eg. Customer report, exploratory testing...
-    validations:
-      required: true
+        e.g. Customer report, details of your exploratory testing, etc.
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+        
+        ---
+        
+        <br>
+         
+        ### Additional context
+        
+        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue. 
+        
+        <br>
+        
+        ---
+        
+        <br>
   - type: dropdown
     id: os
     attributes:
       label: Operating System
-      description: Multiple selection is supported.
+      description: (You may select more than one)
       options:
         - Windows
         - macOS
@@ -53,64 +106,63 @@ body:
         - Android
         - iOS
       multiple: true
-    validations:
-      required: true
-  - type: input
-    id: os_version
+  - type: markdown
     attributes:
-      label: OS Version
+      value: |
+        <br>
   - type: dropdown
     id: browser
     attributes:
       label: Browser
-      description: Multiple selection is supported.
+      description: (You may select more than one)
       options:
-        - Chrome/Chromium
-        - Firefox
+        - Google Chrome/Chromium
+        - Mozilla Firefox
         - Microsoft Edge
         - Microsoft Edge (legacy)
-        - Safari
+        - Apple Safari
       multiple: true
-    validations:
-      required: true
-  - type: input
+  - type: markdown
     attributes:
-      label: Browser Version(s)
-  - type: input
-    id: theme
-    attributes:
-      label: Is this specific to applied theme? If so, what is the theme name?
+      value: |
+        <br>
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple/Atomic
-      description: Multiple selection is supported.
+      label: Simple, Atomic or both?
+      description: (You may select more than one)
       options:
         - Simple
         - Atomic
       multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
   - type: textarea
-    id: errors
+    id: theme
     attributes:
-      label: Console and/or error logs
-      description: If there are any console logs or errors, paste it below.
-  - type: dropdown
-    id: users-affected
-    attributes:
-      label: Number of Users Impacted
-      description: How many users do you think might encounter this bug? Best guesses are fine!
-      options:
-        - One user
-        - Some users (<50%)
-        - Most users (>50%)
-        - All users
-  - type: textarea
-    id: workarounds
-    attributes:
-      label: Available Workarounds
-      description: Are there any workarounds to this bug? How difficult are those workarounds?
+      label: Theme-specific issue?
       placeholder: |
-        eg. There is alternative access to this setting in the sidebar, but it's not readily apparent.
+        If yes, what is the theme name?
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: other_notes
+    attributes:
+      label: Other notes
+      placeholder: |
+        e.g. Logs, CLI or console errors, notes, observations, etc.
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+        
+        ---
+        
+        <br>
   - type: dropdown
     id: reproducibility
     attributes:
@@ -119,9 +171,43 @@ body:
         - Consistent
         - Intermittent
         - Once
-        - Never
-  - type: textarea
-    id: other
+  - type: markdown
     attributes:
-      label: Other information
-      placeholder: additional logs, notes, etc.
+      value: |
+          <br>
+  - type: dropdown
+    id: users-affected
+    attributes:
+      label: Severity
+      description: Approximately how many users are impacted?
+      options:
+        - One
+        - Some (< 50%)
+        - Most (> 50%)
+        - All
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: dropdown
+    id: workarounds
+    attributes:
+      label: Available workarounds?
+      description: Is a workaround possible? What is the impact of this issue to users?
+      options:
+        - No and the platform is unusable
+        - No but the platform is still usable 
+        - Yes, difficult to implement
+        - Yes, easy to implement
+        - There is no user impact
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: textarea
+    id: workarounds-detail
+    attributes:
+      label: Workaround details
+      description: If you are aware of a workaround, please describe it below.
+      placeholder: |
+        e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.

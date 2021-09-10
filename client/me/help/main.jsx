@@ -1,5 +1,5 @@
 import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
-import { Button, CompactCard, Card } from '@automattic/components';
+import { Button, CompactCard, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
@@ -15,7 +15,6 @@ import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

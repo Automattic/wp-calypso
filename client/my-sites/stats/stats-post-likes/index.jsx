@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import PostLikes from 'calypso/blocks/post-likes';
 import Count from 'calypso/components/count';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
-import Gridicon from 'calypso/components/gridicon';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModulePlaceholder from '../stats-module/placeholder';

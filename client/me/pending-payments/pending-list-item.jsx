@@ -1,11 +1,10 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { paymentMethodName } from 'calypso/lib/cart-values';
 import { purchaseType as getPurchaseType, getName } from 'calypso/lib/purchases';

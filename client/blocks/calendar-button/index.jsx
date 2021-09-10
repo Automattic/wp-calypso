@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
-import Gridicon from 'calypso/components/gridicon';
 
 const noop = () => {};
 

@@ -15,6 +15,7 @@ import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -135,14 +136,12 @@ const GoogleAnalyticsJetpackForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<ExternalLink
-									icon
-									href="https://support.google.com/analytics/answer/1032385?hl=en"
-									target="_blank"
-									rel="noopener noreferrer"
+								<InlineSupportLink
+									supportPostId={ 98905 }
+									supportLink="https://wordpress.com/support/google-analytics/#get-your-measurement-id"
 								>
 									{ translate( 'Where can I find my Measurement ID?' ) }
-								</ExternalLink>
+								</InlineSupportLink>
 							</FormFieldset>
 							<FormFieldset>
 								<ToggleControl

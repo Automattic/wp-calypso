@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { PropsWithChildren, ReactElement, useCallback, useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {

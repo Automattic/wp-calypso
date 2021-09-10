@@ -1,4 +1,4 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
@@ -8,7 +8,6 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';

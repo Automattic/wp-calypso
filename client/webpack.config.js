@@ -248,7 +248,6 @@ const webpackConfig = {
 		alias: Object.assign( {
 			debug: path.resolve( __dirname, '../node_modules/debug' ),
 			store: 'store/dist/store.modern',
-			gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 			// By using the path of the package we let Webpack parse the package's `package.json`
 			// and use `mainFields` to decide what is the main file.
 			'@wordpress/data': findPackage( '@wordpress/data' ),
@@ -257,8 +256,6 @@ const webpackConfig = {
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
 
-			// Node polyfills
-			process: 'process/browser',
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
 		} ),
 	},
@@ -275,8 +272,9 @@ const webpackConfig = {
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
 		} ),
+		// Node polyfills
 		new webpack.ProvidePlugin( {
-			process: 'process/browser',
+			process: 'process/browser.js',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),

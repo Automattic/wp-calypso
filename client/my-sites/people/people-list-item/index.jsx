@@ -1,11 +1,10 @@
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { resendInvite } from 'calypso/state/invites/actions';

@@ -1,5 +1,5 @@
 import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import i18nCalypso, { localize } from 'i18n-calypso';
 import page from 'page';
@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';

@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import React, { useRef, useState, useCallback, useLayoutEffect } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

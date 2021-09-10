@@ -44,7 +44,7 @@
 		"react-stripe-elements": "^4.0.2"
 	},
 	"devDependencies": {
-		"typescript": "^4.3.5"
+		"typescript": "^4.4.2"
 	},
 	"private": true
 }

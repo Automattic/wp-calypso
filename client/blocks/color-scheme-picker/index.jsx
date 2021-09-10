@@ -1,10 +1,11 @@
-import { translate } from 'i18n-calypso';
+import { translate, localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
+import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference, setPreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getColorSchemesData from './constants';
@@ -23,12 +24,25 @@ class ColorSchemePicker extends PureComponent {
 	};
 
 	handleColorSchemeSelection = ( event ) => {
-		const { temporarySelection, onSelection, saveColorSchemePreference } = this.props;
+		const {
+			temporarySelection,
+			translate,
+			onSelection,
+			saveColorSchemePreference,
+			successNotice,
+		} = this.props;
 		const { value } = event.currentTarget;
+		const noticeSettings = {
+			id: 'color-scheme-picker-save',
+			duration: 10000,
+		};
+
 		if ( temporarySelection ) {
 			onSelection( value );
 		}
 		saveColorSchemePreference( value, temporarySelection );
+
+		successNotice( translate( 'Settings saved successfully!' ), noticeSettings );
 	};
 
 	render() {
@@ -66,5 +80,5 @@ export default connect(
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 		};
 	},
-	{ saveColorSchemePreference }
-)( ColorSchemePicker );
+	{ saveColorSchemePreference, successNotice }
+)( localize( ColorSchemePicker ) );

@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	bumpStat,

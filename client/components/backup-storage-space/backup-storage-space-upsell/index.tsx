@@ -3,7 +3,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 

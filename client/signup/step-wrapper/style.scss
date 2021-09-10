@@ -1,3 +1,13 @@
+.step-wrapper__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	.formatted-header {
+		flex-grow: 1;
+	}
+}
+
 .step-wrapper__skip-hr {
 	background: var( --color-primary-light );
 	max-width: 270px;
@@ -32,7 +42,7 @@
 	background: var( --color-surface );
 	border-radius: 2px;
 	padding: 2px 12px;
-	@include elevation ( 2dp );
+	@include elevation( 2dp );
 }
 
 .step-wrapper__buttons.is-top-buttons .step-wrapper__skip-heading {
@@ -51,4 +61,20 @@
 
 .step-wrapper__buttons.is-top-buttons .navigation-link svg {
 	display: none;
+}
+
+.step-wrapper__buttons.is-top-right-buttons {
+	margin-left: auto;
+	margin-bottom: 0;
+	font-size: 0.875rem;
+
+	.navigation-link {
+		height: 42px;
+		min-width: 160px;
+		color: #2c3338;
+
+		svg {
+			display: none;
+		}
+	}
 }

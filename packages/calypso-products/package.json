@@ -44,7 +44,7 @@
 	},
 	"devDependencies": {
 		"chai": "^4.3.4",
-		"typescript": "^4.3.5"
+		"typescript": "^4.4.2"
 	},
 	"private": true
 }

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -8,7 +9,6 @@ import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import Emojify from 'calypso/components/emojify';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
 import withDimensions from 'calypso/lib/with-dimensions';

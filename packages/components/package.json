@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "1.0.0-alpha.3",
+	"version": "1.0.0-alpha.4",
 	"description": "Automattic Components",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -43,13 +43,13 @@
 		"react-dom": "^16.12.0"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.3.7",
+		"@storybook/addon-actions": "^6.3.8",
 		"@storybook/preset-scss": "^1.0.3",
 		"css-loader": "^3.4.2",
 		"enzyme": "^3.11.0",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.2.1",
-		"typescript": "^4.3.5",
+		"typescript": "^4.4.2",
 		"webpack": "^5.36.2"
 	},
 	"scripts": {

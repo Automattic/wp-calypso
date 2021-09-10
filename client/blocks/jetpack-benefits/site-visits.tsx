@@ -1,21 +1,14 @@
-/**
- * External Dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import memoizeLast from 'calypso/lib/memoize-last';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-
-/**
- * Internal Dependencies
- */
-import memoizeLast from 'calypso/lib/memoize-last';
-import moment from 'moment';
-import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
-import { useTranslate } from 'i18n-calypso';
 
 const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf ) => ( {
 	period,

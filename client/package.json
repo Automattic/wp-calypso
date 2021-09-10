@@ -47,7 +47,7 @@
 		"@automattic/popup-monitor": "^1.0.0",
 		"@automattic/react-virtualized": "^9.22.3",
 		"@automattic/request-external-access": "^1.0.0",
-		"@automattic/shopping-cart": "^1.0.0",
+		"@automattic/shopping-cart": "^2.0.0",
 		"@automattic/social-previews": "^1.0.1",
 		"@automattic/state-utils": "^1.0.0-alpha.4",
 		"@automattic/tree-select": "^1.0.3",
@@ -136,6 +136,7 @@
 		"enzyme": "^3.11.0",
 		"events": "^3.1.0",
 		"express": "^4.17.1",
+		"express-async-handler": "^1.1.4",
 		"express-useragent": "^1.0.15",
 		"fake-indexeddb": "^3.1.3",
 		"fast-json-stable-stringify": "^2.1.0",
@@ -201,7 +202,7 @@
 		"react-transition-group": "^4.3.0",
 		"reakit": "^1.2.3",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.0.5",
+		"redux": "^4.1.1",
 		"redux-dynamic-middlewares": "^2.0.0",
 		"redux-thunk": "^2.3.0",
 		"refx": "^3.1.1",
@@ -251,6 +252,7 @@
 		"component-query": "^0.0.3",
 		"pkg-dir": "^5.0.0",
 		"postcss-custom-properties": "^11.0.0",
+		"process": "^0.11.10",
 		"react-test-renderer": "^16.12.0",
 		"redux-mock-store": "^1.5.4"
 	}

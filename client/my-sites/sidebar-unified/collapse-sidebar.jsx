@@ -1,7 +1,7 @@
 /**
  * Collapse Sidebar Menu Item
  *
- **/
+ */
 
 import PropTypes from 'prop-types';
 import React from 'react';

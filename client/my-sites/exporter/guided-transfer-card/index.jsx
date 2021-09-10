@@ -1,10 +1,9 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import Button from 'calypso/components/forms/form-button';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';

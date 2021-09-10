@@ -57,7 +57,7 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	it( 'Select .com search result and decline Google Apps offer', async function () {
 		const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 		await findADomainComponent.selectDomainAddress( rootDomain );
-		await findADomainComponent.declineGoogleApps();
+		await findADomainComponent.declineEmailUpsell();
 	} );
 
 	it( 'Go to checkout page and enter registrar details', async function () {
