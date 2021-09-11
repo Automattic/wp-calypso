@@ -8,7 +8,6 @@ import {
 	getYearlyPlanByMonthly,
 	isMonthly,
 	TERM_MONTHLY,
-	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -104,7 +103,8 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 		termLength === 'yearly' ? setTermLength( 'monthly' ) : setTermLength( 'yearly' );
 
 	const handleUpgradeButtonClick = ( productSlug, productId ) => {
-		const args = productSlug === null ? null : { product_slug: productSlug, product_id: productId };
+		const args =
+			productSlug === 'free_plan' ? null : { product_slug: productSlug, product_id: productId };
 		onUpgradeClick( args );
 	};
 
@@ -319,7 +319,7 @@ const mapStateToProps = ( state, ownProps ) => {
 			planSlug: planObject?.product_slug,
 			rawPrice,
 			rawPriceForMonthly,
-			termLength: planObject?.product_slug.includes( 'monthly' ) ? 'monthly' : 'yearly',
+			termLength: isMonthlyPlan ? 'monthly' : 'yearly',
 		};
 	} );
 	planProperties.unshift( {
@@ -327,8 +327,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		planName: 'Free',
 		planObject: {},
-		planProductId: null,
-		planSlug: 'free',
+		planProductId: 1,
+		planSlug: 'free_plan',
 		rawPrice: 0,
 		rawPriceForMonthly: 0,
 		termLength: null,
