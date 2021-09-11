@@ -23,11 +23,10 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			await loginFlow.logIn();
 		} );
 
-		it( 'Displays default entries on card', async function () {
+		it( 'Displays default entries', async function () {
 			supportComponent = new SupportComponent( page );
 			await supportComponent.showSupportCard();
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
+			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Enter valid search keyword', async function () {
@@ -36,11 +35,8 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		} );
 
 		it( 'Search results are shown', async function () {
-			const supportCount = await supportComponent.getSupportResultsCount();
-			expect( supportCount ).toBe( 4 );
-
-			const adminCount = await supportComponent.getAdminResultsCount();
-			expect( adminCount ).toBe( 3 );
+			const results = await supportComponent.getResults( 'article' );
+			expect( results.length ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Clear keyword', async function () {
@@ -48,14 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		} );
 
 		it( 'Default entries are shown again', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
-
-			const supportResults = await supportComponent.getSupportResultsCount();
-			expect( supportResults ).toBe( 0 );
-
-			const adminResults = await supportComponent.getAdminResultsCount();
-			expect( adminResults ).toBe( 0 );
+			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Enter invalid search keyword', async function () {
@@ -64,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		} );
 
 		it( 'No search results are shown', async function () {
-			await supportComponent.noResults();
+			await supportComponent.noResultsShown();
 		} );
 
 		it( 'Enter empty search keyword', async function () {
@@ -74,8 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		} );
 
 		it( 'Continues to display default results', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
+			await supportComponent.noResultsShown();
 		} );
 	} );
 } );
