@@ -109,6 +109,7 @@ export interface DesignPickerProps {
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
+	className?: string;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -120,9 +121,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',
+	className,
 } ) => {
 	return (
-		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }` ) }>
+		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
 				{ designs.map( ( design ) => (
 					<DesignButton
