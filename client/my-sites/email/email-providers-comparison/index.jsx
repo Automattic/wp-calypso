@@ -459,6 +459,8 @@ class EmailProvidersComparison extends React.Component {
 			<Gridicon
 				className="email-providers-comparison__providers-wordpress-com-email"
 				icon="my-sites"
+				height="40"
+				width="40"
 			/>
 		);
 

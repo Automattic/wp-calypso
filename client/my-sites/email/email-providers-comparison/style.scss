@@ -65,7 +65,7 @@
 		margin-top: 0;
 
 		img {
-			max-width: 24px;
+			max-width: 36px;
 		}
 	}
 
@@ -81,6 +81,17 @@
 		img {
 			max-height: 18px;
 		}
+	}
+
+	&.is-forwarding {
+		div > img {
+			width: 36px;
+			height: 36px;
+		}
+	}
+
+	h2.action-panel__title {
+		margin-top: 8px;
 	}
 
 	.email-providers-comparison__provider-card-main-details {

@@ -47,6 +47,7 @@ function EmailProviderCard( {
 		<PromoCard
 			className={ classnames( 'email-providers-comparison__provider-card', {
 				'is-expanded': detailsExpanded,
+				'is-forwarding': providerKey === 'forwarding',
 			} ) }
 			image={ logo }
 			title={ title }
