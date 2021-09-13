@@ -39,6 +39,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		hasSelectedDesign,
 		hasSelectedDesignWithoutFonts,
 		isRedirecting,
+		isEnrollingInFse,
 	} = useSelect(
 		( select ) => {
 			const onboardSelect = select( STORE_KEY );
@@ -48,6 +49,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
 				isRedirecting: onboardSelect.getIsRedirecting(),
+				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta,
 			};
 		},
 		[ STORE_KEY ]
@@ -105,8 +107,8 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}, [ hasSiteTitle ] );
 
 	const canUseStyleStep = React.useCallback( (): boolean => {
-		return hasSelectedDesign;
-	}, [ hasSelectedDesign ] );
+		return hasSelectedDesign && ! isEnrollingInFse;
+	}, [ hasSelectedDesign, isEnrollingInFse ] );
 
 	const shouldSkipStyleStep = React.useCallback( (): boolean => {
 		return hasSelectedDesignWithoutFonts;
