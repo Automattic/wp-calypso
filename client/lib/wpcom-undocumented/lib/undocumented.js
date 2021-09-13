@@ -801,17 +801,6 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 };
 
 /**
- * Get a list of the user's stored cards
- *
- * @param {Function} [fn] The callback function.
- * @returns {Promise} Returns a promise when the `callback` is not provided.
- */
-Undocumented.prototype.getStoredCards = function ( fn ) {
-	debug( '/me/stored-cards query' );
-	return this.wpcom.req.get( { path: '/me/stored-cards' }, fn );
-};
-
-/**
  * Get a list of the user's stored payment methods
  *
  * @param {object} query The query parameters
