@@ -801,14 +801,6 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 };
 
 /**
- * Get a list of the user's allowed payment methods
- */
-Undocumented.prototype.getAllowedPaymentMethods = function () {
-	debug( '/me/allowed-payment-methods query' );
-	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
-};
-
-/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain
