@@ -53,6 +53,7 @@
 		"i18n/empathy-mode": true,
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,
+		"jetpack/backups-date-picker": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
