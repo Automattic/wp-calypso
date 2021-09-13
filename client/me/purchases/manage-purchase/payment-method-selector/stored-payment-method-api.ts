@@ -1,9 +1,7 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import wpcomFactory from 'calypso/lib/wp';
+import wp from 'calypso/lib/wp';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { Purchase } from 'calypso/lib/purchases/types';
-
-const wpcom = wpcomFactory.undocumented();
 
 type StoredCardEndpointResponse = unknown;
 
@@ -21,7 +19,16 @@ export async function saveCreditCard( {
 		stripeConfiguration,
 		useForAllSubscriptions,
 	} );
-	const response = await wpcom.me().storedCardAdd( token, additionalData );
+	const response = await wp.req.post(
+		{
+			path: '/me/stored-cards',
+		},
+		{
+			payment_key: token,
+			use_for_existing: true,
+			...( additionalData ?? {} ),
+		}
+	);
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_add_new_payment_method_error' );
 		throw new Error( response );
@@ -39,12 +46,15 @@ export async function updateCreditCard( {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 } ): Promise< StoredCardEndpointResponse > {
-	const updatedCreditCardApiParams = getParamsForApi( {
+	const { purchaseId, payment_partner, paygate_token } = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		purchase,
 	} );
-	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
+	const response = await wp.req.post( '/upgrades/' + purchaseId + '/update-credit-card', {
+		payment_partner: payment_partner,
+		paygate_token: paygate_token,
+	} );
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );
 		throw new Error( response );
