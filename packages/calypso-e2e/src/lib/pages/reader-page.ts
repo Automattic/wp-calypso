@@ -1,16 +1,16 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	readerPageLocator: '.reader__content',
-	readerVisitLink: '.reader-visit-link',
-	shareButtonLocator: '.reader-share__button',
-	firstComboCardPostLocator: '.reader-combined-card__post-title-link',
-	siteContentLocator: '.site-selector__sites .site__content',
-	commentButtonLocator: '.comment-button',
-	commentTextAreaLocator: '.comments__form textarea',
-	commentSubmitLocator: '.comments__form button:text("Send")',
+	// Reader main stream
+	readerCard: '.reader-post-card',
+	visitSiteLink: '.reader-visit-link',
+	actionButton: ( action: 'Share' | 'Comment' ) =>
+		`.reader-post-actions__item:has(span:has-text("${ action }"))`,
+
+	commentTextArea: '.comments__form textarea',
+	commentSubmitButton: '.comments__form button:text("Send")',
 	commentContentLocator: ( commentText: string ) =>
-		`.comments__comment-content :text( '${ commentText }' )`,
+		`.comments__comment :text( '${ commentText }' )`,
 };
 
 /**
@@ -29,32 +29,28 @@ export class ReaderPage {
 	}
 
 	/**
-	 * Verifies that we are actually on the Reader Page
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	private async verifyReaderPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.readerPageLocator );
-	}
-
-	/**
 	 * Get the URL of the latest post in Reader
 	 *
 	 * @returns {Promise<string>} String of URL for latest post.
 	 */
 	async siteOfLatestPost(): Promise< string > {
-		const href = await this.page.getAttribute( selectors.readerVisitLink, 'href' );
+		const href = await this.page.getAttribute( selectors.visitSiteLink, 'href' );
 		return new URL( href ? href : '' ).host;
 	}
 
 	/**
-	 * Share latest post in Reader
+	 * Visits a post in the Reader.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param param0 Keyed object parameter.
+	 * @param {number} param0.index n-th post to view on the reader page. 1-indexed.
 	 */
-	async shareLatestPost(): Promise< void > {
-		await this.page.click( selectors.shareButtonLocator );
-		await this.page.click( selectors.siteContentLocator );
+	async visitPost( { index }: { index?: number } = {} ): Promise< void > {
+		let selector = '';
+		if ( index ) {
+			selector = `:nth-match(${ selectors.readerCard }, ${ index })`;
+		}
+
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
 	}
 
 	/**
@@ -63,19 +59,11 @@ export class ReaderPage {
 	 * @param {string} comment Text of the comment.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async commentOnLatestPost( comment: string ): Promise< void > {
-		await this.page.click( selectors.commentButtonLocator );
-		await this.page.fill( selectors.commentTextAreaLocator, comment );
-		await this.page.click( selectors.commentSubmitLocator );
-	}
-
-	/**
-	 * Wait for the comment with the specified text to display.
-	 *
-	 * @param {string} comment Text of the comment.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitForCommentToAppear( comment: string ): Promise< void > {
+	async comment( comment: string ): Promise< void > {
+		const elementHandle = await this.page.waitForSelector( selectors.commentTextArea );
+		await elementHandle.scrollIntoViewIfNeeded();
+		await this.page.fill( selectors.commentTextArea, comment );
+		await this.page.click( selectors.commentSubmitButton );
 		await this.page.waitForSelector( selectors.commentContentLocator( comment ) );
 	}
 }
