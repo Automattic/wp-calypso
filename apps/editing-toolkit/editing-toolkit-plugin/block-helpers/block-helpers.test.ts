@@ -1,7 +1,5 @@
 import { getCategoryWithFallbacks } from '.';
 
-const a = 1;
-
 jest.mock( '@wordpress/blocks', () => ( {
 	getCategories: () => [ { slug: 'foobar' }, { slug: 'barfoo' } ],
 } ) );
