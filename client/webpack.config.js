@@ -13,7 +13,6 @@ const {
 	cssNameFromFilename,
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
-const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
@@ -21,7 +20,6 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
-const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
@@ -216,11 +214,7 @@ const webpackConfig = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [
-						autoprefixerPlugin(),
-						browserslistEnv === 'defaults' &&
-							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
-					].filter( Boolean ),
+					plugins: [ autoprefixerPlugin() ],
 				},
 				prelude: `@use '${ path.join(
 					__dirname,
