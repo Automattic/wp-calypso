@@ -323,9 +323,9 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Checks whether the editor has any block warnings/errors displaying
+	 * Checks whether the editor has any block warnings/errors displaying.
 	 *
-	 * @returns True if there are block warnings/errors, false otherwise
+	 * @returns True if there are block warnings/errors, false otherwise.
 	 */
 	async editorHasBlockWarnings(): Promise< boolean > {
 		const frame = await this.getEditorFrame();
