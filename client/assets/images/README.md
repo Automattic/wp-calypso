@@ -1,8 +1,15 @@
 # Images
 
-Images from this folder are managed by Webpack, and can be imported like this:
+Images from this folder are managed by webpack, and can be imported like this:
 
 ```javascript
-import mediaPostImage from 'assets/images/upgrades/media-post.svg';
+import mediaPostImageURL from 'assets/images/upgrades/media-post.svg';
 ```
-Note this creates an immutable name with a hash suffix for the image asset: the url  will change if the source image changes.
+
+You can then use such image that way:
+
+```javascript
+<img src={ mediaPostImageURL } alt="Illustration" />
+```
+
+Technically speaking, webpack will copy that image to the `public/images` output folder automatically, with an immutable hashed name (so this name will change if the source image changes).
