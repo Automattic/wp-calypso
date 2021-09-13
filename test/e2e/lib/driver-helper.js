@@ -658,10 +658,13 @@ export async function verifyTranslationsPresent(
 
 	for ( const element of translatableElements ) {
 		const singular = await element.getAttribute( 'data-e2e-string' );
+		// In order to test translations with placeholders, parameters must be passed as JSON encoded string.
+		// For example, `<div data-e2e-string="'Hello, %s!'" data-e2e-string-params={[ 'Jane' ]}}>{ sprintf( __( 'Hello, %s!' ), 'Jane' ) }</div>`.
 		const params = await element.getAttribute( 'data-e2e-string-params' );
+
 		let translation = singular;
 
-		// Translation for default locale should match the original
+		// Translation for default locale should match the original.
 		if ( locale !== 'en' ) {
 			const translationEntry =
 				translations && translations.find( ( entry ) => entry.original.singular === singular );
