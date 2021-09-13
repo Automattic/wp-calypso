@@ -68,7 +68,7 @@ function redirectToCalypso( request, response, next ) {
 export default function ( app ) {
 	return app.post(
 		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
-		bodyParser.urlencoded(),
+		bodyParser.urlencoded( { extended: true } ),
 		loginWithApple,
 		redirectToCalypso
 	);
