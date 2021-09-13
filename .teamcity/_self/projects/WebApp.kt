@@ -695,7 +695,7 @@ fun playwrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
 		}
 
 		failureConditions {
-			executionTimeoutMin = 45
+			executionTimeoutMin = 20
 		}
 
 		dependencies {

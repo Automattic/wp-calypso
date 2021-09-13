@@ -172,24 +172,15 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( text: string ): Promise< void > {
-		// if ( text.trim() ) {
-		// If there is valid search string, then there should be a network request made.
 		// Wait for the response to the request and ensure the status is HTTP 200.
 		await Promise.all( [
 			this.page.waitForResponse(
-				( response ) => response.url().includes( 'search?' ) && response.status() === 200,
-				{ timeout: 60000 }
+				( response ) => response.url().includes( 'search?' ) && response.status() === 200
 			),
 			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'detached' } ),
-			this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } ),
+			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.fill( selectors.searchInput, text ),
 		] );
-		// } else {
-		// If invalid search string (eg. '     '), then no request is made.
-		await this.page.fill( selectors.searchInput, text );
-		// }
-
-		// In all cases, wait for the 'load' state to be fired.
 		await this.page.waitForLoadState( 'load' );
 	}
 
