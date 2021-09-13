@@ -1,7 +1,7 @@
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
-	// Notificatins panel (including sub-panels)
+	// Notifications panel (including sub-panels)
 	comment: '.wpnc__comment',
 	singleViewPanel: '.wpnc__single-view',
 
