@@ -1,5 +1,6 @@
 import path from 'path';
 import { ElementHandle, Page } from 'playwright';
+import { getTargetDeviceName } from '../../browser-helper';
 import { waitForElementEnabled, clickNavTab } from '../../element-helper';
 
 const selectors = {
@@ -13,8 +14,9 @@ const selectors = {
 
 	// Modal view
 	mediaModal: '.editor-media-modal__content',
-	mediaModalEditButton:
-		'.editor-media-modal-detail__edition-bar .editor-media-modal-detail__edit:visible',
+	mediaModalActionBar: ( device: string ) =>
+		`.editor-media-modal-detail__edition-bar.is-${ device }`,
+	mediaModalEditButton: 'button:text("Edit Image")',
 	mediaModalPreview: '.editor-media-modal-detail__preview',
 
 	// Editor view
@@ -97,7 +99,11 @@ export class MediaPage {
 		await this.waitUntilLoaded();
 
 		await this.page.click( selectors.editButton );
-		await this.page.click( selectors.mediaModalEditButton );
+		await this.page.click(
+			`${ selectors.mediaModalActionBar( getTargetDeviceName() ) } ${
+				selectors.mediaModalEditButton
+			}`
+		);
 		await this.page.waitForSelector( selectors.imageEditorCanvas );
 	}
 
