@@ -85,7 +85,6 @@ export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
-	getStoredCards,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -107,7 +106,6 @@ export default function CompositeCheckout( {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
-	getStoredCards?: () => StoredCard[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -307,7 +305,7 @@ export default function CompositeCheckout( {
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
-		getStoredCards || wpcomGetStoredCards,
+		wpcomGetStoredCards,
 		Boolean( isLoggedOutCart )
 	);
 
