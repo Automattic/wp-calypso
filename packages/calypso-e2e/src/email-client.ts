@@ -21,17 +21,21 @@ export class EmailClient {
 	 * @param param0 Keyed parameter object.
 	 * @param {string} param0.inboxId ID of the inbox to look into. Also known as serverId in Mailosaur parlance.
 	 * @param {string} param0.emailAddress Email address of the recipient.
+	 * @param {string} param0.subject Subject of the email.
 	 * @returns {Message} Message object returned by Mailosaur client.
 	 */
 	async getLastEmail( {
 		inboxId,
 		emailAddress,
+		subject,
 	}: {
 		inboxId: string;
 		emailAddress: string;
+		subject?: string;
 	} ): Promise< Message > {
 		const searchCriteria = {
 			sentTo: emailAddress,
+			subject: subject !== undefined ? subject : '',
 		};
 
 		const message = await this.client.messages.get( inboxId, searchCriteria );
