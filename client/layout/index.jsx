@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
-import { startsWith, flowRight as compose, some } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -170,8 +169,8 @@ class Layout extends Component {
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
 			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
-				this.props.currentRoute?.startsWith( startsWithString )
+			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
+				this.props.currentRoute.startsWith( startsWithString )
 			)
 		);
 	}
@@ -196,8 +195,8 @@ class Layout extends Component {
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
 			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
-				this.props.currentRoute?.startsWith( startsWithString )
+			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
+				this.props.currentRoute.startsWith( startsWithString )
 			)
 		);
 	}
@@ -356,18 +355,17 @@ class Layout extends Component {
 	}
 }
 
-export default compose(
-	withCurrentRoute,
+export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
 		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
-		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
+		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
-			startsWith( currentRoute, '/checkout/jetpack' );
+			currentRoute.startsWith( '/checkout/jetpack' );
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
@@ -423,5 +421,5 @@ export default compose(
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
-	} )
-)( Layout );
+	} )( Layout )
+);
