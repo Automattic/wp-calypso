@@ -7,13 +7,6 @@ import { connect } from 'react-redux';
 import PostShare from 'calypso/blocks/post-share';
 import ExternalLink from 'calypso/components/external-link';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
-import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
-import PostActionsEllipsisMenu from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu';
-import PostActionsEllipsisMenuEdit from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/edit';
-import PostActionsEllipsisMenuTrash from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/trash';
-import PostTypeListPostThumbnail from 'calypso/my-sites/post-type-list/post-thumbnail';
-import PostTypePostAuthor from 'calypso/my-sites/post-type-list/post-type-post-author';
-import PostTypeSiteInfo from 'calypso/my-sites/post-type-list/post-type-site-info';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getNormalizedPost } from 'calypso/state/posts/selectors';
@@ -24,6 +17,13 @@ import { isSingleUserSite } from 'calypso/state/sites/selectors';
 import { hideActiveSharePanel } from 'calypso/state/ui/post-type-list/actions';
 import { isSharePanelOpen } from 'calypso/state/ui/post-type-list/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostActionCounts from '../post-action-counts';
+import PostActionsEllipsisMenu from '../post-actions-ellipsis-menu';
+import PostActionsEllipsisMenuEdit from '../post-actions-ellipsis-menu/edit';
+import PostActionsEllipsisMenuTrash from '../post-actions-ellipsis-menu/trash';
+import PostTypeListPostThumbnail from '../post-thumbnail';
+import PostTypePostAuthor from '../post-type-post-author';
+import PostTypeSiteInfo from '../post-type-site-info';
 
 import './style.scss';
 

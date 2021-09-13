@@ -6,7 +6,6 @@ import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PostItem from 'calypso/blocks/post-item';
 import SitePreview from 'calypso/blocks/site-preview';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -28,6 +27,7 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
+import PostItem from './post-item';
 
 import './style.scss';
 
