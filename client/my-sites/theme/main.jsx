@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -55,6 +56,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isFullSiteEditingTheme } from 'calypso/utils';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -176,15 +178,22 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
+		const { author, name, taxonomies, translate } = this.props;
+
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
-		const tag = this.props.author
-			? this.props.translate( 'by %(author)s', { args: { author: this.props.author } } )
-			: placeholder;
+		const title = name || placeholder;
+		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ isFullSiteEditingTheme( { taxonomies } ) && (
+						<Badge type="warning-clear" className="theme__badge-beta">
+							{ translate( 'Beta' ) }
+						</Badge>
+					) }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);

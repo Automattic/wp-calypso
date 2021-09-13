@@ -11,12 +11,17 @@
 }
 
 .theme__sheet-bar-title {
-	display: block;
+	display: flex;
+	align-items: flex-end;
 	font-size: $font-title-large;
 	font-weight: 400;
 	padding-top: 78px;
 	padding-left: 25px;
 	line-height: 1;
+
+	.theme__badge-beta {
+		margin-left: 10px;
+	}
 }
 
 .theme__sheet-bar-tag {
@@ -106,7 +111,9 @@
 
 .theme__sheet-action-bar-cost-upgrade {
 	text-transform: uppercase;
+	/* stylelint-disable declaration-property-unit-allowed-list */
 	font-size: 90%;
+	/*stylelint-enable declaration-property-unit-allowed-list */
 }
 
 .theme__sheet-screenshot {
