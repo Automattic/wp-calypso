@@ -277,9 +277,8 @@ const webpackConfig = {
 			minify: ! isDevelopment,
 		} ),
 		new AssetsWriter( {
-			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
+			filename: `assets.json`,
 			path: path.join( outputDir, 'build' ),
-			assetExtraPath: extraPath,
 		} ),
 		shouldCheckForDuplicatePackages && new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
