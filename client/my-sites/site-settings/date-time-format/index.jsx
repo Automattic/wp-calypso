@@ -43,7 +43,13 @@ export class DateTimeFormat extends Component {
 			fields: { date_format: dateFormat, time_format: timeFormat },
 		} = nextProps;
 
-		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
+		const localeDifferent = this.props.locale !== nextProps.locale;
+
+		if (
+			( ! this.state.isLoadingSettings && ! localeDifferent ) ||
+			'' === dateFormat ||
+			'' === timeFormat
+		) {
 			return;
 		}
 
