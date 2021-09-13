@@ -83,13 +83,16 @@ export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ):
 }
 
 export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void ) => {
-	const { duration } = getParamsFromContext( context );
+	const { site, duration } = getParamsFromContext( context );
+	const urlQueryArgs: QueryArgs = context.query;
 	context.header = <StoragePricingHeader />;
 	context.primary = (
 		<StoragePricing
-			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }
 			header={ context.header }
 			footer={ context.footer }
+			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }
+			urlQueryArgs={ urlQueryArgs }
+			siteSlug={ site || context.query.site }
 		/>
 	);
 	next();
