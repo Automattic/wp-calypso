@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -87,6 +88,7 @@ class PagesMain extends React.Component {
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SidebarNavigation />
+				<SitePreview />
 				<FormattedHeader
 					brandFont
 					className="pages__page-heading"
