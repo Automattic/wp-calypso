@@ -11,6 +11,7 @@ const selectors = {
  */
 export class FileBlock {
 	static blockName = 'File';
+	static blockEditorSelector = '[aria-label="Block: File"]';
 	block: ElementHandle;
 
 	/**
