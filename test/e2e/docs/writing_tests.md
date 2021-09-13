@@ -48,9 +48,9 @@ To add your spec file to suites, add a jsdoc block at the top of the file, and u
 ```
 
 The current suites used are...
+
 - `calypso-pr` - tests run pre-merge on every Calypso PR.
 - `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
-
 
 ### 3. Import the basics
 
@@ -145,10 +145,10 @@ beforeAll( async () => {
 
 ### Overview
 
-The in-depth testing for a given Gutenberg block should be written and executed in the source repo for that block (e.g. Jetpack, Gutenberg, Newspack).  
+The in-depth testing for a given Gutenberg block should be written and executed in the source repo for that block (e.g. Jetpack, Gutenberg, Newspack).
 
 However, it is often valuable to perform a very basic smoke test on blocks to ensure they function as intended in the WPCOM & Calypso environment.
-For consistency and ease of test writing and maintenance, all of this block testing is done in a shared format, where the same basic flow is iterated over all the blocks under test.  
+For consistency and ease of test writing and maintenance, all of this block testing is done in a shared format, where the same basic flow is iterated over all the blocks under test.
 
 With a few exceptions (like media blocks), block smoke tests should be grouped together according to the _source_ of the block. E.g. all the blocks from Newspack should be in the same spec, all of the core Gutenberg blocks
 should be in the same spec, etc. This allows for granular test execution when those sources are updated and the new versions are included in WPCOM.
@@ -158,10 +158,11 @@ should be in the same spec, etc. This allows for granular test execution when th
 1. Create a new class to represent the block flow in the appropriate subdirectory of [calypso-e2e/src/lib/blocks](../../../packages/calypso-e2e/src/lib/blocks).
 2. That class should implement the interface `BlockFlow` defined [here](../../../packages/calypso-e2e/src/lib/blocks/schemas.ts).
 3. By convention, any test data needed to configure or validate during the block flow should be provided to the class in the constructor.
-    - Also by convention, this is usually done in a single object typed locally with an interface called `ConfigurationData`.
+   - Also by convention, this is usually done in a single object typed locally with an interface called `ConfigurationData`.
 4. In the spec file, simply instantiate (with the needed test data) all the block flows you want to include in that spec, and pass that array to `createBlockTests` found in [specs/specs-playwright/shared-specs/block-testing.ts](../specs/specs-playwright/shared-specs/block-testing.ts).
 
 ### Examples
+
 <details>
 <summary>Block flow class:</summary>
 
