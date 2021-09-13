@@ -983,13 +983,17 @@ class SignupForm extends Component {
 			] );
 
 			return (
-				<P2SignupForm
-					formFields={ this.formFields() }
-					formFooter={ this.formFooter() }
-					handleSubmit={ this.handleSubmit }
-					{ ...socialProps }
-					footerLink={ this.props.footerLink || this.footerLink() }
-				/>
+				<>
+					{ this.getNotice() }
+					<P2SignupForm
+						formFields={ this.formFields() }
+						formFooter={ this.formFooter() }
+						handleSubmit={ this.handleSubmit }
+						{ ...socialProps }
+						footerLink={ this.props.footerLink || this.footerLink() }
+						error={ this.props?.step?.errors?.[ 0 ] }
+					/>
+				</>
 			);
 		}
 

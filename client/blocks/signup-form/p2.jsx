@@ -13,20 +13,22 @@ class P2SignupForm extends Component {
 	showEmailSignupForm = () => this.setState( { showEmailSignupForm: true } );
 
 	render() {
+		const shouldShowEmailSignupForm =
+			this.state.showEmailSignupForm || this.props?.error?.error === 'password_invalid';
 		return (
 			<div className="signup-form">
-				{ this.state.showEmailSignupForm && (
+				{ shouldShowEmailSignupForm && (
 					<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
 						{ this.props.formFields }
 						{ this.props.formFooter }
 					</LoggedOutForm>
 				) }
 
-				{ this.state.showEmailSignupForm && (
+				{ shouldShowEmailSignupForm && (
 					<div className="signup-form__p2-form-separator">{ this.props.translate( 'or' ) }</div>
 				) }
 
-				{ ! this.state.showEmailSignupForm && (
+				{ ! shouldShowEmailSignupForm && (
 					<Button primary onClick={ this.showEmailSignupForm }>
 						<span>{ this.props.translate( 'Continue with email' ) }</span>
 					</Button>
