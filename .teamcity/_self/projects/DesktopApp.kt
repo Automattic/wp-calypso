@@ -3,8 +3,10 @@ package _self.projects
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -28,6 +30,7 @@ object E2ETests : BuildType({
 
 	dependencies {
 		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
 		}
 	}
 
