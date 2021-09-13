@@ -1,6 +1,6 @@
 # Building a Release
 
-In order to run outside of the development environment you need to build a release version, which takes Electron, the app, and Calypso, and builds an 'executable' as well as installers appropriate for your platform. (Windows: NSIS installer, macOS: DMG image, Linux: Debian package)
+In order to run outside of the development environment you need to build a release version, which builds an 'executable' as well as installers appropriate for your platform. (Windows: NSIS installer, macOS: DMG image, Linux: Debian package)
 
 To do this, run the following command:
 
@@ -12,7 +12,7 @@ If you do not want to re-compile your code you can split the command into buildi
 
 ```bash
 # Creating the JS bundles, CSS files, ...
-make source [CONFIG]
+make build-main [CONFIG_ENV]
 
 # Package the App
 make package
@@ -22,14 +22,13 @@ make package
 
 - `make build` will by default only create a distributable package for your current host system.
 - All packages are saved to the `./release` directory.
-- We are using CircleCI for creating release builds. For advanced configuration use cases please check the [`.circleci/config.yml`](../.circleci/config.yml)
+- We are using CircleCI for creating release builds. For advanced configuration use cases please check the [`.circleci/config.yml`](../../.circleci/config.yml)
 
 ## Customizing the build
 
 ### Desktop Configs
 
-In [`desktop-config`](../desktop-config) you can find various configurations for building the app. The most used configurations are
-`release`, `development` and `test`.
+In [`desktop-config`](../desktop-config) you can find various configurations for building the app. The most used configurations are `release` and `development`.
 
 To use a specific configuration, run:
 
