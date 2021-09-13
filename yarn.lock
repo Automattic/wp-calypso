@@ -12500,7 +12500,6 @@ __metadata:
     pkg-dir: ^5.0.0
     portscanner: ^2.2.0
     postcss: ^8.2.6
-    postcss-custom-properties: ^11.0.0
     prismjs: ^1.17.1
     process: ^0.11.10
     prop-types: ^15.7.2
