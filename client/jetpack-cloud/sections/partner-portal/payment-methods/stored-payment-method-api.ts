@@ -1,8 +1,6 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import wpcomFactory from 'calypso/lib/wp';
+import wp from 'calypso/lib/wp';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
-
-const wpcom = wpcomFactory.undocumented();
 
 type StoredCardEndpointResponse = unknown;
 
@@ -21,7 +19,15 @@ export async function saveCreditCard( {
 		useAsPrimaryPaymentMethod,
 	} );
 
-	const response = await wpcom.me().storedCardAdd( token, additionalData );
+	const response = await wp.req.post(
+		{
+			path: '/me/stored-cards',
+		},
+		{
+			payment_key: token,
+			...( additionalData ?? {} ),
+		}
+	);
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_partner_portal_add_new_credit_card_error' );
 		throw new Error( response );
