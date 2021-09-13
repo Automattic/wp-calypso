@@ -177,7 +177,7 @@ export class SupportComponent {
 			this.page.waitForResponse(
 				( response ) => response.url().includes( 'search?' ) && response.status() === 200
 			),
-			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'detached' } ),
+			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.fill( selectors.searchInput, text ),
 		] );
