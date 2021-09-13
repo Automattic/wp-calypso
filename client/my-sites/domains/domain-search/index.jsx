@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
@@ -13,7 +14,6 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
