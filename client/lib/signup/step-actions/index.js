@@ -314,25 +314,36 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, selectedDesign } ) {
-	const options = {};
-
-	if ( themeSlugWithRepo ) {
-		options.theme = themeSlugWithRepo.split( '/' )[ 1 ];
-	} else if ( selectedDesign ) {
-		options.theme = selectedDesign.theme;
-		options.template = selectedDesign.template;
-		options.font_base = selectedDesign.fonts?.base;
-		options.font_headings = selectedDesign.fonts?.headings;
-	}
-
-	if ( ! options.theme ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 
 		return;
 	}
 
-	wpcom.undocumented().changeTheme( siteSlug, options, function ( errors ) {
+	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
+
+	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
+}
+
+export function setThemeAndDesignOnSite( callback, { siteSlug, selectedDesign } ) {
+	if ( ! selectedDesign ) {
+		defer( callback );
+		return;
+	}
+
+	const { theme, template, fonts } = selectedDesign;
+	const options = {
+		theme_with_repo_slug: `pub/${ theme }`,
+		template,
+		font_base: fonts?.base,
+		font_headings: fonts?.headings,
+		save_existing: false,
+	};
+
+	wpcom.undocumented().changeThemeAndDesign( siteSlug, options, function ( errors ) {
 		callback( isEmpty( errors ) ? undefined : [ errors ] );
 	} );
 }

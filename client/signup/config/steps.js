@@ -14,6 +14,7 @@ import {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
+	setThemeAndDesignOnSite,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -26,6 +27,7 @@ export default generateSteps( {
 	createSiteWithCart,
 	currentPage,
 	setThemeOnSite,
+	setThemeAndDesignOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,

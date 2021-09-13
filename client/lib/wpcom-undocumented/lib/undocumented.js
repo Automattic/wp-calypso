@@ -1708,10 +1708,29 @@ Undocumented.prototype.addVipDomainMapping = function ( siteId, domainName, fn )
  * @param {Function} fn
  */
 Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
-	debug( '/site/:site_id/themes/mine' );
+	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post(
 		{
 			path: '/sites/' + siteSlug + '/themes/mine',
+			body: data,
+		},
+		fn
+	);
+};
+
+/*
+ * Change the theme and design of a given site.
+ *
+ * @param {string} [siteSlug]
+ * @param {string} [data]
+ * @param {Function} fn
+ */
+Undocumented.prototype.changeThemeAndDesign = function ( siteSlug, data, fn ) {
+	debug( '/sites/:site_id/theme-and-design-setup' );
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteSlug }/theme-and-design-setup`,
+			apiNamespace: 'wpcom/v2',
 			body: data,
 		},
 		fn
