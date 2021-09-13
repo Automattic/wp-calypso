@@ -31,33 +31,6 @@ export async function saveCreditCard( {
 	return response;
 }
 
-interface UpdateCreditCard {
-	token: string;
-	stripeConfiguration: StripeConfiguration;
-	useAsPrimaryPaymentMethod: boolean;
-}
-
-export async function updateCreditCard( {
-	token,
-	stripeConfiguration,
-	useAsPrimaryPaymentMethod,
-}: UpdateCreditCard ): Promise< StoredCardEndpointResponse > {
-	const updatedCreditCardApiParams = getParamsForApi( {
-		cardToken: token,
-		stripeConfiguration,
-		useAsPrimaryPaymentMethod,
-	} );
-	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
-
-	if ( response.error ) {
-		recordTracksEvent( 'calypso_partner_portal_update_credit_card_error' );
-		throw new Error( response );
-	}
-
-	recordTracksEvent( 'calypso_partner_portal_update_credit_card' );
-	return response;
-}
-
 function getParamsForApi( {
 	cardToken,
 	stripeConfiguration,
