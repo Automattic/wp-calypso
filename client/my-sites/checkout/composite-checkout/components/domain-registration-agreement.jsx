@@ -1,7 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
 import React, { Fragment } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	getDomainRegistrations,

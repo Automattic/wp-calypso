@@ -1,5 +1,5 @@
 import { ElementHandle, Page } from 'playwright';
-import { getViewportName } from '../../browser-helper';
+import { getTargetDeviceName } from '../../browser-helper';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
@@ -44,7 +44,7 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async navigate( item: string, subitem?: string, retries = 3 ): Promise< void > {
-		if ( getViewportName() === 'mobile' ) {
+		if ( getTargetDeviceName() === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
 
@@ -124,11 +124,11 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async switchSite(): Promise< void > {
-		const viewportName = getViewportName();
+		const device = getTargetDeviceName();
 
 		await this.waitForSidebarInitialization();
 
-		if ( viewportName === 'mobile' ) {
+		if ( device === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
 

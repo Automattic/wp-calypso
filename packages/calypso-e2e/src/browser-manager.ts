@@ -5,9 +5,7 @@
 
 import config from 'config';
 import { chromium } from 'playwright';
-import { getViewportSize } from './browser-helper';
-import { getVideoDir } from './media-helper';
-import { viewportSize } from './types';
+import { getLaunchConfiguration } from './browser-helper';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -59,21 +57,7 @@ export async function launchBrowserContext( { logger }: LaunchOptions ): Promise
 		browser = await launchBrowser();
 	}
 
-	// By default, record video for each browser context.
-	const videoDir = getVideoDir();
-	const dimension: viewportSize = getViewportSize();
-	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await browser.version() } Safari/537.36`;
-
-	// Generate a new BrowserContext.
-	return await browser.newContext( {
-		viewport: null, // Do not override window size set in the browser launch parameters.
-		recordVideo: { dir: videoDir, size: { width: dimension.width, height: dimension.height } },
-		userAgent: userAgent,
-		logger: {
-			isEnabled: ( name ) => name === 'api',
-			log: logger,
-		},
-	} );
+	return await browser.newContext( getLaunchConfiguration( browser.version(), { logger } ) );
 }
 
 /**
@@ -88,11 +72,9 @@ export async function launchBrowserContext( { logger }: LaunchOptions ): Promise
 export async function launchBrowser(): Promise< Browser > {
 	const isHeadless = process.env.HEADLESS === 'true' || config.has( 'headless' );
 
-	const dimension: viewportSize = getViewportSize();
-
 	return await chromium.launch( {
 		headless: isHeadless,
-		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
+		args: [ '--window-position=0,0' ],
 	} );
 }
 

@@ -1,10 +1,9 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import {

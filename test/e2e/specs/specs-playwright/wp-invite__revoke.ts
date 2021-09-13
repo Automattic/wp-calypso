@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	DataHelper,
 	EmailClient,
@@ -63,13 +67,13 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			emailAddress: testEmailAddress,
 		} );
 		const links = await emailClient.getLinksFromMessage( message );
-		const acceptInviteLink = links.find( ( link: string ) => link.includes( 'accept-invite' ) );
-		if ( ! acceptInviteLink ) {
-			throw new Error( 'Invite link was not found.' );
-		}
-		adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
+		const acceptInviteLink = links.find( ( link: string ) =>
+			link.includes( 'accept-invite' )
+		) as string;
 
 		expect( acceptInviteLink ).toBeDefined();
+
+		adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 	} );
 
 	it( `Ensure invite link is no longer valid`, async function () {

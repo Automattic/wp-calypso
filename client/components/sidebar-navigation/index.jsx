@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';

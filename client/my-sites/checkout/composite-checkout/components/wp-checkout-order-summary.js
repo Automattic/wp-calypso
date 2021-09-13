@@ -1,4 +1,5 @@
 import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
@@ -16,7 +17,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 import React, { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './crowdsignal.scss';
@@ -17,9 +16,9 @@ class CrowdsignalOauthMasterbar extends Component {
 		];
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
-			map( crowdsignalFonts, ( font ) => {
+			for ( const font of crowdsignalFonts ) {
 				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
-			} );
+			}
 		}
 	}
 

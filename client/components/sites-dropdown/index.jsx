@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import Gridicon from 'calypso/components/gridicon';
 import SiteSelector from 'calypso/components/site-selector';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

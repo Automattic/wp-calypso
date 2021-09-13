@@ -33,6 +33,7 @@ import {
 	isBloggerPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -61,6 +62,16 @@ export function getAllCartItems( cart ) {
  */
 export function getRenewalItems( cart ) {
 	return getAllCartItems( cart ).filter( isRenewal );
+}
+
+/**
+ * Determines whether there is a DIFM (Do it for me) product in the shopping cart.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart - cart as `ResponseCart` object
+ * @returns {boolean} true if there is a DIFM product in the shopping cart, false otherwise.
+ */
+export function hasDIFMProduct( cart ) {
+	return cart && getAllCartItems( cart ).some( isDIFMProduct );
 }
 
 /**

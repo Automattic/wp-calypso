@@ -1,10 +1,9 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';

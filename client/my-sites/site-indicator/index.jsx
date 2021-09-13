@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

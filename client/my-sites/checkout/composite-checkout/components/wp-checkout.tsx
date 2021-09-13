@@ -1,4 +1,5 @@
 import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import {
 	Checkout,
 	CheckoutStep,
@@ -23,7 +24,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
 	hasGoogleApps,

@@ -1,9 +1,8 @@
-import { Button, ProgressBar } from '@automattic/components';
+import { Button, ProgressBar, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/illustrations/fireworks.svg';
-import Gridicon from 'calypso/components/gridicon';
 import { preventWidows } from 'calypso/lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

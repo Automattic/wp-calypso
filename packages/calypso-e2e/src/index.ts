@@ -3,6 +3,7 @@ import * as BrowserManager from './browser-manager';
 import * as DataHelper from './data-helper';
 import * as ElementHelper from './element-helper';
 import * as MediaHelper from './media-helper';
+export type { TestFile } from './media-helper';
 
 export { BrowserHelper, BrowserManager, MediaHelper, DataHelper, ElementHelper };
 

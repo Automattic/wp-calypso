@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
@@ -21,10 +20,8 @@ export const setPresalePrecancellationAvailability = ( availability ) => ( {
 } );
 
 export const requestHappychatEligibility = () => ( dispatch ) => {
-	const clientSlug = config( 'client_slug' );
-	wpcom
-		.undocumented()
-		.getOlarkConfiguration( clientSlug )
+	wpcom.req
+		.get( '/help/olark/mine' )
 		.then( ( configuration ) => {
 			dispatch( setHappyChatEligibility( configuration.isUserEligible ) );
 			dispatch( setPresalePrecancellationAvailability( configuration.availability ) );

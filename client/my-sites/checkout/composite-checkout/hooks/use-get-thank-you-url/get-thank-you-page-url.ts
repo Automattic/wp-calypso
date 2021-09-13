@@ -24,6 +24,7 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasTrafficGuide,
+	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
@@ -430,6 +431,7 @@ function getRedirectUrlForConciergeNudge( {
 		cart &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
+		! hasDIFMProduct( cart ) &&
 		( hasBloggerPlan( cart ) ||
 			hasPersonalPlan( cart ) ||
 			hasPremiumPlan( cart ) ||

@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
 import DocumentHead from 'calypso/components/data/document-head';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

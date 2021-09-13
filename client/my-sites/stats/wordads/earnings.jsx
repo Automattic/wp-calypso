@@ -1,11 +1,10 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
-import Gridicon from 'calypso/components/gridicon';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 

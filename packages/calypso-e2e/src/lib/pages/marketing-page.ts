@@ -1,11 +1,7 @@
 import { Page } from 'playwright';
-import { toTitleCase } from '../../data-helper';
+import { clickNavTab } from '../../element-helper';
 
 const selectors = {
-	content: '#primary',
-	navTabs: 'div.section-nav-tabs',
-	navTabsDropdownOption: '.select-dropdown__option',
-
 	// Traffic tab
 	websiteMetaTextArea: '#advanced_seo_front_page_description',
 	seoPreviewButton: '.seo-settings__preview-button',
@@ -34,21 +30,8 @@ export class MarketingPage {
 	 * @param {string} name Name of the tab to click on the top of the page.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickTabItem( name: string ): Promise< void > {
-		const navTabs = await this.page.waitForSelector( selectors.navTabs );
-
-		// When in mobile viewport, the tab items are changed to a pseudo-dropdown.
-		const isDropdown = await navTabs
-			.getAttribute( 'class' )
-			.then( ( value ) => value?.includes( 'is-dropdown' ) );
-		const sanitizedName = toTitleCase( [ name ] );
-
-		if ( isDropdown ) {
-			await navTabs.click();
-			await this.page.click( `${ selectors.navTabsDropdownOption } >> text=${ sanitizedName }` );
-		} else {
-			await this.page.click( `text=${ sanitizedName }` );
-		}
+	async clickTab( name: string ): Promise< void > {
+		await clickNavTab( this.page, name );
 	}
 
 	/* SEO Preview Methods */

@@ -1,10 +1,9 @@
-import { Button, Dialog } from '@automattic/components';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Gridicon from 'calypso/components/gridicon';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getLoginUrlWithTOSRedirect } from 'calypso/lib/gsuite';

@@ -1,8 +1,20 @@
+import { constants } from 'fs';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import config from 'config';
 import { getTimestamp } from './data-helper';
+
+/**
+ * Interface for holding various parts of a filepath.
+ */
+export interface TestFile {
+	fullpath: string; // eg. /usr/home/wp-calypso/test/e2e/image-uploads/image.jpg
+	dirname: string; // eg. /usr/home/wp-calypso/test/e2e/image-uploads/
+	basename: string; // eg. image.jpg
+	filename: string; // eg. image
+	extension: string; // eg. .jpg
+}
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -45,61 +57,56 @@ export function getVideoDir(): string {
 /**
  * Creates a temporary test file by cloning a source file under a new name.
  *
+ * @param {string} sourcePath Full path on disk of the source file.
  * @param {{[key: string]: string}} param0 Parameter object.
- * @param {string} param0.sourceFileName Basename of the source file to be cloned.
- * @param {string} [param0.testFileName] Basename of the test file to be generated.
- * @returns {Promise<string>} Full path to the generated test file.
+ * @param {string} [param0.postfix] Additional suffix to be used for the file.
+ * @returns {Promise<TestFile>} Object implementing the TestFile interface.
+ * @throws {Error} If source file was not found, or source file did not contain an extension.
  */
-export async function createTestFile( {
-	sourceFileName,
-	testFileName,
-}: {
-	sourceFileName: string;
-	testFileName?: string;
-} ): Promise< string > {
-	let fileName = getTimestamp();
-	// If the output `testFileName` is defined, use that as part of the final filename.
-	if ( testFileName ) {
-		fileName += `-${ testFileName }`;
+export async function createTestFile(
+	sourcePath: string,
+	{
+		postfix,
+	}: {
+		postfix?: string;
+	} = {}
+): Promise< TestFile > {
+	// Check whether the source file maps to a file.
+	// Note, if sourcePath is not found use console.error instead of throw:
+	// https://github.com/facebook/jest/issues/8688
+	try {
+		await fs.access( sourcePath );
+	} catch {
+		throw new Error( `Source file ${ sourcePath } not found on disk.` );
 	}
 
-	// Reassign the variable with the final name to be used, including the extension.
-	fileName = `${ fileName }.${ sourceFileName.split( '.' ).pop() }`;
+	// Obtain the file extension.
+	const extension = path.extname( sourcePath );
+	if ( ! extension ) {
+		throw new Error( `Extension not found on source file ${ sourcePath }` );
+	}
 
-	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
-	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
+	// Generate a filename using current timestamp and a pseudo-randomly generated integer.
+	let filename = getTimestamp();
+	// If `postfix` is defined, use that as part of the final filename.
+	if ( postfix ) {
+		filename += `-${ postfix }`;
+	}
 
-	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e-' ) );
-	const testFilePath = path.join( tempDir, fileName );
+	// Obtain the basename (filename with extension)
+	const basename = `${ filename }${ extension }`;
 
-	await fs.copyFile( sourceFilePath, testFilePath );
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e' ) );
+	const targetPath = path.join( tempDir, basename );
 
-	return testFilePath;
-}
+	await fs.copyFile( sourcePath, targetPath, constants.COPYFILE_EXCL );
 
-/**
- * Returns the path to a generated temporary JPEG image file.
- *
- * @returns {Promise<string>} Full path on disk to the generated test file.
- */
-export async function createTestImage(): Promise< string > {
-	return await createTestFile( { sourceFileName: 'image0.jpg' } );
-}
-
-/**
- * Returns the path to a generated temporary MP3 audio file.
- *
- * @returns {string} Full path on disk to the generated test file.
- */
-export async function createTestAudio(): Promise< string > {
-	return await createTestFile( { sourceFileName: 'bees.mp3' } );
-}
-
-/**
- * Returns the path to an unsupported file.
- *
- * @returns {string} Full path on disk to the generated test file.
- */
-export async function createInvalidFile(): Promise< string > {
-	return await createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
+	// Return an object implementing the interface.
+	return {
+		fullpath: targetPath,
+		dirname: tempDir,
+		basename: basename,
+		filename: filename,
+		extension: extension,
+	};
 }

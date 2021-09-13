@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import WebPreview from 'calypso/components/web-preview';
 import { addQueryArgs } from 'calypso/lib/route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { closePreview } from 'calypso/state/ui/preview/actions';
 import {
@@ -69,7 +69,7 @@ class SitePreview extends Component {
 	}
 
 	render() {
-		if ( ! this.props.selectedSite || ! this.props.selectedSite.is_previewable ) {
+		if ( ! this.props.selectedSitePreviewable ) {
 			debug( 'a preview is not available for this site' );
 			return null;
 		}
@@ -100,6 +100,7 @@ function mapStateToProps( state ) {
 		selectedSiteId,
 		selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
+		selectedSitePreviewable: isSitePreviewable( state, selectedSiteId ),
 		previewUrl: getPreviewUrl( state ),
 		isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
 	};

@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
-import Gridicon from 'calypso/components/gridicon';
 import HappychatButton from 'calypso/components/happychat/button';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { settingsPath } from 'calypso/lib/jetpack/paths';

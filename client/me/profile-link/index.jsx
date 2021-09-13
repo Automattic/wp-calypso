@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import { withoutHttp } from 'calypso/lib/url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

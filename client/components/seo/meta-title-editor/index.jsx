@@ -23,6 +23,7 @@ const getValidTokens = ( translate ) => ( {
 	pageTitle: translate( 'Page Title' ),
 	groupTitle: translate( 'Tag or Category Name' ),
 	date: translate( 'Date' ),
+	archiveTitle: translate( 'Archive Title' ),
 } );
 
 const tokenMap = {
@@ -30,7 +31,7 @@ const tokenMap = {
 	posts: [ 'siteName', 'tagline', 'postTitle' ],
 	pages: [ 'siteName', 'tagline', 'pageTitle' ],
 	groups: [ 'siteName', 'tagline', 'groupTitle' ],
-	archives: [ 'siteName', 'tagline', 'date' ],
+	archives: [ 'siteName', 'tagline', 'date', 'archiveTitle' ],
 };
 
 const getTokensForType = ( type, translate ) => {

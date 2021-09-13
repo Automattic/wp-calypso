@@ -49,7 +49,6 @@ class Document extends React.Component {
 			isSupportSession,
 			isWCComConnect,
 			isWooDna,
-			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
 			target,
@@ -162,33 +161,6 @@ class Document extends React.Component {
 							__html: inlineScript,
 						} }
 					/>
-
-					{
-						// Use <script nomodule> to redirect browsers with no ES module
-						// support to the fallback build. ES module support is a convenient
-						// test to determine that a browser is modern enough to handle
-						// the evergreen bundle.
-						addEvergreenCheck && (
-							<script
-								nonce={ inlineScriptNonce }
-								noModule
-								dangerouslySetInnerHTML={ {
-									__html: `
-							(function() {
-								var url = window.location.href;
-
-								if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
-									url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
-									url += 'forceFallback=1';
-									window.location.href = url;
-								}
-							})();
-							`,
-								} }
-							/>
-						)
-					}
-
 					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.

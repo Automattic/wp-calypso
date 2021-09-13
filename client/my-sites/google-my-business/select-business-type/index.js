@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

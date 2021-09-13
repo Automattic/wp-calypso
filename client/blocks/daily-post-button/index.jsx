@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, defer } from 'lodash';
@@ -8,7 +8,6 @@ import { stringify } from 'qs';
 import React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Gridicon from 'calypso/components/gridicon';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

@@ -1,7 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
 
 const Security2faProgressItem = ( { icon, label, step } ) => (
 	<div

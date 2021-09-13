@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import { setupHooks, DataHelper } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 

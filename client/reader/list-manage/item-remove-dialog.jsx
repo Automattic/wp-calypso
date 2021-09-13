@@ -1,7 +1,6 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 export default function ItemRemoveDialog( props ) {
 	const { title, visibility, onClose, type } = props;

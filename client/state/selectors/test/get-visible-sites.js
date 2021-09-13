@@ -53,7 +53,6 @@ describe( 'getVisibleSites()', () => {
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
-				is_previewable: false,
 				options: {
 					unmapped_url: 'http://example.com',
 				},
