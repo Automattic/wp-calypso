@@ -24,7 +24,6 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
-import { useSetCalendlyListenerEffect } from './hooks';
 import type { UserData } from 'calypso/lib/user/user';
 
 interface Props {
@@ -133,9 +132,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			} );
 		}
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
-
-	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
-	useSetCalendlyListenerEffect( { productSlug, receiptId, jetpackTemporarySiteId } );
 
 	useEffect( () => {
 		if ( supportTicketStatus === 'success' ) {

@@ -7,7 +7,6 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -16,7 +15,6 @@ import {
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
-import { useSetCalendlyListenerEffect } from './hooks';
 import { getActivationCompletedLink } from './utils';
 
 import './style.scss';
@@ -29,7 +27,6 @@ interface Props {
 
 const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 	productSlug,
-	receiptId = 0,
 	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
@@ -42,20 +39,6 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 	);
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
-
-	const happinessAppointmentLink = addQueryArgs(
-		{
-			receiptId,
-			siteId: jetpackTemporarySiteId,
-		},
-		'/checkout/jetpack/schedule-happiness-appointment'
-	);
-
-	useSetCalendlyListenerEffect( {
-		productSlug,
-		receiptId,
-		jetpackTemporarySiteId,
-	} );
 
 	const destinationSiteId = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketDestinationSiteId( state, jetpackTemporarySiteId )
@@ -103,38 +86,11 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 						{ title }
 					</h1>
 					{ ! automaticTransferSucceeded && (
-						<>
-							<p>
-								{ translate(
-									'As soon as your subscription is activated you will receive a confirmation email from our Happiness Engineers.'
-								) }
-							</p>
-							<p>
-								{ translate(
-									'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
-									{
-										components: {
-											a: (
-												<a
-													className="jetpack-checkout-siteless-thank-you-completed__link"
-													onClick={ () =>
-														dispatch(
-															recordTracksEvent(
-																'calypso_siteless_checkout_happiness_link_clicked',
-																{
-																	product_slug: productSlug,
-																}
-															)
-														)
-													}
-													href={ happinessAppointmentLink }
-												/>
-											),
-										},
-									}
-								) }
-							</p>
-						</>
+						<p>
+							{ translate(
+								'As soon as your subscription is activated you will receive a confirmation email from our Happiness Engineers.'
+							) }
+						</p>
 					) }
 					{ automaticTransferSucceeded && (
 						<>
