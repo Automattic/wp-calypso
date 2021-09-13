@@ -19,7 +19,12 @@ const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
 	stored_details_id: string
-): Promise< unknown > => wpcom.assignPaymentMethod( subscriptionId, stored_details_id );
+): Promise< unknown > =>
+	wp.req.post( {
+		path: '/upgrades/' + subscriptionId + '/assign-payment-method',
+		body: { stored_details_id },
+		apiVersion: '1',
+	} );
 const wpcomCreatePayPalAgreement = (
 	subscriptionId: string,
 	successUrl: string,
