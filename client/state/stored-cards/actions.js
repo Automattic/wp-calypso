@@ -13,10 +13,17 @@ import {
 import 'calypso/state/stored-cards/init';
 
 export const addStoredCard = ( cardData ) => ( dispatch ) => {
-	return wp
-		.undocumented()
-		.me()
-		.storedCardAdd( cardData.token, cardData.additionalData )
+	return wp.req
+		.post(
+			{
+				path: '/me/stored-cards',
+			},
+			{
+				payment_key: cardData.token,
+				use_for_existing: true,
+				...( cardData.additionalData ?? {} ),
+			}
+		)
 		.then( ( item ) => {
 			dispatch( {
 				type: STORED_CARDS_ADD_COMPLETED,
