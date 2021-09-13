@@ -1,6 +1,5 @@
-import { Title, SubTitle, ActionButtons, NextButton, SkipButton } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, NextButton, ArrowButton } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
@@ -42,11 +41,10 @@ const BetaOptIn: React.FunctionComponent = () => {
 			</div>
 
 			<ActionButtons className="beta-opt-in__actions">
-				<NextButton onClick={ () => pickBeta( true ) }>
+				<ArrowButton arrow="right" onClick={ () => pickBeta( true ) }>
 					{ __( 'Enroll in Beta' ) }
-					<Icon icon={ chevronRight } />
-				</NextButton>
-				<SkipButton onClick={ () => pickBeta( false ) }>{ __( 'No Thanks' ) }</SkipButton>
+				</ArrowButton>
+				<NextButton onClick={ () => pickBeta( false ) }>{ __( 'No Thanks' ) }</NextButton>
 			</ActionButtons>
 		</div>
 	);
