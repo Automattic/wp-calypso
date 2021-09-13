@@ -143,7 +143,6 @@ const fileLoader = FileConfig.loader(
 				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
 				outputPath: '../images/',
-				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
 		  }
 );
 
