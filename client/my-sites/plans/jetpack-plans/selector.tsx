@@ -34,7 +34,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	siteSlug: siteSlugProp,
 	rootUrl,
 	urlQueryArgs,
-	nav,
 	header,
 	footer,
 	planRecommendation,
@@ -184,36 +183,32 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	);
 
 	return (
-		<>
-			{ nav }
+		<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
+			<PageViewTracker
+				path={ viewTrackerPath }
+				properties={ viewTrackerProps }
+				title="Plans"
+				options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
+			/>
 
-			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
-				<PageViewTracker
-					path={ viewTrackerPath }
-					properties={ viewTrackerProps }
-					title="Plans"
-					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
-				/>
+			{ header }
 
-				{ header }
+			<ProductGrid
+				duration={ currentDuration }
+				urlQueryArgs={ urlQueryArgs }
+				planRecommendation={ planRecommendation }
+				onSelectProduct={ selectProduct }
+				onDurationChange={ trackDurationChange }
+				scrollCardIntoView={ scrollCardIntoView }
+				createButtonURL={ createProductURL }
+			/>
 
-				<ProductGrid
-					duration={ currentDuration }
-					urlQueryArgs={ urlQueryArgs }
-					planRecommendation={ planRecommendation }
-					onSelectProduct={ selectProduct }
-					onDurationChange={ trackDurationChange }
-					scrollCardIntoView={ scrollCardIntoView }
-					createButtonURL={ createProductURL }
-				/>
+			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
+			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+			{ siteId && <QuerySites siteId={ siteId } /> }
 
-				{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				{ siteId && <QuerySites siteId={ siteId } /> }
-
-				{ footer }
-			</Main>
-		</>
+			{ footer }
+		</Main>
 	);
 };
 
