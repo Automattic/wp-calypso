@@ -1,8 +1,12 @@
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
+	// Notificatins panel (including sub-panels)
 	comment: '.wpnc__comment',
 	singleViewPanel: '.wpnc__single-view',
+
+	// Comment actions
+	commentAction: ( action: string ) => `button.wpnc__action-link:has-text("${ action }"):visible`,
 	undoLocator: '.wpnc__undo-item',
 };
 /**
@@ -53,8 +57,9 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNotificationAction( action: 'Trash' ): Promise< void > {
-		const selector = `*css=button >> text=${ action }`;
-		await this.page.click( selector );
+		const elementHandle = await this.page.waitForSelector( selectors.singleViewPanel );
+		await elementHandle.waitForElementState( 'stable' );
+		await this.page.click( selectors.commentAction( action ) );
 	}
 
 	/**
