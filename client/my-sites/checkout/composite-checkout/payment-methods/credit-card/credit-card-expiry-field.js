@@ -50,6 +50,7 @@ export default function CreditCardExpiryField( {
 				<CardExpiryElement
 					options={ {
 						style: stripeElementStyle,
+						disabled: isDisabled,
 					} }
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );

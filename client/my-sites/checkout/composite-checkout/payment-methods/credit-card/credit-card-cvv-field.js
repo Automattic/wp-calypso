@@ -61,6 +61,7 @@ export default function CreditCardCvvField( {
 						<CardCvcElement
 							options={ {
 								style: stripeElementStyle,
+								disabled: isDisabled,
 							} }
 							onChange={ ( input ) => {
 								handleStripeFieldChange( input );
