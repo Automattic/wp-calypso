@@ -425,6 +425,7 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
+			stripe,
 		} ),
 		[
 			contactDetails,
@@ -436,6 +437,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
+			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
 		]

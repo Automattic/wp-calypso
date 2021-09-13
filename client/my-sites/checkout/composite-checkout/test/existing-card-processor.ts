@@ -1,6 +1,8 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import wp from 'calypso/lib/wp';
 import existingCardProcessor from '../lib/existing-card-processor';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { Stripe } from '@stripe/stripe-js';
 
 jest.mock( 'calypso/lib/wp' );
 
@@ -18,10 +20,17 @@ describe( 'existingCardProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const options = {
+	const mockConfirmCardPayment = jest
+		.fn()
+		.mockResolvedValue( { paymentIntent: 'test-payment-intent' } );
+	const stripe = {
+		confirmCardPayment: mockConfirmCardPayment as Stripe[ 'confirmCardPayment' ],
+	} as Stripe;
+	const options: PaymentProcessorOptions = {
 		includeDomainDetails: false,
 		includeGSuiteDetails: false,
 		createUserAndSiteBeforeTransaction: false,
+		stripe,
 		stripeConfiguration,
 		recordEvent: () => null,
 		reduxDispatch: () => null,
