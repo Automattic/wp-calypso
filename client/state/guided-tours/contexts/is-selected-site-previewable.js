@@ -1,5 +1,5 @@
-import { get } from 'lodash';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isSitePreviewable } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Returns true if the selected site can be previewed
@@ -8,4 +8,4 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * @returns {boolean} True if selected site can be previewed, false otherwise.
  */
 export const isSelectedSitePreviewable = ( state ) =>
-	get( getSelectedSite( state ), 'is_previewable', false );
+	isSitePreviewable( state, getSelectedSiteId( state ) );
