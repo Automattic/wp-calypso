@@ -1798,19 +1798,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-Undocumented.prototype.getQandA = function ( query, site, fn ) {
-	debug( 'help-contact-qanda/ searchQuery {query}' );
-
-	return this.wpcom.req.get(
-		'/help/qanda',
-		{
-			query,
-			site,
-		},
-		fn
-	);
-};
-
 // TODO: remove this once the auto-renewal toggle has been fully rolled out.
 Undocumented.prototype.cancelPurchase = function ( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
@@ -1851,83 +1838,6 @@ Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
 	return this.wpcom.req.post(
 		{
 			path: `/upgrades/${ planId }/cancel-plan-trial`,
-		},
-		fn
-	);
-};
-
-/**
- * Get the Directly configuration for the current user
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getDirectlyConfiguration = function ( fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/help/directly/mine',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.submitKayakoTicket = function (
-	subject,
-	message,
-	locale,
-	client,
-	isChatOverflow,
-	fn
-) {
-	debug( 'submitKayakoTicket' );
-
-	return this.wpcom.req.post(
-		{
-			path: '/help/tickets/kayako/new',
-			body: { subject, message, locale, client, is_chat_overflow: isChatOverflow },
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getKayakoConfiguration = function ( fn ) {
-	return this.wpcom.req.get(
-		{
-			path: '/help/tickets/kayako/mine',
-		},
-		fn
-	);
-};
-
-/**
- * Get the olark configuration for the current user
- *
- * @param {object} client - current user
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getOlarkConfiguration = function ( client, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/help/olark/mine',
-			body: { client },
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.submitSupportForumsTopic = function (
-	subject,
-	message,
-	locale,
-	client,
-	fn
-) {
-	return this.wpcom.req.post(
-		{
-			path: '/help/forums/support/topics/new',
-			body: { subject, message, locale, client },
 		},
 		fn
 	);

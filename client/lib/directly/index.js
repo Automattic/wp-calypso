@@ -110,20 +110,17 @@ export function initialize() {
 		return directlyPromise;
 	}
 
-	directlyPromise = wpcom
-		.undocumented()
-		.getDirectlyConfiguration()
-		.then( ( { isAvailable } ) => {
-			if ( ! isAvailable ) {
-				return Promise.reject(
-					new Error( 'Directly Real-Time Messaging is not available at this time.' )
-				);
-			}
+	directlyPromise = wpcom.req.get( '/help/directly/mine' ).then( ( { isAvailable } ) => {
+		if ( ! isAvailable ) {
+			return Promise.reject(
+				new Error( 'Directly Real-Time Messaging is not available at this time.' )
+			);
+		}
 
-			configureGlobals();
-			insertDOM();
-			return loadDirectlyScript();
-		} );
+		configureGlobals();
+		insertDOM();
+		return loadDirectlyScript();
+	} );
 
 	return directlyPromise;
 }

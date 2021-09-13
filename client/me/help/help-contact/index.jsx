@@ -19,7 +19,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import { withoutHttp } from 'calypso/lib/url';
-import wpcomLib from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
 import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
@@ -74,7 +74,6 @@ const debug = debugFactory( 'calypso:help-contact' );
  * Module variables
  */
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
-const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
 class HelpContact extends React.Component {
@@ -200,21 +199,15 @@ class HelpContact extends React.Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'kayako' );
 
-		wpcom.submitKayakoTicket(
-			subject,
-			kayakoMessage,
-			currentUserLocale,
-			this.props.clientSlug,
-			supportVariation === SUPPORT_CHAT_OVERFLOW,
-			( error ) => {
-				if ( error ) {
-					// TODO: bump a stat here
-					this.props.errorNotice( error.message );
-
-					this.setState( { isSubmitting: false } );
-					return;
-				}
-
+		wpcom.req
+			.post( '/help/tickets/kayako/new', {
+				subject,
+				message: kayakoMessage,
+				locale: currentUserLocale,
+				client: this.props.clientSlug,
+				is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
+			} )
+			.then( () => {
 				this.setState( {
 					isSubmitting: false,
 					confirmation: {
@@ -239,8 +232,13 @@ class HelpContact extends React.Component {
 						active_ticket_count: this.props.activeSupportTickets.length,
 					} );
 				}
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// TODO: bump a stat here
+				this.props.errorNotice( error.message );
+
+				this.setState( { isSubmitting: false } );
+			} );
 
 		this.clearSavedContactForm();
 	};
@@ -316,20 +314,14 @@ class HelpContact extends React.Component {
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
 
-		wpcom.submitSupportForumsTopic(
-			subject,
-			forumMessage,
-			currentUserLocale,
-			this.props.clientSlug,
-			( error, data ) => {
-				if ( error ) {
-					// TODO: bump a stat here
-					this.props.errorNotice( error.message );
-
-					this.setState( { isSubmitting: false } );
-					return;
-				}
-
+		wpcom.req
+			.post( '/help/forums/support/topics/new', {
+				subject,
+				message: forumMessage,
+				locale: currentUserLocale,
+				client: this.props.clientSlug,
+			} )
+			.then( ( data ) => {
 				this.setState( {
 					isSubmitting: false,
 					confirmation: {
@@ -353,8 +345,13 @@ class HelpContact extends React.Component {
 						active_ticket_count: this.props.activeSupportTickets.length,
 					} );
 				}
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// TODO: bump a stat here
+				this.props.errorNotice( error.message );
+
+				this.setState( { isSubmitting: false } );
+			} );
 
 		this.clearSavedContactForm();
 	};
