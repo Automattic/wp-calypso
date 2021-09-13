@@ -932,7 +932,7 @@ class CancelPurchaseForm extends React.Component {
 			}
 		}
 
-		return firstButtons.concat( [ prev, next ] );
+		return firstButtons.concat( surveyStep === allSteps[ 0 ] ? [ next ] : [ prev, next ] );
 	};
 
 	componentDidUpdate( prevProps ) {
