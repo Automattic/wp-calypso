@@ -335,17 +335,23 @@ export function setThemeAndDesignOnSite( callback, { siteSlug, selectedDesign } 
 	}
 
 	const { theme, template, fonts } = selectedDesign;
-	const options = {
-		theme_with_repo_slug: `pub/${ theme }`,
-		template,
-		font_base: fonts?.base,
-		font_headings: fonts?.headings,
-		save_existing: false,
-	};
 
-	wpcom.undocumented().changeThemeAndDesign( siteSlug, options, function ( errors ) {
-		callback( isEmpty( errors ) ? undefined : [ errors ] );
-	} );
+	wpcom.req.post(
+		{
+			path: `/sites/${ siteSlug }/theme-and-design-setup`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				theme_with_repo_slug: `pub/${ theme }`,
+				template,
+				font_base: fonts?.base,
+				font_headings: fonts?.headings,
+				save_existing: false,
+			},
+		},
+		( errors ) => {
+			callback( isEmpty( errors ) ? undefined : [ errors ] );
+		}
+	);
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {

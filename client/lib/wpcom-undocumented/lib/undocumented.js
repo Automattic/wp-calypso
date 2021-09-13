@@ -1718,25 +1718,6 @@ Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
 	);
 };
 
-/*
- * Change the theme and design of a given site.
- *
- * @param {string} [siteSlug]
- * @param {string} [data]
- * @param {Function} fn
- */
-Undocumented.prototype.changeThemeAndDesign = function ( siteSlug, data, fn ) {
-	debug( '/sites/:site_id/theme-and-design-setup' );
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteSlug }/theme-and-design-setup`,
-			apiNamespace: 'wpcom/v2',
-			body: data,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.resetPasswordForMailbox = function ( domainName, mailbox, fn ) {
 	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
 	return this.wpcom.req.post(
