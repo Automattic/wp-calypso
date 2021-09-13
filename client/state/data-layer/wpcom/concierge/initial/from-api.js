@@ -13,6 +13,7 @@ export const transform = ( response ) => {
 		appointmentTimespan: response.appointment_timespan,
 		nextAppointment: nextAppointment,
 		scheduleId: response.schedule_id,
+		isHappychatBlocked: response.is_happychat_blocked,
 	};
 };
 

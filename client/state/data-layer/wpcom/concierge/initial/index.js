@@ -25,16 +25,10 @@ export const storeFetchedConciergeInitial = ( action, initial ) =>
 
 export const conciergeInitialFetchError = ( errorMessage ) => errorNotice( errorMessage );
 
-const unauthorizedError = ( errorMessage ) => errorNotice( errorMessage );
-
 export const showConciergeInitialFetchError = ( action ) => {
-	const errorCode = action?.meta?.dataLayer?.error?.code;
 	const errorMessage =
 		action?.meta?.dataLayer?.error?.message ||
 		translate( 'Something went wrong with Quick Start. Please try again later.' );
-	if ( 'rest_concierge_access_denied' === errorCode ) {
-		return unauthorizedError( errorMessage );
-	}
 
 	return conciergeInitialFetchError( errorMessage );
 };

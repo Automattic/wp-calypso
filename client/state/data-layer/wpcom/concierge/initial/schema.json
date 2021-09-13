@@ -31,6 +31,10 @@
 		},
 		"schedule_id": {
 			"type": "number"
+		},
+		"is_happychat_blocked": {
+			"type": "boolean",
+			"optional": true
 		}
 	}
 }

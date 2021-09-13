@@ -23,9 +23,11 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import getConciergeAvailableTimes from 'calypso/state/selectors/get-concierge-available-times';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeHappychatBlocked from 'calypso/state/selectors/get-concierge-user-happychat-blocked';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { getSite } from 'calypso/state/sites/selectors';
 import AppointmentInfo from './shared/appointment-info';
+import HappychatBlocked from './shared/happychat-blocked';
 import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
 
@@ -73,6 +75,7 @@ export class ConciergeMain extends Component {
 			userSettings,
 			nextAppointment,
 			rescheduling,
+			isHappychatBlocked,
 		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
@@ -80,6 +83,10 @@ export class ConciergeMain extends Component {
 
 		if ( ! availableTimes || ! site || ! site.plan || null == scheduleId || ! userSettings ) {
 			return <Skeleton />;
+		}
+
+		if ( isHappychatBlocked ) {
+			return <HappychatBlocked site={ site } />;
 		}
 
 		// if scheduleId is 0, it means the user is not eligible for the concierge service.
@@ -135,4 +142,5 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
+	isHappychatBlocked: getConciergeHappychatBlocked( state ),
 } ) )( ConciergeMain );
