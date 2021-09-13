@@ -1,6 +1,6 @@
 import { expect } from 'chai';
+import nock from 'nock';
 import sinon from 'sinon';
-import wp from 'calypso/lib/wp';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -10,14 +10,13 @@ import {
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
 } from 'calypso/state/action-types';
-import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { addStoredCard, deleteStoredCard, fetchStoredCards } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
+		nock.cleanAll();
 		spy.resetHistory();
 	} );
 
@@ -31,16 +30,12 @@ describe( 'actions', () => {
 			token: 'pg_1234',
 		};
 		const item = { stored_details_id: 123 };
-		let sandbox;
-
-		useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 		test( 'should dispatch complete action when API returns card item', () => {
-			sandbox.stub( wp, 'undocumented' ).callsFake( () => ( {
-				me: () => ( {
-					storedCardAdd: async () => item,
-				} ),
-			} ) );
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( '/rest/v1.1/me/stored-cards' )
+				.reply( 200, item );
 
 			const result = addStoredCard( cardData )( spy );
 
@@ -57,8 +52,9 @@ describe( 'actions', () => {
 		const cards = [ { stored_details_id: 1 }, { stored_details_id: 2 } ];
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			beforeEach( () => {
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.get( '/rest/v1.1/me/payment-methods?expired=include' )
 					.reply( 200, cards );
 			} );
@@ -80,8 +76,9 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			useNock( ( nock ) => {
+			beforeEach( () => {
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.get( '/rest/v1.1/me/payment-methods?expired=include' )
 					.reply( 403, error );
 			} );
@@ -110,11 +107,13 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			useNock( ( nock ) => {
+			beforeEach( () => {
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 0 ] }/delete` )
 					.reply( 200, { success: true } );
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 1 ] }/delete` )
 					.reply( 200, { success: true } );
 			} );
@@ -137,11 +136,13 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			useNock( ( nock ) => {
+			beforeEach( () => {
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 0 ] }/delete` )
 					.reply( 200, { success: true } );
 				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
 					.post( `/rest/v1.1/me/stored-cards/${ card.allStoredDetailsIds[ 1 ] }/delete` )
 					.reply( 403, error );
 			} );
