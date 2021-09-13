@@ -1,10 +1,13 @@
 import config from '@automattic/calypso-config';
 import {
-	includesProduct,
+	formatProduct,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlanSlug,
 	isJetpackProductSlug,
 	isPlan,
+	isWpComBusinessPlan,
+	isWpComPersonalPlan,
+	isWpComPremiumPlan,
 	TERM_ANNUALLY,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
@@ -30,11 +33,9 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -42,7 +43,6 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
-import isPrecancellationChatAvailable from 'calypso/state/happychat/selectors/is-precancellation-chat-available';
 import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
 import getSupportVariation, {
 	SUPPORT_HAPPYCHAT,
@@ -60,16 +60,10 @@ import {
 } from './options-for-product';
 import PrecancellationChatButton from './precancellation-chat-button';
 import previousStep from './previous-step';
-import { radioTextOption, radioSelectOption } from './radio-option';
 import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
-import * as steps from './steps';
-import stepsForProductAndSurvey, {
-	BUSINESS_PLANS,
-	PERSONAL_PREMIUM_PLANS,
-	PREMIUM_PLANS,
-} from './steps-for-product-and-survey';
+import { FINAL_STEP, FEEDBACK_STEP } from './steps';
 
 import './style.scss';
 
@@ -100,13 +94,6 @@ class CancelPurchaseForm extends React.Component {
 			return false;
 		}
 
-		// Don't show a button to start Happychat
-		// if we're already in a chat session
-		const { surveyStep } = this.state;
-		if ( surveyStep === steps.HAPPYCHAT_STEP ) {
-			return false;
-		}
-
 		// Jetpack doesn't do Happychat support
 		const { purchase } = this.props;
 		const isJetpack =
@@ -119,22 +106,11 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	getAllSurveySteps = () => {
-		const {
-			purchase,
-			isChatAvailable,
-			isChatActive,
-			precancellationChatAvailable,
-			downgradeClick,
-		} = this.props;
-		const downgradePossible = !! downgradeClick;
+		if ( isPlan( this.props.purchase ) ) {
+			return [ FEEDBACK_STEP ];
+		}
 
-		return stepsForProductAndSurvey(
-			this.state,
-			purchase,
-			isChatAvailable || isChatActive,
-			precancellationChatAvailable,
-			downgradePossible
-		);
+		return [ FINAL_STEP ];
 	};
 
 	initSurveyState() {
@@ -169,7 +145,6 @@ class CancelPurchaseForm extends React.Component {
 			importQuestionText: '',
 			isSubmitting: false,
 			upsell: '',
-			fullscreen: false,
 		};
 	}
 
@@ -202,21 +177,22 @@ class CancelPurchaseForm extends React.Component {
 			upsell: '',
 		};
 
-		if ( this.state.surveyStep === steps.FEEDBACK_STEP ) {
-			if ( value === 'couldNotInstall' && includesProduct( BUSINESS_PLANS, this.props.purchase ) ) {
+		if ( this.state.surveyStep === FEEDBACK_STEP ) {
+			const product = formatProduct( this.props.purchase );
+			if ( value === 'couldNotInstall' && isWpComBusinessPlan( product ) ) {
 				newState.upsell = 'business-atomic';
 			}
 
 			if (
 				value === 'couldNotInstall' &&
-				includesProduct( PERSONAL_PREMIUM_PLANS, this.props.purchase )
+				( isWpComPremiumPlan( product ) || isWpComPersonalPlan( product ) )
 			) {
 				newState.upsell = 'upgrade-atomic';
 			}
 
 			if (
 				value === 'onlyNeedFree' &&
-				includesProduct( PREMIUM_PLANS, this.props.purchase ) &&
+				isWpComPremiumPlan( product ) &&
 				!! this.props.downgradeClick
 			) {
 				newState.upsell = 'downgrade-personal';
@@ -445,9 +421,8 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	renderQuestionOne = () => {
-		const reasons = {};
 		const { translate } = this.props;
-		const { questionOneOrder, questionOneRadio, questionOneText, surveyStep, upsell } = this.state;
+		const { questionOneOrder, questionOneRadio, questionOneText, upsell } = this.state;
 		const { productSlug: productBeingRemoved } = this.props.purchase;
 
 		// get all downgradable plans and products for downgrade question dropdown
@@ -538,112 +513,53 @@ class CancelPurchaseForm extends React.Component {
 			},
 		];
 
-		if ( surveyStep === steps.FEEDBACK_STEP ) {
-			const optionKeys = [ ...questionOneOrder ];
-			optionKeys.unshift( '' ); // Placeholder.
+		const optionKeys = [ ...questionOneOrder ];
+		optionKeys.unshift( '' ); // Placeholder.
 
-			const selectedOption = options.find( ( option ) => option.value === questionOneRadio );
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<SelectControl
-						label={ translate( 'Why are you canceling?' ) }
-						value={ questionOneRadio }
-						options={ optionKeys.map( ( key ) => {
-							const option = options.find( ( { value } ) => value === key );
-							return {
-								label: option.label,
-								value: option.value,
-								disabled: ! option.value,
-							};
-						} ) }
-						onChange={ this.onRadioOneChange }
-					/>
-					{ ! upsell && selectedOption?.textPlaceholder && (
-						<TextControl
-							placeholder={ selectedOption.textPlaceholder }
-							value={ questionOneText }
-							onChange={ this.onTextOneChange }
-						/>
-					) }
-					{ ! upsell && selectedOption?.selectOptions && (
-						<SelectControl
-							label={ selectedOption.selectLabel }
-							value={ selectedOption.selectInitialValue }
-							options={ selectedOption.selectOptions.map( ( option ) => ( {
-								label: option.label,
-								value: option.value,
-								disabled: option.isLabel,
-							} ) ) }
-							onChange={ this.onSelectOneChange }
-						/>
-					) }
-					{ this.showUpsell() }
-				</div>
-			);
-		}
-
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioTextOption(
-				groupName,
-				key,
-				questionOneRadio,
-				questionOneText,
-				this.onRadioOneChange,
-				this.onTextOneChange,
-				radioPrompt,
-				textPlaceholder
-			) );
-
-		const appendRadioOptionWithSelect = (
-			groupName,
-			key,
-			radioPrompt,
-			selectLabel,
-			selectOptions,
-			selected
-		) =>
-			( reasons[ key ] = radioSelectOption(
-				groupName,
-				key,
-				questionOneRadio,
-				this.onRadioOneChange,
-				this.onSelectOneChange,
-				radioPrompt,
-				selectLabel,
-				selectOptions,
-				selected
-			) );
-
-		options.forEach(
-			( { label, selectInitialValue, selectLabel, selectOptions, textPlaceholder, value } ) => {
-				if ( selectOptions ) {
-					appendRadioOptionWithSelect(
-						'questionOne',
-						value,
-						label,
-						selectLabel,
-						selectOptions,
-						selectInitialValue
-					);
-				} else {
-					appendRadioOption( 'questionOne', value, label, textPlaceholder );
-				}
-			}
-		);
+		const selectedOption = options.find( ( option ) => option.value === questionOneRadio );
 
 		return (
-			<div className="cancel-purchase-form__question">
-				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ questionOneOrder.map( ( question ) => reasons[ question ] ) }
+			<div className="cancel-purchase-form__feedback-question">
+				<SelectControl
+					label={ translate( 'Why are you canceling?' ) }
+					value={ questionOneRadio }
+					options={ optionKeys.map( ( key ) => {
+						const option = options.find( ( { value } ) => value === key );
+						return {
+							label: option.label,
+							value: option.value,
+							disabled: ! option.value,
+						};
+					} ) }
+					onChange={ this.onRadioOneChange }
+				/>
+				{ ! upsell && selectedOption?.textPlaceholder && (
+					<TextControl
+						placeholder={ selectedOption.textPlaceholder }
+						value={ questionOneText }
+						onChange={ this.onTextOneChange }
+					/>
+				) }
+				{ ! upsell && selectedOption?.selectOptions && (
+					<SelectControl
+						label={ selectedOption.selectLabel }
+						value={ selectedOption.selectInitialValue }
+						options={ selectedOption.selectOptions.map( ( option ) => ( {
+							label: option.label,
+							value: option.value,
+							disabled: option.isLabel,
+						} ) ) }
+						onChange={ this.onSelectOneChange }
+					/>
+				) }
+				{ this.showUpsell() }
 			</div>
 		);
 	};
 
 	renderQuestionTwo = () => {
-		const reasons = {};
 		const { translate } = this.props;
-		const { questionTwoOrder, questionTwoRadio, questionTwoText, surveyStep } = this.state;
+		const { questionTwoOrder, questionTwoRadio, questionTwoText } = this.state;
 
 		if ( questionTwoOrder.length === 0 ) {
 			return null;
@@ -690,66 +606,40 @@ class CancelPurchaseForm extends React.Component {
 			},
 		];
 
-		if ( surveyStep === steps.FEEDBACK_STEP ) {
-			const optionKeys = [ ...questionTwoOrder ];
-			optionKeys.unshift( '' ); // Placeholder.
+		const optionKeys = [ ...questionTwoOrder ];
+		optionKeys.unshift( '' ); // Placeholder.
 
-			const selectedOption = options.find( ( option ) => option.value === questionTwoRadio );
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<SelectControl
-						label={ translate( 'Where is your next adventure taking you?' ) }
-						value={ questionTwoRadio }
-						options={ optionKeys.map( ( key ) => {
-							const option = options.find( ( { value } ) => value === key );
-							return {
-								label: option.label,
-								value: option.value,
-								disabled: ! option.value,
-							};
-						} ) }
-						onChange={ this.onRadioTwoChange }
-					/>
-					{ selectedOption?.textPlaceholder && (
-						<TextControl
-							placeholder={ selectedOption.textPlaceholder }
-							value={ questionTwoText }
-							onChange={ this.onTextTwoChange }
-						/>
-					) }
-				</div>
-			);
-		}
-
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioTextOption(
-				groupName,
-				key,
-				questionTwoRadio,
-				questionTwoText,
-				this.onRadioTwoChange,
-				this.onTextTwoChange,
-				radioPrompt,
-				textPlaceholder
-			) );
-
-		options.forEach( ( { label, textPlaceholder, value } ) =>
-			appendRadioOption( 'questionTwo', value, label, textPlaceholder )
-		);
+		const selectedOption = options.find( ( option ) => option.value === questionTwoRadio );
 
 		return (
-			<div className="cancel-purchase-form__question">
-				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ questionTwoOrder.map( ( question ) => reasons[ question ] ) }
+			<div className="cancel-purchase-form__feedback-question">
+				<SelectControl
+					label={ translate( 'Where is your next adventure taking you?' ) }
+					value={ questionTwoRadio }
+					options={ optionKeys.map( ( key ) => {
+						const option = options.find( ( { value } ) => value === key );
+						return {
+							label: option.label,
+							value: option.value,
+							disabled: ! option.value,
+						};
+					} ) }
+					onChange={ this.onRadioTwoChange }
+				/>
+				{ selectedOption?.textPlaceholder && (
+					<TextControl
+						placeholder={ selectedOption.textPlaceholder }
+						value={ questionTwoText }
+						onChange={ this.onTextTwoChange }
+					/>
+				) }
 			</div>
 		);
 	};
 
 	renderImportQuestion = () => {
-		const reasons = [];
 		const { translate } = this.props;
-		const { importQuestionRadio, importQuestionText, surveyStep } = this.state;
+		const { importQuestionRadio } = this.state;
 
 		const options = [
 			{
@@ -772,51 +662,24 @@ class CancelPurchaseForm extends React.Component {
 			},
 		];
 
-		if ( surveyStep === steps.FEEDBACK_STEP ) {
-			// Add placeholder.
-			options.unshift( {
-				value: '',
-				label: translate( 'Select an answer' ),
-			} );
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<SelectControl
-						label={ translate( 'You imported from another site. How did the import go?' ) }
-						value={ importQuestionRadio }
-						options={ options.map( ( { label, value } ) => ( {
-							label,
-							value,
-							disabled: ! value,
-						} ) ) }
-						onChange={ this.onImportRadioChange }
-					/>
-				</div>
-			);
-		}
-
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			reasons.push(
-				radioTextOption(
-					groupName,
-					key,
-					importQuestionRadio,
-					importQuestionText,
-					this.onImportRadioChange,
-					this.onImportTextChange,
-					radioPrompt,
-					textPlaceholder
-				)
-			);
-
-		options.forEach( ( { label, value } ) => appendRadioOption( 'importQuestion', value, label ) );
+		// Add placeholder.
+		options.unshift( {
+			value: '',
+			label: translate( 'Select an answer' ),
+		} );
 
 		return (
-			<div className="cancel-purchase-form__question">
-				<FormLegend>
-					{ translate( 'You imported from another site. How did the import go?' ) }
-				</FormLegend>
-				{ reasons }
+			<div className="cancel-purchase-form__feedback-question">
+				<SelectControl
+					label={ translate( 'You imported from another site. How did the import go?' ) }
+					value={ importQuestionRadio }
+					options={ options.map( ( { label, value } ) => ( {
+						label,
+						value,
+						disabled: ! value,
+					} ) ) }
+					onChange={ this.onImportRadioChange }
+				/>
 			</div>
 		);
 	};
@@ -825,7 +688,7 @@ class CancelPurchaseForm extends React.Component {
 		const { translate, isImport } = this.props;
 		const { surveyStep } = this.state;
 
-		if ( surveyStep === steps.FEEDBACK_STEP ) {
+		if ( surveyStep === FEEDBACK_STEP ) {
 			if ( ! isSurveyFilledIn( this.state, isImport ) ) {
 				// Do not display this question unless user has already answered previous questions.
 				return null;
@@ -906,7 +769,7 @@ class CancelPurchaseForm extends React.Component {
 			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
-		if ( surveyStep === steps.FEEDBACK_STEP ) {
+		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
 				<>
 					<FormattedHeader
@@ -930,54 +793,6 @@ class CancelPurchaseForm extends React.Component {
 		}
 
 		if ( showSurvey ) {
-			if ( surveyStep === steps.INITIAL_STEP ) {
-				return (
-					<div>
-						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
-						<p>
-							{ translate(
-								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
-								{
-									args: { productName },
-								}
-							) }
-						</p>
-						{ this.renderQuestionOne() }
-						{ isImport && this.renderImportQuestion() }
-						{ this.renderQuestionTwo() }
-					</div>
-				);
-			}
-
-			if ( surveyStep === steps.HAPPYCHAT_STEP ) {
-				return (
-					<div>
-						<FormSectionHeading>{ translate( 'How can we help?' ) }</FormSectionHeading>
-						{ this.renderLiveChat() }
-					</div>
-				);
-			}
-
-			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
-				return <BusinessATStep />;
-			}
-
-			if ( surveyStep === steps.UPGRADE_AT_STEP ) {
-				return <UpgradeATStep />;
-			}
-
-			if ( surveyStep === steps.DOWNGRADE_STEP ) {
-				const { precision } = getCurrencyDefaults( purchase.currencyCode );
-				const planCost = parseFloat( this.props.downgradePlanPrice ).toFixed( precision );
-				return (
-					<DowngradeStep
-						currencySymbol={ purchase.currencySymbol }
-						planCost={ planCost }
-						refundAmount={ this.getRefundAmount() }
-					/>
-				);
-			}
-
 			return (
 				<div>
 					<FormSectionHeading>
@@ -1029,7 +844,7 @@ class CancelPurchaseForm extends React.Component {
 		const { isSubmitting, surveyStep } = this.state;
 		const disabled = disableButtons || isSubmitting;
 
-		if ( surveyStep === steps.FEEDBACK_STEP ) {
+		if ( surveyStep === FEEDBACK_STEP ) {
 			let actionText;
 			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
 				actionText = disabled ? translate( 'Removing…' ) : translate( 'Remove plan' );
@@ -1084,13 +899,7 @@ class CancelPurchaseForm extends React.Component {
 			onClick: this.onSubmit,
 			isPrimary: true,
 		};
-		const downgrade = {
-			action: 'downgrade',
-			disabled: this.state.isSubmitting,
-			label: translate( 'Switch to Personal' ),
-			onClick: this.downgradeClick,
-			isPrimary: true,
-		};
+
 		const removeText = translate( 'Remove It' );
 		const removingText = translate( 'Removing' );
 		const remove = (
@@ -1123,13 +932,7 @@ class CancelPurchaseForm extends React.Component {
 			}
 		}
 
-		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
-			return firstButtons.concat( [ prev, downgrade, next ] );
-		}
-
-		return firstButtons.concat(
-			this.state.surveyStep === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
-		);
+		return firstButtons.concat( [ prev, next ] );
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -1143,23 +946,11 @@ class CancelPurchaseForm extends React.Component {
 	}
 
 	componentDidMount() {
-		if ( ! isPlan( this.props.purchase ) ) {
-			this.initSurveyState();
-			return;
-		}
-
-		loadExperimentAssignment( 'fullscreen_precancellation_survey_v2' ).then(
-			( experimentAssignment ) => {
-				if ( 'treatment' === experimentAssignment?.variationName ) {
-					this.setState( { fullscreen: true } );
-				}
-				this.initSurveyState();
-			}
-		);
+		this.initSurveyState();
 	}
 
 	render() {
-		const { fullscreen, surveyStep } = this.state;
+		const { surveyStep } = this.state;
 		if ( ! surveyStep ) {
 			return null;
 		}
@@ -1174,7 +965,7 @@ class CancelPurchaseForm extends React.Component {
 			translate,
 		} = this.props;
 
-		if ( fullscreen && isPlan( purchase ) ) {
+		if ( isPlan( purchase ) ) {
 			return (
 				<>
 					<QueryPlans />
@@ -1230,7 +1021,6 @@ export default connect(
 		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 	} ),
