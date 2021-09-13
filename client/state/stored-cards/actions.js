@@ -30,9 +30,8 @@ export const fetchStoredCards = () => ( dispatch ) => {
 		type: STORED_CARDS_FETCH,
 	} );
 
-	return wp
-		.undocumented()
-		.getPaymentMethods( { expired: 'include' } )
+	return wp.req
+		.get( '/me/payment-methods', { expired: 'include' } )
 		.then( ( data ) => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_COMPLETED,
