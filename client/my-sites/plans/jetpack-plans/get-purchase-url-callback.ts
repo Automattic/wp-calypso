@@ -4,8 +4,16 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import { addQueryArgs } from 'calypso/lib/route';
-import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
+import type {
+	PurchaseURLCallback,
+	QueryArgs,
+	SelectorProduct,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * build the URL to checkout page for the enviroment and products.
@@ -14,7 +22,7 @@ import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
  */
-export default function buildCheckoutURL(
+function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
 	urlQueryArgs: QueryArgs = {}
@@ -75,3 +83,35 @@ export default function buildCheckoutURL(
 		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }
+
+/**
+ * Get the function for generating the URL for the product checkout page
+ *
+ * @param {SelectorProduct} product The product to add to the cart
+ * @param {boolean} isUpgradeableToYearly Whether the product is upgradeable to yearly
+ * @param {string} siteSlug Slug of the site
+ * @param {QueryArgs} urlQueryArgs Additional query params appended to url
+ */
+export const getPurchaseURLCallback = (
+	siteSlug: string,
+	urlQueryArgs: QueryArgs
+): PurchaseURLCallback => (
+	product: SelectorProduct,
+	isUpgradeableToYearly?,
+	purchase?: Purchase
+) => {
+	if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+		return product.externalUrl || '';
+	}
+	if ( purchase && isUpgradeableToYearly ) {
+		const { productSlug: slug } = product;
+		const yearlySlug = getYearlySlugFromMonthly( slug );
+		return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
+	}
+	if ( purchase ) {
+		const relativePath = managePurchase( siteSlug, purchase.id );
+		return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
+	}
+
+	return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
+};

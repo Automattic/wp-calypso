@@ -9,12 +9,10 @@ import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { managePurchase } from 'calypso/me/purchases/paths';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import buildCheckoutURL from './build-checkout-url';
+import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
 import { getForCurrentCROIteration, Iterations } from './iterations';
 import ProductGrid from './product-grid';
@@ -24,7 +22,6 @@ import type {
 	SelectorPageProps,
 	SelectorProduct,
 	PurchaseCallback,
-	PurchaseURLCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 import './style.scss';
@@ -104,26 +101,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[ highlightedProducts ]
 	);
 
-	const createProductURL: PurchaseURLCallback = (
-		product: SelectorProduct,
-		isUpgradeableToYearly = false,
-		purchase
-	) => {
-		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			return product.externalUrl || '';
-		}
-		if ( purchase && isUpgradeableToYearly ) {
-			const { productSlug: slug } = product;
-			const yearlySlug = getYearlySlugFromMonthly( slug );
-			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
-		}
-		if ( purchase ) {
-			const relativePath = managePurchase( siteSlug, purchase.id );
-			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
-		}
-
-		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
-	};
+	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
