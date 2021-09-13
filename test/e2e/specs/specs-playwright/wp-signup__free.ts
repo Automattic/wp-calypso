@@ -76,6 +76,7 @@ describe(
 				if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
 					await page.goBack();
 				} else {
+					gutenbergEditorPage = new GutenbergEditorPage( page );
 					await gutenbergEditorPage.openNavSidebar();
 					await gutenbergEditorPage.returnToDashboard();
 				}

@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 const selectors = {
 	searchInput: `input[aria-label="What would you like your domain name to be?"]`,
 	resultPlaceholder: `.is-placeholder`,
-	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text(${ keyword })`,
+	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
 };
 
 /**
