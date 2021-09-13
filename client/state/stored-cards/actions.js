@@ -61,7 +61,7 @@ export const deleteStoredCard = ( card ) => ( dispatch ) => {
 
 	return Promise.all(
 		card.allStoredDetailsIds.map( ( storedDetailsId ) =>
-			wp.undocumented().me().storedCardDelete( { stored_details_id: storedDetailsId } )
+			wp.req.post( { path: '/me/stored-cards/' + storedDetailsId + '/delete' } )
 		)
 	)
 		.then( () => {
