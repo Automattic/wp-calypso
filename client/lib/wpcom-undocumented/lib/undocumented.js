@@ -801,18 +801,6 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 };
 
 /**
- * Get a list of the user's stored payment methods
- *
- * @param {object} query The query parameters
- * @param {Function} [fn] The callback function.
- * @returns {Promise} Returns a promise when the `callback` is not provided.
- */
-Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
-	debug( '/me/payment-methods query', { query } );
-	return this.wpcom.req.get( '/me/payment-methods', query, fn );
-};
-
-/**
  * Get a list of the user's allowed payment methods
  */
 Undocumented.prototype.getAllowedPaymentMethods = function () {
