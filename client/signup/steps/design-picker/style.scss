@@ -61,3 +61,22 @@
 		}
 	}
 }
+
+.design-picker__preview {
+	height: 860px;
+	padding-bottom: 30px;
+}
+
+.design-picker__web-preview {
+	.web-preview__frame-wrapper.is-resizable {
+		background-color: transparent;
+	}
+
+	.web-preview__frame {
+		border: 1px solid rgba( 0, 0, 0, 0.12 );
+		border-top-width: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 0 0 6px 6px;
+		box-sizing: border-box;
+	}
+}

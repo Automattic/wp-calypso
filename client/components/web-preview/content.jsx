@@ -267,7 +267,7 @@ export class WebPreviewContent extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, toolbarComponent: ToolbarComponent } = this.props;
 
 		const className = classNames( this.props.className, 'web-preview__inner', {
 			'is-touch': this._hasTouch,
@@ -288,7 +288,7 @@ export class WebPreviewContent extends Component {
 
 		return (
 			<div className={ className } ref={ this.setWrapperElement }>
-				<Toolbar
+				<ToolbarComponent
 					setDeviceViewport={ this.setDeviceViewport }
 					device={ this.state.device }
 					{ ...this.props }
@@ -390,6 +390,8 @@ WebPreviewContent.propTypes = {
 	isInlineHelpPopoverVisible: PropTypes.bool,
 	// A post object used to override the selected post in the SEO preview
 	overridePost: PropTypes.object,
+	// A customized Toolbar element
+	toolbarComponent: PropTypes.elementType,
 };
 
 WebPreviewContent.defaultProps = {
@@ -411,6 +413,7 @@ WebPreviewContent.defaultProps = {
 	hasSidebar: false,
 	isModalWindow: false,
 	overridePost: null,
+	toolbarComponent: Toolbar,
 };
 
 const mapState = ( state ) => {
