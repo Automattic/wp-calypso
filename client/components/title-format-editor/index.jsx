@@ -1,10 +1,16 @@
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { buildSeoTitle, isJetpackMinimumVersion } from 'calypso/state/sites/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import {
+	buildSeoTitle,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
@@ -294,6 +300,12 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	let shouldShowSeoArchiveTitleButton = false;
 	if ( isJetpackMinimumVersion( state, siteId, '10.2-alpha' ) ) {
+		shouldShowSeoArchiveTitleButton = true;
+	} else if (
+		! isJetpackSite( state, siteId ) &&
+		hasActiveSiteFeature( state, siteId, FEATURE_ADVANCED_SEO )
+	) {
+		// For non-AT Business plan sites which get SEO features.
 		shouldShowSeoArchiveTitleButton = true;
 	}
 
