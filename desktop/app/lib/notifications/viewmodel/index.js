@@ -35,6 +35,7 @@ function parseNote( note ) {
 	let navigate = null;
 
 	switch ( type ) {
+		case 'automattcher':
 		case 'post':
 			navigate = `/read/blogs/${ siteId }/posts/${ postId }`;
 			break;
