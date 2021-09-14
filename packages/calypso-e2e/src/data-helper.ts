@@ -5,6 +5,16 @@ import { getTargetDeviceName } from './browser-helper';
 export type DateFormat = 'ISO';
 export { config };
 
+export interface PaymentDetails {
+	cardHolder: string;
+	cardNumber: string;
+	expiryMonth: string;
+	expiryYear: string;
+	cvv: string;
+	countryCode: string;
+	postalCode: string;
+}
+
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *
@@ -155,20 +165,19 @@ export function getTestEmailAddress( {
  */
 export function getTestPaymentDetails(
 	issuer: 'Visa' | 'Mastercard' | 'American Express'
-): { [ key: string ]: string } {
+): PaymentDetails | null {
 	if ( issuer === 'Visa' ) {
 		return {
-			cardholder: 'End to End Testing',
-			number: '4242 4242 4242 4242',
+			cardHolder: 'End to End Testing',
+			cardNumber: '4242 4242 4242 4242',
 			expiryMonth: '02',
 			expiryYear: '28',
 			cvv: '999',
-			country: 'TR', // Set to Turkey to force Strip to process payments.
+			countryCode: 'TR', // Set to Turkey to force Strip to process payments.
 			postalCode: '06123',
 		};
 	}
-
-	return {}; // stubbed
+	return null;
 }
 
 /**

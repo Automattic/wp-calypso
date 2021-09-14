@@ -1,9 +1,15 @@
 import { Frame, Page } from 'playwright';
 import { DataHelper } from '../..';
+import { getTargetDeviceName } from '../../browser-helper';
+import type { PaymentDetails } from '../../data-helper';
+import type { TargetDevice } from '../../types';
 
 const selectors = {
 	// Modal
 	modalContinueButton: '.checkout-modal__content button:text("Continue")',
+
+	// Banner
+	dismissBanner: `button[aria-label="Dismiss"]`,
 
 	// Cart item
 	cartItem: ( itemName: string ) =>
@@ -27,9 +33,9 @@ const selectors = {
 	couponCodeInputButton: `button:text("Add a coupon code"):visible`,
 	couponCodeInput: `input[id="order-review-coupon"]`,
 	couponCodeApplyButton: `button:text("Apply")`,
-	couponAppliedBanner: `span:text("Coupon discount applied to cart.")`,
 	paymentButton: `button.checkout-button`,
-	totalAmount: `.wp-checkout-order-summary__total-price`,
+	totalAmount: ( device: TargetDevice ) =>
+		device === 'mobile' ? '.wp-checkout__total-price' : '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
 };
 
@@ -94,7 +100,7 @@ export class CartCheckoutPage {
 
 		await this.page.fill( selectors.couponCodeInput, couponCode );
 		await this.page.click( selectors.couponCodeApplyButton );
-		await this.page.waitForSelector( selectors.couponAppliedBanner );
+		await this.page.click( selectors.dismissBanner );
 	}
 
 	/**
@@ -103,7 +109,9 @@ export class CartCheckoutPage {
 	 * @returns {string} Total value of items in cart.
 	 */
 	async getCheckoutTotalAmount(): Promise< number > {
-		const elementHandle = await this.page.waitForSelector( selectors.totalAmount );
+		const elementHandle = await this.page.waitForSelector(
+			selectors.totalAmount( getTargetDeviceName() )
+		);
 		const stringAmount = await elementHandle.innerText();
 		const parsedAmount = stringAmount.replace( /,/g, '' ).match( /\d+\.?\d*/g );
 		if ( ! parsedAmount?.length ) {
@@ -113,42 +121,42 @@ export class CartCheckoutPage {
 	}
 
 	/**
+	 * Enter billing/tax details.
 	 *
-	 * @param details
-	 * @param details.postalCode
-	 * @param details.country
+	 * @param param0 Object implementing the PaymentDetails interface.
+	 * @param {string} param0.postalCode Postal code of the user.
+	 * @param {string} param0.countryCode Country of the purchaser in ISO 3166-1 Alpha 2 format.
 	 */
-	async enterBillingDetails( {
-		postalCode,
-		country,
-	}: {
-		[ key: string ]: string;
-	} ): Promise< void > {
+	async enterBillingDetails( { postalCode, countryCode }: PaymentDetails ): Promise< void > {
 		await this.page.fill( selectors.postalCode, postalCode );
-		await this.page.selectOption( selectors.countryCode, country );
+		await this.page.selectOption( selectors.countryCode, countryCode );
 		await this.page.click( selectors.submitBillingInformationButton );
 	}
 
 	/**
+	 * Enter payment details.
 	 *
-	 * @param details
+	 * @param param0 Object implementing the PaymentDetails interface.
+	 * @param {string} param0.cardHolder Credit card holder name.
+	 * @param {string} param0.cardNumber Credit card number.
+	 * @param {string} param0.expiryMonth Credit card expiry month.
+	 * @param {string} param0.expiryYear Credit card expiry year.
+	 * @param {string} param0.cvv Credit card CVV value.
 	 */
 	async enterPaymentDetails( {
-		cardholder,
-		number,
+		cardHolder,
+		cardNumber,
 		expiryMonth,
 		expiryYear,
 		cvv,
-	}: {
-		[ key: string ]: string;
-	} ): Promise< void > {
-		await this.page.fill( selectors.cardholderName, cardholder );
+	}: PaymentDetails ): Promise< void > {
+		await this.page.fill( selectors.cardholderName, cardHolder );
 
 		const frameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
 		const cardNumberFrame = ( await frameHandle.contentFrame() ) as Frame;
 
 		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput );
-		await cardNumberInput.fill( number );
+		await cardNumberInput.fill( cardNumber );
 
 		const expiryFrame = await this.page.waitForSelector( selectors.cardExpiryFrame );
 		await expiryFrame.fill( `${ expiryMonth }${ expiryYear }` );
@@ -158,7 +166,7 @@ export class CartCheckoutPage {
 	}
 
 	/**
-	 *
+	 * Complete the purchase by clicking on the 'Pay' button.
 	 */
 	async purchase(): Promise< void > {
 		await Promise.all( [

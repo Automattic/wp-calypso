@@ -2,6 +2,9 @@ import { Page } from 'playwright';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
+
+	// Task card (topmost card)
+	taskMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
 };
 
 /**
@@ -29,5 +32,15 @@ export class MyHomePage {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.visitSiteButton ),
 		] );
+	}
+
+	/**
+	 * Given a partial or full string, verify that a message containing
+	 * the string is shown on the Task card.
+	 *
+	 * @param {string} message Partial or fully matching text to search.
+	 */
+	async validateTaskMessage( message: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.taskMessage( message ) );
 	}
 }

@@ -2,7 +2,22 @@ import { Page } from 'playwright';
 
 const selectors = {
 	purchaseTitle: ( title: string ) => `.manage-purchase__title:has-text("${ title }")`,
+
+	// Purchased item actions
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
+	cancelButton: 'a:text("Cancel Subscription and Refund")',
+	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
+
+	// Cancellation survey
+	whyAnotherReasonRadio: 'input[value="anotherReasonOne"]',
+	whyAnotherReasonInput: 'input[name="anotherReasonOneInput"]',
+	whereNextRadio: 'input[value="anotherReasonTwo"]',
+	whereNextInput: 'input[name="anotherReasonTwoInput"]',
+
+	// Cancellation
+	purchaseCancelledBanner: ':text("You successfully canceled your purchase")',
+
+	modalButton: ( text: string ) => `.dialog__action-buttons button:has-text("${ text }")`,
 };
 
 /**
@@ -45,5 +60,43 @@ export class IndividualPurchasePage {
 
 		// We're landing on the cart page, which has a lot of async loading, so let's make sure we let everything settle.
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	/* Cancellations */
+
+	/**
+	 * Cancel the purchase.
+	 */
+	async cancelPurchase(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.cancelButton ),
+		] );
+
+		await this.completeSurvey();
+
+		// After survey leads to another retention attempt.
+		await this.page.click( selectors.modalButton( 'Next Step' ) );
+		// Optional improvement opinions.
+		await this.page.click( selectors.modalButton( 'Next Step' ) );
+		// Final cancellation screen
+		await this.page.click( selectors.modalButton( 'Cancel Now' ) );
+
+		await this.page.waitForSelector( selectors.purchaseCancelledBanner );
+	}
+
+	/**
+	 * Fill out and submit the cancellation survey.
+	 */
+	async completeSurvey(): Promise< void > {
+		const reason = 'e2e testing';
+
+		await this.page.click( selectors.cancelSubscriptionButton );
+
+		await this.page.check( selectors.whyAnotherReasonRadio );
+		await this.page.fill( selectors.whyAnotherReasonInput, reason );
+
+		await this.page.check( selectors.whereNextRadio );
+		await this.page.fill( selectors.whereNextInput, reason );
 	}
 }

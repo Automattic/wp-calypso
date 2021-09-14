@@ -11,13 +11,10 @@ import {
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	AccountSettingsPage,
-	AccountClosedPage,
 	BrowserManager,
 	EmailClient,
-	NavbarComponent,
-	MeSidebarComponent,
 	BrowserHelper,
+	CloseAccountFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -117,29 +114,9 @@ describe(
 		} );
 
 		describe( 'Delete user account', function () {
-			// Magic link login will always land on the https://wordpress.com host, so we need to reset host for rest of test.
-			it( 'Re-login to ensure correct host', async function () {
-				await BrowserManager.clearAuthenticationState( page );
-				const loginPage = new LoginPage( page );
-				await loginPage.visit();
-				await loginPage.login( { username: username, password: signupPassword } );
-			} );
-
-			it( 'Navigate to Me > Account Settings', async function () {
-				const navbarComponent = new NavbarComponent( page );
-				await navbarComponent.clickMe();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.navigate( 'Account Settings' );
-			} );
-
-			it( 'Delete user account', async function () {
-				const accountSettingsPage = new AccountSettingsPage( page );
-				await accountSettingsPage.closeAccount();
-			} );
-
-			it( 'Confirm account is closed', async function () {
-				const accountClosedPage = new AccountClosedPage( page );
-				await accountClosedPage.confirmAccountClosed();
+			it( 'Close account', async function () {
+				const closeAccountFlow = new CloseAccountFlow( page );
+				await closeAccountFlow.closeAccount();
 			} );
 		} );
 	}
