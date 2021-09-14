@@ -306,6 +306,20 @@ class SignupForm extends Component {
 				}
 			}
 
+			// Catch this early for P2 signup flow.
+			if (
+				this.props.isP2Flow &&
+				fields.username &&
+				fields.password &&
+				fields.username === fields.password
+			) {
+				messages = Object.assign( {}, messages, {
+					password: {
+						invalid: this.props.translate( 'Your password cannot be the same as your username.' ),
+					},
+				} );
+			}
+
 			onComplete( error, messages );
 			if ( ! this.state.validationInitialized ) {
 				this.setState( { validationInitialized: true } );

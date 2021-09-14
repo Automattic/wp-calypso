@@ -83,7 +83,8 @@
 		background-color: var( --p2-color-link );
 		color: #fff;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background-color: var( --p2-color-link-dark );
 		}
 	}
