@@ -30,7 +30,6 @@ export const conciergeInitialFetchError = ( errorMessage ) =>
 
 export const showConciergeInitialFetchError = ( action ) => {
 	const errorMessage = action?.meta?.dataLayer?.error?.message;
-
 	return conciergeInitialFetchError( errorMessage );
 };
 
