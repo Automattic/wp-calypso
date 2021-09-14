@@ -278,9 +278,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				<li className="product-grid__asterisk-item">
 					{ translate( '✢ Discount is for first term only, all renewals are at full price.' ) }
 				</li>
-				<li className="product-grid__asterisk-item">
-					{ translate( 'All paid products and plans include priority support.' ) }
-				</li>
 			</ul>
 		</>
 	);
