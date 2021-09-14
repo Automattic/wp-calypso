@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	formatProduct,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlanSlug,
 	isJetpackProductSlug,
@@ -178,21 +177,22 @@ class CancelPurchaseForm extends React.Component {
 		};
 
 		if ( this.state.surveyStep === FEEDBACK_STEP ) {
-			const product = formatProduct( this.props.purchase );
-			if ( value === 'couldNotInstall' && isWpComBusinessPlan( product ) ) {
+			const { purchase } = this.props;
+			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
 				newState.upsell = 'business-atomic';
 			}
 
 			if (
 				value === 'couldNotInstall' &&
-				( isWpComPremiumPlan( product ) || isWpComPersonalPlan( product ) )
+				( isWpComPremiumPlan( purchase.productSlug ) ||
+					isWpComPersonalPlan( purchase.productSlug ) )
 			) {
 				newState.upsell = 'upgrade-atomic';
 			}
 
 			if (
 				value === 'onlyNeedFree' &&
-				isWpComPremiumPlan( product ) &&
+				isWpComPremiumPlan( purchase.productSlug ) &&
 				!! this.props.downgradeClick
 			) {
 				newState.upsell = 'downgrade-personal';
