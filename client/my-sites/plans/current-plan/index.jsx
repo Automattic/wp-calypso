@@ -11,6 +11,7 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
@@ -53,6 +54,7 @@ import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
 import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
 import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
+import VideoPressProductThankYou from './current-plan-thank-you/jetpack-videopress-thank-you';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
@@ -116,6 +118,10 @@ class CurrentPlan extends Component {
 
 		if ( JETPACK_ANTI_SPAM_PRODUCTS.includes( product ) ) {
 			return <AntiSpamProductThankYou />;
+		}
+
+		if ( JETPACK_VIDEOPRESS_PRODUCTS.includes( product ) ) {
+			return <VideoPressProductThankYou />;
 		}
 
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
