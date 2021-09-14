@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import joinClasses from './join-classes';
@@ -83,7 +84,8 @@ export default function WPCheckoutOrderReview( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
-	const { responseCart, removeCoupon, couponStatus } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
 	const selectedSiteData = useSelector( getSelectedSite );

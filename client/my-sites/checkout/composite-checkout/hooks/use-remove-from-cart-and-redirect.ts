@@ -2,6 +2,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import page from 'page';
 import { useCallback, useState, useRef, useEffect } from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import useValidCheckoutBackUrl from './use-valid-checkout-back-url';
 import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-cart';
@@ -16,7 +17,8 @@ export default function useRemoveFromCartAndRedirect(
 	isRemovingProductFromCart: boolean;
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
 } {
-	const { removeProductFromCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { removeProductFromCart } = useShoppingCart( cartKey );
 
 	// In some cases, the cloud.jetpack.com/pricing page sends a `checkoutBackUrl` url query param to checkout.
 	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug || siteSlugLoggedOutCart );
