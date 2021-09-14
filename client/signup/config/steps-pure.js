@@ -26,6 +26,7 @@ export function generateSteps( {
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
+	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -718,7 +719,7 @@ export function generateSteps( {
 			props: {
 				largeThumbnails: true,
 			},
-			apiRequestFunction: setThemeOnSite,
+			apiRequestFunction: setDesignOnSite,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
