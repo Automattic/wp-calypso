@@ -717,6 +717,7 @@ export function generateSteps( {
 			stepName: 'design-setup-site',
 			props: {
 				largeThumbnails: true,
+				showOnlyThemes: true,
 			},
 			apiRequestFunction: setThemeOnSite,
 			dependencies: [ 'siteSlug' ],
