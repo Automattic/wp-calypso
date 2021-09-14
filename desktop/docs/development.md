@@ -22,8 +22,8 @@ For clarity, all file and folder locations are relative to the root of the Calyp
 - _(main)_ The `main` entry in `desktop/package.json` refers to `app/index.js`, which is the entrypoint of the business logic running in Electron's main process. In production builds, this entrypoint is bundled with webpack to the file `dist/index.js`.
 - _(main)_ Various [app handlers](../app/app-handlers/README.md) are loaded from `desktop/app/app-handlers` - these are bits of code that run before the main window opens
 - `desktop/app/mainWindow/index.js` is where the application `BrowserWindow` is initialized after all app handlers have been loaded. The `BrowserWindow` embeds a nested `BrowserView` and the application's "navigation bar" (buttons for simple browser actions like Back, Forward and Home). The nested `BrowserWindow` loads the WordPress.com webapp.
-- _(main)_ A [preload script](../public_desktop/preload.js) is added to the `BrowserView` configuration. Electron executes this preload script before all other scripts when a page is loaded in the view, and injects Inter-Process Communication ("IPC") channels into the Renderer (browser) process that facilitate things like fetching authentication credentials and keyboard/menu shortcuts to specific locations within Calypso. Communication to/from Calypso is defined in the Calypso's [desktop listeners](../../client/lib/desktop-listeners/index.js) file.
-  - _(renderer)_ Calypso's default [configuration](../../packages/calypso-config/src/index.ts) is overriden by the Desktop application at runtime via the presence of the `window.electron` object in order to affect the behavior of the WordPress.com webapp in select circumstances.
+- _(main)_ A [preload script](../public_desktop/preload.js) is added to the `BrowserView` configuration. Electron executes this preload script before all other scripts when a page is loaded in the view, and injects Inter-Process Communication ("IPC") channels into the Renderer (browser) process. These IPC channels facilitate communication to/from Calypso for things like fetching authentication credentials and keyboard/menu shortcuts to specific locations within Calypso. Handlers in Calypso for these IPC events are defined in the [desktop listeners](../../client/lib/desktop-listeners/index.js) file.
+- _(renderer)_ The preload script also injects an `electron` object into the Renderer's global `window` object. In order to affect the behavior of the WordPress.com webapp in select circumstances, Calypso can determine whether it is in a Desktop app context by checking for the presence of this `window.electron` object. For convenience, this check is exposed as the `config.isEnabled( 'desktop' )` flag in Calypso. In order to make this and other feature flag overrides, Calypso's default [configuration](../../packages/calypso-config/src/index.ts) is overriden by the Desktop application at runtime if `window.electron` is present.
 - _(main)_ After the `BrowserWindow` has been created, various [window handlers](../app/window-handlers/README.md) are loaded that add behaviors to the window and view instances (spellchecking, navigation, notifications, etc).
 - _(renderer)_ In addition to the preload script, the `desktop/public_desktop` folder also contains other assets that are loaded into the Renderer process independent of Calypso, such as HTML and CSS for the application's Preferences and About panes. For convenience, the application's icons are located here as well.
 
@@ -31,14 +31,14 @@ Phew!
 
 ## How do I change the main app?
 
-All app code is contained in the `desktop` directory, and desktop overrides are implemented in Calypso as-needed (using the `config.isEnabled( 'flag' )` mentioned in the prior section). Changes you make to the Desktop's application Node process (main) logic require a rebuild and restart of the app.
+All app code is contained in the `desktop` directory, and desktop overrides are implemented in Calypso as-needed (using the `config.isEnabled( 'desktop' )` check described in the prior section). Changes you make to the Desktop's application Node process (main) logic require a rebuild and restart of the app.
 
 - [Config](../desktop-config/README.md) - app configuration values
 - [Libraries](../app/lib/README.md) - details of the local libraries used
 - [App Handlers](../app/app-handlers/README.md) - handlers that run before the main window is created
 - [Window Handlers](../app/window-handlers/README.md) - handlers that run after the main window is created
 
-The application can also be run in a development mode that uses the localhost instance of Calypso, instead of loading the production WordPress.com webapp. Refer to the main README for details.
+The application can also be run in a development mode that uses the localhost instance of Calypso, instead of loading the production WordPress.com webapp. Refer to the main desktop [README](../README.md) for details.
 
 ## Debugging
 
