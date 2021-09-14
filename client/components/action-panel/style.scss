@@ -1,15 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+
 
 // Main
 .action-panel {
 	padding-bottom: 16px;
-	flex-direction: column-reverse;
-	&.is-primary {
-		@include break-mobile {
-			flex-direction: row;
-		}
-	}
 }
 
 // Title
@@ -48,22 +41,20 @@ a.action-panel__body-text-link {
 	margin: 24px 0;
 	text-align: center;
 
-	float: right;
-	max-width: 208px;
+	@include breakpoint-deprecated( '>480px' ) {
+		float: right;
+		max-width: 208px;
+		margin: 0 0 20px 24px;
 
-	&.is-inline-body-text {
-		margin-top: 40px;
-	}
+		&.is-inline-body-text {
+			margin-top: 40px;
+		}
 
-	&.align-left {
-		float: left;
-		margin-left: 0;
-		margin-right: 24px;
-		width: unset;
-	}
-
-	&.align-right {
-		margin: 0 0 24px 24px;
+		&.align-left {
+			float: left;
+			margin-left: 0;
+			margin-right: 24px;
+		}
 	}
 }
 

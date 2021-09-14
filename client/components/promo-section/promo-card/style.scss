@@ -3,7 +3,10 @@
 
 .promo-card {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+	}
 
 	.action-panel__figure {
 		margin-top: 3px;
@@ -35,15 +38,6 @@
 
 	&.is-primary {
 		align-items: center;
-		flex-direction: column;
-
-		@include break-small {
-			flex-direction: row-reverse;
-		}
-
-		.action-panel__figure {
-			order: -1;
-		}
 
 		.action-panel__title {
 			@extend .wp-brand-font;

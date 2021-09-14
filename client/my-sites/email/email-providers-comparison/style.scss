@@ -1,6 +1,44 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.action-panel {
+	flex-direction: row;
+
+	&.is-primary {
+		flex-direction: column;
+		@include break-mobile {
+			flex-direction: row;
+		}
+	}
+}
+
+.action-panel__figure {
+	float: right;
+	max-width: 208px;
+
+	&.is-inline-body-text {
+		margin-top: 40px;
+	}
+
+	&.align-left {
+		float: left;
+		margin-left: 0;
+		margin-right: 24px;
+		width: unset;
+	}
+
+	&.align-right {
+		margin: 0 0 24px 24px;
+	}
+
+	&.align-left {
+		float: left;
+		margin-left: 0;
+		margin-right: 24px;
+	}
+}
+
+
 .email-providers-comparison__providers {
 	display: flex;
 	flex-direction: row;
