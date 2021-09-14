@@ -49,6 +49,7 @@ import getSupportVariation, {
 } from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import getSite from 'calypso/state/sites/selectors/get-site';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
 import initialSurveyState from './initial-survey-state';
@@ -72,7 +73,6 @@ class CancelPurchaseForm extends React.Component {
 		defaultContent: PropTypes.node.isRequired,
 		disableButtons: PropTypes.bool,
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.shape( { slug: PropTypes.string.isRequired } ),
 		isVisible: PropTypes.bool,
 		onInputChange: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
@@ -350,7 +350,7 @@ class CancelPurchaseForm extends React.Component {
 			return null;
 		}
 
-		const { downgradePlanPrice, purchase, selectedSite, translate } = this.props;
+		const { downgradePlanPrice, purchase, site, translate } = this.props;
 
 		const dismissUpsell = () => this.setState( { upsell: '' } );
 
@@ -386,7 +386,7 @@ class CancelPurchaseForm extends React.Component {
 			case 'upgrade-atomic':
 				return (
 					<Upsell
-						actionHref={ `/checkout/${ selectedSite.slug }/business?coupon=BIZC25` }
+						actionHref={ `/checkout/${ site.slug }/business?coupon=BIZC25` }
 						actionOnClick={ () =>
 							this.props.recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' )
 						}
@@ -959,7 +959,7 @@ class CancelPurchaseForm extends React.Component {
 			isChatAvailable,
 			flowType,
 			isChatActive,
-			selectedSite,
+			site,
 			supportVariation,
 			purchase,
 			translate,
@@ -969,7 +969,7 @@ class CancelPurchaseForm extends React.Component {
 			return (
 				<>
 					<QueryPlans />
-					{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+					{ site && <QuerySitePlans siteId={ site.ID } /> }
 					<QuerySupportTypes />
 					{ this.props.isVisible && (
 						<BlankCanvas className="cancel-purchase-form">
@@ -977,7 +977,7 @@ class CancelPurchaseForm extends React.Component {
 								{ flowType === CANCEL_FLOW_TYPE.REMOVE
 									? translate( 'Remove plan' )
 									: translate( 'Cancel plan' ) }
-								<span className="cancel-purchase-form__site-slug">{ selectedSite.slug }</span>
+								<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
 							</BlankCanvas.Header>
 							<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 							<BlankCanvas.Footer>
@@ -1009,7 +1009,7 @@ class CancelPurchaseForm extends React.Component {
 			>
 				{ this.surveyContent() }
 				<QueryPlans />
-				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+				{ site && <QuerySitePlans siteId={ site.ID } /> }
 			</Dialog>
 		);
 	}
@@ -1023,6 +1023,7 @@ export default connect(
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
+		site: getSite( state, purchase.siteId ),
 	} ),
 	{
 		recordTracksEvent,

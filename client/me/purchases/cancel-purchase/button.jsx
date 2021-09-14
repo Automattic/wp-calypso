@@ -28,7 +28,6 @@ class CancelPurchaseButton extends Component {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
 		getConfirmCancelDomainUrlFor: PropTypes.func,
-		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -248,7 +247,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, selectedSite, translate } = this.props;
+		const { purchase, translate } = this.props;
 		let text;
 		let onClick;
 
@@ -295,7 +294,6 @@ class CancelPurchaseButton extends Component {
 					disableButtons={ disableButtons }
 					defaultContent={ this.renderCancellationEffect() }
 					purchase={ purchase }
-					selectedSite={ selectedSite }
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
