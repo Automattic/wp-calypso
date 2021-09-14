@@ -101,7 +101,10 @@ module.exports = function ( { window, view } ) {
 				if ( navigate ) {
 					// if we have a specific URL, then navigate Calypso there
 					log.info( `Navigating user to URL: ${ navigate }` );
-					if ( isCalypso( view ) ) {
+
+					if ( navigate.startsWith( 'http' ) ) {
+						view.webContents.loadURL( navigate );
+					} else if ( isCalypso( view ) ) {
 						log.info( `Navigating to '${ navigate }'` );
 						view.webContents.send( 'navigate', navigate );
 					} else {
