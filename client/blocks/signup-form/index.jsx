@@ -315,7 +315,9 @@ class SignupForm extends Component {
 			) {
 				messages = Object.assign( {}, messages, {
 					password: {
-						invalid: this.props.translate( 'Your password cannot be the same as your username.' ),
+						invalid: this.props.translate(
+							'Your password cannot be the same as your username. Please pick a different password.'
+						),
 					},
 				} );
 			}
