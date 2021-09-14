@@ -550,7 +550,7 @@ class HelpContact extends React.Component {
 			case SUPPORT_UPWORK_TICKET:
 				return (
 					! config( 'upwork_support_locales' ).includes( currentUserLocale ) &&
-					currentUserLocale !== 'en'
+					! [ 'en', 'en-gb' ].includes( currentUserLocale )
 				);
 
 			default:
