@@ -2,7 +2,6 @@
  * @group calypso-pr
  */
 
-import assert from 'assert';
 import {
 	DataHelper,
 	LoginFlow,
@@ -10,11 +9,12 @@ import {
 	SupportComponent,
 	setupHooks,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
-	let page;
+	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -22,28 +22,26 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		{ siteType: 'Simple', user: 'defaultUser' },
 		{ siteType: 'Atomic', user: 'wooCommerceUser' },
 	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
-		let supportComponent;
+		let supportComponent: SupportComponent;
+		let supportArticlePage: Page;
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( page, user );
 			await loginFlow.logIn();
 		} );
 
-		it( 'Open Settings page', async function () {
+		it( 'Navigate to Tools > Marketing', async function () {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Settings', 'General' );
+			await sidebarComponent.navigate( 'Tools', 'Marketing' );
 		} );
 
 		it( 'Open support popover', async function () {
 			supportComponent = new SupportComponent( page );
-			await supportComponent.clickSupportButton();
+			await supportComponent.openPopover();
 		} );
 
 		it( 'Displays default entries', async function () {
-			const results = await supportComponent.getOverallResultsCount();
-			// Default entries varies from 5 on TeamCity to 6 when run locally.
-			// This statement would check that at least 5 items are visible to compensate.
-			assert.ok( results >= 5 );
+			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Enter search keyword', async function () {
@@ -52,23 +50,18 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		} );
 
 		it( 'Search results are shown', async function () {
-			const supportCount = await supportComponent.getSupportResultsCount();
-			assert.strictEqual( 4, supportCount );
-
-			const adminCount = await supportComponent.getAdminResultsCount();
-			assert.strictEqual( 3, adminCount );
+			const results = await supportComponent.getResults( 'article' );
+			expect( results.length ).toBeGreaterThan( 0 );
 		} );
 
-		it( 'Click and view first support article', async function () {
-			await supportComponent.clickResult( 1 );
+		it( 'Click and visit first support article', async function () {
+			await supportComponent.clickResult( 'article', 1 );
+			// Obtain handle to the popup page.
+			supportArticlePage = await supportComponent.visitArticle();
 		} );
 
-		it( 'Visit and close support article page', async function () {
-			const supportArticlePage = await supportComponent.visitArticle();
+		it( 'Close article page and preview', async function () {
 			await supportArticlePage.close();
-		} );
-
-		it( 'Close support article preview', async function () {
 			await supportComponent.closeArticle();
 		} );
 	} );
@@ -77,7 +70,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		{ siteType: 'Simple', user: 'defaultUser' },
 		{ siteType: 'Atomic', user: 'wooCommerceUser' },
 	] )( 'Unsupported search keywords ($siteType)', function ( { user } ) {
-		let supportComponent;
+		let supportComponent: SupportComponent;
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( page, user );
@@ -91,42 +84,28 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Open support popover', async function () {
 			supportComponent = new SupportComponent( page );
-			await supportComponent.clickSupportButton();
+			await supportComponent.openPopover();
 		} );
 
 		it( 'Displays default entries', async function () {
-			const results = await supportComponent.getOverallResultsCount();
-			assert.ok( results >= 5 );
+			await supportComponent.defaultStateShown();
 		} );
 
-		it( 'Enter empty search keyword', async function () {
+		it( 'Enter empty search keyword and expect no results to be shown', async function () {
 			const keyword = '        ';
 			await supportComponent.search( keyword );
-		} );
-
-		it( 'Continues to display default results', async function () {
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, defaultResults );
+			await supportComponent.noResultsShown();
 		} );
 
 		it( 'Clear keyword', async function () {
 			await supportComponent.clearSearch();
-
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, defaultResults );
-			const supportResults = await supportComponent.getSupportResultsCount();
-			assert.strictEqual( 0, supportResults );
-			const adminResults = await supportComponent.getAdminResultsCount();
-			assert.strictEqual( 0, adminResults );
+			await supportComponent.defaultStateShown();
 		} );
 
-		it( 'Enter invalid search keyword', async function () {
+		it( 'Enter invalid search keyword and expect no results to be shown', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
-		} );
-
-		it( 'No search results are shown', async function () {
-			await supportComponent.noResults();
+			await supportComponent.noResultsShown();
 		} );
 
 		it( 'Close support popover', async function () {
