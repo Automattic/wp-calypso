@@ -166,7 +166,6 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isFree={ item.isFree }
 			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
-			forceGetStarted={ item.forceGetStarted }
 			features={ item.features }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
 			belowPriceText={ item.belowPriceText }

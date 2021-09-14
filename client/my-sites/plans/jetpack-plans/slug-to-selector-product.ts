@@ -17,8 +17,6 @@ import {
 	objectIsProduct,
 	Plan,
 	Product,
-	PRODUCT_JETPACK_VIDEOPRESS,
-	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	PRODUCTS_LIST,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -96,10 +94,6 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
-		const isVideoPress =
-			PRODUCT_JETPACK_VIDEOPRESS === item.product_slug ||
-			PRODUCT_JETPACK_VIDEOPRESS_MONTHLY === item.product_slug;
-
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
 
 		return {
@@ -128,10 +122,6 @@ function itemToSelectorProduct(
 						)
 					) || [],
 			},
-			// We need to hack VideoPress a bit as it has a free option.
-			...( isVideoPress && {
-				forceGetStarted: true,
-			} ),
 		};
 	} else if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
