@@ -98,7 +98,7 @@ class CancelPurchaseForm extends React.Component {
 		// Jetpack doesn't do Happychat support
 		// NOTE: The HappychatButton component may still decide not to render,
 		// based on agent availability and connection status.
-		return ! this.props;
+		return ! this.props.isJetpack;
 	};
 
 	getAllSurveySteps = () => {
