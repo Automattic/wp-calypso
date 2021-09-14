@@ -22,6 +22,8 @@ import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;
 
+const identity = ( value: any ) => value;
+
 const FeaturesStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goBack, goNext } = useStepNavigation();
@@ -59,8 +61,10 @@ const FeaturesStep: React.FunctionComponent = () => {
 		<div className="gutenboarding-page features">
 			<div className="features__header">
 				<div className="features__heading">
-					<Title>{ __( 'Which features will you need?' ) }</Title>
-					<SubTitle>
+					<Title data-e2e-string="Which features will you need?">
+						{ __( 'Which features will you need?' ) }
+					</Title>
+					<SubTitle data-e2e-string="Choose the features that matter to you and we'll suggest a plan to suit your needs. Don't worry, you won't be charged and can change it at any time.">
 						{ __(
 							"Choose the features that matter to you and we'll suggest a plan to suit your needs. Don't worry, you won't be charged and can change it at any time."
 						) }
@@ -91,8 +95,16 @@ const FeaturesStep: React.FunctionComponent = () => {
 								<FeatureIcon featureId={ feature.id } />
 							</div>
 							<div className="features__item-heading">
-								<div className="features__item-name">{ getFeatureText( feature.id, __ ).name }</div>
-								<div className="features__item-description">
+								<div
+									className="features__item-name"
+									data-e2e-string={ getFeatureText( feature.id, identity ).name }
+								>
+									{ getFeatureText( feature.id, __ ).name }
+								</div>
+								<div
+									className="features__item-description"
+									data-e2e-string={ getFeatureText( feature.id, identity ).description }
+								>
 									{ getFeatureText( feature.id, __ ).description }
 								</div>
 							</div>
