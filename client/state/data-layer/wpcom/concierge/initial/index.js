@@ -23,12 +23,13 @@ export const fetchConciergeInitial = ( action ) =>
 export const storeFetchedConciergeInitial = ( action, initial ) =>
 	updateConciergeInitial( initial );
 
-export const conciergeInitialFetchError = ( errorMessage ) => errorNotice( errorMessage );
+export const conciergeInitialFetchError = ( errorMessage ) =>
+	errorMessage
+		? errorNotice( errorMessage )
+		: errorNotice( translate( 'Something went wrong with Quick Start. Please try again later.' ) );
 
 export const showConciergeInitialFetchError = ( action ) => {
-	const errorMessage =
-		action?.meta?.dataLayer?.error?.message ||
-		translate( 'Something went wrong with Quick Start. Please try again later.' );
+	const errorMessage = action?.meta?.dataLayer?.error?.message;
 
 	return conciergeInitialFetchError( errorMessage );
 };
