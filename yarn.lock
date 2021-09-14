@@ -253,7 +253,6 @@ __metadata:
   resolution: "@automattic/composite-checkout@workspace:packages/composite-checkout"
   dependencies:
     "@automattic/calypso-build": ^9.0.0
-    "@automattic/calypso-polyfills": ^2.0.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/addon-actions": ^6.3.8
