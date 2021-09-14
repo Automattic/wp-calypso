@@ -1,4 +1,4 @@
-import DesignPicker from '@automattic/design-picker';
+import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -17,11 +17,13 @@ class DesignPickerStep extends Component {
 		locale: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 		largeThumbnails: PropTypes.bool,
+		showOnlyThemes: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		useHeadstart: true,
 		largeThumbnails: false,
+		showOnlyThemes: false,
 	};
 
 	pickDesign = ( selectedDesign ) => {
@@ -43,11 +45,23 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		// props.locale obtained via `localize` HoC
+		// Use <DesignPicker>'s preferred designs by default
+		let designs = undefined;
+
+		if ( this.props.showOnlyThemes ) {
+			// Only offering designs that are also available as themes. This means excluding
+			// designs where the `template` has a layout that's different from what the theme's
+			// default Headstart annotation provides.
+			designs = getAvailableDesigns().featured.filter(
+				( { features, template, theme } ) => theme === template && ! features.includes( 'anchorfm' )
+			);
+		}
+
 		return (
 			<DesignPicker
+				designs={ designs }
 				theme={ this.props.isReskinned ? 'light' : 'dark' }
-				locale={ this.props.locale }
+				locale={ this.props.locale } // props.locale obtained via `localize` HoC
 				onSelect={ this.pickDesign }
 				className={ classnames( {
 					'design-picker-step__is-large-thumbnails': this.props.largeThumbnails,
