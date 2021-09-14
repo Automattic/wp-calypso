@@ -124,7 +124,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-color-schemes@^2.1.1, @automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes":
+"@automattic/calypso-color-schemes@^3.0.0, @automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes"
   dependencies:
@@ -667,7 +667,7 @@ __metadata:
   resolution: "@automattic/notifications@workspace:apps/notifications"
   dependencies:
     "@automattic/calypso-build": ^9.0.0
-    "@automattic/calypso-color-schemes": ^2.1.1
+    "@automattic/calypso-color-schemes": ^3.0.0
     "@automattic/calypso-polyfills": ^2.0.0
     calypso: ^0.17.0
     classnames: ^2.3.1
@@ -11893,7 +11893,7 @@ __metadata:
     "@automattic/browser-data-collector": ^2.0.0
     "@automattic/calypso-analytics": ^1.0.0
     "@automattic/calypso-build": ^9.0.0
-    "@automattic/calypso-color-schemes": ^2.1.1
+    "@automattic/calypso-color-schemes": ^3.0.0
     "@automattic/calypso-config": ^1.0.0
     "@automattic/calypso-polyfills": ^2.0.0
     "@automattic/calypso-products": ^1.0.0
@@ -38832,7 +38832,7 @@ typescript@^4.4.3:
     "@automattic/babel-plugin-i18n-calypso": ^1.2.0
     "@automattic/babel-plugin-transform-wpcalypso-async": ^1.0.1
     "@automattic/calypso-build": ^9.0.0
-    "@automattic/calypso-color-schemes": ^2.1.1
+    "@automattic/calypso-color-schemes": ^3.0.0
     "@automattic/calypso-doctor": ^0.1.0
     "@automattic/color-studio": 2.5.0
     "@automattic/components": ^1.0.0-alpha.1

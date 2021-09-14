@@ -1,6 +1,10 @@
 /* eslint-disable import/no-nodejs-modules */
-const { copyFileSync, existsSync, mkdirSync } = require( 'fs' );
-const { basename, dirname, join } = require( 'path' );
+import { copyFileSync, existsSync, mkdirSync } from 'fs';
+import { createRequire } from 'module';
+import { basename, dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname( fileURLToPath( import.meta.url ) );
 
 copyAsset( '@automattic/color-studio/dist/color-properties.css' );
 copyAsset( '@automattic/color-studio/dist/color-properties-rgb.css' );
@@ -16,5 +20,6 @@ function copyAsset( assetPath, targetName ) {
 		mkdirSync( dirname( target ), { recursive: true } );
 	}
 
-	copyFileSync( require.resolve( assetPath ), join( target ) );
+	const source = createRequire( import.meta.url ).resolve( assetPath );
+	copyFileSync( source, target );
 }

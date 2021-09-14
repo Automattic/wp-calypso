@@ -1,7 +1,8 @@
 # Release Notes
 
-## trunk
+## 3.0.0
 
+- Breaking: Module converted to ESM only. CJS build is not provided anymore.
 - Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
   - Removed dependency `node-sass`
   - Added dependency `sass ^1.32.13`

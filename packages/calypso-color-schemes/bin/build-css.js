@@ -1,13 +1,17 @@
 /* eslint-disable import/no-nodejs-modules */
-const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
-const { dirname, join } = require( 'path' );
-const postcss = require( 'postcss' );
-const postcssCustomProperties = require( 'postcss-custom-properties' );
-const { renderSync } = require( 'sass' );
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import postcss from 'postcss';
+import postcssCustomProperties from 'postcss-custom-properties';
+import sass from 'sass';
+
+const { renderSync } = sass;
+const __dirname = dirname( fileURLToPath( import.meta.url ) );
 
 const INPUT_FILE = join( __dirname, '..', 'src', 'calypso-color-schemes.scss' );
 const OUTPUT_FILE = join( __dirname, '..', 'css', 'index.css' );
-const OUTPUT_JS_FILE = join( __dirname, '..', 'js', 'index.js' );
+const OUTPUT_JS_FILE = join( __dirname, '..', 'js', 'index.mjs' );
 
 if ( ! existsSync( dirname( OUTPUT_FILE ) ) ) {
 	mkdirSync( dirname( OUTPUT_FILE ), { recursive: true } );
