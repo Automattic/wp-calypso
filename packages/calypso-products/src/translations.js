@@ -178,6 +178,7 @@ export const getJetpackProductsTaglines = () => {
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
+	const videoPressTagLine = translate( 'High-quality, ad-free video for WordPress' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -227,6 +228,8 @@ export const getJetpackProductsTaglines = () => {
 		},
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: { default: antiSpamTagline },
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: { default: videoPressTagLine },
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
 	};
 };
 
