@@ -8,7 +8,7 @@ import './style.scss';
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const useSteps = ( { flowName, hasPaidDomain, hasSelectedDesign } ) => {
+const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
@@ -17,13 +17,13 @@ const useSteps = ( { flowName, hasPaidDomain, hasSelectedDesign } ) => {
 			steps = [ __( 'Your site will be live shortly.' ) ]; // copy from 'packages/launch/src/focused-launch/success'
 			break;
 		case 'setup-site':
-			steps = [ hasSelectedDesign && __( 'Applying design' ) ];
+			steps = [ __( 'Applying design' ) ];
 			break;
 		default:
 			steps = [
 				__( 'Building your site' ),
 				hasPaidDomain && __( 'Getting your domain' ),
-				__( 'Applying design' ),
+				hasAppliedDesign && __( 'Applying design' ),
 			];
 	}
 
@@ -59,10 +59,6 @@ export default function ReskinnedProcessingScreen( props ) {
 		return () => clearTimeout( id );
 	}, [] );
 
-	if ( totalSteps === 0 ) {
-		return null;
-	}
-
 	return (
 		<div className="reskinned-processing-screen">
 			<h1 className="reskinned-processing-screen__progress-step">
@@ -90,5 +86,5 @@ export default function ReskinnedProcessingScreen( props ) {
 ReskinnedProcessingScreen.propTypes = {
 	flowName: PropTypes.string,
 	hasPaidDomain: PropTypes.bool,
-	hasSelectedDesign: PropTypes.bool,
+	hasAppliedDesign: PropTypes.bool,
 };
