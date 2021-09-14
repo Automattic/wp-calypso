@@ -247,6 +247,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale, translate } = this.props;
 
 		if ( config( 'forum_locales' ).includes( currentUserLocale ) ) {
+			// eslint-disable-next-line wpcalypso/i18n-no-variables
 			return translate( message, args );
 		}
 
@@ -265,7 +266,7 @@ class HelpContact extends React.Component {
 			userDeclaredUrl,
 			userRequestsHidingUrl,
 		} = contactForm;
-		const { currentUserLocale, translate } = this.props;
+		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
@@ -522,18 +523,10 @@ class HelpContact extends React.Component {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale } = this.props;
 
-		// Let the user know we only offer support in English.
-		// We only need to show the message if:
-		// 1. The user's locale doesn't match the live chat locale (usually English)
-		// 2. The support request isn't sent to the forums. Because forum support
-		//    requests are sent to the language specific forums (for popular languages)
-		//    we don't tell the user that support is only offered in English.
-		// 3. The support request isn't sent to Upwork. This is support given in
-		//    the user's language.
-		const showHelpLanguagePrompt =
-			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
-			SUPPORT_FORUM !== variationSlug &&
-			SUPPORT_UPWORK_TICKET !== variationSlug;
+		const showHelpLanguagePrompt = this.shouldShowHelpLanguagePrompt(
+			variationSlug,
+			currentUserLocale
+		);
 
 		return {
 			compact: this.props.compact,
@@ -545,6 +538,24 @@ class HelpContact extends React.Component {
 				requestChange: ( contactForm ) => ( savedContactForm = contactForm ),
 			},
 		};
+	};
+
+	shouldShowHelpLanguagePrompt = ( variationSlug, currentUserLocale ) => {
+		switch ( variationSlug ) {
+			case SUPPORT_HAPPYCHAT:
+				return ! config( 'livechat_support_locales' ).includes( currentUserLocale );
+
+			case SUPPORT_TICKET:
+			case SUPPORT_CHAT_OVERFLOW:
+			case SUPPORT_UPWORK_TICKET:
+				return (
+					! config( 'upwork_support_locales' ).includes( currentUserLocale ) &&
+					! [ 'en', 'en-gb' ].includes( currentUserLocale )
+				);
+
+			default:
+				return false;
+		}
 	};
 
 	shouldShowTicketRequestErrorNotice = ( variationSlug ) => {
