@@ -171,15 +171,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-polyfills@^1.0.0, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
+"@automattic/calypso-polyfills@^2.0.0, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
   dependencies:
     core-js: ^3.6.3
-    element-closest: ^3.0.2
     isomorphic-fetch: ^2.2.1
     regenerator-runtime: ^0.13.3
-    svg4everybody: ^2.1.9
   languageName: unknown
   linkType: soft
 
@@ -255,7 +253,6 @@ __metadata:
   resolution: "@automattic/composite-checkout@workspace:packages/composite-checkout"
   dependencies:
     "@automattic/calypso-build": ^9.0.0
-    "@automattic/calypso-polyfills": ^1.0.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/addon-actions": ^6.3.8
@@ -403,7 +400,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/explat-client-react-helpers@workspace:packages/explat-client-react-helpers"
   dependencies:
-    "@automattic/calypso-polyfills": ^1.0.0
+    "@automattic/calypso-polyfills": ^2.0.0
     "@automattic/explat-client": ^0.0.2
     "@testing-library/react": ^12.0.0
     "@testing-library/react-hooks": 7.0.1
@@ -418,7 +415,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/explat-client@workspace:packages/explat-client"
   dependencies:
-    "@automattic/calypso-polyfills": ^1.0.0
+    "@automattic/calypso-polyfills": ^2.0.0
     tslib: ^2.3.0
     typescript: ^4.4.2
   languageName: unknown
@@ -671,7 +668,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
-    "@automattic/calypso-polyfills": ^1.0.0
+    "@automattic/calypso-polyfills": ^2.0.0
     calypso: ^0.17.0
     classnames: ^2.3.1
     debug: ^4.1.1
@@ -942,7 +939,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/testarmada-magellan-mocha-plugin@workspace:packages/magellan-mocha-plugin"
   dependencies:
-    "@automattic/calypso-polyfills": ^1.0.0
+    "@automattic/calypso-polyfills": ^2.0.0
     cli-color: ^1.2.0
     coffee-script: ^1.12.7
     lodash: ^4.17.21
@@ -12343,7 +12340,7 @@ __metadata:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-config": ^1.0.0-alpha.0
-    "@automattic/calypso-polyfills": ^1.0.0
+    "@automattic/calypso-polyfills": ^2.0.0
     "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
     "@automattic/calypso-url": ^1.0.0
@@ -16227,13 +16224,6 @@ __metadata:
     lodash.isequal: ^4.5.0
     semver: ^7.1.3
   checksum: 1b945c3cf6bd5ccb64e5cd804c6b14a623cdd274fd8c6f18e3d55a1ab4b341f5d14fa9d3e16115737382192b8beeeb182bf630242c3d02d6fb7cf5c1a4ebe984
-  languageName: node
-  linkType: hard
-
-"element-closest@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "element-closest@npm:3.0.2"
-  checksum: 1f2da00122be28f276b00532575cf134467a15e2073f74ad31ef2cb9d2b832fd7920d294334a7f86b7a0f767535682d565803a617b819780c31b0774f74ee81b
   languageName: node
   linkType: hard
 
@@ -35902,13 +35892,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"svg4everybody@npm:^2.1.9":
-  version: 2.1.9
-  resolution: "svg4everybody@npm:2.1.9"
-  checksum: 033ba59c4b8b3466c0abcb42bb750e255b5b245b591e5e585a6ab39baf87c19ae2269fb4921589ad94700380c46929e92a88362e180d12e7d1d1a601f27d5c2c
-  languageName: node
-  linkType: hard
-
 "svgo@npm:^1.0.0, svgo@npm:^1.2.2":
   version: 1.3.2
   resolution: "svgo@npm:1.3.2"
@@ -39006,7 +38989,6 @@ typescript@^4.4.2:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-doctor": ^0.1.0
-    "@automattic/calypso-polyfills": ^1.0.0
     "@automattic/color-studio": 2.5.0
     "@automattic/components": ^1.0.0-alpha.1
     "@automattic/data-stores": ^2.0.0

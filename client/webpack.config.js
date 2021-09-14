@@ -327,14 +327,6 @@ const webpackConfig = {
 			}
 		} ),
 		/*
-		 * Use "evergreen" polyfill config, rather than fallback.
-		 */
-		browserslistEnv === 'evergreen' &&
-			new webpack.NormalModuleReplacementPlugin(
-				/^@automattic\/calypso-polyfills$/,
-				'@automattic/calypso-polyfills/browser-evergreen'
-			),
-		/*
 		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
 		 */
 		...( browserslistEnv === 'evergreen'
