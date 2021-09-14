@@ -1,3 +1,4 @@
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import React, { ReactNode, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export const StoragePricing: React.FC< Props > = ( {
-	defaultDuration,
+	defaultDuration = TERM_ANNUALLY,
 	header,
 	footer,
 	urlQueryArgs,
@@ -30,7 +31,11 @@ export const StoragePricing: React.FC< Props > = ( {
 		<Main className="storage-pricing__main">
 			{ header }
 			<PlansFilterBar showDiscountMessage duration={ duration } onDurationChange={ setDuration } />
-			<StorageTierUpgrade urlQueryArgs={ urlQueryArgs } siteSlug={ siteSlug } />
+			<StorageTierUpgrade
+				duration={ duration }
+				urlQueryArgs={ urlQueryArgs }
+				siteSlug={ siteSlug }
+			/>
 			{ footer }
 			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
 		</Main>

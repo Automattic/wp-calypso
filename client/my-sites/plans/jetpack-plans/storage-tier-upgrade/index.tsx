@@ -1,21 +1,22 @@
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getPurchaseURLCallback } from '../get-purchase-url-callback';
 import ProductCard from '../product-card';
-import { QueryArgs, SelectorProduct } from '../types';
+import { Duration, QueryArgs, SelectorProduct } from '../types';
 import { getTieredBackupProducts } from './get-tiered-products';
 
 import './style.scss';
 
 interface Props {
+	duration: Duration;
 	urlQueryArgs: QueryArgs;
 	siteSlug?: string;
 }
 
 export const StorageTierUpgrade: React.FC< Props > = ( {
+	duration,
 	urlQueryArgs,
 	siteSlug: siteSlugProp,
 } ) => {
@@ -23,7 +24,7 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const siteSlug = siteSlugProp || siteSlugState || '';
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const tieredBackupProducts = getTieredBackupProducts( TERM_ANNUALLY );
+	const tieredBackupProducts = getTieredBackupProducts( duration );
 
 	const noop = () => {
 		// Do nothing
@@ -39,7 +40,7 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 					onClick={ noop }
 					siteId={ siteId }
 					currencyCode={ currencyCode }
-					selectedTerm={ TERM_ANNUALLY }
+					selectedTerm={ duration }
 					isAligned={ false }
 					featuredPlans={ [] }
 					scrollCardIntoView={ noop }
