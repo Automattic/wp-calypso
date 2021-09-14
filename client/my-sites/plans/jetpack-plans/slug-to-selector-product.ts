@@ -24,7 +24,6 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
@@ -131,11 +130,7 @@ function itemToSelectorProduct(
 			},
 			// We need to hack VideoPress a bit as it has a free option.
 			...( isVideoPress && {
-				isFree: true,
-				externalUrl: 'https://jetpack.com/features/design/video-hosting',
-				belowPriceText: translate( 'from %(minPrice)s - %(maxPrice)s/month', {
-					args: { minPrice: '$0', maxPrice: '$10' },
-				} ),
+				forceGetStarted: true,
 			} ),
 		};
 	} else if ( objectIsPlan( item ) ) {

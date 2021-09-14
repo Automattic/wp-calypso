@@ -35,6 +35,7 @@ type OwnProps = {
 	onButtonClick: React.MouseEventHandler;
 	buttonURL?: string;
 	expiryDate?: Moment;
+	forceGetStarted?: boolean;
 	isFeatured?: boolean;
 	isFree?: boolean;
 	isOwned?: boolean;
@@ -60,6 +61,7 @@ const DisplayPrice = ( {
 	isOwned,
 	isIncludedInPlan,
 	isFree,
+	forceGetStarted,
 	discountedPrice,
 	currencyCode,
 	originalPrice,
@@ -118,6 +120,14 @@ const DisplayPrice = ( {
 		);
 	}
 
+	const renderGetStarted = () => {
+		return (
+			<span className="jetpack-product-card__get-started">
+				{ translate( 'Get started for free' ) }
+			</span>
+		);
+	};
+
 	if ( isFree ) {
 		return (
 			<div className="jetpack-product-card__price">
@@ -126,9 +136,7 @@ const DisplayPrice = ( {
 					{ belowPriceText && (
 						<span className="jetpack-product-card__billing-time-frame">{ belowPriceText }</span>
 					) }
-					<span className="jetpack-product-card__get-started">
-						{ translate( 'Get started for free' ) }
-					</span>
+					{ renderGetStarted() }
 				</div>
 			</div>
 		);
@@ -187,9 +195,10 @@ const DisplayPrice = ( {
 						</InfoPopover>
 					) }
 					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					{ ! hideSavingLabel && (
+					{ ! hideSavingLabel && ! forceGetStarted && (
 						<span className="jetpack-product-card__you-save">{ discountElt }</span>
 					) }
+					{ ! hideSavingLabel && forceGetStarted && renderGetStarted() }
 				</>
 			) : (
 				<>
@@ -216,6 +225,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	onButtonClick,
 	buttonURL,
 	expiryDate,
+	forceGetStarted = false,
 	isFeatured,
 	isOwned,
 	isIncludedInPlan,
@@ -275,6 +285,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				) }
 
 				<DisplayPrice
+					forceGetStarted={ forceGetStarted }
 					isDeprecated={ isDeprecated }
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
