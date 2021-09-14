@@ -27,6 +27,7 @@ import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
+import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
@@ -345,7 +346,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
 				} else {
 					// pricing page is outside of Calypso, needs a full page load
-					window.location = 'https://wordpress.com/pricing';
+					window.location = isJetpackCloud()
+						? JETPACK_PRICING_PAGE
+						: 'https://wordpress.com/pricing';
 				}
 				return;
 			}

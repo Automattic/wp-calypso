@@ -14,6 +14,7 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
@@ -586,7 +587,7 @@ export default function pages() {
 		res.redirect( redirectUrl );
 	} );
 
-	if ( process.env.NODE_ENV !== 'development' ) {
+	if ( ! isJetpackCloud() && process.env.NODE_ENV !== 'development' ) {
 		app.get( '/discover', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				res.redirect( config( 'discover_logged_out_redirect_url' ) );
