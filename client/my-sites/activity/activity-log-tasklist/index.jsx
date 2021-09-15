@@ -17,7 +17,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import WithItemsToUpdate from './to-update';
 import ActivityLogTaskUpdate from './update';
 
@@ -27,7 +27,6 @@ import './style.scss';
  * Checks if the supplied core update, plugins, or themes are being updated.
  *
  * @param {Array} updatables List of plugin, theme or core update objects to check their update status.
- *
  * @returns {boolean}  True if one or more plugins or themes are updating.
  */
 const isItemUpdating = ( updatables ) =>
@@ -38,7 +37,6 @@ const isItemUpdating = ( updatables ) =>
  *
  * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
  * @param {Array}  updateQueue Collection of plugins or themes currently queued to be updated.
- *
  * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
@@ -130,14 +128,13 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @returns {object} Action to redirect to plugins management.
 	 */
-	goManagePlugins = () => this.props.goManagePlugins( this.props.siteSlug );
+	goManagePlugins = () => this.props.goManagePlugins( this.props.siteAdminUrl );
 
 	/**
 	 * Goes to single theme or plugin management screen.
 	 *
 	 * @param {string} slug Plugin or theme slug, like "hello-dolly" or "dara".
 	 * @param {string} type Indicates if it's "plugin" or "theme".
-	 *
 	 * @returns {object} Action to redirect to plugin management.
 	 */
 	goToPage = ( slug, type ) => this.props.goToPage( slug, type, this.props.siteSlug );
@@ -430,7 +427,6 @@ class ActivityLogTasklist extends Component {
  * @param {string}  state            Current state of update progress.
  * @param {boolean} isUpdateComplete If update actually produced what is expected to be after a successful update.
  *                                   In themes, the 'update' prop of the theme object is nullified when an update is succesful.
- *
  * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
@@ -455,7 +451,6 @@ const getNormalizedStatus = ( state, isUpdateComplete ) => {
  *
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
- *
  * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
@@ -497,7 +492,6 @@ const getStatusForCore = ( siteId, coreVersion ) => {
  * @param {Array}  itemList Collection of plugins/themes that will be updated.
  * @param {number} siteId   ID of the site where the plugin/theme is installed.
  * @param {object} state    App state tree.
- *
  * @returns {Array} List of plugins/themes to update with their status.
  */
 const makeUpdatableList = ( itemList, siteId, state = null ) =>
@@ -514,7 +508,6 @@ const makeUpdatableList = ( itemList, siteId, state = null ) =>
  *
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
- *
  * @returns {*} Stored data container for request.
  */
 const updateTheme = ( siteId, themeId ) =>
@@ -534,7 +527,6 @@ const updateTheme = ( siteId, themeId ) =>
  * Start updating WordPress core on the specified site.
  *
  * @param {number} siteId  Site Id.
- *
  * @returns {*} Stored data container for request.
  */
 const updateCore = ( siteId ) =>
@@ -558,6 +550,7 @@ const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
 		siteName: site.name,
 		pluginWithUpdate: makeUpdatableList( plugins, siteId, state ),
 		themeWithUpdate: makeUpdatableList( themes, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		coreWithUpdate: isEmpty( core )
 			? []
 			: [
@@ -590,9 +583,9 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: ( siteSlug ) => {
+	goManagePlugins: ( siteAdminUrl ) => {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ) );
-		page( `/plugins/manage/${ siteSlug }` );
+		page( `${ siteAdminUrl }plugins.php` );
 	},
 	goToPage: ( slug, type, siteSlug ) => {
 		const tracksEvent =
