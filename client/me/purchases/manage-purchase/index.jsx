@@ -12,7 +12,6 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackSearch,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
@@ -88,6 +87,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
+	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -432,7 +432,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, translate } = this.props;
+		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
 		const { id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
@@ -442,13 +442,7 @@ class ManagePurchase extends Component {
 		let text;
 		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if (
-			isAtomicSite &&
-			isSubscription( purchase ) &&
-			! isGSuiteOrGoogleWorkspace( purchase ) &&
-			! isTitanMail( purchase ) &&
-			! isJetpackSearch( purchase )
-		) {
+		if ( shouldRevertAtomicSiteBeforeCancel && ! config.isEnabled( 'atomic/automated-revert' ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
 		} else if ( hasAmountAvailableToRefund( purchase ) ) {
@@ -934,5 +928,9 @@ export default connect( ( state, props ) => {
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+		shouldRevertAtomicSiteBeforeCancel: shouldRevertAtomicSiteBeforeDeactivation(
+			state,
+			purchase?.id
+		),
 	};
 } )( localize( ManagePurchase ) );

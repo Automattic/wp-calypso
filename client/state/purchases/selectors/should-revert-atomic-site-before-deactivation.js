@@ -13,9 +13,13 @@ import 'calypso/state/purchases/init';
  * @returns {boolean} True if the Atomic revert is needed, false otherwise.
  */
 export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) => {
+	if ( ! purchaseId ) {
+		return false;
+	}
+
 	const purchase = getByPurchaseId( state, purchaseId );
 
-	if ( ! purchaseId ) {
+	if ( ! purchase ) {
 		return false;
 	}
 
