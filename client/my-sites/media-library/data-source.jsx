@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
@@ -66,10 +66,6 @@ export class MediaLibraryDataSource extends Component {
 		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
 	};
 
-	renderScreenReader( selected ) {
-		return <ScreenReaderText>{ selected && selected.label }</ScreenReaderText>;
-	}
-
 	renderMenuItems( sources ) {
 		return sources.map( ( { icon, label, value } ) => (
 			<PopoverMenuItem key={ value } data-source={ value } onClick={ this.changeSource( value ) }>
@@ -103,9 +99,12 @@ export class MediaLibraryDataSource extends Component {
 					onClick={ this.togglePopover }
 					title={ translate( 'Choose media library source' ) }
 				>
-					{ currentSelected && currentSelected.icon }
-					{ this.renderScreenReader( currentSelected ) }
-					<Gridicon icon="chevron-down" size={ 18 } />
+					{ currentSelected && (
+						<span>
+							{ currentSelected.icon } { currentSelected.label }
+						</span>
+					) }
+					<Gridicon className="media-library__header-chevron" icon="chevron-down" size={ 18 } />
 				</Button>
 				{ sources.length > 1 && (
 					<PopoverMenu

@@ -125,9 +125,7 @@
 		box-sizing: border-box;
 		display: flex;
 		align-items: center;
-		width: 65px;
 		min-height: 50px;
-		min-width: 65px;
 		margin-bottom: 17px;
 
 		&.is-single-source {
@@ -160,7 +158,14 @@
 	}
 }
 
+.media-library__header-chevron {
+	margin-left: 4px;
+}
+
 .media-library__source-button.is-borderless {
+	white-space: nowrap;
+	display: inline-block;
+
 	padding: 5px;
 	padding-left: 9px;
 	height: 38px;
