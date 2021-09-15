@@ -7,7 +7,6 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
-	isJetpackSearch,
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Dialog, Button, CompactCard, Gridicon } from '@automattic/components';
@@ -31,7 +30,10 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
-import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import {
+	getPurchasesError,
+	shouldRevertAtomicSiteBeforeDeactivation,
+} from 'calypso/state/purchases/selectors';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
@@ -465,7 +467,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
-			shouldRevertAtomicSite: isAtomicSite && ! isJetpackSearch( purchase ),
+			shouldRevertAtomicSite: shouldRevertAtomicSiteBeforeDeactivation( state, purchase.id ),
 			userId: getCurrentUserId( state ),
 		};
 	},
