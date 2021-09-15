@@ -37,6 +37,7 @@ import {
 	getSiteSlug,
 	getCustomizerUrl,
 	getSiteProducts,
+	getSiteAdminUrl,
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -56,6 +57,7 @@ interface Props {
 		| undefined;
 	widgetCustomizerPaneUrl: URL | null;
 	sitePurchases: Purchase[];
+	siteAdminUrl: string;
 }
 
 class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
@@ -164,6 +166,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 			translate,
 			vaultpressFinished,
 			hasVideoHosting,
+			siteAdminUrl,
 		} = this.props;
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
@@ -281,7 +284,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 							'Choose which WordPress plugins you want to keep automatically updated.'
 						) }
 						duration={ this.getDuration( 3 ) }
-						href={ `/plugins/manage/${ siteSlug }` }
+						href={ `${ siteAdminUrl }plugins.php` }
 						onClick={ this.handleTaskStart( {
 							taskId: CHECKLIST_KNOWN_TASKS.JETPACK_PLUGIN_UPDATES,
 							tourId: 'jetpackPluginUpdates',
@@ -416,6 +419,7 @@ function mapStateToProps( state ) {
 			hasFeature( state, siteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) &&
 			( ! isJetpackOfferResetPlan( planSlug ) || isMinimumVersion ),
 		sitePurchases: getSitePurchases( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 }
 
