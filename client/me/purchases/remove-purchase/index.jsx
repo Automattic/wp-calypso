@@ -467,10 +467,9 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { purchase } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
-		const isAtomicSite = isSiteAutomatedTransfer( state, purchase.siteId );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
-			isAtomicSite,
+			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
