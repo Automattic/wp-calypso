@@ -7,7 +7,8 @@
 .beta-opt-in__header {
 	background: url( '/calypso/images/signup/fse-beta-enroll.png' ) no-repeat bottom center;
 	background-size: 972px 420px;
-	padding: 2em 0 440px;
+	padding-bottom: 440px;
+	margin-top: 80px;
 }
 
 .beta-opt-in__content,
@@ -24,11 +25,13 @@
 
 	p {
 		font-size: 0.875rem;
+		color: var( --studio-gray-50 );
 	}
 
 	h3 {
 		font-size: 1.25rem;
 		font-weight: 600;
 		margin: 0 0 0.67em;
+		color: var( --studio-gray-80 );
 	}
 }
