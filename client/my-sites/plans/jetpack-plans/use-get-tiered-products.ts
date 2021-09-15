@@ -37,17 +37,28 @@ const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
 
 export const useGetTieredBackupProducts = ( billingPeriod: Duration ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const purchasedTier1BackupProduct = useSelector( ( state ) => getSiteProducts( state, siteId ) )
+
+	const activeProductSlugs = useSelector( ( state ) => getSiteProducts( state, siteId ) )
 		?.filter( ( product ) => ! product.expired )
-		.map( ( { productSlug } ) => productSlug )
-		.filter( ( productSlug ) =>
+		.map( ( { productSlug } ) => productSlug );
+
+	const purchasedTier1BackupProduct = activeProductSlugs
+		?.filter( ( productSlug ) =>
 			[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ].includes(
 				productSlug
 			)
 		)
 		.pop() as JetpackSlugsWithStorage;
 
-	const backupProductsByBillingPeriod: { [ Key in Duration ]: JetpackSlugsWithStorage[] } = {
+	const isTierTwoBackupProductPurchased = activeProductSlugs
+		? activeProductSlugs.filter( ( productSlug ) =>
+				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ].includes(
+					productSlug
+				)
+		  ).length > 0
+		: false;
+
+	const tieredBackupProductsByBillingPeriod: { [ Key in Duration ]: JetpackSlugsWithStorage[] } = {
 		[ TERM_ANNUALLY ]: [
 			purchasedTier1BackupProduct ?? PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -58,9 +69,16 @@ export const useGetTieredBackupProducts = ( billingPeriod: Duration ) => {
 		],
 	};
 
-	return backupProductsByBillingPeriod[ billingPeriod ].map(
-		getProductWithOverrides
-	) as SelectorProduct[];
+	const tier2BackupProductsByBillingPeriod: { [ Key in Duration ]: JetpackSlugsWithStorage[] } = {
+		[ TERM_ANNUALLY ]: [ PRODUCT_JETPACK_BACKUP_T2_YEARLY ],
+		[ TERM_MONTHLY ]: [ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ],
+	};
+
+	const productsToReturn = isTierTwoBackupProductPurchased
+		? tier2BackupProductsByBillingPeriod
+		: tieredBackupProductsByBillingPeriod;
+
+	return productsToReturn[ billingPeriod ].map( getProductWithOverrides ) as SelectorProduct[];
 };
 
 export const useGetTieredSecurityProducts = ( billingPeriod: Duration ) => {
@@ -74,7 +92,15 @@ export const useGetTieredSecurityProducts = ( billingPeriod: Duration ) => {
 		.filter( ( planSlug ) => planSlug === currentPlanSlug )
 		.pop() as JetpackSlugsWithStorage;
 
-	const securityProductsByBillingPeriod: { [ Key in Duration ]: JetpackSlugsWithStorage[] } = {
+	const isTier2SecurityProductPurchased =
+		currentPlanSlug &&
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY, PLAN_JETPACK_SECURITY_T2_MONTHLY ].includes(
+			currentPlanSlug
+		);
+
+	const tieredSecurityProductsByBillingPeriod: {
+		[ Key in Duration ]: JetpackSlugsWithStorage[];
+	} = {
 		[ TERM_ANNUALLY ]: [
 			purchasedTier1SecurityProduct ?? PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
@@ -85,9 +111,16 @@ export const useGetTieredSecurityProducts = ( billingPeriod: Duration ) => {
 		],
 	};
 
-	return securityProductsByBillingPeriod[ billingPeriod ].map(
-		getProductWithOverrides
-	) as SelectorProduct[];
+	const tier2SecurityProductsByBillingPeriod = {
+		[ TERM_ANNUALLY ]: [ PLAN_JETPACK_SECURITY_T2_YEARLY ],
+		[ TERM_MONTHLY ]: [ PLAN_JETPACK_SECURITY_T2_MONTHLY ],
+	};
+
+	const productsToReturn = isTier2SecurityProductPurchased
+		? tier2SecurityProductsByBillingPeriod
+		: tieredSecurityProductsByBillingPeriod;
+
+	return productsToReturn[ billingPeriod ].map( getProductWithOverrides ) as SelectorProduct[];
 };
 
 export const useGetTieredProducts = ( billingPeriod: Duration ) => {
