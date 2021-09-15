@@ -320,7 +320,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 						</Button>
 					) ) }
 
-				<p className="jetpack-product-card__description">{ description }</p>
+				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 				{ features && features.items.length > 0 && (
 					<JetpackProductCardFeatures features={ features } />
 				) }

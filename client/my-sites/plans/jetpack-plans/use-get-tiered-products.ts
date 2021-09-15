@@ -28,6 +28,7 @@ const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
 		...slugToSelectorProduct( slug ),
 		displayName: jetpackStorageAmountDisplays[ slug ],
 		buttonLabel: translate( 'Upgrade storage' ),
+		description: null,
 	};
 };
 
