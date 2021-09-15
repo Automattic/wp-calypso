@@ -111,43 +111,26 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	removePurchase = () => {
+	removePurchase = async () => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
 
-		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
-			const productName = getName( purchase );
-			const { purchasesError, purchaseListUrl } = this.props;
-			let successMessage;
+		const response = await this.props.removePurchase( purchase.id, this.props.userId );
 
-			if ( purchasesError ) {
-				this.setState( { isRemoving: false } );
-				this.closeDialog();
-				this.props.errorNotice( purchasesError );
-				return;
-			}
+		const productName = getName( purchase );
+		const { purchasesError, purchaseListUrl } = this.props;
+		let successMessage;
 
-			if ( purchase.hasQueuedRemoval ) {
-				if ( isDomainRegistration( purchase ) ) {
-					successMessage = translate(
-						'We are removing the domain {{domain/}} from your account. ' +
-							'Please give it some time for changes to take effect. ' +
-							'An email will be sent once the process is complete.',
-						{ components: { domain: <em>{ productName }</em> } }
-					);
-				} else {
-					successMessage = translate(
-						'We are removing %(productName)s from {{siteName/}}. ' +
-							'Please give it some time for changes to take effect. ' +
-							'An email will be sent once the process is complete.',
-						{
-							args: { productName },
-							components: { siteName: <em>{ purchase.domain }</em> },
-						}
-					);
-				}
-			} else if ( isDomainRegistration( purchase ) ) {
+		if ( purchasesError ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( purchasesError );
+			return;
+		}
+
+		if ( response.status === 'completed' ) {
+			if ( isDomainRegistration( purchase ) ) {
 				if ( isDomainOnlySite ) {
 					this.props.receiveDeletedSite( purchase.siteId );
 					this.props.setAllSitesSelected();
@@ -162,10 +145,34 @@ class RemovePurchase extends Component {
 					components: { siteName: <em>{ purchase.domain }</em> },
 				} );
 			}
+		} else if ( response.status === 'queued' ) {
+			if ( isDomainRegistration( purchase ) ) {
+				successMessage = translate(
+					'We are removing the domain {{domain/}} from your account.{{br/}}' +
+						'Please give it some time for changes to take effect. ' +
+						'An email will be sent once the process is complete.',
+					{ components: { br: <br />, domain: <em>{ productName }</em> } }
+				);
+			} else {
+				successMessage = translate(
+					'We are removing %(productName)s from {{siteName/}}.{{br/}}' +
+						'Please give it some time for changes to take effect. ' +
+						'An email will be sent once the process is complete.',
+					{
+						args: { productName },
+						components: { br: <br />, siteName: <em>{ purchase.domain }</em> },
+					}
+				);
+			}
+		} else {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( translate( 'There was an error removing the purchase.' ) );
+			return;
+		}
 
-			this.props.successNotice( successMessage, { isPersistent: true } );
-			page( purchaseListUrl );
-		} );
+		this.props.successNotice( successMessage, { isPersistent: true } );
+		page( purchaseListUrl );
 	};
 
 	getChatButton = () => (

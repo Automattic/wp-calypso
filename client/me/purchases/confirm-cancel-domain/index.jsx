@@ -145,10 +145,10 @@ class ConfirmCancelDomain extends React.Component {
 				this.props.clearPurchases();
 			} else if ( response.status === 'queued' ) {
 				successMessage = translate(
-					'We are cancelling %(purchaseName)s and processing your refund. ' +
+					'We are cancelling %(purchaseName)s and processing your refund.{{br/}}' +
 						'Please give it some time for changes to take effect. ' +
 						'An email will be sent once the process is complete.',
-					{ args: { purchaseName } }
+					{ args: { purchaseName }, components: { br: <br /> } }
 				);
 			}
 
