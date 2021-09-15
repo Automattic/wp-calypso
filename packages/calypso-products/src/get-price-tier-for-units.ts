@@ -1,6 +1,13 @@
-import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
+export interface PriceTierEntry {
+	minimum_units: number;
+	maximum_units?: undefined | null | number;
+	minimum_price_display: string;
+	minimum_price_monthly_display: string;
+	maximum_price_display?: string | null | undefined;
+	maximum_price_monthly_display?: string | null | undefined;
+}
 
-export default function getPriceTierForUnits(
+export function getPriceTierForUnits(
 	tiers: PriceTierEntry[],
 	units: number
 ): PriceTierEntry | null {
