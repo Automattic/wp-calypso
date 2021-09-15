@@ -5,7 +5,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { getPurchaseURLCallback } from '../get-purchase-url-callback';
 import ProductCard from '../product-card';
 import { Duration, QueryArgs, SelectorProduct } from '../types';
-import { useGetTieredBackupProducts } from './get-tiered-products';
+import { useGetTieredBackupProducts } from '../use-get-tiered-products';
 
 import './style.scss';
 
