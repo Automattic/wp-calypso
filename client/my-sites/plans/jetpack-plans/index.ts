@@ -14,7 +14,7 @@ export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
 	doForCurrentCROIteration( ( key ) => {
 		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
 			page(
-				`${ rootUrl }/storage/:site?`,
+				`${ rootUrl }/storage/:site`,
 				fragmentOnlySiteSelection,
 				jetpackPricingContext,
 				jetpackStoragePricing,
