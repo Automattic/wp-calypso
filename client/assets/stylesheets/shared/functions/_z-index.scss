@@ -162,10 +162,10 @@ $z-layers: (
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
 		'.support-article-dialog__base.dialog__backdrop': 201001,
-		'.wpcom-site__global-noscript': 300000,
 		// JS off always visible
-		'.is-section-woocommerce .global-notices': 999999,
+		'.wpcom-site__global-noscript': 300000,
 		//render notices on top of dialogs
+		'.is-section-woocommerce .global-notices': 999999,
 		'.webpack-build-monitor': 99999999,
 		'.people-list-item.card.is-compact:focus': 1,
 	),
