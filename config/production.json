@@ -106,6 +106,7 @@
 		"signup/reskin": true,
 		"signup/social": true,
 		"signup/setup-site-after-checkout": true,
+		"signup/hero-flow": false,
 		"site-indicator": true,
 		"memberships": true,
 		"ssr/sample-log-cache-misses": true,

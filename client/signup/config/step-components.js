@@ -73,6 +73,7 @@ const stepNameToModuleName = {
 	design: 'design-picker',
 	'design-setup-site': 'design-picker',
 	'site-info-collection': 'site-info-collection',
+	intent: 'intent',
 };
 
 export function getStepModuleName( stepName ) {
@@ -82,7 +83,7 @@ export function getStepModuleName( stepName ) {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.jsx$/ */ `calypso/signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.[j|t]sx$/ */ `calypso/signup/steps/${ moduleName }`
 	);
 	return module.default;
 }
