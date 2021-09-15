@@ -7,6 +7,7 @@ const selectors = {
 	gallery: '.media-library__content',
 	items: '.media-library__list-item',
 	placeholder: '.is-placeholder',
+	notReadyOverlay: `.is-transient`,
 	editButton: 'button[data-e2e-button="edit"]',
 	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
@@ -142,9 +143,12 @@ export class MediaPage {
 		// Wait until the spinner for the file being uploaded is hidden.
 		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
 		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
-		await this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
-			state: 'hidden',
-		} );
+		await Promise.all( [
+			this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
+				state: 'hidden',
+			} ),
+			this.page.waitForSelector( selectors.notReadyOverlay, { state: 'hidden' } ),
+		] );
 
 		// At this point, if the rejection notice is visible, it means the file was not a supported
 		// file type. Throw the error containing the rejection banner text for handling.
