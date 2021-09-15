@@ -159,7 +159,6 @@ export class MediaPage {
 					.then( ( element ) => element.innerText() )
 			);
 		} else {
-			console.log( 'done' );
 			return await this.page.waitForSelector( itemSelector );
 		}
 	}
