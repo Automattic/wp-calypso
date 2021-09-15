@@ -3,6 +3,7 @@ import React, { ReactNode, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansFilterBar from '../plans-filter-bar';
@@ -37,6 +38,7 @@ export const StoragePricing: React.FC< Props > = ( {
 				siteSlug={ siteSlug }
 			/>
 			{ footer }
+			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
 		</Main>
 	);
