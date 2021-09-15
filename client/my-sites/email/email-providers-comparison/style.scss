@@ -274,7 +274,6 @@
 	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
 		margin-top: 0;
-		margin-left: $container-left-margin;
 	}
 
 	> .button + .button {

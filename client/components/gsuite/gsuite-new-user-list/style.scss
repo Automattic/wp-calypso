@@ -1,6 +1,3 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-
 .gsuite-new-user-list__new-user {
 	fieldset {
 		margin-bottom: 0;
@@ -12,11 +9,15 @@
 	flex-direction: column;
 	justify-content: space-between;
 
-	@include break-mobile {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 
-	@include break-medium {
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: column;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
 	}
 }
@@ -24,11 +25,15 @@
 .gsuite-new-user-list__add-another-user-button {
 	width: 100%;
 
-	@include break-mobile {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 	}
 
-	@include break-medium {
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 20px;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
 		margin-bottom: 0;
 	}
 }
@@ -36,7 +41,7 @@
 .gsuite-new-user-list__domain-select {
 	width: 100%;
 
-	@include break-medium {
+	@include breakpoint-deprecated( '>800px' ) {
 		width: auto;
 	}
 }
@@ -59,14 +64,14 @@
 	}
 
 	&.gsuite-new-user-list__new-user-remove-user-button {
-		@include break-medium {
+		@include breakpoint-deprecated( '>800px' ) {
 			margin-top: calc( 1.5em + 5px );
 		}
 	}
 }
 
 .gsuite-new-user-list__new-user-section {
-	@include break-medium {
+	@include breakpoint-deprecated( '>800px' ) {
 		display: flex;
 		justify-content: space-between;
 
@@ -79,7 +84,7 @@
 		display: none; // TODO: Fix button displayed in the middle of form (see 1165571745647867-as-1198174007918339)
 		overflow: unset; // Prevents ellipsis from appearing because of a right margin applied on the gridicon
 
-		@include break-medium {
+		@include breakpoint-deprecated( '>800px' ) {
 			display: block;
 			height: 40px;
 			width: 50px;
@@ -99,7 +104,7 @@
 		width: 100%;
 	}
 
-	@include break-medium {
+	@include breakpoint-deprecated( '>800px' ) {
 
 		input[type='text'].form-text-input {
 			margin: 0;
