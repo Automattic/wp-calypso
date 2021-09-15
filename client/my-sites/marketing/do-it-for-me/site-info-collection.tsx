@@ -25,7 +25,9 @@ const LoadingContainer = styled.div`
 	justify-content: center;
 `;
 
-function SiteInformationCollection() {
+function SiteInformationCollection( {
+	typeFormStyles = { width: '100%', height: '500px', padding: '1em 0 0 1em' },
+} ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
@@ -33,7 +35,9 @@ function SiteInformationCollection() {
 	const onSubmit = async () => {
 		// After Submitting typeform checkout
 		setIsFormSubmitted( true );
-		page( `/checkout/${ selectedSiteSlug }/wp_difm_lite` );
+		selectedSiteSlug
+			? page( `/checkout/${ selectedSiteSlug }/wp_difm_lite` )
+			: page( '/checkout/wp_difm_lite' );
 	};
 
 	return (
@@ -60,7 +64,7 @@ function SiteInformationCollection() {
 							username,
 						} }
 						id={ getTypeformId() }
-						style={ { width: '100%', height: '500px', padding: '1em 0 0 1em' } }
+						style={ typeFormStyles }
 						onSubmit={ onSubmit }
 						disableAutoFocus={ true }
 					/>
@@ -70,10 +74,10 @@ function SiteInformationCollection() {
 	);
 }
 
-export default function WrappedSiteInformationCollection(): JSX.Element {
+export default function WrappedSiteInformationCollection( props ): JSX.Element {
 	return (
 		<CalypsoShoppingCartProvider>
-			<SiteInformationCollection />
+			<SiteInformationCollection { ...props } />
 		</CalypsoShoppingCartProvider>
 	);
 }
