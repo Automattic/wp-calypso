@@ -36,6 +36,7 @@ import {
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
@@ -720,4 +721,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( withShoppingCart( localize( TransferDomainStep ) ) );
+)( withShoppingCart( withCartKey( localize( TransferDomainStep ) ) ) );
