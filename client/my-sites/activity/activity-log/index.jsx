@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
@@ -47,9 +47,9 @@ import {
 	siteHasBackupProductPurchase,
 	siteHasScanProductPurchase,
 } from 'calypso/state/purchases/selectors';
-import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
+import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
 import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
@@ -548,7 +548,9 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
-				{ siteId && <QueryActivityLogDisplayRules siteId={ siteId } /> }
+				{ siteId && isEnabled( 'activity-log/display-rules' ) && (
+					<QueryRewindPolicies siteId={ siteId } />
+				) }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
@@ -585,7 +587,7 @@ export default connect(
 
 		const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
 		const displayRulesLoaded = displayRulesEnabled
-			? getActivityLogDisplayRulesRequestStatus( state, siteId ) === 'success'
+			? getRewindPoliciesRequestStatus( state, siteId ) === 'success'
 			: true;
 		const visibleDays = displayRulesEnabled
 			? getActivityLogVisibleDays( state, siteId )
@@ -615,7 +617,7 @@ export default connect(
 				: allLogEntries;
 
 		const allLogsVisible = displayRulesEnabled
-			? visibleLogEntries.length < allLogEntries.length
+			? visibleLogEntries.length === allLogEntries.length
 			: false;
 
 		return {

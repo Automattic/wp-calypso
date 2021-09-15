@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
-import Gridicon from 'calypso/components/gridicon';
 import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
 import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'calypso/reader/follow-sources';

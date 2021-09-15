@@ -35,6 +35,6 @@
 		"@types/react": "^16.14.5",
 		"react-dom": "^16.12.0",
 		"react-test-renderer": "^16.12.0",
-		"typescript": "^4.3.5"
+		"typescript": "^4.4.2"
 	}
 }

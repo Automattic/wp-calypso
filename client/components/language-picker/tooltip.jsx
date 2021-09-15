@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { useState, useRef } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import Tooltip from 'calypso/components/tooltip';
 
 function LanguagePickerItemTooltip( { children } ) {

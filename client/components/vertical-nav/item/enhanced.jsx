@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 

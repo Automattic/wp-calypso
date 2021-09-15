@@ -1,4 +1,6 @@
+import { sprintf } from '@wordpress/i18n';
 import config from 'config';
+import request from 'request-promise';
 import {
 	By,
 	Condition,
@@ -20,7 +22,6 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
  * @example
  * const profileButtonLocator = driverHelper.createTextLocator( By.css( '.menu-item' ), 'Profile' );
  * await driverHelper.clickWhenClickable( driver, profileButtonLocator );
- *
  * @param {By|Function} locator The element's locator
  * @param {string|RegExp} text The element's inner text
  * @returns {Function} An element locator function
@@ -306,7 +307,9 @@ export async function setWhenSettable(
 			try {
 				const element = await driver.findElement( locator );
 				await highlightElement( driver, element );
-				const currentValue = await element.getAttribute( 'value' );
+
+				const currentValue = await getInputText( element );
+
 				if ( currentValue === value ) {
 					// Do nothing if given value is already set
 					return element;
@@ -554,6 +557,32 @@ export async function numberOfOpenWindows( driver ) {
 }
 
 /**
+ * Returns the valye/text from an input or input-like element.
+ *
+ * Some inputs might not be real input elements, but elements
+ * with `contentediable` set to `true`.
+ *
+ * @param {WebElement} element The element to be highlighted
+ * @returns {string} the value for the input or the textContent property
+ * for `contenteditable` elements.
+ */
+export async function getInputText( element ) {
+	const value = await element.getAttribute( 'value' );
+	if ( typeof value === 'string' ) {
+		return value;
+	}
+
+	const isContentEditable = ( await element.getAttribute( 'contenteditable' ) ) === 'true';
+	if ( isContentEditable ) {
+		return await element.getText();
+	}
+
+	throw new Error(
+		'Element is not an input element nor an element with `contenteditable` set to `true`.'
+	);
+}
+
+/**
  * Highlights given element via inline style to indicate user action. Used for debugging purposes.
  *
  * @param {WebDriver} driver The parent WebDriver instance
@@ -579,4 +608,93 @@ function getLocatorString( locator ) {
 		return locator.name ? `by function ${ locator.name }()` : 'by function()';
 	}
 	return locator.toString();
+}
+
+async function fetchTranslations( originals, locale, project = 'wpcom' ) {
+	return request
+		.post( 'https://translate.wordpress.com/api/translations/-query-by-originals', {
+			form: {
+				project,
+				locale_slug: locale,
+				original_strings: JSON.stringify( originals ),
+			},
+		} )
+		.then( ( response ) => {
+			let translations = JSON.parse( response );
+			delete translations.originals_not_found;
+			translations = Object.values( translations );
+
+			return translations;
+		} )
+		.catch( () => null );
+}
+
+async function getElementsTranslations( elements, locale, project ) {
+	// Default locale doesn't have translations
+	if ( locale === 'en' ) {
+		return null;
+	}
+
+	const originals = await promise.map( elements, async ( element ) => {
+		const singular = await element.getAttribute( 'data-e2e-string' );
+		return { singular };
+	} );
+
+	return fetchTranslations( originals, locale, project );
+}
+
+export async function verifyTranslationsPresent(
+	driver,
+	locale,
+	selector = '[data-e2e-string]',
+	waitOverride
+) {
+	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const translatableElements = await promise.filter(
+		await driver.findElements( By.css( selector ) ),
+		Boolean
+	);
+	const translations = await getElementsTranslations( translatableElements, locale );
+
+	for ( const element of translatableElements ) {
+		const singular = await element.getAttribute( 'data-e2e-string' );
+		// In order to test translations with placeholders, parameters must be passed as JSON encoded string.
+		// For example, `<div data-e2e-string="'Hello, %s!'" data-e2e-string-params={[ 'Jane' ]}}>{ sprintf( __( 'Hello, %s!' ), 'Jane' ) }</div>`.
+		const params = await element.getAttribute( 'data-e2e-string-params' );
+
+		let translation = singular;
+
+		// Translation for default locale should match the original.
+		if ( locale !== 'en' ) {
+			const translationEntry =
+				translations && translations.find( ( entry ) => entry.original.singular === singular );
+			translation =
+				translationEntry &&
+				translationEntry.translations &&
+				translationEntry.translations[ 0 ] &&
+				translationEntry.translations[ 0 ].translation_0;
+		}
+
+		if ( params ) {
+			translation = sprintf( translation, ...JSON.parse( params ) );
+		}
+
+		await driver.wait(
+			function () {
+				return ( async () => {
+					// Non-breaking space characters are being replaced with regular space characters,
+					// due to an inconsistency in `element.getText()` causing it to return the text with
+					// the non-breaking space characters converted in some cases.
+					const elementTextSanitized = ( await element.getText() )
+						.trim()
+						.replace( /[\u00A0]/g, ' ' );
+					const translationSanitized = translation.trim().replace( /[\u00A0]/g, ' ' );
+
+					return elementTextSanitized === translationSanitized;
+				} )();
+			},
+			timeoutWait,
+			`Timed out waiting for element with translatable string '${ singular }' to be displayed with translation '${ translation }'`
+		);
+	}
 }

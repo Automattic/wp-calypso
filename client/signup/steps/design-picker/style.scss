@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-design {
+.signup__step.is-design,
+.signup__step.is-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -42,6 +43,18 @@
 			font-size: inherit;
 			padding-top: 0;
 			padding-bottom: 0;
+		}
+	}
+
+	.design-picker.design-picker-step__is-large-thumbnails {
+		.design-picker__grid {
+			grid-template-columns: 1fr;
+
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 49px;
+				row-gap: 39px;
+			}
 		}
 	}
 }

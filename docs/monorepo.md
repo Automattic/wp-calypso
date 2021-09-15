@@ -1,15 +1,20 @@
 # Working with the Monorepo
 
-Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent modules that are published to NPM.
+Calypso is a monorepo. In addition to the Calypso application, it also hosts a number of independent packages that are published to NPM, apps that are built and deployed as WordPress.com plugins, and other supporting packages.
 
 ## Module Layout
 
-These modules live under the `packages` and `apps` directories, one folder per module.
+These packages live under the `packages` and `apps` directories, one folder per module.
 
-Two different directories for modules are:
+Directories with packages are:
 
-`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso and build on `yarn start`. See "Publishing" below.
-`/apps` — projects that can produce independent, binary-like outputs deployed elsewhere. Typically not published to NPM or build on `yarn start`.
+`/packages` — projects and libraries that we might publish as [NPM packages](https://docs.npmjs.com/about-packages-and-modules). Typically used also elsewhere in Calypso. See "Publishing" below.
+`/apps` — WPCOM plugins
+`/desktop` - WP Desktop app. Currently this is not part of the monorepo in the sense that it has its own dependency tree (its own `yarn.lock`). The reason is we want a lean `node_modules` because it will be bundled with the WP Desktop app.
+`/client` - Calypso app.
+`/test/e2e` - Package to run e2e tests
+
+Except those inside `/packages/*`, packages are not published to NPM.
 
 Modules should follow our convention for layout:
 
@@ -19,6 +24,9 @@ package.json
 
 # a readme for your module
 README.md
+
+# a changelog for your module
+CHANGELOG.md
 
 # source code lives here
 src/
@@ -36,17 +44,11 @@ test/
 	module-b.js
 ```
 
-Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, and `sideEffects`.
+Your `package.json` can have any of the [normal properties](https://docs.npmjs.com/files/package.json) but at a minimum should contain `main`, `module`, `calypso:src` and `sideEffects`.
 
 ### devDependencies
 
 It used to be that `devDependencies` needed to be added to the root `package.json` but since we moved to `yarn` workspaces we're able to add them as regular `devDependencies` within the package that uses them.
-
-### dependencies
-
-Running the following in your `wp-calypso` root
-`yarn workspace @automattic/{{your-package}} run prepare && npx @yarnpkg/doctor packages/{{your-package}}`
-will output all the unmet dependencies.
 
 ### sideEffects
 
@@ -69,6 +71,7 @@ failing to do so, will make your package work correctly in the dev build but tre
 	"name": "@automattic/your-package",
 	"version": "1.0.0",
 	"description": "My new package",
+	"calypso:src": "src/index.js",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"sideEffects": false,
@@ -97,10 +100,10 @@ failing to do so, will make your package work correctly in the dev build but tre
 }
 ```
 
-If your package requires compilation, the `package.json` `prepare` script should compile the package:
+If your package requires compilation, the `package.json` `build` script should compile the package:
 
 - If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
-- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"prepare": "transpile && copy-assets"`.
+- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"build": "transpile && copy-assets"`.
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
@@ -136,7 +139,7 @@ Or specific apps:
 yarn workspace @automattic/wpcom-block-editor run build
 ```
 
-All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `yarn`. Therefore independent apps in `/apps` directory can use `build` instead of `prepare` so avoid unnecessary builds.
+All `prepare` scripts found in all `package.json`s of apps and packages are always run on Calypso's `yarn`. Therefore packages can use `build` instead of `prepare` so avoid unnecessary builds. Please only add a `prepare` script if your package really needs to be built for the rest of the repo to work.
 
 You can also run other custom `package.json` scripts only for your app or package:
 
@@ -158,101 +161,39 @@ Note that if you're building with Webpack, you may need to turn off [`resolve.sy
 
 ## Publishing
 
-We use [Lerna](https://lerna.js.org/) and its `publish` command to publish the monorepo packages to NPM registry. Please do not use regular [`yarn publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
+### Preparation
 
-### Make sure changelogs and `package.json` versions are up to date
+#### Make sure changelogs and `package.json` versions are up to date
 
 For all packages that you want to publish, make sure that their `package.json` versions are bumped. Decide carefully whether you want to publish a patch, a minor or a major update of the package. Be mindful about [semantic versioning](https://semver.org/).
 
 Make sure that the `CHANGELOG.md` document contains up-to-date information, with the `next` heading replaced with the version number that you are about to publish.
 
-Create PRs with the necessary changes and merge them to `trunk` before publishing. Lerna will add a `gitHead` field to each published package's `package.json`. That field contains the hash of the Git commit that the package was published from. It's better if this commit hash is a permanent one from the `trunk` branch, rather than an ephemeral commit from a local branch.
+Create PRs with the necessary changes and merge them to `trunk` before publishing.
 
-### Checkout the latest trunk locally and build the packages
+#### Checkout the latest trunk
 
 Always publish from the latest `trunk` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
 
-Build the `dist/` directories (the transpiled package content that will be published) from scratch.
-
-```
-git checkout trunk
-git pull
-git status (should be clean!)
-yarn run distclean
-yarn install --frozen-lockfile
-yarn run build-packages
-```
-
-### Getting NPM permissions to publish in the `@automattic` scope
+#### Getting NPM permissions to publish in the `@automattic` scope
 
 To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, you can add yourself to the organization, using the credentials found in the secret store.
 
-### Publishing all outdated packages
+#### Tagging a package
 
-It's good to start un-authenticated, since Lerna doesn't have `--dry-run` option like NPM does: `npm logout`.
-
-Now run: `npx lerna publish from-package`
-
-Lerna will show a list of packages that have versions higher than the latest one published in the NPM registry. Verify that this is indeed the list of packages that you want to publish. If something looks off, abort!
-
-If you say "yes" to the Lerna prompt, and are not authenticated, the publishing will fail with authentication error. Better to say "no".
-
-Now make sure you're logged in at this point, we're going to publish 🚀: `npm whoami`, `npm login`. Enter your username, password, and the OTP code.
-
-Before publishing, keep your OTP (one time password) authenticator app around, as NPM will ask for another OTP code when publishing, even though you already entered one code when logging in. We recommend to set your NPM account to the highest security level, which requires two-factor authentication for both authentication and publishing.
-
-The following command will publish the packages:
-
-```
-npx lerna publish from-package
-```
-
-Lerna will ask you to confirm the publish action, and will also ask for an OTP code.
-
-Pat yourself on the back, you published!
-
-#### Publishing unstable (beta) versions of packages
-
-If you publish a package the default way, the new version will be tagged in the NPM registry with the `latest` tag. NPM clients will install the `latest` version by default, if no other version is specified.
-
-To publish unstable (alpha, beta) versions of packages, and to keep the `latest` tag pointing to a stable version, you can add a `--dist-tag next` option:
-
-```
-npx lerna publish --dist-tag next from-package
-```
-
-The published packages will be tagged as `next`, and installed only when the `next` tag is specified explicitly:
-
-```
-yarn install i18n-calypso@next
-```
-
-#### Running `lerna publish` in non-interactive mode
-
-If you don't want Lerna to ask you any questions when publishing, specify the `--yes` option to skip the confirmation prompt.
-
-The OTP code can be specified as the `NPM_CONFIG_OTP` environment variable, again avoiding Lerna/NPM asking for it interactively. For example:
-
-```
-NPM_CONFIG_OTP=[YOUR_OTP_CODE] npx lerna publish from-package --yes
-```
-
-### Publishing a single package
-
-What if you want to publish just one updated package? `lerna publish from-package` either publishes all eligible packages, or nothing. It doesn't give you a choice. That's where you need `lerna publish from-git`.
-
-To publish only selected packages, you need to create Git tags in form `name@version`. For example:
+It is recommended you create a git tag with the package and version you are about to publish. This will help us track where a specific version comes from. For example:
 
 ```
 git tag "@automattic/calypso-build@6.1.0"
+git push --tags
 ```
 
-or
+### Publishing a package
 
-```
-git tag "@automattic/components@1.0.0"
-```
+Once the above steps (checkout `trunk`, get `@automattic` permissions and package tagging) are done, you are ready to publish the package:
 
-Now `npx lerna publish from-git` will offer to publish only the packages that have a matching Git tag on the current `HEAD` revision.
+First you need to authenticate with the registry: `yarn npm login --scope automattic`. To verify it worked you can use `yarn npm whoami --scope automattic`
 
-The rest of the workflow is exactly the same as in the `from-package` case.
+Then you are ready to publish it: `cd packages/<your-package> && yarn npm publish`.
+
+Done!

@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

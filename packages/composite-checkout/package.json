@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/composite-checkout",
 	"version": "1.0.0",
-	"description": "A checkout component for Automattic brands",
+	"description": "A set of React components and helpers that can be used to create a checkout flow.",
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
 	"types": "dist/types/public-api.d.ts",
@@ -43,13 +43,11 @@
 		"@wordpress/i18n": "^3.20.0",
 		"@wordpress/react-i18n": "^1.0.3",
 		"debug": "^4.1.1",
-		"prop-types": "^15.7.2",
-		"react-stripe-elements": "^4.0.2"
+		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^9.0.0",
-		"@automattic/calypso-polyfills": "^1.0.0",
-		"@storybook/addon-actions": "^6.3.7",
+		"@storybook/addon-actions": "^6.3.8",
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.0.0",
@@ -61,12 +59,11 @@
 		"react-dom": "^16.12.0",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.2.1",
-		"typescript": "^4.3.5",
+		"typescript": "^4.4.2",
 		"webpack": "^5.46.0"
 	},
 	"peerDependencies": {
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
-	},
-	"private": true
+	}
 }

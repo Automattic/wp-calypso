@@ -66,7 +66,7 @@ export function createSubscriptionManager( cartKey: string | undefined ): Subscr
 				// eslint-disable-next-line no-console
 				console.error(
 					'An error ocurred while notifying a subscriber of a ShoppingCartManager change',
-					err.message
+					( err as Error ).message
 				);
 				throw err;
 			}

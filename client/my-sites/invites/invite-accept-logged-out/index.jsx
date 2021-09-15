@@ -21,6 +21,7 @@ import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
  * Module variables
  */
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
+const noop = () => {};
 
 class InviteAcceptLoggedOut extends React.Component {
 	state = { bearerToken: false, userData: false, submitting: false };
@@ -43,7 +44,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		window.location = signInLink;
 	};
 
-	submitForm = ( form, userData ) => {
+	submitForm = ( form, userData, _, afterSubmitCallback = noop ) => {
 		const { invite } = this.props;
 
 		this.setState( { submitting: true } );
@@ -67,7 +68,8 @@ class InviteAcceptLoggedOut extends React.Component {
 				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
-			} );
+			} )
+			.finally( afterSubmitCallback );
 	};
 
 	renderFormHeader = () => {

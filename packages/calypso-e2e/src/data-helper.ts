@@ -1,6 +1,6 @@
 import phrase from 'asana-phrase';
 import config from 'config';
-import { getViewportName } from './browser-helper';
+import { getTargetDeviceName } from './browser-helper';
 
 export type DateFormat = 'ISO';
 export { config };
@@ -198,7 +198,7 @@ export function createSuiteTitle( title: string ): string {
 	const parts = [
 		`[${ getJetpackHost() }]`,
 		`${ toTitleCase( title ) }:`,
-		`(${ getViewportName() })`,
+		`(${ getTargetDeviceName() })`,
 		'@parallel',
 	];
 

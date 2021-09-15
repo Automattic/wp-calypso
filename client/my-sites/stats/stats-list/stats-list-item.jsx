@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import page from 'page';
 import React from 'react';
 import titlecase from 'to-title-case';
 import Emojify from 'calypso/components/emojify';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { flagUrl } from 'calypso/lib/flags';

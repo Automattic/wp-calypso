@@ -10,24 +10,6 @@ const values = {
 	},
 	viewportName: 'desktop',
 	locale: 'en',
-	viewportSize: {
-		mobile: {
-			width: 400,
-			height: 1000,
-		},
-		tablet: {
-			width: 1024,
-			height: 1000,
-		},
-		desktop: {
-			width: 1440,
-			height: 1000,
-		},
-		laptop: {
-			width: 1440,
-			height: 790,
-		},
-	},
 	calypsoBaseURL: 'https://wordpress.com',
 	testAccounts: {
 		basicUser: [ 'wpcomuser', 'hunter2', 'wpcomuser.wordpress.com' ],

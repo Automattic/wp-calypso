@@ -9,22 +9,8 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		super( driver, By.css( '.edit-site-header' ), url );
 		this.editorType = editorType;
 
-		this.editoriFrameLocator = By.css( '.calypsoify.is-iframe iframe' );
+		this.editoriFrameLocator = By.css( '.calypsoify.is-iframe iframe.is-loaded' );
 		this.editorCanvasiFrameLocator = By.css( 'iframe[name="editor-canvas"]' );
-	}
-
-	static async Expect( driver, editorType ) {
-		const page = new this( driver, null, editorType );
-		await page._expectInit();
-		return page;
-	}
-
-	async _preInit() {
-		if ( this.editorType !== 'iframe' ) {
-			return;
-		}
-		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
 	}
 
 	async runInCanvas( fn ) {

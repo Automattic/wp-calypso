@@ -1,10 +1,9 @@
-import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
+import { Card, Button, Dialog, ScreenReaderText, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import { toggleEnabled, toggleUnblockInstructions } from 'calypso/state/push-notifications/actions';
 import {

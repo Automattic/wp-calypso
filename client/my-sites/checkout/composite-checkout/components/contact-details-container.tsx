@@ -9,8 +9,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import getCountries from 'calypso/state/selectors/get-countries';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
@@ -44,7 +43,8 @@ export default function ContactDetailsContainer( {
 	isLoggedOutCart: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const domainNames: string[] = responseCart.products
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
@@ -59,15 +59,9 @@ export default function ContactDetailsContainer( {
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-	const countries = useSelector( ( state ) => getCountries( state, 'domains' ) );
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
 		updateDomainContactFields( details );
-		updateRequiredDomainFields( {
-			postalCode:
-				countries?.find( ( country ) => country.code === details.countryCode )?.has_postal_codes ??
-				true,
-		} );
 	};
 
 	const getIsFieldRequired = ( field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' > ) =>

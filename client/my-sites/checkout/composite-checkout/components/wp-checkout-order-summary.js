@@ -1,4 +1,5 @@
 import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
@@ -16,7 +17,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -29,7 +30,8 @@ export default function WPCheckoutOrderSummary( {
 } = {} ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
@@ -236,7 +238,8 @@ function CheckoutSummaryFeaturesListDomainItem( { domain, hasMonthlyPlan, nextDo
 
 function CheckoutSummaryPlanFeatures( { siteId } ) {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
 	);

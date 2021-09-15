@@ -116,7 +116,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
-						href="https://wp.me/logo-maker"
+						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
 						target="_blank"
 					>
 						{ translate( 'Create a logo' ) }

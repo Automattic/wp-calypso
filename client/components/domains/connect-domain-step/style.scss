@@ -367,6 +367,16 @@
 			}
 		}
 	}
+
+	&__authorization-code {
+		margin-bottom: 32px;
+
+		& input.form-text-input {
+			@include break-mobile {
+				width: 314px;
+			}
+		}
+	}
 }
 
 button.action_buttons__button.action-buttons__back.connect-domain-step__go-back {

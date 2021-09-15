@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

@@ -7,7 +7,7 @@ import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
-import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
+import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
 

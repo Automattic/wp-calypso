@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .jetpack-search__placeholder {
 	.action-panel__title, .jetpack-search__content-body-text, .promo-card__cta-button, .upsell__header-text, .upsell__body-text {
 		@include placeholder( --color-neutral-10 );
@@ -22,7 +25,14 @@
 	}
 }
 
-.jetpack-search__logo img {
-	height: 72px;
-	width: auto;
+.jetpack-search__logo {
+
+	@include break-xlarge() {
+		margin-right: 48px;
+	}
+	
+	img {
+		height: 72px;
+		width: auto;
+	}
 }

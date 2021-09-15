@@ -311,6 +311,7 @@ export const CheckoutStep = ( {
 		const completeResult = Promise.resolve( isCompleteCallback() );
 		setFormValidating();
 		const delayedCompleteResult = await completeResult;
+		debug( `isCompleteCallback for step ${ stepNumber } finished with`, delayedCompleteResult );
 		finishIsCompleteCallback( delayedCompleteResult );
 	};
 

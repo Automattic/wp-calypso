@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import Gridicon from 'calypso/components/gridicon';
 import { keyForPost } from 'calypso/reader/post-key';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';

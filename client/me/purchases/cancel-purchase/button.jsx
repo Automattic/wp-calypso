@@ -164,13 +164,15 @@ class CancelPurchaseButton extends Component {
 					return;
 				}
 
-				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				if ( response.status === 'completed' ) {
+					this.props.successNotice( response.message, { displayOnNextPage: true } );
 
-				this.props.refreshSitePlans( purchase.siteId );
+					this.props.refreshSitePlans( purchase.siteId );
 
-				this.props.clearPurchases();
+					this.props.clearPurchases();
 
-				page.redirect( this.props.purchaseListUrl );
+					page.redirect( this.props.purchaseListUrl );
+				}
 			}
 		);
 	};
@@ -199,13 +201,15 @@ class CancelPurchaseButton extends Component {
 					return;
 				}
 
-				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				if ( response.status === 'completed' ) {
+					this.props.successNotice( response.message, { displayOnNextPage: true } );
 
-				this.props.refreshSitePlans( purchase.siteId );
+					this.props.refreshSitePlans( purchase.siteId );
 
-				this.props.clearPurchases();
+					this.props.clearPurchases();
 
-				page.redirect( this.props.purchaseListUrl );
+					page.redirect( this.props.purchaseListUrl );
+				}
 			}
 		);
 	};

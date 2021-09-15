@@ -30,5 +30,6 @@ export class NewPostFlow {
 		await navbarComponent.clickNewPost();
 		const gutenbergEditorPage = new GutenbergEditorPage( this.page );
 		await gutenbergEditorPage.waitUntilLoaded();
+		await gutenbergEditorPage.dismissWelcomeTourIfPresent();
 	}
 }

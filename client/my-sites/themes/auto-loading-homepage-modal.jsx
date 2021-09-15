@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';

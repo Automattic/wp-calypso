@@ -4,7 +4,7 @@ class Domains {
 	/**
 	 * `Domains` constructor.
 	 *
-	 * @param {WPCOM} wpcom - wpcom instance
+	 * @param wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
 	constructor( wpcom ) {

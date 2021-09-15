@@ -1,7 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

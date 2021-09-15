@@ -1,4 +1,4 @@
-import { Card, CompactCard } from '@automattic/components';
+import { Card, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';

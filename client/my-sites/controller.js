@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-import { get, some, startsWith } from 'lodash';
+import { some, startsWith } from 'lodash';
 import page from 'page';
 import React from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
@@ -44,18 +44,16 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSite, getSiteId, getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import {
@@ -217,39 +215,15 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
-function onSelectedSiteAvailable( context, basePath ) {
+function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-
-	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
 
 	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
 		page.redirect( `/migrate/${ selectedSite.slug }` );
-		return false;
-	}
-
-	// Redirects Atomic sites to wp-admin
-	if ( userCanManagePlugins && isAtomicSite && /^\/plugins/.test( basePath ) ) {
-		const plugin = get( context, 'params.plugin' );
-		let pluginString = '';
-		if ( plugin ) {
-			pluginString = [
-				'tab=search',
-				`s=${ plugin }`,
-				'type=term',
-				'modal-mode=true',
-				`plugin=${ plugin }`,
-			].join( '&' );
-		}
-
-		const pluginInstallURL = 'plugin-install.php?' + `${ pluginString }`;
-		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
-
-		window.location.replace( pluginLink );
 		return false;
 	}
 

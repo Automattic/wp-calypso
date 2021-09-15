@@ -1,7 +1,20 @@
-import { DataHelper, LoginFlow, SidebarComponent, setupHooks } from '@automattic/calypso-e2e';
+/**
+ * @group calypso-pr
+ * @group gutenberg
+ */
+
+import {
+	BrowserHelper,
+	DataHelper,
+	LoginFlow,
+	SidebarComponent,
+	setupHooks,
+} from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const user = 'gutenbergSimpleSiteUser';
+const user = BrowserHelper.targetGutenbergEdge()
+	? 'gutenbergSimpleSiteEdgeUser'
+	: 'gutenbergSimpleSiteUser';
 
 describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	let sidebarComponent: SidebarComponent;
@@ -20,7 +33,10 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	it( 'Navigate to the Block Widgets Editor', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
-		const widgetsMenu = await page.waitForSelector( '"Customising ▸ Widgets"' );
+		// GB 10.4.0-rc-1 changed the english label to "Customize" from "Customise"
+		// (notice the `z`) we accept both since both are considered correct and
+		// shouldn't affect the UX.
+		const widgetsMenu = await page.waitForSelector( 'text=/Customi[s|z]ing ▸ Widgets/' );
 		await widgetsMenu.waitForElementState( 'stable' );
 	} );
 

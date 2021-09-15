@@ -250,50 +250,14 @@ UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function ( callback
 /**
  * Connect the current account with a social service (e.g. Google/Facebook).
  *
- * @param {object} An object containing the keys:
- *	{string} service - Social service associated with token, e.g. google.
- *  {string} access_token - OAuth2 Token returned from service.
- *  {string} id_token - (Optional) OpenID Connect Token returned from service.
- *  {string} user_name - (Optional) The user name associated with this connection, in case it's not part of id_token.
- *  {string} user_email - (Optional) The user name associated with this connection, in case it's not part of id_token.
- *  {string} redirect_to - The URL to redirect to after connecting.
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
+ * @param {object} config Object containing the config.
+ * @param {string} config.service Social service associated with token, e.g. google.
+ * @param {string} config.access_token OAuth2 Token returned from service.
+ * @param {string} config.id_token (Optional) OpenID Connect Token returned from service.
+ * @param {string} config.user_name (Optional) The user name associated with this connection, in case it's not part of id_token.
+ * @param {string} config.user_email (Optional) The user name associated with this connection, in case it's not part of id_token.
+ * @param {string} config.redirect_to - The URL to redirect to after connecting.
  * @param {Function} fn - The callback for the request.
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
  * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialConnect = function (

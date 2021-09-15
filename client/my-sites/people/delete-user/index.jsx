@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import { Card, Button, CompactCard } from '@automattic/components';
+import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -13,7 +13,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import User from 'calypso/components/user';
 import accept from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

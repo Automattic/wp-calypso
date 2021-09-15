@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,7 +9,6 @@ import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notificat
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import Gridicon from 'calypso/components/gridicon';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteDescription,
@@ -122,7 +121,10 @@ class FeedHeader extends Component {
 									disabled={ feed.unseen_count === 0 }
 								>
 									<Gridicon icon="visible" size={ 18 } />
-									<span title={ translate( 'Mark all as seen' ) }>
+									<span
+										className="reader-feed-header__visibility"
+										title={ translate( 'Mark all as seen' ) }
+									>
 										{ translate( 'Mark all as seen' ) }
 									</span>
 								</button>

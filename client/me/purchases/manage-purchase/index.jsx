@@ -25,7 +25,7 @@ import {
 	isP2Plus,
 	getMonthlyPlanByYearly,
 } from '@automattic/calypso-products';
-import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
+import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -39,7 +39,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';

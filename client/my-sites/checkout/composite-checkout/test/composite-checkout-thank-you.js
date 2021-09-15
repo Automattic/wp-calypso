@@ -9,6 +9,7 @@ import {
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
 	redirectCheckoutToWpAdmin,
+	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
@@ -1016,6 +1017,27 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 			} );
 			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-monthly/1234abcd' );
+		} );
+
+		it( 'Does not offers discounted annual business plan upgrade when annual premium plan and DIFM light is purchased together.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle',
+						bill_period: 365,
+					},
+					{
+						product_slug: WPCOM_DIFM_LITE,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 		} );
 	} );
 

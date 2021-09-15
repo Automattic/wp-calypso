@@ -1,4 +1,4 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,7 +9,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PostSchedule from 'calypso/components/post-schedule';

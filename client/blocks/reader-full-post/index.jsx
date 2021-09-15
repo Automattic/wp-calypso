@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -26,7 +27,6 @@ import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import EmbedContainer from 'calypso/components/embed-container';
 import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,

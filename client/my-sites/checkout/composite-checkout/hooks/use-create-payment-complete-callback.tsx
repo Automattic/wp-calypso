@@ -39,8 +39,8 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
-	PaymentCompleteCallback,
-	PaymentCompleteCallbackArguments,
+	PaymentEventCallback,
+	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
@@ -71,7 +71,7 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug: string | undefined;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
-} ): PaymentCompleteCallback {
+} ): PaymentEventCallback {
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -95,7 +95,7 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 
 	return useCallback(
-		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
+		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 

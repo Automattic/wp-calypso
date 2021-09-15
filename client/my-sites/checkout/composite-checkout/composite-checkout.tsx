@@ -25,8 +25,9 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -71,7 +72,6 @@ import {
 } from './types/wpcom-store-state';
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
-import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -151,17 +151,6 @@ export default function CompositeCheckout( {
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
-			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ) )
-			);
-		},
-		[ reduxDispatch, translate ]
-	);
-
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
 			debug( 'error', error );
@@ -173,22 +162,6 @@ export default function CompositeCheckout( {
 			);
 		},
 		[ reduxDispatch, translate ]
-	);
-
-	const showInfoMessage = useCallback(
-		( message ) => {
-			debug( 'info', message );
-			reduxDispatch( infoNotice( message ) );
-		},
-		[ reduxDispatch ]
-	);
-
-	const showSuccessMessage = useCallback(
-		( message ) => {
-			debug( 'success', message );
-			reduxDispatch( successNotice( message ) );
-		},
-		[ reduxDispatch ]
 	);
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
@@ -219,6 +192,7 @@ export default function CompositeCheckout( {
 		jetpackPurchaseToken,
 	} );
 
+	const cartKey = useCartKey();
 	const {
 		couponStatus,
 		applyCoupon,
@@ -231,7 +205,7 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
@@ -453,6 +427,7 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
+			stripe,
 		} ),
 		[
 			contactDetails,
@@ -464,6 +439,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
+			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
 		]
@@ -560,12 +536,25 @@ export default function CompositeCheckout( {
 	} );
 
 	const handlePaymentComplete = useCallback(
-		( args: PaymentCompleteCallbackArguments ) => {
+		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 		},
 		[ onPaymentComplete, onAfterPaymentComplete ]
 	);
+
+	const handlePaymentError = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
+		},
+		[ reduxDispatch, translate ]
+	);
+
+	const handlePaymentRedirect = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -625,9 +614,8 @@ export default function CompositeCheckout( {
 				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
+				onPaymentError={ handlePaymentError }
+				onPaymentRedirect={ handlePaymentRedirect }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }

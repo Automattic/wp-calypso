@@ -117,12 +117,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const { value, checked, type, id } = event.target;
 		const newContactDetails = {};
 
-		if ( id === 'legal-type' ) {
-			this.props.updateRequiredDomainFields?.( {
-				organization: this.isCorporationLegalType( value ),
-			} );
-		}
-
 		newContactDetails.extra = {
 			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
 		};

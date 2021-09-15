@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, CompactCard, Dialog } from '@automattic/components';
+import { Button, Card, CompactCard, Dialog, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, map } from 'lodash';
@@ -11,7 +11,6 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';

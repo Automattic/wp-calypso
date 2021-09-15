@@ -4,6 +4,7 @@ export const modeType = {
 	SUGGESTED: 'suggested',
 	ADVANCED: 'advanced',
 	DONE: 'done',
+	OWNERSHIP_VERIFICATION: 'ownership_verification',
 };
 
 export const stepType = {
@@ -13,6 +14,7 @@ export const stepType = {
 	UPDATE_A_RECORDS: 'update_a_records',
 	CONNECTED: 'connected',
 	VERIFYING: 'verifying',
+	ENTER_AUTH_CODE: 'enter_auth_code',
 };
 
 export const stepSlug = {
@@ -26,6 +28,8 @@ export const stepSlug = {
 	ADVANCED_UPDATE: 'advanced_update',
 	ADVANCED_VERIFYING: 'advanced_verifying',
 	ADVANCED_CONNECTED: 'advanced_connected',
+	OWNERSHIP_VERIFICATION_LOGIN: 'ownership_verification_login',
+	OWNERSHIP_VERIFICATION_AUTH_CODE: 'ownership_verification_auth_code',
 };
 
 export const defaultDomainSetupInfo = {
@@ -37,3 +41,4 @@ export const defaultDomainSetupInfo = {
 
 export const stepsHeadingSuggested = __( 'Suggested setup' );
 export const stepsHeadingAdvanced = __( 'Advanced setup' );
+export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );

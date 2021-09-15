@@ -1,6 +1,22 @@
 import config from '@automattic/calypso-config';
+import { matchesUA } from 'browserslist-useragent';
 import { addQueryArgs } from 'calypso/lib/url';
 import analytics from 'calypso/server/lib/analytics';
+
+function isSupportedBrowser( req ) {
+	// The desktop app sends a UserAgent including WordPress, Electron and Chrome.
+	// We need to check if the chrome portion is supported, but the UA library
+	// will select WordPress and Electron before Chrome, giving a result not
+	// based on the chrome version.
+	const userAgentString = req.useragent.source;
+	const sanitizedUA = userAgentString.replace( / (WordPressDesktop|Electron)\/[.\d]+/g, '' );
+	return matchesUA( sanitizedUA, {
+		env: 'evergreen',
+		ignorePatch: true,
+		ignoreMinor: true,
+		allowHigherVersions: true,
+	} );
+}
 
 export default () => ( req, res, next ) => {
 	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
@@ -28,9 +44,8 @@ export default () => ( req, res, next ) => {
 		return;
 	}
 
-	const isFallback =
-		config.isEnabled( 'redirect-fallback-browsers/test' ) || req.getTarget() === null;
-	if ( ! isFallback ) {
+	const forceRedirect = config.isEnabled( 'redirect-fallback-browsers/test' );
+	if ( ! forceRedirect && isSupportedBrowser( req ) ) {
 		next();
 		return;
 	}

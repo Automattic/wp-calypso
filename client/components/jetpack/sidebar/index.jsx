@@ -14,6 +14,7 @@ import getSiteAdminPage from 'calypso/state/sites/selectors/get-site-admin-page'
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
+import JetpackIcons from './menu-items/jetpack-icons';
 
 import './style.scss';
 
@@ -50,7 +51,7 @@ class JetpackCloudSidebar extends Component {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
 							link={ jetpackAdminUrl }
-							icon="my-sites"
+							customIcon={ <JetpackIcons icon="wordpress" /> }
 						/>
 						<SidebarItem
 							label={ translate( 'Get help', {
@@ -58,8 +59,7 @@ class JetpackCloudSidebar extends Component {
 							} ) }
 							link="https://jetpack.com/support"
 							className="sidebar__jetpack-cloud-item-has-border"
-							materialIcon="help"
-							materialIconStyle="filled"
+							customIcon={ <JetpackIcons icon="help" /> }
 							onNavigate={ this.onGetHelp }
 						/>
 					</SidebarMenu>

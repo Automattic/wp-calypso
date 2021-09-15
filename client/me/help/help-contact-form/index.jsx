@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, isEqual, find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,7 +11,6 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SegmentedControl from 'calypso/components/segmented-control';
@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { resemblesUrl } from 'calypso/lib/url';
-import wpcomLib from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import HelpResults from 'calypso/me/help/help-results';
 import {
 	bumpStat,
@@ -39,11 +39,6 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { generateSubjectFromMessage } from './utils';
 
 import './style.scss';
-
-/**
- * Module variables
- */
-const wpcom = wpcomLib.undocumented();
 
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
@@ -219,8 +214,8 @@ export class HelpContactForm extends React.PureComponent {
 			? config( 'jetpack_support_blog' )
 			: config( 'wpcom_support_blog' );
 
-		wpcom
-			.getQandA( query, site )
+		wpcom.req
+			.get( '/help/qanda', { query, site } )
 			.then( ( qanda ) =>
 				this.setState( {
 					qanda: Array.isArray( qanda ) ? qanda : [],

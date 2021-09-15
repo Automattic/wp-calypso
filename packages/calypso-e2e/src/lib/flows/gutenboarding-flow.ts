@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
-import { getViewportName } from '../../browser-helper';
+import { getTargetDeviceName } from '../../browser-helper';
+import type { Plans } from '../../types';
 
-export type Plans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type Features =
 	| 'Custom domains'
 	| 'Store'
@@ -150,7 +150,7 @@ export class GutenboardingFlow {
 	 */
 	async selectFont( name: string ): Promise< void > {
 		// Font selector depends on the viewport name but lumps non-mobile into desktop.
-		const viewportName = getViewportName() === 'mobile' ? 'mobile' : 'desktop';
+		const viewportName = getTargetDeviceName() === 'mobile' ? 'mobile' : 'desktop';
 
 		// Mobile viewport puts the buttons behind a dropdown.
 		if ( viewportName === 'mobile' ) {

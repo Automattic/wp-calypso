@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,7 +9,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';

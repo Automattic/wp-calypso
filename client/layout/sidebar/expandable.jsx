@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -21,10 +20,10 @@ function containsSelectedSidebarItem( children ) {
 			return true;
 		}
 
-		if ( get( child, 'props.selected' ) ) {
+		if ( child?.props?.selected ) {
 			selectedItemFound = true;
 		} else {
-			const descendants = get( child, 'props.children' );
+			const descendants = child?.props?.children;
 
 			if ( descendants ) {
 				selectedItemFound = containsSelectedSidebarItem( descendants );

@@ -1,6 +1,6 @@
 # Dependency management
 
-This project uses [yarn v1](https://classic.yarnpkg.com/lang/en/) to manage its dependencies. It uses `yarn workspaces` functionallity and [lerna](https://github.com/lerna/lerna) to manage the monorepo.
+This project uses [yarn v3](https://yarnpkg.com/) to manage its dependencies. It uses workspaces[https://yarnpkg.com/features/workspaces] functionality to manage the monorepo.
 
 ## Working with sub-packages
 
@@ -114,10 +114,10 @@ Note that the output includes which sub-package has the dependency. It is possib
 Run
 
 ```
-npx yarn-deduplicate --list
+yarn dedupe --check
 ```
 
-It is recommended to run this command after adding a new dependency and fix potential duplications with `npx yarn-deduplicate --package <duplicated-package>`
+It is recommended to run this command after adding a new dependency and fix potential duplications with `yarn dedupe`
 
 ## Differences with `npm`
 

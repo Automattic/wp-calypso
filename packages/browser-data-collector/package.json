@@ -1,13 +1,18 @@
 {
 	"name": "@automattic/browser-data-collector",
-	"version": "0.0.1",
+	"version": "2.0.0",
 	"description": "A tool to collect data from different browser APIs",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"type": "module",
+	"exports": {
+		"calypso:src": "./src/index.ts",
+		"import": "./dist/esm/index.js"
+	},
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -18,8 +23,8 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -28,6 +33,6 @@
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"devDependencies": {
-		"typescript": "^4.3.5"
+		"typescript": "^4.4.2"
 	}
 }

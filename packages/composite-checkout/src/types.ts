@@ -106,10 +106,9 @@ export interface CheckoutProviderProps {
 	total?: LineItem;
 	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
-	onPaymentComplete: PaymentCompleteCallback;
-	showErrorMessage: ShowNoticeFunction;
-	showInfoMessage: ShowNoticeFunction;
-	showSuccessMessage: ShowNoticeFunction;
+	onPaymentComplete?: PaymentEventCallback;
+	onPaymentRedirect?: PaymentEventCallback;
+	onPaymentError?: PaymentErrorCallback;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
@@ -119,15 +118,17 @@ export interface CheckoutProviderProps {
 	children: React.ReactNode;
 }
 
-export type ShowNoticeFunction = ( message: string ) => void;
-
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-export type PaymentCompleteCallback = ( args: PaymentCompleteCallbackArguments ) => void;
+export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
+export type PaymentErrorCallback = ( args: {
+	paymentMethodId: string | null;
+	transactionError: string | null;
+} ) => void;
 
-export type PaymentCompleteCallbackArguments = {
+export type PaymentEventCallbackArguments = {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 };

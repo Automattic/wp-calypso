@@ -1,5 +1,5 @@
+import { Gridicon } from '@automattic/components';
 import React, { Fragment } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	ButtonRow,
 	Continue,

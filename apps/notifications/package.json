@@ -25,7 +25,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "^2.1.1",
-		"@automattic/calypso-polyfills": "^1.0.0",
+		"@automattic/calypso-polyfills": "^2.0.0",
 		"calypso": "^0.17.0",
 		"classnames": "^2.3.1",
 		"debug": "^4.1.1",
@@ -36,7 +36,7 @@
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"react-redux": "^7.2.4",
-		"redux": "^4.0.5",
+		"redux": "^4.1.1",
 		"redux-thunk": "^2.3.0",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",

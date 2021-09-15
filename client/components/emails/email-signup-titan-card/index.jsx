@@ -1,5 +1,5 @@
 import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import tip from 'calypso/components/domains/register-domain-step/tip';
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
-import Gridicon from 'calypso/components/gridicon';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 

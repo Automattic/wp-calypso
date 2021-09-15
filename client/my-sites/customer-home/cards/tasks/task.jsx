@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';

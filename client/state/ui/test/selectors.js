@@ -48,7 +48,6 @@ describe( 'selectors', () => {
 				URL: 'https://example.com',
 				domain: 'example.com',
 				hasConflict: false,
-				is_previewable: false,
 				options: {},
 				slug: 'example.com',
 				title: 'WordPress.com Example Blog',

@@ -129,7 +129,7 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'calypso:src', 'module', 'main' ],
-		modules: [ path.join( __dirname, 'extensions' ), 'node_modules' ],
+		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
 			'@automattic/calypso-config': 'calypso/server/config',
 		},

@@ -14,10 +14,11 @@ export const Title: React.FunctionComponent< TitlesProps > = ( {
 	className,
 	children,
 	tagName = 'h1',
+	...rest
 } ) =>
 	React.createElement(
 		tagName,
-		{ className: classnames( 'onboarding-title', className ) },
+		{ className: classnames( 'onboarding-title', className ), ...rest },
 		children
 	);
 
@@ -25,9 +26,10 @@ export const SubTitle: React.FunctionComponent< TitlesProps > = ( {
 	className,
 	children,
 	tagName = 'h2',
+	...rest
 } ) =>
 	React.createElement(
 		tagName,
-		{ className: classnames( 'onboarding-subtitle', className ) },
+		{ className: classnames( 'onboarding-subtitle', className ), ...rest },
 		children
 	);

@@ -41,7 +41,6 @@ import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
 import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
-import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
@@ -114,8 +113,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang = request.context.lang;
 	}
 
-	const target = request.getTarget();
-
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
 		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
@@ -145,11 +142,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck:
-			request.query.bypassTargetRedirection !== 'true' &&
-			target === 'evergreen' &&
-			calypsoEnv !== 'development',
-		target: target || 'fallback',
+		target: 'evergreen',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
@@ -212,13 +205,11 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	const targetFromRequest = req.getTarget();
-	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join(
 		rootPath,
 		'public',
-		target,
+		'evergreen',
 		'languages',
 		'lang-revisions.json'
 	);
@@ -553,7 +544,6 @@ export default function pages() {
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
-	app.use( middlewareBuildTarget() );
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
@@ -617,13 +607,17 @@ export default function pages() {
 		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query?.for;
+				const ref = req.query?.ref;
 
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
 				} else {
-					res.redirect( 'https://wordpress.com/pricing' );
+					const pricingPageUrl = ref
+						? `https://wordpress.com/pricing/?ref=${ ref }`
+						: 'https://wordpress.com/pricing';
+					res.redirect( pricingPageUrl );
 				}
 			} else {
 				next();
