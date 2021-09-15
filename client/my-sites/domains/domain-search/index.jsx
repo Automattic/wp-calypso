@@ -25,6 +25,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -300,4 +301,4 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( withShoppingCart( localize( DomainSearch ) ) );
+)( withShoppingCart( withCartKey( localize( DomainSearch ) ) ) );

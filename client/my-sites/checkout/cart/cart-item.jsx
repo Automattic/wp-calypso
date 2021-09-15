@@ -26,6 +26,7 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 } from 'calypso/lib/gsuite/constants';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 
 export class CartItem extends React.Component {
 	removeFromCart = ( event ) => {
@@ -345,4 +346,4 @@ export class CartItem extends React.Component {
 	}
 }
 
-export default withShoppingCart( localize( withLocalizedMoment( CartItem ) ) );
+export default withShoppingCart( withCartKey( localize( withLocalizedMoment( CartItem ) ) ) );

@@ -13,6 +13,7 @@ import Notice from 'calypso/components/notice';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wp from 'calypso/lib/wp';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -253,4 +254,4 @@ export default connect(
 	{
 		successNotice,
 	}
-)( withShoppingCart( localize( MapDomain ) ) );
+)( withShoppingCart( withCartKey( localize( MapDomain ) ) ) );

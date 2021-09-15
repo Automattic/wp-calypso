@@ -42,6 +42,7 @@ import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -1021,7 +1022,7 @@ const ConnectedPlanFeatures = connect(
 	{
 		recordTracksEvent,
 	}
-)( withShoppingCart( localize( PlanFeatures ) ) );
+)( withShoppingCart( withCartKey( localize( PlanFeatures ) ) ) );
 
 /* eslint-enable */
 

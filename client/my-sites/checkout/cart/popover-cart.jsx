@@ -11,6 +11,7 @@ import React from 'react';
 import Count from 'calypso/components/count';
 import HeaderButton from 'calypso/components/header-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartButtons from './cart-buttons';
@@ -157,4 +158,4 @@ class PopoverCart extends React.Component {
 	}
 }
 
-export default withShoppingCart( localize( PopoverCart ) );
+export default withShoppingCart( withCartKey( localize( PopoverCart ) ) );

@@ -29,6 +29,7 @@ import {
 	newUsers,
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -296,4 +297,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( localize( GSuiteAddUsers ) ) );
+)( withShoppingCart( withCartKey( localize( GSuiteAddUsers ) ) ) );
