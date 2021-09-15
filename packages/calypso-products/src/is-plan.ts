@@ -1,3 +1,4 @@
+import { PLAN_HOST_BUNDLE } from './constants';
 import { getPlansSlugs } from './main';
 
 export function isPlan( {
@@ -6,5 +7,6 @@ export function isPlan( {
 }:
 	| { productSlug: never; product_slug: string }
 	| { product_slug: never; productSlug: string } ): boolean {
-	return getPlansSlugs().includes( product_slug ?? productSlug );
+	const slug = product_slug ?? productSlug;
+	return getPlansSlugs().includes( slug ) || slug === PLAN_HOST_BUNDLE;
 }
