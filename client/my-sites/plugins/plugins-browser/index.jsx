@@ -45,7 +45,12 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import {
+	getSitePlan,
+	isJetpackSite,
+	isRequestingSites,
+	getSiteAdminUrl,
+} from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -363,11 +368,10 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
-		const { siteSlug, translate } = this.props;
-		const site = siteSlug ? '/' + siteSlug : '';
+		const { siteAdminUrl, translate } = this.props;
 
 		return (
-			<Button className="plugins-browser__button" href={ '/plugins/manage' + site }>
+			<Button className="plugins-browser__button" href={ `${ siteAdminUrl }plugins.php` }>
 				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
 		);
@@ -557,6 +561,7 @@ export default flow(
 				isFetchingPluginsByCategoryPopular: isFetchingPluginsList( state, 'popular' ),
 				isFetchingPluginsByCategoryFeatured: isFetchingPluginsList( state, 'featured' ),
 				isFetchingPluginsBySearchTerm: isFetchingPluginsList( state, null, search ),
+				siteAdminUrl: getSiteAdminUrl( state, selectedSiteId ),
 			};
 		},
 		{
