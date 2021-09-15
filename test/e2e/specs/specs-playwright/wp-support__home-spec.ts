@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			await supportComponent.search( keyword );
 		} );
 
-		it( 'Search results are shown', async function () {
+		it( 'Search results are shown with a valid search keyword', async function () {
 			const results = await supportComponent.getResults( 'article' );
 			expect( results.length ).toBeGreaterThan( 0 );
 		} );
@@ -47,22 +47,23 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			await supportComponent.defaultStateShown();
 		} );
 
-		it( 'Enter invalid search keyword', async function () {
+		// Invalid keyword search often takes more than 30s to resolve.
+		// See: https://github.com/Automattic/wp-calypso/issues/55478
+		it.skip( 'Enter invalid search keyword', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 		} );
 
-		it( 'No search results are shown', async function () {
+		it.skip( 'No search results are shown', async function () {
 			await supportComponent.noResultsShown();
 		} );
 
 		it( 'Enter empty search keyword', async function () {
 			const keyword = '        ';
-			await supportComponent.clearSearch();
 			await supportComponent.search( keyword );
 		} );
 
-		it( 'Continues to display default results', async function () {
+		it( 'No search results are shown with an empty search keyword', async function () {
 			await supportComponent.noResultsShown();
 		} );
 	} );
