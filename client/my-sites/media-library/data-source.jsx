@@ -10,7 +10,6 @@ import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import GooglePhotosIcon from './google-photos-icon';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {
@@ -46,30 +45,26 @@ export class MediaLibraryDataSource extends Component {
 			{
 				value: '',
 				label: translate( 'Media library' ),
-				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'google_photos',
 				label: translate( 'Google Photos' ),
-				icon: <GooglePhotosIcon />,
 			} );
 		}
 		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Pexels free photos' ),
-				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
 		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );
 	};
 
 	renderMenuItems( sources ) {
-		return sources.map( ( { icon, label, value } ) => (
+		return sources.map( ( { label, value } ) => (
 			<PopoverMenuItem key={ value } data-source={ value } onClick={ this.changeSource( value ) }>
-				{ icon }
 				{ label }
 			</PopoverMenuItem>
 		) );
@@ -99,11 +94,7 @@ export class MediaLibraryDataSource extends Component {
 					onClick={ this.togglePopover }
 					title={ translate( 'Choose media library source' ) }
 				>
-					{ currentSelected && (
-						<span>
-							{ currentSelected.icon } { currentSelected.label }
-						</span>
-					) }
+					{ currentSelected && <span>{ currentSelected.label }</span> }
 					<Gridicon className="media-library__header-chevron" icon="chevron-down" size={ 18 } />
 				</Button>
 				{ sources.length > 1 && (
