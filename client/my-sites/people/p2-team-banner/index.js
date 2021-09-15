@@ -29,7 +29,7 @@ const P2TeamBanner = ( { site, context } ) => {
 					callToAction={ translate( 'Learn more' ) }
 					href="https://p2help.wordpress.com/managing-a-p2/managing-people/inviting-team-members/"
 					showIcon={ false }
-					className="p2-team-banner p2-banner"
+					className="p2-team-banner p2-team-banner--invite p2-banner"
 				/>
 			);
 		}
@@ -50,7 +50,7 @@ const P2TeamBanner = ( { site, context } ) => {
 						callToAction={ translate( 'Manage workspace members' ) }
 						href={ `/people/team/${ hubSlug }` }
 						showIcon={ false }
-						className="p2-team-banner p2-banner p2-team-banner--invite"
+						className="p2-team-banner p2-team-banner--invite p2-banner"
 					/>
 				);
 			case 'invite':
