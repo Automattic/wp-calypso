@@ -234,30 +234,6 @@ export class MySitesSidebar extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
-	trackCustomerInboxClick = () => {
-		this.trackMenuItemClick( 'customer-inbox' );
-		this.onNavigate();
-	};
-
-	customerInbox() {
-		const { translate, siteSuffix, path, site } = this.props;
-
-		if ( ! site ) {
-			return null;
-		}
-
-		return (
-			<SidebarItem
-				materialIcon="inbox"
-				tipTarget="inbox"
-				onNavigate={ this.trackCustomerInboxClick }
-				label={ translate( 'Inbox' ) }
-				selected={ itemLinkMatches( [ '/inbox' ], path ) }
-				link={ '/inbox' + siteSuffix }
-			/>
-		);
-	}
-
 	trackCustomerHomeClick = () => {
 		this.trackMenuItemClick( 'customer-home' );
 		this.onNavigate();
@@ -1039,7 +1015,6 @@ export class MySitesSidebar extends Component {
 
 				<SidebarMenu>
 					{ this.customerHome() }
-					{ this.customerInbox() }
 					{ this.stats() }
 					{ this.upgradesMenu() }
 					{ this.store() }

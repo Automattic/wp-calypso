@@ -38,7 +38,6 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 	shouldShowBetaTesting = false,
-	shouldShowInbox = false,
 } = {} ) {
 	const fallbackResponse = [
 		{
@@ -55,17 +54,6 @@ export default function buildFallbackResponse( {
 			type: 'menu-item',
 			url: `/stats/day/${ siteDomain }`,
 		},
-		...( shouldShowInbox
-			? [
-					{
-						icon: 'dashicons-email',
-						slug: 'inbox',
-						title: translate( 'Inbox' ),
-						type: 'menu-item',
-						url: '/inbox',
-					},
-			  ]
-			: [] ),
 		{
 			icon: 'dashicons-cart',
 			slug: 'upgrades',
