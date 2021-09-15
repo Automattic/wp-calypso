@@ -7,6 +7,9 @@ import page from 'page';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import themeGrid from 'calypso/assets/images/difm/theme-grid.png';
+import verticalCreative from 'calypso/assets/images/difm/vertical-creative.png';
+import verticalResturants from 'calypso/assets/images/difm/vertical-restaurants.png';
+import verticalServices from 'calypso/assets/images/difm/vertical-services.png';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductCost } from 'calypso/state/products-list/selectors';
@@ -25,8 +28,6 @@ const VerticalsGrid = styled.div`
 const Vertical = styled.h1`
 	margin-bottom: 16px;
 	margin: 0 auto 10px;
-	padding: 16px;
-
 	h1 {
 		font-size: 1.25rem;
 		text-align: center;
@@ -38,12 +39,19 @@ const Vertical = styled.h1`
 `;
 
 const ImageContainer = styled.div`
-	height: 150px;
-	overflow: hidden;
 	margin: 10px 0px;
 	min-height: 15em;
+	display: none;
 	@media ( min-width: 960px ) {
-		height: auto;
+		display: block;
+	}
+`;
+
+const MobileImageContainer = styled.div`
+	width: 100%;
+	display: block;
+	@media ( min-width: 960px ) {
+		display: none;
 	}
 `;
 
@@ -103,12 +111,21 @@ export default function DoItForMeLandingPage(): JSX.Element {
 					<h1>
 						{ translate( 'Professional Services' ) } <br /> { translate( 'Local Business' ) }
 					</h1>
+					<MobileImageContainer>
+						<img src={ verticalServices } width="100%" alt="Built By Themes" />
+					</MobileImageContainer>
 				</Vertical>
 				<Vertical>
 					<h1>{ translate( 'Restaurants' ) }</h1>
+					<MobileImageContainer>
+						<img src={ verticalResturants } width="100%" alt="Built By Themes" />
+					</MobileImageContainer>
 				</Vertical>
 				<Vertical>
 					<h1>{ translate( 'Creatives & Portfolio' ) }</h1>
+					<MobileImageContainer>
+						<img src={ verticalCreative } width="100%" alt="Built By Themes" />
+					</MobileImageContainer>
 				</Vertical>
 			</VerticalsGrid>
 			<ImageContainer>
