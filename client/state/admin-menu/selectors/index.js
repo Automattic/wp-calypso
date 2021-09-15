@@ -1,4 +1,5 @@
 import 'calypso/state/admin-menu/init';
+import { isEnabled } from '@automattic/calypso-config';
 
 export function getAdminMenu( state, siteId ) {
 	const stateSlice = state?.adminMenu?.menus;
@@ -7,7 +8,11 @@ export function getAdminMenu( state, siteId ) {
 		return null;
 	}
 
-	return state.adminMenu.menus[ siteId ] || null;
+	const allAdminMenu = state.adminMenu.menus[ siteId ] || null;
+	const filteredAdminMenu = allAdminMenu?.filter( ( t ) => t.slug !== 'httpswordpress-cominbox' );
+	const enableMailbox = isEnabled( 'sidebar/inbox' );
+
+	return enableMailbox ? allAdminMenu : filteredAdminMenu;
 }
 
 export function getIsRequestingAdminMenu( state ) {

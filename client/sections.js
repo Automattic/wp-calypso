@@ -25,6 +25,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'inbox',
+		paths: [ '/inbox' ],
+		module: 'calypso/my-sites/inbox',
+		group: 'sites',
+	},
+	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
