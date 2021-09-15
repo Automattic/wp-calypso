@@ -9,9 +9,8 @@
 	align-items: center;
 
 	width: calc( 100% - 4rem );
-	height: 102px;
 	max-width: 1200px;
-	margin: -47px auto 0; // Undo the padding-top set by .layout__content
+	margin: -32px auto 0; // Undo the padding-top set by .layout__content
 	padding: 0 2rem;
 
 	background-color: var( --color-surface );
@@ -19,7 +18,7 @@
 	// Breakpoint taken from jetpack.com, not standard in Calypso
 	@media ( min-width: 661px ) {
 		width: 100%;
-		margin-top: -71px; // Undo the padding-top set by .layout__content
+		margin-top: -52px; // Undo the padding-top set by .layout__content
 		padding: 0;
 	}
 
@@ -27,7 +26,8 @@
 		width: 95vw;
 	}
 
-	@media ( min-width: 901px ) {
+	@media ( min-width: 960px ) {
+		height: 102px;
 		margin-top: -79px; // Undo the padding-top set by .layout__content
 	}
 
