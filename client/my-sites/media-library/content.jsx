@@ -323,14 +323,19 @@ export class MediaLibraryContent extends React.Component {
 	};
 
 	renderGooglePhotosConnect() {
-		const connectMessage = this.props.translate(
+		const { translate } = this.props;
+		const connectMessage = translate(
 			'To show your Google Photos library you need to connect your Google account.'
 		);
 
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<img src="/calypso/images/sharing/google-photos-connect.png" width="400" alt="" />
+					<img
+						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						width="400"
+						alt={ translate( 'Google Photos' ) }
+					/>
 				</p>
 				<p>{ connectMessage }</p>
 
