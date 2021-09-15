@@ -9,10 +9,10 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Plans from './plans';
 
 function showJetpackPlans( context ) {
-	const getState = context.store.getState();
-	const siteId = getSelectedSiteId( getState );
-	const isJetpackProductSite = getIsJetpackProductSite( getState, siteId );
-	const isWpcom = isSiteWpcom( getState, siteId );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const isJetpackProductSite = getIsJetpackProductSite( state, siteId );
+	const isWpcom = isSiteWpcom( state, siteId );
 	return ! isWpcom || isJetpackProductSite;
 }
 
