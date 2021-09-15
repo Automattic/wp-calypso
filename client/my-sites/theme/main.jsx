@@ -189,7 +189,7 @@ class ThemeSheet extends Component {
 				<span className="theme__sheet-bar-title">
 					{ title }
 					{ isFullSiteEditingTheme( { taxonomies } ) && (
-						<Badge type="warning-clear" className="theme__badge-beta">
+						<Badge type="warning-clear" className="theme__sheet-badge-beta">
 							{ translate( 'Beta' ) }
 						</Badge>
 					) }
@@ -622,11 +622,13 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
-				primary={ isActive }
+				primary
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.props.isWpcomTheme && this.renderPrice() }
+				<Badge type="info" className="theme__sheet-badge-beta">
+					{ this.props.isWpcomTheme && this.renderPrice() }
+				</Badge>
 			</Button>
 		);
 	};

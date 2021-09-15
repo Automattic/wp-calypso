@@ -19,7 +19,7 @@
 	padding-left: 25px;
 	line-height: 1;
 
-	.theme__badge-beta {
+	.theme__sheet-badge-beta {
 		background-color: white;
 		font-weight: bold;
 		margin-left: 10px;
@@ -77,6 +77,11 @@
 	right: 50%;
 	margin-right: 20px;
 
+	.theme__sheet-badge-beta {
+		background-color: var( --color-surface );
+		margin-left: 10px;
+	}
+
 	@include breakpoint-deprecated( '<960px' ) {
 		margin-right: 0;
 		position: absolute;
@@ -106,9 +111,7 @@
 .theme__sheet-action-bar-cost {
 	font-weight: 600;
 	color: #4ab866;
-	margin-left: 10px;
 	display: inline-block;
-	max-width: 50%;
 }
 
 .theme__sheet-action-bar-cost-upgrade {
