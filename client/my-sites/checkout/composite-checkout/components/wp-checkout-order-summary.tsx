@@ -305,7 +305,7 @@ function CheckoutSummaryPlanFeatures( { siteId }: { siteId: number | undefined }
 				return (
 					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isSupported={ isSupported }>
 						{ isSupported ? (
-							<WPCheckoutCheckIcon id={ encodeURIComponent( feature ) } />
+							<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
 						) : (
 							<WPCheckoutCrossIcon />
 						) }
