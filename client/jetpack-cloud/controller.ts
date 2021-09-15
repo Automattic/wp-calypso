@@ -255,11 +255,9 @@ export const storageUpgradeSiteSelection = async ( context: PageJS.Context, next
 		return;
 	}
 
-	if ( siteFragment ) {
-		const { id } = await fetchSite( context, siteFragment );
-		if ( id ) {
-			selectSite( context, id );
-		}
-		next();
+	const { id } = await fetchSite( context, siteFragment );
+	if ( id ) {
+		selectSite( context, id );
 	}
+	next();
 };
