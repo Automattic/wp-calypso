@@ -29,6 +29,9 @@ const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
 		displayName: jetpackStorageAmountDisplays[ slug ],
 		buttonLabel: translate( 'Upgrade storage' ),
 		description: null,
+		subheader: translate( 'of backup storage', {
+			comment: 'A subheader that together with the header will read like "20GB of backup storage"',
+		} ),
 	};
 };
 

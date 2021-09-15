@@ -22,6 +22,7 @@ type OwnProps = {
 	iconSlug?: string;
 	productSlug: string;
 	productName: TranslateResult;
+	subheader?: TranslateResult;
 	headingLevel?: number;
 	description?: ReactNode;
 	currencyCode?: string | null;
@@ -204,6 +205,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	iconSlug,
 	productSlug,
 	productName,
+	subheader,
 	headingLevel,
 	description,
 	currencyCode,
@@ -236,6 +238,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	const parsedHeadingLevel = Number.isFinite( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
 		: 2;
+	const parsedSubheadingLevel = Math.min( parsedHeadingLevel + 1, 6 );
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -272,6 +275,12 @@ const JetpackProductCard: React.FC< Props > = ( {
 					{ className: 'jetpack-product-card__product-name' },
 					<>{ productName }</>
 				) }
+				{ subheader &&
+					createElement(
+						`h${ parsedSubheadingLevel }`,
+						{ className: 'jetpack-product-card__product-subheader' },
+						<>{ subheader }</>
+					) }
 
 				<DisplayPrice
 					isDeprecated={ isDeprecated }
