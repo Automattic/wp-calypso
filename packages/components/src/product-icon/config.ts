@@ -144,7 +144,9 @@ export type SupportedSlugs =
 	| 'jetpack_security_realtime'
 	| 'jetpack_security_realtime_monthly'
 	| 'jetpack_videopress'
-	| 'jetpack_videopress_monthly';
+	| 'jetpack_videopress_monthly'
+	| 'jetpack_videopress_dark'
+	| 'jetpack_videopress_monthly_dark';
 
 export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
