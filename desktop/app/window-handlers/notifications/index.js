@@ -108,8 +108,9 @@ module.exports = function ( { window, view } ) {
 						log.info( `Navigating to '${ navigate }'` );
 						view.webContents.send( 'navigate', navigate );
 					} else {
-						log.info( `Navigating to '${ webBase + navigate }'` );
-						view.webContents.loadURL( webBase + navigate );
+						const path = stripLeadingSlashFromPath( navigate );
+						log.info( `Navigating to '${ webBase + path }'` );
+						view.webContents.loadURL( webBase + path );
 					}
 				} else {
 					// else just display the notifications panel
@@ -135,3 +136,7 @@ module.exports = function ( { window, view } ) {
 		}
 	} );
 };
+
+function stripLeadingSlashFromPath( path ) {
+	return path.replace( /^\/+/g, '' );
+}
