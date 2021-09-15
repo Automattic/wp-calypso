@@ -1311,13 +1311,13 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
 		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday' ),
+			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
-		getDescription: () => i18n.translate( 'Live chat is available 24/7' ),
+		getDescription: () => i18n.translate( 'Live chat is available 24/7.' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
