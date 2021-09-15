@@ -14,11 +14,12 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import slugToSelectorProduct from '../slug-to-selector-product';
-import { Duration, SelectorProduct } from '../types';
+import slugToSelectorProduct from './slug-to-selector-product';
+import { Duration, SelectorProduct } from './types';
 
 const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
 	const jetpackStorageAmountDisplays = getJetpackStorageAmountDisplays();
@@ -83,4 +84,26 @@ export const useGetTieredSecurityProducts = ( billingPeriod: Duration ) => {
 	return securityProductsByBillingPeriod[ billingPeriod ].map(
 		getProductWithOverrides
 	) as SelectorProduct[];
+};
+
+export const useGetTieredProducts = ( billingPeriod: Duration ) => {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+
+	const tieredSecurityProducts = useGetTieredSecurityProducts( billingPeriod );
+	const tieredBackupProducts = useGetTieredBackupProducts( billingPeriod );
+
+	const hasSecurity =
+		purchases
+			.filter( ( purchase ) => 'active' === purchase.subscriptionStatus )
+			.filter( ( purchase ) =>
+				[
+					PLAN_JETPACK_SECURITY_T1_MONTHLY,
+					PLAN_JETPACK_SECURITY_T1_YEARLY,
+					PLAN_JETPACK_SECURITY_T2_MONTHLY,
+					PLAN_JETPACK_SECURITY_T2_YEARLY,
+				].includes( purchase.productSlug )
+			).length > 0;
+
+	return hasSecurity ? tieredSecurityProducts : tieredBackupProducts;
 };

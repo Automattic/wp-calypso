@@ -5,7 +5,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { getPurchaseURLCallback } from '../get-purchase-url-callback';
 import ProductCard from '../product-card';
 import { Duration, QueryArgs, SelectorProduct } from '../types';
-import { useGetTieredBackupProducts } from '../use-get-tiered-products';
+import { useGetTieredProducts } from '../use-get-tiered-products';
 
 import './style.scss';
 
@@ -24,7 +24,7 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const siteSlug = siteSlugProp || siteSlugState || '';
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const tieredBackupProducts = useGetTieredBackupProducts( duration );
+	const tieredProducts = useGetTieredProducts( duration );
 
 	const noop = () => {
 		// Do nothing
@@ -34,7 +34,7 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 
 	return (
 		<div className="storage-tier-upgrade">
-			{ tieredBackupProducts.map( ( product: SelectorProduct ) => (
+			{ tieredProducts.map( ( product: SelectorProduct ) => (
 				<ProductCard
 					item={ product }
 					onClick={ noop }
