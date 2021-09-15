@@ -10,6 +10,7 @@ import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import isSiteUsingCoreSiteEditorSelector from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { isFullSiteEditingTheme } from 'calypso/utils';
 import { trackClick } from '../helpers';
@@ -38,7 +39,13 @@ class CurrentTheme extends Component {
 	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, translate } = this.props;
+		const {
+			currentTheme,
+			currentThemeId,
+			isSiteUsingCoreSiteEditor,
+			siteId,
+			translate,
+		} = this.props;
 		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
 		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
 
@@ -51,6 +58,7 @@ class CurrentTheme extends Component {
 		const showScreenshot = currentTheme && currentTheme.screenshot;
 		// Some themes have no screenshot, so only show placeholder until details loaded
 		const showScreenshotPlaceholder = ! currentTheme;
+		const showBetaBadge = isFullSiteEditingTheme( currentTheme ) && isSiteUsingCoreSiteEditor;
 
 		return (
 			<Card className="current-theme">
@@ -69,7 +77,7 @@ class CurrentTheme extends Component {
 							) }
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
-									{ isFullSiteEditingTheme( currentTheme ) && (
+									{ showBetaBadge && (
 										<Badge type="warning-clear" className="current-theme__badge-beta">
 											{ translate( 'Beta' ) }
 										</Badge>
@@ -119,10 +127,16 @@ class CurrentTheme extends Component {
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
-const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => (
+const CurrentThemeWithOptions = ( {
+	siteId,
+	currentTheme,
+	currentThemeId,
+	isSiteUsingCoreSiteEditor,
+} ) => (
 	<ConnectedCurrentTheme
 		currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
+		isSiteUsingCoreSiteEditor={ isSiteUsingCoreSiteEditor }
 		siteId={ siteId }
 		source="current theme"
 	/>
@@ -133,5 +147,6 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		currentThemeId,
 		currentTheme: getCanonicalTheme( state, siteId, currentThemeId ),
+		isSiteUsingCoreSiteEditor: isSiteUsingCoreSiteEditorSelector( state, siteId ),
 	};
 } )( CurrentThemeWithOptions );
