@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.action-panel {
+.email-providers-comparison__action-panel {
 	flex-direction: row;
 
 	&.is-primary {
@@ -11,33 +11,6 @@
 		}
 	}
 }
-
-.action-panel__figure {
-	float: right;
-	max-width: 208px;
-
-	&.is-inline-body-text {
-		margin-top: 40px;
-	}
-
-	&.align-left {
-		float: left;
-		margin-left: 0;
-		margin-right: 24px;
-		width: unset;
-	}
-
-	&.align-right {
-		margin: 0 0 24px 24px;
-	}
-
-	&.align-left {
-		float: left;
-		margin-left: 0;
-		margin-right: 24px;
-	}
-}
-
 
 .email-providers-comparison__providers {
 	display: flex;
@@ -98,12 +71,30 @@
 }
 
 .email-providers-comparison__provider-card.promo-card {
+	flex-direction: row;
 	.action-panel__figure {
+		float: right;
+		max-width: 208px;
 		margin-bottom: 0.5em;
 		margin-top: 0;
 
 		img {
 			max-width: 36px;
+		}
+
+		&.is-inline-body-text {
+			margin-top: 40px;
+		}
+
+		&.align-left {
+			float: left;
+			margin-left: 0;
+			margin-right: 24px;
+			width: unset;
+		}
+
+		&.align-right {
+			margin: 0 0 24px 24px;
 		}
 	}
 
