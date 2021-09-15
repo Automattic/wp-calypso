@@ -6,7 +6,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
@@ -22,6 +22,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
