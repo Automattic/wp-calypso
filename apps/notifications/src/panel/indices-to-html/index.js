@@ -138,12 +138,15 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 					new_container.setAttribute( 'rel', 'noopener noreferrer' );
 				}
 
-				if ( 'post' === range_info.type ) {
+				if ( 'post' === range_info_type ) {
 					new_container.setAttribute( 'data-post-id', range_info.id );
 					new_container.setAttribute( 'data-site-id', range_info.site_id );
 					new_container.setAttribute( 'data-link-type', 'post' );
 					new_container.setAttribute( 'target', '_self' );
-				} else if ( 'tracks' === range_info.type && range_info.context ) {
+				} else if (
+					( 'tracks' === range_info_type || 'button' === range_info_type ) &&
+					range_info.context
+				) {
 					new_container.setAttribute( 'data-link-type', 'tracks' );
 					new_container.setAttribute( 'data-tracks-event', range_info.context );
 				}

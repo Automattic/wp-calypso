@@ -35,6 +35,13 @@ module.exports = {
 				'jsdoc/check-tag-names': 'off',
 			},
 		},
+		{
+			files: [ 'specs/specs-playwright/shared-specs/**/*' ],
+			rules: {
+				// This directory is used to create shared specs that can be re-used in multiple places.
+				'jest/no-export': 'off',
+			},
+		},
 	],
 	rules: {
 		'import/no-nodejs-modules': 'off',

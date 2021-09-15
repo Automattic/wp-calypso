@@ -25,6 +25,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -191,6 +192,7 @@ export default function CompositeCheckout( {
 		jetpackPurchaseToken,
 	} );
 
+	const cartKey = useCartKey();
 	const {
 		couponStatus,
 		applyCoupon,
@@ -203,7 +205,7 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
@@ -425,6 +427,7 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
+			stripe,
 		} ),
 		[
 			contactDetails,
@@ -436,6 +439,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
+			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
 		]

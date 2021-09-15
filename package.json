@@ -136,7 +136,6 @@
 		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",
 		"@automattic/calypso-doctor": "^0.1.0",
-		"@automattic/calypso-polyfills": "^1.0.0",
 		"@automattic/color-studio": "2.5.0",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/data-stores": "^2.0.0",
@@ -309,6 +308,7 @@
 		"eslint-nibble": "^7.0.0"
 	},
 	"resolutions": {
+		"@wordpress/base-styles": "3.4.3",
 		"newspack-components/@wordpress/base-styles": "3.4.3",
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1"

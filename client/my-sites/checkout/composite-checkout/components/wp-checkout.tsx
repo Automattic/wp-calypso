@@ -31,6 +31,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -59,7 +60,8 @@ const ContactFormTitle = (): JSX.Element => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
@@ -135,12 +137,13 @@ export default function WPCheckout( {
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
 } ): JSX.Element {
+	const cartKey = useCartKey();
 	const {
 		responseCart,
 		applyCoupon,
 		updateLocation,
 		isPendingUpdate: isCartPendingUpdate,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
@@ -525,7 +528,8 @@ function SubmitButtonHeader() {
 }
 
 const SubmitButtonFooter = () => {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>

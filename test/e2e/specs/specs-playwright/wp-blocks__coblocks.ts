@@ -55,29 +55,44 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), function () {
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( PricingTableBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			PricingTableBlock.blockName,
+			PricingTableBlock.blockEditorSelector
+		);
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrice );
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await gutenbergEditorPage.addBlock( DynamicHRBlock.blockName );
+		await gutenbergEditorPage.addBlock(
+			DynamicHRBlock.blockName,
+			DynamicHRBlock.blockEditorSelector
+		);
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( HeroBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			HeroBlock.blockName,
+			HeroBlock.blockEditorSelector
+		);
 		const heroBlock = new HeroBlock( blockHandle );
 		await heroBlock.enterHeading( heroBlockHeading );
 	} );
 
 	it( `Insert ${ ClicktoTweetBlock.blockName } block and enter tweet content`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( ClicktoTweetBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			ClicktoTweetBlock.blockName,
+			ClicktoTweetBlock.blockEditorSelector
+		);
 		const clickToTweetBlock = new ClicktoTweetBlock( blockHandle );
 		await clickToTweetBlock.enterTweetContent( clicktoTweetBlockTweet );
 	} );
 
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( LogosBlock.blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			LogosBlock.blockName,
+			LogosBlock.blockEditorSelector
+		);
 		const logosBlock = new LogosBlock( blockHandle );
 		await logosBlock.upload( logoImage.fullpath );
 	} );

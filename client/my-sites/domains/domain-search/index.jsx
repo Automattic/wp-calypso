@@ -1,3 +1,5 @@
+import { Gridicon } from '@automattic/components';
+import { BackButton } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -24,7 +26,11 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
-import { domainAddEmailUpsell, domainMapping } from 'calypso/my-sites/domains/paths';
+import {
+	domainAddEmailUpsell,
+	domainMapping,
+	domainManagementList,
+} from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
@@ -211,6 +217,13 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
+						<BackButton
+							className={ 'domain-search__go-back' }
+							href={ domainManagementList( selectedSiteSlug ) }
+						>
+							<Gridicon icon="arrow-left" size={ 18 } />
+							{ translate( 'Back' ) }
+						</BackButton>
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
 							<FormattedHeader

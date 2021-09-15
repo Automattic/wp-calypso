@@ -1,3 +1,4 @@
+import getRewindPoliciesRequestStatus from './get-rewind-policies-request-status';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -8,12 +9,7 @@ import type { AppState } from 'calypso/types';
  * @param siteId The site for which to retrieve request status.
  * @returns True if policies are being requested; otherwise, false.
  */
-const isRequestingRewindPolicies = ( state: AppState, siteId: number | null ): boolean => {
-	if ( ! Number.isInteger( siteId ) ) {
-		return false;
-	}
-
-	return state.rewind?.[ siteId as number ]?.policies?.requestStatus === 'pending';
-};
+const isRequestingRewindPolicies = ( state: AppState, siteId: number | null ): boolean =>
+	getRewindPoliciesRequestStatus( state, siteId ) === 'pending';
 
 export default isRequestingRewindPolicies;

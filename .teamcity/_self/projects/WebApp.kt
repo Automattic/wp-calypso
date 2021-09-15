@@ -3,6 +3,7 @@ package _self.projects
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
@@ -20,8 +21,9 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"));
 	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"));
-	buildType(playwrightBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
-	buildType(playwrightBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
+	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
+	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
+	buildType(PreReleaseE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -573,12 +575,13 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 
 		dependencies {
 			snapshot(BuildDockerImage) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
 			}
 		}
 	}
 }
 
-fun playwrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
+fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType {
 		id("Calypso_E2E_Playwright_$targetDevice")
 		uuid = buildUuid
@@ -700,7 +703,108 @@ fun playwrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
 
 		dependencies {
 			snapshot(BuildDockerImage) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
 			}
 		}
 	}
 }
+
+object PreReleaseE2ETests : BuildType({
+	id("Calypso_E2E_Pre_Release")
+	name = "Pre-Release E2E Tests"
+	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+				export PLAYWRIGHT_BROWSERS_PATH=0
+
+				# Install modules
+				${_self.yarn_install_cmd}
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Run pre-release e2e tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export URL="https://wordpress.com"
+
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export TARGET_DEVICE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addBranch = true
+				}
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {}
+
+	failureConditions {
+		executionTimeoutMin = 20
+	}
+})

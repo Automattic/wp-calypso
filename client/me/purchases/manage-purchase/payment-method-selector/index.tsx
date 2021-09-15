@@ -5,6 +5,7 @@ import {
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
 } from '@automattic/composite-checkout';
+import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -95,6 +96,8 @@ export default function PaymentMethodSelector( {
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
+	const elements = useElements();
+
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
@@ -114,6 +117,7 @@ export default function PaymentMethodSelector( {
 							translate,
 							stripe,
 							stripeConfiguration,
+							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
 						},
 						data

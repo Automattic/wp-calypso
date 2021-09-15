@@ -575,11 +575,15 @@ class Signup extends React.Component {
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
+			const destination = this.signupFlowController.getDestination();
 
 			return (
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
+					// If destination is not setup-site flow, we'll apply default design now
+					// because the user cannot choose design in current flow
+					hasAppliedDesign={ ! destination.startsWith( '/start/setup-site' ) }
 				/>
 			);
 		}

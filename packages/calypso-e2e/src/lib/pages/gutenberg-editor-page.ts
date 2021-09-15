@@ -18,6 +18,7 @@ const selectors = {
 	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
+	blockWarning: '.block-editor-warning',
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
@@ -35,9 +36,14 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	viewButton: '.editor-post-publish-panel a:has-text("View")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
+	closePublishPanel: 'button[aria-label="Close panel"]',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
+
+	// Block editor sidebar
+	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
+	dashboardLink: 'a[aria-description="Returns to the dashboard"]',
 };
 
 /**
@@ -196,7 +202,7 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Given a name, adds the Gutenberg block matching the name.
+	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
@@ -206,9 +212,14 @@ export class GutenbergEditorPage {
 	 * 		- Pay with Paypal
 	 * 		- SyntaxHighlighter Code
 	 *
+	 * The block editor selector should select the top level element of a block in the editor.
+	 * For reference, this element will almost always have the ".wp-block" class.
+	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
+	 *
 	 * @param {string} blockName Name of the block to be inserted.
+	 * @param {string} blockEditorSelector Selector to find the parent block element in the editor.
 	 */
-	async addBlock( blockName: string ): Promise< ElementHandle > {
+	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
 
 		// Click on the editor title. This has the effect of dismissing the block inserter
@@ -219,7 +230,7 @@ export class GutenbergEditorPage {
 		await frame.fill( selectors.blockSearch, blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `*[aria-label="Block: ${ blockName }"].is-selected` );
+		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
 	}
 
 	/**
@@ -317,6 +328,16 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Checks whether the editor has any block warnings/errors displaying.
+	 *
+	 * @returns True if there are block warnings/errors, false otherwise.
+	 */
+	async editorHasBlockWarnings(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.isVisible( selectors.blockWarning );
+	}
+
+	/**
 	 * Visits the published entry from the post-publish sidebar.
 	 *
 	 * @returns {Promise<void>} No return value.
@@ -326,5 +347,21 @@ export class GutenbergEditorPage {
 
 		await Promise.all( [ this.page.waitForNavigation(), frame.click( selectors.viewButton ) ] );
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	/**
+	 * Opens the Nav Sidebar on the left hand side.
+	 */
+	async openNavSidebar(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.openSidebarButton );
+	}
+
+	/**
+	 * Clicks on the Dashboard link within the Block Editor Sidebar.
+	 */
+	async returnToDashboard(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.dashboardLink );
 	}
 }

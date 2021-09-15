@@ -3,6 +3,7 @@ import { getCouponLineItemFromCart, getCreditsLineItemFromCart } from '@automatt
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import joinClasses from './join-classes';
 import { NonProductLineItem, LineItem } from './wp-line-item';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -54,7 +55,8 @@ export function WPOrderReviewLineItems( {
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 

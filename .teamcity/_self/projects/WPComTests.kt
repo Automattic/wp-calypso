@@ -281,7 +281,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
 					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 					export URL=%URL%
-					export VIEWPORT_NAME=$targetDevice
+					export TARGET_DEVICE=$targetDevice
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api

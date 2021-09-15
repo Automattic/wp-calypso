@@ -5,7 +5,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import React, { Component } from 'react';
-import LazyRender from 'react-lazily-render';
+import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -275,9 +275,11 @@ class ListAll extends Component {
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
 				{ domain?.blogId && ! isContactEmailEditContext ? (
-					<LazyRender>
-						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
-					</LazyRender>
+					<InView triggerOnce>
+						{ ( { inView, ref } ) => (
+							<div ref={ ref }>{ inView && this.renderQuerySiteDomainsOnce( domain.blogId ) }</div>
+						) }
+					</InView>
 				) : (
 					this.renderQuerySiteDomainsOnce( domain.blogId )
 				) }

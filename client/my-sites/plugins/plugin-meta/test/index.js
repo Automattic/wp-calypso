@@ -25,7 +25,6 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/translator-jumpstart', () => ( {} ) );
 jest.mock( 'calypso/state/guided-tours/selectors', () => ( {} ) );
 jest.mock( 'calypso/layout/guided-tours/positioning', () => 'Positioning' );
-jest.mock( 'calypso/layout/guided-tours/tours/main-tour', () => 'MainTour' );
 jest.mock( 'calypso/layout/masterbar/logged-in', () => 'LoggedIn' );
 jest.mock( 'calypso/layout/community-translator/launcher', () => 'Launcher' );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );

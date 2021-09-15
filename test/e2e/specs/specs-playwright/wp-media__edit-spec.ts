@@ -41,11 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		it( 'Navigate to Media', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Media' );
-		} );
-
-		it( 'Show only images', async function () {
 			mediaPage = new MediaPage( page );
-			await mediaPage.clickTab( 'Images' );
 		} );
 
 		it( 'Upload image', async function () {

@@ -164,7 +164,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 		const close = {
 			action: 'close',
 			disabled: disabled,
-			isPrimary: true,
+			isPrimary: steps.LAST_STEP !== cancellationStep,
 			label: translate( "I'll keep it" ),
 		};
 		const next = {
@@ -187,6 +187,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 				disabled={ props.disableButtons }
 				busy={ props.disableButtons }
 				onClick={ onSubmit }
+				primary
 				scary
 			>
 				{ props.disableButtons ? cancellingText : cancelText }

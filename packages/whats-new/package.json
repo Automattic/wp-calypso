@@ -36,7 +36,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
+		"@automattic/calypso-analytics": "^1.0.0",
 		"@automattic/i18n-utils": "^1.0.0",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/react-i18n": "^1.0.3",

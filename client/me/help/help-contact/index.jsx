@@ -19,7 +19,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import { withoutHttp } from 'calypso/lib/url';
-import wpcomLib from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
 import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
@@ -74,7 +74,6 @@ const debug = debugFactory( 'calypso:help-contact' );
  * Module variables
  */
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
-const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
 class HelpContact extends React.Component {
@@ -200,21 +199,15 @@ class HelpContact extends React.Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'kayako' );
 
-		wpcom.submitKayakoTicket(
-			subject,
-			kayakoMessage,
-			currentUserLocale,
-			this.props.clientSlug,
-			supportVariation === SUPPORT_CHAT_OVERFLOW,
-			( error ) => {
-				if ( error ) {
-					// TODO: bump a stat here
-					this.props.errorNotice( error.message );
-
-					this.setState( { isSubmitting: false } );
-					return;
-				}
-
+		wpcom.req
+			.post( '/help/tickets/kayako/new', {
+				subject,
+				message: kayakoMessage,
+				locale: currentUserLocale,
+				client: this.props.clientSlug,
+				is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
+			} )
+			.then( () => {
 				this.setState( {
 					isSubmitting: false,
 					confirmation: {
@@ -239,8 +232,13 @@ class HelpContact extends React.Component {
 						active_ticket_count: this.props.activeSupportTickets.length,
 					} );
 				}
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// TODO: bump a stat here
+				this.props.errorNotice( error.message );
+
+				this.setState( { isSubmitting: false } );
+			} );
 
 		this.clearSavedContactForm();
 	};
@@ -249,6 +247,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale, translate } = this.props;
 
 		if ( config( 'forum_locales' ).includes( currentUserLocale ) ) {
+			// eslint-disable-next-line wpcalypso/i18n-no-variables
 			return translate( message, args );
 		}
 
@@ -267,7 +266,7 @@ class HelpContact extends React.Component {
 			userDeclaredUrl,
 			userRequestsHidingUrl,
 		} = contactForm;
-		const { currentUserLocale, translate } = this.props;
+		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
@@ -316,20 +315,14 @@ class HelpContact extends React.Component {
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
 
-		wpcom.submitSupportForumsTopic(
-			subject,
-			forumMessage,
-			currentUserLocale,
-			this.props.clientSlug,
-			( error, data ) => {
-				if ( error ) {
-					// TODO: bump a stat here
-					this.props.errorNotice( error.message );
-
-					this.setState( { isSubmitting: false } );
-					return;
-				}
-
+		wpcom.req
+			.post( '/help/forums/support/topics/new', {
+				subject,
+				message: forumMessage,
+				locale: currentUserLocale,
+				client: this.props.clientSlug,
+			} )
+			.then( ( data ) => {
 				this.setState( {
 					isSubmitting: false,
 					confirmation: {
@@ -353,8 +346,13 @@ class HelpContact extends React.Component {
 						active_ticket_count: this.props.activeSupportTickets.length,
 					} );
 				}
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// TODO: bump a stat here
+				this.props.errorNotice( error.message );
+
+				this.setState( { isSubmitting: false } );
+			} );
 
 		this.clearSavedContactForm();
 	};
@@ -525,18 +523,10 @@ class HelpContact extends React.Component {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale } = this.props;
 
-		// Let the user know we only offer support in English.
-		// We only need to show the message if:
-		// 1. The user's locale doesn't match the live chat locale (usually English)
-		// 2. The support request isn't sent to the forums. Because forum support
-		//    requests are sent to the language specific forums (for popular languages)
-		//    we don't tell the user that support is only offered in English.
-		// 3. The support request isn't sent to Upwork. This is support given in
-		//    the user's language.
-		const showHelpLanguagePrompt =
-			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1 &&
-			SUPPORT_FORUM !== variationSlug &&
-			SUPPORT_UPWORK_TICKET !== variationSlug;
+		const showHelpLanguagePrompt = this.shouldShowHelpLanguagePrompt(
+			variationSlug,
+			currentUserLocale
+		);
 
 		return {
 			compact: this.props.compact,
@@ -548,6 +538,24 @@ class HelpContact extends React.Component {
 				requestChange: ( contactForm ) => ( savedContactForm = contactForm ),
 			},
 		};
+	};
+
+	shouldShowHelpLanguagePrompt = ( variationSlug, currentUserLocale ) => {
+		switch ( variationSlug ) {
+			case SUPPORT_HAPPYCHAT:
+				return ! config( 'livechat_support_locales' ).includes( currentUserLocale );
+
+			case SUPPORT_TICKET:
+			case SUPPORT_CHAT_OVERFLOW:
+			case SUPPORT_UPWORK_TICKET:
+				return (
+					! config( 'upwork_support_locales' ).includes( currentUserLocale ) &&
+					! [ 'en', 'en-gb' ].includes( currentUserLocale )
+				);
+
+			default:
+				return false;
+		}
 	};
 
 	shouldShowTicketRequestErrorNotice = ( variationSlug ) => {
