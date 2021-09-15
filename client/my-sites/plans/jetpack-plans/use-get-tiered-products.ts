@@ -111,7 +111,9 @@ export const useGetTieredSecurityProducts = ( billingPeriod: Duration ) => {
 		],
 	};
 
-	const tier2SecurityProductsByBillingPeriod = {
+	const tier2SecurityProductsByBillingPeriod: {
+		[ Key in Duration ]: JetpackSlugsWithStorage[];
+	} = {
 		[ TERM_ANNUALLY ]: [ PLAN_JETPACK_SECURITY_T2_YEARLY ],
 		[ TERM_MONTHLY ]: [ PLAN_JETPACK_SECURITY_T2_MONTHLY ],
 	};
