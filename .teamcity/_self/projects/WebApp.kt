@@ -750,7 +750,7 @@ object PreReleaseE2ETests : BuildType({
 				cd test/e2e
 				mkdir temp
 
-				export URL="https://wordpress.com"
+				export URL="https://wpcalypso.wordpress.com"
 
 				export NODE_CONFIG_ENV=test
 				export PLAYWRIGHT_BROWSERS_PATH=0
