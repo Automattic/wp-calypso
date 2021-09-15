@@ -13,7 +13,7 @@
 	"main": "server/index.js",
 	"dependencies": {
 		"@automattic/accessible-focus": "^1.0.0",
-		"@automattic/browser-data-collector": "^1.0.0",
+		"@automattic/browser-data-collector": "^2.0.0",
 		"@automattic/calypso-analytics": "^1.0.0",
 		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",
