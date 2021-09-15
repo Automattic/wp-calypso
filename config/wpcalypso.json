@@ -120,6 +120,7 @@
 		"signup/reskin": true,
 		"signup/social": true,
 		"signup/setup-site-after-checkout": false,
+		"signup/hero-flow": false,
 		"site-indicator": true,
 		"support-user": true,
 		"tools/migrate": true,

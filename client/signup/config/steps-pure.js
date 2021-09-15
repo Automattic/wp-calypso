@@ -714,6 +714,13 @@ export function generateSteps( {
 			optionalDependencies: [ 'selectedDesign' ],
 		},
 
+		intent: {
+			stepName: 'intent',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'intent', 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+		},
+
 		'design-setup-site': {
 			stepName: 'design-setup-site',
 			props: {
