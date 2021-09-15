@@ -7,12 +7,11 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 	async handleTestEvent( event ) {
 		switch ( event.name ) {
 			case 'setup':
-				this.global.__CURRENT_TEST_NAME__ = null;
 				this.global.__CURRENT_TEST_FAILED__ = false;
 				break;
 
 			case 'test_start':
-				this.global.__CURRENT_TEST_NAME__ = event.test.name;
+				this.global.__CURRENT_SUITE_NAME__ = event.test.parent.name;
 
 				if ( this.testFailed ) {
 					event.test.mode = 'skip';

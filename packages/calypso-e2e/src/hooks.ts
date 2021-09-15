@@ -8,7 +8,7 @@ import type { Page, Video } from 'playwright';
 
 // These are defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
 declare const __CURRENT_TEST_FAILED__: boolean;
-declare const __CURRENT_TEST_NAME__: string;
+declare const __CURRENT_SUITE_NAME__: string;
 
 /**
  * Generates a filename using the test name and a date string.
@@ -58,14 +58,14 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 	} );
 
 	afterAll( async () => {
-		const testName = __CURRENT_TEST_NAME__;
+		const suiteName = __CURRENT_SUITE_NAME__;
 
 		// Take screenshot for failed tests
 		if ( __CURRENT_TEST_FAILED__ ) {
 			const fileName = path.join(
 				tempDir,
 				'screenshots',
-				`${ getTestNameWithTime( testName ) }.png`
+				`${ getTestNameWithTime( suiteName ) }.png`
 			);
 			await mkdir( path.dirname( fileName ), { recursive: true } );
 			await page.screenshot( { path: fileName } );
@@ -81,7 +81,7 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			const destination = path.join(
 				tempDir,
 				'screenshots',
-				`${ getTestNameWithTime( testName ) }.webm`
+				`${ getTestNameWithTime( suiteName ) }.webm`
 			);
 			try {
 				await rename( original, destination );
