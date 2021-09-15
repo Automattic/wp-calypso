@@ -18,6 +18,7 @@ import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { hideMasterbar } from 'calypso/state/ui/actions';
 import normalizeInvite from './utils/normalize-invite';
 
 import './style.scss';
@@ -61,6 +62,10 @@ class InviteAccept extends React.Component {
 			// Replace the plain invite key with the strengthened key
 			// from the url: invite key + secret
 			invite.inviteKey = inviteKey;
+
+			if ( invite?.site?.is_wpforteams_site ) {
+				this.props.hideMasterbar();
+			}
 
 			this.handleFetchInvite( false, invite );
 		} catch ( error ) {
@@ -254,5 +259,6 @@ class InviteAccept extends React.Component {
 export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
 	successNotice,
 	infoNotice,
+	hideMasterbar,
 	redirectToLogout,
 } )( localize( InviteAccept ) );
