@@ -247,10 +247,11 @@ export async function cloudSiteSelection(
  * @param {PageJS.Context} context Route context
  * @param {Function} next Next middleware function
  */
-export const fragmentOnlySiteSelection = async ( context: PageJS.Context, next: () => void ) => {
+export const storageUpgradeSiteSelection = async ( context: PageJS.Context, next: () => void ) => {
 	const siteFragment = parseSiteFragment( context );
 
-	if ( noSite( siteFragment, context ) ) {
+	if ( ! siteFragment ) {
+		page.redirect( '/pricing' );
 		return;
 	}
 
