@@ -13,6 +13,8 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { listBlogStickers } from 'calypso/state/sites/blog-stickers/actions';
 
 import 'calypso/state/purchases/init';
 
@@ -69,7 +71,7 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 		} );
 };
 
-export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
+export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) => {
 	return new Promise( ( resolve ) =>
 		wpcom.req
 			.post( {
@@ -86,6 +88,12 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 				if ( data.status === 'completed' ) {
 					dispatch( requestHappychatEligibility() );
 				}
+
+				// Some purchases removals set a blog sticker to lock the site from
+				// removing more purchases, so we update the list of stickers in case
+				// we need to handle that lock in the UI.
+				const purchase = getByPurchaseId( getState(), purchaseId );
+				dispatch( listBlogStickers( purchase.siteId ) );
 
 				resolve( data );
 			} )

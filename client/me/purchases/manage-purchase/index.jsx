@@ -34,6 +34,7 @@ import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
+import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -89,6 +90,7 @@ import {
 	getRenewableSitePurchases,
 	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
+import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -432,10 +434,16 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
+		const {
+			isAtomicSite,
+			purchase,
+			shouldRevertAtomicSiteBeforeCancel,
+			stickers,
+			translate,
+		} = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) ) {
+		if ( ! isCancelable( purchase ) || stickers.includes( 'subscription_deactivation_locked' ) ) {
 			return null;
 		}
 
@@ -834,6 +842,7 @@ class ManagePurchase extends Component {
 					<QueryUserPurchases userId={ this.props.userId } />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
+				{ siteId && <QueryBlogStickers blogId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>
@@ -932,5 +941,6 @@ export default connect( ( state, props ) => {
 			state,
 			purchase?.id
 		),
+		stickers: getBlogStickers( state, siteId ) || [],
 	};
 } )( localize( ManagePurchase ) );
