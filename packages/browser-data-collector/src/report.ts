@@ -18,7 +18,7 @@ export class ReportImpl implements Report {
 	startCollectors!: Collector[];
 	stopCollectors!: Collector[];
 
-	static async fromNow( id: string, collectors: Collector[] = [] ): Promise< ReportImpl > {
+	static async fromNow( id: string, collectors: Collector[] = [] ): Promise< Report > {
 		const report = new ReportImpl( id, false );
 		await report.start( collectors );
 		return report;
@@ -69,7 +69,7 @@ export class ReportImpl implements Report {
 		return this;
 	}
 
-	async stop( collectors: Collector[] = [] ) {
+	async stop( collectors: Collector[] = [] ): Promise< ReportPayload > {
 		this.end = Date.now();
 		await this.runCollectors( [ ...this.stopCollectors, ...collectors ] );
 

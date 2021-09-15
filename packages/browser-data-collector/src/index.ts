@@ -1,7 +1,7 @@
 import { ReportImpl } from './report';
 import { send } from './transports/logstash';
 
-const inFlightReporters: Map< string, Promise< ReportImpl > > = new Map();
+const inFlightReporters: Map< string, Promise< Report > > = new Map();
 
 /**
  * Starts a new report
