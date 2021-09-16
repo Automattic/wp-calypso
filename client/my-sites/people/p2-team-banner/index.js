@@ -27,7 +27,13 @@ const P2TeamBanner = ( { site, context } ) => {
 						'You can also invite people to specific P2s so they join as guests.'
 					) }
 					callToAction={ translate( 'Learn more' ) }
-					href="https://p2help.wordpress.com/managing-a-p2/managing-people/inviting-team-members/"
+					onClick={ () =>
+						window.open(
+							'https://p2help.wordpress.com/managing-a-p2/managing-people/inviting-team-members/',
+							'_blank'
+						)
+					}
+					disableHref={ true }
 					showIcon={ false }
 					className="p2-team-banner p2-team-banner--invite p2-banner"
 				/>
