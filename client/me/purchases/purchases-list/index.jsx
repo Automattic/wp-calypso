@@ -34,7 +34,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
-import getConciergeHappychatBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
+import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
 import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import ConciergeBanner from '../concierge-banner';
@@ -52,9 +52,9 @@ class PurchasesList extends Component {
 	}
 
 	renderConciergeBanner() {
-		const { nextAppointment, scheduleId, isHappychatBlocked } = this.props;
+		const { nextAppointment, scheduleId, isUserBlocked } = this.props;
 
-		if ( isHappychatBlocked ) {
+		if ( isUserBlocked ) {
 			return;
 		}
 
@@ -221,7 +221,7 @@ export default connect(
 			nextAppointment: getConciergeNextAppointment( state ),
 			scheduleId: getConciergeScheduleId( state ),
 			userId,
-			isHappychatBlocked: getConciergeHappychatBlocked( state ),
+			isUserBlocked: getConciergeUserBlocked( state ),
 		};
 	},
 	{ recordTracksEvent }
