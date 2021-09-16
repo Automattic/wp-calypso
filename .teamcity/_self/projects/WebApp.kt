@@ -264,21 +264,13 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Build components storybook"
+			name = "Run storybook tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export NODE_ENV="production"
-
+				set -x
 				yarn components:storybook:start --ci --smoke-test
-			"""
-		}
-		bashNodeScript {
-			name = "Build search storybook"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				export NODE_ENV="production"
-
 				yarn search:storybook:start --ci --smoke-test
+				yarn composite-checkout:storybook:start --ci --smoke-test
 			"""
 		}
 	}
