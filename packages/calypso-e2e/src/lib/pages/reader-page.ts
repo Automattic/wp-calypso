@@ -29,6 +29,13 @@ export class ReaderPage {
 	}
 
 	/**
+	 * Waits until the page is considered to be loaded.
+	 */
+	private async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
 	 * Get the URL of the latest post in Reader
 	 *
 	 * @returns {Promise<string>} String of URL for latest post.
@@ -73,6 +80,8 @@ export class ReaderPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async comment( comment: string ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const elementHandle = await this.page.waitForSelector( selectors.commentTextArea );
 		await elementHandle.scrollIntoViewIfNeeded();
 		await this.page.fill( selectors.commentTextArea, comment );
