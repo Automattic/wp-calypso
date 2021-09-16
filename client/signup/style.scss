@@ -136,7 +136,7 @@ body.is-section-signup .layout.gravatar {
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		button:not( .is-compact ) {
+		button:not( .is-compact ):not( .is-primary ) {
 			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
@@ -407,6 +407,12 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 		@include breakpoint-deprecated( '<660px' ) {
 			margin-top: 24px;
+		}
+	}
+
+	.step-wrapper__header-button {
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-bottom: -16px;
 		}
 	}
 
@@ -795,5 +801,11 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
+	}
+
+	.inline-help {
+		@include breakpoint-deprecated( '<660px' ) {
+			bottom: 74px;
+		}
 	}
 }

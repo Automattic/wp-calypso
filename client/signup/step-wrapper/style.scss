@@ -41,7 +41,7 @@
 .step-wrapper__header-button {
 	@include breakpoint-deprecated( '<660px' ) {
 		flex-basis: 100%;
-		margin-bottom: -16px;
+		padding: 0 20px;
 	}
 }
 
@@ -50,19 +50,26 @@
 	align-items: center;
 	font-size: 0.875rem;
 
-	@include break-small {
-		&,
-		&:not( .is-sticky ) {
-			position: absolute;
-			top: 2px;
-			left: 11px;
-			right: 16px;
-			margin: 0;
-		}
+	@mixin unstick {
+		position: absolute;
+		top: 2px;
+		left: 11px;
+		right: 16px;
+		padding: 0;
+		border: none;
+		margin: 0;
+		background-color: transparent;
 	}
 
-	.step-wrapper__skip-wrapper {
-		margin-left: auto;
+	&.no-sticky {
+		@include unstick;
+		height: 36px;
+	}
+
+	&:not( .is-sticky ) {
+		@include break-small {
+			@include unstick;
+		}
 	}
 
 	.step-wrapper__navigation-link {
@@ -78,5 +85,10 @@
 			// override unessecary super specificity added by another class
 			padding-top: 0 !important;
 		}
+	}
+
+	.step-wrapper__navigation-link.forward,
+	.step-wrapper__skip-wrapper {
+		margin-left: auto;
 	}
 }

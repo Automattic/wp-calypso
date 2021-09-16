@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
+import { isReskinnedFlow } from '../utils';
 import './style.scss';
 
 class StepWrapper extends Component {
@@ -49,7 +50,7 @@ class StepWrapper extends Component {
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
-				backIcon="chevron-left"
+				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
 			/>
 		);
 	}
@@ -150,6 +151,7 @@ class StepWrapper extends Component {
 
 	render() {
 		const {
+			flowName,
 			stepContent,
 			headerButton,
 			hideFormattedHeader,
@@ -173,7 +175,10 @@ class StepWrapper extends Component {
 			<>
 				<div className={ classes }>
 					{ hasNavigation && (
-						<ActionButtons className="step-wrapper__navigation">
+						<ActionButtons
+							className="step-wrapper__navigation"
+							sticky={ isReskinnedFlow( flowName ) ? null : false }
+						>
 							{ ! hideBack && this.renderBack() }
 							{ ! hideSkip &&
 								skipButtonAlign === 'top' &&
