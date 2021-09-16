@@ -17,8 +17,8 @@ import './timeline.scss';
 
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
-const MessageParagraph = ( { message, isEdited, twemojiUrl } ) => (
-	<p>
+const MessageParagraph = ( { message, isEdited, isOptimistic, twemojiUrl } ) => (
+	<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
 		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
 		{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 	</p>
@@ -75,7 +75,14 @@ const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId(
  * Given a message and array of links contained within that message, returns the message
  * with clickable links inside of it.
  */
-const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl } ) => {
+const MessageWithLinks = ( {
+	message,
+	messageId,
+	isEdited,
+	isOptimistic,
+	links,
+	isExternalUrl,
+} ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -123,7 +130,7 @@ const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl 
 	}
 
 	return (
-		<p>
+		<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
 			{ children.parts }
 			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 		</p>
@@ -160,16 +167,18 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 					message={ event.message }
 					messageId={ event.id }
 					isEdited={ event.isEdited }
+					isOptimistic={ event.isOptimistic }
 					links={ event.links }
 					twemojiUrl={ twemojiUrl }
 					isExternalUrl={ isExternalUrl }
 				/>
-				{ rest.map( ( { message, id, isEdited, links } ) => (
+				{ rest.map( ( { message, id, isEdited, isOptimistic, links } ) => (
 					<MessageText
 						key={ id }
 						message={ message }
 						messageId={ event.id }
 						isEdited={ isEdited }
+						isOptimistic={ isOptimistic }
 						links={ links }
 						twemojiUrl={ twemojiUrl }
 						isExternalUrl={ isExternalUrl }
