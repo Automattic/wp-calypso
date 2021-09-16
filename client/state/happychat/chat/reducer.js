@@ -124,12 +124,11 @@ const timelineReducer = ( state = [], action ) => {
 			// This is a new message — append it!
 			return concat( state, [ event ] );
 
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE: {
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
 			const index = findIndex( state, ( { id } ) => action.message.id === id );
 			return index === -1
 				? state
 				: [ ...state.slice( 0, index ), timelineEvent( {}, action ), ...state.slice( index + 1 ) ];
-		}
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
 			return state;
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
