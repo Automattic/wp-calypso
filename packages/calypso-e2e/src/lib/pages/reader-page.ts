@@ -86,6 +86,6 @@ export class ReaderPage {
 		await elementHandle.scrollIntoViewIfNeeded();
 		await this.page.fill( selectors.commentTextArea, comment );
 		await this.page.click( selectors.commentSubmitButton );
-		await this.page.waitForSelector( selectors.commentContentLocator( comment ) );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
