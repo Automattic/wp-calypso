@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { createRef, Component, Fragment } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -14,16 +14,10 @@ import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
 import './popover-content.scss';
 
-const noop = () => {};
-
 class InlineHelpPopoverContent extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		showVideoResult: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		onClose: noop,
 	};
 
 	state = {
@@ -87,7 +81,7 @@ class InlineHelpPopoverContent extends Component {
 		this.openSecondaryView( VIEW_CONTACT );
 	};
 
-	renderPopoverFooter = () => {
+	renderPopoverFooter() {
 		const { translate } = this.props;
 		return (
 			<div className="inline-help__footer">
@@ -119,9 +113,9 @@ class InlineHelpPopoverContent extends Component {
 		);
 	};
 
-	renderPopoverContent = () => {
+	renderPopoverContent() {
 		return (
-			<Fragment>
+			<>
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						searchQuery={ this.state.searchQuery }
@@ -135,11 +129,11 @@ class InlineHelpPopoverContent extends Component {
 					/>
 				</div>
 				{ this.renderSecondaryView() }
-			</Fragment>
+			</>
 		);
 	};
 
-	renderSecondaryView = () => {
+	renderSecondaryView() {
 		const { onClose, showVideoResult } = this.props;
 		const { searchQuery, selectedResult } = this.state;
 		const classes = classNames(
@@ -152,12 +146,12 @@ class InlineHelpPopoverContent extends Component {
 				{
 					{
 						[ VIEW_CONTACT ]: (
-							<Fragment>
+							<>
 								<h2 className="inline-help__title" tabIndex="-1">
 									{ __( 'Get Support' ) }
 								</h2>
 								<InlineHelpContactView />
-							</Fragment>
+							</>
 						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
