@@ -32,6 +32,6 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	// the site needs to be kept in the Atomic infra.
 	return getSitePurchases( state, purchase.siteId ).some(
 		( sitePurchase ) =>
-			sitePurchase.siteId !== purchaseId && isAtomicSupportedProduct( purchase.productSlug )
+			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( purchase.productSlug )
 	);
 };
