@@ -61,7 +61,7 @@ export class MediaLibraryDataSource extends Component {
 		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
-				labelHeader: translate( 'Pexels free photos' ),
+				labelHeader: translate( 'Pexels' ),
 				labelDropdown: translate( 'Pexels free photos' ),
 				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
