@@ -11,6 +11,7 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
+	getPriceTierForUnits,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -20,14 +21,17 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isWpComProductRenewal, getSublabel, getLabel } from '@automattic/wpcom-checkout';
+import {
+	isWpComProductRenewal,
+	getSublabel,
+	getLabel,
+	getIntroductoryOfferIntervalDisplay,
+} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {

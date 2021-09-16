@@ -10,6 +10,7 @@ import {
 	isJetpackProduct,
 	getProductFromSlug,
 } from '@automattic/calypso-products';
+import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -34,7 +35,6 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';

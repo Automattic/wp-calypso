@@ -22,7 +22,7 @@ export default function DIFMLiteThankYou(): JSX.Element {
 
 					<h2 className="difm-lite-thank-you__header-text">
 						{ translate(
-							'Our Built By WordPress.com team will be in touch with you within 1-2 days when your site is ready to be transferred to your account and launched.'
+							'Our Built By WordPress.com team will be in touch with you when your site is ready to be transferred to your account and launched.'
 						) }
 					</h2>
 				</div>
