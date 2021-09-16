@@ -13,6 +13,11 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
+interface SiteInfoCollectionProps {
+	typeFormStyles?: any;
+	onSubmit?: () => void;
+}
+
 function getTypeformId(): string {
 	return config< string >( 'difm_typeform_id' );
 }
@@ -27,13 +32,13 @@ const LoadingContainer = styled.div`
 
 function SiteInformationCollection( {
 	typeFormStyles = { width: '100%', height: '500px', padding: '1em 0 0 1em' },
-} ) {
+	onSubmit,
+}: SiteInfoCollectionProps ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
 
-	const onSubmit = async () => {
-		// After Submitting typeform checkout
+	const checkout = async () => {
 		setIsFormSubmitted( true );
 		selectedSiteSlug
 			? page( `/checkout/${ selectedSiteSlug }/wp_difm_lite` )
@@ -65,7 +70,7 @@ function SiteInformationCollection( {
 						} }
 						id={ getTypeformId() }
 						style={ typeFormStyles }
-						onSubmit={ onSubmit }
+						onSubmit={ () => ( onSubmit ? onSubmit() : checkout() ) }
 						disableAutoFocus={ true }
 					/>
 				) }
@@ -74,7 +79,9 @@ function SiteInformationCollection( {
 	);
 }
 
-export default function WrappedSiteInformationCollection( props ): JSX.Element {
+export default function WrappedSiteInformationCollection(
+	props: SiteInfoCollectionProps
+): JSX.Element {
 	return (
 		<CalypsoShoppingCartProvider>
 			<SiteInformationCollection { ...props } />
