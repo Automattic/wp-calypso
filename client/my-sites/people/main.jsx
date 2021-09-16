@@ -92,7 +92,7 @@ class People extends React.Component {
 
 		if ( isWPForTeamsSite ) {
 			if ( isP2HubSite ) {
-				return translate( 'People in the %(sitename)s workspace', {
+				return translate( 'People in %(sitename)s', {
 					args: {
 						sitename: site.name,
 						context: 'People page for P2 hubs.',
