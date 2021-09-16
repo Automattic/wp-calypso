@@ -208,14 +208,13 @@ class RemovePurchase extends Component {
 	}
 
 	renderDomainMappingDialog() {
-		const { purchase, site } = this.props;
+		const { purchase } = this.props;
 
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				defaultContent={ this.renderDomainMappingDialogText() }
 				purchase={ purchase }
-				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
@@ -253,14 +252,13 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase, site } = this.props;
+		const { purchase } = this.props;
 
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				defaultContent={ this.renderPlanDialogText() }
 				purchase={ purchase }
-				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
