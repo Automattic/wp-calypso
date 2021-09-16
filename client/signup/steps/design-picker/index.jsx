@@ -94,7 +94,7 @@ class DesignPickerStep extends Component {
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderDesignPicker() }
 				align={ isReskinned ? 'left' : 'center' }
-				skipButtonAlign={ isReskinned ? 'top-right' : 'bottom' }
+				skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
 				{ ...this.props }
 			/>
 		);
