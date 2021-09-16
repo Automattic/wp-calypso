@@ -134,7 +134,7 @@ function getWebpackConfig(
 				),
 				global: 'window',
 			} ),
-			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+			new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 			...SassConfig.plugins( {
 				chunkFilename: cssChunkFilename,
 				filename: cssFilename,
