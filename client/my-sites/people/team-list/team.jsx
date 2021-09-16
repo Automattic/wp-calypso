@@ -38,25 +38,39 @@ class Team extends React.Component {
 
 		if ( isP2HubSite ) {
 			return translate(
-				'There is %(numberPeople)d members in this workspace',
+				'There is %(numberPeople)d member in this workspace',
 				'There are %(numberPeople)d members in this workspace',
 				translateOptions
 			);
 		}
 
-		if ( p2Guests?.found ) {
-			translateOptions.args.numberGuests = p2Guests?.found;
+		if ( ! p2Guests?.found ) {
 			return translate(
-				'There is %(numberPeople)d member and %(numberGuests)d guests in this P2',
-				'There are %(numberPeople)d members and %(numberGuests)d guests in this P2',
+				'There is %(numberPeople)d member in this P2',
+				'There are %(numberPeople)d members in this P2',
 				translateOptions
 			);
 		}
 
+		const guests = translate( '%(numberGuests)d guest', '%(numberGuests)d guests', {
+			args: {
+				numberGuests: p2Guests.found,
+			},
+			count: p2Guests.found,
+		} );
+
+		const numMembers = totalUsers - p2Guests.found;
 		return translate(
-			'There is %(numberPeople)d members in this P2',
-			'There are %(numberPeople)d members in this P2',
-			translateOptions
+			'There is %(numMembers)d member and %(guests)s in this P2',
+			'There are %(numMembers)d members and %(guests)s in this P2',
+			{
+				args: {
+					numMembers,
+					guests,
+				},
+				count: numMembers,
+				context: 'A navigation label.',
+			}
 		);
 	};
 
