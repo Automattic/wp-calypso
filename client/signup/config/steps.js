@@ -36,7 +36,3 @@ export default generateSteps( {
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 } );
-
-export function isDomainStepSkippable( flowName ) {
-	return flowName === 'test-fse';
-}
