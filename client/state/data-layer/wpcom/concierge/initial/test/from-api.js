@@ -6,7 +6,7 @@ describe( 'fromApi()', () => {
 			available_times: [ 1483264800, 1483266600, 1483268400 ],
 			appointment_timespan: 999,
 			next_appointment: { begin_timestamp: 1, end_timestamp: 2, schedule_id: 3 },
-			isUserBlocked: false,
+			is_blocked: false,
 			schedule_id: 123,
 		};
 
