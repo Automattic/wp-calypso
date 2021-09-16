@@ -26,6 +26,6 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"typescript": "^4.4.3"
 	}
 }
