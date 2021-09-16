@@ -22,6 +22,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -373,7 +374,8 @@ export default function useCreatePaymentMethods( {
 	storedCards: StoredCard[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	const paypalMethod = useCreatePayPal( {} );
 

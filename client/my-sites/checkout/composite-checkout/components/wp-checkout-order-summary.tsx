@@ -136,7 +136,8 @@ function CheckoutSummaryFeaturesList( props: {
 	hasMonthlyPlan: boolean;
 	nextDomainIsFree: boolean;
 } ) {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
 	);

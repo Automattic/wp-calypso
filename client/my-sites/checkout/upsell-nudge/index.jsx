@@ -21,6 +21,7 @@ import {
 	isContactValidationResponseValid,
 	getTaxValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -495,4 +496,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withShoppingCart( localize( UpsellNudge ) ) );
+)( withShoppingCart( withCartKey( localize( UpsellNudge ) ) ) );
