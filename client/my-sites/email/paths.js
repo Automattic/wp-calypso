@@ -169,6 +169,10 @@ export function emailManagementEdit(
 	);
 }
 
+export function inboxManagement() {
+	return `${ emailManagementPrefix }/inbox`;
+}
+
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }

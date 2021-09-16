@@ -120,4 +120,9 @@ export default {
 
 		next();
 	},
+
+	inboxManagement( pageContext, next ) {
+		pageContext.primary = null;
+		next();
+	},
 };
