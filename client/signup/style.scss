@@ -142,13 +142,6 @@ body.is-section-signup .layout.gravatar {
 			padding-bottom: 14px;
 		}
 	}
-
-	// Back button
-	.navigation-link.button.back {
-		position: absolute;
-		top: 6px;
-		left: 11px;
-	}
 }
 
 // The container wrapped around every
@@ -391,16 +384,21 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.navigation-link.button.back {
-		svg {
-			display: none;
-		}
-
-		color: $gray-50;
-		top: 23px;
+	.step-wrapper__navigation {
+		top: 22px;
 		left: 72px;
-		text-decoration: underline;
-		font-weight: normal;
+
+		.navigation-link.button.is-borderless {
+			color: $gray-100;
+
+			svg {
+				width: 20px;
+				height: 20px;
+				top: 5px;
+				margin-right: 2px;
+				fill: $gray-100;
+			}
+		}
 	}
 
 	.step-wrapper__header {

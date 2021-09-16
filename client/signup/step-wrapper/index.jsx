@@ -20,6 +20,7 @@ class StepWrapper extends Component {
 		skipLabelText: PropTypes.string,
 		skipHeadingText: PropTypes.string,
 		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
+		skipAsPrimary: PropTypes.bool,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
@@ -29,6 +30,7 @@ class StepWrapper extends Component {
 	static defaultProps = {
 		allowBackFirstStep: false,
 		skipButtonAlign: 'bottom',
+		skipAsPrimary: false,
 	};
 
 	renderBack() {
@@ -46,30 +48,48 @@ class StepWrapper extends Component {
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
+				backIcon="chevron-left"
 			/>
 		);
 	}
 
-	renderSkip( { borderless } ) {
-		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
-			return (
-				<div className="step-wrapper__skip-wrapper">
-					{ this.props.skipHeadingText && (
-						<div className="step-wrapper__skip-heading">{ this.props.skipHeadingText }</div>
-					) }
-					<NavigationLink
-						direction="forward"
-						goToNextStep={ this.props.goToNextStep }
-						defaultDependencies={ this.props.defaultDependencies }
-						flowName={ this.props.flowName }
-						stepName={ this.props.stepName }
-						labelText={ this.props.skipLabelText }
-						cssClass={ this.props.skipHeadingText && 'navigation-link--has-skip-heading' }
-						borderless={ borderless }
-					/>
-				</div>
-			);
+	renderSkip( { borderless, forwardIcon } ) {
+		const {
+			shouldHideNavButtons,
+			skipHeadingText,
+			skipLabelText,
+			skipAsPrimary,
+			defaultDependencies,
+			flowName,
+			stepName,
+			goToNextStep,
+		} = this.props;
+
+		if ( shouldHideNavButtons || ! goToNextStep ) {
+			return null;
 		}
+
+		return (
+			<div className="step-wrapper__skip-wrapper">
+				{ skipHeadingText && <div className="step-wrapper__skip-heading">{ skipHeadingText }</div> }
+				<NavigationLink
+					direction="forward"
+					goToNextStep={ goToNextStep }
+					defaultDependencies={ defaultDependencies }
+					flowName={ flowName }
+					stepName={ stepName }
+					labelText={ skipLabelText }
+					cssClass={ classNames( 'step-wrapper__navigation-link', {
+						primary: skipAsPrimary,
+						'has-skip-heading': skipHeadingText,
+						'has-underline': ! skipAsPrimary,
+					} ) }
+					borderless={ borderless }
+					primary={ skipAsPrimary }
+					forwardIcon={ forwardIcon }
+				/>
+			</div>
+		);
 	}
 
 	headerText() {
@@ -113,7 +133,7 @@ class StepWrapper extends Component {
 			align,
 		} = this.props;
 
-		const hasHeaderButtons = headerButton || ( ! hideSkip && skipButtonAlign === 'top' );
+		const hasHeaderButtons = headerButton;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
@@ -123,7 +143,12 @@ class StepWrapper extends Component {
 		return (
 			<>
 				<div className={ classes }>
-					{ ! hideBack && this.renderBack() }
+					<div className="step-wrapper__navigation">
+						{ ! hideBack && this.renderBack() }
+						{ ! hideSkip &&
+							skipButtonAlign === 'top' &&
+							this.renderSkip( { borderless: true, forwardIcon: null } ) }
+					</div>
 
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
@@ -133,16 +158,7 @@ class StepWrapper extends Component {
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
 							/>
-							{ hasHeaderButtons && (
-								<ActionButtons>
-									{ headerButton }
-									{ ! hideSkip && skipButtonAlign === 'top' && (
-										<div className="step-wrapper__buttons is-top-buttons">
-											{ this.renderSkip( { borderless: false } ) }
-										</div>
-									) }
-								</ActionButtons>
-							) }
+							{ headerButton && <ActionButtons>{ headerButton }</ActionButtons> }
 						</div>
 					) }
 

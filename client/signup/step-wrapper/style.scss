@@ -46,3 +46,37 @@
 		}
 	}
 }
+
+.step-wrapper__navigation {
+	position: absolute;
+	top: 6px;
+	left: 11px;
+	right: 16px;
+	display: flex;
+	align-items: center;
+	font-size: 0.875rem;
+
+	.step-wrapper__skip-wrapper {
+		margin-left: auto;
+	}
+
+	.step-wrapper__navigation-link {
+		font-size: 0.875rem;
+		font-weight: 500; /* stylelint-disable-line */
+
+		&.primary {
+			position: absolute;
+			right: 0;
+		}
+
+		&.has-underline {
+			text-decoration: underline;
+		}
+
+		&.has-skip-heading {
+			transform: translateY( -3px );
+			// override unessecary super specificity added by another class
+			padding-top: 0 !important;
+		}
+	}
+}
