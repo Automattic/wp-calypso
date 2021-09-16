@@ -49,7 +49,7 @@ export class PlansPage {
 	/**
 	 * Wait until the page is loaded and stable.
 	 */
-	async waitUntilLoaded(): Promise< void > {
+	private async waitUntilLoaded(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
 	}
 
