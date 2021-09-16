@@ -316,7 +316,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
   languageName: unknown
   linkType: soft
 
@@ -345,7 +345,7 @@ __metadata:
     debug: ^4.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -379,7 +379,7 @@ __metadata:
     "@wordpress/element": ^4.0.1
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -540,7 +540,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -595,7 +595,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     "@wordpress/element": ^4.0.1
     "@wordpress/i18n": ^4.2.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -719,7 +719,7 @@ __metadata:
     postcss: ^8.2.6
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     webpack: ^5.46.0
@@ -750,7 +750,7 @@ __metadata:
   peerDependencies:
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
   languageName: unknown
   linkType: soft
@@ -778,7 +778,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -811,7 +811,7 @@ __metadata:
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -873,7 +873,7 @@ __metadata:
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     sass-loader: ^10.1.1
@@ -918,7 +918,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -1050,7 +1050,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -1112,7 +1112,7 @@ __metadata:
     postcss: ^8.2.6
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     tinymce: ^4.9.6
@@ -1212,7 +1212,7 @@ __metadata:
     puppeteer: ^3.0.4
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     reakit-utils: ^0.15.1
     redux: ^4.1.1
     utility-types: ^3.10.0
@@ -12081,7 +12081,7 @@ __metadata:
     react-intersection-observer: ^8.32.1
     react-live: ^2.3.0
     react-modal: ^3.14.3
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     react-query: ^3.9.8
     react-redux: ^7.2.4
     react-router-dom: ^5.1.2
@@ -31147,7 +31147,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-native@npm:^0.65.0":
+"react-native@npm:^0.65.1":
   version: 0.65.1
   resolution: "react-native@npm:0.65.1"
   dependencies:
@@ -38968,7 +38968,7 @@ typescript@^4.4.2:
     qs: ^6.9.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.65.1
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
