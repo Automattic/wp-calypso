@@ -434,10 +434,20 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const { purchase, className, stickers, useVerticalNavItem, translate } = this.props;
+		const {
+			className,
+			purchase,
+			shouldRevertAtomicSite,
+			stickers,
+			translate,
+			useVerticalNavItem,
+		} = this.props;
 		const productName = getName( purchase );
 
-		if ( ! isRemovable( purchase ) || stickers.includes( 'subscription_deactivation_locked' ) ) {
+		if (
+			! isRemovable( purchase ) ||
+			( shouldRevertAtomicSite && stickers.includes( 'subscription_deactivation_locked' ) )
+		) {
 			return null;
 		}
 

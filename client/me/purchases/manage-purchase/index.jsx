@@ -443,7 +443,11 @@ class ManagePurchase extends Component {
 		} = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || stickers.includes( 'subscription_deactivation_locked' ) ) {
+		if (
+			! isCancelable( purchase ) ||
+			( shouldRevertAtomicSiteBeforeCancel &&
+				stickers.includes( 'subscription_deactivation_locked' ) )
+		) {
 			return null;
 		}
 
