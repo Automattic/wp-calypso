@@ -53,13 +53,24 @@ export class SidebarComponent {
 
 		// Top level menu item selector.
 		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
-		await this.page.dispatchEvent( itemSelector, 'click' );
+		await Promise.all( [
+			this.page.waitForSelector( `${ selectors.sidebar } .selected :text-is("${ item }")`, {
+				timeout: 10000,
+				state: 'attached',
+			} ),
+			this.page.dispatchEvent( itemSelector, 'click' ),
+		] );
+		// await this.page.dispatchEvent( itemSelector, 'click' );
 
 		// Sub-level menu item selector.
 		if ( subitem ) {
 			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
 			await Promise.all( [
 				this.page.waitForNavigation(),
+				this.page.waitForSelector( `${ selectors.sidebar } .selected :text-is("${ subitem }")`, {
+					timeout: 10000,
+					state: 'attached',
+				} ),
 				this.page.dispatchEvent( subitemSelector, 'click' ),
 			] );
 		}
@@ -73,14 +84,19 @@ export class SidebarComponent {
 			return;
 		}
 
-		// Verify the expected item/subitem are selected.
-		const selectedItemSelector = `${ selectors.sidebar } .selected :text-is("${
-			subitem || item
-		}")`;
-		await this.page.waitForSelector( selectedItemSelector, {
-			timeout: 3000,
-			state: 'attached',
-		} );
+		// Some menu items (eg. Comments, Stats) do not have a submenu. In these cases,
+		// the `.selected` class is applied to the top level menu.
+		// let selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ item }")`;
+
+		// if ( subitem ) {
+		// 	selectedMenuItem = `${ selectors.sidebar } .selected :text-is("${ subitem }")`;
+		// }
+
+		// Verify the expected item or subitem is selected.
+		// await this.page.waitForSelector( selectedMenuItem, {
+		// 	timeout: 5000,
+		// 	state: 'attached',
+		// } );
 	}
 
 	/**
