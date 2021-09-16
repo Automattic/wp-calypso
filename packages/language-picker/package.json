@@ -50,6 +50,6 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"typescript": "^4.4.3"
 	}
 }
