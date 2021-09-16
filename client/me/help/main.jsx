@@ -24,7 +24,7 @@ import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/curr
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
-import getConciergeHappychatBlocked from 'calypso/state/selectors/get-concierge-user-happychat-blocked';
+import getConciergeHappychatBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';

@@ -23,11 +23,10 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import getConciergeAvailableTimes from 'calypso/state/selectors/get-concierge-available-times';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
-import getConciergeHappychatBlocked from 'calypso/state/selectors/get-concierge-user-happychat-blocked';
+import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { getSite } from 'calypso/state/sites/selectors';
 import AppointmentInfo from './shared/appointment-info';
-import HappychatBlocked from './shared/happychat-blocked';
 import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
 
@@ -75,7 +74,7 @@ export class ConciergeMain extends Component {
 			userSettings,
 			nextAppointment,
 			rescheduling,
-			isHappychatBlocked,
+			isUserBlocked,
 		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
@@ -85,12 +84,8 @@ export class ConciergeMain extends Component {
 			return <Skeleton />;
 		}
 
-		if ( isHappychatBlocked ) {
-			return <HappychatBlocked site={ site } />;
-		}
-
 		// if scheduleId is 0, it means the user is not eligible for the concierge service.
-		if ( scheduleId === 0 ) {
+		if ( ! isUserBlocked && scheduleId === 0 ) {
 			return <Upsell site={ site } />;
 		}
 
@@ -99,7 +94,7 @@ export class ConciergeMain extends Component {
 		}
 
 		if ( isEmpty( availableTimes ) ) {
-			return <NoAvailableTimes />;
+			return <NoAvailableTimes isUserBlocked={ isUserBlocked } />;
 		}
 
 		// We have shift data and this is a business site — show the signup steps
@@ -142,5 +137,5 @@ export default connect( ( state, props ) => ( {
 	site: getSite( state, props.siteSlug ),
 	scheduleId: getConciergeScheduleId( state ),
 	userSettings: getUserSettings( state ),
-	isHappychatBlocked: getConciergeHappychatBlocked( state ),
+	isUserBlocked: getConciergeUserBlocked( state ),
 } ) )( ConciergeMain );

@@ -32,7 +32,7 @@
 		"schedule_id": {
 			"type": "number"
 		},
-		"is_happychat_blocked": {
+		"is_blocked": {
 			"type": "boolean",
 			"optional": true
 		}
