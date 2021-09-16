@@ -80,7 +80,6 @@ class StepWrapper extends Component {
 					stepName={ stepName }
 					labelText={ skipLabelText }
 					cssClass={ classNames( 'step-wrapper__navigation-link', {
-						primary: skipAsPrimary,
 						'has-skip-heading': skipHeadingText,
 						'has-underline': ! skipAsPrimary,
 					} ) }
@@ -130,25 +129,28 @@ class StepWrapper extends Component {
 			isLargeSkipLayout,
 			isWideLayout,
 			skipButtonAlign,
+			skipAsPrimary,
 			align,
 		} = this.props;
 
-		const hasHeaderButtons = headerButton;
+		const hasNavigation = ! hideBack || ( ! hideSkip && skipButtonAlign === 'top' );
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
-			'has-header-buttons': hasHeaderButtons,
+			'has-navigation': hasNavigation,
 		} );
 
 		return (
 			<>
 				<div className={ classes }>
-					<div className="step-wrapper__navigation">
-						{ ! hideBack && this.renderBack() }
-						{ ! hideSkip &&
-							skipButtonAlign === 'top' &&
-							this.renderSkip( { borderless: true, forwardIcon: null } ) }
-					</div>
+					{ hasNavigation && (
+						<ActionButtons className="step-wrapper__navigation">
+							{ ! hideBack && this.renderBack() }
+							{ ! hideSkip &&
+								skipButtonAlign === 'top' &&
+								this.renderSkip( { borderless: ! skipAsPrimary, forwardIcon: null } ) }
+						</ActionButtons>
+					) }
 
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
@@ -158,7 +160,9 @@ class StepWrapper extends Component {
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
 							/>
-							{ headerButton && <ActionButtons>{ headerButton }</ActionButtons> }
+							{ headerButton && (
+								<div className="step-wrapper__header-button">{ headerButton }</div>
+							) }
 						</div>
 					) }
 

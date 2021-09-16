@@ -169,7 +169,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 			margin-bottom: 0;
 		}
 
-		&.has-header-buttons {
+		&.has-navigation {
 			padding-bottom: 60px;
 		}
 	}
@@ -385,9 +385,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.step-wrapper__navigation {
-		top: 22px;
-		left: 72px;
-
 		.navigation-link.button.is-borderless {
 			color: $gray-100;
 
@@ -399,11 +396,14 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				fill: $gray-100;
 			}
 		}
+
+		@include break-small {
+			left: 72px;
+		}
 	}
 
 	.step-wrapper__header {
-		margin-top: 48px;
-		margin-bottom: 40px;
+		margin: 48px 20px 40px;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			margin-top: 24px;
@@ -779,6 +779,16 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		.formatted-header__subtitle button.is-borderless {
 			font-weight: 500; /* stylelint-disable-line */
 			color: var( --studio-gray-90 );
+		}
+	}
+
+	.signup__step.is-design,
+	.signup__step.is-design-setup-site {
+		.step-wrapper__header {
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-left: 0;
+				margin-right: 0;
+			}
 		}
 	}
 

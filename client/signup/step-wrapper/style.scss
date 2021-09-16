@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .step-wrapper__header {
 	display: flex;
 	justify-content: space-between;
@@ -5,6 +8,10 @@
 
 	.formatted-header {
 		flex-grow: 1;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
 	}
 }
 
@@ -31,30 +38,28 @@
 	}
 }
 
-.step-wrapper__buttons.is-top-buttons {
-	margin-left: auto;
-	margin-bottom: 0;
-	font-size: 0.875rem;
-
-	.navigation-link {
-		height: 42px;
-		min-width: 160px;
-		color: #2c3338;
-
-		svg {
-			display: none;
-		}
+.step-wrapper__header-button {
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-basis: 100%;
+		margin-bottom: -16px;
 	}
 }
 
-.step-wrapper__navigation {
-	position: absolute;
-	top: 6px;
-	left: 11px;
-	right: 16px;
+.step-wrapper__navigation.action-buttons {
 	display: flex;
 	align-items: center;
 	font-size: 0.875rem;
+
+	@include break-small {
+		&,
+		&:not( .is-sticky ) {
+			position: absolute;
+			top: 2px;
+			left: 11px;
+			right: 16px;
+			margin: 0;
+		}
+	}
 
 	.step-wrapper__skip-wrapper {
 		margin-left: auto;
@@ -63,11 +68,6 @@
 	.step-wrapper__navigation-link {
 		font-size: 0.875rem;
 		font-weight: 500; /* stylelint-disable-line */
-
-		&.primary {
-			position: absolute;
-			right: 0;
-		}
 
 		&.has-underline {
 			text-decoration: underline;
