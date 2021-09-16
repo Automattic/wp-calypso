@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-line-item';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	MobileHiddenHorizontalRule,
 	FullWidthButton,
@@ -154,7 +155,8 @@ export default function MarketplaceShoppingCart(
 		isExpandedBasketView,
 		toggleExpandedBasketView,
 	} = props;
-	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
 	const { products, sub_total_display } = responseCart;
 	const isBasketLoading = isLoading || isPendingUpdate;
 	const translate = useTranslate();
