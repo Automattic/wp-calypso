@@ -31,7 +31,12 @@ export class AccountSettingsPage {
 	 * Closes the currently logged in user's account.
 	 */
 	async closeAccount(): Promise< void > {
-		await this.page.click( selectors.closeAccountLink );
+		// This async navigation can mess with clicking the next button, so we need to make sure to wait explicitly for that async nav to commplete.
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.closeAccountLink ),
+		] );
+
 		await this.page.click( selectors.closeAccountButton );
 		await this.page.click( selectors.modalContinueButton );
 		const username = await this.page
