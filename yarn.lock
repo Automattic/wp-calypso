@@ -109,7 +109,7 @@ __metadata:
     terser-webpack-plugin: ^5.1.1
     thread-loader: ^3.0.4
     typescript: ^4.4.3
-    webpack-cli: ^4.7.2
+    webpack-cli: ^4.8.0
   peerDependencies:
     enzyme: ^3.11.0
     jest: ">=27.0.6"
@@ -7437,15 +7437,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "@webpack-cli/serve@npm:1.5.1"
+"@webpack-cli/serve@npm:^1.5.2":
+  version: 1.5.2
+  resolution: "@webpack-cli/serve@npm:1.5.2"
   peerDependencies:
     webpack-cli: 4.x.x
   peerDependenciesMeta:
     webpack-dev-server:
       optional: true
-  checksum: 250dc1b31e74d8b83e0aba1b8f533227a2639c0a12108aec461f1963a81fce1c885d4de2dcf3046bb548d346c577700c64c7b5ae8caed94b0653d019c57e7266
+  checksum: f90b7036078e806984431d1566122c491e541d4cf5cdfdad70ca817abe1fe4ec18c6d1beeb4182b489a8d7a0c6b8778483f23273696a599fae149e4707fa231b
   languageName: node
   linkType: hard
 
@@ -38222,14 +38222,14 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:^4.7.2":
-  version: 4.7.2
-  resolution: "webpack-cli@npm:4.7.2"
+"webpack-cli@npm:^4.7.2, webpack-cli@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "webpack-cli@npm:4.8.0"
   dependencies:
     "@discoveryjs/json-ext": ^0.5.0
     "@webpack-cli/configtest": ^1.0.4
     "@webpack-cli/info": ^1.3.0
-    "@webpack-cli/serve": ^1.5.1
+    "@webpack-cli/serve": ^1.5.2
     colorette: ^1.2.1
     commander: ^7.0.0
     execa: ^5.0.0
@@ -38252,7 +38252,7 @@ typescript@^4.4.3:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 8b5b23bf06a777ec23e620f02910c4ad5a3244aca1cad15b63f84cfcdf6a3eb342d588d3dd7af36b47616ad32331203135a50f3591c30c589a0018c8da6ec418
+  checksum: 3d01ac4b48fb257c7ab26d801970b9360d1bf72facbb07d580a74ea8772dc21b6de82c91c28f34263635b4180d924d1884c7cd96d6ce46d7c146e59794a42329
   languageName: node
   linkType: hard
 
@@ -38991,7 +38991,7 @@ typescript@^4.4.3:
     typescript: ^4.4.3
     webpack: ^5.46.0
     webpack-bundle-analyzer: ^4.4.2
-    webpack-cli: ^4.7.2
+    webpack-cli: ^4.8.0
     webpack-dev-middleware: ^5.0.0
     whybundled: ^2.0.0
     wpcom: ^6.0.0
@@ -39125,7 +39125,7 @@ typescript@^4.4.3:
     npm-run-all: ^4.1.5
     qs: ^6.5.2
     webpack: ^5.46.0
-    webpack-cli: ^4.7.2
+    webpack-cli: ^4.8.0
     wpcom-oauth-cors: ^1.0.2-beta
     wpcom-proxy-request: ^6.0.0
   languageName: unknown
