@@ -45,21 +45,24 @@ export class MediaLibraryDataSource extends Component {
 		const sources = [
 			{
 				value: '',
-				label: translate( 'Media library' ),
+				labelHeader: translate( 'Media library' ),
+				labelDropdown: translate( 'Media library' ),
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'google_photos',
-				label: translate( 'Google Photos' ),
+				labelHeader: translate( 'Google Photos' ),
+				labelDropdown: translate( 'Google Photos' ),
 				icon: <GooglePhotosIcon />,
 			} );
 		}
 		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
-				label: translate( 'Pexels free photos' ),
+				labelHeader: translate( 'Pexels free photos' ),
+				labelDropdown: translate( 'Pexels free photos' ),
 				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
@@ -67,10 +70,9 @@ export class MediaLibraryDataSource extends Component {
 	};
 
 	renderMenuItems( sources ) {
-		return sources.map( ( { icon, label, value } ) => (
+		return sources.map( ( { labelDropdown, value } ) => (
 			<PopoverMenuItem key={ value } data-source={ value } onClick={ this.changeSource( value ) }>
-				{ icon }
-				{ label }
+				{ labelDropdown }
 			</PopoverMenuItem>
 		) );
 	}
@@ -101,7 +103,7 @@ export class MediaLibraryDataSource extends Component {
 				>
 					{ currentSelected && (
 						<span>
-							{ currentSelected.icon } { currentSelected.label }
+							{ currentSelected.icon } { currentSelected.labelHeader }
 						</span>
 					) }
 					<Gridicon className="media-library__header-chevron" icon="chevron-down" size={ 18 } />
