@@ -5,6 +5,7 @@ import { hideMasterbar } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import Header from './header';
 import JetpackComFooter from './jpcom-footer';
+import JetpackComMasterbar from './jpcom-masterbar';
 
 export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
 	const urlQueryArgs = context.query;
@@ -22,6 +23,7 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	}
 
 	context.store.dispatch( hideMasterbar() );
+	context.nav = <JetpackComMasterbar />;
 	context.header = <Header urlQueryArgs={ urlQueryArgs } />;
 	context.footer = <JetpackComFooter />;
 	next();

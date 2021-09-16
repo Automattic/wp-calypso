@@ -3,7 +3,6 @@ import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import { preventWidows } from 'calypso/lib/formatting';
-import JetpackComMasterbar from '../jpcom-masterbar';
 import './style.scss';
 
 const Header: React.FC< Props > = () => {
@@ -11,8 +10,6 @@ const Header: React.FC< Props > = () => {
 
 	return (
 		<>
-			<JetpackComMasterbar />
-
 			<div className="header">
 				<FormattedHeader
 					className="header__main-title"
