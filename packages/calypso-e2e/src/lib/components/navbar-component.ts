@@ -55,6 +55,7 @@ export class NavbarComponent {
 	 * Click on `Me` on top right of the Home dashboard.
 	 */
 	async clickMe(): Promise< void > {
+		await this.pageSettled();
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
 	}
 

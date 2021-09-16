@@ -117,6 +117,14 @@ describe(
 		} );
 
 		describe( 'Delete user account', function () {
+			// Magic link login will always land on the https://wordpress.com host, so we need to reset host for rest of test.
+			it( 'Re-login to ensure correct host', async function () {
+				await BrowserManager.clearAuthenticationState( page );
+				const loginPage = new LoginPage( page );
+				await loginPage.visit();
+				await loginPage.login( { username: username, password: signupPassword } );
+			} );
+
 			it( 'Navigate to Me > Account Settings', async function () {
 				const navbarComponent = new NavbarComponent( page );
 				await navbarComponent.clickMe();
