@@ -14,13 +14,14 @@ class StepWrapper extends Component {
 		hideFormattedHeader: PropTypes.bool,
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
+		hideNext: PropTypes.bool,
 		// Allows to force a back button in the first step for example.
 		// You should only force this when you're passing a backUrl.
 		allowBackFirstStep: PropTypes.bool,
 		skipLabelText: PropTypes.string,
 		skipHeadingText: PropTypes.string,
 		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
-		skipAsPrimary: PropTypes.bool,
+		nextLabelText: PropTypes.string,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
@@ -30,7 +31,7 @@ class StepWrapper extends Component {
 	static defaultProps = {
 		allowBackFirstStep: false,
 		skipButtonAlign: 'bottom',
-		skipAsPrimary: false,
+		hideNext: true,
 	};
 
 	renderBack() {
@@ -58,7 +59,6 @@ class StepWrapper extends Component {
 			shouldHideNavButtons,
 			skipHeadingText,
 			skipLabelText,
-			skipAsPrimary,
 			defaultDependencies,
 			flowName,
 			stepName,
@@ -79,15 +79,44 @@ class StepWrapper extends Component {
 					flowName={ flowName }
 					stepName={ stepName }
 					labelText={ skipLabelText }
-					cssClass={ classNames( 'step-wrapper__navigation-link', {
+					cssClass={ classNames( 'step-wrapper__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
-						'has-underline': ! skipAsPrimary,
 					} ) }
 					borderless={ borderless }
-					primary={ skipAsPrimary }
 					forwardIcon={ forwardIcon }
 				/>
 			</div>
+		);
+	}
+
+	renderNext() {
+		const {
+			shouldHideNavButtons,
+			nextLabelText,
+			defaultDependencies,
+			flowName,
+			stepName,
+			goToNextStep,
+			translate,
+		} = this.props;
+
+		if ( shouldHideNavButtons || ! goToNextStep ) {
+			return null;
+		}
+
+		return (
+			<NavigationLink
+				direction="forward"
+				goToNextStep={ goToNextStep }
+				defaultDependencies={ defaultDependencies }
+				flowName={ flowName }
+				stepName={ stepName }
+				labelText={ nextLabelText || translate( 'Continue' ) }
+				cssClass="step-wrapper__navigation-link"
+				borderless={ false }
+				primary
+				forwardIcon={ null }
+			/>
 		);
 	}
 
@@ -126,14 +155,14 @@ class StepWrapper extends Component {
 			hideFormattedHeader,
 			hideBack,
 			hideSkip,
+			hideNext,
 			isLargeSkipLayout,
 			isWideLayout,
 			skipButtonAlign,
-			skipAsPrimary,
 			align,
 		} = this.props;
 
-		const hasNavigation = ! hideBack || ( ! hideSkip && skipButtonAlign === 'top' );
+		const hasNavigation = ! hideBack || ( ! hideSkip && skipButtonAlign === 'top' ) || ! hideNext;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
@@ -148,7 +177,8 @@ class StepWrapper extends Component {
 							{ ! hideBack && this.renderBack() }
 							{ ! hideSkip &&
 								skipButtonAlign === 'top' &&
-								this.renderSkip( { borderless: ! skipAsPrimary, forwardIcon: null } ) }
+								this.renderSkip( { borderless: true, forwardIcon: null } ) }
+							{ ! hideNext && this.renderNext() }
 						</ActionButtons>
 					) }
 
