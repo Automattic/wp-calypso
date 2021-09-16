@@ -33,8 +33,7 @@
 			"type": "number"
 		},
 		"is_blocked": {
-			"type": "boolean",
-			"optional": true
+			"type": "boolean"
 		}
 	}
 }
