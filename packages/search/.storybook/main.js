@@ -1,2 +1,10 @@
 const storybookDefaultConfig = require( '../../../bin/storybook-default-config' );
-module.exports = storybookDefaultConfig();
+const webpack = require('webpack');
+
+module.exports = storybookDefaultConfig({
+	plugins: [
+		new webpack.ProvidePlugin( {
+			process: 'process/browser.js',
+		} ),
+	]
+});
