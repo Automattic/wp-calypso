@@ -263,9 +263,11 @@ export class Banner extends Component {
 			plan,
 		} = this.props;
 
-		// No Banners for WP for Teams sites.
+		// For P2 sites, only show banners if they have the 'p2-banner' class.
 		if ( this.props.isSiteWPForTeams ) {
-			return null;
+			if ( 'string' !== typeof className || ! className.split( ' ' ).includes( 'p2-banner' ) ) {
+				return null;
+			}
 		}
 
 		const classes = classNames(
