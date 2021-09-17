@@ -21,12 +21,12 @@ body.is-section-signup {
 	}
 
 	&.is-p2-signup {
-		background: var( --p2-color-text-white );
+		background: var( --p2-color-white );
 		color: var( --p2-color-text );
 
 		&.has-loading-screen-signup {
 			background: var( --p2-color-text );
-			color: var( --p2-color-text-white );
+			color: var( --p2-color-white );
 			&::before {
 				content: '';
 				position: absolute;
@@ -38,12 +38,25 @@ body.is-section-signup {
 			}
 		}
 
-		.layout__content {
+		.layout {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.layout__content,
+		.layout__primary,
+		.signup,
+		.signup__steps,
+		.signup__step,
+		.signup__step.is-user {
 			padding: 0;
+			height: 100%;
 		}
 
 		.layout:not( .dops ) .step-wrapper {
 			margin: 0 0 24px;
+			max-width: none;
 		}
 
 		@include breakpoint-deprecated( '<480px' ) {

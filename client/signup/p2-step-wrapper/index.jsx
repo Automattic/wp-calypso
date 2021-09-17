@@ -20,10 +20,8 @@ function P2StepWrapper( {
 				<div className="p2-step-wrapper__header-logo">
 					<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
 				</div>
-				{ headerText && <div className="p2-step-wrapper__header-text">{ headerText }</div> }
-				{ subHeaderText && (
-					<div className="p2-step-wrapper__subheader-text">{ subHeaderText }</div>
-				) }
+				{ headerText && <h1 className="p2-step-wrapper__header-text">{ headerText }</h1> }
+				{ subHeaderText && <p className="p2-step-wrapper__subheader-text">{ subHeaderText }</p> }
 			</div>
 			<StepWrapper
 				hideFormattedHeader

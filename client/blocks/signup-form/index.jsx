@@ -880,7 +880,7 @@ class SignupForm extends Component {
 					<div>{ this.props.translate( 'Already have a WordPress.com account?' ) }</div>
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ this.props.translate( 'Log in instead.' ) }
+							{ this.props.translate( 'Log in instead' ) }
 						</LoggedOutFormLinkItem>
 					</LoggedOutFormLinks>
 				</div>

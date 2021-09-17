@@ -9,8 +9,9 @@
 		max-width: none;
 		width: 100%;
 
-		> form > div {
-			margin-bottom: 2.5rem;
+		> form > div,
+		> form > .card {
+			margin-bottom: 2em;
 		}
 	}
 
@@ -23,8 +24,9 @@
 	}
 
 	.form-label {
-		font-size: var( --p2-font-size-form-xs );
-		font-weight: 600;
+		font-size: var( --p2-font-size-form-xxs );
+		font-weight: 500; /* stylelint-disable-line */
+		margin-bottom: 0.5em;
 	}
 
 	.form-text-input {
@@ -32,7 +34,7 @@
 	}
 
 	.form-input-validation {
-		font-size: var( --p2-font-size-form-xs );
+		font-size: var( --p2-font-size-form-xxs );
 		line-height: 1.5;
 		padding: 8px 0 0 2px;
 		margin-bottom: 1rem;
@@ -51,10 +53,8 @@
 	}
 
 	button {
-		max-width: 380px;
 		&.social-buttons__button {
 			box-shadow: none;
-			margin-bottom: 12px;
 		}
 	}
 
@@ -68,6 +68,7 @@
 	.signup-form__social {
 		width: 100%;
 		padding: 0;
+		max-width: none;
 	}
 
 	.signup-form__social-buttons {
@@ -105,9 +106,9 @@
 	text-align: center;
 	width: 100%;
 	max-width: 400px;
-	color: var( --p2-color-border );
-	font-size: var( --p2-font-size-form-xs );
-	margin-bottom: 10px;
+	color: var( --p2-color-text-light );
+	font-size: var( --p2-font-size-form-xxs );
+	margin-bottom: 2rem;
 
 	&::before,
 	&::after {
@@ -131,6 +132,7 @@
 	}
 
 	.p2-step-wrapper__footer {
-		margin-bottom: 24px;
+		padding-bottom: 24px;
+		padding-top: 24px;
 	}
 }

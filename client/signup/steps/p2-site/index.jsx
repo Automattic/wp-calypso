@@ -389,19 +389,21 @@ class P2Site extends React.Component {
 					<FormLabel htmlFor="site-address-input">
 						{ this.props.translate( 'Choose an address for your P2 workspace' ) }
 					</FormLabel>
-					<FormTextInput
-						id="site-address-input"
-						autoCapitalize={ 'off' }
-						className="p2-site__site-url"
-						disabled={ fieldDisabled }
-						name="site"
-						value={ formState.getFieldValue( this.state.form, 'site' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'site' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-					/>
-					<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
+					<div className="p2-site__site-url-container">
+						<FormTextInput
+							id="site-address-input"
+							autoCapitalize={ 'off' }
+							className="p2-site__site-url"
+							disabled={ fieldDisabled }
+							name="site"
+							value={ formState.getFieldValue( this.state.form, 'site' ) }
+							isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
+							isValid={ formState.isFieldValid( this.state.form, 'site' ) }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleChangeEvent }
+						/>
+						<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
+					</div>
 				</ValidationFieldset>
 			</>
 		);

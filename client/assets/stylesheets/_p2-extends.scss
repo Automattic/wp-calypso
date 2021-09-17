@@ -5,7 +5,7 @@
 // Text input field
 %p2-form-input-text {
 	background: #fff;
-	border-color: var( --p2-color-border );
+	border-color: var( --p2-color-border-medium );
 	border-radius: 2px;
 	color: var( --p2-color-text );
 	font-family: var( --p2-font-inter );
@@ -67,21 +67,23 @@
 	display: flex;
 	align-items: center;
 	font-family: var( --p2-font-inter );
-	font-size: var( --p2-font-size-form-s );
+	font-size: var( --p2-font-size-form-xs );
+	letter-spacing: -0.01em;
 	justify-content: center;
 	line-height: 1.5;
-	margin: 0 0 12px;
-	padding: 16px 24px;
+	margin: 0 0 1em;
+	padding: 1em 2em;
 	transition: 0.2s ease-in-out;
 	width: 100%;
 
 	&:hover {
 		background-color: var( --p2-color-button-dark );
+		color: var( --p2-color-text );
 	}
 
 	&.is-primary {
 		background-color: var( --p2-color-link );
-		color: #fff;
+		color: var( --p2-color-white );
 
 		&:hover,
 		&:focus {
@@ -90,14 +92,14 @@
 	}
 
 	&[disabled] {
-		opacity: 0.5;
-		cursor: not-allowed;
+		background-color: var( --p2-color-button );
+		cursor: default;
 	}
 }
 
 %p2-link {
 	color: var( --p2-color-link );
-	text-decoration: underline;
+	text-decoration: none;
 
 	&:hover {
 		color: var( --p2-color-link-dark );
