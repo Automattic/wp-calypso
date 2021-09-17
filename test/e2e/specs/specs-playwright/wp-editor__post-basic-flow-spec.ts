@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group calypso-release
  * @group gutenberg
  */
 

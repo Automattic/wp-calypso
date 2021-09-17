@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group calypso-release
  */
 
 import {
@@ -65,16 +65,16 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		await gutenboardingFlow.validateRecommendedPlan( 'Business' );
 	} );
 
-	it.skip( 'Select free plan', async function () {
+	it( 'Select free plan', async function () {
 		await gutenboardingFlow.selectPlan( 'Free' );
 	} );
 
-	it.skip( 'See the Gutenberg editor', async function () {
+	it( 'See the Gutenberg editor', async function () {
 		const gutenbergEditorPage = new GutenbergEditorPage( page );
 		await gutenbergEditorPage.waitUntilLoaded();
 	} );
 
-	it.skip( `Delete created site`, async function () {
+	it( `Delete created site`, async function () {
 		const settingsURL = DataHelper.getCalypsoURL( `settings/general/${ siteURL }` );
 		await page.goto( settingsURL, { waitUntil: 'load' } );
 		const generalSettingsPage = new GeneralSettingsPage( page );
