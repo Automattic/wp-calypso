@@ -60,10 +60,6 @@ export class SidebarComponent {
 			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
 			await Promise.all( [
 				this.page.waitForNavigation(),
-				// this.page.waitForSelector( `${ selectors.sidebar } .selected :text-is("${ subitem }")`, {
-				// 	timeout: 10000,
-				// 	state: 'attached',
-				// } ),
 				this.page.dispatchEvent( subitemSelector, 'click' ),
 			] );
 		}
@@ -93,10 +89,6 @@ export class SidebarComponent {
 			} ),
 			this.page.waitForSelector( '.focus-content' ),
 		] );
-		// await this.page.waitForSelector( selectedMenuItem, {
-		// 	timeout: 5000,
-		// 	state: 'attached',
-		// } );
 	}
 
 	/**
