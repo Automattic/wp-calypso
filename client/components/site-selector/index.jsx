@@ -515,7 +515,9 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			path = '/domains/manage';
 		}
 
-		if ( path.match( /^\/email\// ) ) {
+		if ( path.match( /^\/email\/inbox\/?/ ) ) {
+			path = '/email/inbox';
+		} else if ( path.match( /^\/email\// ) ) {
 			path = '/email';
 		}
 
