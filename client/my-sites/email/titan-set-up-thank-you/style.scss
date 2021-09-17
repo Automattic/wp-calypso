@@ -6,7 +6,8 @@
 }
 
 .thank-you__container {
-	margin: -32px -32px -33px -34px;
+	margin: calc( -79px + var( --masterbar-height ) ) -32px -33px -34px;
+
 	@media ( max-width: 660px ) {
 		padding: 0 32px 34px 34px;
 	}
