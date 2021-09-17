@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,7 +22,9 @@ class InlineHelpRichResult extends Component {
 		tour: PropTypes.string,
 	};
 
-	getButtonLabel = ( type = RESULT_ARTICLE ) => {
+	headerEl = createRef();
+
+	getButtonLabel( type = RESULT_ARTICLE ) {
 		const { translate } = this.props;
 
 		const labels = {
@@ -32,7 +34,7 @@ class InlineHelpRichResult extends Component {
 		};
 
 		return labels[ type ];
-	};
+	}
 
 	buttonIcons = {
 		[ RESULT_TOUR ]: 'list-ordered',
@@ -76,6 +78,10 @@ class InlineHelpRichResult extends Component {
 		// falls back on href
 	};
 
+	componentDidMount() {
+		this.headerEl.current.focus();
+	}
+
 	render() {
 		const { type, title, description, link } = this.props.result;
 		const buttonLabel = this.getButtonLabel( type );
@@ -83,8 +89,8 @@ class InlineHelpRichResult extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
-				<h2 className="inline-help__richresult__title" tabIndex="-1">
+			<section className="inline-help__secondary-view inline-help__richresult">
+				<h2 ref={ this.headerEl } className="inline-help__richresult__title" tabIndex="-1">
 					{ preventWidows( decodeEntities( title ) ) }
 				</h2>
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
@@ -93,7 +99,7 @@ class InlineHelpRichResult extends Component {
 					{ buttonIcon && buttonLabel && ' ' }
 					{ buttonLabel }
 				</Button>
-			</div>
+			</section>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
