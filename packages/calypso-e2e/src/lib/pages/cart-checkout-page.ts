@@ -26,7 +26,9 @@ const selectors = {
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
 	cardExpiryFrame: 'iframe[title="Secure expiration date input frame"]',
+	cardExpiryInput: 'input[data-elements-stable-field-name="cardExpiry"]',
 	cardCVVFrame: 'iframe[title="Secure CVC input frame"]',
+	cardCVVInput: 'input[data-elements-stable-field-name="cardCvc"]',
 
 	// Checkout elements
 	couponCodeInputButton: `button:text("Add a coupon code"):visible`,
@@ -148,17 +150,21 @@ export class CartCheckoutPage {
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
 
-		const frameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
-		const cardNumberFrame = ( await frameHandle.contentFrame() ) as Frame;
-
+		const cardNumberFrameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
+		const cardNumberFrame = ( await cardNumberFrameHandle.contentFrame() ) as Frame;
 		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput );
 		await cardNumberInput.fill( paymentDetails.cardNumber );
 
-		const expiryFrame = await this.page.waitForSelector( selectors.cardExpiryFrame );
-		await expiryFrame.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }` );
+		const expiryFrameHandle = await this.page.waitForSelector( selectors.cardExpiryFrame );
+		const expiryFrame = ( await expiryFrameHandle.contentFrame() ) as Frame;
+		const expiryInput = await expiryFrame.waitForSelector( selectors.cardExpiryInput );
+		await expiryInput.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }` );
 
-		const cvvFrame = await this.page.waitForSelector( selectors.cardCVVFrame );
-		await cvvFrame.fill( paymentDetails.cvv );
+		const cvvFrame = ( await (
+			await this.page.waitForSelector( selectors.cardCVVFrame )
+		 ).contentFrame() ) as Frame;
+		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
+		await cvvInput.fill( paymentDetails.cvv );
 	}
 
 	/**

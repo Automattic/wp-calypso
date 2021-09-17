@@ -24,7 +24,7 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
-	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
+	const username = `e2eflowtestingpaid${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,

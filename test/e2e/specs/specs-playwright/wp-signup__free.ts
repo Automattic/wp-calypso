@@ -22,7 +22,7 @@ describe(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish/Magic Link' ),
 	function () {
 		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
-		const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
+		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
 			prefix: username,
