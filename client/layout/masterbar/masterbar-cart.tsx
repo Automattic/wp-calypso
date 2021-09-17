@@ -71,7 +71,6 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 
 	return (
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
-			<CartMessages />
 			<div className="masterbar-cart__content-wrapper">
 				<div className="masterbar-cart__content-header">
 					<h2 className="masterbar-cart__title">{ translate( 'Cart' ) }</h2>
