@@ -149,19 +149,29 @@ export function getLanguageManifestFileUrl( {
 }
 
 /**
+ * Whether the language manifest is preloaded, i.e. localeSlug is matched in window.i18nLanguageManifest.
+ *
+ * @param   {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @returns {boolean}           Whether the language manifest is preloaded
+ */
+function getIsLanguageManifestPreloaded( localeSlug ) {
+	return (
+		window?.i18nLanguageManifest &&
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
+	);
+}
+
+/**
  * Get the language manifest file for the given locale.
  *
  * @param  {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param  {string} targetBuild The build target. e.g. fallback, evergreen, etc.
  *
- * @returns {Promise} Language manifest json content
+ * @returns {object|Promise} Language manifest json content
  */
 export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
-	if (
-		window?.i18nLanguageManifest &&
-		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
-	) {
-		return Promise.resolve( window.i18nLanguageManifest );
+	if ( getIsLanguageManifestPreloaded( localeSlug ) ) {
+		return window.i18nLanguageManifest;
 	}
 
 	const url = getLanguageManifestFileUrl( {
@@ -352,8 +362,9 @@ export default async function switchLocale( localeSlug ) {
 		// locale data, which consists of the locale manifest data and
 		// translations for currently installed chunks.
 		try {
+			const languageManifest = getLanguageManifestFile( localeSlug, window?.BUILD_TARGET );
 			const { translatedChunks, locale } =
-				( await getLanguageManifestFile( localeSlug, window?.BUILD_TARGET ) ) ?? {};
+				( languageManifest instanceof Promise ? await languageManifest : languageManifest ) ?? {}; // Using await operator on non-Promise object would still split the execution flow which causes unnecessary delay.
 
 			if ( ! locale || ! translatedChunks ) {
 				return;
