@@ -87,7 +87,7 @@ __metadata:
     "@types/webpack-env": ^1.16.2
     "@wojtekmaj/enzyme-adapter-react-17": ^0.6.3
     "@wordpress/babel-plugin-import-jsx-pragma": ^3.1.0
-    "@wordpress/browserslist-config": ^3.0.3
+    "@wordpress/browserslist-config": ^4.1.0
     "@wordpress/dependency-extraction-webpack-plugin": ^3.2.1
     autoprefixer: ^10.2.5
     babel-jest: ^27.0.6
@@ -7787,13 +7787,6 @@ __metadata:
     tinycolor2: ^1.4.2
     uuid: ^8.3.0
   checksum: c8c680d24d964d85fe442f21a650b8a981924e15ae660304fd443a94e833d9687f37731f7b57b53fa59223686d3c5661e3dad1263bb0e140caebf0b0b3ed5f2e
-  languageName: node
-  linkType: hard
-
-"@wordpress/browserslist-config@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "@wordpress/browserslist-config@npm:3.0.3"
-  checksum: 592dd6eaac96887cc8945e2e9169c7df1b74ec439983365b3f8baa4928c571236d981b36fb4b8e94b2d6d009c664eb182bde969eda19f22921804604b8c7414d
   languageName: node
   linkType: hard
 
