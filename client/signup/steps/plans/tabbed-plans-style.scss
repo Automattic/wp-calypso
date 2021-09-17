@@ -30,7 +30,7 @@
 	display: none;
 }
 
-@media (max-width: 600px) {
+@media ( max-width: 600px ) {
 	.tabbed-plans__grid-container {
 		margin-left: 0;
 		grid-template-columns: 1fr;
@@ -71,7 +71,7 @@
 			'feature-3-6'
 			'feature-3-7'
 			'button-3'
-			'shared-features-3'
+			'shared-features-3';
 	}
 
 	.tabbed-plans__shared-features-grid {
@@ -79,7 +79,7 @@
 	}
 
 	.tabbed-plans__shared-features-mobile {
-		margin: 0 56px 24px 56px;
+		margin: 0 56px 24px;
 		padding: 24px 24px 0 0;
 		border-top: 1px solid rgba( 220, 220, 222, 0.5 );
 		display: flex;

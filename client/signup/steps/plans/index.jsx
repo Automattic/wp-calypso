@@ -129,14 +129,7 @@ export class PlansStep extends Component {
 
 		const treatmentPlanDisplay = (
 			<TabbedPlans
-				customerType={ this.getCustomerType() }
-				domainName={ this.getDomainName() }
 				flowName={ flowName }
-				hideFreePlan={ hideFreePlan }
-				intervalType={ this.getIntervalType() }
-				isAllPaidPlansShown={ true }
-				isInSignup={ true }
-				isLaunchPage={ isLaunchPage }
 				onUpgradeClick={ this.onSelectPlan }
 				plans={ [
 					'personal-bundle',
@@ -148,9 +141,6 @@ export class PlansStep extends Component {
 					'business-bundle-monthly',
 					'ecommerce-bundle-monthly',
 				] }
-				planTypes={ planTypes }
-				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
 			/>
 		);
 		const defaultPlanDisplay = (

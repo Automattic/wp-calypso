@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	applyTestFiltersToPlansList,
 	findPlansKeys,
@@ -12,28 +9,14 @@ import {
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import {
-	Icon,
-	image,
-	pages,
-	lifesaver,
-	media,
-	store,
-	currencyDollar,
-	trendingUp,
-} from '@wordpress/icons';
+import { Icon, image, pages, lifesaver, media, store, currencyDollar } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
-
-/**
- * Internal dependencies
- */
 import './tabbed-plans-style.scss';
 
 function SharedFeatures( {
@@ -42,12 +25,9 @@ function SharedFeatures( {
 	setShowFeatures,
 	sharedFeatures,
 	showFeatures,
-	translate,
 } ) {
 	const isMobileView = className.includes( 'mobile' );
-	const toggleFeaturesString = showFeatures
-		? translate( 'Hide all features' )
-		: translate( 'Show all features' );
+	const toggleFeaturesString = showFeatures ? 'Hide all features' : 'Show all features';
 	const show = showFeatures || ! isMobileView;
 
 	return (
@@ -58,9 +38,7 @@ function SharedFeatures( {
 				</button>
 			) }
 			<SharedFeatureHeader>
-				{ selectedTab === 'Professional'
-					? translate( 'All plans include' )
-					: translate( 'Personal plan also includes' ) }
+				{ selectedTab === 'Professional' ? 'All plans include' : 'Personal plan also includes' }
 			</SharedFeatureHeader>
 			{ show &&
 				sharedFeatures[ selectedTab ].map( ( item, index ) => (
@@ -73,299 +51,15 @@ function SharedFeatures( {
 	);
 }
 function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
-	const translate = useTranslate();
-	const tabList = [ 'Limited', 'Professional' ];
-
-	const featureComparisonData = {
-		Professional: [
-			{
-				featureName: translate(
-					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.'
-				),
-				tooltip: translate( 'feature explanation' ),
-				planOne: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-				planTwo: {
-					included: true,
-					copy: translate( '58,000+ Available' ),
-					mobileCopy: translate( '58,000+ plugins available' ),
-				},
-				planThree: {
-					included: true,
-					copy: translate( '58,000+ Available' ),
-					mobileCopy: translate( '58,000+ plugins available' ),
-				},
-			},
-			{
-				featureName: translate( 'Install custome themes' ),
-				tooltip: translate(
-					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.'
-				),
-				planOne: {
-					included: false,
-					copy: translate( 'Not included' ),
-					mobileCopy: null,
-				},
-				planTwo: {
-					included: true,
-					copy: translate( '8,000 to choose from' ),
-					mobileCopy: translate( '8,000 themes to choose from' ),
-				},
-				planThree: {
-					included: true,
-					copy: translate( '8,000 to choose from' ),
-					mobileCopy: translate( '8,000 themes to choose from' ),
-				},
-			},
-			{
-				featureName: translate( 'eCommerce' ),
-				tooltip: translate(
-					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.'
-				),
-				planOne: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-				planTwo: {
-					included: false,
-					copy: translate( 'Not included' ),
-					mobileCopy: null,
-				},
-				planThree: {
-					included: true,
-					copy: translate( 'Complete eCommerce platform' ),
-					mobileCopy: translate( 'Complete eCommerce platform' ),
-				},
-			},
-			{
-				featureName: translate( 'Custom domain name' ),
-				tooltip: translate(
-					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).'
-				),
-				planOne: {
-					included: true,
-					copy: translate( 'Free for the first year' ),
-					mobileCopy: translate( 'Free domain for the first year' ),
-				},
-				planTwo: {
-					included: true,
-					copy: translate( 'Free for the first year' ),
-					mobileCopy: translate( 'Free domain for the first year' ),
-				},
-				planThree: {
-					included: true,
-					copy: translate( 'Free for the first year' ),
-					mobileCopy: translate( 'Free domain for the first year' ),
-				},
-			},
-			{
-				featureName: translate( 'SEO' ),
-				tooltip: translate(
-					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.'
-				),
-				planOne: {
-					included: true,
-					copy: translate( 'Simple' ),
-					mobileCopy: translate( 'Simple SEO' ),
-				},
-				planTwo: {
-					included: true,
-					copy: translate( 'Professional for better ranking' ),
-					mobileCopy: translate( 'Professional SEO' ),
-				},
-				planThree: {
-					included: true,
-					copy: translate( 'Professional for better ranking' ),
-					mobileCopy: translate( 'Professional SEO' ),
-				},
-			},
-			{
-				featureName: translate( 'Customer support' ),
-				tooltip: translate(
-					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.'
-				),
-				planOne: {
-					included: true,
-					copy: translate( 'Live chat and email' ),
-					mobileCopy: translate( '100GB Storage' ),
-				},
-				planTwo: {
-					included: true,
-					copy: translate( '24/7 Priority live chat' ),
-					mobileCopy: translate( '24/7 Priority live chat' ),
-				},
-				planThree: {
-					included: true,
-					copy: translate( '24/7 Priority live chat' ),
-					mobileCopy: translate( '24/7 Priority live chat' ),
-				},
-			},
-			{
-				featureName: translate( 'Storage' ),
-				tooltip: translate(
-					'With increased storage space, you’ll be able to upload more images, audio, and documents to your website. On the Premium, Business, and eCommerce plans, you can upload videos, too.'
-				),
-				planOne: { included: true, copy: translate( '10GB storage' ), mobileCopy: null },
-				planTwo: { included: true, copy: translate( '200GB storage' ), mobileCopy: null },
-				planThree: {
-					included: true,
-					copy: translate( '200GB storage' ),
-					mobileCopy: translate( '200GB storage' ),
-				},
-			},
-		],
-		Limited: [
-			{
-				featureName: translate( 'Install plugins' ),
-				tooltip: translate(
-					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.'
-				),
-				planOne: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-				planTwo: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-			},
-			{
-				featureName: translate( 'Install custom themes' ),
-				tooltip: translate(
-					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.'
-				),
-				planOne: {
-					included: false,
-					copy: translate( 'Not included' ),
-					mobileCopy: null,
-				},
-				planTwo: {
-					included: false,
-					copy: translate( 'Not included' ),
-					mobileCopy: null,
-				},
-			},
-			{
-				featureName: translate( 'eCommerce' ),
-				tooltip: translate(
-					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.'
-				),
-				planOne: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-				planTwo: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-			},
-			{
-				featureName: translate( 'Custom domain name' ),
-				tooltip: translate(
-					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).'
-				),
-				planOne: { included: false, copy: translate( 'Not included' ), mobileCopy: null },
-				planTwo: {
-					included: false,
-					copy: translate( 'Free for the first year' ),
-					mobileCopy: 'Free domain for the first year.',
-				},
-			},
-			{
-				featureName: translate( 'SEO' ),
-				tooltip: translate(
-					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.'
-				),
-				planOne: {
-					included: false,
-					copy: '-',
-					mobileCopy: null,
-				},
-				planTwo: {
-					included: true,
-					copy: translate( 'Simple' ),
-					mobileCopy: translate( 'Simple SEO' ),
-				},
-			},
-			{
-				featureName: translate( 'Customer support' ),
-				tooltip: translate(
-					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.'
-				),
-				planOne: {
-					included: false,
-					copy: translate( 'Not included' ),
-					mobileCopy: null,
-				},
-				planTwo: {
-					included: true,
-					copy: translate( 'Email support' ),
-					mobileCopy: translate( 'Email support' ),
-				},
-			},
-			{
-				featureName: translate( 'Remove WordPress.com Ads' ),
-				tooltip: translate(
-					'Allow your visitors to visit and read your website without seeing any WordPress.com advertising.'
-				),
-				planOne: { included: false, copy: translate( 'No' ), mobileCopy: null },
-				planTwo: { included: true, copy: translate( 'Yes' ), mobileCopy: null },
-			},
-		],
-	};
-
-	const sharedFeatures = {
-		Limited: [
-			{
-				icon: pages,
-				description: translate( 'Unlimited posts and pages' ),
-			},
-			{
-				icon: lifesaver,
-				description: translate( 'Best-in-class managed hosting' ),
-			},
-			{
-				icon: lifesaver,
-				description: translate( 'Free SSL certificante' ),
-			},
-			{
-				icon: lifesaver,
-				description: translate( '6GB of storage' ),
-			},
-			{
-				icon: image,
-				description: translate( 'WordPress.com ads removed' ),
-			},
-			{
-				icon: store,
-				description: translate( 'Accept simple payments and donations' ),
-			},
-		],
-		Professional: [
-			{
-				icon: pages,
-				description: translate( 'Unlimited posts and pages' ),
-			},
-			{
-				icon: lifesaver,
-				description: translate( 'Best-in-class managed hosting' ),
-			},
-			{
-				icon: image,
-				description: translate( 'WordPress.com ads removed' ),
-			},
-			{
-				icon: media,
-				description: translate( 'Video hosting' ),
-			},
-			{
-				icon: store,
-				description: translate( 'Accept simple payments and donations' ),
-			},
-			{
-				icon: currencyDollar,
-				description: translate( 'Earn ad revenue' ),
-			},
-			{
-				icon: image,
-				description: translate( 'Google Analytics' ),
-			},
-			{
-				icon: image,
-				description: translate( 'Professional email marketing integration.' ),
-			},
-		],
-	};
+	const tabList = getTabList();
+	const featureComparisonData = getFeatureComparisonData();
+	const sharedFeatures = getSharedFeatures();
 
 	const [ featureComparison, setFeatureComparison ] = useState(
 		featureComparisonData.Professional
 	);
 	const [ planDetails, setPlanDetails ] = useState();
-	const [ selectedTab, setSelectedTab ] = useState( 'Professional' );
+	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
 	const [ termLength, setTermLength ] = useState( 'yearly' );
 	const [ showFeatures, setShowFeatures ] = useState( false );
 
@@ -444,20 +138,20 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							type="radio"
 							checked={ termLength === 'yearly' ? 'checked' : '' }
 							name="monthly"
-							onClick={ toggleTerm }
+							onChange={ toggleTerm }
 						/>
 						<Checkmark></Checkmark>
-						<span>{ translate( 'Pay Yearly' ) }</span>
+						<span>{ 'Pay Yearly' }</span>
 					</RadioButton>
 					<RadioButton>
 						<input
 							type="radio"
 							checked={ termLength === 'monthly' ? 'checked' : '' }
 							name="monthly"
-							onClick={ toggleTerm }
+							onChange={ toggleTerm }
 						/>
 						<Checkmark></Checkmark>
-						<span>{ translate( 'Pay Monthly' ) }</span>
+						<span>{ 'Pay Monthly' }</span>
 					</RadioButton>
 				</TermToggles>
 
@@ -477,10 +171,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								key={ `planHeader${ index }` }
 								className={ `tabbed-plans__header-${ index + 1 }` }
 							>
-								{ translate( '%(planName)s', {
-									args: { planName: item.planName },
-									comment: 'For example, Business',
-								} ) }
+								{ item.planName }
 								{ item.planName === 'Premium' && <span>Most Popular</span> }
 							</PlanHeader>
 							<PlanPrice
@@ -493,32 +184,22 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								{ item.termLength === 'yearly' && (
 									<>
 										<span>
-											{ translate( 'per month billed as %(annualPrice)s annually', {
-												args: {
-													annualPrice: formatCurrency( item.rawPrice * 12, currencyCode, {
-														stripZeros: true,
-													} ),
-												},
-												comment: 'For example, Start with Business',
-											} ) }
+											{ 'per month billed as ' +
+												formatCurrency( item.rawPrice * 12, currencyCode, { stripZeros: true } ) +
+												' annually' }
 										</span>
 										<Savings>
-											{ translate( "You're saving %(savings)s% by paying annually", {
-												args: {
-													savings: Math.round(
-														( ( item.rawPriceForMonthly - item.rawPrice ) /
-															item.rawPriceForMonthly ) *
-															100
-													),
-												},
-												comment: 'For example, Start with Business',
-											} ) }
+											{ "You're saving " +
+												Math.round(
+													( ( item.rawPriceForMonthly - item.rawPrice ) /
+														item.rawPriceForMonthly ) *
+														100
+												) +
+												'% by paying annually' }
 										</Savings>
 									</>
 								) }
-								{ termLength === 'monthly' && (
-									<span>{ translate( 'per month, billed monthly' ) }</span>
-								) }
+								{ termLength === 'monthly' && <span>per month, billed monthly</span> }
 							</TermDescription>
 							<CtaButton
 								key={ `planCta${ index }` }
@@ -526,14 +207,10 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								onClick={ () => handleUpgradeButtonClick( item.planSlug, item.planProductId ) }
 								primary={ item.planName === 'Premium' }
 							>
-								{ translate( 'Start with %(planName)s', {
-									args: { planName: item.planName },
-									comment: 'For example, Start with Business',
-								} ) }
+								{ `Start with ${ item.planName }` }
 							</CtaButton>
 							{ item.planName !== 'Free' && (
 								<SharedFeatures
-									translate={ translate }
 									selectedTab={ selectedTab }
 									sharedFeatures={ sharedFeatures }
 									showFeatures={ showFeatures }
@@ -596,11 +273,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 					</React.Fragment>
 				) ) }
 			</Grid>
-			<SharedFeatures
-				translate={ translate }
-				selectedTab={ selectedTab }
-				sharedFeatures={ sharedFeatures }
-			/>
+			<SharedFeatures selectedTab={ selectedTab } sharedFeatures={ sharedFeatures } />
 		</>
 	);
 }
@@ -664,6 +337,289 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 export default connect( mapStateToProps )( TabbedPlans );
+
+function getTabList() {
+	return [ 'Limited', 'Professional' ];
+}
+
+function getFeatureComparisonData() {
+	const data = {
+		Professional: [
+			{
+				featureName: 'Install plugins',
+				tooltip:
+					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
+				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planTwo: {
+					included: true,
+					copy: '58,000+ Available',
+					mobileCopy: '58,000+ plugins available',
+				},
+				planThree: {
+					included: true,
+					copy: '58,000+ Available',
+					mobileCopy: '58,000+ plugins available',
+				},
+			},
+			{
+				featureName: 'Install custom themes',
+				tooltip:
+					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
+				planOne: {
+					included: false,
+					copy: 'Not included',
+					mobileCopy: null,
+				},
+				planTwo: {
+					included: true,
+					copy: '8,000 to choose from',
+					mobileCopy: '8,000 themes to choose from',
+				},
+				planThree: {
+					included: true,
+					copy: '8,000 to choose from',
+					mobileCopy: '8,000 themes to choose from',
+				},
+			},
+			{
+				featureName: 'eCommerce',
+				tooltip:
+					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
+				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planTwo: {
+					included: false,
+					copy: 'Not included',
+					mobileCopy: null,
+				},
+				planThree: {
+					included: true,
+					copy: 'Complete eCommerce platform',
+					mobileCopy: 'Complete eCommerce platform',
+				},
+			},
+			{
+				featureName: 'Custom domain name',
+				tooltip:
+					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).',
+				planOne: {
+					included: true,
+					copy: 'Free for the first year',
+					mobileCopy: 'Free domain for the first year',
+				},
+				planTwo: {
+					included: true,
+					copy: 'Free for the first year',
+					mobileCopy: 'Free domain for the first year',
+				},
+				planThree: {
+					included: true,
+					copy: 'Free for the first year',
+					mobileCopy: 'Free domain for the first year',
+				},
+			},
+			{
+				featureName: 'SEO',
+				tooltip:
+					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
+				planOne: {
+					included: true,
+					copy: 'Simple',
+					mobileCopy: 'Simple SEO',
+				},
+				planTwo: {
+					included: true,
+					copy: 'Professional for better ranking',
+					mobileCopy: 'Professional SEO',
+				},
+				planThree: {
+					included: true,
+					copy: 'Professional for better ranking',
+					mobileCopy: 'Professional SEO',
+				},
+			},
+			{
+				featureName: 'Customer support',
+				tooltip:
+					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.',
+				planOne: {
+					included: true,
+					copy: 'Live chat and email',
+					mobileCopy: '100GB Storage',
+				},
+				planTwo: {
+					included: true,
+					copy: '24/7 Priority live chat',
+					mobileCopy: '24/7 Priority live chat',
+				},
+				planThree: {
+					included: true,
+					copy: '24/7 Priority live chat',
+					mobileCopy: '24/7 Priority live chat',
+				},
+			},
+			{
+				featureName: 'Storage',
+				tooltip:
+					'With increased storage space, you’ll be able to upload more images, audio, and documents to your website. On the Premium, Business, and eCommerce plans, you can upload videos, too.',
+				planOne: { included: true, copy: '10GB storage', mobileCopy: null },
+				planTwo: { included: true, copy: '200GB storage', mobileCopy: null },
+				planThree: {
+					included: true,
+					copy: '200GB storage',
+					mobileCopy: '200GB storage',
+				},
+			},
+		],
+		Limited: [
+			{
+				featureName: 'Install plugins',
+				tooltip:
+					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
+				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planTwo: { included: false, copy: 'Not included', mobileCopy: null },
+			},
+			{
+				featureName: 'Install custom themes',
+				tooltip:
+					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
+				planOne: {
+					included: false,
+					copy: 'Not included',
+					mobileCopy: null,
+				},
+				planTwo: {
+					included: false,
+					copy: 'Not included',
+					mobileCopy: null,
+				},
+			},
+			{
+				featureName: 'eCommerce',
+				tooltip:
+					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
+				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planTwo: { included: false, copy: 'Not included', mobileCopy: null },
+			},
+			{
+				featureName: 'Custom domain name',
+				tooltip:
+					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).',
+				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planTwo: {
+					included: false,
+					copy: 'Free for the first year',
+					mobileCopy: 'Free domain for the first year.',
+				},
+			},
+			{
+				featureName: 'SEO',
+				tooltip:
+					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
+				planOne: {
+					included: false,
+					copy: '-',
+					mobileCopy: null,
+				},
+				planTwo: {
+					included: true,
+					copy: 'Simple',
+					mobileCopy: 'Simple SEO',
+				},
+			},
+			{
+				featureName: 'Customer support',
+				tooltip:
+					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.',
+				planOne: {
+					included: false,
+					copy: 'Not included',
+					mobileCopy: null,
+				},
+				planTwo: {
+					included: true,
+					copy: 'Email support',
+					mobileCopy: 'Email support',
+				},
+			},
+			{
+				featureName: 'Remove WordPress.com Ads',
+				tooltip:
+					'Allow your visitors to visit and read your website without seeing any WordPress.com advertising.',
+				planOne: { included: false, copy: 'No', mobileCopy: null },
+				planTwo: { included: true, copy: 'Yes', mobileCopy: null },
+			},
+		],
+	};
+
+	return data;
+}
+
+function getSharedFeatures() {
+	const data = {
+		Limited: [
+			{
+				icon: pages,
+				description: 'Unlimited posts and pages',
+			},
+			{
+				icon: lifesaver,
+				description: 'Best-in-class managed hosting',
+			},
+			{
+				icon: lifesaver,
+				description: 'Free SSL certificante',
+			},
+			{
+				icon: lifesaver,
+				description: '6GB of storage',
+			},
+			{
+				icon: image,
+				description: 'WordPress.com ads removed',
+			},
+			{
+				icon: store,
+				description: 'Accept simple payments and donations',
+			},
+		],
+		Professional: [
+			{
+				icon: pages,
+				description: 'Unlimited posts and pages',
+			},
+			{
+				icon: lifesaver,
+				description: 'Best-in-class managed hosting',
+			},
+			{
+				icon: image,
+				description: 'WordPress.com ads removed',
+			},
+			{
+				icon: media,
+				description: 'Video hosting',
+			},
+			{
+				icon: store,
+				description: 'Accept simple payments and donations',
+			},
+			{
+				icon: currencyDollar,
+				description: 'Earn ad revenue',
+			},
+			{
+				icon: image,
+				description: 'Google Analytics',
+			},
+			{
+				icon: image,
+				description: 'Professional email marketing integration.',
+			},
+		],
+	};
+
+	return data;
+}
 
 const SharedFeatureHeader = styled.div`
 	grid-column: 1 / 4;
@@ -915,7 +871,7 @@ const RadioButton = styled.label`
 		&:checked + span:after {
 			display: block;
 		}
-		:not( :checked ) ~ span:nth-child( 3 ) {
+		:not( :checked ) ~ span:nth-of-type( 3 ) {
 			color: #a7aaad;
 		}
 	}
