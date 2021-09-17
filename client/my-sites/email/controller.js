@@ -120,4 +120,9 @@ export default {
 
 		next();
 	},
+
+	emailManagementInbox( pageContext, next ) {
+		pageContext.primary = null;
+		next();
+	},
 };

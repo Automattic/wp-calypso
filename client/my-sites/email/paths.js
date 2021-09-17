@@ -169,6 +169,13 @@ export function emailManagementEdit(
 	);
 }
 
+export function emailManagementInbox( siteName = null ) {
+	if ( siteName ) {
+		return `${ emailManagementPrefix }/inbox/${ siteName }`;
+	}
+	return `${ emailManagementPrefix }/inbox`;
+}
+
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
