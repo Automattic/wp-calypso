@@ -169,7 +169,10 @@ export function emailManagementEdit(
 	);
 }
 
-export function inboxManagement() {
+export function emailManagementInbox( siteName = null) {
+	if ( siteName ) {
+		return `${ emailManagementPrefix }/inbox/${ siteName }`;
+	}
 	return `${ emailManagementPrefix }/inbox`;
 }
 

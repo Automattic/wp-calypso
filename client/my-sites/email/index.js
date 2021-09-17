@@ -168,7 +168,7 @@ export default function () {
 	} );
 
 	registerMultiPage( {
-		paths: [ paths.inboxManagement() ],
-		handlers: [ ...commonHandlers, controller.inboxManagement, makeLayout, clientRender ],
+		paths: [ paths.emailManagementInbox( ':site' ) ],
+		handlers: [ ...commonHandlers, controller.emailManagementInbox, makeLayout, clientRender ],
 	} );
 }

@@ -121,7 +121,7 @@ export default {
 		next();
 	},
 
-	inboxManagement( pageContext, next ) {
+	emailManagementInbox( pageContext, next ) {
 		pageContext.primary = null;
 		next();
 	},
