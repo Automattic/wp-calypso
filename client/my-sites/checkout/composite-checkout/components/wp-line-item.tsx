@@ -20,7 +20,6 @@ import {
 	useEvents,
 	Button,
 } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isWpComProductRenewal,
 	getSublabel,
@@ -31,7 +30,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -43,7 +41,11 @@ import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
-import type { RemoveProductFromCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	RemoveProductFromCart,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
@@ -698,6 +700,7 @@ function WPLineItem( {
 	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	responseCart,
 }: {
 	product: ResponseCartProduct;
 	allowVariants?: boolean;
@@ -708,11 +711,10 @@ function WPLineItem( {
 	onChangePlanLength?: OnChangeItemVariant;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	responseCart: ResponseCart;
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
 	);

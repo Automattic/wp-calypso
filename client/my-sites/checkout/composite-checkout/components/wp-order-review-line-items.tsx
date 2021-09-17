@@ -1,14 +1,13 @@
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { getCouponLineItemFromCart, getCreditsLineItemFromCart } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import joinClasses from './join-classes';
 import { NonProductLineItem, LineItem } from './wp-line-item';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
+	ResponseCart,
 	RemoveProductFromCart,
 	ResponseCartProduct,
 	RemoveCouponFromCart,
@@ -46,6 +45,7 @@ export function WPOrderReviewLineItems( {
 	removeCoupon,
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
+	responseCart,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -54,9 +54,8 @@ export function WPOrderReviewLineItems( {
 	removeCoupon: RemoveCouponFromCart;
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
+	responseCart: ResponseCart;
 } ): JSX.Element {
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 
@@ -74,6 +73,7 @@ export function WPOrderReviewLineItems( {
 							onChangePlanLength={ onChangePlanLength }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							responseCart={ responseCart }
 						/>
 					</WPOrderReviewListItem>
 				);
