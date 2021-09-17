@@ -61,7 +61,13 @@ function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): J
 }
 
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
-	const { removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } = useShoppingCart();
+	const {
+		responseCart,
+		removeCoupon,
+		removeProductFromCart,
+		isLoading,
+		isPendingUpdate,
+	} = useShoppingCart();
 	const translate = useTranslate();
 	const goToCheckout = () => {
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
@@ -83,6 +89,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 				<WPOrderReviewLineItems
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
+					responseCart={ responseCart }
 				/>
 				<CheckoutSummaryTotal />
 				<div className="masterbar-cart__content-footer">
