@@ -101,3 +101,8 @@ export const sslStatuses = {
 	SSL_PENDING: 'pending',
 	SSL_ACTIVE: 'active',
 };
+
+export const domainTitleContext = {
+	DOMAIN_ITEM: 'DOMAIN_ITEM',
+	PAGE_TITLE: 'PAGE_TITLE',
+};

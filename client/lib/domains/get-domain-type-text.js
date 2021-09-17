@@ -1,4 +1,4 @@
-import { type as domainTypes } from './constants';
+import { type as domainTypes, domainTitleContext } from './constants';
 
 /**
  * Translate function placeholder.
@@ -15,11 +15,20 @@ function translatePlaceholder( string ) {
  *
  * @param   {Object}   domain Domain object
  * @param   {Function} __     Translate function
+ * @param   {string} context  Context of the returned text (DOMAIN_ITEM: item of a domain list, PAGE_TITLE: title when managing the domain)
  * @returns {string}          Domain type text
  */
-export function getDomainTypeText( domain = {}, __ = translatePlaceholder ) {
+export function getDomainTypeText(
+	domain = {},
+	__ = translatePlaceholder,
+	context = domainTitleContext.DOMAIN_ITEM
+) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
+			if ( context === domainTitleContext.PAGE_TITLE ) {
+				return __( 'Connected domain' );
+			}
+
 			return __( 'Managed by external provider' );
 
 		case domainTypes.REGISTERED:
