@@ -17,7 +17,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { getSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import WithItemsToUpdate from './to-update';
 import ActivityLogTaskUpdate from './update';
 
@@ -52,6 +53,8 @@ class ActivityLogTasklist extends Component {
 		plugins: PropTypes.arrayOf( PropTypes.object ), // Plugins updated and those with pending updates
 		themes: PropTypes.arrayOf( PropTypes.object ), // Themes to update
 		core: PropTypes.arrayOf( PropTypes.object ), // New WP core version
+		siteAdminUrl: PropTypes.string,
+		jetpackNonAtomic: PropTypes.bool,
 
 		// Connected props
 		siteName: PropTypes.string.isRequired,
@@ -128,7 +131,12 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @returns {object} Action to redirect to plugins management.
 	 */
-	goManagePlugins = () => this.props.goManagePlugins( this.props.siteAdminUrl );
+	goManagePlugins = () =>
+		this.props.goManagePlugins(
+			this.props.siteSlug,
+			this.props.siteAdminUrl,
+			this.props.jetpackNonAtomic
+		);
 
 	/**
 	 * Goes to single theme or plugin management screen.
@@ -386,30 +394,30 @@ class ActivityLogTasklist extends Component {
 							  )
 							: translate( 'You have one update available' )
 					}
-					{ 1 < numberOfUpdates && (
-						<SplitButton
-							compact
-							primary
-							label={ translate( 'Update all' ) }
-							onClick={ this.updateAll }
-							disabled={ 0 < queued.length }
+					{ /* { 1 < numberOfUpdates && ( */ }
+					<SplitButton
+						compact
+						primary
+						label={ translate( 'Update all' ) }
+						onClick={ this.updateAll }
+						disabled={ 0 < queued.length }
+					>
+						<PopoverMenuItem
+							onClick={ this.goManagePlugins }
+							className="activity-log-tasklist__menu-item"
+							icon="cog"
 						>
-							<PopoverMenuItem
-								onClick={ this.goManagePlugins }
-								className="activity-log-tasklist__menu-item"
-								icon="cog"
-							>
-								<span>{ translate( 'Manage plugins' ) }</span>
-							</PopoverMenuItem>
-							<PopoverMenuItem
-								onClick={ this.dismiss }
-								className="activity-log-tasklist__menu-item"
-								icon="trash"
-							>
-								<span>{ translate( 'Dismiss all' ) }</span>
-							</PopoverMenuItem>
-						</SplitButton>
-					) }
+							<span>{ translate( 'Manage plugins' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ this.dismiss }
+							className="activity-log-tasklist__menu-item"
+							icon="trash"
+						>
+							<span>{ translate( 'Dismiss all' ) }</span>
+						</PopoverMenuItem>
+					</SplitButton>
+					{ /* ) } */ }
 				</div>
 				{ showExpandedView && this.showAllItemsToUpdate( itemsToUpdate ) }
 				{ ! showExpandedView &&
@@ -551,6 +559,7 @@ const mapStateToProps = ( state, { siteId, plugins, themes, core } ) => {
 		pluginWithUpdate: makeUpdatableList( plugins, siteId, state ),
 		themeWithUpdate: makeUpdatableList( themes, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		jetpackNonAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 		coreWithUpdate: isEmpty( core )
 			? []
 			: [
@@ -583,9 +592,15 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_dismiss_all' ) ),
 	trackDismiss: ( { type, slug } ) =>
 		dispatch( recordTracksEvent( `calypso_activitylog_tasklist_dismiss_${ type }`, { slug } ) ),
-	goManagePlugins: ( siteAdminUrl ) => {
+	goManagePlugins: ( siteSlug, siteAdminUrl, jetpackNonAtomic ) => {
 		dispatch( recordTracksEvent( 'calypso_activitylog_tasklist_manage_plugins' ) );
-		page( `${ siteAdminUrl }plugins.php` );
+
+		// When Jetpack is self hosted show the Calypso Plugins Manage page.
+		// Else, redirect to current site WP Admin.
+		const managePluginsDestination = jetpackNonAtomic
+			? `/plugins/manage/${ siteSlug }`
+			: `${ siteAdminUrl }plugins.php`;
+		page( managePluginsDestination );
 	},
 	goToPage: ( slug, type, siteSlug ) => {
 		const tracksEvent =
