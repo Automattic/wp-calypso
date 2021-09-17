@@ -32,6 +32,7 @@ const selectors = {
 	couponCodeInputButton: `button:text("Add a coupon code"):visible`,
 	couponCodeInput: `input[id="order-review-coupon"]`,
 	couponCodeApplyButton: `button:text("Apply")`,
+	disabledButton: 'button[disabled]:has-text("Processing")',
 	paymentButton: `button.checkout-button`,
 	totalAmount: ( device: TargetDevice ) =>
 		device === 'mobile' ? '.wp-checkout__total-price' : '.wp-checkout-order-summary__total-price',
@@ -98,7 +99,13 @@ export class CartCheckoutPage {
 
 		await this.page.fill( selectors.couponCodeInput, coupon );
 		await this.page.click( selectors.couponCodeApplyButton );
-		await this.page.click( selectors.dismissBanner );
+
+		// Wait until coupon is fully applied to cart items to determine if the banner message
+		// needs to be closed.
+		await this.page.waitForSelector( selectors.disabledButton, { state: 'hidden' } );
+		if ( await this.page.isVisible( selectors.dismissBanner ) ) {
+			await this.page.click( selectors.dismissBanner );
+		}
 	}
 
 	/**

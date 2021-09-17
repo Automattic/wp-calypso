@@ -114,6 +114,13 @@ describe(
 		} );
 
 		describe( 'Delete user account', function () {
+			it( 'Re-login to ensure correct host', async function () {
+				await BrowserManager.clearAuthenticationState( page );
+				const loginPage = new LoginPage( page );
+				await loginPage.visit();
+				await loginPage.login( { username: username, password: signupPassword } );
+			} );
+
 			it( 'Close account', async function () {
 				const closeAccountFlow = new CloseAccountFlow( page );
 				await closeAccountFlow.closeAccount();
