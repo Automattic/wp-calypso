@@ -3,6 +3,7 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import { isEnabled } from 'calypso/../packages/calypso-config/src';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -296,15 +297,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			domainItem,
 			themeItem,
 		};
-		processItemCart(
+		processItemCart( {
 			providedDependencies,
 			newCartItems,
 			callback,
 			reduxStore,
 			siteSlug,
+			stepData,
 			isFreeThemePreselected,
-			themeSlugWithRepo
-		);
+			themeSlugWithRepo,
+		} );
 	} );
 }
 
@@ -362,7 +364,14 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( {
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		siteSlug,
+		stepData: stepProvidedItems,
+	} );
 }
 
 export function addDomainToCart(
@@ -379,18 +388,26 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
+	processItemCart( {
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		siteSlug: slug,
+		stepData: stepProvidedItems,
+	} );
 }
 
-function processItemCart(
+function processItemCart( {
 	providedDependencies,
 	newCartItems,
 	callback,
 	reduxStore,
 	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo
-) {
+	stepData,
+	isFreeThemePreselected = null,
+	themeSlugWithRepo = null,
+} ) {
 	const addToCartAndProceed = () => {
 		debug( 'adding cart items', newCartItems );
 		const reduxState = reduxStore.getState();
@@ -411,15 +428,21 @@ function processItemCart(
 
 	const userLoggedIn = isUserLoggedIn( reduxStore.getState() );
 
+	const flowToCheck = stepData.flowName || stepData.lastKnownFlow;
+	const skipSitesAndUsersFetch =
+		isEnabled( 'signup/setup-site-after-checkout' ) &&
+		! newCartItems.length &&
+		[ 'onboarding', 'free', 'business', 'premium', 'personal' ].includes( flowToCheck );
+
 	if ( ! userLoggedIn && isFreeThemePreselected ) {
 		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-	} else if ( userLoggedIn && isFreeThemePreselected ) {
+	} else if ( userLoggedIn && isFreeThemePreselected && ! skipSitesAndUsersFetch ) {
 		fetchSitesAndUser(
 			siteSlug,
 			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
 			reduxStore
 		);
-	} else if ( userLoggedIn && siteSlug ) {
+	} else if ( userLoggedIn && siteSlug && ! skipSitesAndUsersFetch ) {
 		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 	} else {
 		addToCartAndProceed();
