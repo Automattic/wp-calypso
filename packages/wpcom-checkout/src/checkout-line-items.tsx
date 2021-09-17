@@ -679,7 +679,10 @@ function WPLineItem( {
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
+<<<<<<< HEAD:packages/wpcom-checkout/src/checkout-line-items.tsx
 	isPwpoUser,
+=======
+>>>>>>> efdeee2ac3 (Require responseCart prop for WPOrderReviewLineItems):client/my-sites/checkout/composite-checkout/components/wp-line-item.tsx
 }: {
 	children?: React.ReactNode;
 	product: ResponseCartProduct;
@@ -689,7 +692,10 @@ function WPLineItem( {
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
+<<<<<<< HEAD:packages/wpcom-checkout/src/checkout-line-items.tsx
 	isPwpoUser?: boolean;
+=======
+>>>>>>> efdeee2ac3 (Require responseCart prop for WPOrderReviewLineItems):client/my-sites/checkout/composite-checkout/components/wp-line-item.tsx
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
