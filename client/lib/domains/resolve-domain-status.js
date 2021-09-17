@@ -163,17 +163,9 @@ export function resolveDomainStatus(
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const translationArgs = {
+				const expiresMessage = translate( 'Domain registration expires on %(expiryDate)s', {
 					args: { expiryDate: moment( domain.expiry ).format( 'LL' ) },
-				};
-
-				const expiresMessage =
-					null !== domain.bundledPlanSubscriptionId
-						? translate(
-								'Domain registration expires with your plan on %(expiryDate)s',
-								translationArgs
-						  )
-						: translate( 'Domain registration expires on %(expiryDate)s', translationArgs );
+				} );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
