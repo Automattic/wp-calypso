@@ -35,6 +35,7 @@ function UseMyDomain( {
 	onConnect,
 	onTransfer,
 	selectedSite,
+	showHeader,
 	transferDomainUrl,
 	initialMode,
 } ) {
@@ -218,6 +219,10 @@ function UseMyDomain( {
 		setMode( inputMode.transferDomain );
 	};
 
+	const handleTransfer = () => {
+		onTransfer( domainName );
+	};
+
 	const renderDomainInput = () => {
 		return (
 			<UseMyDomainInput
@@ -308,22 +313,39 @@ function UseMyDomain( {
 		}
 	}, [ domainName, mode, __ ] );
 
+	const renderHeader = () => {
+		if ( ! showHeader ) {
+			return null;
+		}
+
+		return (
+			<>
+				<BackButton className={ baseClassName + '__go-back' } onClick={ onGoBack }>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ __( 'Back' ) }
+				</BackButton>
+				<FormattedHeader
+					brandFont
+					className={ baseClassName + '__page-heading' }
+					headerText={ headerText }
+					align="left"
+				/>
+			</>
+		);
+	};
+
 	return (
 		<>
-			<BackButton className={ baseClassName + '__go-back' } onClick={ onGoBack }>
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ __( 'Back' ) }
-			</BackButton>
-			<FormattedHeader
-				brandFont
-				className={ baseClassName + '__page-heading' }
-				headerText={ headerText }
-				align="left"
-			/>
+			{ renderHeader() }
 			{ renderContent() }
 		</>
 	);
 }
+
+UseMyDomain.defaultProps = {
+	isSignupStep: false,
+	showHeader: true,
+};
 
 UseMyDomain.propTypes = {
 	goBack: PropTypes.func.isRequired,
@@ -332,6 +354,7 @@ UseMyDomain.propTypes = {
 	onConnect: PropTypes.func,
 	onTransfer: PropTypes.func,
 	selectedSite: PropTypes.object,
+	showHeader: PropTypes.bool,
 	transferDomainUrl: PropTypes.string,
 };
 

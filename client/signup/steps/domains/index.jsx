@@ -10,6 +10,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
+import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import Notice from 'calypso/components/notice';
 import {
@@ -612,6 +613,16 @@ class DomainsStep extends Component {
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
 				<CalypsoShoppingCartProvider>
+					<UseMyDomain
+						analyticsSection={ this.getAnalyticsSection() }
+						basePath={ this.props.path }
+						goBack={ () => {} }
+						initialQuery={ initialQuery }
+						isSignupStep
+						mapDomainUrl={ this.getMapDomainUrl() }
+						showHeader={ false }
+						onTransfer={ this.handleAddTransfer }
+					/>
 					<UseYourDomainStep
 						analyticsSection={ this.getAnalyticsSection() }
 						basePath={ this.props.path }
