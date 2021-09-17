@@ -368,10 +368,19 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
-		const { siteAdminUrl, translate } = this.props;
+		const { siteAdminUrl, siteSlug, translate } = this.props;
+		const site = siteSlug ? '/' + siteSlug : '';
+
+		// When no site is selected eg `/plugins` or when Jetpack is self hosted
+		// show the Calypso Plugins Manage page.
+		// In any other case, redirect to current site WP Admin.
+		const managePluginsDestination =
+			! siteAdminUrl || this.props.jetpackNonAtomic
+				? `/plugins/manage${ site }`
+				: `${ siteAdminUrl }plugins.php`;
 
 		return (
-			<Button className="plugins-browser__button" href={ `${ siteAdminUrl }plugins.php` }>
+			<Button className="plugins-browser__button" href={ managePluginsDestination }>
 				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
 		);
