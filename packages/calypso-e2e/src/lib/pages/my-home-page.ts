@@ -4,7 +4,7 @@ const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
 
 	// Task card (topmost card)
-	taskMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
+	taskHeadingMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
 };
 
 /**
@@ -36,11 +36,11 @@ export class MyHomePage {
 
 	/**
 	 * Given a partial or full string, verify that a message containing
-	 * the string is shown on the Task card.
+	 * the string is shown on the Task card heading.
 	 *
 	 * @param {string} message Partial or fully matching text to search.
 	 */
-	async validateTaskMessage( message: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.taskMessage( message ) );
+	async validateTaskHeadingMessage( message: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.taskHeadingMessage( message ) );
 	}
 }

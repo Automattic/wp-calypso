@@ -1,5 +1,4 @@
 import { Frame, Page } from 'playwright';
-import { DataHelper } from '../..';
 import { getTargetDeviceName } from '../../browser-helper';
 import type { PaymentDetails } from '../../data-helper';
 import type { TargetDevice } from '../../types';
@@ -85,20 +84,19 @@ export class CartCheckoutPage {
 	}
 
 	/**
-	 * Apply a coupon.
+	 * Apply a given coupon.
 	 *
-	 * If a coupon code is supplied as parameter, this method will apply the supplied code.
-	 * Otherwise, this method will apply the default coupon code found in the configuration.
+	 * This method does not differentiate between valid and invalid coupons.
+	 * The supplied coupon code is applied, and the resulting banner is dismissed.
 	 *
-	 * @param {string} coupon Custom coupon code.
+	 * The calling method should verify whether the coupon code produced intended results.
+	 *
+	 * @param {string} coupon Coupon code.
 	 */
-	async enterCouponCode( coupon?: string ): Promise< void > {
+	async enterCouponCode( coupon: string ): Promise< void > {
 		await this.page.click( selectors.couponCodeInputButton );
 
-		const couponCode =
-			coupon !== undefined ? coupon : ( DataHelper.config.get( 'testCouponCode' ) as string );
-
-		await this.page.fill( selectors.couponCodeInput, couponCode );
+		await this.page.fill( selectors.couponCodeInput, coupon );
 		await this.page.click( selectors.couponCodeApplyButton );
 		await this.page.click( selectors.dismissBanner );
 	}
@@ -123,46 +121,33 @@ export class CartCheckoutPage {
 	/**
 	 * Enter billing/tax details.
 	 *
-	 * @param param0 Object implementing the PaymentDetails interface.
-	 * @param {string} param0.postalCode Postal code of the user.
-	 * @param {string} param0.countryCode Country of the purchaser in ISO 3166-1 Alpha 2 format.
+	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
-	async enterBillingDetails( { postalCode, countryCode }: PaymentDetails ): Promise< void > {
-		await this.page.fill( selectors.postalCode, postalCode );
-		await this.page.selectOption( selectors.countryCode, countryCode );
+	async enterBillingDetails( paymentDetails: PaymentDetails ): Promise< void > {
+		await this.page.fill( selectors.postalCode, paymentDetails.postalCode );
+		await this.page.selectOption( selectors.countryCode, paymentDetails.countryCode );
 		await this.page.click( selectors.submitBillingInformationButton );
 	}
 
 	/**
 	 * Enter payment details.
 	 *
-	 * @param param0 Object implementing the PaymentDetails interface.
-	 * @param {string} param0.cardHolder Credit card holder name.
-	 * @param {string} param0.cardNumber Credit card number.
-	 * @param {string} param0.expiryMonth Credit card expiry month.
-	 * @param {string} param0.expiryYear Credit card expiry year.
-	 * @param {string} param0.cvv Credit card CVV value.
+	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
-	async enterPaymentDetails( {
-		cardHolder,
-		cardNumber,
-		expiryMonth,
-		expiryYear,
-		cvv,
-	}: PaymentDetails ): Promise< void > {
-		await this.page.fill( selectors.cardholderName, cardHolder );
+	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
+		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
 
 		const frameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
 		const cardNumberFrame = ( await frameHandle.contentFrame() ) as Frame;
 
 		const cardNumberInput = await cardNumberFrame.waitForSelector( selectors.cardNumberInput );
-		await cardNumberInput.fill( cardNumber );
+		await cardNumberInput.fill( paymentDetails.cardNumber );
 
 		const expiryFrame = await this.page.waitForSelector( selectors.cardExpiryFrame );
-		await expiryFrame.fill( `${ expiryMonth }${ expiryYear }` );
+		await expiryFrame.fill( `${ paymentDetails.expiryMonth }${ paymentDetails.expiryYear }` );
 
 		const cvvFrame = await this.page.waitForSelector( selectors.cardCVVFrame );
-		await cvvFrame.fill( cvv );
+		await cvvFrame.fill( paymentDetails.cvv );
 	}
 
 	/**

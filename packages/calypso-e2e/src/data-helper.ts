@@ -15,6 +15,8 @@ export interface PaymentDetails {
 	postalCode: string;
 }
 
+export type CreditCardIssuers = 'Visa';
+
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *
@@ -160,24 +162,19 @@ export function getTestEmailAddress( {
  *
  * Simulated credit card information is supplied by Stripe. For more information, see https://stripe.com/docs/testing#cards.
  *
- * @param {'Visa'|'Mastercard'|'American Express'} issuer Credit card network.
- * @returns {[key: string]: string} Keyed object containing strings as values.
+ * @returns {PaymentDetails} Object that implements the PaymentDetails interface.
  */
-export function getTestPaymentDetails(
-	issuer: 'Visa' | 'Mastercard' | 'American Express'
-): PaymentDetails | null {
-	if ( issuer === 'Visa' ) {
-		return {
-			cardHolder: 'End to End Testing',
-			cardNumber: '4242 4242 4242 4242',
-			expiryMonth: '02',
-			expiryYear: '28',
-			cvv: '999',
-			countryCode: 'TR', // Set to Turkey to force Strip to process payments.
-			postalCode: '06123',
-		};
-	}
-	return null;
+export function getTestPaymentDetails(): PaymentDetails {
+	// Only Visa is implemented for now.
+	return {
+		cardHolder: 'End to End Testing',
+		cardNumber: '4242 4242 4242 4242',
+		expiryMonth: '02',
+		expiryYear: '28',
+		cvv: '999',
+		countryCode: 'TR', // Set to Turkey to force Strip to process payments.
+		postalCode: '06123',
+	};
 }
 
 /**

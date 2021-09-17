@@ -19,7 +19,6 @@ import {
 	CloseAccountFlow,
 	PlansPage,
 	IndividualPurchasePage,
-	PaymentDetails,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -86,7 +85,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 
 		it( 'Apply coupon and validate resulting purchase amount', async function () {
 			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
-			await cartCheckoutPage.enterCouponCode();
+			await cartCheckoutPage.enterCouponCode( DataHelper.config.get( 'testCouponCode' ) );
 			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
 
 			expect( newAmount ).toBeLessThan( originalAmount );
@@ -100,7 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		} );
 
 		it( 'Enter billing and payment details', async function () {
-			const paymentDetails = DataHelper.getTestPaymentDetails( 'Visa' ) as PaymentDetails;
+			const paymentDetails = DataHelper.getTestPaymentDetails();
 			await cartCheckoutPage.enterBillingDetails( paymentDetails );
 			await cartCheckoutPage.enterPaymentDetails( paymentDetails );
 		} );
@@ -150,7 +149,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 
 		it( 'Confirm site is launched', async function () {
 			const myHomePage = new MyHomePage( page );
-			await myHomePage.validateTaskMessage( 'You launched your site!' );
+			await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 		} );
 	} );
 
