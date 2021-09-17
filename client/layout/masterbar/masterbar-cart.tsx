@@ -11,12 +11,9 @@ import MasterbarItem from './item';
 
 import './masterbar-cart-style.scss';
 
-type MasterbarCartProps = { children?: React.ReactNode; selectedSiteSlug: string | undefined };
+type MasterbarCartProps = { selectedSiteSlug: string | undefined };
 
-export function MasterbarCart( {
-	children,
-	selectedSiteSlug,
-}: MasterbarCartProps ): JSX.Element | null {
+export function MasterbarCart( { selectedSiteSlug }: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart();
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
@@ -40,9 +37,7 @@ export function MasterbarCart( {
 	return (
 		<div className="masterbar-cart" ref={ masterbarButtonRef }>
 			<CheckoutErrorBoundary errorMessage="Error">
-				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick }>
-					{ children }
-				</MasterbarItem>
+				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick } />
 				<MasterbarCartCount productsInCart={ responseCart.products.length } />
 				<Popover
 					isVisible={ isActive }
