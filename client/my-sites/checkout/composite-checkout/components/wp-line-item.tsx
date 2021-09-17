@@ -32,10 +32,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	getProductDisplayCost,
-	getProductPriceTierList,
-} from 'calypso/state/products-list/selectors';
+import { getProductPriceTierList } from 'calypso/state/products-list/selectors';
 import { useGetProductVariants } from '../hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
@@ -518,14 +515,14 @@ function LineItemSublabelAndPrice( {
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 	// This is the price for one item for products with a quantity (eg. seats in a license).
-	const itemPrice = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
+	const itemPrice = product.item_original_cost_display;
 
 	if ( isPlan( product ) ) {
 		if ( isP2Plus( product ) ) {
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
-					itemPrice: itemPrice,
+					itemPrice,
 					members,
 				},
 				count: members,
