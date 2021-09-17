@@ -1,0 +1,47 @@
+{
+	"name": "@automattic/masterbar-cart",
+	"version": "1.0.0",
+	"description": "WordPress.com Masterbar Shopping Cart",
+	"main": "dist/build.min.js",
+	"sideEffects": true,
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/master-bar-cart"
+	},
+	"private": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "BROWSERSLIST_ENV=evergreen webpack --config='./webpack.config.js'",
+		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build",
+		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host calypso.localhost --port 3000",
+		"start": "yarn dev-server",
+		"sync": "yarn clean && yarn build && sh ./bin/wpcom-watch-and-sync.sh"
+	},
+	"dependencies": {
+		"calypso": "^0.17.0",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-query": "^3.9.8",
+		"wpcom": "^6.0.0",
+		"wpcom-proxy-request": "^6.0.0",
+		"wpcom-xhr-request": "^1.2.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "^9.0.0",
+		"autoprefixer": "^10.2.5",
+		"enzyme": "^3.11.0",
+		"html-webpack-plugin": "^5.0.0-beta.4",
+		"jest": "^27.0.6",
+		"postcss": "^8.2.6",
+		"webpack": "^5.46.0",
+		"webpack-bundle-analyzer": "^4.4.2",
+		"webpack-dev-server": "^3.11.2"
+	}
+}
