@@ -15,12 +15,14 @@ export function getRecommendedThemes( state, siteId ) {
 	// TODO: ensure support for jetpack and wporg queries
 	let recommendedThemes = [];
 	const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
-	const blockThemes = state?.themes?.queries?.wpcom?.getItems( { filter: 'block-templates' } );
+	const blockThemes = state?.themes?.queries?.wpcom?.getItemsIgnoringPage( {
+		filter: 'block-templates',
+	} );
 
-	// TODO: Currently only fetches 20 auto loading themes. Fetch all themes.
-	const classicThemes = state?.themes?.queries?.wpcom?.getItems( {
+	const classicThemes = state?.themes?.queries?.wpcom?.getItemsIgnoringPage( {
 		filter: 'auto-loading-homepage',
 	} );
+
 	if ( blockThemes && isUsingSiteEditor ) {
 		recommendedThemes = [ ...recommendedThemes, ...blockThemes ];
 	}
