@@ -14,13 +14,14 @@ import MasterbarItem from './item';
 
 import './masterbar-cart-style.scss';
 
-type MasterbarCartProps = { tooltip: string; children: React.ReactNode };
+type MasterbarCartProps = { children?: React.ReactNode };
 
-function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element | null {
+function MasterbarCart( { children }: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart();
 	const selectedSite = useSelector( getSelectedSite );
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
+	const translate = useTranslate();
 
 	if ( ! selectedSite?.slug || responseCart.products.length < 1 ) {
 		return null;
@@ -35,6 +36,7 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 		} );
 	};
 	const onClose = () => setIsActive( false );
+	const tooltip = translate( 'View my Shopping Cart' );
 
 	return (
 		<div className="masterbar-cart" ref={ masterbarButtonRef }>
