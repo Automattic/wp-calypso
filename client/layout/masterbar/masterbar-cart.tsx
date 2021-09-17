@@ -13,7 +13,10 @@ import './masterbar-cart-style.scss';
 
 type MasterbarCartProps = { children?: React.ReactNode; selectedSiteSlug: string | undefined };
 
-function MasterbarCart( { children, selectedSiteSlug }: MasterbarCartProps ): JSX.Element | null {
+export function MasterbarCart( {
+	children,
+	selectedSiteSlug,
+}: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart();
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
