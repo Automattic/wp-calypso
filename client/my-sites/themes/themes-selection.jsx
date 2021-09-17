@@ -56,6 +56,7 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
+		// TODO: Replace references to singular query with queries
 		const { query, customizedThemesList } = this.props;
 		if ( ! customizedThemesList && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
@@ -63,6 +64,7 @@ class ThemesSelection extends Component {
 	}
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
+		// TODO: Replace references to singular query with queries
 		const { query, filterString } = this.props;
 		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
@@ -145,11 +147,12 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl } = this.props;
+		// TODO: Remove references to singular query
+		const { source, query, queries = [ {} ], upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
+				<QueryThemes query={ query } queries={ queries } siteId={ source } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }
@@ -189,7 +192,17 @@ function bindGetPremiumThemePrice( state, siteId ) {
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{ filter, page, search, vertical, siteId, source, isLoading: isCustomizedThemeListLoading }
+		// TODO: Remove references to singular filter
+		{
+			filter,
+			filters = [],
+			page,
+			search,
+			vertical,
+			siteId,
+			source,
+			isLoading: isCustomizedThemeListLoading,
+		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
@@ -211,8 +224,24 @@ export const ConnectedThemesSelection = connect(
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
+
+		let queries;
+
+		if ( ! filters.length ) {
+			queries = [ {} ];
+		} else {
+			queries = filters.map( ( filter ) => ( {
+				search,
+				page,
+				tier: '',
+				filter: compact( [ filter, vertical ] ).join( ',' ),
+				number,
+			} ) );
+		}
+
 		return {
 			query,
+			queries,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],

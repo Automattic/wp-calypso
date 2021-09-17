@@ -10,25 +10,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ConnectedThemesSelection } from './themes-selection';
 
 class RecommendedThemes extends React.Component {
-	componentDidMount() {
-		if ( ! this.props.customizedThemesList.length ) {
-			this.fetchThemes();
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, scrollToSearchInput, filter } = this.props;
+		const { isLoading, scrollToSearchInput } = this.props;
 		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
 			scrollToSearchInput();
 		}
-		if ( prevProps.filter !== filter ) {
-			this.fetchThemes();
-		}
-	}
-
-	fetchThemes() {
-		this.props.getRecommendedThemes( this.props.filter );
 	}
 
 	render() {
@@ -41,9 +28,12 @@ const ConnectedRecommendedThemes = connect(
 		const siteId = getSelectedSiteId( state );
 		const filter = getRecommendedThemesFilter( state, siteId );
 		return {
-			customizedThemesList: getRecommendedThemesSelector( state, filter ),
+			customizedThemesList: getRecommendedThemesSelector( state, siteId ),
+			// TODO: How do we accommodate isLoading?
 			isLoading: areRecommendedThemesLoading( state, filter ),
+			// TODO: Get rid of filter key
 			filter,
+			filters: filter,
 		};
 	},
 	{ getRecommendedThemes }

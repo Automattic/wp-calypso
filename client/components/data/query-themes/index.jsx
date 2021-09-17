@@ -42,7 +42,9 @@ class QueryThemes extends Component {
 
 	request() {
 		if ( ! this.props.isRequesting && ! this.props.hasThemes ) {
-			this.props.requestThemes( this.props.siteId, this.props.query );
+			this.props.queries.forEach( ( query ) => {
+				this.props.requestThemes( this.props.siteId, query );
+			} );
 		}
 	}
 
@@ -52,9 +54,16 @@ class QueryThemes extends Component {
 }
 
 export default connect(
-	( state, { query, siteId } ) => ( {
-		hasThemes: getThemesForQuery( state, siteId, query ) !== null,
-		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
-	} ),
+	// TODO: Remove references to singular query
+	( state, { query, queries, siteId } ) => {
+		const hasThemes = queries.every(
+			( query ) => getThemesForQuery( state, siteId, query ) !== null
+		);
+
+		return {
+			hasThemes,
+			isRequesting: isRequestingThemesForQuery( state, siteId, query ),
+		};
+	},
 	{ requestThemes }
 )( QueryThemes );

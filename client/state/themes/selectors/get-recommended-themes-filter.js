@@ -12,5 +12,7 @@ import 'calypso/state/themes/init';
  */
 export function getRecommendedThemesFilter( state, siteId ) {
 	const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
-	return isUsingSiteEditor ? 'block-templates' : 'auto-loading-homepage';
+	return isUsingSiteEditor
+		? [ 'block-templates', 'auto-loading-homepage' ]
+		: [ 'auto-loading-homepage' ];
 }
