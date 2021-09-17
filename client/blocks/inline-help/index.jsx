@@ -43,7 +43,9 @@ class InlineHelp extends Component {
 		isPopoverVisible: false,
 	};
 
-	state = {};
+	state = {
+		videoLink: null,
+	};
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
@@ -101,19 +103,13 @@ class InlineHelp extends Component {
 		this.inlineHelpToggle = node;
 	};
 
-	// @TODO: Instead of prop drilling this should be done via redux
-	setDialogState = ( { showDialog, videoLink = null, dialogType } ) =>
-		this.setState( {
-			showDialog,
-			videoLink,
-			dialogType,
-		} );
+	showVideoResult = ( videoLink ) => this.setState( { videoLink } );
 
-	closeDialog = () => this.setState( { showDialog: false } );
+	closeVideoResult = () => this.setState( { videoLink: null } );
 
 	render() {
 		const { translate, isPopoverVisible } = this.props;
-		const { showDialog, videoLink, dialogType } = this.state;
+		const { videoLink } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': isPopoverVisible,
@@ -137,7 +133,7 @@ class InlineHelp extends Component {
 					<InlineHelpPopover
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
-						setDialogState={ this.setDialogState }
+						showVideoResult={ this.showVideoResult }
 					/>
 				) }
 				{ isWithinBreakpoint( '<660px' ) && isPopoverVisible && (
@@ -145,12 +141,8 @@ class InlineHelp extends Component {
 						<div className="inline-help__mobile-overlay"></div>
 					</RootChild>
 				) }
-				{ showDialog && (
-					<InlineHelpDialog
-						dialogType={ dialogType }
-						videoLink={ videoLink }
-						onClose={ this.closeDialog }
-					/>
+				{ videoLink && (
+					<InlineHelpDialog videoLink={ videoLink } onClose={ this.closeVideoResult } />
 				) }
 			</div>
 		);

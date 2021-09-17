@@ -11,7 +11,7 @@ import { RESULT_ARTICLE, RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 class InlineHelpRichResult extends Component {
 	static propTypes = {
-		setDialogState: PropTypes.func.isRequired,
+		showVideoResult: PropTypes.func.isRequired,
 		closePopover: PropTypes.func.isRequired,
 		searchQuery: PropTypes.string,
 		result: PropTypes.object,
@@ -63,11 +63,7 @@ class InlineHelpRichResult extends Component {
 
 		if ( type === RESULT_VIDEO ) {
 			event.preventDefault();
-			this.props.setDialogState( {
-				showDialog: true,
-				dialogType: 'video',
-				videoLink: link,
-			} );
+			this.props.showVideoResult( link );
 			return;
 		}
 
