@@ -71,10 +71,10 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		it( 'See secure payment', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( 'WordPress.com Personal' );
-			// await cartCheckoutPage.validateCartItem( targetDomain );
+			await cartCheckoutPage.validateCartItem( targetDomain );
 		} );
 
-		it( 'Prices are shown with expected currency symbol', async function () {
+		it( 'Prices are shown with expected currency symbol for GBP', async function () {
 			const buttonText = await cartCheckoutPage.getPaymentButtonText();
 			await buttonText.startsWith( '£' );
 		} );
@@ -95,7 +95,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			// eg. USD would commonly have 2 decimal places, e.g. 12.34.
 			// In JPY or TWD there will be no decimal digits.
 			// Drop decimals so that the result won't be affected by the currency variation.
-			expect( Math.floor( newAmount ) ).toStrictEqual( Math.floor( expectedAmount ) );
+			expect( newAmount ).toStrictEqual( expectedAmount );
 		} );
 
 		it( 'Enter billing and payment details', async function () {

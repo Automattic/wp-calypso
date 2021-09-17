@@ -104,7 +104,11 @@ export class CartCheckoutPage {
 	/**
 	 * Returns the total amount of items in cart.
 	 *
-	 * @returns {string} Total value of items in cart.
+	 * Note, this only works with numering systems that use a comma for grouping separator
+	 * and a full stop for decimals. Notably, Continental Europe uses the reverse notation
+	 * and this method will produce an unexpected result.
+	 *
+	 * @returns {number} Total value of items in cart.
 	 */
 	async getCheckoutTotalAmount(): Promise< number > {
 		const elementHandle = await this.page.waitForSelector(
@@ -115,7 +119,7 @@ export class CartCheckoutPage {
 		if ( ! parsedAmount?.length ) {
 			throw new Error( 'Unable to locate or parse cart amount.' );
 		}
-		return parseInt( parsedAmount.pop() as string );
+		return parseFloat( parsedAmount.pop() as string );
 	}
 
 	/**
