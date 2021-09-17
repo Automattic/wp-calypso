@@ -5,19 +5,20 @@ const selectors = {
 
 	// Purchased item actions
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
-	cancelButton: 'a:text("Cancel Subscription and Refund")',
+	cancelAndRefundButton: 'a:text("Cancel Subscription and Refund")',
 	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
 
 	// Cancellation survey
-	whyAnotherReasonRadio: 'input[value="anotherReasonOne"]',
-	whyAnotherReasonInput: 'input[name="anotherReasonOneInput"]',
-	whereNextRadio: 'input[value="anotherReasonTwo"]',
-	whereNextInput: 'input[name="anotherReasonTwoInput"]',
+	whyCancelOptions: 'select[id="inspector-select-control-0"]',
+	whyCancelAnotherReasonInput: 'input[id="inspector-text-control-0"]',
+
+	whereNextOptions: 'select[id="inspector-select-control-1"]',
+	whereNextAnotherReasonInput: 'input[id="inspector-text-control-1"]',
 
 	// Cancellation
-	purchaseCancelledBanner: ':text("You successfully canceled your purchase")',
+	dismissBanner: '.notice__dismiss',
 
-	modalButton: ( text: string ) => `.dialog__action-buttons button:has-text("${ text }")`,
+	button: ( text: string ) => `button:has-text("${ text }")`,
 };
 
 /**
@@ -70,33 +71,27 @@ export class IndividualPurchasePage {
 	async cancelPurchase(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( selectors.cancelButton ),
+			this.page.click( selectors.cancelAndRefundButton ),
 		] );
 
+		await this.page.click( selectors.cancelSubscriptionButton );
+
 		await this.completeSurvey();
+		await this.page.click( selectors.button( 'Cancel plan' ) );
 
-		// After survey leads to another retention attempt.
-		await this.page.click( selectors.modalButton( 'Next Step' ) );
-		// Optional improvement opinions.
-		await this.page.click( selectors.modalButton( 'Next Step' ) );
-		// Final cancellation screen
-		await this.page.click( selectors.modalButton( 'Cancel Now' ) );
-
-		await this.page.waitForSelector( selectors.purchaseCancelledBanner );
+		await this.page.click( selectors.dismissBanner );
 	}
 
 	/**
 	 * Fill out and submit the cancellation survey.
 	 */
-	async completeSurvey(): Promise< void > {
+	private async completeSurvey(): Promise< void > {
 		const reason = 'e2e testing';
 
-		await this.page.click( selectors.cancelSubscriptionButton );
+		await this.page.selectOption( selectors.whyCancelOptions, { value: 'anotherReasonOne' } );
+		await this.page.fill( selectors.whyCancelAnotherReasonInput, reason );
 
-		await this.page.check( selectors.whyAnotherReasonRadio );
-		await this.page.fill( selectors.whyAnotherReasonInput, reason );
-
-		await this.page.check( selectors.whereNextRadio );
-		await this.page.fill( selectors.whereNextInput, reason );
+		await this.page.selectOption( selectors.whereNextOptions, { value: 'anotherReasonTwo' } );
+		await this.page.fill( selectors.whereNextAnotherReasonInput, reason );
 	}
 }

@@ -107,16 +107,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		it( 'Make purchase', async function () {
 			await cartCheckoutPage.purchase();
 		} );
-
-		it( 'Decline Quickstart session', async function () {
-			// No dedicated page object for this screen at this time.
-			await page.click( 'button[data-e2e-button="decline"]' );
-		} );
-
-		it( 'Confirm plan is purchased', async function () {
-			// No dedicated page object for this screen at this time.
-			await page.waitForSelector( 'h2:has-text("WordPress.com Personal plan")' );
-		} );
 	} );
 
 	describe( 'Launch site', function () {
