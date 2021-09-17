@@ -4,26 +4,22 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
 import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import MasterbarItem from './item';
 
 import './masterbar-cart-style.scss';
 
-type MasterbarCartProps = { children?: React.ReactNode };
+type MasterbarCartProps = { children?: React.ReactNode; selectedSiteSlug: string | undefined };
 
-function MasterbarCart( { children }: MasterbarCartProps ): JSX.Element | null {
+function MasterbarCart( { children, selectedSiteSlug }: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart();
-	const selectedSite = useSelector( getSelectedSite );
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
 
-	if ( ! selectedSite?.slug || responseCart.products.length < 1 ) {
+	if ( ! selectedSiteSlug || responseCart.products.length < 1 ) {
 		return null;
 	}
 
@@ -51,7 +47,7 @@ function MasterbarCart( { children }: MasterbarCartProps ): JSX.Element | null {
 					context={ masterbarButtonRef.current }
 					position="bottom left"
 				>
-					<MasterbarCartContents selectedSiteSlug={ selectedSite.slug } />
+					<MasterbarCartContents selectedSiteSlug={ selectedSiteSlug } />
 				</Popover>
 			</CheckoutErrorBoundary>
 		</div>
