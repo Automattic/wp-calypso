@@ -133,6 +133,7 @@ export default function WPCheckoutOrderReview( {
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					responseCart={ responseCart }
 				/>
 			</WPOrderReviewSection>
 
