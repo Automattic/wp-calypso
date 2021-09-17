@@ -394,30 +394,30 @@ class ActivityLogTasklist extends Component {
 							  )
 							: translate( 'You have one update available' )
 					}
-					{ /* { 1 < numberOfUpdates && ( */ }
-					<SplitButton
-						compact
-						primary
-						label={ translate( 'Update all' ) }
-						onClick={ this.updateAll }
-						disabled={ 0 < queued.length }
-					>
-						<PopoverMenuItem
-							onClick={ this.goManagePlugins }
-							className="activity-log-tasklist__menu-item"
-							icon="cog"
+					{ 1 < numberOfUpdates && (
+						<SplitButton
+							compact
+							primary
+							label={ translate( 'Update all' ) }
+							onClick={ this.updateAll }
+							disabled={ 0 < queued.length }
 						>
-							<span>{ translate( 'Manage plugins' ) }</span>
-						</PopoverMenuItem>
-						<PopoverMenuItem
-							onClick={ this.dismiss }
-							className="activity-log-tasklist__menu-item"
-							icon="trash"
-						>
-							<span>{ translate( 'Dismiss all' ) }</span>
-						</PopoverMenuItem>
-					</SplitButton>
-					{ /* ) } */ }
+							<PopoverMenuItem
+								onClick={ this.goManagePlugins }
+								className="activity-log-tasklist__menu-item"
+								icon="cog"
+							>
+								<span>{ translate( 'Manage plugins' ) }</span>
+							</PopoverMenuItem>
+							<PopoverMenuItem
+								onClick={ this.dismiss }
+								className="activity-log-tasklist__menu-item"
+								icon="trash"
+							>
+								<span>{ translate( 'Dismiss all' ) }</span>
+							</PopoverMenuItem>
+						</SplitButton>
+					) }
 				</div>
 				{ showExpandedView && this.showAllItemsToUpdate( itemsToUpdate ) }
 				{ ! showExpandedView &&
