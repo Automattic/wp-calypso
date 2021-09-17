@@ -22,9 +22,17 @@ export function resolveDomainStatus(
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const expiresMessage = translate( 'Expires in %(days)s', {
-					args: { days: moment( domain.expiry ).fromNow( true ) },
-				} );
+				const translationArgs = {
+					args: { expiryDate: moment( domain.expiry ).format( 'LL' ) },
+				};
+
+				const expiresMessage =
+					null !== domain.bundledPlanSubscriptionId
+						? translate(
+								'Domain connection expires with your plan on %(expiryDate)s',
+								translationArgs
+						  )
+						: translate( 'Domain connection expires on %(expiryDate)s', translationArgs );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
@@ -155,9 +163,17 @@ export function resolveDomainStatus(
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const expiresMessage = translate( 'Expires in %(days)s', {
-					args: { days: moment( domain.expiry ).fromNow( true ) },
-				} );
+				const translationArgs = {
+					args: { expiryDate: moment( domain.expiry ).format( 'LL' ) },
+				};
+
+				const expiresMessage =
+					null !== domain.bundledPlanSubscriptionId
+						? translate(
+								'Domain registration expires with your plan on %(expiryDate)s',
+								translationArgs
+						  )
+						: translate( 'Domain registration expires on %(expiryDate)s', translationArgs );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
