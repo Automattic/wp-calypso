@@ -610,6 +610,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/masterbar-cart@workspace:apps/masterbar-cart":
+  version: 0.0.0-use.local
+  resolution: "@automattic/masterbar-cart@workspace:apps/masterbar-cart"
+  dependencies:
+    "@automattic/calypso-build": ^9.0.0
+    autoprefixer: ^10.2.5
+    calypso: ^0.17.0
+    enzyme: ^3.11.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.0.6
+    postcss: ^8.2.6
+    react: ^16.12.0
+    react-dom: ^16.12.0
+    react-query: ^3.9.8
+    webpack: ^5.46.0
+    webpack-bundle-analyzer: ^4.4.2
+    webpack-dev-server: ^3.11.2
+    wpcom: ^6.0.0
+    wpcom-proxy-request: ^6.0.0
+    wpcom-xhr-request: ^1.2.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/material-design-icons@^1.0.0, @automattic/material-design-icons@workspace:packages/material-design-icons":
   version: 0.0.0-use.local
   resolution: "@automattic/material-design-icons@workspace:packages/material-design-icons"
@@ -29732,6 +29755,20 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^16.12.0":
+  version: 16.14.0
+  resolution: "react-dom@npm:16.14.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+    scheduler: ^0.19.1
+  peerDependencies:
+    react: ^16.14.0
+  checksum: ca146e780631672a2d57c8d77775d38f394a6cd67db30c6af7964d0b3574ef7edccb1de8d592e990b98f4f5f8d1c8460b0691f04e7a45799962a51dcbaaa1371
+  languageName: node
+  linkType: hard
+
 "react-draggable@npm:^4.4.3":
   version: 4.4.4
   resolution: "react-draggable@npm:4.4.4"
@@ -30286,6 +30323,17 @@ fsevents@~2.1.2:
     object-assign: ^4.1.1
     prop-types: ^15.6.2
   checksum: 4d6ad44cd5c12511218ad179df94919b5c1c328d078160a9f39ae7d31738c427a9b6bbcf9fb4745f4c4f534ddab8529acc24e7cd9dce086c76e3478422256fb3
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.12.0":
+  version: 16.14.0
+  resolution: "react@npm:16.14.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+    prop-types: ^15.6.2
+  checksum: df8faae43e01387013900e8f8fb3c4ce9935b7edbcbaa77e12999c913eb958000a0a8750bf9a0886dae0ad768dd4a4ee983752d5bade8d840adbe0ce890a2438
   languageName: node
   linkType: hard
 
