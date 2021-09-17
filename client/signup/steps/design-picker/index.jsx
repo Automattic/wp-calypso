@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import DesignPicker from '@automattic/design-picker';
+import DesignPicker, { isBlankCanvasDesign } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -197,25 +197,28 @@ class DesignPickerStep extends Component {
 	}
 
 	render() {
-		const { isReskinned } = this.props;
+		const { isReskinned, translate } = this.props;
 		const { selectedDesign } = this.state;
 		const headerText = this.headerText();
 		const subHeaderText = this.subHeaderText();
 
 		if ( selectedDesign ) {
+			const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
+			const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+
 			return (
 				<StepWrapper
 					{ ...this.props }
-					fallbackHeaderText={ selectedDesign.title }
-					headerText={ selectedDesign.title }
+					fallbackHeaderText={ designTitle }
+					headerText={ designTitle }
 					fallbackSubHeaderText={ '' }
 					subHeaderText={ '' }
 					stepContent={ this.renderDesignPreview() }
 					align={ 'center' }
 					hideSkip
 					hideNext={ false }
-					nextLabelText={ this.props.translate( 'Start with %(designTitle)s', {
-						args: { designTitle: selectedDesign.title },
+					nextLabelText={ translate( 'Start with %(designTitle)s', {
+						args: { designTitle },
 					} ) }
 					goToNextStep={ this.submitDesign }
 				/>
