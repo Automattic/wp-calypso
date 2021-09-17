@@ -102,7 +102,7 @@ export const sslStatuses = {
 	SSL_ACTIVE: 'active',
 };
 
-export const domainTitleContext = {
+export const domainInfoContext = {
 	DOMAIN_ITEM: 'DOMAIN_ITEM',
 	PAGE_TITLE: 'PAGE_TITLE',
 };

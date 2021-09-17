@@ -7,7 +7,7 @@ import { getSelectedDomain, getDomainTypeText } from 'calypso/lib/domains';
 import {
 	registrar as registrarNames,
 	type as domainTypes,
-	domainTitleContext,
+	domainInfoContext,
 } from 'calypso/lib/domains/constants';
 import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
@@ -52,7 +52,7 @@ class Edit extends React.Component {
 		if ( this.props.hasDomainOnlySite ) {
 			return this.props.translate( 'Parked Domain' );
 		}
-		return getDomainTypeText( domain, this.props.translate, domainTitleContext.PAGE_TITLE );
+		return getDomainTypeText( domain, this.props.translate, domainInfoContext.PAGE_TITLE );
 	}
 
 	getDetailsForType = ( type ) => {
