@@ -107,12 +107,12 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}, [ hasSiteTitle ] );
 
 	const canUseStyleStep = React.useCallback( (): boolean => {
-		return hasSelectedDesign && ! isEnrollingInFse;
-	}, [ hasSelectedDesign, isEnrollingInFse ] );
+		return hasSelectedDesign;
+	}, [ hasSelectedDesign ] );
 
 	const shouldSkipStyleStep = React.useCallback( (): boolean => {
-		return hasSelectedDesignWithoutFonts;
-	}, [ hasSelectedDesignWithoutFonts ] );
+		return hasSelectedDesignWithoutFonts || isEnrollingInFse;
+	}, [ hasSelectedDesignWithoutFonts, isEnrollingInFse ] );
 
 	const canUseFeatureStep = React.useCallback( (): boolean => {
 		return hasSelectedDesign;

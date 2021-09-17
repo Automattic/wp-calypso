@@ -8,12 +8,13 @@ import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
 	const locale = useLocale();
-	const { hasSiteTitle, hasSelectedDesignWithoutFonts } = useSelect(
+	const { hasSiteTitle, hasSelectedDesignWithoutFonts, isEnrollingInFse } = useSelect(
 		( select ) => {
 			const onboardSelect = select( ONBOARD_STORE );
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
+				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta(),
 			};
 		},
 		[ ONBOARD_STORE ]
@@ -48,8 +49,15 @@ export default function useSteps(): Array< StepType > {
 		];
 	}
 
-	// Remove the Style (fonts) step from the Site Editor flow.
-	if ( isEnabled( 'gutenboarding/site-editor' ) || hasSelectedDesignWithoutFonts ) {
+	// Remove the Style (fonts) step in the following cases:
+	// - Site Editor flow (feature flag)
+	// - the user has selected a design without fonts
+	// - the user is enrolled in Beta FSE
+	if (
+		isEnabled( 'gutenboarding/site-editor' ) ||
+		hasSelectedDesignWithoutFonts ||
+		isEnrollingInFse
+	) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 
