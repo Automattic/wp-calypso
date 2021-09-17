@@ -163,8 +163,8 @@ export function resolveDomainStatus(
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const expiresMessage = translate( 'Domain registration expires on %(expiryDate)s', {
-					args: { expiryDate: moment( domain.expiry ).format( 'LL' ) },
+				const expiresMessage = translate( 'Expires in %(days)s', {
+					args: { days: moment( domain.expiry ).fromNow( true ) },
 				} );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
