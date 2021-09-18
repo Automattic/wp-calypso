@@ -46,6 +46,7 @@ export function WPOrderReviewLineItems( {
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
+	isPwpoUser,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -55,6 +56,7 @@ export function WPOrderReviewLineItems( {
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
+	isPwpoUser: boolean;
 } ): JSX.Element {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -74,6 +76,7 @@ export function WPOrderReviewLineItems( {
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
+							isPwpoUser={ isPwpoUser }
 						/>
 					</WPOrderReviewListItem>
 				);
@@ -86,11 +89,17 @@ export function WPOrderReviewLineItems( {
 						hasDeleteButton={ ! isSummary }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						isPwpoUser={ isPwpoUser }
 					/>
 				</WPOrderReviewListItem>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem subtotal lineItem={ creditsLineItem } isSummary={ isSummary } />
+				<NonProductLineItem
+					subtotal
+					lineItem={ creditsLineItem }
+					isSummary={ isSummary }
+					isPwpoUser={ isPwpoUser }
+				/>
 			) }
 		</WPOrderReviewList>
 	);
