@@ -19,16 +19,13 @@ import {
 	useEvents,
 	Button,
 } from '@automattic/composite-checkout';
-import {
-	isWpComProductRenewal,
-	getSublabel,
-	getLabel,
-	getIntroductoryOfferIntervalDisplay,
-	joinClasses,
-} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { getSublabel, getLabel } from './checkout-labels';
+import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
+import { isWpComProductRenewal } from './is-wpcom-product-renewal';
+import { joinClasses } from './join-classes';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
