@@ -5,7 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
+import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -16,7 +16,6 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
-import joinClasses from './join-classes';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { OnChangeItemVariant } from './item-variation-picker';

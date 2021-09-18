@@ -3,12 +3,12 @@ import {
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
 	isWpComProductRenewal,
+	joinClasses,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { ItemVariationPicker } from './item-variation-picker';
-import joinClasses from './join-classes';
 import { NonProductLineItem, LineItem } from './wp-line-item';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
