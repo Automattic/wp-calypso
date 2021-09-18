@@ -11,7 +11,6 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	getPriceTierForUnits,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -32,7 +31,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getProductPriceTierList } from 'calypso/state/products-list/selectors';
 import { useGetProductVariants } from '../hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
@@ -459,14 +457,10 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ): JSX
 
 function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
 	const translate = useTranslate();
-	const priceTierList = useSelector( ( state ) =>
-		getProductPriceTierList( state, product.product_slug )
-	);
 
 	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tier = getPriceTierForUnits( priceTierList, product.current_quantity );
-		const tierMaximum = tier?.maximum_units;
-		const tierMinimum = tier?.minimum_units;
+		const tierMaximum = product.tier_maximum_units;
+		const tierMinimum = product.tier_minimum_units;
 		if ( tierMaximum ) {
 			return (
 				<LineItemMeta>
@@ -474,7 +468,7 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 				</LineItemMeta>
 			);
 		}
-		if ( tier && ! tierMaximum ) {
+		if ( tierMinimum ) {
 			return (
 				<LineItemMeta>
 					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
