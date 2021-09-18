@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { startsWith } from 'lodash';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
@@ -31,7 +32,7 @@ export default function getSupportVariation( state ) {
 		return SUPPORT_TICKET;
 	}
 
-	if ( getCurrentUserLocale( state ) === 'en' && isDirectlyReady( state ) ) {
+	if ( startsWith( getCurrentUserLocale( state ), 'en' ) && isDirectlyReady( state ) ) {
 		return SUPPORT_DIRECTLY;
 	}
 
