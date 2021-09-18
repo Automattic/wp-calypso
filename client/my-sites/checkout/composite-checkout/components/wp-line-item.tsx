@@ -28,9 +28,6 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useGetProductVariants } from '../hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
@@ -162,6 +159,7 @@ function WPNonProductLineItem( {
 	hasDeleteButton,
 	removeProductFromCart,
 	createUserAndSiteBeforeTransaction,
+	isPwpoUser,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
@@ -169,6 +167,7 @@ function WPNonProductLineItem( {
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
+	isPwpoUser?: boolean;
 } ): JSX.Element {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -178,10 +177,6 @@ function WPNonProductLineItem( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const translate = useTranslate();
-	const isPwpoUser = useSelector(
-		( state ) =>
-			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-	);
 	const modalCopy = returnModalCopy(
 		lineItem.type,
 		translate,
@@ -692,6 +687,7 @@ function WPLineItem( {
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
+	isPwpoUser,
 }: {
 	product: ResponseCartProduct;
 	allowVariants?: boolean;
@@ -703,6 +699,7 @@ function WPLineItem( {
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
+	isPwpoUser?: boolean;
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -712,10 +709,6 @@ function WPLineItem( {
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const isPwpoUser = useSelector(
-		( state ) =>
-			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-	);
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
