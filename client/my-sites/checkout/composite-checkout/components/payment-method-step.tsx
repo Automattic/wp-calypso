@@ -4,12 +4,12 @@ import {
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
+	NonProductLineItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import * as React from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import { NonProductLineItem } from './wp-line-item';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
