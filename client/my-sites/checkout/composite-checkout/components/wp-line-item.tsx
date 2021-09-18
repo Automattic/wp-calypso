@@ -28,7 +28,6 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useGetProductVariants } from '../hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -678,7 +677,6 @@ function GSuiteDiscountCallout( {
 
 function WPLineItem( {
 	product,
-	allowVariants,
 	siteId,
 	className,
 	hasDeleteButton,
@@ -690,7 +688,6 @@ function WPLineItem( {
 	isPwpoUser,
 }: {
 	product: ResponseCartProduct;
-	allowVariants?: boolean;
 	siteId?: number | undefined;
 	className?: string;
 	hasDeleteButton?: boolean;
@@ -723,8 +720,7 @@ function WPLineItem( {
 
 	const productSlug = product?.product_slug;
 
-	const shouldShowVariantSelector = allowVariants && product && ! isRenewal;
-	const variants = useGetProductVariants( siteId, productSlug );
+	const shouldShowVariantSelector = onChangePlanLength && product && ! isRenewal;
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -824,12 +820,13 @@ function WPLineItem( {
 			{ isGSuite && <GSuiteUsersList product={ product } /> }
 			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 
-			{ shouldShowVariantSelector && onChangePlanLength && (
+			{ shouldShowVariantSelector && (
 				<ItemVariationPicker
-					variants={ variants }
 					selectedItem={ product }
 					onChangeItemVariant={ onChangePlanLength }
 					isDisabled={ isDisabled }
+					siteId={ siteId }
+					productSlug={ productSlug }
 				/>
 			) }
 		</div>
