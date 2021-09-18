@@ -9,10 +9,44 @@
 
 namespace A8C\FSE;
 
+use Automattic\Jetpack\Connection\Client;
+
 /**
  * This is the option name for enabling/disabling.
  */
 define( 'ACTIVATE_FSE_OPTION_NAME', 'wpcom_is_fse_activated' );
+
+/**
+ * Checks if site is eligible for Core FSE
+ *
+ * As of 2021, this is only sites for existing users who explicitly
+ * choose to enroll in the WP.com FSE Beta
+ */
+function is_core_fse_eligible() {
+	if ( ! method_exists( 'Automattic\Jetpack\Connection\Client', 'wpcom_json_api_request_as_blog' ) || ! class_exists( 'Jetpack_Options' ) ) {
+		return false;
+	}
+
+	$wpcom_site_id = \Jetpack_Options::get_option( 'id' );
+
+	// For Simple sites, this will check the blog sticker directly, without an API request.
+	// For Atomic/Jetpack sites, we make an API request using the blog token to check for the blog sticker on wpcom.
+	$response = Client::wpcom_json_api_request_as_blog(
+		sprintf( '/sites/%d/gutenberg', $wpcom_site_id ),
+		4,
+		array(),
+		null,
+		'wpcom'
+	);
+
+	if ( is_wp_error( $response ) ) {
+		return false;
+	}
+
+	$result = json_decode( wp_remote_retrieve_body( $response ), true );
+
+	return isset( $result['is_eligible_for_core_fse'] ) && true === $result['is_eligible_for_core_fse'];
+}
 
 /**
  * Checks if Core's FSE is active via this plugin,
