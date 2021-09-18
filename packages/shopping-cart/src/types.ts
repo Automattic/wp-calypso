@@ -283,6 +283,8 @@ export interface ResponseCartProduct {
 	item_original_subtotal_display: string; // without discounts, with volume
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
+	tier_minimum_units?: number | null;
+	tier_maximum_units?: number | null;
 	is_domain_registration: boolean;
 	is_bundled: boolean;
 	is_sale_coupon_applied: boolean;
