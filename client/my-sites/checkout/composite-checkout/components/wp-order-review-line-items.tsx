@@ -1,7 +1,13 @@
-import { getCouponLineItemFromCart, getCreditsLineItemFromCart } from '@automattic/wpcom-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import {
+	getCouponLineItemFromCart,
+	getCreditsLineItemFromCart,
+	isWpComProductRenewal,
+} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
 import { NonProductLineItem, LineItem } from './wp-line-item';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -60,23 +66,35 @@ export function WPOrderReviewLineItems( {
 } ): JSX.Element {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => {
+				const isRenewal = isWpComProductRenewal( product );
+				const shouldShowVariantSelector = onChangePlanLength && ! isRenewal;
 				return (
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							siteId={ siteId }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
-							onChangePlanLength={ onChangePlanLength }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
 							isPwpoUser={ isPwpoUser }
-						/>
+						>
+							{ shouldShowVariantSelector && (
+								<ItemVariationPicker
+									selectedItem={ product }
+									onChangeItemVariant={ onChangePlanLength }
+									isDisabled={ isDisabled }
+									siteId={ siteId }
+									productSlug={ product.product_slug }
+								/>
+							) }
+						</LineItem>
 					</WPOrderReviewListItem>
 				);
 			} ) }
