@@ -28,9 +28,7 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
-import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
@@ -676,23 +674,21 @@ function GSuiteDiscountCallout( {
 }
 
 function WPLineItem( {
+	children,
 	product,
-	siteId,
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
-	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
 }: {
+	children?: React.ReactNode;
 	product: ResponseCartProduct;
-	siteId?: number | undefined;
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	onChangePlanLength?: OnChangeItemVariant;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
@@ -719,8 +715,6 @@ function WPLineItem( {
 	const isRenewal = isWpComProductRenewal( product );
 
 	const productSlug = product?.product_slug;
-
-	const shouldShowVariantSelector = onChangePlanLength && product && ! isRenewal;
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -819,16 +813,7 @@ function WPLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }
 			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
-
-			{ shouldShowVariantSelector && (
-				<ItemVariationPicker
-					selectedItem={ product }
-					onChangeItemVariant={ onChangePlanLength }
-					isDisabled={ isDisabled }
-					siteId={ siteId }
-					productSlug={ productSlug }
-				/>
-			) }
+			{ children }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
