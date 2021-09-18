@@ -74,6 +74,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		page( checkoutUrl );
 	};
 	const isDisabled = isLoading || isPendingUpdate;
+	const isPwpoUser = false; // TODO: deal with this properly
 
 	return (
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
@@ -90,6 +91,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
 					responseCart={ responseCart }
+					isPwpoUser={ isPwpoUser }
 				/>
 				<CheckoutSummaryTotal />
 				<div className="masterbar-cart__content-footer">
