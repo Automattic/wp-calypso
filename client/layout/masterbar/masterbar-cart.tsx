@@ -14,7 +14,7 @@ import './masterbar-cart-style.scss';
 type MasterbarCartProps = { selectedSiteSlug: string | undefined };
 
 export function MasterbarCart( { selectedSiteSlug }: MasterbarCartProps ): JSX.Element | null {
-	const { responseCart, reloadFromServer } = useShoppingCart();
+	const { responseCart, reloadFromServer } = useShoppingCart( selectedSiteSlug );
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
@@ -67,7 +67,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		removeProductFromCart,
 		isLoading,
 		isPendingUpdate,
-	} = useShoppingCart();
+	} = useShoppingCart( selectedSiteSlug );
 	const translate = useTranslate();
 	const goToCheckout = () => {
 		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
