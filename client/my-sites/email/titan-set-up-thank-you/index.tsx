@@ -117,6 +117,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 		<ThankYou
 			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
+			containerClassName={ 'titan-set-up-thank-you__container' }
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }
 			thankYouTitle={ title ?? translate( 'Your email is now ready to use' ) }
