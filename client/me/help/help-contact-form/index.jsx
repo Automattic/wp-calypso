@@ -172,8 +172,8 @@ export class HelpContactForm extends React.PureComponent {
 
 		recordTracksEvent( 'calypso_contact_form_submit', {
 			compact,
-			currentUserLocale,
-			variationSlug,
+			locale: currentUserLocale,
+			support_variation: variationSlug,
 		} );
 	};
 
