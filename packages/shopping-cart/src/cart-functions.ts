@@ -122,15 +122,30 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	cart: TempResponseCart,
 	location: CartLocation
 ): boolean {
-	const { countryCode, postalCode, subdivisionCode } = location;
-	const isMissing = ( value: null | undefined | string ) => value === null || value === undefined;
-	if ( ! isMissing( countryCode ) && cart.tax.location.country_code !== countryCode ) {
+	const {
+		countryCode: newCountryCode = '',
+		postalCode: newPostalCode = '',
+		subdivisionCode: newSubdivisionCode = '',
+	} = location;
+	const {
+		country_code: oldCountryCode = '',
+		postal_code: oldPostalCode = '',
+		subdivision_code: oldSubdivisionCode = '',
+	} = cart.tax?.location;
+	if (
+		location.countryCode === undefined &&
+		location.postalCode === undefined &&
+		location.subdivisionCode === undefined
+	) {
+		return false;
+	}
+	if ( newCountryCode !== oldCountryCode ) {
 		return true;
 	}
-	if ( ! isMissing( postalCode ) && cart.tax.location.postal_code !== postalCode ) {
+	if ( newPostalCode !== oldPostalCode ) {
 		return true;
 	}
-	if ( ! isMissing( subdivisionCode ) && cart.tax.location.subdivision_code !== subdivisionCode ) {
+	if ( newSubdivisionCode !== oldSubdivisionCode ) {
 		return true;
 	}
 	return false;
