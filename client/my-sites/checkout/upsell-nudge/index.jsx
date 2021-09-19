@@ -347,7 +347,6 @@ export class UpsellNudge extends React.Component {
 			this.props.shoppingCartManager.updateLocation( {
 				countryCode,
 				postalCode,
-				subdivisionCode: null,
 			} );
 			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
 			return;
