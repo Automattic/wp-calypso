@@ -132,20 +132,14 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		postal_code: oldPostalCode = '',
 		subdivision_code: oldSubdivisionCode = '',
 	} = cart.tax?.location;
-	if (
-		location.countryCode === undefined &&
-		location.postalCode === undefined &&
-		location.subdivisionCode === undefined
-	) {
-		return false;
-	}
-	if ( newCountryCode !== oldCountryCode ) {
+
+	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
 		return true;
 	}
-	if ( newPostalCode !== oldPostalCode ) {
+	if ( location.postalCode !== undefined && newPostalCode !== oldPostalCode ) {
 		return true;
 	}
-	if ( newSubdivisionCode !== oldSubdivisionCode ) {
+	if ( location.subdivisionCode !== undefined && newSubdivisionCode !== oldSubdivisionCode ) {
 		return true;
 	}
 	return false;
