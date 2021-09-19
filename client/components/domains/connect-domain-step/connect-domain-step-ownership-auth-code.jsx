@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { __ as translate } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -22,6 +23,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 	progressStepList,
 	recordMappingButtonClickInUseYourDomain,
 	selectedSite,
+	buttonMessage,
 } ) => {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
@@ -105,7 +107,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 				onClick={ checkAuthCode }
 				primary
 			>
-				{ __( 'Check my authorization code' ) }
+				{ buttonMessage }
 			</Button>
 		</div>
 	);
@@ -130,6 +132,10 @@ export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) 
 	recordMappingButtonClickInUseYourDomain,
 } )( ConnectDomainStepOwnershipAuthCode );
 
+ConnectDomainStepOwnershipAuthCode.defaultProps = {
+	buttonMessage: translate( 'Check my authorization code' ),
+};
+
 ConnectDomainStepOwnershipAuthCode.propTypes = {
 	className: PropTypes.string.isRequired,
 	defaultConnectHandler: PropTypes.func,
@@ -140,4 +146,5 @@ ConnectDomainStepOwnershipAuthCode.propTypes = {
 	progressStepList: PropTypes.object.isRequired,
 	recordMappingButtonClickInUseYourDomain: PropTypes.func.isRequired,
 	selectedSite: PropTypes.object,
+	buttonMessage: PropTypes.string,
 };
