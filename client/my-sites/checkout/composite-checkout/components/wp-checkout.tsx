@@ -220,9 +220,9 @@ export default function WPCheckout( {
 			} );
 		} else {
 			updateLocation( {
-				countryCode: contactInfo.countryCode?.value ?? '',
-				postalCode: contactInfo.postalCode?.value ?? '',
-				subdivisionCode: contactInfo.state?.value ?? '',
+				countryCode: contactInfo.countryCode?.value || undefined,
+				postalCode: contactInfo.postalCode?.value || undefined,
+				subdivisionCode: contactInfo.state?.value || undefined,
 			} );
 		}
 	}, [ activePaymentMethod, updateLocation, contactInfo ] );
