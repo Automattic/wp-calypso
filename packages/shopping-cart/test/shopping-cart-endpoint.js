@@ -240,6 +240,13 @@ describe( 'doesCartLocationDifferFromResponseCartLocation', function () {
 		);
 		expect( result ).toBe( false );
 	} );
+	it( 'returns false if all are the same, subdivisionCode is missing, and remote subdivisionCode is not missing', function () {
+		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
+			countryCode: 'US',
+			postalCode: '90210',
+		} );
+		expect( result ).toBe( false );
+	} );
 	it( 'returns false if no new location codes are provided and a remote location exists', function () {
 		const result = doesCartLocationDifferFromResponseCartLocation( cartWithLocation, {
 			countryCode: undefined,
