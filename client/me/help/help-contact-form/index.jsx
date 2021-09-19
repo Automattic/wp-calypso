@@ -93,6 +93,7 @@ export class HelpContactForm extends React.PureComponent {
 			value: PropTypes.any,
 			requestChange: PropTypes.func.isRequired,
 		} ),
+		variationSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -164,6 +165,16 @@ export class HelpContactForm extends React.PureComponent {
 		if ( tracksEvent ) {
 			recordTracksEvent( tracksEvent, { selected_option: selectedOption } );
 		}
+	};
+
+	trackSubmit = () => {
+		const { compact, currentUserLocale, variationSlug } = this.props;
+
+		recordTracksEvent( 'calypso_contact_form_submit', {
+			compact,
+			currentUserLocale,
+			variationSlug,
+		} );
 	};
 
 	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
@@ -394,6 +405,8 @@ export class HelpContactForm extends React.PureComponent {
 
 		const analyseSiteData = this.analyseSiteData();
 
+		this.trackSubmit();
+
 		this.props.onSubmit( {
 			howCanWeHelp,
 			howYouFeel,
@@ -429,6 +442,8 @@ export class HelpContactForm extends React.PureComponent {
 		this.props.recordTracksEventAction( 'calypso_happychat_a_b_native_ticket_selected', {
 			locale: currentUserLocale,
 		} );
+
+		this.trackSubmit();
 
 		this.props.additionalSupportOption.onSubmit( {
 			howCanWeHelp,
