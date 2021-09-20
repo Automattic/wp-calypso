@@ -13,9 +13,9 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 
 const commonHandlers = [ siteSelection, navigation ];
 
-const emailInboxAddHeader = ( context, next ) => {
+const emailInboxSiteSelectionHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
-		return translate( 'Select a site to open {{strong}}Inbox{{/strong}}', {
+		return translate( 'Select a site to open {{strong}}My Inbox{{/strong}}', {
 			components: {
 				strong: <strong />,
 			},
@@ -31,7 +31,7 @@ export default function () {
 	page(
 		paths.emailManagementInbox(),
 		siteSelection,
-		emailInboxAddHeader,
+		emailInboxSiteSelectionHeader,
 		sites,
 		makeLayout,
 		clientRender
