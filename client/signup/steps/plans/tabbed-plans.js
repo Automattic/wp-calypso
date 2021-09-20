@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 import './tabbed-plans-style.scss';
@@ -63,10 +64,11 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
 	const [ termLength, setTermLength ] = useState( 'yearly' );
 	const [ showFeatures, setShowFeatures ] = useState( false );
-	const reduxDispatch = useDispatch();
+	const dispatch = useDispatch();
 
-	const toggleTab = () =>
+	const toggleTab = () => {
 		selectedTab === tabList[ 0 ] ? setSelectedTab( tabList[ 1 ] ) : setSelectedTab( tabList[ 0 ] );
+	};
 
 	const toggleTerm = () =>
 		termLength === 'yearly' ? setTermLength( 'monthly' ) : setTermLength( 'yearly' );
@@ -74,6 +76,13 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	const handleUpgradeButtonClick = ( productSlug, productId ) => {
 		const args =
 			productSlug === 'free_plan' ? null : { product_slug: productSlug, product_id: productId };
+
+		dispatch(
+			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
+				plan: productSlug,
+			} )
+		);
+
 		onUpgradeClick( args );
 	};
 
@@ -101,12 +110,26 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	}, [ selectedTab, planProperties, termLength ] );
 
 	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
+				tab: selectedTab,
+			} )
+		);
+
 		window.addEventListener( 'keydown', tabHandler );
 
 		return () => {
 			window.removeEventListener( 'keydown', tabHandler );
 		};
 	}, [ selectedTab ] );
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
+				term: termLength,
+			} )
+		);
+	}, [ termLength ] );
 
 	return (
 		<>
