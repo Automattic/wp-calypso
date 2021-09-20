@@ -1,16 +1,15 @@
 import config from 'config';
 import { devices } from 'playwright';
-import { LaunchOptions } from './browser-manager';
 import { getVideoDir } from './media-helper';
 import type { TargetDevice } from './types';
-import type { BrowserContextOptions, ViewportSize, Logger } from 'playwright';
+import type { BrowserContextOptions, ViewportSize } from 'playwright';
 
 export type LocaleCode = `${ string }${ string }`;
 
 /**
  * Returns the target screen size for tests to run against.
  *
- * If the environment variable BROWSERSIZE is set, this will override all configuration
+ * If the environment variable TARGET_DEVICE is set, this will override all configuration
  * values. Otherwise, the default path contained in the configuration file is returned.
  *
  * @returns {TargetDevice} Target screen size.
@@ -24,7 +23,7 @@ export function getTargetDeviceName(): TargetDevice {
 /**
  * Returns the locale under test.
  *
- * If the environment variable BROWSERLOCALE is set, this will override all configuration
+ * If the environment variable LOCALE is set, this will override all configuration
  * values. Otherwise, the default path contained in the configuration file is returned.
  *
  * @returns {LocaleCode} Target locale code.
@@ -50,20 +49,27 @@ export function getDevice( name: TargetDevice ): BrowserContextOptions {
 }
 
 /**
- * Builds the launch configuration that match the target device.
+ * Returns whether the test should be run headlessly.
+ *
+ * This method will return true if either the environment variable is set, or the
+ * configuration file contains a top-level entry of `headless`.
+ *
+ * @returns {boolean} Whether the test should be run headlessly.
+ */
+export function getHeadless(): boolean {
+	return process.env.HEADLESS === 'true' || config.has( 'headless' );
+}
+
+/**
+ * Builds a basic launch configuration that match the target device specified by environment variables.
  *
  * Generated launch configuration will be based on Playwright's pre-defined set of devices,
  * however with certain customizations.
  *
  * @param {string} chromeVersion Chrome version to be used as part of user agent string.
- * @param options Options to pass to `browser.newContext()`.
- * @param {Logger} options.logger Logger sink for Playwright logging.
  * @returns {BrowserContextOptions} Customized launch configuration for the target.
  */
-export function getLaunchConfiguration(
-	chromeVersion: string,
-	{ logger }: LaunchOptions
-): BrowserContextOptions {
+export function getLaunchConfiguration( chromeVersion: string ): BrowserContextOptions {
 	const videoDir = getVideoDir();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 
@@ -76,11 +82,6 @@ export function getLaunchConfiguration(
 	config.userAgent = userAgent;
 	// Explicitly resize captured video resolution to the viewport size.
 	config.recordVideo = { dir: videoDir, size: config.viewport as ViewportSize };
-	// Custom logger sink.
-	config.logger = {
-		isEnabled: ( name ) => name === 'api',
-		log: logger,
-	};
 	return config;
 }
 
