@@ -6,6 +6,11 @@ import { getStatsPathForTab } from 'calypso/lib/route';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+/* Deprecated:
+NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET
+Remove event and usage on or after 2022-01-01
+https://github.com/Automattic/wp-calypso/pull/56415
+*/
 import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET } from 'calypso/state/desktop/window-events';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -44,6 +49,11 @@ const DesktopListeners = {
 		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
 		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
 
+		/* Deprecated:
+		NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET
+		Remove event and usage on or after 2022-01-01
+		See: https://github.com/Automattic/wp-calypso/pull/56415
+		*/
 		window.addEventListener(
 			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET,
 			this.resetUnseenNotifications.bind( this )
@@ -70,6 +80,11 @@ const DesktopListeners = {
 		this.selectedSite = site;
 	},
 
+	/* Deprecated:
+	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET
+	Remove event and usage on or after 2022-01-01
+	See: https://github.com/Automattic/wp-calypso/pull/56415
+	*/
 	// window event
 	resetUnseenNotifications: function () {
 		debug( 'Reseting unseen notification count' );
