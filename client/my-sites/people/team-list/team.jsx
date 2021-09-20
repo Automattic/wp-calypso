@@ -70,6 +70,8 @@ class Team extends React.Component {
 				},
 				count: numMembers,
 				context: 'A navigation label.',
+				comment:
+					'%(guests)s is a separate translated string that expands to %(numberGuests)d guest',
 			}
 		);
 	};
