@@ -11,9 +11,8 @@ import { Icon } from '@wordpress/icons';
 /**
  * Internal Dependencies
  */
-import useFocusHandler from './hooks/use-focus-handler';
-import useKeydownHandler from './hooks/use-keydown-handler';
 import maximize from './icons/maximize';
+import KeyboardNavigation from './keyboard-navigation';
 import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
 
@@ -61,23 +60,6 @@ function LaunchWpcomWelcomeTour() {
 	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
 
-function KeyboardNavigation( {
-	onMinimize,
-	onNextCardProgression,
-	onPreviousCardProgression,
-	focusRef,
-	isMinimized,
-} ) {
-	function KeydownHandler() {
-		useKeydownHandler( onMinimize, onNextCardProgression, onPreviousCardProgression );
-		return null;
-	}
-
-	const isTourFocused = useFocusHandler( focusRef );
-
-	return isTourFocused && ! isMinimized ? <KeydownHandler /> : null;
-}
-
 function WelcomeTourFrame() {
 	const ref = useRef( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
@@ -90,12 +72,14 @@ function WelcomeTourFrame() {
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 
 	const handleDismiss = ( source ) => {
-		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
-			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
-			action: source,
-		} );
-		setShowWelcomeGuide( false, { openedManually: false } );
+		return () => {
+			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
+				is_gutenboarding: isGutenboarding,
+				slide_number: currentCardIndex + 1,
+				action: source,
+			} );
+			setShowWelcomeGuide( false, { openedManually: false } );
+		};
 	};
 
 	const handleNextCardProgression = () => {
@@ -132,6 +116,7 @@ function WelcomeTourFrame() {
 		<>
 			<KeyboardNavigation
 				onMinimize={ handleMinimize }
+				onDismiss={ handleDismiss }
 				onNextCardProgression={ handleNextCardProgression }
 				onPreviousCardProgression={ handlePreviousCardProgression }
 				focusRef={ ref }
