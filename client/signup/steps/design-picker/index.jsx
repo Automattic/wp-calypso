@@ -1,4 +1,4 @@
-import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
+import DesignPicker from '@automattic/design-picker';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,6 +7,11 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getRecommendedThemes } from 'calypso/state/themes/actions';
+import {
+	getRecommendedThemes as getRecommendedThemesSelector,
+	areRecommendedThemesLoading,
+} from 'calypso/state/themes/selectors';
 import './style.scss';
 
 class DesignPickerStep extends Component {
@@ -25,6 +30,16 @@ class DesignPickerStep extends Component {
 		largeThumbnails: false,
 		showOnlyThemes: false,
 	};
+
+	componentDidMount() {
+		if ( this.props.showOnlyThemes ) {
+			this.fetchThemes();
+		}
+	}
+
+	fetchThemes() {
+		this.props.getRecommendedThemes( 'auto-loading-homepage' );
+	}
 
 	pickDesign = ( selectedDesign ) => {
 		recordTracksEvent( 'calypso_signup_select_design', {
@@ -49,12 +64,23 @@ class DesignPickerStep extends Component {
 		let designs = undefined;
 
 		if ( this.props.showOnlyThemes ) {
-			// Only offering designs that are also available as themes. This means excluding
-			// designs where the `template` has a layout that's different from what the theme's
-			// default Headstart annotation provides.
-			designs = getAvailableDesigns().featured.filter(
-				( { features, template, theme } ) => theme === template && ! features.includes( 'anchorfm' )
-			);
+			// TODO fetching and filtering code should be pulled to a shared place that's usable by both
+			// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
+			// component itself. The `/new` environment needs helpers for making authenticated requests to
+			// the theme API before we can do this.
+			// taxonomies.theme_subject probably maps to category
+			designs = this.props.customizedThemesList.map( ( { id, name, screenshot } ) => {
+				return {
+					categories: [],
+					features: [],
+					image: screenshot,
+					is_premium: false,
+					slug: id,
+					template: id,
+					theme: id,
+					title: name,
+				};
+			} );
 		}
 
 		return (
@@ -101,4 +127,12 @@ class DesignPickerStep extends Component {
 	}
 }
 
-export default connect( null, { submitSignupStep } )( localize( DesignPickerStep ) );
+export default connect(
+	( state ) => {
+		return {
+			customizedThemesList: getRecommendedThemesSelector( state, 'auto-loading-homepage' ),
+			isLoading: areRecommendedThemesLoading( state, 'auto-loading-homepage' ),
+		};
+	},
+	{ getRecommendedThemes, submitSignupStep }
+)( localize( DesignPickerStep ) );
