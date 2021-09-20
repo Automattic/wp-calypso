@@ -6,21 +6,23 @@ const selectors = {
 	// Gallery view
 	gallery: '.media-library__content',
 	items: '.media-library__list-item',
+	selectedItems: '.is-selected',
 	placeholder: '.is-placeholder',
+	uploadSpinner: '.media-library__list-item-spinner',
 	notReadyOverlay: `.is-transient`,
 	editButton: 'button[data-e2e-button="edit"]',
 	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
-	// Modal view
-	mediaModal: '.editor-media-modal__content',
-	mediaModalEditButton:
+	// Edit File modal
+	editFileModal: '.editor-media-modal__content',
+	editImageButton:
 		'.editor-media-modal-detail__edition-bar .editor-media-modal-detail__edit:visible',
-	mediaModalPreview: '.editor-media-modal-detail__preview',
 
-	// Editor view
+	// Iamge Editor
 	imageEditorCanvas: '.image-editor__canvas-container',
-	imageEditorToolbarButton: '.image-editor__toolbar-button',
+	imageEditorToolbarButton: ( text: string ) =>
+		`.image-editor__toolbar-button span:text("${ text }")`,
 	imageEditorResetButton: 'button[data-e2e-button="reset"]',
 	imageEditorCancelButton: 'button[data-e2e-button="cancel"]',
 };
@@ -90,16 +92,32 @@ export class MediaPage {
 	}
 
 	/**
-	 * Given that a gallery item is selected, enter the edit screen.
+	 * Launches the edit item modal where file attributes can be modified.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * This method expects at least one gallery element supporting editing
+	 * to be selected. If no images are selected, this method will throw.
+	 *
+	 * @throws {Error} If no gallery items are selected.
 	 */
-	async editImage(): Promise< void > {
+	async editItem(): Promise< void > {
 		await this.waitUntilLoaded();
 
+		const itemsSelected = await this.page.isVisible( selectors.selectedItems );
+		if ( ! itemsSelected ) {
+			throw new Error( 'Unable to edit files: no item(s) were selected.' );
+		}
+
 		await this.page.click( selectors.editButton );
-		await this.page.click( selectors.mediaModalEditButton );
-		await this.page.waitForSelector( selectors.imageEditorCanvas );
+	}
+
+	/**
+	 * Launches the image editor from within the edit item modal.
+	 *
+	 * This option is only available for files that are classified as 'images' in WPCOM.
+	 */
+	async editImage(): Promise< void > {
+		await this.page.waitForSelector( selectors.editFileModal );
+		await this.page.click( selectors.editImageButton );
 	}
 
 	/**
@@ -109,8 +127,7 @@ export class MediaPage {
 	 */
 	async rotateImage(): Promise< void > {
 		await this.page.waitForSelector( selectors.imageEditorCanvas );
-		const selector = `${ selectors.imageEditorToolbarButton } span:text("Rotate")`;
-		await this.page.click( selector );
+		await this.page.click( selectors.imageEditorToolbarButton( 'Rotate' ) );
 		await waitForElementEnabled( this.page, selectors.imageEditorResetButton );
 	}
 
@@ -121,7 +138,7 @@ export class MediaPage {
 	 */
 	async cancelImageEdit(): Promise< void > {
 		await this.page.click( selectors.imageEditorCancelButton );
-		await this.page.waitForSelector( selectors.mediaModal );
+		await this.page.waitForSelector( selectors.editFileModal );
 	}
 
 	/**
@@ -130,36 +147,60 @@ export class MediaPage {
 	 * @param {string} fullPath Full path to the file on disk.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async upload( fullPath: string ): Promise< ElementHandle > {
+	async upload( fullPath: string ): Promise< void > {
 		await this.waitUntilLoaded();
 
-		const filename = path.basename( fullPath );
-		const itemSelector = `figure[title="${ filename }"]`;
-
-		await this.page.waitForSelector( selectors.fileInput );
-		// Simulate the action of user selecting a file then clicking confirm.
-		await this.page.setInputFiles( selectors.fileInput, fullPath );
-
-		// Wait until the spinner for the file being uploaded is hidden.
-		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
-		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
+		// Set the file input to the full path of file on disk, which will trigger
+		// elements to be attached to the page.
 		await Promise.all( [
-			this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
+			// this.page.waitForSelector( selectors.uploadSpinner, { state: 'detached' } ),
+			// this.page.waitForSelector( selectors.notReadyOverlay, { state: 'detached' } ),
+			// this.page.waitForSelector( 'button[data-e2e-button="delete"][disabled]', {
+			// 	state: 'detached',
+			// } ),
+			this.page.setInputFiles( selectors.fileInput, fullPath ),
+		] );
+
+		await Promise.all( [
+			this.page.waitForSelector( 'button[data-e2e-button="delete"][disabled]', {
 				state: 'hidden',
 			} ),
+			this.page.waitForSelector( selectors.uploadSpinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.notReadyOverlay, { state: 'hidden' } ),
 		] );
 
-		// At this point, if the rejection notice is visible, it means the file was not a supported
-		// file type. Throw the error containing the rejection banner text for handling.
-		if ( await this.page.isVisible( selectors.uploadRejectionNotice ) ) {
+		// For both Simple and Atomic, the rejection banner is shown after the upload progress
+		// elements are removed from page.
+		const rejected = await this.page.isVisible( selectors.uploadRejectionNotice );
+
+		if ( rejected ) {
 			throw new Error(
 				await this.page
 					.waitForSelector( selectors.uploadRejectionNotice )
 					.then( ( element ) => element.innerText() )
 			);
-		} else {
-			return await this.page.waitForSelector( itemSelector );
 		}
+
+		// Wait until the spinner for the file being uploaded is hidden.
+		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
+		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
+		// await Promise.all( [
+		// 	this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
+		// 		state: 'hidden',
+		// 	} ),
+		// 	this.page.waitForSelector( selectors.notReadyOverlay, { state: 'hidden' } ),
+		// ] );
+
+		// // At this point, if the rejection notice is visible, it means the file was not a supported
+		// // file type. Throw the error containing the rejection banner text for handling.
+		// if ( await this.page.isVisible( selectors.uploadRejectionNotice ) ) {
+		// 	throw new Error(
+		// 		await this.page
+		// 			.waitForSelector( selectors.uploadRejectionNotice )
+		// 			.then( ( element ) => element.innerText() )
+		// 	);
+		// } else {
+		// 	return await this.page.waitForSelector( itemSelector );
+		// }
 	}
 }
