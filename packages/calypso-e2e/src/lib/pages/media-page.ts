@@ -10,13 +10,13 @@ const selectors = {
 	uploadSpinner: '.media-library__list-item-spinner',
 	notReadyOverlay: `.is-transient`,
 	editButton: 'button[data-e2e-button="edit"]',
+	deleteButton: 'button[data-e2e-button="delete"]',
 	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
 	// Edit File modal
 	editFileModal: '.editor-media-modal__content',
-	editImageButton:
-		'.editor-media-modal-detail__edition-bar .editor-media-modal-detail__edit:visible',
+	editImageButton: 'button:has-text("Edit Image"):visible',
 
 	// Iamge Editor
 	imageEditorCanvas: '.image-editor__canvas-container',
@@ -153,7 +153,8 @@ export class MediaPage {
 		await this.page.setInputFiles( selectors.fileInput, fullPath );
 
 		await Promise.all( [
-			this.page.waitForSelector( 'button[data-e2e-button="delete"][disabled]', {
+			// Delete file button is disabled during uploads.
+			this.page.waitForSelector( `${ selectors.deleteButton }[disabled]`, {
 				state: 'hidden',
 			} ),
 			this.page.waitForSelector( selectors.uploadSpinner, { state: 'hidden' } ),
