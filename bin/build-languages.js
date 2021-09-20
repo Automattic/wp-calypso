@@ -1,12 +1,12 @@
 const crypto = require( 'crypto' );
 const fs = require( 'fs' );
-const https = require( 'https' );
+const { writeFile } = require( 'fs' ).promises;
 const path = require( 'path' );
-const readline = require( 'readline' );
 const languages = require( '@automattic/languages' );
 const parse = require( 'gettext-parser' ).po.parse;
 const _ = require( 'lodash' );
 const mkdirp = require( 'mkdirp' );
+const fetch = require( 'node-fetch' );
 
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
@@ -15,12 +15,6 @@ const CHUNKS_MAP_PATTERN = './public/chunks-map.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 const OUTPUT_PATH = './public/languages';
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
-
-function logUpdate( text ) {
-	readline.clearLine( process.stdout, 0 );
-	readline.cursorTo( process.stdout, 0 );
-	process.stdout.write( text );
-}
 
 // Create languages directory
 function createLanguagesDir() {
@@ -38,106 +32,61 @@ function getModuleReference( module ) {
 }
 
 // Download languages revisions
-function downloadLanguagesRevions() {
-	return new Promise( ( resolve ) => {
-		function log( status ) {
-			logUpdate(
-				`Downloading ${ LANGUAGES_REVISIONS_FILENAME }${ status ? ` ${ status }.` : '...' }`
-			);
-		}
+async function downloadLanguagesRevions() {
+	console.log( `Downloading ${ LANGUAGES_REVISIONS_FILENAME }...` );
+	const response = await fetch( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }` );
+	if ( response.status !== 200 ) {
+		throw new Error( 'Failed to download language revisions file.' );
+	}
 
-		const fileStream = fs.createWriteStream( `${ OUTPUT_PATH }/${ LANGUAGES_REVISIONS_FILENAME }` );
+	const json = await response.json();
+	await writeFile(
+		`${ OUTPUT_PATH }/${ LANGUAGES_REVISIONS_FILENAME }`,
+		JSON.stringify( json, null, 2 )
+	);
 
-		https.get( `${ LANGUAGES_BASE_URL }/${ LANGUAGES_REVISIONS_FILENAME }`, ( response ) => {
-			response.pipe( fileStream );
-
-			let languageRevisions = '';
-			response.on( 'data', ( chunk ) => {
-				languageRevisions += chunk;
-			} );
-			response.on( 'end', () => {
-				if ( response.statusCode !== 200 ) {
-					console.error( 'Failed to download language revisions file.' );
-					process.exit( 1 );
-				}
-
-				log( 'completed' );
-				resolve( JSON.parse( languageRevisions ) );
-			} );
-		} );
-	} );
+	console.log( `Downloading ${ LANGUAGES_REVISIONS_FILENAME } completed.` );
+	return json;
 }
 
 // Request and write language files
 async function downloadLanguages( languageRevisions ) {
-	let downloadedLanguagesCount = 0;
+	return await Promise.all(
+		langSlugs.map( async ( langSlug ) => {
+			const filename = `${ langSlug }-v1.1.json`;
 
-	function log( status ) {
-		logUpdate(
-			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
-				`(${ downloadedLanguagesCount }/${ langSlugs.length })`
-		);
-	}
+			const output = `${ OUTPUT_PATH }/${ filename }`;
+			const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
 
-	log();
+			console.log( `Downloading ${ filename }...` );
 
-	const downloadedLanguages = await Promise.all(
-		langSlugs.map(
-			( langSlug ) =>
-				new Promise( ( resolve ) => {
-					const filename = `${ langSlug }-v1.1.json`;
+			const response = await fetch( translationUrl );
+			if ( response.status !== 200 ) {
+				// Script should exit with an error if any of the
+				// translation download jobs for a language included
+				// in language revisions file fails.
+				// Failed downloads for languages that are not
+				// included in language revisions file could be skipped
+				// without interrupting the script.
+				if ( langSlug in languageRevisions ) {
+					throw new Error( `Failed to download translations for "${ langSlug }".` );
+				}
+				return { langSlug, failed: true };
+			}
 
-					const fileStream = fs.createWriteStream( `${ OUTPUT_PATH }/${ filename }` );
-					const translationUrl = `${ LANGUAGES_BASE_URL }/${ filename }`;
+			const json = await response.json();
+			await writeFile( output, JSON.stringify( json ) );
 
-					https.get( translationUrl, ( response ) => {
-						response.setEncoding( 'utf8' );
-						let body = '';
+			console.log( `Downloading ${ filename } complete.` );
 
-						response.pipe( fileStream );
-						response.on( 'data', ( chunk ) => ( body += chunk ) );
-						response.on( 'end', () => {
-							// Script should exit with an error if any of the
-							// translation download jobs for a language included
-							// in language revisions file fails.
-							// Failed downloads for languages that are not
-							// included in language revisions file could be skipped
-							// without interrupting the script.
-							if ( response.statusCode !== 200 && langSlug in languageRevisions ) {
-								console.error( `Failed to download translations for "${ langSlug }".` );
-								process.exit( 1 );
-							}
-
-							if ( response.statusCode === 200 ) {
-								downloadedLanguagesCount++;
-								log();
-
-								resolve( {
-									langSlug,
-									languageTranslations: JSON.parse( body ),
-								} );
-
-								return;
-							}
-
-							resolve( {
-								langSlug,
-								failed: true,
-							} );
-						} );
-					} );
-				} )
-		)
+			return { langSlug, languageTranslations: json };
+		} )
 	);
-
-	log( 'completed' );
-
-	return downloadedLanguages;
 }
 
 // Split language translations into chunks
 function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
-	logUpdate( 'Building language chunks...' );
+	console.log( 'Building language chunks...' );
 
 	const successfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => ! failed );
 	const unsuccessfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => failed );
@@ -266,7 +215,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 			} );
 		} );
 
-		logUpdate( 'Updating language revisions...\n' );
+		console.log( 'Updating language revisions...' );
 
 		return fs.writeFileSync(
 			`${ OUTPUT_PATH }/${ LANGUAGES_REVISIONS_FILENAME }`,
@@ -277,8 +226,9 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		);
 	}
 
-	logUpdate(
-		`Building language chunks completed.\nSkipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
+	console.log( 'Building language chunks completed.' );
+	console.log(
+		`Skipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
 			.map( ( { langSlug } ) => langSlug )
 			.join( ', ' ) }.`
 	);
