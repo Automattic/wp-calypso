@@ -23,7 +23,7 @@ const useKeydownHandler = ( { onEscape, onArrowRight, onArrowLeft }: Props ): vo
 					onEscape && ( onEscape(), ( handled = true ) );
 					break;
 				case 'ArrowRight':
-					onArrowRight && ( onArrowRight(), ( handled = false ) );
+					onArrowRight && ( onArrowRight(), ( handled = true ) );
 					break;
 				case 'ArrowLeft':
 					onArrowLeft && ( onArrowLeft(), ( handled = true ) );
