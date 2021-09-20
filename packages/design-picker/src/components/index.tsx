@@ -25,18 +25,27 @@ interface DesignPreviewImageProps {
 	locale: string;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) =>
-	isEnabled( 'gutenboarding/mshot-preview' ) ? (
-		<MShotsImage
-			url={ getDesignUrl( design, locale ) }
-			aria-labelledby={ makeOptionId( design ) }
-			alt=""
-			options={ mShotOptions() }
-			scrollable={ design.preview !== 'static' }
-		/>
-	) : (
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) => {
+	if ( design.image ) {
+		return <img alt="" aria-labelledby={ makeOptionId( design ) } src={ design.image } />;
+	}
+
+	if ( isEnabled( 'gutenboarding/mshot-preview' ) ) {
+		return (
+			<MShotsImage
+				url={ getDesignUrl( design, locale ) }
+				aria-labelledby={ makeOptionId( design ) }
+				alt=""
+				options={ mShotOptions() }
+				scrollable={ design.preview !== 'static' }
+			/>
+		);
+	}
+
+	return (
 		<img alt="" aria-labelledby={ makeOptionId( design ) } src={ getDesignImageUrl( design ) } />
 	);
+};
 
 interface DesignButtonProps {
 	design: Design;
