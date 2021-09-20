@@ -5,6 +5,7 @@ export const modeType = {
 	ADVANCED: 'advanced',
 	DONE: 'done',
 	OWNERSHIP_VERIFICATION: 'ownership_verification',
+	TRANSFER: 'transfer',
 };
 
 export const stepType = {
@@ -15,6 +16,8 @@ export const stepType = {
 	CONNECTED: 'connected',
 	VERIFYING: 'verifying',
 	ENTER_AUTH_CODE: 'enter_auth_code',
+	UNLOCK_DOMAIN: 'unlock_domain',
+	FINALIZE: 'finalize',
 };
 
 export const stepSlug = {
@@ -30,6 +33,10 @@ export const stepSlug = {
 	ADVANCED_CONNECTED: 'advanced_connected',
 	OWNERSHIP_VERIFICATION_LOGIN: 'ownership_verification_login',
 	OWNERSHIP_VERIFICATION_AUTH_CODE: 'ownership_verification_auth_code',
+	TRANSFER_START: 'transfer_start',
+	TRANSFER_LOGIN: 'transfer_login',
+	TRANSFER_UNLOCK: 'transfer_unlock',
+	TRANSFER_AUTH_CODE: 'transfer_auth_code',
 };
 
 export const defaultDomainSetupInfo = {

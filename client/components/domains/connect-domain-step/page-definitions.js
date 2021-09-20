@@ -1,4 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import TransferDomainStepAuthCode from 'calypso/components/domains/connect-domain-step/transfer-domain-step-auth-code';
+import TransferDomainStepLogin from 'calypso/components/domains/connect-domain-step/transfer-domain-step-login';
+import TransferDomainStepStart from 'calypso/components/domains/connect-domain-step/transfer-domain-step-start';
+import TransferDomainStepUnlock from 'calypso/components/domains/connect-domain-step/transfer-domain-step-unlock';
 import ConnectDomainStepAdvancedRecords from './connect-domain-step-advanced-records';
 import ConnectDomainStepAdvancedStart from './connect-domain-step-advanced-start';
 import ConnectDomainStepDone from './connect-domain-step-done';
@@ -100,6 +104,44 @@ export const connectADomainOwnershipVerificationStepsDefinition = {
 		name: __( 'Verify ownership' ),
 		component: ConnectDomainStepOwnershipAuthCode,
 		prev: stepSlug.OWNERSHIP_VERIFICATION_LOGIN,
+	},
+};
+
+export const transferDomainStepsDefinition = {
+	[ stepSlug.TRANSFER_START ]: {
+		mode: modeType.TRANSFER,
+		step: stepType.START,
+		component: TransferDomainStepStart,
+		next: stepSlug.TRANSFER_LOGIN,
+	},
+	[ stepSlug.TRANSFER_LOGIN ]: {
+		mode: modeType.TRANSFER,
+		step: stepType.LOG_IN_TO_PROVIDER,
+		name: __( 'Log in to provider' ),
+		component: TransferDomainStepLogin,
+		next: stepSlug.TRANSFER_UNLOCK,
+		prev: stepSlug.TRANSFER_START,
+	},
+	[ stepSlug.TRANSFER_UNLOCK ]: {
+		mode: modeType.TRANSFER,
+		step: stepType.UNLOCK_DOMAIN,
+		name: __( 'Unlock domain' ),
+		component: TransferDomainStepUnlock,
+		next: stepSlug.TRANSFER_AUTH_CODE,
+		prev: stepSlug.TRANSFER_LOGIN,
+	},
+	[ stepSlug.TRANSFER_AUTH_CODE ]: {
+		mode: modeType.TRANSFER,
+		step: stepType.ENTER_AUTH_CODE,
+		name: __( 'Get domain authorization code' ),
+		component: TransferDomainStepAuthCode,
+		next: 'unused transfer domain step',
+		prev: stepSlug.TRANSFER_UNLOCK,
+	},
+	[ 'unused transfer domain step' ]: {
+		mode: modeType.TRANSFER,
+		step: stepType.FINALIZE,
+		name: __( 'Finalize transfer' ),
 	},
 };
 
