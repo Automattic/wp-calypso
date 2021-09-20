@@ -212,9 +212,6 @@ const InnerSearch = (
 		setKeyword( '' );
 		setIsOpen( true );
 
-		searchInput.current?.focus();
-		// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
-		// prevent outlines around the open icon after being clicked
 		recordEvent?.( 'Clicked Open Search' );
 	};
 
@@ -252,6 +249,8 @@ const InnerSearch = (
 			return;
 		}
 		if ( isOpen ) {
+			// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
+			// prevent outlines around the open icon after being clicked
 			searchInput.current?.focus();
 			openIcon.current?.blur();
 		}
