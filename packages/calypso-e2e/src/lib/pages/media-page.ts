@@ -1,4 +1,3 @@
-import path from 'path';
 import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled, clickNavTab } from '../../element-helper';
 
@@ -6,7 +5,7 @@ const selectors = {
 	// Gallery view
 	gallery: '.media-library__content',
 	items: '.media-library__list-item',
-	selectedItems: '.is-selected',
+	selectedItems: '.media-library__list-item.is-selected',
 	placeholder: '.is-placeholder',
 	uploadSpinner: '.media-library__list-item-spinner',
 	notReadyOverlay: `.is-transient`,
@@ -100,7 +99,7 @@ export class MediaPage {
 	 * @throws {Error} If no gallery items are selected.
 	 */
 	async editItem(): Promise< void > {
-		await this.waitUntilLoaded();
+		// await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
 
 		const itemsSelected = await this.page.isVisible( selectors.selectedItems );
 		if ( ! itemsSelected ) {
@@ -150,16 +149,8 @@ export class MediaPage {
 	async upload( fullPath: string ): Promise< void > {
 		await this.waitUntilLoaded();
 
-		// Set the file input to the full path of file on disk, which will trigger
-		// elements to be attached to the page.
-		await Promise.all( [
-			// this.page.waitForSelector( selectors.uploadSpinner, { state: 'detached' } ),
-			// this.page.waitForSelector( selectors.notReadyOverlay, { state: 'detached' } ),
-			// this.page.waitForSelector( 'button[data-e2e-button="delete"][disabled]', {
-			// 	state: 'detached',
-			// } ),
-			this.page.setInputFiles( selectors.fileInput, fullPath ),
-		] );
+		// Set the file input to the full path of file on disk.
+		await this.page.setInputFiles( selectors.fileInput, fullPath );
 
 		await Promise.all( [
 			this.page.waitForSelector( 'button[data-e2e-button="delete"][disabled]', {
