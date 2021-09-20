@@ -15,6 +15,7 @@ const sendChannels = [
 	'user-login-status',
 	'view-post-clicked',
 	'print',
+	'reset-unread-count',
 	'secrets',
 	'toggle-dev-tools',
 	'title-bar-double-click',

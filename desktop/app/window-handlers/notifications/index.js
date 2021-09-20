@@ -30,7 +30,20 @@ function updateNotificationBadge() {
 }
 
 module.exports = function ( { window, view } ) {
-	ipc.on( 'clear-notices-count', function () {
+	view.webContents.on( 'did-finish-load', () => {
+		const code = `
+			if ( typeof masterbarItems === 'undefined' ) {
+				console.log( 'Hello hello' );
+				const masterbarItems = document.getElementsByClassName( 'masterbar__notifications' );
+				if ( masterbarItems && masterbarItems.length > 0 ) {
+					const bell = masterbarItems[0];
+					bell.addEventListener("click",function(){window.electron.send( 'reset-unread-count' );});
+				}
+			}`;
+		view.webContents.executeJavaScript( code );
+	} );
+
+	ipc.on( 'reset-unread-count', function () {
 		if ( notificationBadgeCount > 0 ) {
 			log.info( 'Notification badge count reset' );
 			notificationBadgeCount = 0;

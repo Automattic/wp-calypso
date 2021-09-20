@@ -143,8 +143,6 @@ function showAppWindow() {
 		return Settings.toRenderer();
 	} );
 
-	mainView.webContents.loadURL( appUrl );
-
 	mainWindow.on( 'close', function () {
 		const currentURL = mainView.webContents.getURL();
 		log.info( `Closing main window, last location: '${ currentURL }'` );
@@ -167,6 +165,8 @@ function showAppWindow() {
 	require( '../window-handlers/navigation' )( appWindow );
 
 	platform.setMainWindow( appWindow );
+
+	mainView.webContents.loadURL( appUrl );
 
 	return mainWindow;
 }
