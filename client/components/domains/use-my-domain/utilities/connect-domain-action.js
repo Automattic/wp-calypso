@@ -7,7 +7,8 @@ import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 
 export const connectDomainAction = (
 	{ domain, selectedSite, verificationData },
-	onDone = () => {}
+	// eslint-disable-next-line no-unused-vars
+	onDone = ( err ) => {}
 ) => ( dispatch, getState ) => {
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 
