@@ -99,8 +99,7 @@ export class MediaPage {
 	 * @throws {Error} If no gallery items are selected.
 	 */
 	async editItem(): Promise< void > {
-		// await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
-
+		// Check that an item has been selected.
 		try {
 			await this.page.waitForSelector( selectors.selectedItems );
 		} catch ( error ) {
@@ -172,27 +171,5 @@ export class MediaPage {
 					.then( ( element ) => element.innerText() )
 			);
 		}
-
-		// Wait until the spinner for the file being uploaded is hidden.
-		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
-		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
-		// await Promise.all( [
-		// 	this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
-		// 		state: 'hidden',
-		// 	} ),
-		// 	this.page.waitForSelector( selectors.notReadyOverlay, { state: 'hidden' } ),
-		// ] );
-
-		// // At this point, if the rejection notice is visible, it means the file was not a supported
-		// // file type. Throw the error containing the rejection banner text for handling.
-		// if ( await this.page.isVisible( selectors.uploadRejectionNotice ) ) {
-		// 	throw new Error(
-		// 		await this.page
-		// 			.waitForSelector( selectors.uploadRejectionNotice )
-		// 			.then( ( element ) => element.innerText() )
-		// 	);
-		// } else {
-		// 	return await this.page.waitForSelector( itemSelector );
-		// }
 	}
 }
