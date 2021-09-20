@@ -122,7 +122,7 @@ export class NoteBody extends React.Component {
 					replyBlock = <ReplyBlock key={ blockKey } block={ block.block } />;
 					break;
 				default:
-					body.push( p( html( block.block ) ) );
+					body.push( <div key={ blockKey }>{ p( html( block.block ) ) }</div> );
 					break;
 			}
 		}
