@@ -11,7 +11,7 @@ import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 export let browser: Browser;
 
 export interface LaunchOptions {
-	logger: Logger[ 'log' ];
+	logger: Logger;
 }
 
 /**
@@ -34,12 +34,9 @@ export async function newBrowserContext(
 	// Get basic configuration (devices, browser agent string, etc).
 	const config = getLaunchConfiguration( browser.version() );
 
+	// Add logging details.
 	if ( launchOptions?.logger ) {
-		// Add logging details.
-		config.logger = {
-			isEnabled: ( name ) => name === 'api',
-			log: launchOptions.logger,
-		};
+		config.logger = launchOptions.logger;
 	}
 
 	// Launch a new BrowserContext with launch configuration.

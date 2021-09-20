@@ -49,11 +49,15 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		await startBrowser( chromium );
 		// Launch context with logging.
 		const context = await newBrowserContext( {
-			logger: async ( name, severity, message ) => {
-				await appendFile(
-					path.join( tempDir, 'playwright.log' ),
-					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-				);
+			logger: {
+				log: async ( name: string, severity: string, message: string ) => {
+					await appendFile(
+						path.join( tempDir, 'playwright.log' ),
+						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
+					);
+				},
+				// Default to verbose Playwright API logs.
+				isEnabled: ( name: string ) => name === 'api',
 			},
 		} );
 		// Launch a new page within the context.
