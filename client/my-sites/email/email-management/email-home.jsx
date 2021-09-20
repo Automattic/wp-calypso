@@ -43,6 +43,7 @@ class EmailManagementHome extends React.Component {
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		context: PropTypes.string,
 	};
 
 	render() {

@@ -1,17 +1,53 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import PromoCard from 'calypso/components/promo-section/promo-card';
 import SectionHeader from 'calypso/components/section-header';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementPurchaseNewEmailAccount,
+	isUnderEmailInbox,
+} from 'calypso/my-sites/email/paths';
 
 class EmailListInactive extends React.Component {
+	getMainHeader() {
+		const { translate } = this.props;
+		const image = {
+			path: emailIllustration,
+			align: 'right',
+		};
+
+		return (
+			<>
+				<PromoCard
+					isPrimary={ true }
+					title={ translate( 'Pick a domain to get started' ) }
+					image={ image }
+				>
+					<p>
+						{ translate(
+							'Pick a domain from your available domains below to add email service to it.'
+						) }
+					</p>
+				</PromoCard>
+				<br />
+			</>
+		);
+	}
+
 	render() {
 		const { selectedSiteSlug, currentRoute, domains, translate } = this.props;
 
 		if ( domains.length < 1 ) {
 			return null;
 		}
+
+		const sectionHeaderLabel = isUnderEmailInbox( currentRoute )
+			? translate( 'Domains' )
+			: translate( 'Other domains' );
+
+		const mainHeader = isUnderEmailInbox( currentRoute ) ? this.getMainHeader() : null;
 
 		const emailListItems = domains.map( ( domain ) => {
 			return (
@@ -34,7 +70,8 @@ class EmailListInactive extends React.Component {
 
 		return (
 			<div className="email-list-inactive">
-				<SectionHeader label={ translate( 'Other domains' ) } />
+				{ mainHeader }
+				<SectionHeader label={ sectionHeaderLabel } />
 				{ emailListItems }
 			</div>
 		);
