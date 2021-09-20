@@ -14,7 +14,9 @@ class GenerateChunksMapPlugin {
 	}
 
 	apply( compiler ) {
+		console.log( 1 );
 		compiler.hooks.done.tap( PLUGIN_NAME, ( { compilation } ) => {
+			console.log( 2 );
 			// Generate chunks map
 			const { chunks } = compilation;
 

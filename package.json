@@ -119,7 +119,7 @@
 		"test-visual": "node ./test/visual/generate-themes-data && backstop reference --config=./test/visual/pretest.config.js --docker && backstop test --config=./test/visual/backstop.config.js --docker",
 		"test-visual-approve": "node ./test/visual/generate-themes-data && backstop approve --config=./test/visual/backstop.config.js --docker",
 		"test-visual-reference": "node ./test/visual/generate-themes-data && backstop reference --config=./test/visual/pretest.config.js --docker && backstop reference --config=./test/visual/backstop.config.js --docker",
-		"translate": "npx rimraf build/strings && wp-babel-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './build/strings' --output './calypso-strings.pot'",
+		"translate": "npx rimraf build/strings && mkdirp public && wp-babel-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './build/strings' --output './public/calypso-strings.pot'",
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "yarn run tsc --project client",
 		"update-deps": "npx rimraf yarn.lock && yarn run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install && replace --silent 'http://' 'https://' . --recursive --include='yarn.lock' && touch -m node_modules",
