@@ -26,6 +26,16 @@
 	}
 }
 
+.reader-popover.popover.is-bottom .popover__arrow::before,
+.reader-popover.popover.is-bottom-left .popover__arrow::before,
+.reader-popover.popover.is-bottom-right .popover__arrow::before {
+	border: 10px solid var( --color-surface );
+	border-bottom-style: solid;
+	border-left-color: transparent;
+	border-right-color: transparent;
+	border-top: none;
+}
+
 .reader-popover.popover .popover__inner {
 	background: var( --color-surface );
 }
