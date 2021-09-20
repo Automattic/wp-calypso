@@ -537,6 +537,7 @@ class HelpContact extends React.Component {
 				value: savedContactForm,
 				requestChange: ( contactForm ) => ( savedContactForm = contactForm ),
 			},
+			variationSlug,
 		};
 	};
 
