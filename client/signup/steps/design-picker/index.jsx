@@ -1,4 +1,4 @@
-import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
+import DesignPicker from '@automattic/design-picker';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,6 +7,11 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getRecommendedThemes } from 'calypso/state/themes/actions';
+import {
+	getRecommendedThemes as getRecommendedThemesSelector,
+	areRecommendedThemesLoading,
+} from 'calypso/state/themes/selectors';
 import './style.scss';
 
 class DesignPickerStep extends Component {
@@ -25,6 +30,14 @@ class DesignPickerStep extends Component {
 		largeThumbnails: false,
 		showOnlyThemes: false,
 	};
+
+	componentDidMount() {
+		this.fetchThemes();
+	}
+
+	fetchThemes() {
+		this.props.getRecommendedThemes( 'auto-loading-homepage' );
+	}
 
 	pickDesign = ( selectedDesign ) => {
 		recordTracksEvent( 'calypso_signup_select_design', {
@@ -49,24 +62,34 @@ class DesignPickerStep extends Component {
 		let designs = undefined;
 
 		if ( this.props.showOnlyThemes ) {
-			// Only offering designs that are also available as themes. This means excluding
-			// designs where the `template` has a layout that's different from what the theme's
-			// default Headstart annotation provides.
-			designs = getAvailableDesigns().featured.filter(
-				( { features, template, theme } ) => theme === template && ! features.includes( 'anchorfm' )
-			);
+			// Should probably be pulled out into a utility to format theme response as design picker design
+			// taxonomies.theme_subject probably maps to category
+			designs = this.props.customizedThemesList.map( ( { id, name, screenshot } ) => {
+				return {
+					categories: [],
+					features: [],
+					image: screenshot,
+					is_premium: false,
+					slug: id,
+					template: id,
+					theme: id,
+					title: name,
+				};
+			} );
 		}
 
 		return (
-			<DesignPicker
-				designs={ designs }
-				theme={ this.props.isReskinned ? 'light' : 'dark' }
-				locale={ this.props.locale } // props.locale obtained via `localize` HoC
-				onSelect={ this.pickDesign }
-				className={ classnames( {
-					'design-picker-step__is-large-thumbnails': this.props.largeThumbnails,
-				} ) }
-			/>
+			<div>
+				<DesignPicker
+					designs={ designs }
+					theme={ this.props.isReskinned ? 'light' : 'dark' }
+					locale={ this.props.locale } // props.locale obtained via `localize` HoC
+					onSelect={ this.pickDesign }
+					className={ classnames( {
+						'design-picker-step__is-large-thumbnails': this.props.largeThumbnails,
+					} ) }
+				/>
+			</div>
 		);
 	}
 
@@ -101,4 +124,12 @@ class DesignPickerStep extends Component {
 	}
 }
 
-export default connect( null, { submitSignupStep } )( localize( DesignPickerStep ) );
+export default connect(
+	( state ) => {
+		return {
+			customizedThemesList: getRecommendedThemesSelector( state, 'auto-loading-homepage' ),
+			isLoading: areRecommendedThemesLoading( state, 'auto-loading-homepage' ),
+		};
+	},
+	{ getRecommendedThemes, submitSignupStep }
+)( localize( DesignPickerStep ) );
