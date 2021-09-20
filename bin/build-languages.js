@@ -125,9 +125,6 @@ async function downloadLanguages( languageRevisions ) {
 								failed: true,
 							} );
 						} );
-						response.on( 'error', () => {
-							debugger;
-						} );
 					} );
 				} )
 		)
@@ -289,14 +286,8 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 async function run() {
 	createLanguagesDir();
-	let languageRevisions;
-	let downloadedLanguages;
-	try {
-		languageRevisions = await downloadLanguagesRevions();
-		downloadedLanguages = await downloadLanguages( languageRevisions );
-	} catch ( err ) {
-		console.log( err );
-	}
+	const languageRevisions = await downloadLanguagesRevions();
+	const downloadedLanguages = await downloadLanguages( languageRevisions );
 	buildLanguageChunks( downloadedLanguages, languageRevisions );
 }
 
