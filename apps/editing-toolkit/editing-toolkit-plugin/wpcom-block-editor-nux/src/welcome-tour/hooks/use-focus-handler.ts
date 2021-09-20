@@ -32,8 +32,7 @@ const useFocusHandler = ( ref: React.MutableRefObject< null | HTMLElement > ): b
 
 	const handleKeyup = useCallback(
 		( event ) => {
-			// Spacebar & ' ' are for space. See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
-			if ( [ 'Tab', 'Enter', 'Spacebar', ' ' ].includes( event.key ) ) {
+			if ( event.key === 'Tab' ) {
 				if ( ref.current?.contains( event.target ) ) {
 					setHasFocus( true );
 				} else {
