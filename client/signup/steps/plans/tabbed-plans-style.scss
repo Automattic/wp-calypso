@@ -1,7 +1,7 @@
 .tabbed-plans__grid-container {
 	margin-left: 50px;
 	display: grid;
-	grid-template-columns: 0.8fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
 	grid-template-rows: auto;
 	grid-template-areas:
 		'terms	plan-header-1		plan-header-2	plan-header-3'
@@ -14,12 +14,13 @@
 		'ft-5	feature-1-5 		feature-2-5		feature-3-5'
 		'ft-6	feature-1-6 		feature-2-6		feature-3-6'
 		'ft-7	feature-1-7 		feature-2-7		feature-3-7'
-		'. 		button-1 			button-2 		button-3';
+		'. 		button-1 			button-2 		button-3'
+		'. 		free-banner 		free-banner 	free-banner'
+		'. 		shared-features 	shared-features shared-features';
 }
 
 .tabbed-plans__shared-features-grid {
-	width: 79%;
-	float: right;
+	grid-area: shared-features;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: auto;
@@ -71,7 +72,8 @@
 			'feature-3-6'
 			'feature-3-7'
 			'button-3'
-			'shared-features-3';
+			'shared-features-3'
+			'free-banner';
 	}
 
 	.tabbed-plans__shared-features-grid {

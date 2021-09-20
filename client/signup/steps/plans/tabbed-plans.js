@@ -13,7 +13,7 @@ import { Icon, image, pages, lifesaver, media, store, currencyDollar } from '@wo
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlan, getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
@@ -54,6 +54,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	const tabList = getTabList();
 	const featureComparisonData = getFeatureComparisonData();
 	const sharedFeatures = getSharedFeatures();
+	const bestForStrings = getBestForStrings();
 
 	const [ featureComparison, setFeatureComparison ] = useState(
 		featureComparisonData.Professional
@@ -62,6 +63,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
 	const [ termLength, setTermLength ] = useState( 'yearly' );
 	const [ showFeatures, setShowFeatures ] = useState( false );
+	const reduxDispatch = useDispatch();
 
 	const toggleTab = () =>
 		selectedTab === tabList[ 0 ] ? setSelectedTab( tabList[ 1 ] ) : setSelectedTab( tabList[ 0 ] );
@@ -173,6 +175,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							>
 								{ item.planName }
 								{ item.planName === 'Premium' && <span>Most Popular</span> }
+								<p>{ bestForStrings[ item.planName ] }</p>
 							</PlanHeader>
 							<PlanPrice
 								key={ `planPrice${ index }` }
@@ -230,10 +233,10 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							key={ `featureTitle${ index }` }
 							className={ `tabbed-plans__feature-title-${ index + 1 }` }
 						>
+							{ item.featureName }
 							<InfoPopover className="tabbed-plans__feature-tip-info" position={ 'right' }>
 								{ item.tooltip }
 							</InfoPopover>
-							{ item.featureName }
 						</FeatureTitle>
 						{ item.planOne && (
 							<>
@@ -272,8 +275,14 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 						) }
 					</React.Fragment>
 				) ) }
+				<FreeBanner>
+					Not sure which plan to choose?{ ' ' }
+					<button href="#" onClick={ () => handleUpgradeButtonClick( null ) }>
+						Explore our Free option
+					</button>
+				</FreeBanner>
+				<SharedFeatures selectedTab={ selectedTab } sharedFeatures={ sharedFeatures } />
 			</Grid>
-			<SharedFeatures selectedTab={ selectedTab } sharedFeatures={ sharedFeatures } />
 		</>
 	);
 }
@@ -340,6 +349,16 @@ export default connect( mapStateToProps )( TabbedPlans );
 
 function getTabList() {
 	return [ 'Limited', 'Professional' ];
+}
+
+function getBestForStrings() {
+	return {
+		Free: 'Best for sampling',
+		Personal: 'Best for getting started',
+		Premium: 'Best for freelancers',
+		Business: 'Best for small business',
+		eCommerce: 'Best for online stores',
+	};
 }
 
 function getFeatureComparisonData() {
@@ -506,7 +525,7 @@ function getFeatureComparisonData() {
 					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).',
 				planOne: { included: false, copy: 'Not included', mobileCopy: null },
 				planTwo: {
-					included: false,
+					included: true,
 					copy: 'Free for the first year',
 					mobileCopy: 'Free domain for the first year.',
 				},
@@ -517,7 +536,7 @@ function getFeatureComparisonData() {
 					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
 				planOne: {
 					included: false,
-					copy: '-',
+					copy: '—',
 					mobileCopy: null,
 				},
 				planTwo: {
@@ -705,7 +724,8 @@ const Feature = styled.div`
 `;
 
 const FeatureTitle = styled.div`
-	padding: 15px 0;
+	justify-self: end;
+	padding: 15px 36px 15px 0;
 	align-self: center;
 	font-weight: 500;
 	font-size: 14px;
@@ -713,7 +733,7 @@ const FeatureTitle = styled.div`
 	color: #2c3338;
 
 	button {
-		margin-right: 15px;
+		margin-left: 15px;
 		font-size: 1em;
 		vertical-align: text-top;
 
@@ -737,6 +757,10 @@ const PlanHeader = styled.div`
 	line-height: 24px;
 	letter-spacing: 0.32px;
 	color: #101517;
+
+	p {
+		font-size: 14px;
+	}
 
 	span {
 		float: right;
@@ -825,7 +849,7 @@ const SelectedTab = styled( Tab )`
 
 const FeaturedPlan = styled.div`
 	grid-column: 2 / 3;
-	grid-row: 1 / -1;
+	grid-row: 1 / button-1;
 	background: rgba( 241, 245, 248, 0.6 );
 `;
 
@@ -922,6 +946,7 @@ const PlanBorderOne = styled.div`
 		border: ${ ( props ) => ( props.featured ? '0' : '1px solid #dcdcde' ) };
 	}
 `;
+
 const PlanBorderTwo = styled.div`
 	@media ( max-width: 600px ) {
 		margin: 24px 24px 0 24px;
@@ -931,6 +956,7 @@ const PlanBorderTwo = styled.div`
 		border-radius: 2px;
 	}
 `;
+
 const PlanBorderThree = styled.div`
 	@media ( max-width: 600px ) {
 		margin: 24px 24px 0 24px;
@@ -938,5 +964,17 @@ const PlanBorderThree = styled.div`
 		grid-row: plan-header-3 / shared-features-3;
 		border: 1px solid #dcdcde;
 		border-radius: 2px;
+	}
+`;
+const FreeBanner = styled.p`
+	grid-area: free-banner;
+	margin: 24px 0;
+	padding: 7px 0;
+	font-size: 14px;
+	background: lightgray;
+	text-align: center;
+
+	@media ( max-width: 600px ) {
+		margin: 24px 24px;
 	}
 `;
