@@ -53,7 +53,8 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
+	// Skipped 2021-09-20 by Edwin Takahashi: this test case has been migrated to Playwright.
+	describe.skip( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
 		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -317,7 +318,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @signup', function () {
+	// Skipped 2021-09-20 by Edwin Takahashi: this test case has been migrated to Playwright.
+	describe.skip( 'Sign up for a site on a personal paid plan coming in via /create as personal flow in GBP currency @signup', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -701,7 +703,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Basic sign up for a free site @signup @email @ie11canary', function () {
+	// Skipped 2021-09-20 by Edwin Takahashi: this test case has been migrated to Playwright.
+	describe.skip( 'Basic sign up for a free site @signup @email @ie11canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 
 		before( async function () {
@@ -960,7 +963,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
+	// Skipped 2021-09-20 by Edwin Takahashi: this test case has been migrated to Playwright.
+	describe.skip( 'Signup and create new site using the New Onboarding (Gutenboarding) @signup', function () {
 		const emailAddress = dataHelper.getEmailAddress( dataHelper.getNewBlogName(), signupInboxId );
 
 		before( async function () {
@@ -983,7 +987,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a paid plan w/ domain name then move back to domain step @signup', function () {
+	// Skipped 2021-09-20 by Edwin Takahashi: this test case has been migrated to Playwright.
+	describe.skip( 'Sign up for a site on a paid plan w/ domain name then move back to domain step @signup', function () {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
