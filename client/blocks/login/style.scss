@@ -293,7 +293,7 @@
 
 	.login__form-terms {
 		margin-top: 24px;
-		margin-bottom: 8px;
+		margin-bottom: 1rem;
 	}
 
 	.login__form, .login__social {
@@ -320,18 +320,20 @@
 			border-bottom: none;
 			font-size: var( --p2-font-size-form-xs );
 			font-weight: 400;
-			padding: 24px 4px;
+			margin: 24px 4px;
+			padding: 0;
 		}
 	}
 
 	.login__divider {
 		color: var( --p2-color-border );
 		font-size: var( --p2-font-size-form-xs );
-		margin: 0 auto;
+		margin: 0 auto 1rem;
 		max-width: 400px;
 		overflow: hidden;
 		text-align: center;
 		width: 100%;
+		text-transform: none;
 
 		&::before,
 		&::after {
