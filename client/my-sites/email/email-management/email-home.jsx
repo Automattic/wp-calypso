@@ -20,7 +20,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetUpMailbox, isUnderEmailInbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -118,14 +118,18 @@ class EmailManagementHome extends React.Component {
 			page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedSite.domain ) );
 		}
 
+		const emailListActive = isUnderEmailInbox( currentRoute ) ? null : (
+			<EmailListActive
+				domains={ domainsWithEmail }
+				selectedSiteSlug={ selectedSite.slug }
+				currentRoute={ currentRoute }
+				selectedSiteId={ selectedSiteId }
+			/>
+		);
+
 		return this.renderContentWithHeader(
 			<>
-				<EmailListActive
-					domains={ domainsWithEmail }
-					selectedSiteSlug={ selectedSite.slug }
-					currentRoute={ currentRoute }
-					selectedSiteId={ selectedSiteId }
-				/>
+				{ emailListActive }
 				<EmailListInactive
 					domains={ domainsWithNoEmail }
 					selectedSiteSlug={ selectedSite.slug }

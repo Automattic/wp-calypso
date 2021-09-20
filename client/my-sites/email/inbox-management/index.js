@@ -9,12 +9,13 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const InboxManagement = ( { domains } ) => {
 	const nonWPCOMDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
-	const WPCOMDomains = domains.filter( ( domain ) => domain.isWPCOMDomain );
-	const hasSubscription = WPCOMDomains.some( ( domain ) => hasEmailSubscription( domain ) );
+	const domainsWithSubscriptions = nonWPCOMDomains.filter( ( domain ) =>
+		hasEmailSubscription( domain )
+	);
 
 	//EmailManagementHome logic will handle the case where there is only one domain to show directly the email comparison
 	//and also if there is no domain so, it will show a CTA to buy domain
-	if ( ! hasSubscription && nonWPCOMDomains?.length >= 1 && WPCOMDomains?.length === 0 ) {
+	if ( domainsWithSubscriptions.length === 0 || domainsWithSubscriptions.length > 1 ) {
 		return (
 			<CalypsoShoppingCartProvider>
 				<EmailManagementHome />
