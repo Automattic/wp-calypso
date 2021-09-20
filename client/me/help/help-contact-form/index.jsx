@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { debounce, isEqual, find, isEmpty } from 'lodash';
+import { debounce, isEqual, find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -33,8 +33,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { selectSiteId } from 'calypso/state/help/actions';
 import { getHelpSelectedSite, getHelpSelectedSiteId } from 'calypso/state/help/selectors';
-import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { requestSite } from 'calypso/state/sites/actions';
 import { generateSubjectFromMessage } from './utils';
 
@@ -109,8 +107,6 @@ export class HelpContactForm extends React.PureComponent {
 			value: null,
 			requestChange: () => {},
 		},
-		showingQandAStep: false,
-		showQandAOnInlineHelpContactForm: () => {},
 	};
 
 	/**
@@ -128,13 +124,9 @@ export class HelpContactForm extends React.PureComponent {
 		userDeclaresUnableToSeeSite: this.props.siteCount === 0,
 		userDeclaredUrl: '',
 		userRequestsHidingUrl: false,
+		showingQandAStep: false,
 		qanda: [],
 	};
-
-	componentDidMount() {
-		this.debouncedQandA = debounce( this.doQandASearch, 500 );
-		this.requestSite = debounce( this.doRequestSite, 500 );
-	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
@@ -195,6 +187,8 @@ export class HelpContactForm extends React.PureComponent {
 		}
 	};
 
+	requestSite = debounce( this.doRequestSite, 500 );
+
 	doQandASearch = () => {
 		const query = this.getSibylQuery();
 
@@ -227,6 +221,8 @@ export class HelpContactForm extends React.PureComponent {
 			)
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	};
+
+	debouncedQandA = debounce( this.doQandASearch, 500 );
 
 	trackSibylClick = ( event, helpLink ) => {
 		if ( ! this.state.sibylClicked ) {
@@ -383,7 +379,7 @@ export class HelpContactForm extends React.PureComponent {
 			this.setState( { sibylClicked: false } );
 		}
 
-		if ( isEmpty( this.state.qanda ) ) {
+		if ( this.state.qanda.length === 0 ) {
 			this.props.trackSupportWithoutSibylSuggestions( this.getSibylQuery() );
 		} else {
 			this.props.trackSupportWithSibylSuggestions(
@@ -459,9 +455,8 @@ export class HelpContactForm extends React.PureComponent {
 			showHelpLanguagePrompt,
 			showHidingUrlOption,
 			translate,
-			showingQandAStep,
 		} = this.props;
-		const hasQASuggestions = ! isEmpty( this.state.qanda );
+		const hasQASuggestions = this.state.qanda.length > 0;
 
 		const howCanWeHelpOptions = [
 			{
@@ -544,7 +539,7 @@ export class HelpContactForm extends React.PureComponent {
 			);
 		}
 
-		if ( showingQandAStep && hasQASuggestions ) {
+		if ( this.state.showingQandAStep && hasQASuggestions ) {
 			return (
 				<div className="help-contact-form">
 					<h2 className="help-contact-form__title">
@@ -713,7 +708,7 @@ export class HelpContactForm extends React.PureComponent {
 				) }
 
 				{ ! showQASuggestions && hasQASuggestions && (
-					<FormButton type="button" onClick={ this.props.showQandAOnInlineHelpContactForm }>
+					<FormButton type="button" onClick={ () => this.setState( { showingQandAStep: true } ) }>
 						{ translate( 'Continue' ) }
 					</FormButton>
 				) }
@@ -748,7 +743,6 @@ const mapStateToProps = ( state ) => ( {
 	siteCount: getCurrentUserSiteCount( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
-	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
 } );
 
 const mapDispatchToProps = {
@@ -760,7 +754,6 @@ const mapDispatchToProps = {
 	trackSupportAfterSibylClick,
 	trackSupportWithSibylSuggestions,
 	trackSupportWithoutSibylSuggestions,
-	showQandAOnInlineHelpContactForm,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( HelpContactForm ) );
