@@ -31,9 +31,6 @@ function middleware( app ) {
 	// In development environment we need to wait for initial webpack compile
 	// to finish and execute the build-languages script if translation chunks
 	// feature is enabled.
-	console.log( 1 );
-	console.log( shouldBuildChunksMap );
-
 	if ( shouldBuildChunksMap ) {
 		callbacks.push( () => {
 			execSync( 'yarn run build-languages' );
@@ -45,9 +42,7 @@ function middleware( app ) {
 
 		// Dequeue and call request handlers
 		while ( callbacks.length > 0 ) {
-			console.log( 2 );
 			callbacks.shift()();
-			console.log( 3 );
 		}
 
 		// In order to show our message *after* webpack's "bundle is now VALID"
