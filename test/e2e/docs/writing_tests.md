@@ -51,7 +51,7 @@ The current suites used are...
 
 - `calypso-pr` - tests run pre-merge on every Calypso PR.
 - `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
-- `calypso-release` - tests run post-merge and pre-release in the calyspo deployment process.
+- `calypso-release` - tests run post-merge and pre-release in the Calypso deployment process.
 
 ### 3. Import the basics
 
