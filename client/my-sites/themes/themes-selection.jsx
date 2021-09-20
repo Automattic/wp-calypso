@@ -187,6 +187,18 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
+function generateThemeQueries( filters, queryTemplate, vertical ) {
+	// Queries all themes when no filter is specified
+	if ( ! filters.length ) {
+		return [ queryTemplate ];
+	}
+
+	return filters.map( ( filter ) => ( {
+		...queryTemplate,
+		filter: compact( [ filter, vertical ] ).join( ',' ),
+	} ) );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -217,6 +229,13 @@ export const ConnectedThemesSelection = connect(
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
 		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 30;
+		const queryTemplate = {
+			search,
+			page,
+			tier: '',
+			filter: '',
+			number,
+		};
 		const query = {
 			search,
 			page,
@@ -225,19 +244,7 @@ export const ConnectedThemesSelection = connect(
 			number,
 		};
 
-		let queries;
-
-		if ( ! filters.length ) {
-			queries = [ {} ];
-		} else {
-			queries = filters.map( ( filter ) => ( {
-				search,
-				page,
-				tier: '',
-				filter: compact( [ filter, vertical ] ).join( ',' ),
-				number,
-			} ) );
-		}
+		const queries = generateThemeQueries( filters, queryTemplate, vertical );
 
 		return {
 			query,
