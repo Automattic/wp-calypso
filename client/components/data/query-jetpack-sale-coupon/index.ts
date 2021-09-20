@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchJetpackSaleCoupon } from 'calypso/state/marketing/actions';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 
-export default function QueryJetpackSaleCoupon() {
+export default function QueryJetpackSaleCoupon(): null {
 	const dispatch = useDispatch();
 	const saleCoupon = useSelector( getJetpackSaleCoupon );
 
