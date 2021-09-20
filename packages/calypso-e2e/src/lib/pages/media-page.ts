@@ -101,8 +101,9 @@ export class MediaPage {
 	async editItem(): Promise< void > {
 		// await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
 
-		const itemsSelected = await this.page.isVisible( selectors.selectedItems );
-		if ( ! itemsSelected ) {
+		try {
+			await this.page.waitForSelector( selectors.selectedItems );
+		} catch ( error ) {
 			throw new Error( 'Unable to edit files: no item(s) were selected.' );
 		}
 
