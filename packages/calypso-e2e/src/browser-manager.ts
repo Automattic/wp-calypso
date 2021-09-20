@@ -102,6 +102,24 @@ export async function startBrowser( browserType: BrowserType ): Promise< Browser
 }
 
 /**
+ * Closes the target page passed in as parameter, and optionally closes the BrowserContext as well.
+ *
+ * @param {Page} page Target page to close.
+ * @param param0 Parameter object.
+ * @param {boolean} param0.closeContext Whether to also close the BrowserContext to which the page belongs.
+ */
+export async function closePage(
+	page: Page,
+	{ closeContext = false }: { closeContext?: boolean } = {}
+): Promise< void > {
+	if ( closeContext ) {
+		await page.context().close();
+	} else {
+		await page.close();
+	}
+}
+
+/**
  * Terminates the Browser instance.
  *
  * Once a Browser instance is terminated, all open contexts and pages are also terminated.

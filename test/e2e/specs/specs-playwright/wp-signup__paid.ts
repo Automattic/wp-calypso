@@ -116,13 +116,15 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		} );
 
 		it( 'Verify site is not yet launched', async function () {
-			const testContext = await BrowserManager.browser.newContext();
-			const testPage = await testContext.newPage();
+			// Obtain a new Page in a separate BrowserContext.
+			const testPage = await BrowserManager.newPage( { newContext: true } );
 			// TODO: make a utility to obtain the blog URL.
 			await testPage.goto( `https://${ blogName }.wordpress.com` );
+			// View site without logging in.
 			const comingSoonPage = new ComingSoonPage( testPage );
 			await comingSoonPage.validateComingSoonState();
-			await testContext.close();
+			// Dispose the test page and context.
+			await BrowserManager.closePage( testPage, { closeContext: true } );
 		} );
 
 		it( 'Start site launch', async function () {
