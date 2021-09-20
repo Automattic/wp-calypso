@@ -151,6 +151,7 @@ const InnerSearch = (
 	const searchInput = React.useRef< HTMLInputElement >( null );
 	const openIcon = React.useRef< HTMLButtonElement >( null );
 	const overlay = React.useRef< HTMLDivElement >( null );
+	const firstRender = React.useRef< boolean >( true );
 
 	React.useImperativeHandle(
 		forwardedRef,
@@ -214,7 +215,6 @@ const InnerSearch = (
 		searchInput.current?.focus();
 		// no need to call `onSearchOpen` as it will be called by `onFocus` once the searcbox is focused
 		// prevent outlines around the open icon after being clicked
-		openIcon.current?.blur();
 		recordEvent?.( 'Clicked Open Search' );
 	};
 
@@ -243,6 +243,19 @@ const InnerSearch = (
 
 		recordEvent?.( 'Clicked Close Search' );
 	};
+
+	// Focus the searchInput when isOpen flips to true, but ignore initial render
+	React.useEffect( () => {
+		// Do nothing on initial render
+		if ( firstRender.current ) {
+			firstRender.current = false;
+			return;
+		}
+		if ( isOpen ) {
+			searchInput.current?.focus();
+			openIcon.current?.blur();
+		}
+	}, [ isOpen ] );
 
 	const closeListener = keyListener( closeSearch );
 	const openListener = keyListener( openSearch );
