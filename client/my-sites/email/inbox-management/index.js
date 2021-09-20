@@ -15,7 +15,7 @@ const InboxManagement = ( { domains } ) => {
 
 	//EmailManagementHome logic will handle the case where there is only one domain to show directly the email comparison
 	//and also if there is no domain so, it will show a CTA to buy domain
-	if ( domainsWithSubscriptions.length === 0 || domainsWithSubscriptions.length > 1 ) {
+	if ( domainsWithSubscriptions.length === 0 ) {
 		return (
 			<CalypsoShoppingCartProvider>
 				<EmailManagementHome />
@@ -24,7 +24,7 @@ const InboxManagement = ( { domains } ) => {
 	}
 
 	//If we are at this point it means that we've at least have one subscription to show in mailbox selector
-	return <h1>Handle Mailbox Placeholder</h1>;
+	return <h1>Placeholder</h1>;
 };
 
 export default connect( ( state ) => {
