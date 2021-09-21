@@ -35,9 +35,10 @@ function getTestNameWithTime( testName: string ): string {
  */
 export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): void => {
 	let page: Page;
-	const tempDir = getArtifactDir();
+	let tempDir: string;
 
 	beforeAll( async () => {
+		tempDir = await getArtifactDir();
 		// Get default logging configuration, which will create a directory to store
 		// artifacts.
 		const loggingConfiguration = await getDefaultLoggerConfiguration();

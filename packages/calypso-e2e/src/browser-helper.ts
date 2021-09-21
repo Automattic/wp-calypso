@@ -133,8 +133,5 @@ export async function getArtifactDir(): Promise< string > {
 	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
 	const resultsPath = path.join( process.cwd(), 'results' );
 	await mkdir( resultsPath, { recursive: true } );
-	const out = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
-	console.log( out );
-	// return await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
-	return out;
+	return await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
 }
