@@ -288,6 +288,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isGutenboarding,
+			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
@@ -303,6 +304,13 @@ export class LoginLinks extends Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
+		}
+
+		if ( isP2Login && query?.redirect_to ) {
+			const urlParts = getUrlParts( query.redirect_to );
+			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
+				return null;
+			}
 		}
 
 		return (
