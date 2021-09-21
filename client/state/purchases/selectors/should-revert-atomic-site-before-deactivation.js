@@ -30,8 +30,8 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	// Retrieves all Atomic supported purchases for the site.
 	// If there is at least one active subscription except the given one,
 	// the site needs to be kept in the Atomic infra.
-	return getSitePurchases( state, purchase.siteId ).some(
+	return ! getSitePurchases( state, purchase.siteId ).some(
 		( sitePurchase ) =>
-			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( purchase.productSlug )
+			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( sitePurchase.productSlug )
 	);
 };
