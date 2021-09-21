@@ -28,18 +28,20 @@ import DomainTransferOrConnect from './transfer-or-connect';
 
 import './style.scss';
 
-function UseMyDomain( {
-	goBack,
-	initialInputMode,
-	initialQuery,
-	isSignupStep,
-	onConnect,
-	onTransfer,
-	selectedSite,
-	showHeader,
-	transferDomainUrl,
-	initialMode,
-} ) {
+function UseMyDomain( props ) {
+	const {
+		goBack = () => {},
+		initialInputMode = UseMyDomain.inputMode.domainInput,
+		initialQuery,
+		isSignupStep = false,
+		onConnect,
+		onTransfer,
+		selectedSite,
+		showHeader = true,
+		transferDomainUrl,
+		initialMode,
+	} = props;
+
 	const { __ } = useI18n();
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( null );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( null );
@@ -342,13 +344,6 @@ function UseMyDomain( {
 		</>
 	);
 }
-
-UseMyDomain.defaultProps = {
-	goBack: () => {},
-	initialInputMode: UseMyDomain.inputMode.domainInput,
-	isSignupStep: false,
-	showHeader: true,
-};
 
 UseMyDomain.propTypes = {
 	goBack: PropTypes.func,
