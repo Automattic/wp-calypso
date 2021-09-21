@@ -885,7 +885,7 @@ class CancelPurchaseForm extends React.Component {
 				<>
 					<FormattedHeader
 						brandFont
-						headerText={ translate( 'Your thoughts are needed' ) }
+						headerText={ translate( 'Share your feedback' ) }
 						subHeaderText={ translate(
 							'Before you go, please answer a few quick questions to help us improve %(productName)s.',
 							{
@@ -907,7 +907,7 @@ class CancelPurchaseForm extends React.Component {
 			if ( surveyStep === INITIAL_STEP ) {
 				return (
 					<div>
-						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
+						<FormSectionHeading>{ translate( 'Share your feedback' ) }</FormSectionHeading>
 						<p>
 							{ translate(
 								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
