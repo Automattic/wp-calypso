@@ -26,14 +26,11 @@ class RecommendedThemes extends React.Component {
 const ConnectedRecommendedThemes = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const filter = getRecommendedThemesFilter( state, siteId );
+		const filters = getRecommendedThemesFilter( state, siteId );
 		return {
 			customizedThemesList: getRecommendedThemesSelector( state, siteId ),
-			// TODO: How do we accommodate isLoading?
-			isLoading: areRecommendedThemesLoading( state, filter ),
-			// TODO: Get rid of filter key
-			filter,
-			filters: filter,
+			isLoading: areRecommendedThemesLoading( state, filters, siteId ),
+			filters,
 		};
 	},
 	{ getRecommendedThemes }
