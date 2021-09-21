@@ -14,7 +14,7 @@ const validateFilePath: validator< string > = (
 	}
 	if ( filePathBackSlashRegExp.test( pathToValidate ) ) {
 		return {
-			message: translate( 'Use Forward Slashes, "/", in path.' ),
+			message: translate( 'Use forward slashes, "/", in path.' ).toString(),
 		};
 	}
 	const invalidCharacters = pathToValidate
@@ -37,7 +37,7 @@ const validateFilePath: validator< string > = (
 
 	if ( filePathMultiSlashRegExp.test( pathToValidate ) ) {
 		return {
-			message: translate( 'Use only single slashes, "/", in path.' ),
+			message: translate( 'Use only single slashes, "/", in path.' ).toString(),
 		};
 	}
 

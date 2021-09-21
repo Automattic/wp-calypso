@@ -1,5 +1,5 @@
 export interface ValidationError {
-	message: ;
+	message: string;
 }
 
 export type validator< T > = ( data: T ) => null | ValidationError;

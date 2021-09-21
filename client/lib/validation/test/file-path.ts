@@ -16,7 +16,7 @@ describe( 'filePathValidator', () => {
 	test( 'should reject a path with backslashes', () => {
 		expect( filePathValidator( '\\abc' ) ).toHaveProperty(
 			'message',
-			'Use Forward Slashes, "/", in path.'
+			'Use forward slashes, "/", in path.'
 		);
 	} );
 
