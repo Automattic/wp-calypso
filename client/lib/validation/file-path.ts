@@ -3,6 +3,7 @@ import { ValidationError, validator } from './types';
 
 const filePathRegExp = /^\/$|^(\/[\w-]+)+\/?$/;
 const filePathBackSlashRegExp = /^\\$|^(\\[\w-]+)+\\?$/;
+const filePathMultiSlashRegExp = /^\/+$|^(\/+[\w-]+)+\/*$/;
 const validFilePathChars = /[\w\-/]/g;
 
 const validateFilePath: validator< string > = (
@@ -33,7 +34,13 @@ const validateFilePath: validator< string > = (
 			).toString(),
 		};
 	}
-	// TODO: possible
+
+	if ( filePathMultiSlashRegExp.test( pathToValidate ) ) {
+		return {
+			message: translate( 'Use only single slashes, "/", in path.' ),
+		};
+	}
+
 	return {
 		message: translate( 'Not a valid file path.' ).toString(),
 	};

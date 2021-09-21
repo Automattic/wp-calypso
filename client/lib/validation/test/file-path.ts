@@ -28,7 +28,10 @@ describe( 'filePathValidator', () => {
 	test.each( [ [ '//' ], [ '/abc//def' ], [ '/abc//' ], [ '///' ], [ '/a///b/c' ] ] )(
 		'should reject a path with two or more adjacent slashes',
 		( path ) => {
-			expect( filePathValidator( path ) ).not.toBeNull();
+			expect( filePathValidator( path ) ).toHaveProperty(
+				'message',
+				'Use only single slashes, "/", in path.'
+			);
 		}
 	);
 
