@@ -31,7 +31,7 @@ import './style.scss';
 function UseMyDomain( props ) {
 	const {
 		goBack = () => {},
-		initialInputMode = UseMyDomain.inputMode.domainInput,
+		initialInputMode = inputMode.domainInput,
 		initialQuery,
 		isSignupStep = false,
 		onConnect,
