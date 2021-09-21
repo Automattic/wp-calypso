@@ -16,7 +16,11 @@ const validateFilePath: validator< string > = (
 			message: translate( 'Use Forward Slashes, "/", in path.' ),
 		};
 	}
-	const invalidCharacters = pathToValidate.replace( validFilePathChars, '' );
+	const invalidCharacters = pathToValidate
+		.replace( validFilePathChars, '' )
+		.split( '' )
+		.filter( ( character, index, array ) => array.indexOf( character ) === index )
+		.join( '' );
 	if ( invalidCharacters.length > 0 ) {
 		return {
 			message: translate(
