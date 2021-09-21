@@ -21,9 +21,6 @@ export class GooglePhotos extends SharingService {
 
 	/**
 	 * Deletes the passed connections.
-	 *
-	 * @param {Array} connections Optional. Connections to be deleted.
-	 *                            Default: All connections for this service.
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
