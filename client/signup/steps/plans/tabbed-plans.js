@@ -6,10 +6,9 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { Icon, image, pages, lifesaver, media, store, currencyDollar } from '@wordpress/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
@@ -44,7 +43,7 @@ function SharedFeatures( {
 			{ show &&
 				sharedFeatures[ selectedTab ].map( ( item, index ) => (
 					<SharedFeature key={ `sharedFeature${ index }` }>
-						<Icon icon={ item.icon } size={ 24 } />
+						<Gridicon icon={ item.icon } size={ 24 } />
 						<span>{ item.description }</span>
 					</SharedFeature>
 				) ) }
@@ -157,28 +156,30 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 				</Tabs>
 			</TabWrapper>
 			<Grid className="tabbed-plans__grid-container">
-				<TermToggles className="tabbed-plans__term-toggles">
-					<RadioButton>
-						<input
-							type="radio"
-							checked={ termLength === 'yearly' ? 'checked' : '' }
-							name="monthly"
-							onChange={ toggleTerm }
-						/>
-						<Checkmark></Checkmark>
-						<span>{ 'Pay Yearly' }</span>
-					</RadioButton>
-					<RadioButton>
-						<input
-							type="radio"
-							checked={ termLength === 'monthly' ? 'checked' : '' }
-							name="monthly"
-							onChange={ toggleTerm }
-						/>
-						<Checkmark></Checkmark>
-						<span>{ 'Pay Monthly' }</span>
-					</RadioButton>
-				</TermToggles>
+				{ selectedTab === 'Professional' && (
+					<TermToggles className="tabbed-plans__term-toggles">
+						<RadioButton>
+							<input
+								type="radio"
+								checked={ termLength === 'yearly' ? 'checked' : '' }
+								name="monthly"
+								onChange={ toggleTerm }
+							/>
+							<Checkmark></Checkmark>
+							<span>{ 'Pay Yearly' }</span>
+						</RadioButton>
+						<RadioButton>
+							<input
+								type="radio"
+								checked={ termLength === 'monthly' ? 'checked' : '' }
+								name="monthly"
+								onChange={ toggleTerm }
+							/>
+							<Checkmark></Checkmark>
+							<span>{ 'Pay Monthly' }</span>
+						</RadioButton>
+					</TermToggles>
+				) }
 
 				<PlanBorderOne featured={ selectedTab === 'Professional' } />
 				<PlanBorderTwo />
@@ -214,19 +215,31 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 												formatCurrency( item.rawPrice * 12, currencyCode, { stripZeros: true } ) +
 												' annually' }
 										</span>
-										<Savings>
-											{ "You're saving " +
-												Math.round(
-													( ( item.rawPriceForMonthly - item.rawPrice ) /
-														item.rawPriceForMonthly ) *
-														100
-												) +
-												'% by paying annually' }
-										</Savings>
+										{ selectedTab === 'Professional' && (
+											<Savings>
+												{ "You're saving " +
+													Math.round(
+														( ( item.rawPriceForMonthly - item.rawPrice ) /
+															item.rawPriceForMonthly ) *
+															100
+													) +
+													'% by paying annually' }
+											</Savings>
+										) }
 									</>
 								) }
 								{ termLength === 'monthly' && <span>per month, billed monthly</span> }
 							</TermDescription>
+							{ item.planName !== 'Free' && (
+								<CtaButton
+									key={ `planCtaTop${ index }` }
+									className={ `tabbed-plans__top-button-${ index + 1 }` }
+									onClick={ () => handleUpgradeButtonClick( item.planSlug, item.planProductId ) }
+									primary={ item.planName === 'Premium' }
+								>
+									{ `Start with ${ item.planName }` }
+								</CtaButton>
+							) }
 							<CtaButton
 								key={ `planCta${ index }` }
 								className={ `tabbed-plans__button-${ index + 1 }` }
@@ -235,18 +248,16 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							>
 								{ `Start with ${ item.planName }` }
 							</CtaButton>
-							{ item.planName !== 'Free' && (
-								<SharedFeatures
-									selectedTab={ selectedTab }
-									sharedFeatures={ sharedFeatures }
-									showFeatures={ showFeatures }
-									setShowFeatures={ setShowFeatures }
-									className={ classNames(
-										'tabbed-plans__shared-features-mobile',
-										`tabbed-plans__shared-features-${ index + 1 }`
-									) }
-								/>
-							) }
+							<SharedFeatures
+								selectedTab={ selectedTab }
+								sharedFeatures={ sharedFeatures }
+								showFeatures={ showFeatures }
+								setShowFeatures={ setShowFeatures }
+								className={ classNames(
+									'tabbed-plans__shared-features-mobile',
+									`tabbed-plans__shared-features-${ index + 1 }`
+								) }
+							/>
 						</React.Fragment>
 					) ) }
 
@@ -299,10 +310,22 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 					</React.Fragment>
 				) ) }
 				<FreeBanner>
-					Not sure which plan to choose?{ ' ' }
-					<button href="#" onClick={ () => handleUpgradeButtonClick( null ) }>
-						Explore our Free option
-					</button>
+					{ selectedTab === 'Professional' && (
+						<>
+							Need something simple to start?{ ' ' }
+							<button href="#" onClick={ () => toggleTab() }>
+								Explore our Starter plans
+							</button>
+						</>
+					) }
+					{ selectedTab === 'Starter' && (
+						<>
+							Need something more professional?{ ' ' }
+							<button href="#" onClick={ () => toggleTab() }>
+								Explore our Professional plans
+							</button>
+						</>
+					) }
 				</FreeBanner>
 				<SharedFeatures selectedTab={ selectedTab } sharedFeatures={ sharedFeatures } />
 			</Grid>
@@ -371,15 +394,15 @@ const mapStateToProps = ( state, ownProps ) => {
 export default connect( mapStateToProps )( TabbedPlans );
 
 function getTabList() {
-	return [ 'Limited', 'Professional' ];
+	return [ 'Starter', 'Professional' ];
 }
 
 function getBestForStrings() {
 	return {
-		Free: 'Best for sampling',
-		Personal: 'Best for getting started',
-		Premium: 'Best for freelancers',
-		Business: 'Best for small business',
+		Free: 'Best for temporary use',
+		Personal: 'Best for personal sites and blogs',
+		Premium: 'Best for portfolios and freelancers',
+		Business: 'Best for professional sites and blogs',
 		eCommerce: 'Best for online stores',
 	};
 }
@@ -391,7 +414,7 @@ function getFeatureComparisonData() {
 				featureName: 'Install plugins',
 				tooltip:
 					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
-				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 				planTwo: {
 					included: true,
 					copy: '58,000+ Available',
@@ -404,12 +427,12 @@ function getFeatureComparisonData() {
 				},
 			},
 			{
-				featureName: 'Install custom themes',
+				featureName: 'Install themes',
 				tooltip:
 					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
 				planOne: {
 					included: false,
-					copy: 'Not included',
+					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
 				planTwo: {
@@ -427,15 +450,15 @@ function getFeatureComparisonData() {
 				featureName: 'eCommerce',
 				tooltip:
 					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
-				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 				planTwo: {
 					included: false,
-					copy: 'Not included',
+					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
 				planThree: {
 					included: true,
-					copy: 'Complete eCommerce platform',
+					copy: 'Included',
 					mobileCopy: 'Complete eCommerce platform',
 				},
 			},
@@ -470,12 +493,12 @@ function getFeatureComparisonData() {
 				},
 				planTwo: {
 					included: true,
-					copy: 'Professional for better ranking',
+					copy: 'Professional',
 					mobileCopy: 'Professional SEO',
 				},
 				planThree: {
 					included: true,
-					copy: 'Professional for better ranking',
+					copy: 'Professional',
 					mobileCopy: 'Professional SEO',
 				},
 			},
@@ -512,26 +535,26 @@ function getFeatureComparisonData() {
 				},
 			},
 		],
-		Limited: [
+		Starter: [
 			{
 				featureName: 'Install plugins',
 				tooltip:
 					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
-				planOne: { included: false, copy: 'Not included', mobileCopy: null },
-				planTwo: { included: false, copy: 'Not included', mobileCopy: null },
+				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 			},
 			{
-				featureName: 'Install custom themes',
+				featureName: 'Install themes',
 				tooltip:
 					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
 				planOne: {
 					included: false,
-					copy: 'Not included',
+					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
 				planTwo: {
 					included: false,
-					copy: 'Not included',
+					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
 			},
@@ -539,14 +562,14 @@ function getFeatureComparisonData() {
 				featureName: 'eCommerce',
 				tooltip:
 					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
-				planOne: { included: false, copy: 'Not included', mobileCopy: null },
-				planTwo: { included: false, copy: 'Not included', mobileCopy: null },
+				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 			},
 			{
 				featureName: 'Custom domain name',
 				tooltip:
 					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).',
-				planOne: { included: false, copy: 'Not included', mobileCopy: null },
+				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 				planTwo: {
 					included: true,
 					copy: 'Free for the first year',
@@ -559,7 +582,7 @@ function getFeatureComparisonData() {
 					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
 				planOne: {
 					included: false,
-					copy: '—',
+					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
 				planTwo: {
@@ -574,7 +597,7 @@ function getFeatureComparisonData() {
 					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.',
 				planOne: {
 					included: false,
-					copy: 'Not included',
+					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
 				planTwo: {
@@ -584,10 +607,10 @@ function getFeatureComparisonData() {
 				},
 			},
 			{
-				featureName: 'Remove WordPress.com Ads',
+				featureName: 'Remove Ads',
 				tooltip:
 					'Allow your visitors to visit and read your website without seeing any WordPress.com advertising.',
-				planOne: { included: false, copy: 'No', mobileCopy: null },
+				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 				planTwo: { included: true, copy: 'Yes', mobileCopy: null },
 			},
 		],
@@ -598,64 +621,64 @@ function getFeatureComparisonData() {
 
 function getSharedFeatures() {
 	const data = {
-		Limited: [
+		Starter: [
 			{
-				icon: pages,
+				icon: 'pages',
 				description: 'Unlimited posts and pages',
 			},
 			{
-				icon: lifesaver,
-				description: 'Best-in-class managed hosting',
+				icon: 'cloud',
+				description: 'World-class hosting',
 			},
 			{
-				icon: lifesaver,
+				icon: 'lock',
 				description: 'Free SSL certificante',
 			},
 			{
-				icon: lifesaver,
+				icon: 'image',
 				description: '6GB of storage',
 			},
 			{
-				icon: image,
-				description: 'WordPress.com ads removed',
+				icon: 'image',
+				description: 'Ads removed',
 			},
 			{
-				icon: store,
-				description: 'Accept simple payments and donations',
+				icon: 'cart',
+				description: 'Accept simple payments',
 			},
 		],
 		Professional: [
 			{
-				icon: pages,
+				icon: 'pages',
 				description: 'Unlimited posts and pages',
 			},
 			{
-				icon: lifesaver,
-				description: 'Best-in-class managed hosting',
+				icon: 'cloud',
+				description: 'World-class hosting',
 			},
 			{
-				icon: image,
-				description: 'WordPress.com ads removed',
+				icon: 'image',
+				description: 'Ads removed',
 			},
 			{
-				icon: media,
+				icon: 'play',
 				description: 'Video hosting',
 			},
 			{
-				icon: store,
-				description: 'Accept simple payments and donations',
+				icon: 'cart',
+				description: 'Accept simple payments',
 			},
 			{
-				icon: currencyDollar,
+				icon: 'star',
 				description: 'Earn ad revenue',
 			},
 			{
-				icon: image,
+				icon: 'stats-alt',
 				description: 'Google Analytics',
 			},
 			{
-				icon: image,
-				description: 'Professional email marketing integration.',
+				icon: 'mail',
+				description: 'Email marketing integration.',
 			},
 		],
 	};
@@ -667,9 +690,10 @@ const SharedFeatureHeader = styled.div`
 	grid-column: 1 / 4;
 	grid-row: 1;
 	justify-self: stretch;
-	margin: 25px 24px;
-	padding-bottom: 10px;
+	margin: 25px 0;
+	padding: 10px 24px;
 	border-bottom: 1px solid rgba( 220, 220, 222, 0.5 );
+	font-weight: 500;
 
 	@media ( max-width: 600px ) {
 		display: none;
@@ -678,6 +702,7 @@ const SharedFeatureHeader = styled.div`
 const SharedFeature = styled.div`
 	padding: 5px 0;
 	font-weight: 400;
+	font-size: 14px;
 
 	svg {
 		vertical-align: middle;
@@ -756,7 +781,7 @@ const FeatureTitle = styled.div`
 	color: #2c3338;
 
 	button {
-		margin-left: 15px;
+		margin-left: 8px;
 		font-size: 1em;
 		vertical-align: text-top;
 
@@ -992,10 +1017,18 @@ const PlanBorderThree = styled.div`
 const FreeBanner = styled.p`
 	grid-area: free-banner;
 	margin: 24px 0;
-	padding: 7px 0;
-	font-size: 14px;
-	background: lightgray;
+	padding: 15px 0;
 	text-align: center;
+	font-size: 14px;
+	background: #f6f7f7;
+	border-radius: 2px;
+
+	button {
+		font-size: 14px;
+		color: #0675c4;
+		cursor: pointer;
+		text-decoration: underline;
+	}
 
 	@media ( max-width: 600px ) {
 		margin: 24px 24px;
