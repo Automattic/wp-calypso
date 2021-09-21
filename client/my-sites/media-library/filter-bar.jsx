@@ -9,6 +9,7 @@ import SectionNavTabItem from 'calypso/components/section-nav/item';
 import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import DataSource from './data-source';
+import GooglePhotosAccount from './google-photos-account';
 
 // These source supply very large images, and there are instances such as
 // the site icon editor, where we want to disable them because the editor
@@ -206,6 +207,9 @@ export class MediaLibraryFilterBar extends Component {
 					{ this.renderSearchSection() }
 				</SectionNav>
 
+				{ this.props.isConnected && 'google_photos' === this.props.source && (
+					<GooglePhotosAccount />
+				) }
 				{ this.renderPlanStorage() }
 			</div>
 		);

@@ -118,6 +118,43 @@
 		}
 	}
 
+	.google-photos-account {
+		margin-bottom: 9px;
+		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
+		background-color: var( --color-surface );
+		padding: 4px 24px;
+		box-sizing: border-box;
+		width: 30%;
+
+		&:focus {
+			box-shadow: 0 0 0 1px var( --color-border-subtle ),
+			inset 0 0 0 2px var( --color-primary-light );
+			outline: none;
+			z-index: 1;
+		}
+
+		@include breakpoint-deprecated( '>960px' ) {
+			margin-bottom: 17px;
+		}
+
+		.google-photos-account__account-avatar {
+			position: relative;
+			top: 1px;
+		}
+
+		.google-photos-account__account-name {
+			font-size: $font-body-small;
+			margin: 0 8px;
+			position: relative;
+			top: -4px;
+		}
+
+		.button {
+			padding: 5px;
+		}
+	}
+
 	.media-library__datasource {
 		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 			0 1px 2px var( --color-neutral-0 );
