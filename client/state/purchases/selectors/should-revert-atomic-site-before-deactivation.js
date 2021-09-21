@@ -19,11 +19,11 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 
 	const purchase = getByPurchaseId( state, purchaseId );
 
-	if ( ! purchase ) {
-		return false;
-	}
-
-	if ( ! isSiteAutomatedTransfer( state, purchase.siteId ) ) {
+	if (
+		! purchase ||
+		! isSiteAutomatedTransfer( state, purchase.siteId ) ||
+		! isAtomicSupportedProduct( purchase.productSlug )
+	) {
 		return false;
 	}
 
