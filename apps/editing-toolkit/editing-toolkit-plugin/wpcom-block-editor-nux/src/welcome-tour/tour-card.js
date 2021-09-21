@@ -60,8 +60,17 @@ function WelcomeTourCard( {
 			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
 			<CardMedia className="welcome-tour-card__media">
 				<picture>
-					{ imgSrc.mobile && <source srcSet={ imgSrc.mobile } media="(max-width: 600px)" /> }
-					<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc.desktop } />
+					{ imgSrc.mobile && (
+						<source
+							srcSet={ imgSrc.mobile?.src }
+							type={ imgSrc.mobile?.type }
+							media="(max-width: 600px)"
+						/>
+					) }
+					<img
+						alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) }
+						src={ imgSrc.desktop?.src }
+					/>
 				</picture>
 			</CardMedia>
 			<CardBody>

@@ -5,24 +5,24 @@ import { __ } from '@wordpress/i18n';
 
 const CDN_PREFIX = 'https://s0.wp.com/i/editor-welcome-tour';
 const addBlock = {
-	desktop: `${ CDN_PREFIX }/slide-add-block.gif`,
-	mobile: `${ CDN_PREFIX }/slide-add-block_mobile.gif`,
+	desktop: { src: `${ CDN_PREFIX }/slide-add-block.gif`, type: 'image/gif' },
+	mobile: { src: `${ CDN_PREFIX }/slide-add-block_mobile.gif`, type: 'image/gif' },
 };
-const allBlocks = { desktop: `${ CDN_PREFIX }/slide-all-blocks.gif` };
-const finish = { desktop: `${ CDN_PREFIX }/slide-finish.png` };
-const makeBold = { desktop: `${ CDN_PREFIX }/slide-make-bold.gif` };
+const allBlocks = { desktop: { src: `${ CDN_PREFIX }/slide-all-blocks.gif`, type: 'image/gif' } };
+const finish = { desktop: { src: `${ CDN_PREFIX }/slide-finish.png`, type: 'image/gif' } };
+const makeBold = { desktop: { src: `${ CDN_PREFIX }/slide-make-bold.gif`, type: 'image/gif' } };
 const moreOptions = {
-	desktop: `${ CDN_PREFIX }/slide-more-options.gif`,
-	mobile: `${ CDN_PREFIX }/slide-more-options_mobile.gif`,
+	desktop: { src: `${ CDN_PREFIX }/slide-more-options.gif`, type: 'image/gif' },
+	mobile: { src: `${ CDN_PREFIX }/slide-more-options_mobile.gif`, type: 'image/gif' },
 };
 const moveBlock = {
-	desktop: `${ CDN_PREFIX }/slide-move-block.gif`,
-	mobile: `${ CDN_PREFIX }/slide-move-block_mobile.gif`,
+	desktop: { src: `${ CDN_PREFIX }/slide-move-block.gif`, type: 'image/gif' },
+	mobile: { src: `${ CDN_PREFIX }/slide-move-block_mobile.gif`, type: 'image/gif' },
 };
-const undo = { desktop: `${ CDN_PREFIX }/slide-undo.gif` };
+const undo = { desktop: { src: `${ CDN_PREFIX }/slide-undo.gif`, type: 'image/gif' } };
 const welcome = {
-	desktop: `${ CDN_PREFIX }/slide-welcome.png`,
-	mobile: `${ CDN_PREFIX }/slide-welcome_mobile.jpg`,
+	desktop: { src: `${ CDN_PREFIX }/slide-welcome.png`, type: 'image/png' },
+	mobile: { src: `${ CDN_PREFIX }/slide-welcome_mobile.jpg`, type: 'image/jpeg' },
 };
 
 /**
