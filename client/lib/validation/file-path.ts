@@ -19,9 +19,14 @@ const validateFilePath: validator< string > = (
 	const invalidCharacters = pathToValidate.replace( validFilePathChars, '' );
 	if ( invalidCharacters.length > 0 ) {
 		return {
-			message: translate( 'Path contains invalid character "%s".', {
-				args: [ invalidCharacters ],
-			} ).toString(),
+			message: translate(
+				'Path contains invalid character "%s".',
+				'Path contains invalid characters "%s".',
+				{
+					args: [ invalidCharacters ],
+					count: invalidCharacters.length,
+				}
+			).toString(),
 		};
 	}
 	// TODO: possible
