@@ -53,7 +53,6 @@ describe( 'getPublicSites()', () => {
 				title: 'WordPress.com Example Blog',
 				domain: 'example.com',
 				slug: 'example.com',
-				hasConflict: false,
 				options: {
 					unmapped_url: 'http://example.com',
 				},
