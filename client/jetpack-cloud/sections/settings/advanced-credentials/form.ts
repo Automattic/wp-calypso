@@ -68,13 +68,6 @@ export interface FormErrors {
 
 export const INITIAL_FORM_ERRORS: FormErrors = {};
 
-export const mergeFoundCredentials = ( foundCredentials: Credentials, formState: FormState ) => ( {
-	...formState,
-	...foundCredentials,
-	type: undefined,
-	protocol: foundCredentials.type,
-} );
-
 export const validate = ( formState: FormState, mode: FormMode ): FormErrors => {
 	const formErrors: FormErrors = {};
 	// user checking
