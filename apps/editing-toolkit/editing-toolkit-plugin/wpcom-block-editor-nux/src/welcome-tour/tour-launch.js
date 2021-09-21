@@ -7,7 +7,7 @@ import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '@wordpress/icons';
+import { Icon, close } from '@wordpress/icons';
 /**
  * Internal Dependencies
  */
@@ -141,21 +141,29 @@ function WelcomeTourFrame() {
 						/>
 					</>
 				) : (
-					<WelcomeTourMinimized onMaximize={ handleMaximize } />
+					<WelcomeTourMinimized onMaximize={ handleMaximize } onDismiss={ handleDismiss } />
 				) }
 			</div>
 		</>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize } ) {
+function WelcomeTourMinimized( { onMaximize, onDismiss } ) {
 	return (
-		<Button onClick={ onMaximize } className="wpcom-editor-welcome-tour__resume-btn">
-			<Flex gap={ 13 }>
-				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
-				<Icon icon={ maximize } size={ 24 } />
-			</Flex>
-		</Button>
+		<Flex gap={ 0 } className="wpcom-editor-welcome-tour__minimized">
+			<Button onClick={ onMaximize } aria-label={ __( 'Resume Tour', 'full-site-editing' ) }>
+				<Flex gap={ 13 }>
+					<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
+					<Icon icon={ maximize } size={ 24 } />
+				</Flex>
+			</Button>
+			<Button
+				onClick={ () => onDismiss( 'close-btn-minimized' ) }
+				aria-label={ __( 'Close Tour', 'full-site-editing' ) }
+			>
+				<Icon icon={ close } size={ 24 } />
+			</Button>
+		</Flex>
 	);
 }
 
