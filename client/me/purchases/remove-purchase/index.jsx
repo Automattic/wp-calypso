@@ -7,7 +7,6 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
-	isJetpackSearch,
 	isTitanMail,
 } from '@automattic/calypso-products';
 import { Dialog, Button, CompactCard, Gridicon } from '@automattic/components';
@@ -31,7 +30,10 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
-import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import {
+	getPurchasesError,
+	shouldRevertAtomicSiteBeforeDeactivation,
+} from 'calypso/state/purchases/selectors';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
@@ -109,47 +111,68 @@ class RemovePurchase extends Component {
 		this.setState( { isDialogVisible: false } );
 	};
 
-	removePurchase = () => {
+	removePurchase = async () => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
 
-		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
-			const productName = getName( purchase );
-			const { purchasesError, purchaseListUrl } = this.props;
+		const response = await this.props.removePurchase( purchase.id, this.props.userId );
 
-			if ( purchasesError ) {
-				this.setState( { isRemoving: false } );
+		const productName = getName( purchase );
+		const { purchasesError, purchaseListUrl } = this.props;
+		let successMessage;
 
-				this.closeDialog();
+		if ( purchasesError ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( purchasesError );
+			return;
+		}
 
-				this.props.errorNotice( purchasesError );
-			} else {
-				if ( isDomainRegistration( purchase ) ) {
-					if ( isDomainOnlySite ) {
-						this.props.receiveDeletedSite( purchase.siteId );
-						this.props.setAllSitesSelected();
-					}
-
-					this.props.successNotice(
-						translate( 'The domain {{domain/}} was removed from your account.', {
-							components: { domain: <em>{ productName }</em> },
-						} ),
-						{ isPersistent: true }
-					);
-				} else {
-					this.props.successNotice(
-						translate( '%(productName)s was removed from {{siteName/}}.', {
-							args: { productName },
-							components: { siteName: <em>{ purchase.domain }</em> },
-						} ),
-						{ isPersistent: true }
-					);
+		if ( response.status === 'completed' ) {
+			if ( isDomainRegistration( purchase ) ) {
+				if ( isDomainOnlySite ) {
+					this.props.receiveDeletedSite( purchase.siteId );
+					this.props.setAllSitesSelected();
 				}
 
-				page( purchaseListUrl );
+				successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+					components: { domain: <em>{ productName }</em> },
+				} );
+			} else {
+				successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+					args: { productName },
+					components: { siteName: <em>{ purchase.domain }</em> },
+				} );
 			}
-		} );
+		} else if ( response.status === 'queued' ) {
+			if ( isDomainRegistration( purchase ) ) {
+				successMessage = translate(
+					'We are removing the domain {{domain/}} from your account.{{br/}}' +
+						'Please give it some time for changes to take effect. ' +
+						'An email will be sent once the process is complete.',
+					{ components: { br: <br />, domain: <em>{ productName }</em> } }
+				);
+			} else {
+				successMessage = translate(
+					'We are removing %(productName)s from {{siteName/}}.{{br/}}' +
+						'Please give it some time for changes to take effect. ' +
+						'An email will be sent once the process is complete.',
+					{
+						args: { productName },
+						components: { br: <br />, siteName: <em>{ purchase.domain }</em> },
+					}
+				);
+			}
+		} else {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( translate( 'There was an error removing the purchase.' ) );
+			return;
+		}
+
+		this.props.successNotice( successMessage, { isPersistent: true } );
+		page( purchaseListUrl );
 	};
 
 	getChatButton = () => (
@@ -387,7 +410,7 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
+		if ( this.props.shouldRevertAtomicSite && ! config.isEnabled( 'atomic/automated-revert' ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 
@@ -409,7 +432,7 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const { purchase, className, useVerticalNavItem, translate } = this.props;
+		const { className, purchase, translate, useVerticalNavItem } = this.props;
 		const productName = getName( purchase );
 
 		if ( ! isRemovable( purchase ) ) {
@@ -450,6 +473,7 @@ export default connect(
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
+			shouldRevertAtomicSite: shouldRevertAtomicSiteBeforeDeactivation( state, purchase.id ),
 			userId: getCurrentUserId( state ),
 		};
 	},

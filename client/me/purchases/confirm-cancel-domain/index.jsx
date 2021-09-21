@@ -135,24 +135,29 @@ class ConfirmCancelDomain extends React.Component {
 				return;
 			}
 
+			let successMessage;
 			if ( response.status === 'completed' ) {
-				this.props.successNotice(
-					translate( '%(purchaseName)s was successfully cancelled and refunded.', {
-						args: { purchaseName },
-					} ),
-					{ displayOnNextPage: true }
-				);
-
-				this.props.refreshSitePlans( purchase.siteId );
-
-				this.props.clearPurchases();
-
-				recordTracksEvent( 'calypso_domain_cancel_form_submit', {
-					product_slug: purchase.productSlug,
+				successMessage = translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+					args: { purchaseName },
 				} );
 
-				page.redirect( this.props.purchaseListUrl );
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.clearPurchases();
+			} else if ( response.status === 'queued' ) {
+				successMessage = translate(
+					'We are cancelling %(purchaseName)s and processing your refund.{{br/}}' +
+						'Please give it some time for changes to take effect. ' +
+						'An email will be sent once the process is complete.',
+					{ args: { purchaseName }, components: { br: <br /> } }
+				);
 			}
+
+			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
+				product_slug: purchase.productSlug,
+			} );
+
+			this.props.successNotice( successMessage, { displayOnNextPage: true } );
+			page.redirect( this.props.purchaseListUrl );
 		} );
 	};
 
