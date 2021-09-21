@@ -6,12 +6,20 @@ const selectors = {
 	usernameInput: 'input[name="username"]',
 	passwordInput: 'input[name="password"]',
 
+	// WPCC specific fields
+	firstNameInput: 'input[name="firstName"]',
+	lastNameInput: 'input[name="lastName"]',
+
 	// Buttons
-	submitButton: 'button.signup-form__submit',
+	submitButton: 'button[type="submit"]',
 };
 
 /**
- * Represents the Invitation User Signup Page.
+ * This object represents multiple pages on WordPress.com:
+ * 	- regular (/start/user)
+ * 	- gutenboarding (/new)
+ * 	- wpcc
+ *	- invitation signup
  */
 export class UserSignupPage {
 	private page: Page;
@@ -42,6 +50,27 @@ export class UserSignupPage {
 		// user to this page.
 		// Example: invite => Signup & Follow
 		//          signup from login => Create your account
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.submitButton ),
+		] );
+	}
+
+	/**
+	 * Signup form that is used by WordPress.com Connect (WPCC) endpoint.
+	 *
+	 * WPCC is a single sign-on service. For more information, please see
+	 * https://wordpress.com/support/wpcc-faq/.
+	 *
+	 * @param {string} email Email address of the new user.
+	 * @param {string} password Password of the new user.
+	 */
+	async signupWPCC( email: string, password: string ): Promise< void > {
+		await this.page.fill( selectors.firstNameInput, 'E2E' );
+		await this.page.fill( selectors.lastNameInput, 'Testing' );
+		await this.page.fill( selectors.emailInput, email );
+		await this.page.fill( selectors.passwordInput, password );
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.submitButton ),

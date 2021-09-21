@@ -23,7 +23,7 @@ import { Page } from 'playwright';
 describe(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish/Magic Link' ),
 	function () {
-		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
+		const inboxId = DataHelper.config.get( 'signupInboxId' ) as string;
 		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
@@ -41,7 +41,7 @@ describe(
 			page = args.page;
 		} );
 
-		describe( 'Signup', function () {
+		describe( 'Signup via /start/user', function () {
 			it( 'Navigate to Signup page', async function () {
 				const loginPage = new LoginPage( page );
 				await loginPage.clickSignup();

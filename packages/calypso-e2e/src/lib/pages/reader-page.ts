@@ -2,11 +2,14 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// Reader main stream
+	searchInput: 'input[aria-label="Search"]',
+	followButton: 'button[title="Follow"]',
 	readerCard: '.reader-post-card',
 	visitSiteLink: '.reader-visit-link',
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
+	// Comments
 	commentTextArea: '.comments__form textarea',
 	commentSubmitButton: '.comments__form button:text("Send")',
 	commentContentLocator: ( commentText: string ) =>
@@ -33,6 +36,25 @@ export class ReaderPage {
 	 */
 	private async waitUntilLoaded(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
+	 * Searches the Reader stream with a keyword.
+	 *
+	 * @param {string} keyword Keyword to search.
+	 */
+	async search( keyword: string ): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.fill( selectors.searchInput, keyword ),
+		] );
+	}
+
+	/**
+	 * Clicks on the Follow Site button when viewing a single reader entry.
+	 */
+	async followSite(): Promise< void > {
+		await this.page.click( selectors.followButton );
 	}
 
 	/**

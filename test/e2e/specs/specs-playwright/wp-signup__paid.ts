@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	DomainSearchComponent,
-	LoginPage,
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
