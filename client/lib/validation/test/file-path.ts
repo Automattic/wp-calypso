@@ -19,4 +19,12 @@ describe( 'filePathValidator', () => {
 	test( 'should validate a deep path', () => {
 		expect( filePathValidator( '/abc/def/xyz/' ) ).toBeNull();
 	} );
+
+	// NOTE: We've seen support tickets with exactly this issue
+	test.each( [ [ '//' ], [ '/abc//def' ], [ '/abc//' ], [ '///' ], [ '/a///b/c' ] ] )(
+		'should reject a path with two or more adjacent slashes',
+		( path ) => {
+			expect( filePathValidator( path ) ).not.toBeNull();
+		}
+	);
 } );
