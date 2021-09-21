@@ -87,10 +87,10 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
+	isPurchaseManagementLocked,
 	getRenewableSitePurchases,
 	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
-import { isPurchaseManagementLocked } from 'calypso/state/purchases/selectors/is-purchase-management-locked';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';

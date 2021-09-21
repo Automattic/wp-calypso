@@ -38,8 +38,7 @@ import {
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { isPurchaseManagementLocked } from 'calypso/state/purchases/selectors/is-purchase-management-locked';
+import { getByPurchaseId, isPurchaseManagementLocked } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
