@@ -119,13 +119,14 @@
 	}
 
 	.google-photos-account {
-		margin-bottom: 9px;
+		margin-bottom: 17px;
 		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
+		flex-shrink: 0;
 		background-color: var( --color-surface );
 		padding: 4px 24px;
 		box-sizing: border-box;
-		width: 30%;
+		width: 250px;
 
 		&:focus {
 			box-shadow: 0 0 0 1px var( --color-border-subtle ),
@@ -134,8 +135,8 @@
 			z-index: 1;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
-			margin-bottom: 17px;
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-bottom: 9px;
 		}
 
 		.google-photos-account__account-avatar {
