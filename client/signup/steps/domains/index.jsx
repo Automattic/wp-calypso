@@ -11,7 +11,6 @@ import { recordUseYourDomainButtonClick } from 'calypso/components/domains/regis
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
-import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
@@ -584,6 +583,10 @@ class DomainsStep extends Component {
 		this.handleSave( 'transferForm', state );
 	};
 
+	onUseMyDomainConnect = ( { domain } ) => {
+		this.handleAddMapping( 'useYourDomainForm', domain );
+	};
+
 	transferForm = () => {
 		const initialQuery = get( this.props.step, 'domainForm.lastQuery' );
 
@@ -616,22 +619,11 @@ class DomainsStep extends Component {
 					<UseMyDomain
 						analyticsSection={ this.getAnalyticsSection() }
 						basePath={ this.props.path }
-						goBack={ () => {} }
 						initialQuery={ initialQuery }
 						isSignupStep
-						mapDomainUrl={ this.getMapDomainUrl() }
 						showHeader={ false }
 						onTransfer={ this.handleAddTransfer }
-					/>
-					<UseYourDomainStep
-						analyticsSection={ this.getAnalyticsSection() }
-						basePath={ this.props.path }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						initialQuery={ initialQuery }
-						isSignupStep
-						mapDomainUrl={ this.getMapDomainUrl() }
-						transferDomainUrl={ this.getTransferDomainUrl() }
-						products={ this.props.productsList }
+						onConnect={ this.onUseMyDomainConnect }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
