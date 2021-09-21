@@ -656,6 +656,11 @@ function wpcomPages( app ) {
 		res.redirect( redirectUrl );
 	} );
 
+	app.get( '/themes/premium', function ( req, res ) {
+		const redirectUrl = '/themes';
+		res.redirect( redirectUrl );
+	} );
+
 	// Landing pages for domains-related emails
 	app.get(
 		'/domain-services/:action',
