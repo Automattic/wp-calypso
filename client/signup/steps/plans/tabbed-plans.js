@@ -38,7 +38,9 @@ function SharedFeatures( {
 				</button>
 			) }
 			<SharedFeatureHeader>
-				{ selectedTab === 'Professional' ? 'All plans include' : 'Personal plan also includes' }
+				{ selectedTab === 'Professional'
+					? 'All Professional plans include'
+					: 'Personal and Premium plans also includes' }
 			</SharedFeatureHeader>
 			{ show &&
 				sharedFeatures[ selectedTab ].map( ( item, index ) => (
@@ -63,6 +65,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
 	const [ termLength, setTermLength ] = useState( 'yearly' );
 	const [ showFeatures, setShowFeatures ] = useState( false );
+	const [ primaryButton, setPrimaryButton ] = useState( 'Business' );
 	const dispatch = useDispatch();
 
 	const toggleTab = () => {
@@ -95,28 +98,25 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	useEffect( () => {
 		const planFilter =
 			selectedTab === 'Professional'
-				? [ 'Premium', 'Business', 'eCommerce' ]
-				: [ 'Free', 'Personal' ];
+				? [ 'Business', 'eCommerce' ]
+				: [ 'Free', 'Personal', 'Premium' ];
 
 		const displayedPlans = planProperties
 			.filter( ( plan ) => planFilter.includes( plan.planName ) )
 			.filter( ( plan ) => plan.termLength === termLength || plan.termLength === null );
-
-		// Remove free plan if the user has selected a domain
 
 		setFeatureComparison( featureComparisonData[ selectedTab ] );
 		setPlanDetails( displayedPlans );
 	}, [ selectedTab, planProperties, termLength ] );
 
 	useEffect( () => {
+		selectedTab === tabList[ 0 ] ? setPrimaryButton( 'Premium' ) : setPrimaryButton( 'Business' );
 		dispatch(
 			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
 				tab: selectedTab,
 			} )
 		);
-
 		window.addEventListener( 'keydown', tabHandler );
-
 		return () => {
 			window.removeEventListener( 'keydown', tabHandler );
 		};
@@ -166,7 +166,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								onChange={ toggleTerm }
 							/>
 							<Checkmark></Checkmark>
-							<span>{ 'Pay Yearly' }</span>
+							<span>{ 'Pay Annually' }</span>
 						</RadioButton>
 						<RadioButton>
 							<input
@@ -185,8 +185,13 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 				<PlanBorderTwo />
 				{ selectedTab === 'Professional' && (
 					<>
-						<FeaturedPlan />
-						<PlanBorderThree />
+						<FeaturedPlanBusiness />
+					</>
+				) }
+				{ selectedTab === 'Starter' && (
+					<>
+						<FeaturedPlanPremium />
+						<PlanBorderThree featured={ selectedTab === 'Starter' } />
 					</>
 				) }
 
@@ -199,6 +204,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							>
 								{ item.planName }
 								{ item.planName === 'Premium' && <span>Most Popular</span> }
+								{ item.planName === 'Business' && <span>Best Value</span> }
 								<p>{ bestForStrings[ item.planName ] }</p>
 							</PlanHeader>
 							<PlanPrice
@@ -211,21 +217,19 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								{ item.termLength === 'yearly' && (
 									<>
 										<span>
-											{ 'per month billed as ' +
+											{ 'per month, billed as ' +
 												formatCurrency( item.rawPrice * 12, currencyCode, { stripZeros: true } ) +
 												' annually' }
 										</span>
-										{ selectedTab === 'Professional' && (
-											<Savings>
-												{ "You're saving " +
-													Math.round(
-														( ( item.rawPriceForMonthly - item.rawPrice ) /
-															item.rawPriceForMonthly ) *
-															100
-													) +
-													'% by paying annually' }
-											</Savings>
-										) }
+										<Savings>
+											{ "You're saving " +
+												Math.round(
+													( ( item.rawPriceForMonthly - item.rawPrice ) /
+														item.rawPriceForMonthly ) *
+														100
+												) +
+												'% by paying annually' }
+										</Savings>
 									</>
 								) }
 								{ termLength === 'monthly' && <span>per month, billed monthly</span> }
@@ -235,7 +239,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 									key={ `planCtaTop${ index }` }
 									className={ `tabbed-plans__top-button-${ index + 1 }` }
 									onClick={ () => handleUpgradeButtonClick( item.planSlug, item.planProductId ) }
-									primary={ item.planName === 'Premium' }
+									primary={ item.planName === primaryButton }
 								>
 									{ `Start with ${ item.planName }` }
 								</CtaButton>
@@ -244,7 +248,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								key={ `planCta${ index }` }
 								className={ `tabbed-plans__button-${ index + 1 }` }
 								onClick={ () => handleUpgradeButtonClick( item.planSlug, item.planProductId ) }
-								primary={ item.planName === 'Premium' }
+								primary={ item.planName === primaryButton }
 							>
 								{ `Start with ${ item.planName }` }
 							</CtaButton>
@@ -268,7 +272,12 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							className={ `tabbed-plans__feature-title-${ index + 1 }` }
 						>
 							{ item.featureName }
-							<InfoPopover className="tabbed-plans__feature-tip-info" position={ 'right' }>
+							<InfoPopover
+								className="tabbed-plans__feature-tip-info"
+								position="right"
+								icon="info"
+								iconSize="15"
+							>
 								{ item.tooltip }
 							</InfoPopover>
 						</FeatureTitle>
@@ -400,9 +409,9 @@ function getTabList() {
 function getBestForStrings() {
 	return {
 		Free: 'Best for temporary use',
-		Personal: 'Best for personal sites and blogs',
-		Premium: 'Best for portfolios and freelancers',
-		Business: 'Best for professional sites and blogs',
+		Personal: 'Best for personal sites',
+		Premium: 'Best for portfolio sites',
+		Business: 'Best for small businesses',
 		eCommerce: 'Best for online stores',
 	};
 }
@@ -414,13 +423,12 @@ function getFeatureComparisonData() {
 				featureName: 'Install plugins',
 				tooltip:
 					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: {
+				planOne: {
 					included: true,
 					copy: '58,000+ Available',
 					mobileCopy: '58,000+ plugins available',
 				},
-				planThree: {
+				planTwo: {
 					included: true,
 					copy: '58,000+ Available',
 					mobileCopy: '58,000+ plugins available',
@@ -431,16 +439,11 @@ function getFeatureComparisonData() {
 				tooltip:
 					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
 				planOne: {
-					included: false,
-					copy: <Gridicon icon="cross" size={ 18 } />,
-					mobileCopy: null,
-				},
-				planTwo: {
 					included: true,
 					copy: '8,000 to choose from',
 					mobileCopy: '8,000 themes to choose from',
 				},
-				planThree: {
+				planTwo: {
 					included: true,
 					copy: '8,000 to choose from',
 					mobileCopy: '8,000 themes to choose from',
@@ -450,13 +453,12 @@ function getFeatureComparisonData() {
 				featureName: 'eCommerce',
 				tooltip:
 					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: {
+				planOne: {
 					included: false,
 					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
-				planThree: {
+				planTwo: {
 					included: true,
 					copy: 'Included',
 					mobileCopy: 'Complete eCommerce platform',
@@ -476,11 +478,6 @@ function getFeatureComparisonData() {
 					copy: 'Free for the first year',
 					mobileCopy: 'Free domain for the first year',
 				},
-				planThree: {
-					included: true,
-					copy: 'Free for the first year',
-					mobileCopy: 'Free domain for the first year',
-				},
 			},
 			{
 				featureName: 'SEO',
@@ -488,15 +485,10 @@ function getFeatureComparisonData() {
 					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
 				planOne: {
 					included: true,
-					copy: 'Simple',
-					mobileCopy: 'Simple SEO',
-				},
-				planTwo: {
-					included: true,
 					copy: 'Professional',
 					mobileCopy: 'Professional SEO',
 				},
-				planThree: {
+				planTwo: {
 					included: true,
 					copy: 'Professional',
 					mobileCopy: 'Professional SEO',
@@ -508,15 +500,10 @@ function getFeatureComparisonData() {
 					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.',
 				planOne: {
 					included: true,
-					copy: 'Live chat and email',
-					mobileCopy: '100GB Storage',
-				},
-				planTwo: {
-					included: true,
 					copy: '24/7 Priority live chat',
 					mobileCopy: '24/7 Priority live chat',
 				},
-				planThree: {
+				planTwo: {
 					included: true,
 					copy: '24/7 Priority live chat',
 					mobileCopy: '24/7 Priority live chat',
@@ -526,9 +513,8 @@ function getFeatureComparisonData() {
 				featureName: 'Storage',
 				tooltip:
 					'With increased storage space, you’ll be able to upload more images, audio, and documents to your website. On the Premium, Business, and eCommerce plans, you can upload videos, too.',
-				planOne: { included: true, copy: '10GB storage', mobileCopy: null },
-				planTwo: { included: true, copy: '200GB storage', mobileCopy: null },
-				planThree: {
+				planOne: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
+				planTwo: {
 					included: true,
 					copy: '200GB storage',
 					mobileCopy: '200GB storage',
@@ -542,6 +528,11 @@ function getFeatureComparisonData() {
 					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
 				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planThree: {
+					included: false,
+					copy: <Gridicon icon="cross" size={ 18 } />,
+					mobileCopy: null,
+				},
 			},
 			{
 				featureName: 'Install themes',
@@ -557,6 +548,11 @@ function getFeatureComparisonData() {
 					copy: <Gridicon icon="cross" size={ 18 } />,
 					mobileCopy: null,
 				},
+				planThree: {
+					included: false,
+					copy: <Gridicon icon="cross" size={ 18 } />,
+					mobileCopy: null,
+				},
 			},
 			{
 				featureName: 'eCommerce',
@@ -564,6 +560,11 @@ function getFeatureComparisonData() {
 					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
 				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
 				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planThree: {
+					included: false,
+					copy: <Gridicon icon="cross" size={ 18 } />,
+					mobileCopy: null,
+				},
 			},
 			{
 				featureName: 'Custom domain name',
@@ -574,6 +575,11 @@ function getFeatureComparisonData() {
 					included: true,
 					copy: 'Free for the first year',
 					mobileCopy: 'Free domain for the first year.',
+				},
+				planThree: {
+					included: true,
+					copy: 'Free for the first year',
+					mobileCopy: 'Free domain for the first year',
 				},
 			},
 			{
@@ -586,6 +592,11 @@ function getFeatureComparisonData() {
 					mobileCopy: null,
 				},
 				planTwo: {
+					included: true,
+					copy: 'Simple',
+					mobileCopy: 'Simple SEO',
+				},
+				planThree: {
 					included: true,
 					copy: 'Simple',
 					mobileCopy: 'Simple SEO',
@@ -605,13 +616,19 @@ function getFeatureComparisonData() {
 					copy: 'Email support',
 					mobileCopy: 'Email support',
 				},
+				planThree: {
+					included: true,
+					copy: 'Live chat and email',
+					mobileCopy: '100GB Storage',
+				},
 			},
 			{
 				featureName: 'Remove Ads',
 				tooltip:
 					'Allow your visitors to visit and read your website without seeing any WordPress.com advertising.',
 				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: { included: true, copy: 'Yes', mobileCopy: null },
+				planTwo: { included: true, copy: 'Ads removed', mobileCopy: null },
+				planThree: { included: true, copy: 'Ads removed', mobileCopy: null },
 			},
 		],
 	};
@@ -678,7 +695,7 @@ function getSharedFeatures() {
 			},
 			{
 				icon: 'mail',
-				description: 'Email marketing integration.',
+				description: 'Email marketing integration',
 			},
 		],
 	};
@@ -774,6 +791,7 @@ const Feature = styled.div`
 const FeatureTitle = styled.div`
 	justify-self: end;
 	padding: 15px 36px 15px 0;
+	border-bottom: 1px solid rgba( 220, 220, 222, 0.4 );
 	align-self: center;
 	font-weight: 500;
 	font-size: 14px;
@@ -783,11 +801,7 @@ const FeatureTitle = styled.div`
 	button {
 		margin-left: 8px;
 		font-size: 1em;
-		vertical-align: text-top;
-
-		svg {
-			color: #a7aaad;
-		}
+		vertical-align: middle;
 	}
 
 	@media ( max-width: 600px ) {
@@ -895,10 +909,18 @@ const SelectedTab = styled( Tab )`
 	border-radius: 5px;
 `;
 
-const FeaturedPlan = styled.div`
-	grid-column: 2 / 3;
+const FeaturedPlanBusiness = styled.div`
+	grid-column: 2;
 	grid-row: 1 / button-1;
-	background: rgba( 241, 245, 248, 0.6 );
+	background: rgba( 187, 224, 250, 0.3 );
+	border-radius: 2px;
+`;
+
+const FeaturedPlanPremium = styled.div`
+	grid-column: 4;
+	grid-row: 1 / button-1;
+	background: rgba( 187, 224, 250, 0.3 );
+	border-radius: 2px;
 `;
 
 const TermToggles = styled.div`
@@ -916,6 +938,7 @@ const RadioButton = styled.label`
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
+	margin-bottom: 13px;
 	cursor: pointer;
 	font-size: 22px;
 
@@ -960,9 +983,6 @@ const RadioButton = styled.label`
 		height: 8px;
 		background: #000;
 		border-radius: 40px;
-	}
-	@media ( max-width: 600px ) {
-		padding-bottom: 15px;
 	}
 `;
 
@@ -1010,20 +1030,21 @@ const PlanBorderThree = styled.div`
 		margin: 24px 24px 0 24px;
 		grid-column: 1;
 		grid-row: plan-header-3 / shared-features-3;
-		border: 1px solid #dcdcde;
 		border-radius: 2px;
+		background: ${ ( props ) => ( props.featured ? '#f1f5f8' : '#fff' ) };
+		border: ${ ( props ) => ( props.featured ? '0' : '1px solid #dcdcde' ) };
 	}
 `;
 const FreeBanner = styled.p`
 	grid-area: free-banner;
-	margin: 24px 0;
+	margin: 48px 0 24px 0;
 	padding: 15px 0;
 	text-align: center;
-	font-size: 14px;
-	background: #f6f7f7;
+	font-size: 1rem;
+	background: rgba( 246, 247, 247, 0.5 );
 	border-radius: 2px;
 
-	button {
+	& > button {
 		font-size: 14px;
 		color: #0675c4;
 		cursor: pointer;
