@@ -21,6 +21,17 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return fragmentIsEqual( path, currentPath, 3 );
 	}
 	/*
+	 * When the current path starts with /email:
+	 *  - ensure that 'email/inbox' only matches Inbox screens
+	 *  - else match both first and second path segments
+	 */
+	if ( pathIncludes( currentPath, 'email', 1 ) ) {
+		if ( pathIncludes( currentPath, 'inbox', 2 ) ) {
+			return fragmentIsEqual( path, currentPath, 2 );
+		}
+		return fragmentIsEqual( path, currentPath, 2 ) && fragmentIsEqual( path, currentPath, 1 );
+	}
+	/*
 	 * If the menu item URL contains 'taxonomies', ignore it when on Settings screens.
 	 * Taxonomies are located under the Posts parent menu; this prevents the Posts parent
 	 * from being highlighted when Settings screens are active.
