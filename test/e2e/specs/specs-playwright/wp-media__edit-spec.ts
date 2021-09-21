@@ -18,7 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -47,13 +47,12 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		it( 'Upload image', async function () {
 			// Ideally, we'd not want to upload an image (that's a separate test)
 			// but occasionally, the photo gallery is cleaned out leaving no images.
-			const uploadedImageHandle = await mediaPage.upload( testImage.fullpath );
-			const isVisible = await uploadedImageHandle.isVisible();
-			expect( isVisible ).toBe( true );
+			await mediaPage.upload( testImage.fullpath );
 		} );
 
-		it( 'Click to edit selected image', async function () {
-			await mediaPage.editImage();
+		it( 'Launch image editor', async function () {
+			await mediaPage.editSelectedItem();
+			await mediaPage.launchImageEditor();
 		} );
 
 		it( 'Rotate image', async function () {
