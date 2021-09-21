@@ -25,7 +25,7 @@ const DomainStepAuthCode = ( {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
 	const [ connectInProgress, setConnectInProgress ] = useState( false );
-	const [ authCodeError, setAuthCodeError ] = useState< string | null >( null );
+	const [ authCodeError, setAuthCodeError ] = useState< ( string | undefined ) | null >( null );
 
 	const getVerificationData = () => {
 		return {
@@ -46,6 +46,7 @@ const DomainStepAuthCode = ( {
 				verificationData: getVerificationData(),
 			},
 			( error ) => {
+				if ( ! error ) return;
 				if ( 'ownership_verification_failed' === error.error ) {
 					setAuthCodeError( error.message );
 				}

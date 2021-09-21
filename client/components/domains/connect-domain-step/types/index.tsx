@@ -6,9 +6,9 @@ type Maybe< T > = T | null;
 
 type PossibleSlugs = ValueOf< typeof stepSlug >;
 
-type AuthCodeValidationError = {
-	error: string;
-	message: string;
+export type AuthCodeValidationError = {
+	error?: string;
+	message?: string;
 };
 
 export type AuthCodeValidationData = {
@@ -22,16 +22,18 @@ export type AuthCodeValidationData = {
 	};
 };
 
+export type AuthCodeValidationHandler = (
+	authData: AuthCodeValidationData,
+	onDone?: ( error?: Maybe< AuthCodeValidationError >, callbackData?: unknown ) => void
+) => unknown;
+
 export type DomainStepAuthCodeProps = {
 	authCodeDescription: JSX.Element;
 	buttonMessage: string;
 	className: string;
 	domain: string;
 	onBeforeValidate: () => void;
-	validateHandler: (
-		authData: AuthCodeValidationData,
-		onDone?: ( error: AuthCodeValidationError ) => void
-	) => unknown;
+	validateHandler: AuthCodeValidationHandler;
 	pageSlug: PossibleSlugs;
 	progressStepList: Record< PossibleSlugs, string >;
 	selectedSite: Maybe< SiteData >;
