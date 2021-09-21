@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useCallback } from 'react';
+import { connect } from 'react-redux';
 import { connectDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import DomainStepAuthCode from './domain-step-auth-code';
@@ -10,6 +11,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 	className,
 	domain,
 	pageSlug,
+	connectDomainActionHandler,
 	progressStepList,
 } ) => {
 	const { __ } = useI18n();
@@ -23,11 +25,13 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 			className={ className }
 			domain={ domain }
 			onBeforeValidate={ recordMappingButtonClickInUseYourDomain }
-			validateHandler={ connectDomainAction }
+			validateHandler={ connectDomainActionHandler }
 			pageSlug={ pageSlug }
 			progressStepList={ progressStepList }
 		/>
 	);
 };
 
-export default ConnectDomainStepOwnershipAuthCode;
+export default connect( null, { connectDomainActionHandler: connectDomainAction } )(
+	ConnectDomainStepOwnershipAuthCode
+);
