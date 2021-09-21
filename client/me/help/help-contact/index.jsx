@@ -364,11 +364,6 @@ class HelpContact extends React.Component {
 		return this.props.isHappychatAvailable && this.props.isHappychatUserEligible;
 	};
 
-	shouldUseDirectly = () => {
-		const isEn = this.props.currentUserLocale === 'en';
-		return isEn && ! this.props.isDirectlyFailed;
-	};
-
 	recordCompactSubmit = ( variation ) => {
 		if ( this.props.compact ) {
 			this.props.recordTracksEventAction( 'calypso_inlinehelp_contact_submit', {
