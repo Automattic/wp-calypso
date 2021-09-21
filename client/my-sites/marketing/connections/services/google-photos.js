@@ -65,7 +65,7 @@ export class GooglePhotos extends SharingService {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<img
 				className="sharing-service__logo"
-				src="/calypso/images/sharing/google-photos-logo.svg"
+				src="/calypso/images/sharing/google-photos-logo.svg?v=20210921"
 				width="48"
 				height="48"
 				alt=""
