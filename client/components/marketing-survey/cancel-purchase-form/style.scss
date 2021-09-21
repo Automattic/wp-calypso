@@ -130,6 +130,15 @@
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 5px;
 	padding: 1.25rem;
+	margin-top: 2rem;
+	font-size: 0.875rem;
+
+	h4 {
+		color: var( --studio-gray-80 );
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+		font-size: 1rem;
+	}
 }
 
 .cancel-purchase-form__actions {

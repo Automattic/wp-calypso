@@ -30,6 +30,7 @@ import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-supp
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -107,24 +108,21 @@ class CancelPurchaseForm extends React.Component {
 
 	shouldUseBlankCanvasLayout = () => {
 		const { isJetpack, purchase } = this.props;
-		if ( isPlan( purchase ) ) {
-			return ! isJetpack;
-		}
-
-		return false;
+		return isPlan( purchase ) && ! isJetpack;
 	};
 
 	getAllSurveySteps = () => {
 		const { purchase, shouldRevertAtomicSite } = this.props;
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			if ( shouldRevertAtomicSite ) {
-				return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
-			}
-
-			return [ FEEDBACK_STEP ];
-		}
 
 		if ( isPlan( purchase ) ) {
+			if ( this.shouldUseBlankCanvasLayout() ) {
+				if ( shouldRevertAtomicSite ) {
+					return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
+				}
+
+				return [ FEEDBACK_STEP ];
+			}
+
 			return [ INITIAL_STEP, FINAL_STEP ];
 		}
 
@@ -896,7 +894,7 @@ class CancelPurchaseForm extends React.Component {
 	};
 
 	surveyContent() {
-		const { translate, isImport, isJetpack, showSurvey } = this.props;
+		const { translate, isImport, isJetpack, showSurvey, site } = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
@@ -965,6 +963,9 @@ class CancelPurchaseForm extends React.Component {
 								'To make sure you have everything after you cancel, you can download a backup and easily restore or migrate your site.'
 							) }
 						</p>
+						<ExternalLink icon href={ `/backup/${ site.slug }` }>
+							{ translate( 'Go to your backups' ) }
+						</ExternalLink>
 					</div>
 				</div>
 			);
