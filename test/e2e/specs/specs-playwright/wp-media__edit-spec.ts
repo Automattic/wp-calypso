@@ -18,7 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	let testImage: TestFile;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -51,8 +51,8 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		} );
 
 		it( 'Launch image editor', async function () {
-			await mediaPage.editItem();
-			await mediaPage.editImage();
+			await mediaPage.editSelectedItem();
+			await mediaPage.launchImageEditor();
 		} );
 
 		it( 'Rotate image', async function () {

@@ -98,7 +98,7 @@ export class MediaPage {
 	 *
 	 * @throws {Error} If no gallery items are selected.
 	 */
-	async editItem(): Promise< void > {
+	async editSelectedItem(): Promise< void > {
 		// Check that an item has been selected.
 		try {
 			await this.page.waitForSelector( selectors.selectedItems );
@@ -114,7 +114,7 @@ export class MediaPage {
 	 *
 	 * This option is only available for files that are classified as 'images' in WPCOM.
 	 */
-	async editImage(): Promise< void > {
+	async launchImageEditor(): Promise< void > {
 		await this.page.waitForSelector( selectors.editFileModal );
 		await this.page.click( selectors.editImageButton );
 	}
