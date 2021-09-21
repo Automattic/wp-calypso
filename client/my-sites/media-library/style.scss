@@ -128,6 +128,10 @@
 		box-sizing: border-box;
 		width: 250px;
 
+		.editor-media-modal & {
+			margin-bottom: 16px;
+		}
+
 		&:focus {
 			box-shadow: 0 0 0 1px var( --color-border-subtle ),
 			inset 0 0 0 2px var( --color-primary-light );
