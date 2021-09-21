@@ -1,0 +1,91 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+body {
+	background-color: #fff;
+}
+
+.mailbox-selection-list {
+
+	.mailbox-selection-list__header {
+		.formatted-header__title {
+			font-size: $font-headline-medium;
+			line-height: $font-headline-medium;
+		}
+
+		.formatted-header__subtitle {
+			font-size: $font-body;
+			line-height: $font-title-medium;
+		}
+	}
+
+	.mailbox-selection-list__item {
+		width: 660px;
+		box-shadow: none;
+		border-width: 1px 0 0;
+		border-color: #e7e9ea;
+		border-style: solid;
+		margin-bottom: 1px;
+		display: flex;
+		align-items: center;
+
+		.gridicons-external {
+			width: 22px;
+		}
+
+		&:first-of-type {
+			margin-top: 60px;
+			border-top-width: 0;
+		}
+
+		.mailbox-selection-list__domain h2 {
+			color: var( --p2-color-text );
+			font-family: SF UI Text, SFUIText-Regular, Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
+			font-weight: 600;
+			letter-spacing: -0.18px;
+			line-height: 24px;
+			font-size: $font-body;
+			word-break: break-all;
+		}
+	}
+
+	.mailbox-selection-list__domain {
+		margin: 0;
+		padding: 0;
+	}
+
+	.mailbox-selection-list__icon {
+		align-self: center;
+		height: 36px;
+		width: 36px;
+		margin-right: 16px;
+
+		.mailbox-selection-list__icon-circle {
+			width: 100%;
+			height: 100%;
+			line-height: 100%;
+			border-radius: 50%;
+			font-size: 20px;
+			color: #fff;
+			text-align: center;
+			background: #3197a7;
+			font-weight: bold;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-transform: capitalize;
+		}
+
+		> img, svg {
+			height: 36px;
+			margin-right: 16px;
+			min-height: 36px;
+			min-width: 36px;
+			width: 36px;
+
+			@include break-large {
+				margin-right: 16px;
+			}
+		}
+	}
+}
