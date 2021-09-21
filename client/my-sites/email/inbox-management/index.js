@@ -8,7 +8,6 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const InboxManagement = ( { domains } ) => {
-
 	const domainsWithSubscriptions = domains.filter(
 		( domain ) => ! domain.isWPCOMDomain && hasEmailSubscription( domain )
 	);
