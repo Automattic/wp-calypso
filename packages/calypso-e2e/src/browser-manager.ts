@@ -5,7 +5,11 @@
 
 import config from 'config';
 import { BrowserType } from 'playwright';
-import { getHeadless, getLaunchConfiguration } from './browser-helper';
+import {
+	getDefaultLoggerConfiguration,
+	getHeadless,
+	getLaunchConfiguration,
+} from './browser-helper';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -67,7 +71,7 @@ export async function newPage( {
 
 	// If caller wants the Page object in a new BrowserContext.
 	if ( newContext ) {
-		const newContext = await newBrowserContext();
+		const newContext = await newBrowserContext( await getDefaultLoggerConfiguration() );
 		return await newContext.newPage();
 	}
 

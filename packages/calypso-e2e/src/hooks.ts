@@ -1,8 +1,8 @@
-import { mkdtemp, mkdir, rename, appendFile } from 'fs/promises';
+import { mkdir, rename } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
-import { getState } from 'expect';
 import { chromium, Page, Video } from 'playwright';
+import { getDefaultLoggerConfiguration } from './browser-helper';
 import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
 import { getDateString } from './data-helper';
 
@@ -38,28 +38,13 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 	let tempDir: string;
 
 	beforeAll( async () => {
-		// Create dir for storing test files
-		const { testPath } = getState() as { testPath: string };
-		const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
-		const resultsPath = path.join( process.cwd(), 'results' );
-		await mkdir( resultsPath, { recursive: true } );
-		tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
-
+		// Get default logging configuration, which will create a directory to store
+		// artifacts.
+		const loggingConfiguration = await getDefaultLoggerConfiguration();
 		// Start the browser
 		await startBrowser( chromium );
 		// Launch context with logging.
-		const context = await newBrowserContext( {
-			logger: {
-				log: async ( name: string, severity: string, message: string ) => {
-					await appendFile(
-						path.join( tempDir, 'playwright.log' ),
-						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-					);
-				},
-				// Default to verbose Playwright API logs.
-				isEnabled: ( name: string ) => name === 'api',
-			},
-		} );
+		const context = await newBrowserContext( loggingConfiguration );
 		// Launch a new page within the context.
 		page = await context.newPage();
 		callback( { page } );

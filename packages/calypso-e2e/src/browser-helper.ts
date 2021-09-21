@@ -1,6 +1,10 @@
+import { appendFile, mkdir, mkdtemp } from 'fs/promises';
+import path from 'path';
 import config from 'config';
+import { getState } from 'expect';
 import { devices } from 'playwright';
 import { getVideoDir } from './media-helper';
+import type { LaunchOptions } from './browser-manager';
 import type { TargetDevice } from './types';
 import type { BrowserContextOptions, ViewportSize } from 'playwright';
 
@@ -92,4 +96,35 @@ export function getLaunchConfiguration( chromeVersion: string ): BrowserContextO
  */
 export function targetGutenbergEdge(): boolean {
 	return !! process.env.GUTENBERG_EDGE;
+}
+
+/**
+ * Returns the default Logger configuration.
+ *
+ * The default Logger configuration has the following:
+ * 	- level: pw:api (verbose API logs)
+ * 	- name, severity, message
+ * 	- file name: playwright.log
+ *
+ * @returns {LaunchOptions} Logger configuration.
+ */
+export async function getDefaultLoggerConfiguration(): Promise< LaunchOptions > {
+	const { testPath } = getState() as { testPath: string };
+	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
+	const resultsPath = path.join( process.cwd(), 'results' );
+	await mkdir( resultsPath, { recursive: true } );
+	const tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
+
+	return {
+		logger: {
+			log: async ( name: string, severity: string, message: string ) => {
+				await appendFile(
+					path.join( tempDir, 'playwright.log' ),
+					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
+				);
+			},
+			// Default to verbose Playwright API logs.
+			isEnabled: ( name: string ) => name === 'api',
+		},
+	};
 }
