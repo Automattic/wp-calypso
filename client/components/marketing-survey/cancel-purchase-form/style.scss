@@ -50,6 +50,16 @@
 	vertical-align: middle;
 }
 
+.cancel-purchase-form__step {
+	position: absolute;
+	right: 1.5rem;
+	display: none;
+
+	@include break-small {
+		display: inline-block;
+	}
+}
+
 .cancel-purchase-form__feedback,
 .cancel-purchase-form__atomic-revert {
 	max-width: 730px;

@@ -1183,6 +1183,8 @@ class CancelPurchaseForm extends React.Component {
 		} = this.props;
 
 		if ( isPlan( purchase ) && ! isJetpack ) {
+			const steps = this.getAllSurveySteps();
+
 			return (
 				<>
 					<QueryPlans />
@@ -1195,6 +1197,16 @@ class CancelPurchaseForm extends React.Component {
 									? translate( 'Remove plan' )
 									: translate( 'Cancel plan' ) }
 								<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+								{ steps.length > 1 && (
+									<span className="cancel-purchase-form__step">
+										{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
+											args: {
+												currentStep: steps.indexOf( surveyStep ) + 1,
+												totalSteps: steps.length,
+											},
+										} ) }
+									</span>
+								) }
 							</BlankCanvas.Header>
 							<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 							<BlankCanvas.Footer>
