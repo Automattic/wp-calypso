@@ -6,7 +6,7 @@ const selectors = {
 	// Components
 	supportPopoverButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
-	searchInput: 'input[aria-label="Search"][placeholder="Search for help…"]',
+	searchInput: '.inline-help__search input[aria-label="Search"]',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
 	spinner: '.spinner',

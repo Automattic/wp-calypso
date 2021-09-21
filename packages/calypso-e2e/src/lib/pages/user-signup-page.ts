@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getTargetDeviceName } from '../../browser-helper';
 
 const selectors = {
 	// Fields
@@ -7,6 +8,7 @@ const selectors = {
 	passwordInput: 'input[name="password"]',
 
 	// WPCC specific fields
+	createWPCOMAccountButton: 'button:text("Create a WordPress.com Account"):visible',
 	firstNameInput: 'input[name="firstName"]',
 	lastNameInput: 'input[name="lastName"]',
 
@@ -66,14 +68,28 @@ export class UserSignupPage {
 	 * @param {string} password Password of the new user.
 	 */
 	async signupWPCC( email: string, password: string ): Promise< void > {
+		const target = getTargetDeviceName();
+
+		// On mobile devices, the signup form is not shown by default.
+		if ( target === 'mobile' ) {
+			await this.page.click( selectors.createWPCOMAccountButton );
+		}
+
 		await this.page.fill( selectors.firstNameInput, 'E2E' );
 		await this.page.fill( selectors.lastNameInput, 'Testing' );
 		await this.page.fill( selectors.emailInput, email );
 		await this.page.fill( selectors.passwordInput, password );
 
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.submitButton ),
-		] );
+		if ( target === 'mobile' ) {
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this.page.click( selectors.submitButton ),
+			] );
+		} else {
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this.page.click( selectors.createWPCOMAccountButton ),
+			] );
+		}
 	}
 }
