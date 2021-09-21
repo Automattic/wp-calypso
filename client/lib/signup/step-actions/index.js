@@ -327,18 +327,11 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 		return;
 	}
 
-	const { theme } = selectedDesign;
+	const { theme, template: headstart_template } = selectedDesign;
 
-	Promise.resolve()
-		.then( () =>
-			wpcom.undocumented().changeTheme( siteSlug, { theme, dont_change_homepage: true } )
-		)
-		.then( () =>
-			wpcom.req.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-			} )
-		)
+	wpcom
+		.undocumented()
+		.changeTheme( siteSlug, { theme, headstart_template, dont_change_homepage: true } )
 		.then( () => {
 			callback();
 		} )
