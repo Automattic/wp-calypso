@@ -5,6 +5,10 @@ describe( 'filePathValidator', () => {
 		expect( filePathValidator( '/abc' ) ).toBeNull();
 	} );
 
+	test( 'should validate a path to root', () => {
+		expect( filePathValidator( '/' ) ).toBeNull();
+	} );
+
 	test( 'should reject a path with no slashes', () => {
 		expect( filePathValidator( 'abc' ) ).not.toBeNull();
 	} );
@@ -27,4 +31,18 @@ describe( 'filePathValidator', () => {
 			expect( filePathValidator( path ) ).not.toBeNull();
 		}
 	);
+
+	test( 'should reject a path with a non-valid character', () => {
+		expect( filePathValidator( '/abc*' ) ).toHaveProperty(
+			'message',
+			'Path contains invalid character "*".'
+		);
+	} );
+
+	test( 'should reject a path with multiple non-valid characters', () => {
+		expect( filePathValidator( '/abc*/efg&' ) ).toHaveProperty(
+			'message',
+			'Path contains invalid characters "*&".'
+		);
+	} );
 } );
