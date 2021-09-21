@@ -47,18 +47,24 @@ class EmailManagementHome extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 		context: PropTypes.string,
+		emailListInactiveHeader: PropTypes.element,
+		onlyDomainsWithoutSubscription: PropTypes.bool,
+		sectionHeaderLabel: PropTypes.string,
 	};
 
 	render() {
 		const {
+			canManageSite,
+			currentRoute,
 			domains,
+			emailListInactiveHeader,
 			hasSiteDomainsLoaded,
 			hasSitesLoaded,
-			canManageSite,
-			selectedSite,
+			onlyDomainsWithoutSubscription,
 			selectedDomainName,
-			currentRoute,
+			selectedSite,
 			selectedSiteId,
+			sectionHeaderLabel,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -123,18 +129,20 @@ class EmailManagementHome extends React.Component {
 
 		return this.renderContentWithHeader(
 			<>
-				{ ! isUnderEmailManagementInbox( currentRoute ) && (
+				{ ! onlyDomainsWithoutSubscription && (
 					<EmailListActive
-						domains={ domainsWithEmail }
-						selectedSiteSlug={ selectedSite.slug }
 						currentRoute={ currentRoute }
+						domains={ domainsWithEmail }
 						selectedSiteId={ selectedSiteId }
+						selectedSiteSlug={ selectedSite.slug }
 					/>
 				) }
 				<EmailListInactive
-					domains={ domainsWithNoEmail }
-					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
+					domains={ domainsWithNoEmail }
+					header={ emailListInactiveHeader }
+					sectionHeaderLabel={ sectionHeaderLabel }
+					selectedSiteSlug={ selectedSite.slug }
 				/>
 			</>
 		);
