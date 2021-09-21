@@ -23,7 +23,6 @@ export default function getSiteComputedAttributes( state, siteId ) {
 
 	const computedAttributes = {
 		domain: getSiteDomain( state, siteId ),
-		hasConflict: isSiteConflicting( state, siteId ),
 		options: getSiteOptions( state, siteId ),
 		slug: getSiteSlug( state, siteId ),
 		title: getSiteTitle( state, siteId ),
@@ -36,7 +35,7 @@ export default function getSiteComputedAttributes( state, siteId ) {
 	}
 
 	// we only need to use the unmapped URL for conflicting sites
-	if ( computedAttributes.hasConflict ) {
+	if ( isSiteConflicting( state, siteId ) ) {
 		computedAttributes.URL = getSiteOption( state, siteId, 'unmapped_url' );
 	}
 
