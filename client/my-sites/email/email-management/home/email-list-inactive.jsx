@@ -7,14 +7,7 @@ import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/p
 
 class EmailListInactive extends React.Component {
 	render() {
-		const {
-			currentRoute,
-			domains,
-			header,
-			sectionHeaderLabel,
-			selectedSiteSlug,
-			translate,
-		} = this.props;
+		const { currentRoute, domains, header, sectionHeaderLabel, selectedSiteSlug, translate } = this.props;
 		if ( domains.length < 1 ) {
 			return null;
 		}
@@ -41,7 +34,7 @@ class EmailListInactive extends React.Component {
 		return (
 			<div className="email-list-inactive">
 				{ header }
-				<SectionHeader label={ sectionHeaderLabel } />
+				<SectionHeader label={ sectionHeaderLabel ?? translate( 'Other domains' ) } />
 				{ emailListItems }
 			</div>
 		);
