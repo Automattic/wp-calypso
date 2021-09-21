@@ -281,6 +281,10 @@
 		@extend %p2-form-input-text;
 	}
 
+	.form-input-validation {
+		@extend %p2-form-input-validation;
+	}
+
 	.form-password-input {
 		@extend %p2-form-input-password;
 	}
