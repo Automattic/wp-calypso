@@ -8,9 +8,9 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const InboxManagement = ( { domains } ) => {
-	const nonWPCOMDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
-	const domainsWithSubscriptions = nonWPCOMDomains.filter( ( domain ) =>
-		hasEmailSubscription( domain )
+
+	const domainsWithSubscriptions = domains.filter(
+		( domain ) => ! domain.isWPCOMDomain && hasEmailSubscription( domain )
 	);
 
 	//EmailManagementHome logic will handle the case where there is only one domain to show directly the email comparison

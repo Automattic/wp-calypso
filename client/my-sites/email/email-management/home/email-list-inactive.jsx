@@ -7,7 +7,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	emailManagementPurchaseNewEmailAccount,
-	isUnderEmailInbox,
+	isUnderEmailManagementInbox,
 } from 'calypso/my-sites/email/paths';
 
 class EmailListInactive extends React.Component {
@@ -20,14 +20,10 @@ class EmailListInactive extends React.Component {
 
 		return (
 			<>
-				<PromoCard
-					isPrimary={ true }
-					title={ translate( 'Pick a domain to get started' ) }
-					image={ image }
-				>
+				<PromoCard title={ translate( 'Pick a domain to get started' ) } image={ image }>
 					<p>
 						{ translate(
-							'Pick a domain from your available domains below to add email service to it.'
+							'Pick a domain from your available domains below to add an email solution.'
 						) }
 					</p>
 				</PromoCard>
@@ -43,11 +39,11 @@ class EmailListInactive extends React.Component {
 			return null;
 		}
 
-		const sectionHeaderLabel = isUnderEmailInbox( currentRoute )
+		const sectionHeaderLabel = isUnderEmailManagementInbox( currentRoute )
 			? translate( 'Domains' )
 			: translate( 'Other domains' );
 
-		const mainHeader = isUnderEmailInbox( currentRoute ) ? this.getMainHeader() : null;
+		const mainHeader = isUnderEmailManagementInbox( currentRoute ) ? this.getMainHeader() : null;
 
 		const emailListItems = domains.map( ( domain ) => {
 			return (
