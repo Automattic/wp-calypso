@@ -2,7 +2,7 @@ import { mkdir, rename } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
 import { chromium, Page, Video } from 'playwright';
-import { getDefaultLoggerConfiguration } from './browser-helper';
+import { getDefaultLoggerConfiguration, getArtifactDir } from './browser-helper';
 import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
 import { getDateString } from './data-helper';
 
@@ -35,7 +35,7 @@ function getTestNameWithTime( testName: string ): string {
  */
 export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): void => {
 	let page: Page;
-	let tempDir: string;
+	const tempDir = getArtifactDir();
 
 	beforeAll( async () => {
 		// Get default logging configuration, which will create a directory to store

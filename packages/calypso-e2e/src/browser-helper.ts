@@ -109,17 +109,11 @@ export function targetGutenbergEdge(): boolean {
  * @returns {LaunchOptions} Logger configuration.
  */
 export async function getDefaultLoggerConfiguration(): Promise< LaunchOptions > {
-	const { testPath } = getState() as { testPath: string };
-	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
-	const resultsPath = path.join( process.cwd(), 'results' );
-	await mkdir( resultsPath, { recursive: true } );
-	const tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
-
 	return {
 		logger: {
 			log: async ( name: string, severity: string, message: string ) => {
 				await appendFile(
-					path.join( tempDir, 'playwright.log' ),
+					path.join( await getArtifactDir(), 'playwright.log' ),
 					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
 				);
 			},
@@ -127,4 +121,20 @@ export async function getDefaultLoggerConfiguration(): Promise< LaunchOptions > 
 			isEnabled: ( name: string ) => name === 'api',
 		},
 	};
+}
+
+/**
+ * Returns the artifact directory where logs, screenshots and video recordings are stored.
+ *
+ * @returns {Promise<string>} Path to the artifdact directory.
+ */
+export async function getArtifactDir(): Promise< string > {
+	const { testPath } = getState() as { testPath: string };
+	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
+	const resultsPath = path.join( process.cwd(), 'results' );
+	await mkdir( resultsPath, { recursive: true } );
+	const out = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
+	console.log( out );
+	// return await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
+	return out;
 }
