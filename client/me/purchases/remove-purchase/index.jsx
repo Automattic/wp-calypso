@@ -16,7 +16,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
@@ -35,7 +34,6 @@ import {
 	getPurchasesError,
 	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
-import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
@@ -434,20 +432,10 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		const {
-			className,
-			purchase,
-			shouldRevertAtomicSite,
-			stickers,
-			translate,
-			useVerticalNavItem,
-		} = this.props;
+		const { className, purchase, translate, useVerticalNavItem } = this.props;
 		const productName = getName( purchase );
 
-		if (
-			! isRemovable( purchase ) ||
-			( shouldRevertAtomicSite && stickers.includes( 'subscription_deactivation_locked' ) )
-		) {
+		if ( ! isRemovable( purchase ) ) {
 			return null;
 		}
 
@@ -471,7 +459,6 @@ class RemovePurchase extends Component {
 				</Wrapper>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.renderDialog() }
-				{ purchase?.siteId && <QueryBlogStickers blogId={ purchase.siteId } /> }
 			</>
 		);
 	}
@@ -487,7 +474,6 @@ export default connect(
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
 			shouldRevertAtomicSite: shouldRevertAtomicSiteBeforeDeactivation( state, purchase.id ),
-			stickers: getBlogStickers( state, purchase.siteId ) || [],
 			userId: getCurrentUserId( state ),
 		};
 	},
