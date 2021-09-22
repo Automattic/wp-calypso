@@ -16,15 +16,21 @@ export const StoragePricingHeader = () => {
 				<FormattedHeader
 					className="storage-pricing-header__title"
 					headerText={ preventWidows(
-						translate( 'Upgrade your Backup storage to %(storageAmount)dTB', {
-							args: { storageAmount: 1 },
-						} )
+						translate(
+							'Upgrade your Backup storage to %(storageAmount)dTB',
+							'Upgrade your Backup storage to %(storageAmount)dTB',
+							{
+								count: 1,
+								args: { storageAmount: 1 },
+							}
+						)
 					) }
 				/>
 				<p className="storage-pricing-header__subtitle">
 					{ translate(
+						'Upgrade at any time, if you reach your backup storage limit, or want access to restores older than %(restoreDays)d day',
 						'Upgrade at any time, if you reach your backup storage limit, or want access to restores older than %(restoreDays)d days',
-						{ args: { restoreDays: 30 } }
+						{ count: 30, args: { restoreDays: 30 } }
 					) }
 				</p>
 			</div>
