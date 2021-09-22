@@ -7,6 +7,7 @@
 	.formatted-header__title {
 		font-weight: 700;
 		font-size: $font-headline-medium;
+		letter-spacing: -0.95px;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			font-size: $font-headline-small;

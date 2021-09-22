@@ -6,13 +6,21 @@
 	margin-top: 48px;
 	margin-bottom: 64px;
 
+	.jetpack-product-card__price {
+		text-align: center;
+	}
+
 	.jetpack-product-card__product-name {
-		font-size: 3.375rem;
+		font-size: $font-headline-large;
+		letter-spacing: -2px;
+		text-align: center;
 		margin-bottom: 9px;
 	}
 
 	.jetpack-product-card__product-subheader {
-		font-size: 2rem;
+		font-size: $font-title-medium;
+		letter-spacing: -1px;
+		text-align: center;
 		margin-top: 9px;
 	}
 }
