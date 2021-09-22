@@ -61,6 +61,7 @@ import getInlineHelpSupportVariation, {
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 import getSupportLevel from 'calypso/state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
+import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';
 import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -148,11 +149,7 @@ class HelpContact extends React.Component {
 	};
 
 	prepareDirectlyWidget = () => {
-		if (
-			this.hasDataToDetermineVariation() &&
-			this.props.supportVariation === SUPPORT_DIRECTLY &&
-			this.props.isDirectlyUninitialized
-		) {
+		if ( this.props.isDirectlyUninitialized ) {
 			this.props.initializeDirectly();
 		}
 	};
@@ -367,11 +364,6 @@ class HelpContact extends React.Component {
 		return this.props.isHappychatAvailable && this.props.isHappychatUserEligible;
 	};
 
-	shouldUseDirectly = () => {
-		const isEn = this.props.currentUserLocale === 'en';
-		return isEn && ! this.props.isDirectlyFailed;
-	};
-
 	recordCompactSubmit = ( variation ) => {
 		if ( this.props.compact ) {
 			this.props.recordTracksEventAction( 'calypso_inlinehelp_contact_submit', {
@@ -576,8 +568,9 @@ class HelpContact extends React.Component {
 			this.props.ticketSupportConfigurationReady || null != this.props.ticketSupportRequestError;
 		const happychatReadyOrDisabled =
 			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
+		const directlyReadyOrError = this.props.isDirectlyReady || this.props.isDirectlyFailed;
 
-		return ticketReadyOrError && happychatReadyOrDisabled;
+		return ticketReadyOrError && happychatReadyOrDisabled && directlyReadyOrError;
 	};
 
 	shouldShowPreloadForm = () => {
@@ -753,6 +746,7 @@ export default connect(
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
+			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
