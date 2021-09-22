@@ -61,7 +61,7 @@
 		});
 	};
 
-	function relayIframeMessaged() {
+	function RelayIframeMessage() {
 		window.addEventListener( 'message', ( event ) => {
 			if ( event.data ) {
 				const { message, payload } = event.data;
@@ -71,6 +71,8 @@
 	}
 
 	var nav = new Navigate();
+
+	var relay = new RelayIframeMessage()
 		</script>
 	</body>
 </html>

@@ -100,11 +100,6 @@ const init = () => {
 
 				isShowing = showing;
 				refresh();
-			}
-
-			if ( 'toggleVisibility' === action ) {
-				isVisible = ! hidden;
-				refresh();
 
 				// If we're in a WP-Desktop context, window.electron will
 				// be set. Let the app know that the notifications panel
@@ -112,6 +107,11 @@ const init = () => {
 				if ( window && window.parent ) {
 					window.parent.postMessage( { message: 'notifications-panel-toggled' }, '*' );
 				}
+			}
+
+			if ( 'toggleVisibility' === action ) {
+				isVisible = ! hidden;
+				refresh();
 			}
 		} )
 	);
