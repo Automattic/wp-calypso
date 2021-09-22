@@ -265,7 +265,7 @@
 		right: 0;
 		top: 0;
 		bottom: 0;
-		display: flex;
+		display: none;
 		align-items: center;
 		justify-content: center;
 		z-index: 1;
@@ -282,8 +282,8 @@
 			z-index: -1;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
+		@include break-medium {
+			display: flex;
 		}
 	}
 

@@ -1,7 +1,14 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/mixins';
+
 .preview-toolbar__toolbar {
 	// Move spinner to the bottom of browser header
 	& ~ hr.spinner-line {
-		top: 68px;
+		top: 16px;
+
+		@include break-small {
+			top: 68px;
+		}
 	}
 
 	.preview-toolbar__browser-header,
@@ -17,9 +24,13 @@
 }
 
 .preview-toolbar__devices {
-	display: flex;
+	display: none;
 	justify-content: center;
 	margin-bottom: 25px;
+
+	@include break-small {
+		display: flex;
+	}
 }
 
 .preview-toolbar__button {
@@ -54,15 +65,11 @@
 		top: 50%;
 		transform: translateY( -50% );
 		fill: rgba( 0, 0, 0, 0.12 );
-
-		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
-		}
 	}
 }
 
 .preview-toolbar__browser-url {
-	display: block;
+	display: none;
 	width: 60%;
 	height: 24px;
 	line-height: 24px;
@@ -81,5 +88,9 @@
 	&::before {
 		content: 'https://';
 		color: #8c8f94;
+	}
+
+	@include break-small {
+		display: block;
 	}
 }

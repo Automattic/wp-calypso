@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button, Tooltip } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -149,8 +150,15 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	onPreview,
 	...props
 } ) => {
+	const isDesktop = useDesktopBreakpoint();
+
 	if ( ! onPreview ) {
 		return <DesignButton { ...props } />;
+	}
+
+	// Show the preview directly when selecting the design if the device is not desktop
+	if ( ! isDesktop ) {
+		return <DesignButton { ...props } onSelect={ onPreview } />;
 	}
 
 	return (
