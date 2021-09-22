@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.connect-domain-step, .domain-step-auth-code {
+.connect-domain-step {
 	&.card {
 		margin-bottom: 16px;
 	}
