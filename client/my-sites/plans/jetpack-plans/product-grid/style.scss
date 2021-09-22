@@ -112,10 +112,6 @@
 }
 
 .product-grid__asterisk-item {
-	&::before {
-		content: '*';
-	}
-
 	color: var( --color-neutral-light );
 
 	font-size: $font-body;

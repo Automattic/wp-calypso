@@ -139,17 +139,17 @@ const DisplayPrice = ( {
 	);
 	const discountElt =
 		billingTerm === TERM_ANNUALLY
-			? translate( '* Save %(percent)d%% for the first year', {
+			? translate( 'Save %(percent)d%% for the first year ✢', {
 					args: {
 						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
 					},
-					comment: 'Asterisk clause describing the displayed price adjustment',
+					comment: '✢ clause describing the displayed price adjustment',
 			  } )
-			: translate( '* You Save %(percent)d%%', {
+			: translate( 'You Save %(percent)d%% ✢', {
 					args: {
 						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
 					},
-					comment: 'Asterisk clause describing the displayed price adjustment',
+					comment: '✢ clause describing the displayed price adjustment',
 			  } );
 
 	return (
