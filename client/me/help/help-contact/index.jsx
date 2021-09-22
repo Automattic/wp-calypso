@@ -43,7 +43,7 @@ import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
 } from 'calypso/state/help/directly/actions';
-import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
+import { getHelpSelectedSite } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
@@ -204,7 +204,7 @@ class HelpContact extends React.Component {
 				subject,
 				message: kayakoMessage,
 				locale: currentUserLocale,
-				client: this.props.clientSlug,
+				client: config( 'client_slug' ),
 				is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
 			} )
 			.then( () => {
@@ -320,7 +320,7 @@ class HelpContact extends React.Component {
 				subject,
 				message: forumMessage,
 				locale: currentUserLocale,
-				client: this.props.clientSlug,
+				client: config( 'client_slug' ),
 			} )
 			.then( ( data ) => {
 				this.setState( {
@@ -745,8 +745,9 @@ class HelpContact extends React.Component {
 
 export default connect(
 	( state ) => {
-		const helpSelectedSiteId = getHelpSelectedSiteId( state );
+		const selectedSite = getHelpSelectedSite( state );
 		return {
+			selectedSite,
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			getUserInfo: getHappychatUserInfo( state ),
@@ -760,7 +761,7 @@ export default connect(
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
-			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
+			shouldStartHappychatConnection: ! isRequestingSites( state ) && selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
 			activeSupportTickets: getActiveSupportTickets( state ),
