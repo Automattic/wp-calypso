@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getMediaQueryList } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -64,7 +65,7 @@ function WelcomeTourCard( {
 						<source
 							srcSet={ imgSrc.mobile?.src }
 							type={ imgSrc.mobile?.type }
-							media="(max-width: 600px)"
+							media={ getMediaQueryList( '<480px' ).media }
 						/>
 					) }
 					<img
