@@ -440,7 +440,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			font-size: 2.25rem; /* stylelint-disable-line */
 
 			@include break-xlarge {
-				font-size: 2.6rem; /* stylelint-disable-line */
+				font-size: 2.75rem; /* stylelint-disable-line */
 			}
 		}
 
@@ -814,9 +814,12 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 	.signup__step.is-intent {
 		.step-wrapper {
-			display: flex;
 			align-items: flex-start;
 			margin-top: 20%;
+			padding: 0 20px;
+			@include break-small {
+				display: flex;
+			}
 		}
 
 		.step-wrapper__header {

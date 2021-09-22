@@ -1,26 +1,44 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .intent-screen__cards {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	margin-top: -24px;
 	margin-bottom: 40px;
+	padding-left: 40px;
+	@include break-small {
+		padding-left: 60px;
+	}
 }
 
 .intent-screen__card {
 	display: flex;
 	align-items: flex-start;
 	position: relative;
-	width: 456px;
 	padding: 24px 0;
+	
+	@include break-small {
+		width: 342px;
+	}
+
+	@include break-medium {
+		width: 456px;
+	}
 
 	&-icon {
 		position: absolute;
 		top: 24px;
-		left: -48px;
+		left: -40px;
+		@include break-small {
+			left: -48px;
+		}
 	}
 
 	&-info {
 		flex: 1;
+		padding-right: 6px;
 	}
 
 	&-title {
@@ -42,4 +60,12 @@
 	& + & {
 		border-top: 1px solid #dcdcde;
 	}
+}
+
+.intent-screen__card-description {
+	margin-bottom: 0;
+}
+
+.intent-screen__card-button {
+	min-width: 130px;
 }
