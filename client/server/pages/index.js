@@ -658,7 +658,7 @@ function wpcomPages( app ) {
 
 	app.get( '/themes/premium', function ( req, res ) {
 		const redirectUrl = '/themes';
-		res.redirect( redirectUrl );
+		res.redirect( 301, redirectUrl );
 	} );
 
 	// Landing pages for domains-related emails
