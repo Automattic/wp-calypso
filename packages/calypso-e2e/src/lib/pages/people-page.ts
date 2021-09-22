@@ -39,6 +39,13 @@ export class PeoplePage {
 	}
 
 	/**
+	 *
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
 	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
 	 *
 	 * @param {string} name Name of the tab to click.
@@ -92,6 +99,8 @@ export class PeoplePage {
 	 * Click on the `Invite` button to navigate to the invite user page.
 	 */
 	async clickInviteUser(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitePeopleButton ),
@@ -104,13 +113,20 @@ export class PeoplePage {
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
-		await this.page.click( selectors.invitedUser( emailAddress ) );
+		await this.waitUntilLoaded();
+
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.invitedUser( emailAddress ) ),
+		] );
 	}
 
 	/**
 	 * Revokes the pending invite.
 	 */
 	async revokeInvite(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await this.page.click( selectors.revokeInviteButton );
 		await this.page.waitForSelector( selectors.inviteRevokedMessage );
 	}
