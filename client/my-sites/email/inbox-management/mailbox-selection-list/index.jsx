@@ -5,40 +5,53 @@ import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
-import {
-	EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
-	EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,
-} from 'calypso/lib/emails/email-provider-constants';
+import { getEmailAddress, isGoogleEmailAccount, isTitanMailAccount } from 'calypso/lib/emails';
+import { getGmailUrl } from 'calypso/lib/gsuite';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const getExternalUrl = ( mailbox ) => {
+	if ( isTitanMailAccount( mailbox ) ) {
+		return getTitanEmailUrl( getEmailAddress( mailbox ) );
+	}
+
+	if ( isGoogleEmailAccount( mailbox ) ) {
+		return getGmailUrl( getEmailAddress( mailbox ) );
+	}
+
+	return '';
+};
+
 const MailboxItemIcon = ( { mailbox } ) => {
 	const translate = useTranslate();
 
-	if (
-		[ EMAIL_ACCOUNT_TYPE_TITAN_MAIL, EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL ].includes(
-			mailbox?.account_type ?? null
-		)
-	) {
+	if ( isTitanMailAccount( mailbox ) ) {
 		return (
 			<span className="mailbox-selection-list__icon-circle"> { mailbox.mailbox[ 0 ] ?? 'T' } </span>
 		);
 	}
 
-	return <img src={ googleWorkspaceIcon } alt={ translate( 'Google Workspace icon' ) } />;
+	if ( isGoogleEmailAccount( mailbox ) ) {
+		return <img src={ googleWorkspaceIcon } alt={ translate( 'Google Workspace icon' ) } />;
+	}
+
+	return null;
 };
 
 const MailBoxItem = ( { mailbox } ) => {
 	return (
-		<Card className="mailbox-selection-list__item" href="https://www.google.com" target="external">
+		<Card
+			className="mailbox-selection-list__item"
+			href={ getExternalUrl( mailbox ) }
+			target="external"
+		>
 			<span className="mailbox-selection-list__icon">
 				<MailboxItemIcon mailbox={ mailbox } />
 			</span>
 			<div className="mailbox-selection-list__domain">
-				<h2>
-					{ mailbox.mailbox }@{ mailbox.domain }
-				</h2>
+				<h2>{ getEmailAddress( mailbox ) }</h2>
 			</div>
 		</Card>
 	);
