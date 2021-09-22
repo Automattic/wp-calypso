@@ -5,11 +5,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
-import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
 import {
@@ -161,14 +159,6 @@ class DomainsStep extends Component {
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
 	}
-
-	getMapDomainUrl = () => {
-		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.getLocale() );
-	};
-
-	getTransferDomainUrl = () => {
-		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.getLocale() );
-	};
 
 	getUseYourDomainUrl = () => {
 		return getStepUrl(
@@ -517,8 +507,8 @@ class DomainsStep extends Component {
 					products={ this.props.productsList }
 					basePath={ this.props.path }
 					promoTlds={ trueNamePromoTlds }
-					mapDomainUrl={ this.getMapDomainUrl() }
-					transferDomainUrl={ this.getTransferDomainUrl() }
+					mapDomainUrl={ this.getUseYourDomainUrl() }
+					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 					onSave={ this.handleSave.bind( this, 'domainForm' ) }
@@ -555,59 +545,8 @@ class DomainsStep extends Component {
 		);
 	};
 
-	mappingForm = () => {
-		const initialState = this.props.step ? this.props.step.mappingForm : undefined;
-		const initialQuery =
-			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
-
-		return (
-			<div className="domains__step-section-wrapper" key="mappingForm">
-				<CalypsoShoppingCartProvider>
-					<MapDomainStep
-						analyticsSection={ this.getAnalyticsSection() }
-						initialState={ initialState }
-						path={ this.props.path }
-						onRegisterDomain={ this.handleAddDomain }
-						onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
-						onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-						products={ this.props.productsList }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						initialQuery={ initialQuery }
-					/>
-				</CalypsoShoppingCartProvider>
-			</div>
-		);
-	};
-
-	onTransferSave = ( state ) => {
-		this.handleSave( 'transferForm', state );
-	};
-
 	onUseMyDomainConnect = ( { domain } ) => {
 		this.handleAddMapping( 'useYourDomainForm', domain );
-	};
-
-	transferForm = () => {
-		const initialQuery = get( this.props.step, 'domainForm.lastQuery' );
-
-		return (
-			<div className="domains__step-section-wrapper" key="transferForm">
-				<CalypsoShoppingCartProvider>
-					<TransferDomainStep
-						analyticsSection={ this.getAnalyticsSection() }
-						basePath={ this.props.path }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						initialQuery={ initialQuery }
-						isSignupStep
-						mapDomainUrl={ this.getMapDomainUrl() }
-						onRegisterDomain={ this.handleAddDomain }
-						onTransferDomain={ this.handleAddTransfer }
-						onSave={ this.onTransferSave }
-						products={ this.props.productsList }
-					/>
-				</CalypsoShoppingCartProvider>
-			</div>
-		);
 	};
 
 	useYourDomainForm = () => {
@@ -696,14 +635,6 @@ class DomainsStep extends Component {
 	renderContent() {
 		let content;
 		let sideContent;
-
-		if ( 'mapping' === this.props.stepSectionName ) {
-			content = this.mappingForm();
-		}
-
-		if ( 'transfer' === this.props.stepSectionName ) {
-			content = this.transferForm();
-		}
 
 		if ( 'use-your-domain' === this.props.stepSectionName ) {
 			content = this.useYourDomainForm();

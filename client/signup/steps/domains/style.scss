@@ -3,12 +3,26 @@
 
 .domains__step-section-wrapper {
 	margin: 0 auto;
-	max-width: 720px;
 	width: 100%;
 }
 
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
+
+	& .use-my-domain__page-heading {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	& .use-my-domain,
+	& .domain-transfer-or-connect__content {
+		box-shadow: none;
+
+		@include break-mobile {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 
 	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
