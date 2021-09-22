@@ -18,7 +18,12 @@ class MediaLibraryListNoContent extends Component {
 
 		//TODO: handle each service with individual messages
 		if ( 'google_photos' === source ) {
-			return translate( "You don't have any photos in your Google library.", {
+			if ( 'videos' === filter ) {
+				return translate( "You don't have any videos in your Google Photos library.", {
+					comment: 'Media no results',
+				} );
+			}
+			return translate( "You don't have any images in your Google Photos library.", {
 				comment: 'Media no results',
 			} );
 		}
@@ -77,7 +82,7 @@ class MediaLibraryListNoContent extends Component {
 				</UploadButton>
 			);
 		} else if ( 'google_photos' === this.props.source ) {
-			line = this.props.translate( 'New photos may take a few minutes to appear.' );
+			line = this.props.translate( 'New images and videos may take a few minutes to appear.' );
 		}
 
 		return (
