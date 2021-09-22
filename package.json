@@ -77,7 +77,7 @@
 		"build-server:copy-modules": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || node bin/copy-production-modules.js",
 		"build-server-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true yarn run build-server",
 		"build-client": "BROWSERSLIST_ENV=evergreen yarn webpack --config client/webpack.config.js --stats-preset errors-only",
-		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || yarn run build-client && yarn run build-languages-if-enabled",
+		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || { yarn run build-client && yarn run build-languages-if-enabled }",
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true yarn run build-client",
 		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --verbose run prepare",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
