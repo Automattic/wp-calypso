@@ -171,9 +171,9 @@ export function emailManagementEdit(
 
 export function emailManagementInbox( siteName = null ) {
 	if ( siteName ) {
-		return `${ emailManagementPrefix }/inbox/${ siteName }`;
+		return `/inbox/${ siteName }`;
 	}
-	return `${ emailManagementPrefix }/inbox`;
+	return `/inbox`;
 }
 
 export function isUnderEmailManagementAll( path ) {
