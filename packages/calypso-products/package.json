@@ -37,7 +37,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
-		"@automattic/calypso-config": "^1.0.0-alpha.0",
+		"@automattic/calypso-config": "^1.0.0",
 		"@automattic/calypso-url": "^1.0.0",
 		"i18n-calypso": "^5.0.0",
 		"react": "^17.0.2"
