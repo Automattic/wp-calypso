@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import './progress-line-style.scss';
@@ -13,6 +14,10 @@ const ProgressLine = ( { statusText } ) => {
 			</div>
 		</div>
 	);
+};
+
+ProgressLine.propType = {
+	mailbox: PropTypes.string.isRequired,
 };
 
 export default ProgressLine;

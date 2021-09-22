@@ -9,8 +9,12 @@ body {
 
 	.mailbox-selection-list__header {
 		.formatted-header__title {
-			font-size: $font-headline-medium;
+			font-size: $font-title-large;
 			line-height: $font-headline-medium;
+
+			@include break-large {
+				font-size: $font-headline-medium;
+			}
 		}
 
 		.formatted-header__subtitle {
@@ -19,8 +23,35 @@ body {
 		}
 	}
 
+	.mailbox-selection-list__status {
+		line-height: 24px;
+		font-size: $font-title-small;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.gridicon {
+			margin-right: 14px;
+			width: 40px;
+			height: 40px;
+		}
+
+		.gridicons-cross-circle {
+			color: #ff0000;
+		}
+
+		@include break-large {
+			transform: none;
+			font-size: $font-title-medium;
+		}
+	}
+
 	.mailbox-selection-list__item {
-		width: 660px;
+		width: 343px;
 		box-shadow: none;
 		border-width: 1px 0 0;
 		border-color: #e7e9ea;
@@ -28,6 +59,10 @@ body {
 		margin-bottom: 1px;
 		display: flex;
 		align-items: center;
+
+		@include break-large {
+			width: 660px;
+		}
 
 		.gridicons-external {
 			width: 20px;
@@ -64,8 +99,8 @@ body {
 			width: 100%;
 			height: 100%;
 			line-height: 100%;
-			border-radius: 50%;
-			font-size: 20px;
+			border-radius: 999px; /* stylelint-disable-line scales/radii */
+			font-size: $font-title-small;
 			color: #fff;
 			text-align: center;
 			background: #3197a7;
