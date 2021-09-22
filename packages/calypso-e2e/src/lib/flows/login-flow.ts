@@ -65,17 +65,11 @@ export class LoginFlow {
 	 * Log in as the specified user from the WPCOM Log-In endpoint.
 	 * This is the most basic action of logging in.
 	 *
-	 * Sometimes when logging into a site, there will be a redirect to the site specific page,
-	 * e.g. wordpress.com > wordpress.com/home/site. You can provide the specific URL we should be waiting
-	 * for before continuing to get around this.
-	 *
-	 * @param {object} root0 Root keyed object for optional options
-	 * @param {string | undefined} root0.landingUrl The URL we must navigate to before continuing. Use to handle home redirect.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async logIn( { landingUrl }: { landingUrl?: string } = {} ): Promise< void > {
+	async logIn(): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'log-in' ) );
-		await Promise.all( [ this.page.waitForNavigation( { url: landingUrl } ), this.baseflow() ] );
+		await Promise.all( [ this.page.waitForNavigation(), this.baseflow() ] );
 	}
 
 	/**

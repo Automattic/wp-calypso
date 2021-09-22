@@ -118,10 +118,6 @@ describe(
 		describe( 'Delete user account', function () {
 			let newPage: Page;
 
-			afterAll( async function () {
-				await BrowserManager.closePage( newPage, { closeContext: true } );
-			} );
-
 			it( 'Launch new context to ensure correct host', async function () {
 				newPage = await BrowserManager.newPage( { newContext: true } );
 			} );
@@ -135,7 +131,10 @@ describe(
 					username: username,
 					password: signupPassword,
 				} );
-				await loginFlow.logIn( { landingUrl: expectedLandngUrl } );
+				await Promise.all( [
+					newPage.waitForNavigation( { url: expectedLandngUrl } ),
+					loginFlow.logIn(),
+				] );
 			} );
 
 			it( 'Close account', async function () {
