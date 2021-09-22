@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, LoginFlow, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
@@ -19,8 +19,8 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		let supportComponent: SupportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Displays default entries', async function () {

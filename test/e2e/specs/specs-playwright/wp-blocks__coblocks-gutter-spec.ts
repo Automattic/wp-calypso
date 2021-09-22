@@ -5,7 +5,7 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PricingTableBlock,
@@ -22,8 +22,8 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
 	} );
 
 	it( 'Start new post', async function () {

@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	ThemesPage,
 	PreviewComponent,
@@ -26,9 +26,9 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		page = args.page;
 	} );
 
-	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page, user );
-		await loginFlow.logIn();
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: user } );
 	} );
 
 	it( 'Navigate to Themes', async function () {

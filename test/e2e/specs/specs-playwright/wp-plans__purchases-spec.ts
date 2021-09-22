@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	setupHooks,
 	SidebarComponent,
 	PlansPage,
@@ -26,9 +26,9 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	} );
 
 	describe( 'Initial navigation', function () {
-		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, userOnPremiumPlan );
-			await loginFlow.logIn();
+		it( 'Log in', async function () {
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: userOnPremiumPlan } );
 		} );
 
 		it( 'Navigate to Upgrades > Plans', async function () {

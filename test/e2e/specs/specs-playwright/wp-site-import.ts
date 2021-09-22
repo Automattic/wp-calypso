@@ -5,7 +5,7 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	SiteImportPage,
 } from '@automattic/calypso-e2e';
@@ -19,9 +19,9 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 		page = args.page;
 	} );
 
-	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page );
-		await loginFlow.logIn();
+	it( 'Log in', async function () {
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'defaultUser' } );
 	} );
 
 	it( 'Navigate to Tools > Import', async function () {

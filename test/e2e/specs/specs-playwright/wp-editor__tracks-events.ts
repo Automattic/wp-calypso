@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	GutenbergEditorPage,
 	setupHooks,
@@ -21,8 +21,8 @@ describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), functi
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, mainUser );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: mainUser } );
 	} );
 
 	it( 'Start new post', async function () {

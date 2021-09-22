@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	MediaHelper,
-	LoginFlow,
+	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	setupHooks,
@@ -33,9 +33,9 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	`( 'Edit Image ($siteType)', function ( { user } ) {
 		let mediaPage: MediaPage;
 
-		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+		it( 'Log in', async function () {
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Media', async function () {

@@ -3,7 +3,7 @@ import {
 	BlockFlow,
 	setupHooks,
 	GutenbergEditorPage,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	EditorContext,
 	PublishedPostContext,
@@ -29,8 +29,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Editor set up', function () {
 			it( 'Log in and start a new post', async function () {
-				const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-				await loginFlow.logIn();
+				const loginPage = new LoginPage( page );
+				await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
 
 				const newPostFlow = new NewPostFlow( page );
 				await newPostFlow.newPostFromNavbar();
