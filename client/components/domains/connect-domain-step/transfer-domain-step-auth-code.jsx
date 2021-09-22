@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { transferDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { authCodeStepDescription } from './constants';
 import DomainStepAuthCode from './domain-step-auth-code';
 
 import './style.scss';
@@ -23,6 +24,7 @@ const TransferDomainStepAuthCode = ( {
 	return (
 		<DomainStepAuthCode
 			buttonMessage={ __( 'Check readiness for transfer' ) }
+			authCodeDescription={ authCodeStepDescription }
 			className={ className }
 			domain={ domain }
 			onBeforeValidate={ recordTransferButtonClickInUseYourDomain }

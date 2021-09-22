@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { __ as translate } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ChangeEvent, useState } from 'react';
 import { connect } from 'react-redux';
@@ -113,20 +112,3 @@ const DomainStepAuthCode = ( {
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
 	DomainStepAuthCode
 );
-
-DomainStepAuthCode.defaultProps = {
-	authCodeDescription: (
-		<>
-			<p className={ 'domain-step-auth-code__text' }>
-				{ translate(
-					'We will use your domain authorization code to verify that you are the domain owner.'
-				) }
-			</p>
-			<p className={ 'domain-step-auth-code__text' }>
-				{ translate(
-					'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
-				) }
-			</p>
-		</>
-	),
-};
