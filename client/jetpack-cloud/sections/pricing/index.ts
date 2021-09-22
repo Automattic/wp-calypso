@@ -7,6 +7,7 @@ import './style.scss';
 export default function (): void {
 	// Redirects
 	page( '/:locale/plans', ( { params } ) => page.redirect( `/${ params.locale }/pricing` ) );
+	page( '/plans/:site', ( { params } ) => page.redirect( `/pricing/${ params.site }` ) );
 	page( '/plans', '/pricing' );
 
 	jetpackPlans( '/:locale/pricing', jetpackPricingContext );
