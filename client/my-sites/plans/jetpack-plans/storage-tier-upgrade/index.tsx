@@ -34,8 +34,9 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 
 	return (
 		<div className="storage-tier-upgrade">
-			{ tieredProducts.map( ( product: SelectorProduct ) => (
+			{ tieredProducts.map( ( product: SelectorProduct, index: number ) => (
 				<ProductCard
+					key={ index }
 					item={ product }
 					onClick={ noop }
 					siteId={ siteId }
