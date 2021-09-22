@@ -23,6 +23,69 @@ body {
 		}
 	}
 
+	.mailbox-selection-list__new-mailbox-upsell-container {
+		background: #f9f9f9;
+		align-items: center;
+		justify-content: space-between;
+		position: relative;
+		margin: 20px auto 10px;
+		padding: 10px 15px;
+		width: 240px;
+
+		@include break-medium {
+			width: 342px;
+			display: flex;
+			margin-top: 60px;
+			padding: 16px 24px;
+		}
+
+		@include break-large {
+			width: 660px;
+			display: flex;
+			margin-top: 80px;
+			padding: 16px 24px;
+		}
+
+		.mailbox-selection-list__new-mailbox-upsell-messages {
+			font-size: $font-body-small;
+			line-height: 28px;
+
+			h2 {
+				font-weight: bold;
+				font-size: $font-body;
+				line-height: 30px;
+				margin-bottom: 0;
+
+				@include break-medium {
+					margin-bottom: 8px;
+					line-height: 34px;
+				}
+
+				@include break-large {
+					margin-bottom: 8px;
+					line-height: 34px;
+				}
+			}
+		}
+
+		.mailbox-selection-list__new-mailbox-upsell-cta {
+			margin-top: 20px;
+
+			@include break-medium {
+				margin-top: 0;
+			}
+
+			@include break-large {
+				margin-top: 0;
+			}
+
+			.button {
+				font-size: $font-body-small;
+				font-weight: bold;
+			}
+		}
+	}
+
 	.mailbox-selection-list__status {
 		line-height: 24px;
 		font-size: $font-title-small;
@@ -51,7 +114,7 @@ body {
 	}
 
 	.mailbox-selection-list__item {
-		width: 343px;
+		width: 310px;
 		box-shadow: none;
 		border-width: 1px 0 0;
 		border-color: #e7e9ea;
@@ -59,6 +122,12 @@ body {
 		margin-bottom: 1px;
 		display: flex;
 		align-items: center;
+		padding: 12px;
+
+		@include break-medium {
+			width: 343px;
+			padding: 16px;
+		}
 
 		@include break-large {
 			width: 660px;
@@ -69,8 +138,11 @@ body {
 		}
 
 		&:first-of-type {
-			margin-top: 60px;
 			border-top-width: 0;
+
+			@include break-large {
+				margin-top: 60px;
+			}
 		}
 
 		.mailbox-selection-list__domain h2 {

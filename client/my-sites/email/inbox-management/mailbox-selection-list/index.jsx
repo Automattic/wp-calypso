@@ -1,7 +1,8 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -67,6 +68,28 @@ MailboxItem.propType = {
 	mailbox: PropTypes.object.isRequired,
 };
 
+const NewMailboxUpsell = () => {
+	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = selectedSite?.slug;
+
+	const handleClick = useCallback( () => {
+		page.redirect( `/email/${ selectedSiteSlug }` );
+	}, [ selectedSiteSlug ] );
+
+	return (
+		<div className="mailbox-selection-list__new-mailbox-upsell-container">
+			<div className="mailbox-selection-list__new-mailbox-upsell-messages">
+				<h2>{ translate( 'Need another mailbox?' ) }</h2>
+				<div>{ translate( 'Create new and activate immediately' ) }</div>
+			</div>
+			<div className="mailbox-selection-list__new-mailbox-upsell-cta">
+				<Button onClick={ handleClick }>{ translate( 'Create a new mailbox' ) }</Button>
+			</div>
+		</div>
+	);
+};
+
 const MailboxItems = ( { mailboxes } ) => {
 	const translate = useTranslate();
 
@@ -83,6 +106,8 @@ const MailboxItems = ( { mailboxes } ) => {
 			{ mailboxes.map( ( mailbox, index ) => (
 				<MailboxItem mailbox={ mailbox } key={ index } />
 			) ) }
+
+			<NewMailboxUpsell />
 		</>
 	);
 };
