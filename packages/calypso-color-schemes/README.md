@@ -53,7 +53,7 @@ module.exports = () => ( {
 } );
 ```
 
-The JS output can't be used this way until https://github.com/postcss/postcss-custom-properties/issues/255 is solved.
+The JS output can't be used this way until [this issue](https://github.com/postcss/postcss-custom-properties/issues/255) is solved.
 
 ### Note on using the JS/JSON outputs
 
