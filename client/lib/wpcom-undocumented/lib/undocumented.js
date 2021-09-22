@@ -250,14 +250,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-// Used to preserve backslash in some known settings fields like custom time and date formats.
-function encode_backslash( value ) {
-	if ( typeof value !== 'string' || value.indexOf( '\\' ) === -1 ) {
-		return value;
-	}
-	return value.replace( /\\/g, '\\\\' );
-}
-
 /**
  * GET/POST site settings
  *
@@ -281,14 +273,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 
 	if ( 'get' === method ) {
 		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	// special treatment to preserve backslash in date_format
-	if ( body.date_format ) {
-		body.date_format = encode_backslash( body.date_format );
-	}
-	if ( body.time_format ) {
-		body.time_format = encode_backslash( body.time_format );
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
