@@ -10,8 +10,8 @@ import { useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
 import { getEmailAddress, isGoogleEmailAccount, isTitanMailAccount } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
-import ProgressLine from 'calypso/my-sites/email/inbox-management/mailbox-selection-list/progress-line';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ProgressLine from './progress-line';
 
 import './style.scss';
 
