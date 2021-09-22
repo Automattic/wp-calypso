@@ -1,4 +1,4 @@
-import { isEnabled } from 'config';
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 /* eslint-disable jsdoc/require-param */
 /**
