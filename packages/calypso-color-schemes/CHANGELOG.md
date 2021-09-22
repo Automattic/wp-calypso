@@ -2,8 +2,11 @@
 
 ## 3.0.0
 
-- Breaking: Module converted to ESM.
-- Added: It now provides Custom Properties as a JSON file.
+- Breaking: Module converted to ESM. Reaching into package internals is not available anymore, only these imports are available:
+  - `@automattic/calypso-color-schemes` (returns a CSS file)
+  - `@automattic/calypso-color-schemes/js` (returns a CommonJS when used from `require`, ESM when used from `import`)
+  - `@automattic/calypso-color-schemes/json`
+- Added: It now provides Custom Properties as a JSON file. To use them, import from `@automattic/calypso-color-schemes/json`
 - Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files:
   - Removed dependency `node-sass`
   - Added dependency `sass ^1.32.13`
