@@ -3,6 +3,14 @@ import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 import { LoginPage } from '../pages';
 
 /**
+ * A username/password set of credentials that can be used to log in.
+ */
+export interface LoginCredentials {
+	username: string;
+	password: string;
+}
+
+/**
  * Class representing the end-to-end log in process.
  */
 export class LoginFlow {
@@ -14,14 +22,19 @@ export class LoginFlow {
 	 * Creates an instance of the log in flow.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {string} [accountType] Type of account to be used for the log in process.
+	 * @param {string} [account] Account information to be used to login. Can be either an account type from config, or credentials.
 	 */
-	constructor( page: Page, accountType = 'defaultUser' ) {
+	constructor( page: Page, account: string | LoginCredentials = 'defaultUser' ) {
 		this.page = page;
 
-		const [ username, password ] = getAccountCredential( accountType );
-		this.username = username;
-		this.password = password;
+		if ( typeof account === 'string' ) {
+			const [ username, password ] = getAccountCredential( account );
+			this.username = username;
+			this.password = password;
+		} else {
+			this.username = account.username;
+			this.password = account.password;
+		}
 	}
 
 	/**
@@ -52,11 +65,17 @@ export class LoginFlow {
 	 * Log in as the specified user from the WPCOM Log-In endpoint.
 	 * This is the most basic action of logging in.
 	 *
+	 * Sometimes when logging into a site, there will be a redirect to the site specific page,
+	 * e.g. wordpress.com > wordpress.com/home/site. You can provide the specific URL we should be waiting
+	 * for before continuing to get around this.
+	 *
+	 * @param {object} root0 Root keyed object for optional options
+	 * @param {string | undefined} root0.landingUrl The URL we must navigate to before continuing. Use to handle home redirect.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async logIn(): Promise< void > {
+	async logIn( { landingUrl }: { landingUrl?: string } = {} ): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'log-in' ) );
-		await Promise.all( [ this.page.waitForNavigation(), this.baseflow() ] );
+		await Promise.all( [ this.page.waitForNavigation( { url: landingUrl } ), this.baseflow() ] );
 	}
 
 	/**
