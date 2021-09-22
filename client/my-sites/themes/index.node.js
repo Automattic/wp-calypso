@@ -12,6 +12,7 @@ import {
 	redirectSearchAndType,
 	redirectFilterAndType,
 	redirectToThemeDetails,
+	redirectTiers,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
 
@@ -31,6 +32,7 @@ export default function ( router ) {
 	];
 	router(
 		showcaseRoutes,
+		redirectTiers,
 		ssrSetupLocale,
 		fetchThemeFilters,
 		validateVertical,

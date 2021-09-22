@@ -114,3 +114,12 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 	}
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
 }
+
+export function redirectTiers( { res, originalUrl }, next ) {
+	const redirectUrl = originalUrl.replace( /\/(free|premium)/, '' );
+	if ( redirectUrl === originalUrl ) {
+		return next();
+	}
+
+	res.redirect( 301, redirectUrl );
+}
