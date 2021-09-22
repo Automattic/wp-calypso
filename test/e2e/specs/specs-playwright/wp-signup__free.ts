@@ -114,15 +114,21 @@ describe(
 		} );
 
 		describe( 'Delete user account', function () {
-			it( 'Re-login to ensure correct host', async function () {
-				await BrowserManager.clearAuthenticationState( page );
-				const loginPage = new LoginPage( page );
+			let newPage: Page;
+
+			afterAll( async function () {
+				await BrowserManager.closePage( newPage, { closeContext: true } );
+			} );
+
+			it( 'Launch new context to ensure correct host', async function () {
+				newPage = await BrowserManager.newPage( { newContext: true } );
+				const loginPage = new LoginPage( newPage );
 				await loginPage.visit();
 				await loginPage.login( { username: username, password: signupPassword } );
 			} );
 
 			it( 'Close account', async function () {
-				const closeAccountFlow = new CloseAccountFlow( page );
+				const closeAccountFlow = new CloseAccountFlow( newPage );
 				await closeAccountFlow.closeAccount();
 			} );
 		} );
