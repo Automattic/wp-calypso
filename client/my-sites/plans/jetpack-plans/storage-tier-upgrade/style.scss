@@ -6,6 +6,10 @@
 	margin-top: 48px;
 	margin-bottom: 64px;
 
+	.jetpack-product-card__body {
+		padding: 32px;
+	}
+
 	.jetpack-product-card__price {
 		text-align: center;
 	}
@@ -22,5 +26,13 @@
 		letter-spacing: -1px;
 		text-align: center;
 		margin-top: 9px;
+	}
+
+	.jetpack-product-card__button {
+		margin-block-start: 20px;
+	}
+
+	.jetpack-product-card__features-item:first-child {
+		margin: 0 0 14px;
 	}
 }

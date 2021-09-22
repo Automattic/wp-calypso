@@ -9,6 +9,8 @@ import PlansFilterBar from '../plans-filter-bar';
 import { StorageTierUpgrade } from '../storage-tier-upgrade';
 import { QueryArgs, Duration } from '../types';
 
+import './style.scss';
+
 interface Props {
 	defaultDuration: Duration;
 	header: ReactNode;
