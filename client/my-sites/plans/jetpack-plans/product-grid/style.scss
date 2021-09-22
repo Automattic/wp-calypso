@@ -68,30 +68,12 @@
 	}
 }
 
-.product-grid__filter-bar,
-.product-grid__filter-bar-placeholder {
+.product-grid__filter-bar {
 	height: 63px;
 	margin-bottom: 70px;
 
 	@include break-small {
 		margin-bottom: 50px;
-	}
-}
-
-.product-grid__filter-bar-placeholder {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	width: 250px;
-	margin-left: auto;
-	margin-right: auto;
-
-	> :first-child {
-		@include placeholder();
-
-		width: 100%;
-		height: 24px;
 	}
 }
 
