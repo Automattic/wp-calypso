@@ -7,7 +7,6 @@ const selectors = {
 	// iframe and editor
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
-	editorBody: '.edit-post-visual-editor',
 
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
@@ -68,8 +67,10 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		const frame = await this.getEditorFrame();
-		await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
-		await frame.waitForSelector( selectors.editorBody );
+		await this.page.waitForLoadState( 'load' );
+		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
+		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		await frame.waitForSelector( selectors.editorTitle );
 		return frame;
 	}
 
