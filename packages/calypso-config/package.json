@@ -11,7 +11,9 @@
 		"import": "./dist/esm/index.js"
 	},
 	"type": "module",
-	"engines": { "node": "^12.20.0 || ^14.13.1 || >=16.0.0" },
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
