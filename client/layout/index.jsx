@@ -190,6 +190,7 @@ class Layout extends Component {
 			'/start/p2',
 			'/plugins/domain',
 			'/plugins/marketplace/setup',
+			'/marketing/do-it-for-me',
 		];
 
 		return (
