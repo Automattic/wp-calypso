@@ -1,6 +1,6 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
-import { storageUpgradeSiteSelection } from 'calypso/jetpack-cloud/controller';
+import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import { jetpackPricingContext } from 'calypso/jetpack-cloud/sections/pricing/controller';
 import {
 	doForCurrentCROIteration,
@@ -15,7 +15,7 @@ export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
 		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
 			page(
 				`${ rootUrl }/storage/:site`,
-				storageUpgradeSiteSelection,
+				cloudSiteSelection,
 				jetpackPricingContext,
 				jetpackStoragePricing,
 				makeLayout,

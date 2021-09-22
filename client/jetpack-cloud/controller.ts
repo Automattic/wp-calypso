@@ -240,24 +240,3 @@ export async function cloudSiteSelection(
 		await siteSelectionWithoutFragment( context, next );
 	}
 }
-
-/**
- * Parse site slug from path and call the proper middleware.
- *
- * @param {PageJS.Context} context Route context
- * @param {Function} next Next middleware function
- */
-export const storageUpgradeSiteSelection = async ( context: PageJS.Context, next: () => void ) => {
-	const siteFragment = parseSiteFragment( context );
-
-	if ( ! siteFragment ) {
-		page.redirect( '/pricing' );
-		return;
-	}
-
-	const { id } = await fetchSite( context, siteFragment );
-	if ( id ) {
-		selectSite( context, id );
-	}
-	next();
-};
