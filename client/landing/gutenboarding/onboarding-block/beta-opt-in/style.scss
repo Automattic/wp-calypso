@@ -1,27 +1,40 @@
-.beta-opt-in {
-	&.gutenboarding-page {
-		text-align: center;
+.beta-opt-in__header {
+	margin: 80px 0 64px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.beta-opt-in__content {
+	margin: 0 auto;
+	display: flex;
+	padding-right: 33%;
+	flex-wrap: wrap;
+	position: relative;
+
+	&::after {
+		content: '';
+		display: block;
+		width: 307px;
+		height: 307px;
+		background: url( '/calypso/images/signup/beta-wp-icon.png' ) no-repeat;
+		background-size: 307px 307px;
+		position: absolute;
+		right: 0;
+		top: -6px;
 	}
 }
 
-.beta-opt-in__header {
-	background: url( '/calypso/images/signup/fse-beta-enroll.png' ) no-repeat bottom center;
-	background-size: 972px 420px;
-	padding-bottom: 440px;
-	margin-top: 80px;
-}
+.beta-opt-in__item {
+	width: calc( 50% - 40px );
+	padding: 0 10px 0 30px;
+	position: relative;
+	margin: 0 30px 30px 0;
 
-.beta-opt-in__content,
-.beta-opt-in .beta-opt-in__actions {
-	max-width: 630px;
-	display: flex;
-	margin: 0 auto;
-}
-
-.beta-opt-in__column {
-	box-sizing: border-box;
-	width: 50%;
-	padding: 1em;
+	svg {
+		position: absolute;
+		left: 0;
+	}
 
 	p {
 		font-size: 0.875rem;
@@ -29,9 +42,16 @@
 	}
 
 	h3 {
-		font-size: 1.25rem;
+		font-size: 1rem;
 		font-weight: 600;
 		margin: 0 0 0.67em;
 		color: var( --studio-gray-80 );
+	}
+}
+
+.beta-opt-in__submit {
+	margin-top: 40px;
+	svg {
+		margin-left: 10px;
 	}
 }
