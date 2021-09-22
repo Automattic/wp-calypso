@@ -86,7 +86,7 @@
 			border-radius: 2px;
 			overflow: hidden;
 
-			&:after { /* stylelint-disable-line */
+			&:after { /* stylelint-disable-line selector-pseudo-element-colon-notation */
 				content: '';
 				position: absolute;
 				left: 0;
