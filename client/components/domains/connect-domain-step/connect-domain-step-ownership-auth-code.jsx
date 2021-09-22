@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { connectDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { authCodeStepDescription } from './constants';
+import { authCodeStepDefaultDescription } from './constants';
 import DomainStepAuthCode from './domain-step-auth-code';
 
 import './style.scss';
@@ -20,10 +20,20 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 		() => recordTracksEvent( 'calypso_use_your_domain_mapping_click', { domain } ),
 		[ domain ]
 	);
+	const authCodeDescription = (
+		<>
+			<p className={ 'connect-domain-step__text' }>
+				{ __(
+					'We will use your domain authorization code to verify that you are the domain owner.'
+				) }
+			</p>
+			<p className={ 'connect-domain-step__text' }>{ authCodeStepDefaultDescription }</p>
+		</>
+	);
 	return (
 		<DomainStepAuthCode
 			buttonMessage={ __( 'Check my authorization code' ) }
-			authCodeDescription={ authCodeStepDescription }
+			authCodeDescription={ authCodeDescription }
 			className={ className }
 			domain={ domain }
 			onBeforeValidate={ recordMappingButtonClickInUseYourDomain }

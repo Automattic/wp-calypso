@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import React from 'react';
 
 export const modeType = {
 	SUGGESTED: 'suggested',
@@ -51,17 +50,6 @@ export const stepsHeadingSuggested = __( 'Suggested setup' );
 export const stepsHeadingAdvanced = __( 'Advanced setup' );
 export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );
 
-export const authCodeStepDescription = (
-	<>
-		<p className={ 'connect-domain-step__text' }>
-			{ __(
-				'We will use your domain authorization code to verify that you are the domain owner.'
-			) }
-		</p>
-		<p className={ 'connect-domain-step__text' }>
-			{ __(
-				'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
-			) }
-		</p>
-	</>
+export const authCodeStepDefaultDescription = __(
+	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
 );
