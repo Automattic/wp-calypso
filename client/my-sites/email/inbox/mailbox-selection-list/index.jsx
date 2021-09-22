@@ -7,7 +7,12 @@ import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
-import { getEmailAddress, isGoogleEmailAccount, isTitanMailAccount } from 'calypso/lib/emails';
+import {
+	getEmailAddress,
+	isEmailForwardAccount,
+	isGoogleEmailAccount,
+	isTitanMailAccount,
+} from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -32,7 +37,7 @@ const MailboxItemIcon = ( { mailbox } ) => {
 
 	if ( isTitanMailAccount( mailbox ) ) {
 		return (
-			<span className="mailbox-selection-list__icon-circle"> { mailbox.mailbox[ 0 ] ?? 'T' } </span>
+			<span className="mailbox-selection-list__icon-circle">{ mailbox.mailbox[ 0 ] ?? 'T' }</span>
 		);
 	}
 
@@ -48,9 +53,13 @@ MailboxItemIcon.propType = {
 };
 
 const MailboxItem = ( { mailbox } ) => {
+	if ( isEmailForwardAccount( mailbox ) ) {
+		return null;
+	}
+
 	return (
 		<Card
-			className="mailbox-selection-list__item"
+			className="mailbox-selection-list__mailbox"
 			href={ getExternalUrl( mailbox ) }
 			target="external"
 		>
@@ -113,7 +122,7 @@ const MailboxItems = ( { mailboxes } ) => {
 };
 
 MailboxItems.propType = {
-	mailboxes: PropTypes.array.isRequired,
+	mailboxes: PropTypes.arrayOf( PropTypes.object ).isRequired,
 };
 
 const MailboxListStatus = ( { isError, statusMessage } ) => {

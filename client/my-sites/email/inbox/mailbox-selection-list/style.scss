@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 
 body {
-	background-color: #fff;
+	background-color: var( --studio-white );
 }
 
 .mailbox-selection-list {
@@ -113,7 +113,7 @@ body {
 		}
 	}
 
-	.mailbox-selection-list__item {
+	.mailbox-selection-list__mailbox {
 		width: 310px;
 		box-shadow: none;
 		border-width: 1px 0 0;
@@ -147,7 +147,7 @@ body {
 
 		.mailbox-selection-list__domain h2 {
 			color: var( --p2-color-text );
-			font-family: SF UI Text, SFUIText-Regular, Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
+			font-family: $sans;
 			font-weight: 600;
 			letter-spacing: -0.18px;
 			line-height: 24px;
@@ -173,7 +173,7 @@ body {
 			line-height: 100%;
 			border-radius: 999px; /* stylelint-disable-line scales/radii */
 			font-size: $font-title-small;
-			color: #fff;
+			color: var( --studio-white );
 			text-align: center;
 			background: #3197a7;
 			font-weight: bold;

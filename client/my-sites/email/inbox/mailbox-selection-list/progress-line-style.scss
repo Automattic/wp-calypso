@@ -23,7 +23,7 @@
 		}
 
 		.progress-line__status-text {
-			font-family: SF Pro Display, SF UI Text, SFUIText-Regular, Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
+			font-family: $sans;
 			font-weight: 400;
 			font-size: $font-title-small;
 			line-height: 22px;
@@ -53,27 +53,27 @@
 		@keyframes load {
 			0% {
 				width: 0;
-				background: #3c434a;
+				background: var( --studio-gray-70 );
 			}
 
 			25% {
 				width: 40%;
-				background: #3c434a;
+				background: var( --studio-gray-70 );
 			}
 
 			50% {
 				width: 60%;
-				background: #3c434a;
+				background: var( --studio-gray-70 );
 			}
 
 			75% {
 				width: 75%;
-				background: #3c434a;
+				background: var( --studio-gray-70 );
 			}
 
 			100% {
 				width: 100%;
-				background: #3c434a;
+				background: var( --studio-gray-70 );
 			}
 		}
 
