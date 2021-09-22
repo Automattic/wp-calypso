@@ -217,7 +217,10 @@ export function noSite(
  * @param {PageJS.Context} context Route context
  * @param {Function} next Next middleware function
  */
-export function cloudSiteSelection( context: PageJS.Context, next: () => void ): void {
+export async function cloudSiteSelection(
+	context: PageJS.Context,
+	next: () => void
+): Promise< void > {
 	const siteFragment = parseSiteFragment( context );
 
 	if ( noSite( siteFragment, context ) ) {
@@ -225,8 +228,15 @@ export function cloudSiteSelection( context: PageJS.Context, next: () => void ):
 	}
 
 	if ( siteFragment ) {
-		siteSelectionWithFragment( siteFragment, context, next );
+		if ( context.path.startsWith( '/pricing' ) ) {
+			const { id } = await fetchSite( context, siteFragment );
+			if ( ! id ) {
+				await siteSelectionWithoutFragment( context, next );
+				return;
+			}
+		}
+		await siteSelectionWithFragment( siteFragment, context, next );
 	} else {
-		siteSelectionWithoutFragment( context, next );
+		await siteSelectionWithoutFragment( context, next );
 	}
 }
