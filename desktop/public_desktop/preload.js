@@ -3,23 +3,23 @@ const { ipcRenderer, contextBridge } = require( 'electron' );
 // Outgoing IPC message channels from Renderer to Main process.
 // Maintain this list in alphabetical order.
 const sendChannels = [
+	'back-button-clicked',
+	'clear-notices-count',
 	'get-config',
 	'get-settings',
-	'log',
-	'request-site-response',
-	'clear-notices-count',
-	'back-button-clicked',
 	'forward-button-clicked',
 	'home-button-clicked',
-	'user-auth',
-	'user-login-status',
-	'view-post-clicked',
+	'log',
+	'magic-link-set-password',
+	'notifications-panel-toggled',
 	'print',
-	'reset-unread-count',
+	'request-site-response',
 	'secrets',
 	'toggle-dev-tools',
 	'title-bar-double-click',
-	'magic-link-set-password',
+	'user-auth',
+	'user-login-status',
+	'view-post-clicked',
 ];
 
 // Incoming IPC message channels from Main process to Renderer.

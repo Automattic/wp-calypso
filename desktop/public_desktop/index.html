@@ -29,38 +29,48 @@
 			</div>
 		</div>
 		<script>
-      function handleDoubleClick() {
-        const titleBar = document.getElementById('title-bar');
-        titleBar.addEventListener('dblclick', function () {
-          window.electron.send('title-bar-double-click');
-        });
-      }
-      handleDoubleClick();
-			function Navigate() {
-				const titleBarButtons = document.getElementById( 'title-bar-buttons' );
-				// Override title bar button padding on window load (Linux, Windows)
-				window.addEventListener( 'load', function() {
-					const padding = window.electron.styles.titleBarPaddingLeft;
-					titleBarButtons.style.paddingLeft = padding;
-				})
+	function handleDoubleClick() {
+		const titleBar = document.getElementById('title-bar');
+		titleBar.addEventListener('dblclick', function () {
+		window.electron.send('title-bar-double-click');
+		});
+	}
+	handleDoubleClick();
 
-				const backButton = document.getElementById( 'nav-button-back' );
-				backButton.addEventListener( 'click', function() {
-					window.electron.send( 'back-button-clicked' );
-				});
+	function Navigate() {
+		const titleBarButtons = document.getElementById( 'title-bar-buttons' );
+		// Override title bar button padding on window load (Linux, Windows)
+		window.addEventListener( 'load', function() {
+			const padding = window.electron.styles.titleBarPaddingLeft;
+			titleBarButtons.style.paddingLeft = padding;
+		})
 
-				const forwardButton = document.getElementById( 'nav-button-forward' );
-				forwardButton.addEventListener( 'click', function() {
-					window.electron.send( 'forward-button-clicked' );
-				});
+		const backButton = document.getElementById( 'nav-button-back' );
+		backButton.addEventListener( 'click', function() {
+			window.electron.send( 'back-button-clicked' );
+		});
 
-				const homeButton = document.getElementById( 'nav-button-home' );
-				homeButton.addEventListener( 'click', function() {
-					window.electron.send( 'home-button-clicked' );
-				});
-			};
+		const forwardButton = document.getElementById( 'nav-button-forward' );
+		forwardButton.addEventListener( 'click', function() {
+			window.electron.send( 'forward-button-clicked' );
+		});
 
-			var nav = new Navigate();
+		const homeButton = document.getElementById( 'nav-button-home' );
+		homeButton.addEventListener( 'click', function() {
+			window.electron.send( 'home-button-clicked' );
+		});
+	};
+
+	function relayIframeMessaged() {
+		window.addEventListener( 'message', ( event ) => {
+			if ( event.data ) {
+				const { message, payload } = event.data;
+				window.electron.send( message, data );
+			}
+		} )
+	}
+
+	var nav = new Navigate();
 		</script>
 	</body>
 </html>
