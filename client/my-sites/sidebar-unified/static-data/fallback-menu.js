@@ -1,5 +1,5 @@
+import { isEnabled } from 'config';
 import { translate } from 'i18n-calypso';
-
 /* eslint-disable jsdoc/require-param */
 /**
  * Fallback nav menu items.
@@ -40,6 +40,35 @@ export default function buildFallbackResponse( {
 	shouldShowAMP = false,
 	shouldShowBetaTesting = false,
 } = {} ) {
+	let wooCommerce = [];
+	if ( shouldShowWooCommerce ) {
+		wooCommerce = [
+			{
+				icon: WOOCOMMERCE_ICON,
+				slug: 'woo-php',
+				title: translate( 'WooCommerce' ),
+				type: 'menu-item',
+				url: `https://${ siteDomain }/wp-admin/admin.php?page=wc-admin`,
+			},
+			{
+				type: 'separator',
+			},
+		];
+	} else if ( isEnabled( 'woop' ) ) {
+		wooCommerce = [
+			{
+				icon: WOOCOMMERCE_ICON,
+				slug: 'woo-php',
+				title: translate( 'WooCommerce' ),
+				type: 'menu-item',
+				url: `/woocommerce`,
+			},
+			{
+				type: 'separator',
+			},
+		];
+	}
+
 	const fallbackResponse = [
 		{
 			icon: 'dashicons-admin-home',
@@ -328,31 +357,7 @@ export default function buildFallbackResponse( {
 			type: 'separator',
 		},
 		// Add WooCommerce here
-		...( shouldShowWooCommerce
-			? [
-					{
-						icon: WOOCOMMERCE_ICON,
-						slug: 'woo-php',
-						title: translate( 'WooCommerce' ),
-						type: 'menu-item',
-						url: `https://${ siteDomain }/wp-admin/admin.php?page=wc-admin`,
-					},
-					{
-						type: 'separator',
-					},
-			  ]
-			: [
-					{
-						icon: WOOCOMMERCE_ICON,
-						slug: 'woo-php',
-						title: translate( 'WooCommerce' ),
-						type: 'menu-item',
-						url: `/woocommerce`,
-					},
-					{
-						type: 'separator',
-					},
-			  ] ),
+		...wooCommerce,
 		...( shouldShowThemes
 			? [
 					{
