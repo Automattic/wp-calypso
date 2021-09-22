@@ -38,9 +38,10 @@ const getProductWithOverrides = ( slug: JetpackSlugsWithStorage ) => {
 export const useGetTieredBackupProducts = ( billingPeriod: Duration ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
-	const activeProductSlugs = useSelector( ( state ) => getSiteProducts( state, siteId ) )
-		?.filter( ( product ) => ! product.expired )
-		.map( ( { productSlug } ) => productSlug );
+	const activeProductSlugs =
+		useSelector( ( state ) => getSiteProducts( state, siteId ) )
+			?.filter( ( product ) => ! product.expired )
+			?.map( ( { productSlug } ) => productSlug ) ?? [];
 
 	const purchasedTier1BackupProduct = activeProductSlugs
 		?.filter( ( productSlug ) =>
@@ -48,7 +49,7 @@ export const useGetTieredBackupProducts = ( billingPeriod: Duration ) => {
 				productSlug
 			)
 		)
-		.pop() as JetpackSlugsWithStorage;
+		?.pop() as JetpackSlugsWithStorage;
 
 	const isTierTwoBackupProductPurchased = activeProductSlugs
 		? activeProductSlugs.filter( ( productSlug ) =>
