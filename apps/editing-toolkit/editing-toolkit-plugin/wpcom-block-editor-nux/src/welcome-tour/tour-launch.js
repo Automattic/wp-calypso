@@ -28,7 +28,9 @@ function LaunchWpcomWelcomeTour() {
 
 	const localeSlug = useLocale();
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
+	new window.Image().src = isDesktop()
+		? getTourContent( localeSlug )[ 0 ].imgSrc.desktop
+		: getTourContent( localeSlug )[ 0 ].imgSrc.mobile;
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
