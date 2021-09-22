@@ -31,6 +31,7 @@ function updateNotificationBadge() {
 
 module.exports = function ( { window, view } ) {
 	ipc.on( 'notifications-panel-toggled', function () {
+		log.info( 'Notifications panel toggled' );
 		if ( notificationBadgeCount > 0 ) {
 			log.info( 'Notification badge count reset' );
 			notificationBadgeCount = 0;
