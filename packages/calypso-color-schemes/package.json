@@ -25,13 +25,17 @@
 	},
 	"exports": {
 		".": "./css/index.css",
-		"./js": "./js/index.mjs"
+		"./js": {
+			"import": "./js/index.js",
+			"require": "./js/index.cjs"
+		},
+		"./json": "./json/index.json"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "npx rimraf js css src/__color-studio",
+		"clean": "npx rimraf js css json src/__color-studio",
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {

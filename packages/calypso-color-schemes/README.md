@@ -33,18 +33,28 @@ Sometimes, `calypso-color-schemes` properties are consumed in JavaScript. To avo
 import { customProperties } from '@automattic/calypso-color-schemes/js'; // mind the js suffix
 ```
 
-Or with `postcss-custom-properties`, and `postcss.config.js` can look like this:
+or
+
+```js
+const { customProperties } = require( '@automattic/calypso-color-schemes/js' );
+```
+
+### Using the JSON output
+
+Like the JS output, a JSON version is provided too. It can be used with `postcss-custom-properties`, and `postcss.config.js` can look like this:
 
 ```js
 module.exports = () => ( {
 	plugins: {
 		'postcss-custom-properties': {
-			importFrom: [ require.resolve( '@automattic/calypso-color-schemes/js' ) ],
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes/json' ) ],
 		},
 	},
 } );
 ```
 
-### Note on using the JS output
+The JS output can't be used this way until https://github.com/postcss/postcss-custom-properties/issues/255 is solved.
 
-The CSS files include variable definitions for all Calypso color schemes (Classic Blue, Contrast, Midnight, ...), but the JS exports include only variables from the `:root` selector, i.e., only the fallback default theme.
+### Note on using the JS/JSON outputs
+
+The CSS files include variable definitions for all Calypso color schemes (Classic Blue, Contrast, Midnight, ...), but the JS/JSON exports include only variables from the `:root` selector, i.e., only the fallback default theme.
