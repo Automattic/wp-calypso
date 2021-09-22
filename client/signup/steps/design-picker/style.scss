@@ -65,6 +65,13 @@
 .design-picker__preview {
 	height: 860px;
 	padding-bottom: 30px;
+
+	@include break-small {
+		.step-wrapper__header,
+		.step-wrapper__content {
+			transform: translateY( -68px );
+		}
+	}
 }
 
 .design-picker__web-preview {
