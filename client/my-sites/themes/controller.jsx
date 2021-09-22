@@ -116,7 +116,7 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 }
 
 export function redirectTiers( { res, originalUrl }, next ) {
-	const redirectUrl = originalUrl.replace( /\/(free|premium)/, '' );
+	const redirectUrl = originalUrl.replace( /\/(free|premium|type)/g, '' );
 	if ( redirectUrl === originalUrl ) {
 		return next();
 	}

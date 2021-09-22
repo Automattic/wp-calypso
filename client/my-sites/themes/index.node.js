@@ -51,10 +51,12 @@ export default function ( router ) {
 			'/themes/:site?/type/:tier(free|premium)',
 			'/themes/:site?/search/:search/type/:tier(free|premium)',
 		],
+		redirectTiers,
 		redirectSearchAndType
 	);
 	router(
 		[ '/themes/:site?/filter/:filter', '/themes/:site?/filter/:filter/type/:tier(free|premium)' ],
+		redirectTiers,
 		redirectFilterAndType
 	);
 	router(
