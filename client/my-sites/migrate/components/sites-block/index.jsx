@@ -39,7 +39,7 @@ class SitesBlock extends Component {
 								className="sites-block__faux-site-selector-label"
 								htmlFor="sites-block__faux-site-selector-url-input"
 							>
-								{ translate( 'Import from...' ) }
+								{ translate( 'Import from…' ) }
 							</FormLabel>
 							<div className="sites-block__faux-site-selector-url">
 								<FormTextInput
