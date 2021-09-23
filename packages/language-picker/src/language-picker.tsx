@@ -128,7 +128,7 @@ function LanguagePicker< TLanguage extends Language >( {
 	const searchPlaceholder = __( 'Search languages…' );
 
 	return (
-		<Flex className="language-picker-component" align="left">
+		<Flex className="language-picker-component" align="left" direction="column" expanded={ false }>
 			<FlexBlock className="language-picker-component__heading">
 				<Flex justify="space-between" align="left">
 					<FlexItem className="language-picker-component__title wp-brand-font">
