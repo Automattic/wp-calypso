@@ -1,0 +1,10 @@
+.site-info-collection__container {
+	&.action-panel {
+		max-width: 1024px;
+		padding-left: 25px;
+		margin-left: 20px;
+		.action-panel__body {
+			padding: 15px;
+		}
+	}
+}
