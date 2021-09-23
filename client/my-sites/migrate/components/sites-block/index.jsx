@@ -23,7 +23,7 @@ class SitesBlock extends Component {
 	};
 
 	renderFauxSiteSelector() {
-		const { onUrlChange, url } = this.props;
+		const { onUrlChange, translate, url } = this.props;
 		const { error } = this.state;
 		const isError = !! error;
 
