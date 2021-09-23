@@ -167,6 +167,7 @@
 		"upsell/troubleshooting": true,
 		"woocommerce/extension-referrers": true,
 		"woocommerce/store-on-non-atomic-sites": true,
+		"woop": true,
 		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false,
 		"redirect-fallback-browsers": true
