@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { reduxGetState, reduxDispatch } from 'calypso/lib/redux-bridge';
 import wpcom from 'calypso/lib/wp';
@@ -25,7 +26,7 @@ export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 			apiNamespace: 'wpcom/v2',
 		},
 		( error, response ) => {
-			if ( ! error ) {
+			if ( ! error && config.isEnabled( 'atomic/automated-revert' ) ) {
 				// Some purchases cancellations set a blog sticker to lock the site from
 				// cancelling more purchases, so we update the list of stickers in case
 				// we need to handle that lock in the UI.

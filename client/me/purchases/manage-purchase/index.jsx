@@ -833,7 +833,9 @@ class ManagePurchase extends Component {
 					<QueryUserPurchases userId={ this.props.userId } />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				{ purchase?.siteId && <QueryBlogStickers blogId={ purchase.siteId } /> }
+				{ purchase?.siteId && config.isEnabled( 'atomic/automated-revert' ) && (
+					<QueryBlogStickers blogId={ purchase.siteId } />
+				) }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>
