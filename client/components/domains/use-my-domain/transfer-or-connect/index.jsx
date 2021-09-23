@@ -17,7 +17,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getOptionInfo,
 	connectDomainAction,
-	transferDomainAction as defaultTransferHandler,
+	defaultTransferDomainAction as defaultTransferHandler,
 } from '../utilities';
 import OptionContent from './option-content';
 
