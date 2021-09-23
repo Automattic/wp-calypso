@@ -27,6 +27,15 @@ export type AuthCodeValidationHandler = (
 	onDone?: ( error?: Maybe< AuthCodeValidationError >, callbackData?: unknown ) => void
 ) => unknown;
 
+export type StartStepProps = {
+	className: string;
+	pageSlug: PossibleSlugs;
+	onNextStep: () => void;
+	stepContent: JSX.Element;
+	progressStepList: Record< PossibleSlugs, string >;
+	setPage: ( page: PossibleSlugs ) => void;
+};
+
 export type DomainStepAuthCodeProps = {
 	authCodeDescription: JSX.Element;
 	buttonMessage: string;

@@ -49,6 +49,7 @@ export const defaultDomainSetupInfo = {
 export const stepsHeadingSuggested = __( 'Suggested setup' );
 export const stepsHeadingAdvanced = __( 'Advanced setup' );
 export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );
+export const stepsHeadingTransfer = __( 'Initial setup' );
 
 export const authCodeStepDefaultDescription = __(
 	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
