@@ -4,7 +4,7 @@ exports[`<Suggestions> render basic list of suggestions 1`] = `
 <div
   className="suggestions"
 >
-  <Memo([object Object])
+  <Memo(ForwardRef(Item))
     hasHighlight={true}
     key="0"
     label="Apple"
@@ -13,7 +13,7 @@ exports[`<Suggestions> render basic list of suggestions 1`] = `
     onMouseOver={[Function]}
     query=""
   />
-  <Memo([object Object])
+  <Memo(ForwardRef(Item))
     hasHighlight={false}
     key="1"
     label="Pear"
@@ -22,7 +22,7 @@ exports[`<Suggestions> render basic list of suggestions 1`] = `
     onMouseOver={[Function]}
     query=""
   />
-  <Memo([object Object])
+  <Memo(ForwardRef(Item))
     hasHighlight={false}
     key="2"
     label="Orange"

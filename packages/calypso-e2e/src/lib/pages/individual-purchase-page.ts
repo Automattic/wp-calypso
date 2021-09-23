@@ -2,7 +2,23 @@ import { Page } from 'playwright';
 
 const selectors = {
 	purchaseTitle: ( title: string ) => `.manage-purchase__title:has-text("${ title }")`,
+
+	// Purchased item actions
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
+	cancelAndRefundButton: 'a:text("Cancel Subscription and Refund")',
+	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
+
+	// Cancellation survey
+	whyCancelOptions: 'select[id="inspector-select-control-0"]',
+	whyCancelAnotherReasonInput: 'input[id="inspector-text-control-0"]',
+
+	whereNextOptions: 'select[id="inspector-select-control-1"]',
+	whereNextAnotherReasonInput: 'input[id="inspector-text-control-1"]',
+
+	// Cancellation
+	dismissBanner: '.notice__dismiss',
+
+	button: ( text: string ) => `button:has-text("${ text }")`,
 };
 
 /**
@@ -45,5 +61,37 @@ export class IndividualPurchasePage {
 
 		// We're landing on the cart page, which has a lot of async loading, so let's make sure we let everything settle.
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	/* Cancellations */
+
+	/**
+	 * Cancel the purchase.
+	 */
+	async cancelPurchase(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.cancelAndRefundButton ),
+		] );
+
+		await this.page.click( selectors.cancelSubscriptionButton );
+
+		await this.completeSurvey();
+		await this.page.click( selectors.button( 'Cancel plan' ) );
+
+		await this.page.click( selectors.dismissBanner );
+	}
+
+	/**
+	 * Fill out and submit the cancellation survey.
+	 */
+	private async completeSurvey(): Promise< void > {
+		const reason = 'e2e testing';
+
+		await this.page.selectOption( selectors.whyCancelOptions, { value: 'anotherReasonOne' } );
+		await this.page.fill( selectors.whyCancelAnotherReasonInput, reason );
+
+		await this.page.selectOption( selectors.whereNextOptions, { value: 'anotherReasonTwo' } );
+		await this.page.fill( selectors.whereNextAnotherReasonInput, reason );
 	}
 }

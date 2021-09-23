@@ -1,19 +1,11 @@
 import { getProductBySlug } from './get-product-by-slug';
+import type { PriceTierEntry } from '@automattic/calypso-products';
 import type { AppState } from 'calypso/types';
 import 'calypso/state/products-list/init';
 
 type Product = {
 	price_tier_list: PriceTierEntry[];
 };
-
-export interface PriceTierEntry {
-	minimum_units: number;
-	maximum_units?: undefined | null | number;
-	minimum_price_display: string;
-	minimum_price_monthly_display: string;
-	maximum_price_display?: string | null | undefined;
-	maximum_price_monthly_display?: string | null | undefined;
-}
 
 /**
  * Returns the price tiers of the specified product.

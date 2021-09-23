@@ -16,6 +16,7 @@ import {
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -72,7 +73,8 @@ export default function useCreatePaymentCompleteCallback( {
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
-	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();

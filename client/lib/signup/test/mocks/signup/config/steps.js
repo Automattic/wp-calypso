@@ -103,5 +103,3 @@ export default {
 		optionalDependencies: [ 'surveyQuestion' ],
 	},
 };
-
-export const isDomainStepSkippable = jest.fn( () => false );

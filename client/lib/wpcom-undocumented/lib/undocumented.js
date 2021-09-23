@@ -250,14 +250,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-// Used to preserve backslash in some known settings fields like custom time and date formats.
-function encode_backslash( value ) {
-	if ( typeof value !== 'string' || value.indexOf( '\\' ) === -1 ) {
-		return value;
-	}
-	return value.replace( /\\/g, '\\\\' );
-}
-
 /**
  * GET/POST site settings
  *
@@ -281,14 +273,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 
 	if ( 'get' === method ) {
 		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	// special treatment to preserve backslash in date_format
-	if ( body.date_format ) {
-		body.date_format = encode_backslash( body.date_format );
-	}
-	if ( body.time_format ) {
-		body.time_format = encode_backslash( body.time_format );
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
@@ -795,81 +779,6 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
 			method: 'get',
 			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Get a list of the user's stored cards
- *
- * @param {Function} [fn] The callback function.
- * @returns {Promise} Returns a promise when the `callback` is not provided.
- */
-Undocumented.prototype.getStoredCards = function ( fn ) {
-	debug( '/me/stored-cards query' );
-	return this.wpcom.req.get( { path: '/me/stored-cards' }, fn );
-};
-
-/**
- * Get a list of the user's stored payment methods
- *
- * @param {object} query The query parameters
- * @param {Function} [fn] The callback function.
- * @returns {Promise} Returns a promise when the `callback` is not provided.
- */
-Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
-	debug( '/me/payment-methods query', { query } );
-	return this.wpcom.req.get( '/me/payment-methods', query, fn );
-};
-
-/**
- * Get a list of the user's allowed payment methods
- */
-Undocumented.prototype.getAllowedPaymentMethods = function () {
-	debug( '/me/allowed-payment-methods query' );
-	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
-};
-
-/**
- * Assign a stored payment method to a subscription.
- *
- * @param {string} subscriptionId The subscription ID (a.k.a. purchase ID) to be assigned
- * @param {string} stored_details_id The payment method ID to assign
- * @param {Function} [fn] The callback function
- */
-Undocumented.prototype.assignPaymentMethod = function ( subscriptionId, stored_details_id, fn ) {
-	debug( '/upgrades/assign-payment-method query', { subscriptionId, stored_details_id } );
-	return this.wpcom.req.post(
-		{
-			path: '/upgrades/' + subscriptionId + '/assign-payment-method',
-			body: { stored_details_id },
-			apiVersion: '1',
-		},
-		fn
-	);
-};
-
-/**
- * Returns a PayPal Express URL to redirect to for confirming the creation of a billing agreement.
- *
- * @param {string} subscription_id The subscription ID (a.k.a. purchase ID) to assign the billing agreement to after it is created
- * @param {string} success_url The URL to return the user to for a successful billing agreement creation
- * @param {string} cancel_url The URL to return the user to if they cancel the billing agreement creation
- * @param {Function} [fn] The callback function
- */
-Undocumented.prototype.createPayPalAgreement = function (
-	subscription_id,
-	success_url,
-	cancel_url,
-	fn
-) {
-	debug( '/payment-methods/create-paypal-agreement', { subscription_id, success_url, cancel_url } );
-	return this.wpcom.req.post(
-		{
-			path: '/payment-methods/create-paypal-agreement',
-			body: { subscription_id, success_url, cancel_url },
-			apiVersion: '1',
 		},
 		fn
 	);

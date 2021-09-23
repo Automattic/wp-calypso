@@ -227,7 +227,7 @@ class InviteAccept extends React.Component {
 		const { user } = this.props;
 
 		const containerClasses = classNames( 'invite-accept', {
-			'is-p2': !! invite?.site?.is_wpforteams_site,
+			'is-p2-invite': !! invite?.site?.is_wpforteams_site,
 		} );
 
 		const formClasses = classNames( 'invite-accept__form', {

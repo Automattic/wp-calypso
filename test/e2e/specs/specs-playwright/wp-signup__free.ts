@@ -11,13 +11,11 @@ import {
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	AccountSettingsPage,
-	AccountClosedPage,
 	BrowserManager,
 	EmailClient,
-	NavbarComponent,
-	MeSidebarComponent,
 	BrowserHelper,
+	CloseAccountFlow,
+	LoginFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -25,7 +23,7 @@ describe(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free/Publish/Magic Link' ),
 	function () {
 		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
-		const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
+		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
 			prefix: username,
@@ -35,6 +33,7 @@ describe(
 
 		let page: Page;
 		let domainSearchComponent: DomainSearchComponent;
+		let selectedDomain: string;
 		let gutenbergEditorPage: GutenbergEditorPage;
 
 		setupHooks( ( args ) => {
@@ -55,7 +54,7 @@ describe(
 			it( 'Select a free .wordpress.com domain', async function () {
 				domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( blogName );
-				await domainSearchComponent.selectDomain( '.wordpress.com' );
+				selectedDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
 			it( 'Select WordPress.com Free plan', async function () {
@@ -117,21 +116,30 @@ describe(
 		} );
 
 		describe( 'Delete user account', function () {
-			it( 'Navigate to Me > Account Settings', async function () {
-				const navbarComponent = new NavbarComponent( page );
-				await navbarComponent.clickMe();
-				const meSidebarComponent = new MeSidebarComponent( page );
-				await meSidebarComponent.navigate( 'Account Settings' );
+			let newPage: Page;
+
+			it( 'Launch new context to ensure correct host', async function () {
+				newPage = await BrowserManager.newPage( { newContext: true } );
 			} );
 
-			it( 'Delete user account', async function () {
-				const accountSettingsPage = new AccountSettingsPage( page );
-				await accountSettingsPage.closeAccount();
+			it( 'Login', async function () {
+				// Logging in and immediately using navbar often leads to race conditions when the redirect
+				// from <rooturl> to <rooturl>/home/<site> redirect takes you out of the navigation you just did.
+				// We need to wait for that to happen before proceeding.
+				const expectedLandngUrl = DataHelper.getCalypsoURL( `home/${ selectedDomain }` );
+				const loginFlow = new LoginFlow( newPage, {
+					username: username,
+					password: signupPassword,
+				} );
+				await Promise.all( [
+					newPage.waitForNavigation( { url: expectedLandngUrl } ),
+					loginFlow.logIn(),
+				] );
 			} );
 
-			it( 'Confirm account is closed', async function () {
-				const accountClosedPage = new AccountClosedPage( page );
-				await accountClosedPage.confirmAccountClosed();
+			it( 'Close account', async function () {
+				const closeAccountFlow = new CloseAccountFlow( newPage );
+				await closeAccountFlow.closeAccount();
 			} );
 		} );
 	}

@@ -36,7 +36,7 @@ function P2Details( {
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			headerText={ translate( "We're almost finished! Your P2 will be:" ) }
+			headerText={ translate( "We're almost finished! Your P2 workspace will be:" ) }
 		>
 			<div className="p2-details">
 				<div className="p2-details__site-part">

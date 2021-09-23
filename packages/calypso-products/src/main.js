@@ -25,7 +25,14 @@ import {
 	TYPE_P2_PLUS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
-import { isJetpackBusiness, isBusiness, isEnterprise, isEcommerce, isVipPlan } from '.';
+import {
+	isJetpackBusiness,
+	isBusiness,
+	isEnterprise,
+	isEcommerce,
+	isVipPlan,
+	isMarketplaceProduct,
+} from '.';
 
 export function getPlans() {
 	return PLANS_LIST;
@@ -594,3 +601,14 @@ export function planHasJetpackClassicSearch( plan ) {
 			isVipPlan( plan ) )
 	);
 }
+
+/**
+ * Determines if a product is supported by the Atomic sites infrastructure.
+ *
+ * @param {string} productSlug Slug of the product.
+ * @returns {boolean|boolean} Whether the Atomic infra supports the specified product.
+ */
+export const isAtomicSupportedProduct = ( productSlug ) =>
+	isWpComBusinessPlan( productSlug ) ||
+	isWpComEcommercePlan( productSlug ) ||
+	isMarketplaceProduct( { productSlug } );

@@ -11,7 +11,7 @@ function renderFooterLink( props ) {
 			<div>{ props.translate( 'Already have a WordPress.com account?' ) }</div>
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ props.onClickSignInLink }>
-					{ props.translate( 'Log in instead.' ) }
+					{ props.translate( 'Log in instead' ) }
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		</div>

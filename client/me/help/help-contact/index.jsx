@@ -43,7 +43,7 @@ import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
 } from 'calypso/state/help/directly/actions';
-import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
+import { getHelpSelectedSite } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
@@ -61,6 +61,7 @@ import getInlineHelpSupportVariation, {
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 import getSupportLevel from 'calypso/state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
+import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';
 import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -148,11 +149,7 @@ class HelpContact extends React.Component {
 	};
 
 	prepareDirectlyWidget = () => {
-		if (
-			this.hasDataToDetermineVariation() &&
-			this.props.supportVariation === SUPPORT_DIRECTLY &&
-			this.props.isDirectlyUninitialized
-		) {
+		if ( this.props.isDirectlyUninitialized ) {
 			this.props.initializeDirectly();
 		}
 	};
@@ -204,7 +201,7 @@ class HelpContact extends React.Component {
 				subject,
 				message: kayakoMessage,
 				locale: currentUserLocale,
-				client: this.props.clientSlug,
+				client: config( 'client_slug' ),
 				is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
 			} )
 			.then( () => {
@@ -320,7 +317,7 @@ class HelpContact extends React.Component {
 				subject,
 				message: forumMessage,
 				locale: currentUserLocale,
-				client: this.props.clientSlug,
+				client: config( 'client_slug' ),
 			} )
 			.then( ( data ) => {
 				this.setState( {
@@ -365,11 +362,6 @@ class HelpContact extends React.Component {
 
 		// if the happychat connection is able to accept chats, use it
 		return this.props.isHappychatAvailable && this.props.isHappychatUserEligible;
-	};
-
-	shouldUseDirectly = () => {
-		const isEn = this.props.currentUserLocale === 'en';
-		return isEn && ! this.props.isDirectlyFailed;
 	};
 
 	recordCompactSubmit = ( variation ) => {
@@ -537,6 +529,7 @@ class HelpContact extends React.Component {
 				value: savedContactForm,
 				requestChange: ( contactForm ) => ( savedContactForm = contactForm ),
 			},
+			variationSlug,
 		};
 	};
 
@@ -575,8 +568,9 @@ class HelpContact extends React.Component {
 			this.props.ticketSupportConfigurationReady || null != this.props.ticketSupportRequestError;
 		const happychatReadyOrDisabled =
 			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
+		const directlyReadyOrError = this.props.isDirectlyReady || this.props.isDirectlyFailed;
 
-		return ticketReadyOrError && happychatReadyOrDisabled;
+		return ticketReadyOrError && happychatReadyOrDisabled && directlyReadyOrError;
 	};
 
 	shouldShowPreloadForm = () => {
@@ -744,13 +738,15 @@ class HelpContact extends React.Component {
 
 export default connect(
 	( state ) => {
-		const helpSelectedSiteId = getHelpSelectedSiteId( state );
+		const selectedSite = getHelpSelectedSite( state );
 		return {
+			selectedSite,
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			getUserInfo: getHappychatUserInfo( state ),
 			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
+			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
@@ -759,7 +755,7 @@ export default connect(
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
-			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
+			shouldStartHappychatConnection: ! isRequestingSites( state ) && selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
 			activeSupportTickets: getActiveSupportTickets( state ),

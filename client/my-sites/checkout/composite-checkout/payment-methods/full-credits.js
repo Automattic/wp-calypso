@@ -9,6 +9,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 
 export function createFullCreditsMethod() {
@@ -23,7 +24,8 @@ export function createFullCreditsMethod() {
 
 function FullCreditsSubmitButton( { disabled, onClick } ) {
 	const [ items ] = useLineItems();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 
@@ -64,7 +66,8 @@ function ButtonContents( { formStatus, total } ) {
 
 function WordPressCreditsLabel() {
 	const { __ } = useI18n();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	return (
 		<React.Fragment>

@@ -21,12 +21,12 @@ body.is-section-signup {
 	}
 
 	&.is-p2-signup {
-		background: var( --p2-color-text-white );
+		background: var( --p2-color-white );
 		color: var( --p2-color-text );
 
 		&.has-loading-screen-signup {
 			background: var( --p2-color-text );
-			color: var( --p2-color-text-white );
+			color: var( --p2-color-white );
 			&::before {
 				content: '';
 				position: absolute;
@@ -38,12 +38,25 @@ body.is-section-signup {
 			}
 		}
 
-		.layout__content {
+		.layout {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.layout__content,
+		.layout__primary,
+		.signup,
+		.signup__steps,
+		.signup__step,
+		.signup__step.is-user {
 			padding: 0;
+			height: 100%;
 		}
 
 		.layout:not( .dops ) .step-wrapper {
 			margin: 0 0 24px;
+			max-width: none;
 		}
 
 		@include breakpoint-deprecated( '<480px' ) {
@@ -136,18 +149,11 @@ body.is-section-signup .layout.gravatar {
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		button:not( .is-compact ) {
+		button:not( .is-compact ):not( .is-primary ) {
 			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
 		}
-	}
-
-	// Back button
-	.navigation-link.button.back {
-		position: absolute;
-		top: 6px;
-		left: 11px;
 	}
 }
 
@@ -176,7 +182,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 			margin-bottom: 0;
 		}
 
-		&.has-header-buttons {
+		&.has-navigation {
 			padding-bottom: 60px;
 		}
 	}
@@ -391,24 +397,35 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.navigation-link.button.back {
-		svg {
-			display: none;
+	.step-wrapper__navigation {
+		.navigation-link.button.is-borderless {
+			color: $gray-100;
+
+			svg {
+				width: 20px;
+				height: 20px;
+				top: 5px;
+				margin-right: 2px;
+				fill: $gray-100;
+			}
 		}
 
-		color: $gray-50;
-		top: 23px;
-		left: 72px;
-		text-decoration: underline;
-		font-weight: normal;
+		@include break-small {
+			left: 72px;
+		}
 	}
 
 	.step-wrapper__header {
-		margin-top: 48px;
-		margin-bottom: 40px;
+		margin: 48px 20px 40px;
 
 		@include breakpoint-deprecated( '<660px' ) {
 			margin-top: 24px;
+		}
+	}
+
+	.step-wrapper__header-button {
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-bottom: -16px;
 		}
 	}
 
@@ -784,8 +801,24 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
+	.signup__step.is-design,
+	.signup__step.is-design-setup-site {
+		.step-wrapper__header {
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-left: 0;
+				margin-right: 0;
+			}
+		}
+	}
+
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
+	}
+
+	.inline-help {
+		@include breakpoint-deprecated( '<660px' ) {
+			bottom: 74px;
+		}
 	}
 }

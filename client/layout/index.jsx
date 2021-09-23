@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import SitePreview from 'calypso/blocks/site-preview';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -315,7 +314,6 @@ class Layout extends Component {
 								placeholder={ null }
 							/>
 					  ) }
-				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="calypso/components/happychat" />
 				) }

@@ -28,7 +28,6 @@ class CancelPurchaseButton extends Component {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
 		getConfirmCancelDomainUrlFor: PropTypes.func,
-		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -165,14 +164,12 @@ class CancelPurchaseButton extends Component {
 				}
 
 				if ( response.status === 'completed' ) {
-					this.props.successNotice( response.message, { displayOnNextPage: true } );
-
 					this.props.refreshSitePlans( purchase.siteId );
-
 					this.props.clearPurchases();
-
-					page.redirect( this.props.purchaseListUrl );
 				}
+
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
@@ -202,14 +199,12 @@ class CancelPurchaseButton extends Component {
 				}
 
 				if ( response.status === 'completed' ) {
-					this.props.successNotice( response.message, { displayOnNextPage: true } );
-
 					this.props.refreshSitePlans( purchase.siteId );
-
 					this.props.clearPurchases();
-
-					page.redirect( this.props.purchaseListUrl );
 				}
+
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
@@ -248,7 +243,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, selectedSite, translate } = this.props;
+		const { purchase, translate } = this.props;
 		let text;
 		let onClick;
 
@@ -295,7 +290,6 @@ class CancelPurchaseButton extends Component {
 					disableButtons={ disableButtons }
 					defaultContent={ this.renderCancellationEffect() }
 					purchase={ purchase }
-					selectedSite={ selectedSite }
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }

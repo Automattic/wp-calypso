@@ -80,17 +80,12 @@ const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const { select, registerStore } = defaultRegistry;
 
-const wpcom = wp.undocumented();
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
+const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
-	getStoredCards,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -112,7 +107,6 @@ export default function CompositeCheckout( {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
-	getStoredCards?: () => StoredCard[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -313,7 +307,7 @@ export default function CompositeCheckout( {
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
-		getStoredCards || wpcomGetStoredCards,
+		wpcomGetStoredCards,
 		Boolean( isLoggedOutCart )
 	);
 

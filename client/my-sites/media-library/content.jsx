@@ -325,7 +325,7 @@ export class MediaLibraryContent extends React.Component {
 	renderGooglePhotosConnect() {
 		const { translate } = this.props;
 		const connectMessage = translate(
-			'To show your Google Photos library you need to connect your Google account.'
+			'To get started, connect your site to your Google Photos library.'
 		);
 
 		return (

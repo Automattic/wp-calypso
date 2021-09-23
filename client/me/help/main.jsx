@@ -24,6 +24,7 @@ import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/curr
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
@@ -224,10 +225,10 @@ class Help extends React.PureComponent {
 	};
 
 	supportSessionCard = () => {
-		const { translate, hasAppointment, scheduleId } = this.props;
+		const { translate, hasAppointment, scheduleId, isUserBlocked } = this.props;
 
 		//If we already have an appointment or the scheduleId has not been loaded, bail
-		if ( hasAppointment || null === scheduleId ) {
+		if ( hasAppointment || null === scheduleId || isUserBlocked ) {
 			return;
 		}
 
@@ -352,6 +353,7 @@ export const mapStateToProps = ( state ) => {
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
 	const hasAppointment = getConciergeNextAppointment( state );
 	const scheduleId = getConciergeScheduleId( state );
+	const isUserBlocked = getConciergeUserBlocked( state );
 	const showCoursesTeaser = isBusinessPlanUser;
 
 	return {
@@ -362,6 +364,7 @@ export const mapStateToProps = ( state ) => {
 		isEmailVerified,
 		hasAppointment,
 		scheduleId,
+		isUserBlocked,
 	};
 };
 

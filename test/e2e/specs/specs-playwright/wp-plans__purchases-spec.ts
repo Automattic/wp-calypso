@@ -73,15 +73,10 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		} );
 
 		it( 'Remove plan from cart', async function () {
-			// This removal is going to trigger an automatic asynchronous navigation back to the Plans page. Let's make sure we're ready for it!
-			await Promise.all( [
-				page.waitForNavigation(),
-				cartCheckoutPage.removeCartItem( cartItemForPremiumPlan ),
-			] );
+			await cartCheckoutPage.removeCartItem( cartItemForPremiumPlan );
 		} );
 
 		it( 'Automatically land back on "Plans" tab of Plans page', async function () {
-			await page.waitForLoadState( 'load' );
 			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );
@@ -99,15 +94,10 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		} );
 
 		it( 'Remove Business plan from cart', async function () {
-			// This removal is going to trigger an automatic asynchronous navigation back to the Plans page. Let's make sure we're ready for it!
-			await Promise.all( [
-				page.waitForNavigation(),
-				cartCheckoutPage.removeCartItem( cartItemForBusinessPlan ),
-			] );
+			await cartCheckoutPage.removeCartItem( cartItemForBusinessPlan );
 		} );
 
 		it( 'Automatically land back on "Plans" tab of Plans page', async function () {
-			await page.waitForLoadState( 'load' );
 			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );

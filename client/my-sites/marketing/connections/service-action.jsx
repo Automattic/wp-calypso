@@ -75,6 +75,15 @@ const SharingServiceAction = ( {
 		);
 	}
 
+	// See: https://developers.google.com/photos/library/guides/ux-guidelines
+	if ( 'google_photos' === service.ID && '/marketing/connections/:site' !== path ) {
+		return (
+			<Button primary onClick={ onClick } disabled={ isPending }>
+				{ translate( 'Connect to Google Photos' ) }
+			</Button>
+		);
+	}
+
 	if ( 'mailchimp' === service.ID && status === 'not-connected' ) {
 		return (
 			<div>

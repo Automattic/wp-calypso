@@ -21,6 +21,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
@@ -136,7 +137,8 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
-	const { responseCart: cart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart: cart } = useShoppingCart( cartKey );
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
 
 	useScrollQRCodeIntoView( !! stripeResponseWithCode );

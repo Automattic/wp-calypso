@@ -28,12 +28,17 @@ export class NavigationLink extends Component {
 		allowBackFirstStep: PropTypes.bool,
 		rel: PropTypes.string,
 		borderless: PropTypes.bool,
+		primary: PropTypes.bool,
+		backIcon: PropTypes.string,
+		forwardIcon: PropTypes.string,
 	};
 
 	static defaultProps = {
 		labelText: '',
 		allowBackFirstStep: false,
 		borderless: true,
+		backIcon: 'arrow-left',
+		forwardIcon: 'arrow-right',
 	};
 
 	getPreviousStep( flowName, signupProgress, currentStepName ) {
@@ -124,7 +129,7 @@ export class NavigationLink extends Component {
 	}
 
 	render() {
-		const { translate, labelText, borderless } = this.props;
+		const { translate, labelText, borderless, primary, backIcon, forwardIcon } = this.props;
 
 		if (
 			this.props.positionInFlow === 0 &&
@@ -140,7 +145,7 @@ export class NavigationLink extends Component {
 		let text;
 
 		if ( this.props.direction === 'back' ) {
-			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
+			backGridicon = backIcon ? <Gridicon icon={ backIcon } size={ 18 } /> : null;
 			if ( labelText ) {
 				text = labelText;
 			} else {
@@ -149,7 +154,7 @@ export class NavigationLink extends Component {
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
+			forwardGridicon = forwardIcon ? <Gridicon icon={ forwardIcon } size={ 18 } /> : null;
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 
@@ -161,6 +166,7 @@ export class NavigationLink extends Component {
 
 		return (
 			<Button
+				primary={ primary }
 				borderless={ borderless }
 				className={ buttonClasses }
 				href={ this.getBackUrl() }

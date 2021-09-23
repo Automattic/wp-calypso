@@ -42,7 +42,13 @@ export class DomainSearchComponent {
 	 * Select a domain matching the keyword.
 	 *
 	 * The keyword can be anything that uniquely identifies the desired domain name
-	 * in the search results listing. Typically, this would be the TLD.
+	 * in the search results listing.
+	 *
+	 * Examples:
+	 * 	keyword = uniquewordpresscomsite.com
+	 * 	keyword = .com
+	 *
+	 * If multiple matches are found, the first match is attmpted.
 	 *
 	 * @param {string} keyword Unique keyword to select domains.
 	 * @returns {string} Domain that was selected.

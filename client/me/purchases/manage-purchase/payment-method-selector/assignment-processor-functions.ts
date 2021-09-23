@@ -15,16 +15,25 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
 	stored_details_id: string
-): Promise< unknown > => wpcom.assignPaymentMethod( subscriptionId, stored_details_id );
+): Promise< unknown > =>
+	wp.req.post( {
+		path: '/upgrades/' + subscriptionId + '/assign-payment-method',
+		body: { stored_details_id },
+		apiVersion: '1',
+	} );
 const wpcomCreatePayPalAgreement = (
-	subscriptionId: string,
-	successUrl: string,
-	cancelUrl: string
-): Promise< string > => wpcom.createPayPalAgreement( subscriptionId, successUrl, cancelUrl );
+	subscription_id: string,
+	success_url: string,
+	cancel_url: string
+): Promise< string > =>
+	wp.req.post( {
+		path: '/payment-methods/create-paypal-agreement',
+		body: { subscription_id, success_url, cancel_url },
+		apiVersion: '1',
+	} );
 
 export async function assignNewCardProcessor(
 	{

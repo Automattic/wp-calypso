@@ -264,21 +264,13 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Build components storybook"
+			name = "Run storybook tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export NODE_ENV="production"
-
+				set -x
 				yarn components:storybook:start --ci --smoke-test
-			"""
-		}
-		bashNodeScript {
-			name = "Build search storybook"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				export NODE_ENV="production"
-
 				yarn search:storybook:start --ci --smoke-test
+				yarn composite-checkout:storybook:start --ci --smoke-test
 			"""
 		}
 	}
@@ -711,6 +703,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 object PreReleaseE2ETests : BuildType({
 	id("Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
 	name = "Pre-Release E2E Tests"
 	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
 
@@ -749,7 +742,7 @@ object PreReleaseE2ETests : BuildType({
 				cd test/e2e
 				mkdir temp
 
-				export URL="https://wordpress.com"
+				export URL="https://wpcalypso.wordpress.com"
 
 				export NODE_CONFIG_ENV=test
 				export PLAYWRIGHT_BROWSERS_PATH=0
@@ -790,14 +783,11 @@ object PreReleaseE2ETests : BuildType({
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
 				sendTo = "#e2eflowtesting-notif"
-				messageFormat = verboseMessageFormat {
-					addBranch = true
-				}
+				messageFormat = simpleMessageFormat()
 			}
 			buildFailedToStart = true
 			buildFailed = true
 			buildFinishedSuccessfully = true
-			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
 	}

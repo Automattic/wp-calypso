@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
@@ -6,7 +7,10 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
-import { connectADomainOwnershipVerificationStepsDefinition } from 'calypso/components/domains/connect-domain-step/page-definitions';
+import {
+	connectADomainOwnershipVerificationStepsDefinition,
+	transferDomainStepsDefinition,
+} from 'calypso/components/domains/connect-domain-step/page-definitions';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -29,6 +33,7 @@ function UseMyDomain( {
 		domainInput: 'domain-input',
 		transferOrConnect: 'transfer-or-connect',
 		ownershipVerification: 'ownership-verification',
+		transferDomain: 'transfer-domain',
 	};
 
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
@@ -39,6 +44,9 @@ function UseMyDomain( {
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
 		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
 	);
+	const [ transferDomainFlowPageSlug, setTransferDomainFlowPageSlug ] = useState(
+		stepSlug.TRANSFER_START
+	);
 	const initialValidation = useRef( null );
 
 	const baseClassName = 'use-my-domain';
@@ -46,11 +54,20 @@ function UseMyDomain( {
 	const onGoBack = () => {
 		const prevOwnershipVerificationFlowPageSlug =
 			connectADomainOwnershipVerificationStepsDefinition[ ownershipVerificationFlowPageSlug ]?.prev;
+		const prevTransferDomainStepsDefinition =
+			transferDomainStepsDefinition[ transferDomainFlowPageSlug ]?.prev;
 
 		switch ( mode ) {
 			case inputMode.ownershipVerification:
 				if ( prevOwnershipVerificationFlowPageSlug ) {
 					setOwnershipVerificationFlowPageSlug( prevOwnershipVerificationFlowPageSlug );
+				} else {
+					setMode( inputMode.transferOrConnect );
+				}
+				return;
+			case inputMode.transferDomain:
+				if ( prevTransferDomainStepsDefinition ) {
+					setTransferDomainFlowPageSlug( prevTransferDomainStepsDefinition );
 				} else {
 					setMode( inputMode.transferOrConnect );
 				}
@@ -121,6 +138,10 @@ function UseMyDomain( {
 		setMode( inputMode.ownershipVerification );
 	};
 
+	const showTransferDomainFlow = () => {
+		setMode( inputMode.transferDomain );
+	};
+
 	const renderDomainInput = () => {
 		return (
 			<UseMyDomainInput
@@ -147,7 +168,9 @@ function UseMyDomain( {
 						? showOwnershipVerificationFlow
 						: onConnect
 				}
-				onTransfer={ onTransfer }
+				onTransfer={
+					config.isEnabled( 'domains/new-transfer-flow' ) ? showTransferDomainFlow : onTransfer
+				}
 				transferDomainUrl={ transferDomainUrl }
 			/>
 		);
@@ -167,6 +190,19 @@ function UseMyDomain( {
 		);
 	};
 
+	const renderTransferDomainFlow = () => {
+		return (
+			<ConnectDomainSteps
+				baseClassName={ 'connect-domain-step' }
+				domain={ domainName }
+				initialPageSlug={ transferDomainFlowPageSlug }
+				onTransfer={ onTransfer }
+				onSetPage={ setTransferDomainFlowPageSlug }
+				stepsDefinition={ transferDomainStepsDefinition }
+			/>
+		);
+	};
+
 	const renderContent = () => {
 		switch ( mode ) {
 			case inputMode.domainInput:
@@ -175,6 +211,8 @@ function UseMyDomain( {
 				return renderTransferOrConnect();
 			case inputMode.ownershipVerification:
 				return renderOwnershipVerificationFlow();
+			case inputMode.transferDomain:
+				return renderTransferDomainFlow();
 		}
 	};
 

@@ -46,6 +46,6 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
-		"typescript": "^4.4.2"
+		"typescript": "^4.4.3"
 	}
 }

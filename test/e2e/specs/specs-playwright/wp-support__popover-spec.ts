@@ -102,14 +102,15 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 			await supportComponent.defaultStateShown();
 		} );
 
-		it( 'Enter invalid search keyword and expect no results to be shown', async function () {
+		// Invalid keyword search often takes more than 30s to resolve.
+		// See: https://github.com/Automattic/wp-calypso/issues/55478
+		it.skip( 'Enter invalid search keyword and expect no results to be shown', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 			await supportComponent.noResultsShown();
 		} );
 
 		it( 'Close support popover', async function () {
-			await supportComponent.clearSearch();
 			await supportComponent.closePopover();
 		} );
 	} );

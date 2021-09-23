@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, hasTranslation } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 const addBlock = 'https://s0.wp.com/i/editor-welcome-tour/slide-add-block.gif';
 const allBlocks = 'https://s0.wp.com/i/editor-welcome-tour/slide-all-blocks.gif';
@@ -22,21 +22,10 @@ function getTourContent( localeSlug ) {
 	return [
 		{
 			heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
-			description:
-				localeSlug === 'en' ||
-				localeSlug === 'en-gb' ||
-				hasTranslation(
-					'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
-					'full-site-editing'
-				)
-					? __(
-							'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
-							'full-site-editing'
-					  )
-					: __(
-							'Continue on with this short tour to learn the fundamentals of the WordPress editor.',
-							'full-site-editing'
-					  ),
+			description: __(
+				'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
+				'full-site-editing'
+			),
 			imgSrc: welcome,
 			animation: null,
 		},

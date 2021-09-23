@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
 import getContactDetailsType from 'calypso/my-sites/checkout/composite-checkout/lib/get-contact-details-type';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
@@ -75,7 +76,8 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 	} );
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const selectedSite = useSelector( getSelectedSite );
 
 	const contactDetailsType = getContactDetailsType( props.cart );

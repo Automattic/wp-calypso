@@ -31,7 +31,7 @@ jest.mock( 'enzyme', () => {
 		jest.requireActual( 'jest-enzyme' );
 
 		// configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-		const Adapter = jest.requireActual( 'enzyme-adapter-react-16' );
+		const Adapter = jest.requireActual( '@wojtekmaj/enzyme-adapter-react-17' );
 		actualEnzyme.configure( { adapter: new Adapter() } );
 
 		// configure snapshot serializer for enzyme
@@ -58,3 +58,9 @@ jest.mock( 'sinon', () => {
 	}
 	return actualSinon;
 } );
+
+// This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
+// JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
+global.CSS = {
+	supports: jest.fn(),
+};

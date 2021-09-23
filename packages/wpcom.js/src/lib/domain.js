@@ -188,6 +188,41 @@ class Domain {
 		const body = { mode };
 		return this.wpcom.req.post( root + this._id + '/mapping-status', query, body, fn );
 	}
+
+	/**
+	 * Checks the auth code for transferring this domain
+	 *
+	 * @param {string} authCode - The auth code for the given domain to check.
+	 * @param {Function} fn The callback function
+	 * @returns {Promise} A promise that resolves when the request completes
+	 */
+	checkAuthCode = function ( authCode, fn ) {
+		return this.wpcom.req.get(
+			`${ root + encodeURIComponent( this._id ) }/inbound-transfer-check-auth-code`,
+			{ auth_code: authCode },
+			fn
+		);
+	};
+
+	/**
+	 * Determine whether a domain name is available for registration
+	 *
+	 * @param {number} blogId - Optional blogId to determine if domain is used on another site.
+	 * @param {boolean} isCartPreCheck - specifies whether this availability check is for a domain about to be added to the cart.
+	 * @param {Function} fn The callback function
+	 * @returns {Promise} A promise that resolves when the request completes
+	 */
+	isDomainAvailable = function ( blogId, isCartPreCheck, fn ) {
+		return this.wpcom.req.get(
+			`${ root + encodeURIComponent( this._id ) }/is-available`,
+			{
+				blog_id: blogId,
+				apiVersion: '1.3',
+				is_cart_pre_check: isCartPreCheck,
+			},
+			fn
+		);
+	};
 }
 
 /**

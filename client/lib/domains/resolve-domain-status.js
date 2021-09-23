@@ -22,9 +22,14 @@ export function resolveDomainStatus(
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const expiresMessage = translate( 'Expires in %(days)s', {
-					args: { days: moment( domain.expiry ).fromNow( true ) },
-				} );
+				const expiresMessage =
+					null !== domain.bundledPlanSubscriptionId
+						? translate( 'Domain connection expires with your plan on %(expiryDate)s', {
+								args: { expiryDate: moment( domain.expiry ).format( 'LL' ) },
+						  } )
+						: translate( 'Domain connection expires in %(days)s', {
+								args: { days: moment( domain.expiry ).fromNow( true ) },
+						  } );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
