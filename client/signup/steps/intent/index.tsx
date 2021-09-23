@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import intentImageUrl from 'calypso/assets/images/intent-screen/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -48,11 +49,13 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
+			headerImageUrl={ intentImageUrl }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <IntentScreen onSelect={ submitIntent } /> }
 			align={ 'left' }
 			hideSkip
+			isHorizontalLayout={ true }
 			{ ...props }
 		/>
 	);

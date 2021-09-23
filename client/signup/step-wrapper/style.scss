@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 
 .step-wrapper__header {
 	display: flex;
@@ -89,5 +89,81 @@
 	.step-wrapper__navigation-link.forward,
 	.step-wrapper__skip-wrapper {
 		margin-left: auto;
+	}
+}
+
+.step-wrapper__image {
+	margin-top: 24px;
+	display: none;
+
+	@include break-small {
+		display: block;
+	}
+	
+	img {
+		width: 50%;
+	}
+}
+
+.layout:not( .dops ) .step-wrapper {
+	max-width: 960px;
+	margin: 0 auto;
+
+	// Some steps (like plans) need a larger
+	// width column.
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
+
+	// Some steps (intent gathering) use a horizontal layout
+	&.is-horizontal-layout {
+		align-items: flex-start;
+		margin-top: 20%;
+		padding: 0 20px;
+
+		@include break-small {
+			display: flex;
+		}
+
+		.step-wrapper__header {
+			display: block;
+			margin-top: 0;
+		}
+		.step-wrapper__content {
+			margin-left: auto;
+		}
+	}
+
+	// Skip button
+	.step-wrapper__buttons {
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
+	.step-wrapper__header {
+		margin-top: 48px;
+		margin-bottom: 40px;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-top: 24px;
+		}
+	}
+
+	// pressable-nux has no title or subtitle so
+	// needs to not hide the (W) logo
+	.is-pressable-nux & {
+		margin-top: 30px;
+	}
+
+	// On small screens remove the margin from the
+	// bottom of the cards.
+	@include breakpoint-deprecated( '<660px' ) {
+		.card {
+			margin-bottom: 0;
+		}
+
+		&.has-header-buttons {
+			padding-bottom: 60px;
+		}
 	}
 }

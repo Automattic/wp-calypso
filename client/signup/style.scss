@@ -157,37 +157,6 @@ body.is-section-signup .layout.gravatar {
 	}
 }
 
-// The container wrapped around every
-// step in signup
-body.is-section-signup .layout:not( .dops ) .step-wrapper {
-	max-width: 960px;
-	margin: 0 auto;
-
-	// Some steps (like plans) need a larger
-	// width column.
-	&.is-wide-layout {
-		max-width: 1040px;
-	}
-
-	// pressable-nux has no title or subtitle so
-	// needs to not hide the (W) logo
-	.is-pressable-nux & {
-		margin-top: 30px;
-	}
-
-	// On small screens remove the margin from the
-	// bottom of the cards.
-	@include breakpoint-deprecated( '<660px' ) {
-		.card {
-			margin-bottom: 0;
-		}
-
-		&.has-navigation {
-			padding-bottom: 60px;
-		}
-	}
-}
-
 // Signup headings
 body.is-section-signup .layout:not( .dops ):not( .is-wccom-oauth-flow ) .formatted-header,
 body.is-section-signup .layout.gravatar .formatted-header {
@@ -213,12 +182,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			color: var( --color-text-inverted );
 		}
 	}
-}
-
-// Skip button
-.step-wrapper__buttons {
-	text-align: center;
-	margin-bottom: 20px;
 }
 
 .is-section-signup .layout__content,
@@ -415,11 +378,13 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.step-wrapper__header {
-		margin: 24px 20px;
+	.step-wrapper:not( .is-horizontal-layout ) {
+		.step-wrapper__header {
+			margin: 24px 20px;
 
-		@include break-large {
-			margin: 48px 0 40px;
+			@include break-large {
+				margin: 48px 0 40px;
+			}
 		}
 	}
 
@@ -809,25 +774,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				margin-left: 0;
 				margin-right: 0;
 			}
-		}
-	}
-
-	.signup__step.is-intent {
-		.step-wrapper {
-			align-items: flex-start;
-			margin-top: 20%;
-			padding: 0 20px;
-			@include break-small {
-				display: flex;
-			}
-		}
-
-		.step-wrapper__header {
-			margin-top: 0;
-		}
-
-		.step-wrapper__content {
-			margin-left: auto;
 		}
 	}
 
