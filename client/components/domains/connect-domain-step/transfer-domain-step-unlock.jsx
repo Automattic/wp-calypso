@@ -78,7 +78,7 @@ const TransferDomainStepUnlock = ( {
 					unkownLockStatusAdditionalDescription }
 				{ lockedDomainDescription }
 			</p>
-			<p>
+			<p className={ className + '__text' }>
 				{ __( 'It might take a few minutes for any changes to take effect.' ) }
 				<br />
 				{ __( 'Once you have unlocked your domain click on the button below to proceed.' ) }
