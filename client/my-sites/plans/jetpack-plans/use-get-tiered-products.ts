@@ -44,20 +44,19 @@ export const useGetTieredBackupProducts = ( billingPeriod: Duration ) => {
 			?.map( ( { productSlug } ) => productSlug ) ?? [];
 
 	const purchasedTier1BackupProduct = activeProductSlugs
-		?.filter( ( productSlug ) =>
+		.filter( ( productSlug ) =>
 			[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ].includes(
 				productSlug
 			)
 		)
-		?.pop() as JetpackSlugsWithStorage;
+		.pop() as JetpackSlugsWithStorage;
 
-	const isTierTwoBackupProductPurchased = activeProductSlugs
-		? activeProductSlugs.filter( ( productSlug ) =>
-				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ].includes(
-					productSlug
-				)
-		  ).length > 0
-		: false;
+	const isTierTwoBackupProductPurchased =
+		activeProductSlugs.filter( ( productSlug ) =>
+			[ PRODUCT_JETPACK_BACKUP_T2_YEARLY, PRODUCT_JETPACK_BACKUP_T2_MONTHLY ].includes(
+				productSlug
+			)
+		).length > 0;
 
 	const tieredBackupProductsByBillingPeriod: { [ Key in Duration ]: JetpackSlugsWithStorage[] } = {
 		[ TERM_ANNUALLY ]: [
