@@ -106,12 +106,10 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 		);
 	} );
 
-	// 1. In the case of non-watch mode, run the sync.
-	// 2. In the case of watch mode, make sure that there will be an initial sync
-	//    in case no "changes" are registered.
-	debouncedSync();
 	if ( shouldWatch ) {
 		chokidar.watch( localPath ).on( 'change', debouncedSync );
+	} else {
+		debouncedSync();
 	}
 }
 
