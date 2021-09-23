@@ -19,9 +19,8 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build:o2-blocks": "calypso-build",
-		"dev": "yarn builder --watch",
-		"build": "NODE_ENV=production yarn builder",
-		"builder": "node ../../bin/build-calypso-app.mjs --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks"
+		"dev": "node ../../bin/build-calypso-app.mjs --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
+		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "^9.0.0",

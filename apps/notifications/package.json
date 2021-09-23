@@ -18,12 +18,11 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build:o2-blocks": "calypso-build --config='./webpack.config.js'",
+		"build:notifications": "calypso-build --config='./webpack.config.js'",
 		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host calypso.localhost --port 3000",
-		"start": "yarn run clean && yarn run build:o2-blocks && yarn run dev-server",
-		"dev": "yarn builder --watch",
-		"build": "NODE_ENV=production yarn builder",
-		"builder": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications"
+		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
+		"dev": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
+		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "^2.1.1",
