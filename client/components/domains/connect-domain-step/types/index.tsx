@@ -34,6 +34,7 @@ export type StartStepProps = {
 	onNextStep: () => void;
 	stepContent: JSX.Element;
 	progressStepList: Record< PossibleSlugs, string >;
+	isFetchingDomainLockStatus: boolean;
 	setPage: ( page: PossibleSlugs ) => void;
 };
 

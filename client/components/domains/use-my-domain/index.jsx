@@ -3,20 +3,24 @@ import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	connectADomainOwnershipVerificationStepsDefinition,
-	transferDomainStepsDefinition,
+	transferLockedDomainStepsDefinition,
+	transferUnlockedDomainStepsDefinition,
 } from 'calypso/components/domains/connect-domain-step/page-definitions';
+import {
+	getAvailabilityErrorMessage,
+	getDomainNameValidationErrorMessage,
+} from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
-import { getAvailabilityErrorMessage, getDomainNameValidationErrorMessage } from './utilities';
 
 import './style.scss';
 
@@ -29,16 +33,23 @@ function UseMyDomain( {
 	selectedSite,
 	transferDomainUrl,
 } ) {
-	const inputMode = {
-		domainInput: 'domain-input',
-		transferOrConnect: 'transfer-or-connect',
-		ownershipVerification: 'ownership-verification',
-		transferDomain: 'transfer-domain',
-	};
+	const inputMode = useMemo(
+		() => ( {
+			domainInput: 'domain-input',
+			transferOrConnect: 'transfer-or-connect',
+			ownershipVerification: 'ownership-verification',
+			transferDomain: 'transfer-domain',
+		} ),
+		[]
+	);
 
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
+	const [ isFetchingDomainLockStatus, setIsFetchingDomainLockStatus ] = useState( false );
+	const [ transferDomainStepsDefinition, setTransferDomainStepsDefinition ] = useState(
+		transferLockedDomainStepsDefinition
+	);
 	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
 	const [ mode, setMode ] = useState( inputMode.domainInput );
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
@@ -134,6 +145,20 @@ function UseMyDomain( {
 		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
 	}, [ initialQuery, onNext ] );
 
+	const setStepsUsingDomainLockStatus = useCallback( async () => {
+		setIsFetchingDomainLockStatus( true );
+		const { unlocked } = await wpcom.undocumented().getInboundTransferStatus( domainName );
+		setTransferDomainStepsDefinition(
+			unlocked ? transferUnlockedDomainStepsDefinition : transferLockedDomainStepsDefinition
+		);
+		setIsFetchingDomainLockStatus( false );
+	}, [ domainName, setIsFetchingDomainLockStatus, setTransferDomainStepsDefinition ] );
+
+	useEffect( () => {
+		if ( mode !== inputMode.transferDomain ) return;
+		setStepsUsingDomainLockStatus();
+	}, [ mode, inputMode, setStepsUsingDomainLockStatus ] );
+
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
 	};
@@ -199,6 +224,7 @@ function UseMyDomain( {
 				onTransfer={ onTransfer }
 				onSetPage={ setTransferDomainFlowPageSlug }
 				stepsDefinition={ transferDomainStepsDefinition }
+				isFetchingDomainLockStatus={ isFetchingDomainLockStatus }
 			/>
 		);
 	};
