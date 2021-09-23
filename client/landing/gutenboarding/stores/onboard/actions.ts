@@ -224,6 +224,11 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const enrollInFseBeta = ( enrollInFseBeta: boolean ) => ( {
+	type: 'SET_ENROLL_IN_FSE_BETA' as const,
+	enrollInFseBeta,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -248,4 +253,5 @@ export type OnboardAction = ReturnType<
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
 	| typeof startOnboarding
+	| typeof enrollInFseBeta
 >;

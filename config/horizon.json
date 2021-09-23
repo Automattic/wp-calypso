@@ -42,6 +42,7 @@
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
 		"fullstory": true,
+		"full-site-editing/beta-opt-in": true,
 		"gdpr-banner": true,
 		"google-my-business": false,
 		"gutenboarding/alpha-templates": true,
