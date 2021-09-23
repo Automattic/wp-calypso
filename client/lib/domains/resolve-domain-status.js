@@ -9,7 +9,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 } from 'calypso/lib/url/support';
-import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
+import { domainManagementNameServers, domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes } from './constants';
 
 export function resolveDomainStatus(
@@ -236,6 +236,29 @@ export function resolveDomainStatus(
 					statusClass: 'status-premium',
 					icon: 'check_circle',
 					listStatusClass: 'premium',
+				};
+			}
+
+			if ( domain.transfer_status === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
+				return {
+					statusText: translate( 'Action required' ),
+					statusClass: 'status-warning',
+					icon: 'info',
+					listStatusText: translate(
+						'{{strong}}Point to WordPress.com:{{/strong}} To point this domain to your WordPress.com site, you need to update the name servers. {{a}}Update now{{/a}} or do this later.',
+						{
+							components: {
+								strong: <strong />,
+								a: (
+									<a
+										href={ domainManagementNameServers( siteSlug, domain.domain ) }
+										onClick={ ( e ) => e.stopPropagation() }
+									/>
+								),
+							},
+						}
+					),
+					listStatusClass: 'transfer-warning',
 				};
 			}
 
