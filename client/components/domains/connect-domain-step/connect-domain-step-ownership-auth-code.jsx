@@ -82,7 +82,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 			</p>
 			<p className={ className + '__text' }>
 				{ __(
-					'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
+					'A domain authorization code is a unique code linked only to your domain. It might also be called a secret code, auth code, or EPP code. You can obtain this code from your domain registrar (where the domain is currently registered).'
 				) }
 			</p>
 			<div className={ className + '__authorization-code' }>
