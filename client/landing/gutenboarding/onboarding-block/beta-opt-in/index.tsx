@@ -32,7 +32,7 @@ const BetaOptIn: React.FunctionComponent = () => {
 				</div>
 				<ActionButtons className="beta-opt-in__actions">
 					<BackButton onClick={ goBack } />
-					<SkipButton onClick={ () => pickBeta( false ) }>{ __( 'No Thanks' ) }</SkipButton>
+					<SkipButton onClick={ () => pickBeta( false ) } />
 				</ActionButtons>
 			</div>
 			<ol className="beta-opt-in__content">
