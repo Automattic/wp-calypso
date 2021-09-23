@@ -46,6 +46,12 @@ export const defaultDomainSetupInfo = {
 	},
 } as const;
 
+export const domainLockStatusType = {
+	LOCKED: 'locked',
+	UNLOCKED: 'unlocked',
+	UNKNOWN: 'unknown',
+} as const;
+
 export const stepsHeadingSuggested = __( 'Suggested setup' );
 export const stepsHeadingAdvanced = __( 'Advanced setup' );
 export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );

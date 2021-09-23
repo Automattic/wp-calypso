@@ -6,7 +6,10 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
-import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import {
+	stepSlug,
+	domainLockStatusType,
+} from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	connectADomainOwnershipVerificationStepsDefinition,
 	transferLockedDomainStepsDefinition,
@@ -46,6 +49,7 @@ function UseMyDomain( {
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
+	const [ domainLockStatus, setDomainLockStatus ] = useState( domainLockStatusType.LOCKED );
 	const [ isFetchingDomainLockStatus, setIsFetchingDomainLockStatus ] = useState( false );
 	const [ transferDomainStepsDefinition, setTransferDomainStepsDefinition ] = useState(
 		transferLockedDomainStepsDefinition
@@ -146,12 +150,28 @@ function UseMyDomain( {
 	}, [ initialQuery, onNext ] );
 
 	const setStepsUsingDomainLockStatus = useCallback( async () => {
-		setIsFetchingDomainLockStatus( true );
-		const { unlocked } = await wpcom.undocumented().getInboundTransferStatus( domainName );
-		setTransferDomainStepsDefinition(
-			unlocked ? transferUnlockedDomainStepsDefinition : transferLockedDomainStepsDefinition
-		);
-		setIsFetchingDomainLockStatus( false );
+		const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
+		let lockStatus = UNKNOWN;
+		try {
+			setIsFetchingDomainLockStatus( true );
+
+			const { unlocked } = await wpcom.undocumented().getInboundTransferStatus( domainName );
+			setTransferDomainStepsDefinition(
+				unlocked ? transferUnlockedDomainStepsDefinition : transferLockedDomainStepsDefinition
+			);
+
+			if ( unlocked === null ) {
+				lockStatus = UNKNOWN;
+			} else {
+				lockStatus = unlocked ? UNLOCKED : LOCKED;
+			}
+
+			setDomainLockStatus( lockStatus );
+		} catch {
+			setDomainLockStatus( lockStatus );
+		} finally {
+			setIsFetchingDomainLockStatus( false );
+		}
 	}, [ domainName, setIsFetchingDomainLockStatus, setTransferDomainStepsDefinition ] );
 
 	useEffect( () => {
@@ -225,6 +245,7 @@ function UseMyDomain( {
 				onSetPage={ setTransferDomainFlowPageSlug }
 				stepsDefinition={ transferDomainStepsDefinition }
 				isFetchingDomainLockStatus={ isFetchingDomainLockStatus }
+				domainLockStatus={ domainLockStatus }
 			/>
 		);
 	};
