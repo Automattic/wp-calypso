@@ -1,8 +1,10 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { computer, tablet, phone } from './icons';
 import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
@@ -14,9 +16,9 @@ const DesignPickerPreviewToolbar = ( {
 	translate,
 } ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: 'computer' },
-		tablet: { title: translate( 'Tablet' ), icon: 'tablet' },
-		phone: { title: translate( 'Phone' ), icon: 'phone' },
+		computer: { title: translate( 'Desktop' ), icon: computer },
+		tablet: { title: translate( 'Tablet' ), icon: tablet },
+		phone: { title: translate( 'Phone' ), icon: phone },
 	} );
 
 	return (
@@ -32,7 +34,7 @@ const DesignPickerPreviewToolbar = ( {
 						} ) }
 						onClick={ () => setDeviceViewport( device ) }
 					>
-						<Gridicon size={ 18 } icon={ devices.current[ device ].icon } />
+						<Icon size={ 24 } icon={ devices.current[ device ].icon } />
 					</Button>
 				) ) }
 			</div>
