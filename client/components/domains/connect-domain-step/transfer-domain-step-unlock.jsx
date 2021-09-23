@@ -77,8 +77,8 @@ const TransferDomainStepUnlock = ( {
 				{ initialDomainLockStatus === domainLockStatusType.UNKNOWN &&
 					unkownLockStatusAdditionalDescription }
 				{ lockedDomainDescription }
-				<br />
-				<br />
+			</p>
+			<p>
 				{ __( 'It might take a few minutes for any changes to take effect.' ) }
 				<br />
 				{ __( 'Once you have unlocked your domain click on the button below to proceed.' ) }
