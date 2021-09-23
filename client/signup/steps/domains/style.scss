@@ -15,7 +15,9 @@
 	}
 
 	& .use-my-domain,
+	& .connect-domain-step,
 	& .domain-transfer-or-connect__content {
+		background: transparent;
 		box-shadow: none;
 
 		@include break-mobile {
