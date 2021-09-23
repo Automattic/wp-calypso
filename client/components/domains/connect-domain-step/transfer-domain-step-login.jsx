@@ -3,7 +3,7 @@ import ConnectDomainStepLogin from 'calypso/components/domains/connect-domain-st
 import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
 
 const TransferDomainStepLogin = ( props ) => {
-	return <ConnectDomainStepLogin heading={ stepsHeadingTransfer } { ...props } />;
+	return <ConnectDomainStepLogin { ...props } heading={ stepsHeadingTransfer } />;
 };
 
 export default TransferDomainStepLogin;
