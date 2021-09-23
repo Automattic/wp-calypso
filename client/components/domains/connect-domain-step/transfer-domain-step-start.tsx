@@ -34,13 +34,13 @@ export default function TransferDomainStepStart( {
 				{ __( 'It takes 10-20 minutes to set up.' ) }
 				<br />
 				{ __(
-					'It takes 10-20 minutes to set up. It can take up to 5 days for the domain to be transferred, depending on your provider.'
+					'It can take up to 5 days for the domain to be transferred, depending on your provider.'
 				) }
-				<br />
-				<br />
+			</p>
+			<p className={ className + '__text' }>
 				{ createInterpolateElement(
 					__(
-						'If you would like to have your domain point to your WordPress.com site faster, <a>consider connecting your domain</a> first.'
+						'If you would like to have your domain point to your WordPress.com site faster, consider <a>connecting your domain</a> first.'
 					),
 					{
 						a: createElement( 'a', {
