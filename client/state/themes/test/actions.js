@@ -429,20 +429,7 @@ describe( 'actions', () => {
 				],
 			},
 		};
-		// classic themes
-		const millerTheme = {
-			id: 'miller',
-			stylesheet: 'pub/miller',
-			taxonomies: {
-				theme_feature: [
-					{
-						name: 'Auto Loading Homepage',
-						slug: 'auto-loading-homepage',
-						term_id: '687694703',
-					},
-				],
-			},
-		};
+		// classic theme
 		const twentyfifteenTheme = {
 			id: 'twentyfifteen',
 			stylesheet: 'pub/twentyfifteen',
@@ -471,7 +458,6 @@ describe( 'actions', () => {
 					wpcom: new ThemeQueryManager( {
 						items: {
 							[ maylandBlocksTheme.id ]: maylandBlocksTheme,
-							[ millerTheme.id ]: millerTheme,
 							[ twentyfifteenTheme.id ]: twentyfifteenTheme,
 						},
 					} ),
@@ -487,20 +473,10 @@ describe( 'actions', () => {
 			},
 		} );
 
-		describe( 'when switching between a classic and a block theme', () => {
-			test( 'should dispatch an action to refresh the admin bar', () => {
+		describe( 'when switching between any theme', () => {
+			test( 'should refresh the admin bar', () => {
 				themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetState );
 				expect( spy ).to.have.been.calledWith( {
-					type: 'ADMIN_MENU_REQUEST',
-					siteId: 2211667,
-				} );
-			} );
-		} );
-
-		describe( 'when switching between classic themes', () => {
-			test( 'should not dispatch an action to refresh the admin bar', () => {
-				themeActivated( 'pub/miller', 2211667 )( spy, fakeGetState );
-				expect( spy ).not.to.have.been.calledWith( {
 					type: 'ADMIN_MENU_REQUEST',
 					siteId: 2211667,
 				} );
