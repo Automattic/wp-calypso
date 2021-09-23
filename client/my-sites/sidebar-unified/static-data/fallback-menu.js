@@ -61,7 +61,7 @@ export default function buildFallbackResponse( {
 				slug: 'woo-php',
 				title: translate( 'WooCommerce' ),
 				type: 'menu-item',
-				url: `/woocommerce`,
+				url: `/woocommerce-installation/${ siteDomain }`,
 			},
 			{
 				type: 'separator',
