@@ -20,10 +20,14 @@ const TransferDomainStepUnlock = ( { className, onNextStep, domain, ...props } )
 	}, [ domain, setCheckInProgress ] );
 
 	const checkDomainLockStatus = async () => {
-		const isDomainUnlocked = await getDomainLockStatus();
-		if ( isDomainUnlocked ) onNextStep();
-		else {
-			setDomainStatusError( 'Your domain is locked' );
+		try {
+			const isDomainUnlocked = await getDomainLockStatus();
+			if ( isDomainUnlocked ) onNextStep();
+			else {
+				setDomainStatusError( 'Your domain is locked' );
+			}
+		} catch {
+			setDomainStatusError( 'Can’t get the domain’s lock status' );
 		}
 	};
 
