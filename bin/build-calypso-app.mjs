@@ -2,10 +2,16 @@
 /* eslint-disable no-console */
 /* eslint-disable no-process-exit */
 import { exec } from 'child_process';
+import { EventEmitter } from 'events';
 import chokidar from 'chokidar';
 import runAll from 'npm-run-all';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+
+// When we run a build which has more than 10 build tasks in parallel (like ETK),
+// Node shows a warning. We just need to increase the number of allowed listeners
+// to handle larger numbers of parallel tasks.
+EventEmitter.setMaxListeners( 20 );
 
 // Default NODE_ENV is development unless manually set to production.
 if ( ! process.env.NODE_ENV ) {
@@ -14,9 +20,11 @@ if ( ! process.env.NODE_ENV ) {
 if ( ! process.env.BROWSERSLIST_ENV ) {
 	process.env.BROWSERSLIST_ENV = 'wpcom';
 }
+if ( ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK ) {
+	process.env.DISABLE_DUPLICATE_PACKAGE_CHECK = true;
+}
 
 const { argv } = yargs( hideBin( process.argv ) ).options( {
-	watch: { type: 'boolean', default: false },
 	sync: { type: 'boolean', default: false, implies: 'remotePath' },
 	remotePath: { type: 'string' },
 	localPath: {
@@ -28,9 +36,11 @@ const { argv } = yargs( hideBin( process.argv ) ).options( {
 } );
 await runBuilder( argv );
 
-async function runBuilder( { watch, sync, localPath, remotePath, verbose } ) {
+async function runBuilder( { sync, localPath, remotePath, verbose } ) {
+	const shouldWatch = process.env.NODE_ENV === 'development';
+
 	if ( verbose ) {
-		console.info( `Watch mode: ${ watch ? 'yes' : 'no' }\nSync mode: ${
+		console.info( `Watch mode: ${ shouldWatch ? 'yes' : 'no' }\nSync mode: ${
 			sync ? 'yes' : 'no'
 		}\nLocal path: ${ localPath }\nRemote path: ${ remotePath }
 		` );
@@ -49,7 +59,7 @@ async function runBuilder( { watch, sync, localPath, remotePath, verbose } ) {
 	runAll( [ 'build:*' ], { ...runOpts, parallel: true } )
 		.then( () => {
 			console.log( 'Build completed!' );
-			if ( ! watch && sync ) {
+			if ( ! shouldWatch && sync ) {
 				// In non-watch + sync mode, we sync only once after the build has finished.
 				syncToRemote( localPath, remotePath );
 			}
@@ -62,7 +72,7 @@ async function runBuilder( { watch, sync, localPath, remotePath, verbose } ) {
 		} );
 
 	// In dev mode, we start watching to sync while the webpack build is happening.
-	if ( watch && sync ) {
+	if ( shouldWatch && sync ) {
 		syncToRemote( localPath, remotePath, true );
 	}
 }

@@ -21,6 +21,7 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const cachePath = path.resolve( '.cache' );
+const shouldCheckForDuplicatePackages = ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK;
 
 /**
  * Return a webpack config object
@@ -140,7 +141,7 @@ function getWebpackConfig(
 				filename: cssFilename,
 				minify: ! isDevelopment,
 			} ),
-			new DuplicatePackageCheckerPlugin(),
+			...( shouldCheckForDuplicatePackages ? [ new DuplicatePackageCheckerPlugin() ] : [] ),
 			...( env.WP ? [ new DependencyExtractionWebpackPlugin( { injectPolyfill: true } ) ] : [] ),
 		],
 	};
