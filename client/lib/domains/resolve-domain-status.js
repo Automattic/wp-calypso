@@ -268,7 +268,6 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.TRANSFER:
-			domain.transferStatus = transferStatus.PENDING_REGISTRY;
 			if ( domain.transferStatus === transferStatus.PENDING_START ) {
 				return {
 					statusText: translate( 'Action required' ),
