@@ -16,6 +16,12 @@ const selectors = {
 	removeCartItemButton: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
 
+	// Order Summary
+	editOrderButton: 'button[aria-label="Edit your order"]',
+	removeCouponButton: ( coupon: string ) =>
+		`button[aria-label="Remove Coupon: ${ coupon } from cart"]`,
+	saveOrderButton: 'button[aria-label="Save your order"]',
+
 	// Tax information
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
 	postalCode: `input[id="contact-postal-code"]`,
@@ -104,6 +110,24 @@ export class CartCheckoutPage {
 
 		// Wait until coupon is fully applied to cart items to determine if the banner message
 		// needs to be closed.
+		await this.page.waitForSelector( selectors.disabledButton, { state: 'hidden' } );
+		if ( await this.page.isVisible( selectors.dismissBanner ) ) {
+			await this.page.click( selectors.dismissBanner );
+		}
+	}
+
+	/**
+	 * Removes a matching coupon from the cart.
+	 *
+	 * @param {string} coupon Coupon code to remove.
+	 */
+	async removeCouponCode( coupon: string ): Promise< void > {
+		await this.page.click( selectors.editOrderButton );
+		await this.page.click( selectors.removeCouponButton( coupon ) );
+		await this.page.click( selectors.modalContinueButton );
+		await this.page.click( selectors.saveOrderButton );
+
+		// Similar to applying a coupon - wait until the cart is updated prior to continuing.
 		await this.page.waitForSelector( selectors.disabledButton, { state: 'hidden' } );
 		if ( await this.page.isVisible( selectors.dismissBanner ) ) {
 			await this.page.click( selectors.dismissBanner );
