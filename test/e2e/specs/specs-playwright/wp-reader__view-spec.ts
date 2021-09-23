@@ -36,6 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 
 	it( 'Visit latest post', async function () {
 		await readerPage.visitPost( { index: 1 } );
+		throw new Error();
 	} );
 
 	it( 'Comment and confirm it is shown', async function () {
