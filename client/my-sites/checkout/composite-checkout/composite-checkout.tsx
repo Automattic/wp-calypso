@@ -18,7 +18,6 @@ import page from 'page';
 import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -28,7 +27,6 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -203,11 +201,9 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
-	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
-		couponStatus === 'applied',
-		jetpackSaleCoupon
+		couponStatus === 'applied'
 	);
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
@@ -597,7 +593,6 @@ export default function CompositeCheckout( {
 
 	return (
 		<React.Fragment>
-			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
 			<QueryPlans />
