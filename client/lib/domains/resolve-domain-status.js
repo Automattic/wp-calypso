@@ -268,6 +268,7 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.TRANSFER:
+			domain.transferStatus = transferStatus.PENDING_REGISTRY;
 			if ( domain.transferStatus === transferStatus.PENDING_START ) {
 				return {
 					statusText: translate( 'Action required' ),
@@ -312,10 +313,10 @@ export function resolveDomainStatus(
 						statusClass: 'status-success',
 						icon: 'info',
 						listStatusText: translate(
-							'{{strong}}Transfer in progress:{{/strong}} the transfer should be completed by %(transferFinishDate)s. {{a}}Learn more{{/a}}',
+							'{{strong}}Transfer in progress:{{/strong}} the transfer should be completed by %(transferFinishDate)s. We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 							transferOptions
 						),
-						listStatusClass: 'alert',
+						listStatusClass: 'verifying',
 					};
 				}
 				return {
@@ -326,7 +327,7 @@ export function resolveDomainStatus(
 						'{{strong}}Transfer in progress:{{/strong}} We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 						transferOptions
 					),
-					listStatusClass: 'alert',
+					listStatusClass: 'verifying',
 				};
 			}
 
