@@ -16,11 +16,12 @@ export default async function refreshCountryCodeCookieGdpr() {
 	}
 
 	if ( refreshCountryCodeCookieGdprRequest === null ) {
-		refreshCountryCodeCookieGdprRequest = requestCountryCode();
+		refreshCountryCodeCookieGdprRequest = requestCountryCode().then( ( countryCode ) =>
+			setCountryCodeCookie( countryCode )
+		);
 	}
 
-	const countryCode = await refreshCountryCodeCookieGdprRequest;
-	setCountryCodeCookie( countryCode );
+	await refreshCountryCodeCookieGdprRequest;
 	refreshCountryCodeCookieGdprRequest = null;
 }
 
