@@ -1,15 +1,11 @@
 {
 	"name": "@automattic/calypso-products",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "This module contains information about the various products sold within calypso, such as product slugs, plan intervals, etc.",
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
-	"types": "dist/types/index.d.ts",
-	"calypso:src": "src/index.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -17,6 +13,15 @@
 		"dist",
 		"src"
 	],
+	"type": "module",
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	},
+	"exports": {
+		"calypso:src": "./src/index.ts",
+		"import": "./dist/esm/index.js"
+	},
+	"types": "dist/types/index.d.ts",
 	"keywords": [
 		"checkout",
 		"payments",

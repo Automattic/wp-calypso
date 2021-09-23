@@ -181,7 +181,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-products@^1.0.0, @automattic/calypso-products@workspace:packages/calypso-products":
+"@automattic/calypso-products@^2.0.0, @automattic/calypso-products@workspace:packages/calypso-products":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-products@workspace:packages/calypso-products"
   dependencies:
@@ -1124,7 +1124,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-checkout@workspace:packages/wpcom-checkout"
   dependencies:
-    "@automattic/calypso-products": ^1.0.0
+    "@automattic/calypso-products": ^2.0.0
     "@automattic/calypso-stripe": ^1.0.0
     "@automattic/composite-checkout": ^1.0.0
     "@automattic/shopping-cart": ^2.0.0
@@ -11896,7 +11896,7 @@ __metadata:
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-config": ^1.0.0
     "@automattic/calypso-polyfills": ^2.0.0
-    "@automattic/calypso-products": ^1.0.0
+    "@automattic/calypso-products": ^2.0.0
     "@automattic/calypso-stripe": ^1.0.0
     "@automattic/calypso-url": ^1.0.0
     "@automattic/color-studio": 2.5.0
