@@ -57,7 +57,7 @@ class EmailManagementHome extends React.Component {
 			emailListInactiveHeader,
 			hasSiteDomainsLoaded,
 			hasSitesLoaded,
-			showActiveDomainList,
+			showActiveDomainList = true,
 			selectedDomainName,
 			selectedSite,
 			selectedSiteId,
@@ -126,7 +126,7 @@ class EmailManagementHome extends React.Component {
 
 		return this.renderContentWithHeader(
 			<>
-				{ ! showActiveDomainList && (
+				{ showActiveDomainList && (
 					<EmailListActive
 						currentRoute={ currentRoute }
 						domains={ domainsWithEmail }

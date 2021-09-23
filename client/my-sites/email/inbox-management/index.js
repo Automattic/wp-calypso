@@ -45,7 +45,7 @@ const InboxManagement = ( { domains } ) => {
 				<EmailManagementHome
 					emailListInactiveHeader={ getMainHeader() }
 					sectionHeaderLabel={ translate( 'Domains' ) }
-					showActiveDomainList={ true }
+					showActiveDomainList={ false }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
