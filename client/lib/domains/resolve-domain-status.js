@@ -274,7 +274,7 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					icon: 'info',
 					listStatusText: translate(
-						'{{strong}}Transfer waiting:{{/strong}} Follow {{a}}these steps{{/a}} by %(transferUntilDate)s to start the transfer.',
+						'{{strong}}Transfer waiting:{{/strong}} Follow {{a}}these steps{{/a}} by %(beginTransferUntilDate)s to start the transfer.',
 						{
 							components: {
 								strong: <strong />,
@@ -287,7 +287,9 @@ export function resolveDomainStatus(
 									/>
 								),
 							},
-							args: { transferUntilDate: moment( domain.beginTransferUntilDate ).format( 'LL' ) },
+							args: {
+								beginTransferUntilDate: moment( domain.beginTransferUntilDate ).format( 'LL' ),
+							},
 						}
 					),
 					listStatusClass: 'transfer-warning',
