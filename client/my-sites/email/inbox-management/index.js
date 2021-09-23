@@ -9,6 +9,8 @@ import { hasEmailSubscription } from 'calypso/my-sites/email/email-management/ho
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+import './style.scss';
+
 const InboxManagement = ( { domains } ) => {
 	function getMainHeader() {
 		const image = {
@@ -22,6 +24,7 @@ const InboxManagement = ( { domains } ) => {
 					isPrimary={ true }
 					title={ translate( 'Pick a domain to get started' ) }
 					image={ image }
+					className={ 'is-inbox-card' }
 				>
 					<p>{ translate( 'Pick one of your domains below to add an email solution.' ) }</p>
 				</PromoCard>
@@ -42,7 +45,7 @@ const InboxManagement = ( { domains } ) => {
 				<EmailManagementHome
 					emailListInactiveHeader={ getMainHeader() }
 					sectionHeaderLabel={ translate( 'Domains' ) }
-					onlyDomainsWithoutSubscription={ true }
+					showActiveDomainList={ true }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
