@@ -24,7 +24,7 @@ const InboxManagement = ( { domains } ) => {
 					isPrimary={ true }
 					title={ translate( 'Pick a domain to get started' ) }
 					image={ image }
-					className={ 'is-inbox-card' }
+					className={ 'inbox-management__is-inbox-card' }
 				>
 					<p>{ translate( 'Pick one of your domains below to add an email solution.' ) }</p>
 				</PromoCard>
