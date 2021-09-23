@@ -6,7 +6,7 @@ export const modeType = {
 	DONE: 'done',
 	OWNERSHIP_VERIFICATION: 'ownership_verification',
 	TRANSFER: 'transfer',
-};
+} as const;
 
 export const stepType = {
 	START: 'start_setup',
@@ -18,7 +18,7 @@ export const stepType = {
 	ENTER_AUTH_CODE: 'enter_auth_code',
 	UNLOCK_DOMAIN: 'unlock_domain',
 	FINALIZE: 'finalize',
-};
+} as const;
 
 export const stepSlug = {
 	SUGGESTED_START: 'suggested_start',
@@ -37,15 +37,19 @@ export const stepSlug = {
 	TRANSFER_LOGIN: 'transfer_login',
 	TRANSFER_UNLOCK: 'transfer_unlock',
 	TRANSFER_AUTH_CODE: 'transfer_auth_code',
-};
+} as const;
 
 export const defaultDomainSetupInfo = {
 	data: {
 		default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 	},
-};
+} as const;
 
 export const stepsHeadingSuggested = __( 'Suggested setup' );
 export const stepsHeadingAdvanced = __( 'Advanced setup' );
 export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );
+
+export const authCodeStepDefaultDescription = __(
+	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
+);
