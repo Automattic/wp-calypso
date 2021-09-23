@@ -29,13 +29,12 @@ export function themeActivated( themeStylesheet, siteId, source = 'unknown', pur
 			themeStylesheet,
 			siteId,
 		};
-		const themeId = getThemeIdFromStylesheet( themeStylesheet );
 		const previousThemeId = getActiveTheme( getState(), siteId );
 		const query = getLastThemeQuery( getState(), siteId );
 		const search_taxonomies = prependThemeFilterKeys( getState(), query.filter );
 		const search_term = search_taxonomies + ( query.search || '' );
 		const trackThemeActivation = recordTracksEvent( 'calypso_themeshowcase_theme_activate', {
-			theme: themeId,
+			theme: getThemeIdFromStylesheet( themeStylesheet ),
 			previous_theme: previousThemeId,
 			source: source,
 			purchased: purchased,
