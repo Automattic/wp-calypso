@@ -23,7 +23,7 @@ class SitesBlock extends Component {
 	};
 
 	renderFauxSiteSelector() {
-		const { onUrlChange, url } = this.props;
+		const { onUrlChange, translate, url } = this.props;
 		const { error } = this.state;
 		const isError = !! error;
 
@@ -39,7 +39,7 @@ class SitesBlock extends Component {
 								className="sites-block__faux-site-selector-label"
 								htmlFor="sites-block__faux-site-selector-url-input"
 							>
-								Import from...
+								{ translate( 'Import from…' ) }
 							</FormLabel>
 							<div className="sites-block__faux-site-selector-url">
 								<FormTextInput
