@@ -116,6 +116,12 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
+function showProgressIndicator( flowName ) {
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site' ];
+
+	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+}
+
 class Signup extends React.Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
@@ -697,8 +703,6 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 
 		return (
@@ -709,7 +713,7 @@ class Signup extends React.Component {
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
 						rightComponent={
-							showProgressIndicator && (
+							showProgressIndicator( this.props.flowName ) && (
 								<FlowProgressIndicator
 									positionInFlow={ this.getPositionInFlow() }
 									flowLength={ this.getInteractiveStepsCount() }
