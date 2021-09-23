@@ -28,6 +28,7 @@ export type AuthCodeValidationHandler = (
 ) => unknown;
 
 export type StartStepProps = {
+	domain: string;
 	className: string;
 	pageSlug: PossibleSlugs;
 	onNextStep: () => void;
