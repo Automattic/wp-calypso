@@ -95,14 +95,6 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
-		it( 'Apply coupon', async function () {
-			await cartCheckoutPage.enterCouponCode( DataHelper.config.get( 'testCouponCode' ) );
-		} );
-
-		it( 'Remove coupon code', async function () {
-			await cartCheckoutPage.removeCouponCode( DataHelper.config.get( 'testCouponCode' ) );
-		} );
-
 		it( 'Remove WordPress.com Business from cart', async function () {
 			await cartCheckoutPage.removeCartItem( cartItemForBusinessPlan );
 		} );

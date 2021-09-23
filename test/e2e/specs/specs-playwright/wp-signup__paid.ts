@@ -83,7 +83,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await cartCheckoutPage.removeCartItem( targetDomain );
 		} );
 
-		it( 'Apply coupon and validate resulting purchase amount', async function () {
+		it( 'Apply coupon and validate purchase amount', async function () {
 			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
 			await cartCheckoutPage.enterCouponCode( DataHelper.config.get( 'testCouponCode' ) );
 			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
@@ -96,6 +96,13 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			// In JPY or TWD there will be no decimal digits.
 			// Drop decimals so that the result won't be affected by the currency variation.
 			expect( newAmount ).toStrictEqual( expectedAmount );
+		} );
+
+		it( 'Remove coupon code and validate purchase amount', async function () {
+			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			await cartCheckoutPage.removeCouponCode( DataHelper.config.get( 'testCouponCode' ) );
+			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			expect( newAmount ).toBeGreaterThan( originalAmount );
 		} );
 
 		it( 'Enter billing and payment details', async function () {
