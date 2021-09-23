@@ -219,43 +219,16 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderTextForExperiment() {
-		const { hideFreePlan, flowName, translate } = this.props;
 		const defaultSubHeaderText = this.getSubHeaderText();
-		const refundWindow = 'yearly' === this.getIntervalType() ? 14 : 7;
 
-		if ( ! isDesktop() || 'onboarding' !== flowName ) {
-			return defaultSubHeaderText;
-		}
-
-		let emphasizedRefundPolicyText = '';
-		if ( hideFreePlan ) {
-			emphasizedRefundPolicyText = translate(
-				'Try risk-free with a %(days)s-day money back guarantee on all plans.',
-				{
-					args: {
-						days: refundWindow,
-					},
-				}
-			);
-		} else {
-			emphasizedRefundPolicyText = translate(
-				'Try risk-free with a %(days)s-day money back guarantee on all plans. Or {{link}}start with a free site{{/link}}.',
-				{
-					components: {
-						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-					},
-					args: {
-						days: refundWindow,
-					},
-				}
-			);
-		}
+		const tabbedPlanRefundPolicyText =
+			'There’s a plan for everybody. Pick between our Professional or Starter plans.';
 
 		return (
 			<Experiment
-				name="emphasizing_refund_policy_v2"
+				name="tabbed_plans_poc"
 				defaultExperience={ defaultSubHeaderText }
-				treatmentExperience={ emphasizedRefundPolicyText }
+				treatmentExperience={ tabbedPlanRefundPolicyText }
 				loadingExperience={ '\u00A0' } // &nbsp;
 			/>
 		);

@@ -63,7 +63,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	);
 	const [ planDetails, setPlanDetails ] = useState();
 	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
-	const [ termLength, setTermLength ] = useState( 'yearly' );
+	const [ termLength, setTermLength ] = useState( 'annually' );
 	const [ showFeatures, setShowFeatures ] = useState( false );
 	const [ primaryButton, setPrimaryButton ] = useState( 'Premium' );
 	const dispatch = useDispatch();
@@ -73,7 +73,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 	};
 
 	const toggleTerm = () =>
-		termLength === 'yearly' ? setTermLength( 'monthly' ) : setTermLength( 'yearly' );
+		termLength === 'annually' ? setTermLength( 'monthly' ) : setTermLength( 'annually' );
 
 	const handleUpgradeButtonClick = ( productSlug, productId ) => {
 		const args =
@@ -161,7 +161,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 						<RadioButton>
 							<input
 								type="radio"
-								checked={ termLength === 'yearly' ? 'checked' : '' }
+								checked={ termLength === 'annually' ? 'checked' : '' }
 								name="monthly"
 								onChange={ toggleTerm }
 							/>
@@ -215,13 +215,9 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							</PlanPrice>
 							<TermDescription className={ `tabbed-plans__term-desc-${ index + 1 }` }>
 								{ item.planName === 'Free' && <span>Limited features</span> }
-								{ item.termLength === 'yearly' && (
+								{ item.termLength === 'annually' && (
 									<>
-										<span>
-											{ 'per month, billed as ' +
-												formatCurrency( item.rawPrice * 12, currencyCode, { stripZeros: true } ) +
-												' annually' }
-										</span>
+										<span>per month, billed annually</span>
 										<Savings>
 											{ "You're saving " +
 												Math.round(
@@ -271,13 +267,14 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 						<FeatureTitle
 							key={ `featureTitle${ index }` }
 							className={ `tabbed-plans__feature-title-${ index + 1 }` }
+							isLast={ arr.length === index + 1 }
 						>
 							{ item.featureName }
 							<InfoPopover
 								className="tabbed-plans__feature-tip-info"
 								position="right"
 								icon="info"
-								iconSize="15"
+								iconSize={ 15 }
 							>
 								{ item.tooltip }
 							</InfoPopover>
@@ -287,11 +284,13 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								<Feature
 									key={ `featureItemOne${ index }` }
 									className={ `tabbed-plans__feature-1-${ index + 1 }` }
-									included={ item.planOne.included }
+									included={ item.planOne[ termLength ].included }
 									isLast={ arr.length === index + 1 }
 								>
-									<span>{ item.planOne.copy }</span>
-									{ item.planOne.mobileCopy && <span>{ item.planOne.mobileCopy }</span> }
+									<span>{ item.planOne[ termLength ].copy }</span>
+									{ item.planOne[ termLength ].mobileCopy && (
+										<span>{ item.planOne[ termLength ].mobileCopy }</span>
+									) }
 								</Feature>
 							</>
 						) }
@@ -299,22 +298,26 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							<Feature
 								key={ `featureItemTwo${ index }` }
 								className={ `tabbed-plans__feature-2-${ index + 1 }` }
-								included={ item.planTwo.included }
+								included={ item.planTwo[ termLength ].included }
 								isLast={ arr.length === index + 1 }
 							>
-								<span>{ item.planTwo.copy }</span>
-								{ item.planTwo.mobileCopy && <span>{ item.planTwo.mobileCopy }</span> }
+								<span>{ item.planTwo[ termLength ].copy }</span>
+								{ item.planTwo[ termLength ].mobileCopy && (
+									<span>{ item.planTwo[ termLength ].mobileCopy }</span>
+								) }
 							</Feature>
 						) }
 						{ item.planThree && (
 							<Feature
 								key={ `featureItemThree${ index }` }
 								className={ `tabbed-plans__feature-3-${ index + 1 }` }
-								included={ item.planThree.included }
+								included={ item.planThree[ termLength ].included }
 								isLast={ arr.length === index + 1 }
 							>
-								<span>{ item.planThree.copy }</span>
-								{ item.planThree.mobileCopy && <span>{ item.planThree.mobileCopy }</span> }
+								<span>{ item.planThree[ termLength ].copy }</span>
+								{ item.planThree[ termLength ].mobileCopy && (
+									<span>{ item.planThree[ termLength ].mobileCopy }</span>
+								) }
 							</Feature>
 						) }
 					</React.Fragment>
@@ -382,7 +385,7 @@ const mapStateToProps = ( state, ownProps ) => {
 			planSlug: planObject?.product_slug,
 			rawPrice,
 			rawPriceForMonthly,
-			termLength: isMonthlyPlan ? 'monthly' : 'yearly',
+			termLength: isMonthlyPlan ? 'monthly' : 'annually',
 		};
 	} );
 	planProperties.unshift( {
@@ -410,8 +413,8 @@ function getTabList() {
 function getBestForStrings() {
 	return {
 		Free: 'Ads displayed on all sites',
-		Personal: 'Best for personal sites',
-		Premium: 'Best for portfolio sites & blogs',
+		Personal: 'Best for small sites & blogs',
+		Premium: 'Best for customized sites & blogs',
 		Business: 'Best for small businesses',
 		eCommerce: 'Best for online stores',
 	};
@@ -425,19 +428,42 @@ function getFeatureComparisonData() {
 				tooltip:
 					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
 				planOne: {
-					included: false,
-					copy: <Gridicon icon="cross" size={ 18 } />,
-					mobileCopy: null,
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
 				},
 				planTwo: {
-					included: true,
-					copy: '58,000+ Available',
-					mobileCopy: '58,000+ plugins available',
+					annually: {
+						included: true,
+						copy: '58,000+ Available',
+						mobileCopy: '58,000+ plugins available',
+						monthly: { available: true, explainer: null },
+					},
+					monthly: {
+						included: true,
+						copy: '58,000+ Available',
+						mobileCopy: '58,000+ plugins available',
+						monthly: { available: true, explainer: null },
+					},
 				},
 				planThree: {
-					included: true,
-					copy: '58,000+ Available',
-					mobileCopy: '58,000+ plugins available',
+					annually: {
+						included: true,
+						copy: '58,000+ Available',
+						monthlyCopy: '58,000+ Available',
+					},
+					monthly: {
+						included: true,
+						copy: '58,000+ Available',
+						monthlyCopy: '58,000+ Available',
+					},
 				},
 			},
 			{
@@ -445,35 +471,81 @@ function getFeatureComparisonData() {
 				tooltip:
 					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
 				planOne: {
-					included: false,
-					copy: <Gridicon icon="cross" size={ 18 } />,
-					mobileCopy: null,
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
 				},
 				planTwo: {
-					included: true,
-					copy: '8,000 to choose from',
-					mobileCopy: '8,000 themes to choose from',
+					annually: {
+						included: true,
+						copy: '8,000 to choose from',
+						mobileCopy: '8,000 themes to choose from',
+					},
+					monthly: {
+						included: true,
+						copy: '8,000 to choose from',
+						mobileCopy: '8,000 themes to choose from',
+					},
 				},
 				planThree: {
-					included: true,
-					copy: '8,000 to choose from',
-					mobileCopy: '8,000 themes to choose from',
+					annually: {
+						included: true,
+						copy: '8,000 to choose from',
+						mobileCopy: '8,000 themes to choose from',
+					},
+					monthly: {
+						included: true,
+						copy: '8,000 to choose from',
+						mobileCopy: '8,000 themes to choose from',
+					},
 				},
 			},
 			{
 				featureName: 'eCommerce',
 				tooltip:
 					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 				planTwo: {
-					included: false,
-					copy: <Gridicon icon="cross" size={ 18 } />,
-					mobileCopy: null,
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
 				},
 				planThree: {
-					included: true,
-					copy: 'Included',
-					mobileCopy: 'Complete eCommerce platform',
+					annually: {
+						included: true,
+						copy: 'Complete eCommerce platform',
+						mobileCopy: 'Complete eCommerce platform',
+					},
+					monthly: {
+						included: true,
+						copy: 'Complete eCommerce platform',
+						mobileCopy: 'Complete eCommerce platform',
+					},
 				},
 			},
 			{
@@ -481,19 +553,40 @@ function getFeatureComparisonData() {
 				tooltip:
 					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).',
 				planOne: {
-					included: true,
-					copy: 'Free for the first year',
-					mobileCopy: 'Free domain for the first year.',
+					annually: {
+						included: true,
+						copy: 'Free for the first year',
+						mobileCopy: 'Free domain for the first year.',
+					},
+					monthly: {
+						included: false,
+						copy: 'Included with annual plans',
+						mobileCopy: null,
+					},
 				},
 				planTwo: {
-					included: true,
-					copy: 'Free for the first year',
-					mobileCopy: 'Free domain for the first year',
+					annually: {
+						included: true,
+						copy: 'Free for the first year',
+						mobileCopy: 'Free domain for the first year',
+					},
+					monthly: {
+						included: false,
+						copy: 'Included with annual plans',
+						mobileCopy: null,
+					},
 				},
 				planThree: {
-					included: true,
-					copy: 'Free for the first year',
-					mobileCopy: 'Free domain for the first year',
+					annually: {
+						included: true,
+						copy: 'Free for the first year',
+						mobileCopy: 'Free domain for the first year',
+					},
+					monthly: {
+						included: false,
+						copy: 'Included with annual plans',
+						mobileCopy: null,
+					},
 				},
 			},
 			{
@@ -501,19 +594,40 @@ function getFeatureComparisonData() {
 				tooltip:
 					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
 				planOne: {
-					included: true,
-					copy: 'Simple',
-					mobileCopy: 'Simple SEO',
+					annually: {
+						included: true,
+						copy: 'Simple',
+						mobileCopy: 'Simple SEO',
+					},
+					monthly: {
+						included: true,
+						copy: 'Simple',
+						mobileCopy: 'Simple SEO',
+					},
 				},
 				planTwo: {
-					included: true,
-					copy: 'Professional',
-					mobileCopy: 'Professional SEO',
+					annually: {
+						included: true,
+						copy: 'Professional',
+						mobileCopy: 'Professional SEO',
+					},
+					monthly: {
+						included: true,
+						copy: 'Professional',
+						mobileCopy: 'Professional SEO',
+					},
 				},
 				planThree: {
-					included: true,
-					copy: 'Professional',
-					mobileCopy: 'Professional SEO',
+					annually: {
+						included: true,
+						copy: 'Professional',
+						mobileCopy: 'Professional SEO',
+					},
+					monthly: {
+						included: true,
+						copy: 'Professional',
+						mobileCopy: 'Professional SEO',
+					},
 				},
 			},
 			{
@@ -521,28 +635,58 @@ function getFeatureComparisonData() {
 				tooltip:
 					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.',
 				planOne: {
-					included: true,
-					copy: 'Email support',
-					mobileCopy: 'Email support',
+					annually: {
+						included: true,
+						copy: 'Email support',
+						mobileCopy: 'Email support',
+					},
+					monthly: {
+						included: true,
+						copy: 'Email support',
+						mobileCopy: 'Email support',
+					},
 				},
 				planTwo: {
-					included: true,
-					copy: '24/7 Priority live chat',
-					mobileCopy: '24/7 Priority live chat',
+					annually: {
+						included: true,
+						copy: '24/7 Priority live chat',
+						mobileCopy: '24/7 Priority live chat',
+					},
+					monthly: {
+						included: true,
+						copy: 'Email support',
+						mobileCopy: 'Email support',
+					},
 				},
 				planThree: {
-					included: true,
-					copy: '24/7 Priority live chat',
-					mobileCopy: '24/7 Priority live chat',
+					annually: {
+						included: true,
+						copy: '24/7 Priority live chat',
+						mobileCopy: '24/7 Priority live chat',
+					},
+					monthly: {
+						included: true,
+						copy: 'Email support',
+						mobileCopy: 'Email support',
+					},
 				},
 			},
 			{
 				featureName: 'Storage',
 				tooltip:
 					'With increased storage space, you’ll be able to upload more images, audio, and documents to your website. On the Premium, Business, and eCommerce plans, you can upload videos, too.',
-				planOne: { included: true, copy: '13GB storage', mobileCopy: '13GB storage' },
-				planTwo: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
-				planThree: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
+				planOne: {
+					annually: { included: true, copy: '13GB storage', mobileCopy: '13GB storage' },
+					monthly: { included: true, copy: '13GB storage', mobileCopy: '13GB storage' },
+				},
+				planTwo: {
+					annually: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
+					monthly: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
+				},
+				planThree: {
+					annually: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
+					monthly: { included: true, copy: '200GB storage', mobileCopy: '200GB storage' },
+				},
 			},
 		],
 		Starter: [
@@ -550,62 +694,196 @@ function getFeatureComparisonData() {
 				featureName: 'Install plugins',
 				tooltip:
 					'Plugins are like apps for your site. They add new functionality and features to expand your site. There are over 58,000+ WordPress plugins available for anything you need.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
+				planTwo: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 			},
 			{
 				featureName: 'Install themes',
 				tooltip:
 					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
+				planTwo: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 			},
 			{
 				featureName: 'eCommerce',
 				tooltip:
 					'Build, manage, and scale your online store with unlimited products or services, multiple currencies, integrations with top shipping carriers, and eCommerce marketing tools.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
+				planTwo: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 			},
 			{
 				featureName: 'Custom domain name',
 				tooltip:
 					'Remove “.wordpress.com” from your site address with a custom domain of your choosing. Free for one year (will renew at its regular price).',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 				planTwo: {
-					included: true,
-					copy: 'Free for the first year',
-					mobileCopy: 'Free domain for the first year',
+					annually: {
+						included: true,
+						copy: 'Free for the first year',
+						mobileCopy: 'Free domain for the first year',
+					},
+					monthly: {
+						included: false,
+						copy: 'Included with annual plans',
+						mobileCopy: 'Included with annual plans',
+					},
 				},
 			},
 			{
 				featureName: 'SEO',
 				tooltip:
 					'SEO (Search Engine Optimization) helps your site rank higher, and more accurately in search engines, so more people can find your site.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 				planTwo: {
-					included: true,
-					copy: 'Simple',
-					mobileCopy: 'Simple SEO',
+					annually: {
+						included: true,
+						copy: 'Simple',
+						mobileCopy: 'Simple SEO',
+					},
+					monthly: {
+						included: true,
+						copy: 'Simple',
+						mobileCopy: 'Simple SEO',
+					},
 				},
 			},
 			{
 				featureName: 'Customer support',
 				tooltip:
 					'Keep moving forward with your site at any time. Our Happiness Engineers will help you via email, live chat, or 24/7 priority live chat, depending on the plan you choose.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
 				planTwo: {
-					included: true,
-					copy: 'Live chat and email',
-					mobileCopy: '100GB Storage',
+					annually: {
+						included: true,
+						copy: 'Live chat and email',
+						mobileCopy: 'Live chat and email support',
+					},
+					monthly: {
+						included: true,
+						copy: 'Email support',
+						mobileCopy: 'Email support',
+					},
 				},
 			},
 			{
 				featureName: 'Remove Ads',
 				tooltip:
 					'Allow your visitors to visit and read your website without seeing any WordPress.com advertising.',
-				planOne: { included: false, copy: <Gridicon icon="cross" size={ 18 } />, mobileCopy: null },
-				planTwo: { included: true, copy: 'Ads removed', mobileCopy: null },
+				planOne: {
+					annually: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+					monthly: {
+						included: false,
+						copy: <Gridicon icon="cross" size={ 18 } />,
+						mobileCopy: null,
+					},
+				},
+				planTwo: {
+					annually: { included: true, copy: 'Ads removed', mobileCopy: null },
+					monthly: { included: true, copy: 'Ads removed', mobileCopy: null },
+				},
 			},
 		],
 	};
@@ -766,11 +1044,12 @@ const Feature = styled.div`
 `;
 
 const FeatureTitle = styled.div`
-	justify-self: end;
+	justify-self: stretch;
 	padding: 15px 36px 15px 0;
-	border-bottom: 1px solid rgba( 220, 220, 222, 0.4 );
+	border-bottom: ${ ( props ) => ( props.isLast ? '0' : '1px solid rgba( 220, 220, 222, 0.2 )' ) };
 	align-self: center;
 	font-weight: 500;
+	text-align: end;
 	font-size: 14px;
 	letter-spacing: -0.16px;
 	color: #2c3338;
@@ -798,7 +1077,7 @@ const PlanHeader = styled.div`
 	color: #101517;
 
 	p {
-		font-size: 14px;
+		font-size: 12px;
 	}
 
 	span {
@@ -1018,7 +1297,7 @@ const FreeBanner = styled.p`
 	margin: 48px 0 24px 0;
 	padding: 15px 0;
 	text-align: center;
-	font-size: 1rem;
+	font-size: 14px;
 	background: rgba( 246, 247, 247, 0.5 );
 	border-radius: 2px;
 
