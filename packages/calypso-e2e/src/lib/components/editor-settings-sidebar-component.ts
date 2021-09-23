@@ -14,7 +14,7 @@ const selectors = {
 		`${ sidebarParentSelector } .components-panel__body-toggle:has-text("${ sectionName }")`,
 	expandedSection: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
-	lastSection: `${ sidebarParentSelector } .components-panel__body:last-of-type`,
+	lastSection: `${ sidebarParentSelector } .components-panel__body >> nth=-1`,
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
 	tagInput: `${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") input`,
