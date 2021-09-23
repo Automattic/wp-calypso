@@ -2,7 +2,7 @@ import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isReskinnedFlow } from '../utils';

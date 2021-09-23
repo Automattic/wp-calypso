@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 

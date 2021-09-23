@@ -1,5 +1,3 @@
-import React from 'react';
-
 const DomainImage = () => (
 	<svg width="443px" height="71px" viewBox="0 0 443 71" xmlns="http://www.w3.org/2000/svg">
 		<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">

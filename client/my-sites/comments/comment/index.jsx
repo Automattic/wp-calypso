@@ -4,7 +4,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import { debounce, get, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import QueryComment from 'calypso/components/data/query-comment';

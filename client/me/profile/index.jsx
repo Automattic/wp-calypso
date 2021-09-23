@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -24,7 +24,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
-class Profile extends React.Component {
+class Profile extends Component {
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}

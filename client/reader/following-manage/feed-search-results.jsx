@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
@@ -11,7 +11,7 @@ import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-strea
 import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'calypso/reader/follow-sources';
 import { requestFeedSearch } from 'calypso/state/reader/feed-searches/actions';
 
-class FollowingManageSearchFeedsResults extends React.Component {
+class FollowingManageSearchFeedsResults extends Component {
 	static propTypes = {
 		query: PropTypes.string.isRequired,
 		showMoreResults: PropTypes.bool,

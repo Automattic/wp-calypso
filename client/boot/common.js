@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
@@ -409,7 +409,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ProviderWrappedLayout, {
+	const layoutElement = createElement( ProviderWrappedLayout, {
 		store: reduxStore,
 	} );
 

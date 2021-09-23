@@ -2,7 +2,6 @@ import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';

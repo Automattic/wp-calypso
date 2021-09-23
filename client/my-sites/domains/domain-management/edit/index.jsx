@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import { getSelectedDomain, getDomainTypeText } from 'calypso/lib/domains';
@@ -24,7 +24,7 @@ import WpcomDomainType from './domain-types/wpcom-domain-type';
 
 import './style.scss';
 
-class Edit extends React.Component {
+class Edit extends Component {
 	render() {
 		const domain = this.props.domains && getSelectedDomain( this.props );
 

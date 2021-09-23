@@ -3,7 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -204,7 +204,7 @@ class GoogleLoginButton extends Component {
 				onBlur: this.hideError,
 			};
 
-			customButton = React.cloneElement( children, childProps );
+			customButton = cloneElement( children, childProps );
 		}
 
 		return (

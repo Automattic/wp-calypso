@@ -2,11 +2,11 @@ import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
-export default class LoggedOutForm extends React.Component {
+export default class LoggedOutForm extends Component {
 	static propTypes = {
 		children: PropTypes.node.isRequired,
 		className: PropTypes.string,

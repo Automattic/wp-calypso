@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import PostShare from 'calypso/blocks/post-share';
@@ -27,7 +27,7 @@ import PostTypeSiteInfo from '../post-type-site-info';
 
 import './style.scss';
 
-class PostItem extends React.Component {
+class PostItem extends Component {
 	clickHandler = ( clickTarget ) => () => {
 		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
 	};

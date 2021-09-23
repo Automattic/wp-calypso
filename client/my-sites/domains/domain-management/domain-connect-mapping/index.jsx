@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -22,7 +22,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const wpcom = wp.undocumented();
 
-class DomainConnectMapping extends React.Component {
+class DomainConnectMapping extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

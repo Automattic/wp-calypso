@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Draggable from 'calypso/components/draggable';
 import {

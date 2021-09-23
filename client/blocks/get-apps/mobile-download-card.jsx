@@ -1,7 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
@@ -45,7 +45,7 @@ function sendSMS( phone ) {
 	} );
 }
 
-class MobileDownloadCard extends React.Component {
+class MobileDownloadCard extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		countriesList: PropTypes.array.isRequired,

@@ -3,7 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { concat, without, isEmpty, find } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -20,7 +20,7 @@ export class ActionTypeSelector extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.activityTypeButton = React.createRef();
+		this.activityTypeButton = createRef();
 	}
 
 	resetActivityTypeSelector = ( event ) => {

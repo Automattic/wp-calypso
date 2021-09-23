@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';

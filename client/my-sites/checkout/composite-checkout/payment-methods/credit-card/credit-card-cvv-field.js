@@ -1,7 +1,6 @@
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
 import { CardCvcElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import {
 	LeftColumn,
 	RightColumn,

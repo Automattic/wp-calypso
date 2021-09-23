@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, size, filter, isEmpty, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
@@ -24,7 +24,7 @@ import ReaderCombinedCardPost from './post';
 
 import './style.scss';
 
-class ReaderCombinedCardComponent extends React.Component {
+class ReaderCombinedCardComponent extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		posts: PropTypes.array.isRequired,

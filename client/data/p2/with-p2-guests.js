@@ -1,5 +1,4 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React from 'react';
 import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
 
 const withP2Guests = createHigherOrderComponent(

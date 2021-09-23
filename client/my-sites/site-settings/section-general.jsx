@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import GeneralForm from 'calypso/my-sites/site-settings/form-general';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

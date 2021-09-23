@@ -10,7 +10,7 @@ jest.mock( 'calypso/lib/analytics/track-component-view', () => {
 
 import { Card, Button } from '@automattic/components';
 import { shallow } from 'enzyme';
-import React from 'react';
+import * as React from 'react';
 import PlanPrice from 'calypso/my-sites/plan-price/';
 import { Banner } from '../index';
 

@@ -10,7 +10,6 @@ import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );

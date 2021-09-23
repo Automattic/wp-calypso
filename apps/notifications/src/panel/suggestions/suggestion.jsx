@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 
 const getRegExpFor = function ( type, textToHighlight ) {
 	const expressions = {};
@@ -29,7 +29,7 @@ const highlight = ( content, textToHighlight, type ) => {
 	)[ 0 ];
 };
 
-export class Suggestion extends React.Component {
+export class Suggestion extends Component {
 	render() {
 		const username = highlight( this.props.username, this.props.suggestionsQuery, 'username' );
 		username.unshift( { type: 'text', text: '@' } );

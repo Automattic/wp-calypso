@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import getAppsImage from 'calypso/assets/images/illustrations/get-apps-banner.svg';
 
 const GetAppsIllustration = ( { translate } ) => (

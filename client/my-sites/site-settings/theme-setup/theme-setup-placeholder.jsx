@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ThemeSetupPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

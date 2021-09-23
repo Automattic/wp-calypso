@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

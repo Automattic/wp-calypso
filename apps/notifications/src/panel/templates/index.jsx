@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../helpers/input';
@@ -62,7 +62,7 @@ export const findNextNoteId = ( noteId, notes ) => {
 	return notes[ nextIndex ].id;
 };
 
-class Layout extends React.Component {
+class Layout extends Component {
 	state = {
 		lastSelectedIndex: 0,
 		navigationEnabled: true,

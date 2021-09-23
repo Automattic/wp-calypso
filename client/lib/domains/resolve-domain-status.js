@@ -1,6 +1,5 @@
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';

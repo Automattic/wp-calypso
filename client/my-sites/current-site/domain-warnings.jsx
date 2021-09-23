@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';

@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';

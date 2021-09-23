@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 
 const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {

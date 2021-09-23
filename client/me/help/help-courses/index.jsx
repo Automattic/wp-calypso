@@ -1,7 +1,7 @@
 import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';

@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { PureComponent } from 'react';
 import './style.scss';
 
-class ReadingTime extends React.PureComponent {
+class ReadingTime extends PureComponent {
 	render() {
 		const words = this.props.words || 0;
 		const timeInMinutes = Math.round( this.props.readingTime / 60 );

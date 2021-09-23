@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
@@ -23,7 +23,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-class NotificationSubscriptions extends React.Component {
+class NotificationSubscriptions extends Component {
 	handleClickEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}

@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';

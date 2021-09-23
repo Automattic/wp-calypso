@@ -1,4 +1,4 @@
-import React from 'react';
+import { createElement } from 'react';
 import {
 	FEATURE_STATS,
 	SECTION_LEARN_GROW,
@@ -22,17 +22,15 @@ const Secondary = ( { cards } ) => {
 		return null;
 	}
 
-	return (
-		<>
-			{ cards.map(
-				( card ) =>
-					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
-						key: card,
-					} )
-			) }
-		</>
-	);
+	return <>
+        { cards.map(
+            ( card ) =>
+                cardComponents[ card ] &&
+                createElement( cardComponents[ card ], {
+                    key: card,
+                } )
+        ) }
+    </>;
 };
 
 export default Secondary;

@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import CourseVideo from './course-video';
 
 export default localize( ( props ) => {

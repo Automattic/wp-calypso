@@ -7,7 +7,7 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -61,7 +61,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
-class ThemeSheet extends React.Component {
+class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
 	static propTypes = {
@@ -733,7 +733,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		if ( hasUpsellBanner ) {
-			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
+			previewUpsellBanner = cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}

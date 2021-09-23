@@ -2,7 +2,7 @@ import url from 'url';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import page from 'page';
-import React from 'react';
+import * as React from 'react';
 
 const debug = debugFactory( 'calypso:url-search' );
 
@@ -35,7 +35,7 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 };
 
 const UrlSearch = ( Component ) =>
-	class extends React.Component {
+	(class extends React.Component {
 		static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
 		static defaultProps = {
 			search: '',
@@ -84,6 +84,6 @@ const UrlSearch = ( Component ) =>
 				/>
 			);
 		}
-	};
+	});
 
 export default UrlSearch;

@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
 
 describe( 'FormCountrySelect', () => {

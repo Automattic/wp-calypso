@@ -1,5 +1,5 @@
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
@@ -35,6 +35,6 @@ export function setup( context, next ) {
 		return page.redirect( '/woocommerce-installation' );
 	}
 
-	context.primary = React.createElement( main );
+	context.primary = createElement( main );
 	next();
 }

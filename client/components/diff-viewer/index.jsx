@@ -1,5 +1,5 @@
 import { parsePatch } from 'diff/lib/patch/parse';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import './style.scss';
 

@@ -3,7 +3,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
@@ -29,7 +29,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class MapDomainStep extends React.Component {
+class MapDomainStep extends Component {
 	static propTypes = {
 		products: PropTypes.object,
 		cart: PropTypes.object,

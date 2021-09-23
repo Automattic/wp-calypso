@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';

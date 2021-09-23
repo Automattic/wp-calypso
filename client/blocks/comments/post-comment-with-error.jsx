@@ -1,12 +1,12 @@
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import PostCommentForm from './form';
 
 import './post-comment.scss'; // intentional, shares styles
 import './post-comment-with-error.scss';
 
-export default class PostCommentWithError extends React.Component {
+export default class PostCommentWithError extends Component {
 	renderCommentForm() {
 		const { post, commentsTree, commentId, onUpdateCommentText, activeReplyCommentId } = this.props;
 		const commentText = get( commentsTree, [ commentId, 'data', 'content' ] );

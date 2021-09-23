@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import React from 'react';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
 import { render as rtlRender, screen } from 'calypso/test-helpers/config/testing-library';
 import HasSitePurchasesSwitch from '../index';

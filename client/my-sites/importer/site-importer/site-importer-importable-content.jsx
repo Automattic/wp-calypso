@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 import './site-importer-importable-content.scss';
 

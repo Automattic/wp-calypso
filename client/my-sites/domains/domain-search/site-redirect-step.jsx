@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,7 +19,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 
 import './site-redirect-step.scss';
 
-class SiteRedirectStep extends React.Component {
+class SiteRedirectStep extends Component {
 	static propTypes = {
 		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,

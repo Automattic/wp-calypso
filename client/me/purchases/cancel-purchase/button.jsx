@@ -4,7 +4,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';

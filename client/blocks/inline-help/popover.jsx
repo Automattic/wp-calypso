@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
@@ -32,7 +32,7 @@ class InlineHelpPopover extends Component {
 		selectedResult: null,
 	};
 
-	secondaryViewRef = React.createRef();
+	secondaryViewRef = createRef();
 
 	openResultView = ( event, result ) => {
 		event.preventDefault();

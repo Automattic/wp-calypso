@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map, deburr, get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -42,7 +42,7 @@ const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 let siteUrlsSearched = [];
 let timesValidationFailed = 0;
 
-class P2Site extends React.Component {
+class P2Site extends Component {
 	static displayName = 'P2Site';
 
 	constructor( props ) {

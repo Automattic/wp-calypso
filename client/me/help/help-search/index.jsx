@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryHelpLinks from 'calypso/components/data/query-help-links';
 import SearchCard from 'calypso/components/search-card';
@@ -13,7 +13,7 @@ import getHelpLinks from 'calypso/state/selectors/get-help-links';
 
 import './style.scss';
 
-export class HelpSearch extends React.PureComponent {
+export class HelpSearch extends PureComponent {
 	state = {
 		searchQuery: '',
 	};

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { groupBy, isEmpty, map, size, values } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
@@ -58,7 +58,7 @@ function getMediaScalePreference( state, isMobile ) {
 	return mediaScale;
 }
 
-export class MediaLibraryContent extends React.Component {
+export class MediaLibraryContent extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,

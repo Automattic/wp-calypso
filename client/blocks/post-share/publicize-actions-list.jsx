@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySharePostActions from 'calypso/components/data/query-share-post-actions/index.jsx';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';

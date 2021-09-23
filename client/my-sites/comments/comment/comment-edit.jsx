@@ -2,7 +2,7 @@ import { Button, Popover, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, createRef } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormButton from 'calypso/components/forms/form-button';

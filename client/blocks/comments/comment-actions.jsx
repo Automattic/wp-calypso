@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';

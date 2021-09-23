@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 
 function PodcastingNotSupportedMessage( { translate } ) {

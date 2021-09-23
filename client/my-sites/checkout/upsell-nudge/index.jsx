@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -68,7 +68,7 @@ export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 
-export class UpsellNudge extends React.Component {
+export class UpsellNudge extends Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
 		upsellType: PropTypes.string,

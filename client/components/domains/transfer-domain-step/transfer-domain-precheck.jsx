@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,7 +19,7 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isSupportSession as hasEnteredSupportSession } from 'calypso/state/support/selectors';
 
-class TransferDomainPrecheck extends React.Component {
+class TransferDomainPrecheck extends Component {
 	static propTypes = {
 		authCodeValid: PropTypes.bool,
 		checkAuthCode: PropTypes.func,

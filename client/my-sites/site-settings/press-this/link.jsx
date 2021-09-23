@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { newPost } from 'calypso/lib/paths';
 
 /**
@@ -52,7 +52,7 @@ const pressThis = function ( postURL ) {
 	void 0;
 };
 
-class PressThisLink extends React.Component {
+class PressThisLink extends Component {
 	static propTypes = {
 		site: PropTypes.object.isRequired,
 	};

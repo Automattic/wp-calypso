@@ -8,7 +8,6 @@ import {
 import Debug from 'debug';
 import { get, some } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

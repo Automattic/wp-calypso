@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
@@ -19,7 +19,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { connectOptions } from './theme-options';
 
-class ThemePreview extends React.Component {
+class ThemePreview extends Component {
 	static displayName = 'ThemePreview';
 
 	static propTypes = {

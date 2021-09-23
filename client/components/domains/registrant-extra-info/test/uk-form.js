@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
 

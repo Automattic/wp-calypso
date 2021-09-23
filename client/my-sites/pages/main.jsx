@@ -1,7 +1,7 @@
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import SitePreview from 'calypso/blocks/site-preview';
@@ -23,7 +23,7 @@ import PageList from './page-list';
 
 import './style.scss';
 
-class PagesMain extends React.Component {
+class PagesMain extends Component {
 	static displayName = 'Pages';
 
 	static propTypes = {

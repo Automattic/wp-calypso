@@ -1,4 +1,3 @@
-import React from 'react';
 import ListEnd from 'calypso/components/list-end';
 
 export default function ListEndExample() {

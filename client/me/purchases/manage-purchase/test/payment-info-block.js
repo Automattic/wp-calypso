@@ -6,7 +6,6 @@
 /* eslint-disable jest/valid-title */
 
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import PaymentInfoBlock from '../payment-info-block';
 import '@testing-library/jest-dom/extend-expect';
 

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import Search from 'calypso/components/search';
 import urlSearch from 'calypso/lib/url-search';
 

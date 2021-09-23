@@ -1,5 +1,5 @@
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import Main from './main';
 
 export default {
@@ -15,7 +15,7 @@ export default {
 			window.scrollTo( 0, 0 );
 		}
 
-		context.primary = React.createElement( Main, {
+		context.primary = createElement( Main, {
 			section: context.params.section,
 			path: context.path,
 			query: context.query,

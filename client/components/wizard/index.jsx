@@ -1,6 +1,6 @@
 import { compact, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { cloneElement, Component } from 'react';
 import NavigationLink from './navigation-link';
 import ProgressIndicator from './progress-indicator';
 
@@ -89,12 +89,12 @@ class Wizard extends Component {
 		const forwardUrl = this.getForwardUrl() || '';
 
 		return (
-			<div className="wizard">
+            <div className="wizard">
 				{ totalSteps > 1 && (
 					<ProgressIndicator stepNumber={ stepIndex } totalSteps={ totalSteps } />
 				) }
 
-				{ React.cloneElement( component, {
+				{ cloneElement( component, {
 					basePath,
 					getBackUrl: this.getBackUrl,
 					getForwardUrl: this.getForwardUrl,
@@ -124,7 +124,7 @@ class Wizard extends Component {
 					</div>
 				) }
 			</div>
-		);
+        );
 	}
 }
 

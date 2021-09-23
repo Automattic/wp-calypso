@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 import './style.scss';

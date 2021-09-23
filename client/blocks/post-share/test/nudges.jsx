@@ -25,7 +25,6 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { UpgradeToPremiumNudgePure } from '../nudges';
 
 const props = {

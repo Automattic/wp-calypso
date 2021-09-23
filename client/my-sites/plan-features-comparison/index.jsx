@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { compact, get, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';

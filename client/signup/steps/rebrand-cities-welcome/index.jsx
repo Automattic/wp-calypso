@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { generateUniqueRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';

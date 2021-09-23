@@ -5,7 +5,7 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["runComponentTests", "expect"] }] */
 
 import 'regenerator-runtime';
-import React, { useState, useEffect } from 'react';
+import { Component, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 
@@ -83,7 +83,7 @@ describe( '@automattic/viewport-react', () => {
 	}
 
 	// Auxiliary class for HOC tests.
-	class BaseComponent extends React.Component {
+	class BaseComponent extends Component {
 		render() {
 			const isActive = this.props.isBreakpointActive;
 			return isActive ? 'true' : 'false';
@@ -226,7 +226,7 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	describe( 'withBreakpoint', () => {
-		class ExpectUndefinedComponent extends React.Component {
+		class ExpectUndefinedComponent extends Component {
 			render() {
 				const isActive = this.props.isBreakpointActive;
 				return isActive === undefined ? 'undefined' : `unexpected value: ${ isActive }`;

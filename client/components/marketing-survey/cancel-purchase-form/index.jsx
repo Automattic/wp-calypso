@@ -22,7 +22,7 @@ import {
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { cloneElement } from 'react';
+import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import pluginsThemesImage from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 import downgradeImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
@@ -74,7 +74,7 @@ import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, FINAL_STEP, INITIAL_STEP } from './s
 
 import './style.scss';
 
-class CancelPurchaseForm extends React.Component {
+class CancelPurchaseForm extends Component {
 	static propTypes = {
 		defaultContent: PropTypes.node.isRequired,
 		disableButtons: PropTypes.bool,

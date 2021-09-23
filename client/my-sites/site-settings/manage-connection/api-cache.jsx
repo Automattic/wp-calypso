@@ -3,7 +3,6 @@ import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight, pick } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

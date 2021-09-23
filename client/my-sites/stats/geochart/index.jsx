@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { throttle, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -25,7 +25,7 @@ class StatsGeochart extends Component {
 
 	visualizationsLoaded = false;
 	visualization = null;
-	chartRef = React.createRef();
+	chartRef = createRef();
 
 	componentDidMount() {
 		if ( ! window.google || ! window.google.charts ) {

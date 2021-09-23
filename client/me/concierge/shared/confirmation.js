@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 

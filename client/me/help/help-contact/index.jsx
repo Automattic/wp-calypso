@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
@@ -77,7 +77,7 @@ const debug = debugFactory( 'calypso:help-contact' );
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 let savedContactForm = null;
 
-class HelpContact extends React.Component {
+class HelpContact extends Component {
 	static propTypes = {
 		compact: PropTypes.bool,
 	};

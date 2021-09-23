@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
-export default class FeaturedImage extends React.Component {
+export default class FeaturedImage extends Component {
 	constructor( props ) {
 		super();
 		this.state = { src: props.src };

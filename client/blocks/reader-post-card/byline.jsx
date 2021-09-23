@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { get, map, take, values } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -19,7 +19,7 @@ import {
 
 const TAGS_TO_SHOW = 3;
 
-class TagLink extends React.Component {
+class TagLink extends Component {
 	recordSingleTagClick = () => {
 		const tag = this.props.tag;
 		recordAction( 'click_tag' );
@@ -45,7 +45,7 @@ class TagLink extends React.Component {
 	}
 }
 
-class PostByline extends React.Component {
+class PostByline extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,

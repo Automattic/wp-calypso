@@ -3,7 +3,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';

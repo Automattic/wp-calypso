@@ -1,8 +1,8 @@
 import debugFactory from 'debug';
-import React from 'react';
+import { Component } from 'react';
 const debug = debugFactory( 'calypso:my-sites:site' );
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'SitePlaceholder';
 
 	componentDidMount() {

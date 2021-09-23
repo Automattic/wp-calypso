@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { createElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
@@ -38,17 +38,15 @@ const ManageSite = () => {
 		return null;
 	}
 
-	return (
-		<>
-			{ cards.map(
-				( card, index ) =>
-					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
-						key: index,
-					} )
-			) }
-		</>
-	);
+	return <>
+        { cards.map(
+            ( card, index ) =>
+                cardComponents[ card ] &&
+                createElement( cardComponents[ card ], {
+                    key: index,
+                } )
+        ) }
+    </>;
 };
 
 function useManageSiteCards() {

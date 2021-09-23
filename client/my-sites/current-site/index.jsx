@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';

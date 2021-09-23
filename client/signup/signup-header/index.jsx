@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 

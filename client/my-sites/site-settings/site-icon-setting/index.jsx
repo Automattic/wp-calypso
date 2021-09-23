@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEqual, flow, compact, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
@@ -197,7 +197,7 @@ class SiteIconSetting extends Component {
 		const { translate, siteId, isSaving, hasIcon } = this.props;
 
 		return (
-			<FormFieldset className="site-icon-setting">
+            <FormFieldset className="site-icon-setting">
 				<FormLabel className="site-icon-setting__heading">
 					{ translate( 'Site icon' ) }
 					<InfoPopover position="bottom right">
@@ -208,7 +208,7 @@ class SiteIconSetting extends Component {
 						) }
 					</InfoPopover>
 				</FormLabel>
-				{ React.createElement(
+				{ createElement(
 					buttonProps.href ? 'a' : 'button',
 					{
 						...buttonProps,
@@ -262,7 +262,7 @@ class SiteIconSetting extends Component {
 					/>
 				) }
 			</FormFieldset>
-		);
+        );
 	}
 }
 

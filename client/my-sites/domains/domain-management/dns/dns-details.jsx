@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { PureComponent } from 'react';
 import { CUSTOM_DNS } from 'calypso/lib/url/support';
 
-class DnsDetails extends React.PureComponent {
+class DnsDetails extends PureComponent {
 	render() {
 		const { translate } = this.props;
 

@@ -1,6 +1,6 @@
 import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

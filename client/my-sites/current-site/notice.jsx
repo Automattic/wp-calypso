@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { get, reject } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
@@ -40,7 +40,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
-export class SiteNotice extends React.Component {
+export class SiteNotice extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 	};

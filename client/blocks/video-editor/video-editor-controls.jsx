@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import UploadButton from './video-editor-upload-button';
 
 const noop = () => {};

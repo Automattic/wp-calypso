@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import scrollTo from 'calypso/lib/scroll-to';
 import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';

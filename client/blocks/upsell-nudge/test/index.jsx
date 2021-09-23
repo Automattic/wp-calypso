@@ -13,7 +13,6 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { UpsellNudge } from '../index';
 
 const props = {

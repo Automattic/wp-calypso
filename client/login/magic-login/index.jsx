@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import GlobalNotices from 'calypso/components/global-notices';
 import JetpackHeader from 'calypso/components/jetpack-header';
@@ -27,7 +27,7 @@ import RequestLoginEmailForm from './request-login-email-form';
 
 import './style.scss';
 
-class MagicLogin extends React.Component {
+class MagicLogin extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useMemo, useState, useRef, useLayoutEffect } from 'react';
+import { Children, createRef, useMemo, useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -15,7 +15,7 @@ const isTouch = hasTouch();
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, ( child ) => {
+	Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
@@ -53,7 +53,7 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
-	const menu = React.createRef(); // Needed for HoverIntent.
+	const menu = createRef(); // Needed for HoverIntent.
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 	const isUnifiedMenuEnabled = useSelector( isNavUnificationEnabled );

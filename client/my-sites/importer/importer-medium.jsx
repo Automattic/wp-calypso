@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import FileImporter from './file-importer';
 
-class ImporterMedium extends React.PureComponent {
+class ImporterMedium extends PureComponent {
 	static displayName = 'ImporterMedium';
 
 	render() {

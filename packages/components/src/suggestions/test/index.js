@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import Suggestions from '..';
 import Item from '../item';
 

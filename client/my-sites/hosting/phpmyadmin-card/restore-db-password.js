@@ -1,6 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import {
 	withAnalytics,

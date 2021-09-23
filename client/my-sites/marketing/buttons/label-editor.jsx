@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { decodeEntities } from 'calypso/lib/formatting';
 
@@ -10,7 +10,7 @@ const closeKeyCodes = [
 	27, // Escape
 ];
 
-class SharingButtonsLabelEditor extends React.Component {
+class SharingButtonsLabelEditor extends Component {
 	static displayName = 'SharingButtonsLabelEditor';
 
 	static propTypes = {

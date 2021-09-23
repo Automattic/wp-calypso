@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';

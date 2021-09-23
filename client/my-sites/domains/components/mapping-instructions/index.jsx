@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';
@@ -14,7 +14,7 @@ import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/my-sites/domains/domain-manag
 
 import './style.scss';
 
-class DomainMappingInstructions extends React.Component {
+class DomainMappingInstructions extends Component {
 	static propTypes = {
 		aRecordsRequiredForMapping: PropTypes.array,
 		areDomainDetailsLoaded: PropTypes.bool,
@@ -43,15 +43,15 @@ class DomainMappingInstructions extends React.Component {
 		);
 
 		return (
-			<React.Fragment>
+            <Fragment>
 				<p>{ nameServerInstructionsMessage }</p>
 				<ul>
 					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 						return <li key={ nameServer }>{ nameServer }</li>;
 					} ) }
 				</ul>
-			</React.Fragment>
-		);
+			</Fragment>
+        );
 	}
 
 	renderNsRecordsInstructions() {
@@ -67,7 +67,7 @@ class DomainMappingInstructions extends React.Component {
 		);
 
 		return (
-			<React.Fragment>
+            <Fragment>
 				<p>{ nameServerInstructionsMessage }</p>
 				<ul>
 					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
@@ -80,8 +80,8 @@ class DomainMappingInstructions extends React.Component {
 						);
 					} ) }
 				</ul>
-			</React.Fragment>
-		);
+			</Fragment>
+        );
 	}
 
 	renderNsRecordsInstructionsWithHeader() {
@@ -133,7 +133,7 @@ class DomainMappingInstructions extends React.Component {
 		];
 
 		return (
-			<React.Fragment>
+            <Fragment>
 				{ isAtomic && (
 					<Notice status="is-warning" showDismiss={ false } translate={ this.props.translate }>
 						{ cnameMappingWarning }
@@ -151,8 +151,8 @@ class DomainMappingInstructions extends React.Component {
 						<li key={ i }>{ instruction }</li>
 					) ) }
 				</ul>
-			</React.Fragment>
-		);
+			</Fragment>
+        );
 	}
 
 	renderCnameInstructionsWithHeader() {

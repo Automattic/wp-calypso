@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import QueryVerticals from 'calypso/components/data/query-verticals';

@@ -1,13 +1,13 @@
 import classnames from 'classnames';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const noop = () => {};
 
-class PostPhoto extends React.Component {
+class PostPhoto extends Component {
 	state = {
 		cardWidth: 800,
 	};

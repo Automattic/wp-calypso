@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
@@ -12,7 +12,7 @@ export default function QueryWordadsSettings( { siteId } ) {
 		isRequestingJetpackSettings( state, siteId, null )
 	);
 
-	React.useEffect(
+	useEffect(
 		() => {
 			dispatch( requestWordadsSettings( siteId ) );
 

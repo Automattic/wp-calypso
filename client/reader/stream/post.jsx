@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
@@ -14,7 +14,7 @@ import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
-class ReaderPostCardAdapter extends React.Component {
+class ReaderPostCardAdapter extends Component {
 	static displayName = 'ReaderPostCardAdapter';
 
 	onClick = ( postToOpen ) => {

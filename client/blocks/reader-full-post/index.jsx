@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 import CommentButton from 'calypso/blocks/comment-button';
@@ -84,7 +84,7 @@ import ReaderFullPostUnavailable from './unavailable';
 
 import './style.scss';
 
-export class FullPostView extends React.Component {
+export class FullPostView extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		onClose: PropTypes.func.isRequired,
@@ -95,8 +95,8 @@ export class FullPostView extends React.Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
-	commentsWrapper = React.createRef();
-	postContentWrapper = React.createRef();
+	commentsWrapper = createRef();
+	postContentWrapper = createRef();
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );

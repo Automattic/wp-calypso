@@ -1,7 +1,7 @@
 import { Popover } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
@@ -9,7 +9,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class SitesPopover extends React.Component {
+class SitesPopover extends Component {
 	static propTypes = {
 		showDelay: PropTypes.number,
 		context: PropTypes.object,

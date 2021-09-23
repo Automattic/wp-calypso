@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { isEqual, isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -13,7 +13,7 @@ import './style.scss';
 
 const noop = () => {};
 
-export class ThemesList extends React.Component {
+export class ThemesList extends Component {
 	static propTypes = {
 		themes: PropTypes.array.isRequired,
 		emptyContent: PropTypes.element,

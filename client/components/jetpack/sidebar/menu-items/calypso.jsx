@@ -1,4 +1,3 @@
-import React from 'react';
 import JetpackSidebarMenuItems from '.';
 
 export default ( { path, expandSection } ) => {

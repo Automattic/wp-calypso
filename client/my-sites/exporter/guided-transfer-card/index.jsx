@@ -1,6 +1,6 @@
 import { CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import Button from 'calypso/components/forms/form-button';

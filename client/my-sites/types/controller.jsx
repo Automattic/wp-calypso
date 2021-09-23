@@ -1,4 +1,3 @@
-import React from 'react';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import Types from './main';

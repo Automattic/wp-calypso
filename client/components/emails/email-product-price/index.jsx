@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 import './style.scss';

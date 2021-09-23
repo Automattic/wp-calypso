@@ -1,7 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React from 'react';
+import { createContext, useMemo, useContext } from 'react';
 
-const RouteContext = React.createContext( {
+const RouteContext = createContext( {
 	// TODO: a `null` value would be a better fit here, but existing code might access
 	// the properties of `currentSection` without guarding for `null`. Accessing properties
 	// of a boolean value is OK -- it's an object.
@@ -18,7 +18,7 @@ export function RouteProvider( {
 } ) {
 	// modify the `currentRouteInfo` object (and trigger rerender of consumers) only if any
 	// of its properties really changes.
-	const currentRouteInfo = React.useMemo(
+	const currentRouteInfo = useMemo(
 		() => ( { currentSection, currentRoute, currentQuery } ),
 		[ currentSection, currentRoute, currentQuery ]
 	);
@@ -26,7 +26,7 @@ export function RouteProvider( {
 }
 
 export function useCurrentRoute() {
-	return React.useContext( RouteContext );
+	return useContext( RouteContext );
 }
 
 export const withCurrentRoute = createHigherOrderComponent( ( Wrapped ) => {

@@ -10,7 +10,7 @@ import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import ActionCard from 'calypso/components/action-card/docs/example';
@@ -115,7 +115,7 @@ import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 
-export default class DesignAssets extends React.Component {
+export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
 
@@ -137,18 +137,18 @@ export default class DesignAssets extends React.Component {
 		} );
 
 		return (
-			<Main className={ className }>
+            <Main className={ className }>
 				<DocumentHead title="UI Components" />
 
 				{ component ? (
-					<React.Fragment>
+					<Fragment>
 						<HeaderCake onClick={ this.backToComponents } backText="All Components">
 							{ slugToCamelCase( component ) }
 						</HeaderCake>
 						{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
 							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 						) }
-					</React.Fragment>
+					</Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
@@ -271,6 +271,6 @@ export default class DesignAssets extends React.Component {
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
 				</Collection>
 			</Main>
-		);
+        );
 	}
 }

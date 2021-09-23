@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import {
 	makeLayout,
 	redirectLoggedOut,

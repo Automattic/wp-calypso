@@ -1,7 +1,7 @@
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';

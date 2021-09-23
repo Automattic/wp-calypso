@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { includes, isEqual, some } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';

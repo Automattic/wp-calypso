@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import ExternalLink from '../index';
 
 describe( 'External Link', () => {

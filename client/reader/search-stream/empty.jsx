@@ -1,13 +1,13 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class SearchEmptyContent extends React.Component {
+class SearchEmptyContent extends Component {
 	static propTypes = {
 		query: PropTypes.string,
 	};

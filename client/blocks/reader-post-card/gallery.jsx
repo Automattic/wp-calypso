@@ -1,6 +1,5 @@
 import { map, take, filter } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';

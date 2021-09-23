@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 
 import 'calypso/me/purchases/style.scss';
 

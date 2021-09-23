@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent, forwardRef } from 'react';
 import addUserMentions from './add';
 import connectUserMentions from './connect';
 
@@ -11,7 +11,7 @@ import connectUserMentions from './connect';
  * @returns {object} the enhanced component
  */
 const withUserMentions = ( WrappedComponent ) => {
-	class TextInputWrapper extends React.PureComponent {
+	class TextInputWrapper extends PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,
 		};
@@ -23,7 +23,7 @@ const withUserMentions = ( WrappedComponent ) => {
 
 	return connectUserMentions(
 		addUserMentions(
-			React.forwardRef( ( props, ref ) => {
+			forwardRef( ( props, ref ) => {
 				return <TextInputWrapper { ...props } forwardedRef={ ref } />;
 			} )
 		)

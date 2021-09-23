@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import SegmentedControlItem from './item';
 
 import './style.scss';
 
-export default class SegmentedControl extends React.Component {
+export default class SegmentedControl extends Component {
 	static Item = SegmentedControlItem;
 
 	static propTypes = {

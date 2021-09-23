@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
 import QueryTaxonomies from 'calypso/components/data/query-taxonomies';

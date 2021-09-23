@@ -1,13 +1,13 @@
 import debugFactory from 'debug';
 import moment from 'moment';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import MomentContext from './context';
 
 const debug = debugFactory( 'calypso:localized-moment' );
 
-class MomentProvider extends React.Component {
+class MomentProvider extends Component {
 	state = { moment, momentLocale: moment.locale() };
 
 	async checkAndLoad( previousLocale ) {

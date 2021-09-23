@@ -1,8 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import React from 'react';
-
-export default ( suggestions ) => ( {
+export default suggestions => {
 	name: 'users',
 	className: 'editor-autocompleters__user',
 	triggerPrefix: '@',
@@ -35,4 +33,4 @@ export default ( suggestions ) => ( {
 	getOptionCompletion( user ) {
 		return `@${ user.user_login }`;
 	},
-} );
+};

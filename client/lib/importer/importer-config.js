@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
-import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {

@@ -1,5 +1,5 @@
 import { map, sampleSize, times } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { suggestions } from 'calypso/reader/search-stream/suggestions';
@@ -78,7 +78,7 @@ function getSuggestions( count, tags ) {
 }
 
 const SuggestionsProvider = ( Element, count = 3 ) =>
-	class extends Component {
+	(class extends Component {
 		// never let the suggestions change once its been set to non-null so that suggestions
 		// don't keep getting recalulated every redux-store change
 		memoizedSuggestions = null;
@@ -100,6 +100,6 @@ const SuggestionsProvider = ( Element, count = 3 ) =>
 			const EnhancedComponent = this.EnhancedComponent;
 			return <EnhancedComponent { ...this.props } />;
 		}
-	};
+	});
 
 export default SuggestionsProvider;

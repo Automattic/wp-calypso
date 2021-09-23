@@ -2,12 +2,12 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import Page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import Notice from 'calypso/components/notice';
 
 const noop = () => {};
 
-class ImporterError extends React.PureComponent {
+class ImporterError extends PureComponent {
 	static displayName = 'ImporterError';
 	static defaultProps = {
 		retryImport: noop,

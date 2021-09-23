@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import EmptyContent from 'calypso/components/empty-content';
@@ -22,7 +22,7 @@ import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
 
-class People extends React.Component {
+class People extends Component {
 	renderPeopleList() {
 		const { site, search, filter, translate } = this.props;
 

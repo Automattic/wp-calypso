@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { capitalize, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';

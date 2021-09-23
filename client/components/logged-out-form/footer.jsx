@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import './footer.scss';
 

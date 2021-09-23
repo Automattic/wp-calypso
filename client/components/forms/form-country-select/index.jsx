@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
 import './style.scss';

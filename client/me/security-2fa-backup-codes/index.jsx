@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
@@ -12,7 +12,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 import './style.scss';
 
-class Security2faBackupCodes extends React.Component {
+class Security2faBackupCodes extends Component {
 	constructor( props ) {
 		super( props );
 

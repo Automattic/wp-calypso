@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

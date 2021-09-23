@@ -8,7 +8,7 @@ import {
 import classnames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import safeImageURL from 'calypso/lib/safe-image-url';
 import { getUserTempGravatar } from 'calypso/state/current-user/gravatar-status/selectors';

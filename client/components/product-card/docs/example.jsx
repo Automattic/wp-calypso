@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import ProductCardAction from '../action';
 import ProductCard from '../index';
 import ProductCardOptions from '../options';

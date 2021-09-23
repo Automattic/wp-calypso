@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import Divider from '../divider';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';

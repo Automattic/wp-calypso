@@ -5,7 +5,7 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { get, forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';

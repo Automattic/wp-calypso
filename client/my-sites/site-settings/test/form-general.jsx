@@ -10,9 +10,9 @@ jest.mock( 'store', () => ( {
 jest.mock(
 	'calypso/blocks/upsell-nudge',
 	() =>
-		function UpsellNudge() {
+		(function UpsellNudge() {
 			return <div />;
-		}
+		})
 );
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -36,7 +36,6 @@ import { render, fireEvent } from '@testing-library/react';
 import { shallow } from 'enzyme';
 import '@testing-library/jest-dom/extend-expect';
 import moment from 'moment';
-import React from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
