@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Main from 'calypso/components/main';
 import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
 import WooCommerceColophon from './woocommerce-colophon';

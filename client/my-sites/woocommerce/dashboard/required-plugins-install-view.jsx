@@ -436,6 +436,7 @@ class RequiredPluginsInstallView extends Component {
 
 	updateEngine = () => {
 		switch ( this.state.engineState ) {
+			// todo: add at transfer step
 			case 'INITIALIZING':
 				this.doInitialization();
 				break;
@@ -463,6 +464,8 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	startSetup = () => {
+		// todo before starting the  confirm wpcomstaging url change with AT confirmation interstitial
+
 		const { hasPendingAT } = this.props;
 
 		recordTrack( 'calypso_woocommerce_dashboard_action_click', {

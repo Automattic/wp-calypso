@@ -15,7 +15,7 @@ export function checkPrerequisites( context, next ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
 
-	// Show the woo install page on all plans.
+	// Show the woo install page on all plans when woop flag is active
 	if ( ! isEnabled( 'woop' ) ) {
 		// Only allow AT sites to access.
 		if ( ! isAtomicSite( state, siteId ) ) {
