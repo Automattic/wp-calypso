@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-e2e",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Tools for e2e tests",
 	"main": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
@@ -14,6 +14,13 @@
 		"e2e",
 		"calypso"
 	],
+	"type": "module",
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	},
+	"exports": {
+		"import": "./dist/esm/index.js"
+	},
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
 		"config": "^3.3.6",
