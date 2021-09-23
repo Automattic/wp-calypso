@@ -43,6 +43,7 @@ export type DomainStepAuthCodeProps = {
 	buttonMessage: string;
 	className: string;
 	domain: string;
+	customHeading?: string;
 	onBeforeValidate: () => void;
 	validateHandler: AuthCodeValidationHandler;
 	pageSlug: PossibleSlugs;
