@@ -1,4 +1,3 @@
-import { parse as parseUrl } from 'url';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugModule from 'debug';
@@ -232,7 +231,7 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		if ( this.checkForIframeLoadFailure( caller ) ) {
+		if ( ! this.props.disableRedirects && this.checkForIframeLoadFailure( caller ) ) {
 			if ( this.props.showClose ) {
 				window.open( this.state.iframeUrl, '_blank' );
 				this.props.onClose();
@@ -250,7 +249,7 @@ export class WebPreviewContent extends Component {
 		// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
 		// iframe OR redirected to using <a href="" target="_top">.
 		if ( this.props.isPrivateAtomic ) {
-			const { protocol, host } = parseUrl( this.props.externalUrl );
+			const { protocol, host } = new URL( this.props.externalUrl );
 			this.iframe.contentWindow.postMessage( { connected: 'calypso' }, `${ protocol }//${ host }` );
 		}
 	};
@@ -392,6 +391,8 @@ WebPreviewContent.propTypes = {
 	overridePost: PropTypes.object,
 	// A customized Toolbar element
 	toolbarComponent: PropTypes.elementType,
+	// Disable page redirect if loading iframe is failed
+	disableRedirects: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {

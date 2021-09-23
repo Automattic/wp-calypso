@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Button, Tooltip } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -150,7 +150,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	onPreview,
 	...props
 } ) => {
-	const isDesktop = useDesktopBreakpoint();
+	const isDesktop = useViewportMatch( 'large' );
 
 	if ( ! onPreview ) {
 		return <DesignButton { ...props } />;

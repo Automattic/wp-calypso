@@ -24,13 +24,9 @@
 }
 
 .preview-toolbar__devices {
-	display: none;
+	display: flex;
 	justify-content: center;
 	margin-bottom: 25px;
-
-	@include break-small {
-		display: flex;
-	}
 }
 
 // Need the extra specificity here to override core

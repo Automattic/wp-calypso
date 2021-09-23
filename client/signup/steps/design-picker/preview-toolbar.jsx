@@ -12,6 +12,7 @@ const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 const DesignPickerPreviewToolbar = ( {
 	device: currentDevice,
 	externalUrl,
+	showDeviceSwitcher,
 	setDeviceViewport,
 	translate,
 } ) => {
@@ -23,21 +24,23 @@ const DesignPickerPreviewToolbar = ( {
 
 	return (
 		<div className="preview-toolbar__toolbar">
-			<div className="preview-toolbar__devices">
-				{ possibleDevices.map( ( device ) => (
-					<Button
-						key={ device }
-						borderless
-						aria-label={ devices.current[ device ].title }
-						className={ classNames( 'preview-toolbar__button', {
-							'is-selected': device === currentDevice,
-						} ) }
-						onClick={ () => setDeviceViewport( device ) }
-					>
-						<Icon size={ 24 } icon={ devices.current[ device ].icon } />
-					</Button>
-				) ) }
-			</div>
+			{ showDeviceSwitcher && (
+				<div className="preview-toolbar__devices">
+					{ possibleDevices.map( ( device ) => (
+						<Button
+							key={ device }
+							borderless
+							aria-label={ devices.current[ device ].title }
+							className={ classNames( 'preview-toolbar__button', {
+								'is-selected': device === currentDevice,
+							} ) }
+							onClick={ () => setDeviceViewport( device ) }
+						>
+							<Icon size={ 24 } icon={ devices.current[ device ].icon } />
+						</Button>
+					) ) }
+				</div>
+			) }
 			<div className="preview-toolbar__browser-header">
 				<svg width="40" height="8">
 					<g>
@@ -57,6 +60,8 @@ DesignPickerPreviewToolbar.propTypes = {
 	device: PropTypes.string,
 	// The site URL
 	externalUrl: PropTypes.string,
+	// Show device viewport switcher
+	showDeviceSwitcher: PropTypes.bool,
 	// Called when a device button is clicked
 	setDeviceViewport: PropTypes.func,
 };
