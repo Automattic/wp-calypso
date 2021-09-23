@@ -59,14 +59,14 @@ const MailboxItem = ( { mailbox } ) => {
 
 	return (
 		<Card
-			className="mailbox-selection-list__mailbox"
+			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox ) }
 			target="external"
 		>
 			<span className="mailbox-selection-list__icon">
 				<MailboxItemIcon mailbox={ mailbox } />
 			</span>
-			<div className="mailbox-selection-list__domain">
+			<div className="mailbox-selection-list__mailbox">
 				<h2>{ getEmailAddress( mailbox ) }</h2>
 			</div>
 		</Card>

@@ -17,7 +17,7 @@ const ProgressLine = ( { statusText } ) => {
 };
 
 ProgressLine.propType = {
-	mailbox: PropTypes.string.isRequired,
+	mailbox: PropTypes.node.isRequired,
 };
 
 export default ProgressLine;
