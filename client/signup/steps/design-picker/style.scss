@@ -59,6 +59,8 @@
 	}
 
 	.action-buttons {
-		background-color: transparent;
+		@include break-small {
+			background-color: transparent;
+		}
 	}
 }
