@@ -1,46 +1,33 @@
 import { CompactCard } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import QueryHelpLinks from 'calypso/components/data/query-help-links';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
+import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import HelpResults from 'calypso/me/help/help-results';
 import NoResults from 'calypso/my-sites/no-results';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getHelpLinks from 'calypso/state/selectors/get-help-links';
-
 import './style.scss';
 
-export class HelpSearch extends PureComponent {
-	state = {
-		searchQuery: '',
+export function HelpSearch( props ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ searchQuery, setQuery ] = useState( '' );
+	const { data: helpLinks } = useHelpSearchQuery( searchQuery );
+
+	const onSearch = ( query ) => {
+		setQuery( query );
+		props.onSearch( !! query );
+		dispatch( recordTracksEvent( 'calypso_help_search', { query } ) );
 	};
 
-	onSearch = ( searchQuery ) => {
-		this.setState( {
-			searchQuery,
-		} );
-
-		if ( isEmpty( searchQuery ) ) {
-			this.props.onSearch( false );
-		} else {
-			this.props.onSearch( true );
-		}
-
-		this.props.recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
-	};
-
-	displaySearchResults = () => {
-		const { searchQuery } = this.state;
-		const { helpLinks, translate } = this.props;
-
-		if ( isEmpty( searchQuery ) ) {
+	const displaySearchResults = () => {
+		if ( ! searchQuery ) {
 			return null;
 		}
 
-		if ( isEmpty( helpLinks ) ) {
+		if ( ! helpLinks ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<div className="help-results__placeholder">
@@ -63,10 +50,10 @@ export class HelpSearch extends PureComponent {
 		}
 
 		if (
-			isEmpty( helpLinks.wordpress_support_links ) &&
-			isEmpty( helpLinks.wordpress_forum_links ) &&
-			isEmpty( helpLinks.wordpress_forum_links_localized ) &&
-			isEmpty( helpLinks.jetpack_support_links )
+			! helpLinks.wordpress_support_links?.length &&
+			! helpLinks.wordpress_forum_links?.length &&
+			! helpLinks.wordpress_forum_links_localized?.length &&
+			! helpLinks.jetpack_support_links?.length
 		) {
 			return (
 				<CompactCard className="help-search__no-results">
@@ -111,30 +98,18 @@ export class HelpSearch extends PureComponent {
 		);
 	};
 
-	render() {
-		const { searchQuery } = this.state;
-
-		return (
-			<div className="help-search">
-				<QueryHelpLinks query={ searchQuery } />
-				<SearchCard
-					analyticsGroup="Help"
-					delaySearch={ true }
-					initialValue=""
-					onSearch={ this.onSearch }
-					placeholder={ this.props.translate( 'How can we help?' ) }
-				/>
-				{ this.displaySearchResults() }
-			</div>
-		);
-	}
+	return (
+		<div className="help-search">
+			<SearchCard
+				analyticsGroup="Help"
+				delaySearch={ true }
+				initialValue=""
+				onSearch={ onSearch }
+				placeholder={ translate( 'How can we help?' ) }
+			/>
+			{ displaySearchResults() }
+		</div>
+	);
 }
 
-export default connect(
-	( state ) => ( {
-		helpLinks: getHelpLinks( state ),
-	} ),
-	{
-		recordTracksEvent,
-	}
-)( localize( HelpSearch ) );
+export default HelpSearch;
