@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
-// import intentImage from 'calypso/assets/images/intent-screen/intent.svg';
 import { build, write } from './icons';
 import type { IntentFlag } from './types';
 import './intent-screen.scss';

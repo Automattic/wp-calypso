@@ -8,6 +8,7 @@
 	margin-top: -24px;
 	margin-bottom: 40px;
 	padding-left: 40px;
+	
 	@include break-small {
 		padding-left: 60px;
 	}
@@ -51,21 +52,15 @@
 	&-description {
 		font-size: $font-body-small;
 		color: #646970;
+		margin-bottom: 0;
 	}
 
 	&-button {
 		border-radius: 4px; /* stylelint-disable-line */
+		min-width: 130px;
 	}
 
 	& + & {
 		border-top: 1px solid #dcdcde;
 	}
-}
-
-.intent-screen__card-description {
-	margin-bottom: 0;
-}
-
-.intent-screen__card-button {
-	min-width: 130px;
 }
