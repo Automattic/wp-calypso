@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -89,11 +90,13 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) =
 					dispatch( requestHappychatEligibility() );
 				}
 
-				// Some purchases removals set a blog sticker to lock the site from
-				// removing more purchases, so we update the list of stickers in case
-				// we need to handle that lock in the UI.
-				const purchase = getByPurchaseId( getState(), purchaseId );
-				dispatch( listBlogStickers( purchase.siteId ) );
+				if ( config.isEnabled( 'atomic/automated-revert' ) ) {
+					// Some purchases removals set a blog sticker to lock the site from
+					// removing more purchases, so we update the list of stickers in case
+					// we need to handle that lock in the UI.
+					const purchase = getByPurchaseId( getState(), purchaseId );
+					dispatch( listBlogStickers( purchase.siteId ) );
+				}
 
 				resolve( data );
 			} )
