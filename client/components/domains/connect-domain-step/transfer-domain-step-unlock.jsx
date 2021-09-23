@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React, { useCallback, useState } from 'react';
 import ConnectDomainStepWrapper from 'calypso/components/domains/connect-domain-step/connect-domain-step-wrapper';
+import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
 
@@ -59,7 +60,12 @@ const TransferDomainStepUnlock = ( { className, onNextStep, domain, ...props } )
 	);
 
 	return (
-		<ConnectDomainStepWrapper className={ className } stepContent={ stepContent } { ...props } />
+		<ConnectDomainStepWrapper
+			heading={ stepsHeadingTransfer }
+			className={ className }
+			stepContent={ stepContent }
+			{ ...props }
+		/>
 	);
 };
 
