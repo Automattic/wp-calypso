@@ -39,7 +39,7 @@ export class PeoplePage {
 	}
 
 	/**
-	 *
+	 * Wait until the page is loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
@@ -114,6 +114,11 @@ export class PeoplePage {
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
 		await this.waitUntilLoaded();
+
+		// Ensure the card for the invited user is stable and loaded before clicking,
+		// otherwise the click is ignored.
+		const elementHandle = await this.page.waitForSelector( selectors.invitedUser( emailAddress ) );
+		await elementHandle.waitForElementState( 'stable' );
 
 		await Promise.all( [
 			this.page.waitForNavigation(),
