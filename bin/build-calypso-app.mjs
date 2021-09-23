@@ -61,7 +61,7 @@ async function runBuilder( { sync, localPath, remotePath, verbose } ) {
 			console.log( 'Build completed!' );
 			if ( ! shouldWatch && sync ) {
 				// In non-watch + sync mode, we sync only once after the build has finished.
-				syncToRemote( localPath, remotePath );
+				setupRemoteSync( localPath, remotePath );
 			}
 		} )
 		.catch( ( e ) => {
@@ -73,43 +73,60 @@ async function runBuilder( { sync, localPath, remotePath, verbose } ) {
 
 	// In dev mode, we start watching to sync while the webpack build is happening.
 	if ( shouldWatch && sync ) {
-		syncToRemote( localPath, remotePath, true );
+		setupRemoteSync( localPath, remotePath, true );
 	}
 }
 
-function syncToRemote( localPath, remotePath, watch = false ) {
+/**
+ * Sets up remote syncing. In watch mode, schedules syncs to the remote after changes
+ * have stoped happening and existing syncs have stopped. In non-watch mode, does
+ * a single sync.
+ *
+ * @param localPath   The path to the changes to watch locally.
+ * @param remotePath  The path the changes should be synced to on the sandbox.
+ * @param shouldWatch Whether to watch for changes.
+ */
+function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
+	let rsync = null;
 	const debouncedSync = debouncer( () => {
 		console.info( 'Performing sync...' );
-		exec( `rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }` );
+		if ( rsync ) {
+			rsync.kill();
+		}
+		rsync = exec(
+			`rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }`,
+			( err ) => {
+				rsync = null;
+				// SIGTERM is how we manually kill an existing rsync process so
+				// it's not an error condition for our program.
+				if ( err && err.signal !== 'SIGTERM' ) {
+					throw err;
+				}
+			}
+		);
 	} );
-	if ( watch ) {
+
+	// 1. In the case of non-watch mode, run the sync.
+	// 2. In the case of watch mode, make sure that there will be an initial sync
+	//    in case no "changes" are registered.
+	debouncedSync();
+	if ( shouldWatch ) {
 		chokidar.watch( localPath ).on( 'change', debouncedSync );
-	} else {
-		debouncedSync();
 	}
 }
 
-// A debouncer that does the following:
-// - Calls the func immediately if no calls happened in the past 500ms. (Such as
-//   the first time the debounced function is called.)
-// - Calls func again only after further calls have stopped for 500ms. (Does not
-//   call func if no calls happened after the first time.)
-function debouncer( func, delayMs = 500 ) {
+/**
+ * A debouncer that calls `cb` after it has not been called for at least 1s.
+ *
+ * @param cb A function to call after other debouncing is completed.
+ */
+function debouncer( cb ) {
 	let timeout = null;
-	let calledWithTimeout = false;
 	return () => {
-		if ( ! timeout ) {
-			func();
-		} else {
-			calledWithTimeout = true;
-		}
+		// Each time the debounced function is called, cancel the current schedule
+		// and re-schedule it for +1s.
 		clearTimeout( timeout );
-		timeout = setTimeout( () => {
-			if ( calledWithTimeout ) {
-				func();
-				calledWithTimeout = false;
-			}
-		}, delayMs );
+		timeout = setTimeout( cb, 1000 );
 	};
 }
 
@@ -123,9 +140,18 @@ function showTips( tasks ) {
 		'build:newspack-blocks': 'You may need to run `composer install` from wp-calypso root.',
 	};
 
-	tasks.forEach( ( task ) => {
-		if ( task.code !== 0 && tips[ task.name ] ) {
-			console.log( tips[ task.name ] );
+	const numFailed = tasks.reduce( ( total, { code } ) => total + ( code ? 1 : 0 ), 0 );
+	if ( numFailed === tasks.length ) {
+		console.info(
+			'Since all builds failed, there is likely an issue with webpack or node modules.'
+		);
+		return;
+	}
+
+	// If only individual tasks failed, print individual tips.
+	tasks.forEach( ( { code, name } ) => {
+		if ( code !== 0 && tips[ name ] ) {
+			console.info( tips[ name ] );
 		}
 	} );
 }
