@@ -7,7 +7,7 @@ import {
 	wpForTeamsP2PlusNotSupportedRedirect,
 	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
-import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import jetpackPlans, { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans';
 import {
 	features,
 	plans,
@@ -85,6 +85,17 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		p2RedirectToHubPlans,
 		redirectToCheckout
+	);
+
+	// This is a special plans page just for Jetpack Backup storage plans.
+	// It needs to be defined before the other plans pages so that /plans/storage/:site
+	// will take precedence over /plans/:intervalType?/:site.
+	jetpackStoragePlans(
+		'/plans',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToPlansIfNotJetpack,
+		navigation
 	);
 
 	// This route renders the plans page for both WPcom and Jetpack sites.

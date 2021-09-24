@@ -88,6 +88,7 @@ export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void
 	context.header = <StoragePricingHeader />;
 	context.primary = (
 		<StoragePricing
+			nav={ context.nav }
 			header={ context.header }
 			footer={ context.footer }
 			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }

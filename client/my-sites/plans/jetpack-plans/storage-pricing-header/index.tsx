@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import JetpackComMasterbar from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
@@ -11,7 +10,6 @@ export const StoragePricingHeader = () => {
 
 	return (
 		<>
-			<JetpackComMasterbar />
 			<div className="storage-pricing-header">
 				<FormattedHeader
 					className="storage-pricing-header__title"
