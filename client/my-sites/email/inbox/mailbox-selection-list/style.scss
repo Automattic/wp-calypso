@@ -1,0 +1,187 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+body.is-section-inbox {
+	background-color: var( --studio-white );
+}
+
+.mailbox-selection-list__status {
+	font-size: $font-title-small;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 35vh;
+
+	.mailbox-selection-list__status-content {
+		line-height: 40px;
+	}
+
+	.mailbox-selection-list__status-text {
+		align-self: normal;
+	}
+
+	.gridicon {
+		margin-right: 14px;
+		width: 40px;
+		height: 40px;
+	}
+
+	.gridicons-cross-circle {
+		color: #bdb5b5;
+	}
+
+	@include break-large {
+		transform: none;
+		font-size: $font-title-medium;
+	}
+}
+
+.mailbox-selection-list {
+
+	.mailbox-selection-list__header {
+		.formatted-header__title {
+			font-size: $font-title-large;
+			line-height: $font-headline-medium;
+
+			@include break-large {
+				font-size: $font-headline-medium;
+			}
+		}
+
+		.formatted-header__subtitle {
+			font-size: $font-body;
+			line-height: $font-title-medium;
+		}
+	}
+
+	.mailbox-selection-list__new-mailbox-upsell-container {
+		background: #f9f9f9;
+		align-items: center;
+		justify-content: space-between;
+		position: relative;
+		margin: 20px auto 10px;
+		padding: 10px 15px;
+		width: 240px;
+
+		@include break-medium {
+			display: flex;
+			width: 342px;
+			margin-top: 60px;
+			padding: 16px 24px;
+		}
+
+		@include break-large {
+			width: 660px;
+			margin-top: 80px;
+		}
+
+		.mailbox-selection-list__new-mailbox-upsell-messages {
+			font-size: $font-body-small;
+			line-height: 28px;
+
+			h2 {
+				font-weight: bold;
+				font-size: $font-body;
+				line-height: 30px;
+				margin-bottom: 0;
+
+				@include break-medium {
+					margin-bottom: 8px;
+					line-height: 34px;
+				}
+			}
+		}
+
+		.mailbox-selection-list__new-mailbox-upsell-cta {
+			margin-top: 20px;
+
+			@include break-medium {
+				margin-top: 0;
+			}
+
+			.button {
+				font-weight: bold;
+			}
+		}
+	}
+
+	.mailbox-selection-list__item {
+		width: 310px;
+		box-shadow: none;
+		border-width: 1px 0 0;
+		border-color: #e7e9ea;
+		border-style: solid;
+		margin-bottom: 1px;
+		display: flex;
+		align-items: center;
+		padding: 12px;
+
+		@include break-medium {
+			width: 343px;
+			padding: 16px;
+		}
+
+		@include break-large {
+			width: 660px;
+		}
+
+		.gridicons-external {
+			width: 20px;
+		}
+
+		&:first-of-type {
+			border-top-width: 0;
+
+			@include break-large {
+				margin-top: 60px;
+			}
+		}
+
+		.mailbox-selection-list__mailbox {
+			margin: 0;
+			padding: 0;
+
+			h2 {
+				color: var( --studio-wordpress-blue-100 );
+				font-family: $sans;
+				font-weight: 600;
+				font-size: $font-body;
+				word-break: break-all;
+			}
+		}
+	}
+
+	.mailbox-selection-list__icon {
+		align-self: center;
+		height: 36px;
+		width: 36px;
+		margin-right: 16px;
+
+		.mailbox-selection-list__icon-circle {
+			width: 100%;
+			height: 100%;
+			border-radius: 999px; /* stylelint-disable-line scales/radii */
+			font-size: $font-title-small;
+			color: var( --studio-white );
+			text-align: center;
+			background: #3197a7;
+			font-weight: bold;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-transform: capitalize;
+		}
+
+		> img, svg {
+			height: 36px;
+			margin-right: 16px;
+			min-height: 36px;
+			min-width: 36px;
+			width: 36px;
+
+			@include break-large {
+				margin-right: 16px;
+			}
+		}
+	}
+}
