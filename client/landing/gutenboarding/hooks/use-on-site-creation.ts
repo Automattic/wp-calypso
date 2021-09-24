@@ -110,7 +110,13 @@ export default function useOnSiteCreation(): void {
 			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = `/home/${ newSite.site_slug }/`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			window.location.href = destination;
 		}
 	}, [
 		flow,
