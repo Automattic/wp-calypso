@@ -151,6 +151,23 @@ class StepWrapper extends Component {
 		}
 	}
 
+	hasNavigation() {
+		const {
+			hideBack,
+			hideSkip,
+			hideNext,
+			positionInFlow,
+			stepSectionName,
+			allowBackFirstStep,
+			skipButtonAlign,
+		} = this.props;
+
+		const hasBack = ! hideBack && ( positionInFlow > 0 || stepSectionName || allowBackFirstStep );
+		const hasSkip = ! hideSkip && skipButtonAlign === 'top';
+
+		return hasBack || hasSkip || ! hideNext;
+	}
+
 	render() {
 		const {
 			flowName,
@@ -168,7 +185,7 @@ class StepWrapper extends Component {
 			isHorizontalLayout,
 		} = this.props;
 
-		const hasNavigation = ! hideBack || ( ! hideSkip && skipButtonAlign === 'top' ) || ! hideNext;
+		const hasNavigation = this.hasNavigation();
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
