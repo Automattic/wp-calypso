@@ -80,7 +80,7 @@
 			}
 
 			&:after { /* stylelint-disable-line selector-pseudo-element-colon-notation */
-				animation: load 5s infinite;
+				animation: 5s ease 0s 1 normal forwards running load;
 				box-shadow: 0 0 5px rgba( 0, 0, 0, 0.2 );
 				content: '';
 			}
