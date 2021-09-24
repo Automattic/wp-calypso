@@ -218,17 +218,31 @@ export class PlansStep extends Component {
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
 
+	getHeaderTextForExperiment() {
+		const defaultSubHeaderText = this.getHeaderText();
+
+		const experimentHeaderText = 'Choose the right plan for you';
+
+		return (
+			<Experiment
+				name="tabbed_plans_poc"
+				defaultExperience={ defaultSubHeaderText }
+				treatmentExperience={ experimentHeaderText }
+				loadingExperience={ '\u00A0' } // &nbsp;
+			/>
+		);
+	}
 	getSubHeaderTextForExperiment() {
 		const defaultSubHeaderText = this.getSubHeaderText();
 
-		const tabbedPlanRefundPolicyText =
+		const experimentSubHeaderText =
 			'There’s a plan for everybody. Pick between our Professional or Starter plans.';
 
 		return (
 			<Experiment
 				name="tabbed_plans_poc"
 				defaultExperience={ defaultSubHeaderText }
-				treatmentExperience={ tabbedPlanRefundPolicyText }
+				treatmentExperience={ experimentSubHeaderText }
 				loadingExperience={ '\u00A0' } // &nbsp;
 			/>
 		);
@@ -243,7 +257,7 @@ export class PlansStep extends Component {
 			hasInitializedSitesBackUrl,
 		} = this.props;
 
-		const headerText = this.getHeaderText();
+		const headerText = this.getHeaderTextForExperiment();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
 		const subHeaderText = this.getSubHeaderTextForExperiment();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;

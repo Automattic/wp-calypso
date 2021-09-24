@@ -415,7 +415,7 @@ function getBestForStrings() {
 		Free: 'Ads displayed on all sites',
 		Personal: 'Best for small sites & blogs',
 		Premium: 'Best for customized sites & blogs',
-		Business: 'Best for small businesses',
+		Business: 'Best for professional sites & blogs',
 		eCommerce: 'Best for online stores',
 	};
 }
@@ -637,8 +637,8 @@ function getFeatureComparisonData() {
 				planOne: {
 					annually: {
 						included: true,
-						copy: 'Email support',
-						mobileCopy: 'Email support',
+						copy: 'Live chat and email support',
+						mobileCopy: 'Live chat and email support',
 					},
 					monthly: {
 						included: true,
@@ -674,7 +674,7 @@ function getFeatureComparisonData() {
 			{
 				featureName: 'Storage',
 				tooltip:
-					'With increased storage space, you’ll be able to upload more images, audio, and documents to your website. On the Premium, Business, and eCommerce plans, you can upload videos, too.',
+					'With increased storage space, you’ll be able to upload more images, audio, and documents to your website. Professional plans also include video hosting.',
 				planOne: {
 					annually: { included: true, copy: '13GB storage', mobileCopy: '13GB storage' },
 					monthly: { included: true, copy: '13GB storage', mobileCopy: '13GB storage' },
