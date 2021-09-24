@@ -1,7 +1,7 @@
 /**
  * This script is adapted from ../../editing-toolkit/bin/npm-run-build.js
  *
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ *WARNING: No ES6 modules here. Not transpiled! ****
  */
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable no-console */
@@ -12,7 +12,7 @@ const args = process.argv.slice( 2 );
 
 const argsToCommands = {
 	'--build': 'build:*',
-	'--dev': 'build --watch',
+	'--dev': 'build',
 	'--sync': 'wpcom-sync',
 };
 
