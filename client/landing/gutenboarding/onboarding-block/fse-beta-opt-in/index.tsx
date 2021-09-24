@@ -24,11 +24,10 @@ const FseBetaOptIn: React.FunctionComponent = () => {
 	const { shouldEnrollInFseBeta } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const pickBeta = ( shouldEnroll: boolean ) => {
 		enrollInFseBeta( shouldEnroll );
+		trackEventWithFlow( 'calypso_fse_beta_opt_in', {
+			selected_fse_beta_opt_in: shouldEnroll,
+		} );
 		goNext();
-	};
-	const optIn = () => {
-		trackEventWithFlow( 'calypso_fse_beta_opt_in' );
-		pickBeta( true );
 	};
 
 	useTrackStep( 'FseBetaOptIn', () => ( {
@@ -71,7 +70,7 @@ const FseBetaOptIn: React.FunctionComponent = () => {
 				</li>
 			</ol>
 
-			<NextButton className="fse-beta-opt-in__submit" onClick={ optIn }>
+			<NextButton className="fse-beta-opt-in__submit" onClick={ () => pickBeta( true ) }>
 				{ __( 'Enroll in Beta' ) }
 				<Icon icon={ arrowRight } />
 			</NextButton>
