@@ -80,16 +80,9 @@ export class UserSignupPage {
 		await this.page.fill( selectors.emailInput, email );
 		await this.page.fill( selectors.passwordInput, password );
 
-		if ( target === 'mobile' ) {
-			await Promise.all( [
-				this.page.waitForNavigation(),
-				this.page.click( selectors.submitButton ),
-			] );
-		} else {
-			await Promise.all( [
-				this.page.waitForNavigation(),
-				this.page.click( selectors.createWPCOMAccountButton ),
-			] );
-		}
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.submitButton ),
+		] );
 	}
 }
