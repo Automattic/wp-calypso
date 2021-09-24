@@ -33,6 +33,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -123,6 +124,8 @@ export default function CompositeCheckout( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 } ): JSX.Element {
+	const previousPath = useSelector( getPreviousPath );
+
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(
@@ -590,15 +593,11 @@ export default function CompositeCheckout( {
 		} )
 	) {
 		debug( 'rendering empty cart page' );
-		const goToPlans = () => {
+		const goToPreviousPage = () => {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
 			} );
-			if ( updatedSiteSlug ) {
-				page( `/plans/${ updatedSiteSlug }` );
-			} else {
-				page( '/plans' );
-			}
+			page( previousPath );
 		};
 		return (
 			<Fragment>
@@ -608,8 +607,8 @@ export default function CompositeCheckout( {
 						<CheckoutStepAreaWrapper>
 							<EmptyCart />
 							<SubmitButtonWrapper>
-								<Button buttonType="primary" fullWidth onClick={ goToPlans }>
-									{ translate( 'Browse our plans' ) }
+								<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+									{ translate( 'Return to previous page' ) }
 								</Button>
 							</SubmitButtonWrapper>
 						</CheckoutStepAreaWrapper>
