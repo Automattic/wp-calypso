@@ -145,7 +145,7 @@ const MailboxSelectionList = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const { data, error, isLoading } = useGetMailboxes( selectedSite?.ID ?? null, {
-		retry: false,
+		retry: 3,
 	} );
 
 	if ( isLoading ) {
