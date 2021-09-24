@@ -7,32 +7,27 @@ import styled from '@emotion/styled';
 import page from 'page';
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import ButtonGroup from 'calypso/components/button-group';
-import FormattedHeader from 'calypso/components/formatted-header';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextArea from 'calypso/components/forms/form-textarea';
-import FormRadio from 'calypso/components/forms/form-radio';
-import PhoneInput from 'calypso/components/phone-input';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import getCountries from 'calypso/state/selectors/get-countries';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import CardHeading from 'calypso/components/card-heading';
-import FilePicker from 'calypso/components/file-picker';
-import IT from 'calypso/assets/images/difm/IT-1.png';
-import consult1 from 'calypso/assets/images/difm/consult-1.png';
-import consult2 from 'calypso/assets/images/difm/consult-2.png';
 import dietician from 'calypso/assets/images/difm/dietician-1.png';
 import musician from 'calypso/assets/images/difm/musician-1.png';
 import photography from 'calypso/assets/images/difm/photography-1.png';
 import phsych from 'calypso/assets/images/difm/phsych-1.png';
-import restaurant from 'calypso/assets/images/difm/restaurant-1.png';
-import treeremoval from 'calypso/assets/images/difm/tree-removal.png';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ButtonGroup from 'calypso/components/button-group';
+import CardHeading from 'calypso/components/card-heading';
+import FilePicker from 'calypso/components/file-picker';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextArea from 'calypso/components/forms/form-textarea';
+import PhoneInput from 'calypso/components/phone-input';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import getCountries from 'calypso/state/selectors/get-countries';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -87,13 +82,17 @@ const VerticalsGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat( 2, 1fr );
 	grid-template-rows: repeat( 2, 1fr );
-	gap: 0.75em;
+	gap: 1em;
 	text-align: center;
 	@media ( max-width: 960px ) {
 		grid-template-columns: 1fr;
 		grid-template-rows: auto;
+		gap: 0.5em;
 	}
 `;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function empty() {}
 
 function DemoTile( { image, description } ) {
 	return (
@@ -101,10 +100,14 @@ function DemoTile( { image, description } ) {
 			css={ css`
 				height: 230px;
 				overflow: hidden;
-				margin: 10px 0px;
 				border: 1px dashed #ababab;
-				padding: 10px 10px 0px 10px;
+				padding: 5px;
 				cursor: pointer;
+				@media ( max-width: 960px ) {
+					height: 85px;
+					display: flex;
+					padding: 5px;
+				}
 				&:hover {
 					border: 1px solid black;
 				}
@@ -112,17 +115,29 @@ function DemoTile( { image, description } ) {
 		>
 			<div
 				css={ css`
-					height: 162px;
+					width: 100%;
+					height: 80%;
 					overflow: hidden;
+					@media ( max-width: 960px ) {
+						height: 100%;
+						width: 75%;
+					}
 				` }
 			>
 				<img src={ image } width="100%" alt="WordPress logo" />
 			</div>
 			<div
 				css={ css`
-					height: 54px;
+					width: 100%;
+					height: 20%;
 					display: flex;
+					justify-content: space-between;
 					background: #eee;
+					@media ( max-width: 960px ) {
+						align-items: center;
+						height: 100%;
+						width: 25%;
+					}
 				` }
 			>
 				<h2
@@ -136,8 +151,8 @@ function DemoTile( { image, description } ) {
 				>
 					{ description }
 				</h2>
-				<span className="theme__badge-price theme__badge-price-upgrade"></span>
-				<span className="theme__more-button">
+				<span className="site-info-collection__upgrade"></span>
+				<span className="site-info-collection__more-button">
 					<button></button>
 				</span>
 			</div>
@@ -320,7 +335,7 @@ function SiteInformationCollection() {
 							</FormSettingExplanation>
 							<FormFieldset>
 								<FormLabel htmlFor="slogan">Please upload your logo if you have one. </FormLabel>
-								<FilePicker multiple accept="image/*" onPick={ console.log.bind( console ) }>
+								<FilePicker multiple accept="image/*" onPick={ empty }>
 									<Button>Select Files</Button>
 								</FilePicker>
 							</FormFieldset>
@@ -329,11 +344,11 @@ function SiteInformationCollection() {
 									Do you want a blog included with your new site?
 								</FormLabel>
 								<FormLabel>
-									<FormRadio value="yes" checked={ true } onChange={ () => {} } label="Yes" />
+									<FormRadio value="yes" checked={ true } onChange={ empty } label="Yes" />
 								</FormLabel>
 
 								<FormLabel>
-									<FormRadio value="no" checked={ false } onChange={ () => {} } label="No" />
+									<FormRadio value="no" checked={ false } onChange={ empty } label="No" />
 								</FormLabel>
 							</FormFieldset>
 
@@ -345,7 +360,7 @@ function SiteInformationCollection() {
 									<FormRadio
 										value="professional-services"
 										checked={ true }
-										onChange={ () => {} }
+										onChange={ empty }
 										label="Professional Services"
 									/>
 								</FormLabel>
@@ -353,7 +368,7 @@ function SiteInformationCollection() {
 									<FormRadio
 										value="local-service"
 										checked={ false }
-										onChange={ () => {} }
+										onChange={ empty }
 										label="Local Service"
 									/>
 								</FormLabel>
@@ -361,7 +376,7 @@ function SiteInformationCollection() {
 									<FormRadio
 										value="creative-arts"
 										checked={ false }
-										onChange={ () => {} }
+										onChange={ empty }
 										label="Creative Arts"
 									/>
 								</FormLabel>
@@ -369,7 +384,7 @@ function SiteInformationCollection() {
 									<FormRadio
 										value="restaurants"
 										checked={ false }
-										onChange={ () => {} }
+										onChange={ empty }
 										label="Restaurants"
 									/>
 								</FormLabel>
