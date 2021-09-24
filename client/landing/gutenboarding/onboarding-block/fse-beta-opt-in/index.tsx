@@ -17,7 +17,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 import './style.scss';
 
-const BetaOptIn: React.FunctionComponent = () => {
+const FseBetaOptIn: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goNext, goBack } = useStepNavigation();
 	const { enrollInFseBeta } = useDispatch( ONBOARD_STORE );
@@ -31,24 +31,24 @@ const BetaOptIn: React.FunctionComponent = () => {
 		pickBeta( true );
 	};
 
-	useTrackStep( 'BetaOptIn', () => ( {
+	useTrackStep( 'FseBetaOptIn', () => ( {
 		selected_fse_beta_opt_in: shouldEnrollInFseBeta(),
 	} ) );
 
 	return (
-		<div className="gutenboarding-page beta-opt-in">
-			<div className="beta-opt-in__header">
+		<div className="gutenboarding-page fse-beta-opt-in">
+			<div className="fse-beta-opt-in__header">
 				<div>
 					<Title>{ __( 'Join Our Full Site Editing Beta' ) }</Title>
 					<SubTitle>{ __( 'Experience the new WordPress.com site editing features' ) }</SubTitle>
 				</div>
-				<ActionButtons className="beta-opt-in__actions">
+				<ActionButtons className="fse-beta-opt-in__actions">
 					<BackButton onClick={ goBack } />
 					<SkipButton onClick={ () => pickBeta( false ) } />
 				</ActionButtons>
 			</div>
-			<ol className="beta-opt-in__content">
-				<li className="beta-opt-in__item">
+			<ol className="fse-beta-opt-in__content">
+				<li className="fse-beta-opt-in__item">
 					<Icon icon={ siteLogo } />
 					<h3>{ __( 'Edit Your Logo' ) }</h3>
 					<p>
@@ -57,21 +57,21 @@ const BetaOptIn: React.FunctionComponent = () => {
 						) }
 					</p>
 				</li>
-				<li className="beta-opt-in__item">
+				<li className="fse-beta-opt-in__item">
 					<Icon icon={ header } />
 					<h3>{ __( 'Update Your Header and Footer' ) }</h3>
 					<p>
 						{ __( 'Full Site Editing allows you to make changes on your site header and footer.' ) }
 					</p>
 				</li>
-				<li className="beta-opt-in__item">
+				<li className="fse-beta-opt-in__item">
 					<Icon icon={ navigation } />
 					<h3>{ __( 'Build Your Navigation' ) }</h3>
 					<p>{ __( 'Take your site menus to the next level by adding blocks to it.' ) }</p>
 				</li>
 			</ol>
 
-			<NextButton className="beta-opt-in__submit" onClick={ optIn }>
+			<NextButton className="fse-beta-opt-in__submit" onClick={ optIn }>
 				{ __( 'Enroll in Beta' ) }
 				<Icon icon={ arrowRight } />
 			</NextButton>
@@ -79,4 +79,4 @@ const BetaOptIn: React.FunctionComponent = () => {
 	);
 };
 
-export default BetaOptIn;
+export default FseBetaOptIn;

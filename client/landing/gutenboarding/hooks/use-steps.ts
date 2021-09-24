@@ -31,7 +31,7 @@ export default function useSteps(): Array< StepType > {
 		steps = [
 			Step.IntentGathering,
 			Step.Domains,
-			Step.BetaOptIn,
+			Step.FseBetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Features,
@@ -40,7 +40,7 @@ export default function useSteps(): Array< StepType > {
 	} else {
 		steps = [
 			Step.IntentGathering,
-			Step.BetaOptIn,
+			Step.FseBetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Domains,
@@ -63,7 +63,7 @@ export default function useSteps(): Array< StepType > {
 
 	// Remove the FSE Beta Opt In if not in a configured environment
 	if ( ! isEnabled( 'full-site-editing/beta-opt-in' ) ) {
-		steps = steps.filter( ( step ) => step !== Step.BetaOptIn );
+		steps = steps.filter( ( step ) => step !== Step.FseBetaOptIn );
 	}
 
 	// Logic necessary to skip Domains or Plans steps

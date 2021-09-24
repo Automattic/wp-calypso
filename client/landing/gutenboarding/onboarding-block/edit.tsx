@@ -18,12 +18,12 @@ import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import AcquireIntent from './acquire-intent';
 import AnchorError from './anchor-error';
-import BetaOptIn from './beta-opt-in';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
 import Designs from './designs';
 import Domains from './domains';
 import Features from './features';
+import FseBetaOptIn from './fse-beta-opt-in';
 import Language from './language';
 import Plans from './plans';
 import StylePreview from './style-preview';
@@ -203,8 +203,8 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
 				</Route>
 
-				<Route path={ makePath( Step.BetaOptIn ) }>
-					<BetaOptIn />
+				<Route path={ makePath( Step.FseBetaOptIn ) }>
+					<FseBetaOptIn />
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>

@@ -1,6 +1,6 @@
 @import '../../mixins';
 
-.beta-opt-in__header {
+.fse-beta-opt-in__header {
 	margin: 48px 0 30px;
 	display: flex;
 	justify-content: space-between;
@@ -11,7 +11,7 @@
 	}
 }
 @include break-large {
-	.beta-opt-in__content {
+	.fse-beta-opt-in__content {
 		margin: 0 auto;
 		display: flex;
 		padding-right: 33%;
@@ -33,7 +33,7 @@
 }
 
 
-.beta-opt-in__item {
+.fse-beta-opt-in__item {
 	padding: 0 10px 0 30px;
 	position: relative;
 	margin-bottom: 30px;
@@ -63,7 +63,7 @@
 	}
 }
 
-.beta-opt-in__submit {
+.fse-beta-opt-in__submit {
 	margin-top: 40px;
 	svg {
 		margin-left: 10px;
