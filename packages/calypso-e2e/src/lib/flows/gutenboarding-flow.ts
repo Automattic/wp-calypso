@@ -18,6 +18,7 @@ const selectors = {
 	// Start your website
 	siteTitle: '.acquire-intent-text-input__input',
 	siteTitleLabel: 'label.site-title__input-label',
+	siteIsCalled: 'label[data-e2e-string="My site is called"]',
 
 	// Domain
 	domainSearch: 'input[placeholder="Search for a domain"]',
@@ -97,7 +98,10 @@ export class GutenboardingFlow {
 	 */
 	async getSiteTitleLabel(): Promise< string > {
 		const elementHandle = await this.page.waitForSelector( selectors.siteTitleLabel );
-		await elementHandle.waitForElementState( 'stable' );
+		await Promise.all( [
+			this.page.waitForLoadState( 'networkidle' ),
+			elementHandle.waitForElementState( 'stable' ),
+		] );
 		return await elementHandle.innerText();
 	}
 
