@@ -6,9 +6,9 @@ body.is-section-inbox {
 }
 
 .mailbox-selection-list__status {
-	font-size: $font-title-small;
-	display: flex;
 	align-items: center;
+	display: flex;
+	font-size: $font-title-small;
 	justify-content: center;
 	margin-top: 35vh;
 
@@ -21,9 +21,9 @@ body.is-section-inbox {
 	}
 
 	.gridicon {
+		height: 40px;
 		margin-right: 14px;
 		width: 40px;
-		height: 40px;
 	}
 
 	.gridicons-cross-circle {
@@ -31,8 +31,8 @@ body.is-section-inbox {
 	}
 
 	@include break-large {
-		transform: none;
 		font-size: $font-title-medium;
+		transform: none;
 	}
 }
 
@@ -55,24 +55,24 @@ body.is-section-inbox {
 	}
 
 	.mailbox-selection-list__new-mailbox-upsell-container {
-		background: #f9f9f9;
 		align-items: center;
+		background: #f9f9f9;
 		justify-content: space-between;
-		position: relative;
 		margin: 20px auto 10px;
 		padding: 10px 15px;
+		position: relative;
 		width: 240px;
 
 		@include break-medium {
 			display: flex;
-			width: 342px;
 			margin-top: 60px;
 			padding: 16px 24px;
+			width: 342px;
 		}
 
 		@include break-large {
-			width: 660px;
 			margin-top: 80px;
+			width: 660px;
 		}
 
 		.mailbox-selection-list__new-mailbox-upsell-messages {
@@ -80,14 +80,14 @@ body.is-section-inbox {
 			line-height: 28px;
 
 			h2 {
-				font-weight: bold;
 				font-size: $font-body;
+				font-weight: bold;
 				line-height: 30px;
 				margin-bottom: 0;
 
 				@include break-medium {
-					margin-bottom: 8px;
 					line-height: 34px;
+					margin-bottom: 8px;
 				}
 			}
 		}
@@ -106,19 +106,19 @@ body.is-section-inbox {
 	}
 
 	.mailbox-selection-list__item {
-		width: 310px;
-		box-shadow: none;
-		border-width: 1px 0 0;
+		align-items: center;
 		border-color: #e7e9ea;
 		border-style: solid;
-		margin-bottom: 1px;
+		border-width: 1px 0 0;
+		box-shadow: none;
 		display: flex;
-		align-items: center;
+		margin-bottom: 1px;
 		padding: 12px;
+		width: 310px;
 
 		@include break-medium {
-			width: 343px;
 			padding: 16px;
+			width: 343px;
 		}
 
 		@include break-large {
@@ -144,8 +144,8 @@ body.is-section-inbox {
 			h2 {
 				color: var( --studio-wordpress-blue-100 );
 				font-family: $sans;
-				font-weight: 600;
 				font-size: $font-body;
+				font-weight: 600;
 				word-break: break-all;
 			}
 		}
@@ -154,22 +154,22 @@ body.is-section-inbox {
 	.mailbox-selection-list__icon {
 		align-self: center;
 		height: 36px;
-		width: 36px;
 		margin-right: 16px;
+		width: 36px;
 
 		.mailbox-selection-list__icon-circle {
-			width: 100%;
-			height: 100%;
-			border-radius: 999px; /* stylelint-disable-line scales/radii */
-			font-size: $font-title-small;
-			color: var( --studio-white );
-			text-align: center;
-			background: #3197a7;
-			font-weight: bold;
-			display: flex;
-			justify-content: center;
 			align-items: center;
+			background: #3197a7;
+			border-radius: 999px; /* stylelint-disable-line scales/radii */
+			color: var( --studio-white );
+			display: flex;
+			font-size: $font-title-small;
+			font-weight: bold;
+			height: 100%;
+			justify-content: center;
+			text-align: center;
 			text-transform: capitalize;
+			width: 100%;
 		}
 
 		> img, svg {
