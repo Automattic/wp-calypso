@@ -146,12 +146,9 @@ class DomainItem extends PureComponent {
 			return;
 		}
 
-		const autoRenewLabel = translate( 'Auto-renew: %(autoRenewValue)s', {
-			args: {
-				autoRenewValue: domainDetails?.isAutoRenewing ? 'on' : 'off',
-			},
-			comment: 'Auto-renew a domain registration. %(autoRenewValue)s can be "on" or "off"',
-		} );
+		const autoRenewLabel = domainDetails?.isAutoRenewing
+			? translate( 'Auto-renew (on)' )
+			: translate( 'Auto-renew (off)' );
 		return <span className="domain-item__meta-item">{ autoRenewLabel }</span>;
 	}
 
