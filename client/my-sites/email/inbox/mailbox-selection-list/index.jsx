@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
+import unsupportedBrowserIllustration from 'calypso/assets/images/illustrations/unsupported-browser.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
 import {
@@ -138,7 +139,33 @@ const MailboxListStatus = ( { isError, statusMessage } ) => {
 
 MailboxListStatus.propType = {
 	isError: PropTypes.bool,
-	statusMessage: PropTypes.string.isRequired,
+	statusMessage: PropTypes.node.isRequired,
+};
+
+const MailboxLoaderError = () => {
+	const translate = useTranslate();
+
+	return (
+		<div className="mailbox-selection-list__loader-error-container">
+			<section>
+				<img src={ unsupportedBrowserIllustration } alt={ translate( 'Google Workspace icon' ) } />
+				<FormattedHeader
+					align="center"
+					brandFont
+					headerText={ translate( "Something's broken" ) }
+					subHeaderText={ translate(
+						'There has been an error in loading your mailboxes. Please try to refresh the page, and reach out to support if the issue persists.'
+					) }
+				/>
+				<footer>
+					<Button primary>{ translate( 'Refresh the page' ) }</Button>
+					<Button borderless primary>
+						{ translate( 'Contact support' ) }
+					</Button>
+				</footer>
+			</section>
+		</div>
+	);
 };
 
 const MailboxSelectionList = () => {
@@ -153,12 +180,7 @@ const MailboxSelectionList = () => {
 	}
 
 	if ( error ) {
-		return (
-			<MailboxListStatus
-				isError
-				statusMessage={ translate( 'There was an error loading your mailboxes.' ) }
-			/>
-		);
+		return <MailboxLoaderError />;
 	}
 
 	const mailboxes = data?.mailboxes ?? [];

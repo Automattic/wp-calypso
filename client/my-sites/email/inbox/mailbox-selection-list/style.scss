@@ -5,6 +5,68 @@ body.is-section-inbox {
 	background-color: var( --studio-white );
 }
 
+.mailbox-selection-list__loader-error-container {
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	margin: 0;
+	min-height: 90vh;
+
+	section {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+
+		img {
+			width: 153px;
+
+			@include break-medium {
+				width: 194px;
+			}
+		}
+
+		.formatted-header {
+			margin-top: 25px;
+			margin-bottom: 15px;
+
+			@include break-medium {
+				margin-bottom: 32px;
+			}
+
+			.formatted-header__title {
+				color: var( --studio-gray-80 );
+				font-size: $font-title-large;
+				margin-bottom: 10px;
+
+				@include break-medium {
+					font-size: $font-headline-medium;
+				}
+			}
+
+			.formatted-header__subtitle {
+				color: var( --studio-gray-60 );
+				font-size: $font-body;
+				margin-bottom: 0;
+
+				@include break-medium {
+					max-width: 505px;
+				}
+			}
+		}
+
+		footer {
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+
+			button {
+				margin-bottom: 10px;
+			}
+		}
+	}
+}
+
 .mailbox-selection-list__status {
 	align-items: center;
 	display: flex;
