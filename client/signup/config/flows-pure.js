@@ -423,7 +423,7 @@ export function generateFlows( {
 			pageTitle: translate( 'Setup your site' ),
 		},
 		{
-			name: 'built-by-wpcom',
+			name: 'do-it-for-me',
 			steps: [ 'user', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
