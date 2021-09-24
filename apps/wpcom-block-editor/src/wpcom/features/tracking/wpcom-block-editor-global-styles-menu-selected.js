@@ -24,6 +24,10 @@ function trackGlobalStylesMenuSelected( { path } ) {
 		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
 			menu: 'blocks',
 		} );
+	} else if ( buttonText === __( 'Layout' ) ) {
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
+			menu: 'layout',
+		} );
 	}
 }
 
