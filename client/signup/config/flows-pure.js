@@ -424,7 +424,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'built-by-wpcom',
-			steps: [ 'user', 'domains', 'site-info-collection' ],
+			steps: [ 'user', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2019-06-20',
