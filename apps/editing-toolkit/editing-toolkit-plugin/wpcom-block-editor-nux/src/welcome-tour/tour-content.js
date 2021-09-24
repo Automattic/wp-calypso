@@ -11,10 +11,6 @@ import { __ } from '@wordpress/i18n';
  */
 
 function getTourAssets( key ) {
-	if ( ! key ) {
-		return;
-	}
-
 	const CDN_PREFIX = 'https://s0.wp.com/i/editor-welcome-tour';
 	const tourAssets = {
 		addBlock: {
