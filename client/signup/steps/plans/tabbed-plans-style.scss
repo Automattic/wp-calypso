@@ -87,6 +87,11 @@
 		border-top: 1px solid rgba( 220, 220, 222, 0.5 );
 		display: flex;
 		flex-flow: column wrap;
+
+		span {
+			margin-left: 10px;
+			vertical-align: middle;
+		}
 	}
 }
 

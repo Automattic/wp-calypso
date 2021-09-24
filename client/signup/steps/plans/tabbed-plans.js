@@ -19,31 +19,25 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getPlan, getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 import './tabbed-plans-style.scss';
 
-function SharedFeatures( {
-	className = '',
-	selectedTab,
-	setShowFeatures,
-	sharedFeatures,
-	showFeatures,
-} ) {
+function SharedFeatures( { className = '', featureDescription, sharedFeatures } ) {
+	const [ showFeatures, setShowFeatures ] = useState( false );
 	const isMobileView = className.includes( 'mobile' );
-	const toggleFeaturesString = showFeatures ? 'Hide all features' : 'Show all features';
+	const featuresString = showFeatures ? 'Hide all features' : 'Show all features';
 	const show = showFeatures || ! isMobileView;
 
 	return (
 		<div className={ `tabbed-plans__shared-features-grid ${ className }` }>
 			{ isMobileView && (
-				<button onClick={ () => setShowFeatures( ! showFeatures ) }>
-					{ toggleFeaturesString }
-				</button>
+				<div>
+					<button onClick={ () => setShowFeatures( ! showFeatures ) }>{ featuresString }</button>
+					<span>
+						<Gridicon icon={ show ? 'chevron-up' : 'chevron-down' } size={ 12 } />
+					</span>
+				</div>
 			) }
-			<SharedFeatureHeader>
-				{ selectedTab === 'Professional'
-					? 'All Professional plans include'
-					: 'Personal plan also includes' }
-			</SharedFeatureHeader>
+			<SharedFeatureHeader>{ featureDescription }</SharedFeatureHeader>
 			{ show &&
-				sharedFeatures[ selectedTab ].map( ( item, index ) => (
+				sharedFeatures.map( ( item, index ) => (
 					<SharedFeature key={ `sharedFeature${ index }` }>
 						<Gridicon icon={ item.icon } size={ 24 } />
 						<span>{ item.description }</span>
@@ -64,7 +58,6 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 	const [ planDetails, setPlanDetails ] = useState();
 	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
 	const [ termLength, setTermLength ] = useState( 'annually' );
-	const [ showFeatures, setShowFeatures ] = useState( false );
 	const [ primaryButton, setPrimaryButton ] = useState( 'Premium' );
 	const dispatch = useDispatch();
 
@@ -88,13 +81,6 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 		onUpgradeClick( args );
 	};
 
-	const tabHandler = ( event ) => {
-		if ( event.code === 'Tab' ) {
-			event.preventDefault();
-			toggleTab();
-		}
-	};
-
 	useEffect( () => {
 		const planFilter =
 			selectedTab === 'Professional'
@@ -116,10 +102,6 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 				tab: selectedTab,
 			} )
 		);
-		window.addEventListener( 'keydown', tabHandler );
-		return () => {
-			window.removeEventListener( 'keydown', tabHandler );
-		};
 	}, [ selectedTab ] );
 
 	useEffect( () => {
@@ -158,17 +140,17 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 			<Grid className="tabbed-plans__grid-container">
 				{ selectedTab === 'Professional' && (
 					<TermToggles className="tabbed-plans__term-toggles">
-						<RadioButton>
+						<RadioButtonLabel>
 							<input
 								type="radio"
 								checked={ termLength === 'annually' ? 'checked' : '' }
-								name="monthly"
+								name="annually"
 								onChange={ toggleTerm }
 							/>
 							<Checkmark></Checkmark>
 							<span>{ 'Pay annually' }</span>
-						</RadioButton>
-						<RadioButton>
+						</RadioButtonLabel>
+						<RadioButtonLabel>
 							<input
 								type="radio"
 								checked={ termLength === 'monthly' ? 'checked' : '' }
@@ -177,7 +159,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 							/>
 							<Checkmark></Checkmark>
 							<span>{ 'Pay monthly' }</span>
-						</RadioButton>
+						</RadioButtonLabel>
 					</TermToggles>
 				) }
 
@@ -229,7 +211,9 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 										</Savings>
 									</>
 								) }
-								{ termLength === 'monthly' && <span>per month, billed monthly</span> }
+								{ termLength === 'monthly' && item.planName !== 'Free' && (
+									<span>per month, billed monthly</span>
+								) }
 							</TermDescription>
 							{ item.planName !== 'Free' && (
 								<CtaButton
@@ -250,10 +234,12 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 								{ `Start with ${ item.planName }` }
 							</CtaButton>
 							<SharedFeatures
-								selectedTab={ selectedTab }
-								sharedFeatures={ sharedFeatures }
-								showFeatures={ showFeatures }
-								setShowFeatures={ setShowFeatures }
+								featureDescription={
+									selectedTab === 'Professional'
+										? 'All Professional plans include'
+										: 'Personal plan also includes'
+								}
+								sharedFeatures={ sharedFeatures[ selectedTab ] }
 								className={ classNames(
 									'tabbed-plans__shared-features-mobile',
 									`tabbed-plans__shared-features-${ index + 1 }`
@@ -340,7 +326,14 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 						</>
 					) }
 				</FreeBanner>
-				<SharedFeatures selectedTab={ selectedTab } sharedFeatures={ sharedFeatures } />
+				<SharedFeatures
+					featureDescription={
+						selectedTab === 'Professional'
+							? 'All Professional plans include'
+							: 'Personal plan also includes'
+					}
+					sharedFeatures={ sharedFeatures[ selectedTab ] }
+				/>
 			</Grid>
 		</>
 	);
@@ -348,6 +341,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 
 TabbedPlans.propTypes = {
 	onUpgradeClick: PropTypes.func,
+	planProperties: PropTypes.array,
 };
 
 const mapStateToProps = ( state, ownProps ) => {
@@ -469,7 +463,7 @@ function getFeatureComparisonData() {
 			{
 				featureName: 'Install themes',
 				tooltip:
-					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
+					'Themes change the design of your site. We provide dozens of free professional themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
 				planOne: {
 					annually: {
 						included: false,
@@ -650,7 +644,7 @@ function getFeatureComparisonData() {
 					annually: {
 						included: true,
 						copy: '24/7 priority live chat',
-						mobileCopy: '24/7 Priority live chat',
+						mobileCopy: '24/7 priority live chat',
 					},
 					monthly: {
 						included: true,
@@ -722,7 +716,7 @@ function getFeatureComparisonData() {
 			{
 				featureName: 'Install themes',
 				tooltip:
-					'Themes change the design of your site. We provide dozens of professional free themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
+					'Themes change the design of your site. We provide dozens of free professional themes for a wide range of uses. On the Business and eCommerce plan, you can also install any 3rd party WordPress theme, free or paid, from the 8,000 custom themes made by 3rd party designers.',
 				planOne: {
 					annually: {
 						included: false,
@@ -1011,7 +1005,8 @@ const CtaButton = styled( Button )`
 
 	@media ( max-width: 600px ) {
 		margin: 24px 56px;
-		padding: 0;
+		font-size: 14px !important;
+		padding: 0 !important;
 	}
 `;
 
@@ -1192,7 +1187,7 @@ const TermToggles = styled.div`
 	}
 `;
 
-const RadioButton = styled.label`
+const RadioButtonLabel = styled.label`
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;

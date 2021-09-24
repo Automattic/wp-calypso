@@ -115,8 +115,6 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			showTreatmentPlansReorderTest,
-			// eslint-disable-next-line no-unused-vars
-			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 		} = this.props;
@@ -219,14 +217,13 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderTextForExperiment() {
-		const defaultSubHeaderText = this.getHeaderText();
-
+		const defaultHeaderText = this.getHeaderText();
 		const experimentHeaderText = 'Choose the right plan for you';
 
 		return (
 			<Experiment
 				name="tabbed_layout_plans_signup"
-				defaultExperience={ defaultSubHeaderText }
+				defaultExperience={ defaultHeaderText }
 				treatmentExperience={ experimentHeaderText }
 				loadingExperience={ '\u00A0' } // &nbsp;
 			/>
@@ -234,7 +231,6 @@ export class PlansStep extends Component {
 	}
 	getSubHeaderTextForExperiment() {
 		const defaultSubHeaderText = this.getSubHeaderText();
-
 		const experimentSubHeaderText =
 			'There’s a plan for everybody. Pick between our Professional or Starter plans.';
 
