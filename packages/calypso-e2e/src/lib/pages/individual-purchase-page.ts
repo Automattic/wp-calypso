@@ -1,12 +1,25 @@
 import { Page } from 'playwright';
 
 const selectors = {
+	// Shared
 	purchaseTitle: ( title: string ) => `.manage-purchase__title:has-text("${ title }")`,
+	autoRenewToggle: 'input.components-form-toggle__input',
+	modalConfirm: 'button[data-tip-target="dialog-base-action-confirm"]',
+	radioButton: ( value: string ) => `input[type="radio"][value=${ value }]`,
+	modalSubmit: 'button[data-e2e-button="submit"]',
+	button: ( text: string ) => `button:has-text("${ text }")`,
 
-	// Purchased item actions
+	// Purchased item actions: plans
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
 	cancelAndRefundButton: 'a:text("Cancel Subscription and Refund")',
 	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
+
+	// Purchased item actions: domains
+	deleteDomainCard: 'a:has-text("Delete your domain permanently")',
+	cancelDomainButton: 'button:has-text("Cancel Domain and Refund")',
+	cancelDomainReasonOption: 'select.confirm-cancel-domain__reasons-dropdown form-select',
+	cancelDomainReasonTextArea: 'textarea.confirm-cancel-domain__reason-details',
+	cancelDomainCheckbox: 'input.form-checkbox',
 
 	// Cancellation survey
 	whyCancelOptions: 'select[id="inspector-select-control-0"]',
@@ -17,8 +30,6 @@ const selectors = {
 
 	// Cancellation
 	dismissBanner: '.notice__dismiss',
-
-	button: ( text: string ) => `button:has-text("${ text }")`,
 };
 
 /**
@@ -61,6 +72,44 @@ export class IndividualPurchasePage {
 
 		// We're landing on the cart page, which has a lot of async loading, so let's make sure we let everything settle.
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	/**
+	 * Toggle off domain auto renew.
+	 */
+	async turnOffAutoRenew(): Promise< void > {
+		await this.page.click( selectors.autoRenewToggle );
+		await this.page.click( selectors.modalConfirm );
+		await this.page.click( selectors.radioButton( 'not-sure' ) );
+		await this.page.click( selectors.modalSubmit );
+		await this.page.waitForSelector( ':text-matches("successfully")' );
+	}
+
+	/* Domain Purchase actions */
+
+	/**
+	 * If the individual purchase shown on page is of type domain,
+	 * execute the delete domain flow.
+	 *
+	 * Note that flow of domain cancellation is different depending on
+	 * whether the domain is within the cancellatio and refund window
+	 * or not.
+	 *
+	 * This flow is for domains that are within the refund window.
+	 * Test developers intending to cancel a domain past this window
+	 * should implement such path.
+	 */
+	async deleteDomain(): Promise< void > {
+		await this.page.click( selectors.deleteDomainCard );
+		await this.page.click( selectors.cancelDomainButton );
+		await this.page.selectOption( selectors.cancelDomainReasonOption, 'other' );
+		await this.page.fill( selectors.cancelDomainReasonTextArea, 'e2e testing' );
+		await this.page.check( selectors.cancelDomainCheckbox );
+
+		await Promise.all( [
+			this.page.waitForNavigation( { timeout: 60000 } ),
+			this.page.click( selectors.button( 'Cancel Domain' ) ),
+		] );
 	}
 
 	/* Cancellations */

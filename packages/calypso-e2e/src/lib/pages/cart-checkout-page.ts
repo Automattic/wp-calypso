@@ -1,6 +1,6 @@
 import { Frame, Page } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
-import type { PaymentDetails } from '../../data-helper';
+import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
 import type { TargetDevice } from '../../types';
 
 const selectors = {
@@ -21,6 +21,17 @@ const selectors = {
 	removeCouponButton: ( coupon: string ) =>
 		`button[aria-label="Remove Coupon: ${ coupon } from cart"]`,
 	saveOrderButton: 'button[aria-label="Save your order"]',
+
+	// Registrar information
+	firstNameInput: `input[aria-describedby="validation-field-first-name"]`,
+	lastNameInput: `input[aria-describedby="validation-field-last-name"]`,
+	phoneInput: `input[name="phone"]`,
+	phoneSelect: 'select.phone-input__country-select',
+	countrySelect: 'select[aria-describedby="validation-field-country-code"]',
+	addressInput: 'input[aria-describedby="validation-field-address-1"]',
+	cityInput: 'input[aria-describedby="validation-field-city"]',
+	stateSelect: 'select[aria-describedby="validation-field-state"]',
+	postalCodeInput: 'input[aria-describedby="validation-field-postal-code"]',
 
 	// Tax information
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
@@ -189,6 +200,23 @@ export class CartCheckoutPage {
 		 ).contentFrame() ) as Frame;
 		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
 		await cvvInput.fill( paymentDetails.cvv );
+	}
+
+	/**
+	 * Enter domain registrar information.
+	 *
+	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
+	 */
+	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
+		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
+		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
+		await this.page.fill( selectors.phoneInput, registrarDetails.phone );
+		await this.page.selectOption( selectors.countrySelect, registrarDetails.countryCode );
+		await this.page.fill( selectors.addressInput, registrarDetails.address );
+		await this.page.fill( selectors.cityInput, registrarDetails.city );
+		await this.page.selectOption( selectors.stateSelect, registrarDetails.stateCode );
+		await this.page.fill( selectors.postalCodeInput, registrarDetails.postalCode );
 	}
 
 	/**
