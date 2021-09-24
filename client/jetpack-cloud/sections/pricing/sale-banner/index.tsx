@@ -1,8 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 
 import './style.scss';
@@ -12,12 +13,15 @@ const getTimeLeftFromSecondsLeft = ( timeDiff: number ) => {
 		days: Math.floor( timeDiff / ( 60 * 60 * 24 ) ),
 		hours: Math.floor( ( timeDiff / ( 60 * 60 ) ) % 24 ),
 		minutes: Math.floor( ( timeDiff / 60 ) % 60 ),
-		seconds: Math.floor( timeDiff % 60 ),
+		seconds: Math.floor( timeDiff % 60 )
+			.toString()
+			.padStart( 2, '0' ),
 	};
 };
 
 const SaleBanner: React.FC = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const [ isClosed, setIsClosed ] = useState( false );
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
@@ -36,6 +40,11 @@ const SaleBanner: React.FC = () => {
 		return () => clearInterval( intervalId );
 	}, [ timeLeft, expiryDate, now, setTimeLeft ] );
 
+	const closeBanner = () => {
+		dispatch( recordTracksEvent( 'calypso_pricing_page_sale_banner_close_button_click' ) );
+		setIsClosed( true );
+	};
+
 	return (
 		<>
 			{ ! isClosed && isBeforeExpiry && (
@@ -49,13 +58,13 @@ const SaleBanner: React.FC = () => {
 							} ) }
 						</div>
 						<span className="sale-banner__countdown-timer">
-							{ translate( 'Sale ends in: %(days)sd %(hours)sh %(minutes)sm %(seconds)ss', {
+							{ translate( 'Sale ends in: %(days)dd %(hours)dh %(minutes)dm %(seconds)ss', {
 								args: { days, hours, minutes, seconds },
 								comment: 'The end string will look like "Sale ends in: 13d 6h 2m 20s"',
 							} ) }
 						</span>
 					</div>
-					<button className="sale-banner__close-button" onClick={ () => setIsClosed( true ) }>
+					<button className="sale-banner__close-button" onClick={ closeBanner }>
 						<Gridicon icon="cross-small" size={ 24 } />
 					</button>
 				</div>
