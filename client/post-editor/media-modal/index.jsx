@@ -134,6 +134,7 @@ export class EditorMediaModal extends Component {
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
 			gallerySettings: props.initialGallerySettings,
+			selectedItems: props.selectedItems,
 		};
 	}
 
@@ -159,7 +160,8 @@ export class EditorMediaModal extends Component {
 	}
 
 	confirmSelection = () => {
-		const { view, selectedItems } = this.props;
+		const { view } = this.props;
+		const { selectedItems } = this.state;
 
 		if ( areMediaActionsDisabled( view, selectedItems, this.props.isParentReady ) ) {
 			return;
@@ -436,6 +438,25 @@ export class EditorMediaModal extends Component {
 		this.setState( { gallerySettings } );
 	};
 
+	updateItem = ( itemId, detail ) => {
+		const { selectedItems } = this.state;
+		const index = selectedItems.findIndex( ( item ) => item.ID === itemId );
+
+		if ( index === -1 ) {
+			return;
+		}
+
+		selectedItems.splice( index, 1, {
+			...selectedItems[ index ],
+			...detail,
+		} );
+
+		this.setState( {
+			...this.state,
+			selectedItems,
+		} );
+	};
+
 	renderContent() {
 		let content;
 
@@ -448,6 +469,7 @@ export class EditorMediaModal extends Component {
 						selectedIndex={ this.getDetailSelectedIndex() }
 						onRestoreItem={ this.restoreOriginalMedia }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
+						onUpdateItem={ this.updateItem }
 					/>
 				);
 				break;
