@@ -1011,6 +1011,7 @@ const CtaButton = styled( Button )`
 
 	@media ( max-width: 600px ) {
 		margin: 24px 56px;
+		padding: 0;
 	}
 `;
 

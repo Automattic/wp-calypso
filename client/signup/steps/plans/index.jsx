@@ -170,7 +170,7 @@ export class PlansStep extends Component {
 			<div>
 				<QueryPlans />
 				<Experiment
-					name="tabbed_plans_poc"
+					name="tabbed_layout_plans_signup"
 					defaultExperience={ defaultPlanDisplay }
 					treatmentExperience={ treatmentPlanDisplay }
 					loadingExperience={ loadingPlanDisplay }
@@ -225,7 +225,7 @@ export class PlansStep extends Component {
 
 		return (
 			<Experiment
-				name="tabbed_plans_poc"
+				name="tabbed_layout_plans_signup"
 				defaultExperience={ defaultSubHeaderText }
 				treatmentExperience={ experimentHeaderText }
 				loadingExperience={ '\u00A0' } // &nbsp;
@@ -240,7 +240,7 @@ export class PlansStep extends Component {
 
 		return (
 			<Experiment
-				name="tabbed_plans_poc"
+				name="tabbed_layout_plans_signup"
 				defaultExperience={ defaultSubHeaderText }
 				treatmentExperience={ experimentSubHeaderText }
 				loadingExperience={ '\u00A0' } // &nbsp;
