@@ -10,7 +10,6 @@ import {
 	CloseAccountFlow,
 	UserSignupPage,
 	CartCheckoutPage,
-	SidebarComponent,
 	NavbarComponent,
 	IndividualPurchasePage,
 } from '@automattic/calypso-e2e';
@@ -82,7 +81,22 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Check out', async function () {
-			await cartCheckoutPage.purchase();
+			// This step is affected by an issue with page redirect of the post-checkout page.
+			// See: https://github.com/Automattic/wp-calypso/issues/56548
+			await Promise.all( [
+				page.waitForNavigation( {
+					url: '**/checkout/thank-you/no-site/**',
+					waitUntil: 'networkidle',
+				} ),
+				cartCheckoutPage.purchase(),
+			] );
+			// The redirect to the `thank-you` page occurs twice, so capture and wait for
+			// the second redirect to settle.
+			// See issue linked above for more details.
+			await page.waitForNavigation( {
+				url: '**/checkout/thank-you/no-site/**',
+				waitUntil: 'networkidle',
+			} );
 		} );
 	} );
 
@@ -90,19 +104,14 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		let individualPurchasePage: IndividualPurchasePage;
 
 		it( 'Click My Sites', async function () {
-			// This step is affected by an issue with page redirect
-			// of the post-checkout page.
-			// See: https://github.com/Automattic/wp-calypso/issues/56548
 			const navbarCompnent = new NavbarComponent( page );
 			await navbarCompnent.clickMySites();
 		} );
 
-		it( 'Navigate to Settings', async function () {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Settings' );
-		} );
-
 		it( 'Manage domain', async function () {
+			// This isn't MyHomePage, nor is it PurchasesPage.
+			// Instead of creating a POM for just one task, call the
+			// raw selector.
 			await page.click( 'a:text("Manage domain")' );
 		} );
 

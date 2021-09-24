@@ -17,7 +17,7 @@ const selectors = {
 	// Purchased item actions: domains
 	deleteDomainCard: 'a:has-text("Delete your domain permanently")',
 	cancelDomainButton: 'button:has-text("Cancel Domain and Refund")',
-	cancelDomainReasonOption: 'select.confirm-cancel-domain__reasons-dropdown form-select',
+	cancelDomainReasonOption: 'select.confirm-cancel-domain__reasons-dropdown',
 	cancelDomainReasonTextArea: 'textarea.confirm-cancel-domain__reason-details',
 	cancelDomainCheckbox: 'input.form-checkbox',
 
@@ -107,6 +107,8 @@ export class IndividualPurchasePage {
 		await this.page.check( selectors.cancelDomainCheckbox );
 
 		await Promise.all( [
+			// Extended timeout here due to this process often taking long time for
+			// domain-only accounts.
 			this.page.waitForNavigation( { timeout: 60000 } ),
 			this.page.click( selectors.button( 'Cancel Domain' ) ),
 		] );
