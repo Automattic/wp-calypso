@@ -19,7 +19,7 @@
 		"bundle": "BROWSERSLIST_ENV=wpcom calypso-build --env WP",
 		"build:dev": "yarn run bundle",
 		"build:prod": "NODE_ENV=production yarn run bundle",
-		"build": "yarn clean && npm-run-all --parallel 'build:* --watch'",
+		"build": "yarn clean && npm-run-all --parallel 'build:*'",
 		"clean": "npx rimraf dist",
 		"dev": "node bin/npm-run-build.js --dev",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
