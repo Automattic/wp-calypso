@@ -415,6 +415,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
+		// Temporarily skip these tests until we can update track events / tests to handle the new
+		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
 		describe.skip( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
 			it( 'when Global Styles sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
@@ -513,6 +515,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
+		// Temporarily skip these tests until we can update track events / tests to handle the new
+		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
 		describe.skip( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
@@ -566,6 +570,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
+		// Temporarily skip these tests until we can update track events / tests to handle the new
+		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
 		describe.skip( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
