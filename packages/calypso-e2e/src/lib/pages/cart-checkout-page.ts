@@ -32,6 +32,8 @@ const selectors = {
 	cityInput: 'input[aria-describedby="validation-field-city"]',
 	stateSelect: 'select[aria-describedby="validation-field-state"]',
 	postalCodeInput: 'input[aria-describedby="validation-field-postal-code"]',
+	submitRegistrarInformationButton:
+		'button[aria-label="Continue with the entered contact details"]',
 
 	// Tax information
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
@@ -167,6 +169,24 @@ export class CartCheckoutPage {
 	}
 
 	/**
+	 * Enter domain registrar information.
+	 *
+	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
+	 */
+	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
+		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
+		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
+		await this.page.fill( selectors.phoneInput, registrarDetails.phone );
+		await this.page.selectOption( selectors.countrySelect, registrarDetails.countryCode );
+		await this.page.fill( selectors.addressInput, registrarDetails.address );
+		await this.page.fill( selectors.cityInput, registrarDetails.city );
+		await this.page.selectOption( selectors.stateSelect, registrarDetails.stateCode );
+		await this.page.fill( selectors.postalCodeInput, registrarDetails.postalCode );
+		await this.page.click( selectors.submitRegistrarInformationButton );
+	}
+
+	/**
 	 * Enter billing/tax details.
 	 *
 	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
@@ -200,23 +220,6 @@ export class CartCheckoutPage {
 		 ).contentFrame() ) as Frame;
 		const cvvInput = await cvvFrame.waitForSelector( selectors.cardCVVInput );
 		await cvvInput.fill( paymentDetails.cvv );
-	}
-
-	/**
-	 * Enter domain registrar information.
-	 *
-	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
-	 */
-	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
-		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
-		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
-		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
-		await this.page.fill( selectors.phoneInput, registrarDetails.phone );
-		await this.page.selectOption( selectors.countrySelect, registrarDetails.countryCode );
-		await this.page.fill( selectors.addressInput, registrarDetails.address );
-		await this.page.fill( selectors.cityInput, registrarDetails.city );
-		await this.page.selectOption( selectors.stateSelect, registrarDetails.stateCode );
-		await this.page.fill( selectors.postalCodeInput, registrarDetails.postalCode );
 	}
 
 	/**
