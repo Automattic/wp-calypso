@@ -52,7 +52,7 @@ function SharedFeatures( {
 		</div>
 	);
 }
-function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
+function TabbedPlans( { onUpgradeClick, planProperties } ) {
 	const tabList = getTabList();
 	const featureComparisonData = getFeatureComparisonData();
 	const sharedFeatures = getSharedFeatures();
@@ -211,7 +211,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								key={ `planPrice${ index }` }
 								className={ `tabbed-plans__price-${ index + 1 }` }
 							>
-								{ formatCurrency( item.rawPrice, currencyCode, { stripZeros: true } ) }
+								{ formatCurrency( item.rawPrice, item.currencyCode, { stripZeros: true } ) }
 							</PlanPrice>
 							<TermDescription className={ `tabbed-plans__term-desc-${ index + 1 }` }>
 								{ item.planName === 'Free' && <span>Limited features</span> }
