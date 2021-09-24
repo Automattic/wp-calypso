@@ -166,7 +166,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								onChange={ toggleTerm }
 							/>
 							<Checkmark></Checkmark>
-							<span>{ 'Pay Annually' }</span>
+							<span>{ 'Pay annually' }</span>
 						</RadioButton>
 						<RadioButton>
 							<input
@@ -176,7 +176,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 								onChange={ toggleTerm }
 							/>
 							<Checkmark></Checkmark>
-							<span>{ 'Pay Monthly' }</span>
+							<span>{ 'Pay monthly' }</span>
 						</RadioButton>
 					</TermToggles>
 				) }
@@ -204,7 +204,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							>
 								{ item.planName }
 								{ item.planName === 'Personal' && <span>Best to start</span> }
-								{ item.planName === 'Business' && <span>Best Value</span> }
+								{ item.planName === 'Business' && <span>Best value</span> }
 								<p>{ bestForStrings[ item.planName ] }</p>
 							</PlanHeader>
 							<PlanPrice
@@ -215,7 +215,7 @@ function TabbedPlans( { currencyCode, onUpgradeClick, planProperties } ) {
 							</PlanPrice>
 							<TermDescription className={ `tabbed-plans__term-desc-${ index + 1 }` }>
 								{ item.planName === 'Free' && <span>Limited features</span> }
-								{ item.termLength === 'annually' && (
+								{ item.termLength === 'annually' && item.planName !== 'Free' && (
 									<>
 										<span>per month, billed annually</span>
 										<Savings>
@@ -442,13 +442,13 @@ function getFeatureComparisonData() {
 				planTwo: {
 					annually: {
 						included: true,
-						copy: '58,000+ Available',
+						copy: '58,000+ available',
 						mobileCopy: '58,000+ plugins available',
 						monthly: { available: true, explainer: null },
 					},
 					monthly: {
 						included: true,
-						copy: '58,000+ Available',
+						copy: '58,000+ available',
 						mobileCopy: '58,000+ plugins available',
 						monthly: { available: true, explainer: null },
 					},
@@ -456,12 +456,12 @@ function getFeatureComparisonData() {
 				planThree: {
 					annually: {
 						included: true,
-						copy: '58,000+ Available',
+						copy: '58,000+ available',
 						monthlyCopy: '58,000+ Available',
 					},
 					monthly: {
 						included: true,
-						copy: '58,000+ Available',
+						copy: '58,000+ available',
 						monthlyCopy: '58,000+ Available',
 					},
 				},
@@ -649,7 +649,7 @@ function getFeatureComparisonData() {
 				planTwo: {
 					annually: {
 						included: true,
-						copy: '24/7 Priority live chat',
+						copy: '24/7 priority live chat',
 						mobileCopy: '24/7 Priority live chat',
 					},
 					monthly: {
@@ -661,7 +661,7 @@ function getFeatureComparisonData() {
 				planThree: {
 					annually: {
 						included: true,
-						copy: '24/7 Priority live chat',
+						copy: '24/7 priority live chat',
 						mobileCopy: '24/7 Priority live chat',
 					},
 					monthly: {
@@ -854,8 +854,8 @@ function getFeatureComparisonData() {
 				planTwo: {
 					annually: {
 						included: true,
-						copy: 'Live chat and email',
-						mobileCopy: 'Live chat and email support',
+						copy: 'Email support',
+						mobileCopy: 'Email support',
 					},
 					monthly: {
 						included: true,
@@ -911,7 +911,7 @@ function getSharedFeatures() {
 				description: '6GB of storage',
 			},
 			{
-				icon: 'image',
+				icon: 'image-remove',
 				description: 'Ads removed',
 			},
 			{
@@ -929,7 +929,7 @@ function getSharedFeatures() {
 				description: 'World-class hosting',
 			},
 			{
-				icon: 'image',
+				icon: 'image-remove',
 				description: 'Ads removed',
 			},
 			{
@@ -1004,6 +1004,7 @@ const CtaButton = styled( Button )`
 	border-radius: 4px;
 	font-weight: 500;
 	font-size: 14px;
+	height: 40px;
 	letter-spacing: 0.32px;
 	background: ${ ( props ) => ( props.primary ? '#117ac9' : '#fff' ) };
 	color: ${ ( props ) => ( props.primary ? '#fff' : '#2b2d2f' ) };
