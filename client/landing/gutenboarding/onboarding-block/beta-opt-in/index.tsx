@@ -6,11 +6,13 @@ import {
 	BackButton,
 	SkipButton,
 } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, siteLogo, header, navigation, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
+import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 import './style.scss';
@@ -19,10 +21,20 @@ const BetaOptIn: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goNext, goBack } = useStepNavigation();
 	const { enrollInFseBeta } = useDispatch( ONBOARD_STORE );
+	const { shouldEnrollInFseBeta } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const pickBeta = ( shouldEnroll: boolean ) => {
 		enrollInFseBeta( shouldEnroll );
 		goNext();
 	};
+	const optIn = () => {
+		trackEventWithFlow( 'calypso_fse_beta_opt_in' );
+		pickBeta( true );
+	};
+
+	useTrackStep( 'BetaOptIn', () => ( {
+		selected_fse_beta_opt_in: shouldEnrollInFseBeta(),
+	} ) );
+
 	return (
 		<div className="gutenboarding-page beta-opt-in">
 			<div className="beta-opt-in__header">
@@ -59,7 +71,7 @@ const BetaOptIn: React.FunctionComponent = () => {
 				</li>
 			</ol>
 
-			<NextButton className="beta-opt-in__submit" onClick={ () => pickBeta( true ) }>
+			<NextButton className="beta-opt-in__submit" onClick={ optIn }>
 				{ __( 'Enroll in Beta' ) }
 				<Icon icon={ arrowRight } />
 			</NextButton>
