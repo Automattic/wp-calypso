@@ -415,7 +415,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
+		describe.skip( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
 			it( 'when Global Styles sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
@@ -513,7 +513,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+		describe.skip( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
@@ -566,7 +566,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+		describe.skip( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
