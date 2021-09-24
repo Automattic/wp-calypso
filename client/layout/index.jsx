@@ -191,6 +191,7 @@ class Layout extends Component {
 			'/plugins/domain',
 			'/plugins/marketplace/setup',
 			'/marketing/do-it-for-me',
+			'/start/do-it-for-me',
 		];
 
 		return (
