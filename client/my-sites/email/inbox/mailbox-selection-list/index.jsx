@@ -3,11 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
+import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import unsupportedBrowserIllustration from 'calypso/assets/images/illustrations/unsupported-browser.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
+import { getMailboxesCacheKey, useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
 import {
 	getEmailAddress,
 	isEmailForwardAccount,
@@ -16,6 +17,7 @@ import {
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
@@ -142,8 +144,14 @@ MailboxListStatus.propType = {
 	statusMessage: PropTypes.node.isRequired,
 };
 
-const MailboxLoaderError = () => {
+const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
+
+	const reloadMailboxes = () => {
+		queryClient.removeQueries( getMailboxesCacheKey( siteId ) );
+		refetchMailboxes();
+	};
 
 	return (
 		<div className="mailbox-selection-list__loader-error-container">
@@ -158,8 +166,10 @@ const MailboxLoaderError = () => {
 					) }
 				/>
 				<footer>
-					<Button primary>{ translate( 'Refresh the page' ) }</Button>
-					<Button borderless primary>
+					<Button primary onClick={ reloadMailboxes }>
+						{ translate( 'Refresh the page' ) }
+					</Button>
+					<Button borderless primary href={ CALYPSO_CONTACT }>
 						{ translate( 'Contact support' ) }
 					</Button>
 				</footer>
@@ -168,19 +178,25 @@ const MailboxLoaderError = () => {
 	);
 };
 
+MailboxLoaderError.propType = {
+	refetchMailboxes: PropTypes.func.isRequired,
+	siteId: PropTypes.number.isRequired,
+};
+
 const MailboxSelectionList = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const { data, error, isLoading } = useGetMailboxes( selectedSite?.ID ?? null, {
-		retry: 3,
+	const selectedSiteId = selectedSite?.ID ?? null;
+	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
+		retry: 2,
 	} );
 
 	if ( isLoading ) {
 		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
 	}
 
-	if ( error ) {
-		return <MailboxLoaderError />;
+	if ( isError ) {
+		return <MailboxLoaderError refetchMailboxes={ refetch } siteId={ selectedSiteId } />;
 	}
 
 	const mailboxes = data?.mailboxes ?? [];
