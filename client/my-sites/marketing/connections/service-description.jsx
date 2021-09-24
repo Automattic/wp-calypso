@@ -137,12 +137,12 @@ class SharingServiceDescription extends Component {
 			},
 			slack: function () {
 				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Connected this P2 to your Slack Workspace.', {
+					return this.props.translate( 'Workspace connected to Slack.', {
 						comment: 'Get slack notifications on new P2 posts.',
 					} );
 				}
 
-				return this.props.translate( 'Connect your Slack Workspace to this P2.', {
+				return this.props.translate( 'Connect this workspace to your Slack.', {
 					comment: 'Get slack notifications on new P2 posts.',
 				} );
 			},
