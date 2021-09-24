@@ -6,6 +6,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import { hasEmailSubscription } from 'calypso/my-sites/email/email-management/home/utils';
+import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -24,7 +25,7 @@ const InboxManagement = ( { domains } ) => {
 					isPrimary={ true }
 					title={ translate( 'Pick a domain to get started' ) }
 					image={ image }
-					className={ 'inbox-management__is-inbox-card' }
+					className={ 'inbox__is-inbox-card' }
 				>
 					<p>{ translate( 'Pick one of your domains below to add an email solution.' ) }</p>
 				</PromoCard>
@@ -52,7 +53,7 @@ const InboxManagement = ( { domains } ) => {
 	}
 
 	//If we are at this point it means that we've at least have one subscription to show in mailbox selector
-	return <h1>Placeholder</h1>;
+	return <MailboxSelectionList />;
 };
 
 export default connect( ( state ) => {
