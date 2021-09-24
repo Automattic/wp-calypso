@@ -134,7 +134,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-config@^1.0.0, @automattic/calypso-config@workspace:packages/calypso-config":
+"@automattic/calypso-config@^1.0.0-alpha.0, @automattic/calypso-config@workspace:packages/calypso-config":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-config@workspace:packages/calypso-config"
   dependencies:
@@ -185,7 +185,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-products@workspace:packages/calypso-products"
   dependencies:
-    "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/calypso-url": ^1.0.0
     chai: ^4.3.4
     i18n-calypso: ^5.0.0
@@ -324,7 +324,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
   dependencies:
-    "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/onboarding": ^1.0.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
@@ -11894,7 +11894,7 @@ __metadata:
     "@automattic/calypso-analytics": ^1.0.0
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
-    "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/calypso-polyfills": ^2.0.0
     "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
