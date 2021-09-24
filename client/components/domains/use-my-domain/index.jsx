@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
@@ -213,9 +212,7 @@ function UseMyDomain( {
 						? showOwnershipVerificationFlow
 						: onConnect
 				}
-				onTransfer={
-					config.isEnabled( 'domains/new-transfer-flow' ) ? showTransferDomainFlow : onTransfer
-				}
+				onTransfer={ onTransfer ?? showTransferDomainFlow }
 				transferDomainUrl={ transferDomainUrl }
 			/>
 		);

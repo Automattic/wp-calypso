@@ -10,4 +10,3 @@ export { getTransferSalePriceText } from './get-transfer-sale-price-text';
 export { isFreeTransfer } from './is-free-transfer';
 export { optionInfo } from './option-info';
 export { transferDomainAction } from './transfer-domain-action';
-export { transferDomainAction as defaultTransferDomainAction } from './default-transfer-domain-action';
