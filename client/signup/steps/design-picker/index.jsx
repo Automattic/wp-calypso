@@ -7,12 +7,15 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getRecommendedThemes } from 'calypso/state/themes/actions';
-import {
-	getRecommendedThemes as getRecommendedThemesSelector,
-	areRecommendedThemesLoading,
-} from 'calypso/state/themes/selectors';
+import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
+import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import './style.scss';
+
+// Ideally this data should come from the themes API, maybe by a tag that's applied to
+// themes? e.g. `link-in-bio` or `no-fold`
+const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
+
+const SUBJECTS_TO_EXCLUDE = [ 'podcast' ];
 
 class DesignPickerStep extends Component {
 	static propTypes = {
@@ -23,6 +26,8 @@ class DesignPickerStep extends Component {
 		translate: PropTypes.func,
 		largeThumbnails: PropTypes.bool,
 		showOnlyThemes: PropTypes.bool,
+		fetchRecommendedThemes: PropTypes.func.isRequired,
+		themes: PropTypes.array.isRequired,
 	};
 
 	static defaultProps = {
@@ -38,7 +43,7 @@ class DesignPickerStep extends Component {
 	}
 
 	fetchThemes() {
-		this.props.getRecommendedThemes( 'auto-loading-homepage' );
+		this.props.fetchRecommendedThemes( 'auto-loading-homepage' );
 	}
 
 	pickDesign = ( selectedDesign ) => {
@@ -69,18 +74,23 @@ class DesignPickerStep extends Component {
 			// component itself. The `/new` environment needs helpers for making authenticated requests to
 			// the theme API before we can do this.
 			// taxonomies.theme_subject probably maps to category
-			designs = this.props.customizedThemesList.map( ( { id, name, screenshot } ) => {
-				return {
+			designs = this.props.themes
+				.filter(
+					( { taxonomies } ) =>
+						! taxonomies.theme_subject?.find( ( subject ) =>
+							SUBJECTS_TO_EXCLUDE.includes( subject.slug )
+						)
+				)
+				.map( ( { id, name } ) => ( {
 					categories: [],
 					features: [],
-					image: screenshot,
 					is_premium: false,
 					slug: id,
 					template: id,
 					theme: id,
 					title: name,
-				};
-			} );
+					...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+				} ) );
 		}
 
 		return (
@@ -130,9 +140,8 @@ class DesignPickerStep extends Component {
 export default connect(
 	( state ) => {
 		return {
-			customizedThemesList: getRecommendedThemesSelector( state, 'auto-loading-homepage' ),
-			isLoading: areRecommendedThemesLoading( state, 'auto-loading-homepage' ),
+			themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
 		};
 	},
-	{ getRecommendedThemes, submitSignupStep }
+	{ fetchRecommendedThemes, submitSignupStep }
 )( localize( DesignPickerStep ) );

@@ -23,7 +23,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, loca
 		url={ getDesignUrl( design, locale ) }
 		aria-labelledby={ makeOptionId( design ) }
 		alt=""
-		options={ mShotOptions() }
+		options={ mShotOptions( design ) }
 		scrollable={ design.preview !== 'static' }
 	/>
 );
