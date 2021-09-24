@@ -164,12 +164,14 @@ const MailboxSelectionList = () => {
 	const mailboxes = data?.mailboxes ?? [];
 
 	return (
-		<div className="mailbox-selection-list">
-			{ mailboxes.length > 0 ? (
-				<MailboxItems mailboxes={ mailboxes } />
-			) : (
-				<MailboxListStatus statusMessage={ translate( 'You have no mailboxes yet.' ) } />
-			) }
+		<div className="mailbox-selection-list__container">
+			<div className="mailbox-selection-list">
+				{ mailboxes.length > 0 ? (
+					<MailboxItems mailboxes={ mailboxes } />
+				) : (
+					<MailboxListStatus statusMessage={ translate( 'You have no mailboxes yet.' ) } />
+				) }
+			</div>
 		</div>
 	);
 };

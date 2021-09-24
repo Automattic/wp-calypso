@@ -36,82 +36,13 @@ body.is-section-inbox {
 	}
 }
 
-.mailbox-selection-list {
+.mailbox-selection-list__container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-	.mailbox-selection-list__header {
-		.formatted-header__title {
-			font-size: $font-title-large;
-			line-height: $font-headline-medium;
-
-			@include break-large {
-				font-size: $font-headline-medium;
-			}
-		}
-
-		.formatted-header__subtitle {
-			font-size: $font-body;
-			line-height: $font-title-medium;
-		}
-	}
-
-	.mailbox-selection-list__new-mailbox-upsell-container {
-		align-items: center;
-		background: #f9f9f9;
+	.mailbox-selection-list {
 		box-sizing: border-box;
-		justify-content: space-between;
-		margin: 48px auto 0;
-		padding: 16px;
-		position: relative;
-		width: 240px;
-
-		@include break-medium {
-			display: flex;
-			width: 342px;
-		}
-
-		@include break-large {
-			width: 660px;
-		}
-
-		.mailbox-selection-list__new-mailbox-upsell-messages {
-			font-size: $font-body-small;
-			line-height: 28px;
-
-			h2 {
-				font-size: $font-body;
-				font-weight: bold;
-				line-height: 30px;
-				margin-bottom: 0;
-
-				@include break-medium {
-					line-height: 34px;
-					margin-bottom: 8px;
-				}
-			}
-		}
-
-		.mailbox-selection-list__new-mailbox-upsell-cta {
-			margin-top: 20px;
-
-			@include break-medium {
-				margin-top: 0;
-			}
-
-			.button {
-				font-weight: bold;
-			}
-		}
-	}
-
-	.mailbox-selection-list__item {
-		align-items: center;
-		border-color: #e7e9ea;
-		border-style: solid;
-		border-width: 1px 0 0;
-		box-shadow: none;
-		display: flex;
-		margin-bottom: 1px;
-		padding: 12px;
 		width: 310px;
 
 		@include break-medium {
@@ -123,62 +54,145 @@ body.is-section-inbox {
 			width: 660px;
 		}
 
-		.gridicons-external {
-			width: 20px;
-		}
+		.mailbox-selection-list__header {
+			.formatted-header__title {
+				font-size: $font-title-large;
+				line-height: $font-headline-medium;
 
-		&:first-of-type {
-			border-top-width: 0;
-
-			@include break-large {
-				margin-top: 60px;
+				@include break-large {
+					font-size: $font-headline-medium;
+				}
 			}
-		}
 
-		.mailbox-selection-list__mailbox {
-			margin: 0;
-			padding: 0;
-
-			h2 {
-				color: var( --studio-wordpress-blue-100 );
-				font-family: $sans;
+			.formatted-header__subtitle {
 				font-size: $font-body;
-				font-weight: 600;
-				word-break: break-all;
+				line-height: $font-title-medium;
 			}
 		}
-	}
 
-	.mailbox-selection-list__icon {
-		align-self: center;
-		height: 36px;
-		margin-right: 16px;
-		width: 36px;
-
-		.mailbox-selection-list__icon-circle {
+		.mailbox-selection-list__new-mailbox-upsell-container {
 			align-items: center;
-			background: #3197a7;
-			border-radius: 999px; /* stylelint-disable-line scales/radii */
-			color: var( --studio-white );
+			background: #f9f9f9;
+			box-sizing: border-box;
 			display: flex;
-			font-size: $font-title-small;
-			font-weight: bold;
-			height: 100%;
-			justify-content: center;
-			text-align: center;
-			text-transform: capitalize;
-			width: 100%;
+			flex-direction: column;
+			justify-content: space-between;
+			margin: 48px auto 0;
+			padding: 16px;
+			position: relative;
+
+			@include break-medium {
+				flex-direction: unset;
+			}
+
+			& > * {
+				max-width: none;
+				align-self: normal;
+
+				@include break-medium {
+					max-width: 50%;
+					align-self: unset;
+				}
+			}
+
+			.mailbox-selection-list__new-mailbox-upsell-messages {
+				font-size: $font-body-small;
+				line-height: 28px;
+
+				h2 {
+					font-size: $font-body;
+					font-weight: bold;
+					line-height: 30px;
+					margin-bottom: 0;
+
+					@include break-medium {
+						line-height: 34px;
+						margin-bottom: 8px;
+					}
+				}
+
+				div {
+					padding-right: 10px;
+				}
+			}
+
+			.mailbox-selection-list__new-mailbox-upsell-cta {
+				margin-top: 20px;
+
+				@include break-medium {
+					margin-top: 0;
+				}
+
+				.button {
+					font-weight: bold;
+				}
+			}
 		}
 
-		> img, svg {
+		.mailbox-selection-list__item {
+			align-items: center;
+			border-color: #e7e9ea;
+			border-style: solid;
+			border-width: 1px 0 0;
+			box-shadow: none;
+			display: flex;
+			margin-bottom: 1px;
+			padding: 12px;
+
+			.gridicons-external {
+				width: 20px;
+			}
+
+			&:first-of-type {
+				border-top-width: 0;
+				margin-top: 50px;
+			}
+
+			.mailbox-selection-list__mailbox {
+				margin: 0 30px 0 0;
+				padding: 0;
+
+				h2 {
+					color: var( --studio-wordpress-blue-100 );
+					font-family: $sans;
+					font-size: $font-body;
+					font-weight: 600;
+					word-break: break-all;
+				}
+			}
+		}
+
+		.mailbox-selection-list__icon {
+			align-self: center;
 			height: 36px;
 			margin-right: 16px;
-			min-height: 36px;
-			min-width: 36px;
 			width: 36px;
 
-			@include break-large {
+			.mailbox-selection-list__icon-circle {
+				align-items: center;
+				background: #3197a7;
+				border-radius: 999px; /* stylelint-disable-line scales/radii */
+				color: var( --studio-white );
+				display: flex;
+				font-size: $font-title-small;
+				font-weight: bold;
+				height: 100%;
+				justify-content: center;
+				text-align: center;
+				text-transform: capitalize;
+				width: 100%;
+			}
+
+			> img, svg {
+				height: 36px;
 				margin-right: 16px;
+				min-height: 36px;
+				min-width: 36px;
+				width: 36px;
+
+				@include break-large {
+					margin-right: 16px;
+				}
 			}
 		}
 	}
