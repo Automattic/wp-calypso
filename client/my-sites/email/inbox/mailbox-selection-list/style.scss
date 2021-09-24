@@ -57,21 +57,19 @@ body.is-section-inbox {
 	.mailbox-selection-list__new-mailbox-upsell-container {
 		align-items: center;
 		background: #f9f9f9;
+		box-sizing: border-box;
 		justify-content: space-between;
-		margin: 20px auto 10px;
-		padding: 10px 15px;
+		margin: 48px auto 0;
+		padding: 16px;
 		position: relative;
 		width: 240px;
 
 		@include break-medium {
 			display: flex;
-			margin-top: 60px;
-			padding: 16px 24px;
 			width: 342px;
 		}
 
 		@include break-large {
-			margin-top: 80px;
 			width: 660px;
 		}
 
