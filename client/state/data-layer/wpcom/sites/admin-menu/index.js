@@ -16,7 +16,7 @@ export const requestFetchAdminMenu = ( action ) =>
 		action
 	);
 
-const sanitizeUrl = ( url, wpAdminUrl, siteUrl ) => {
+export const sanitizeUrl = ( url, wpAdminUrl, siteUrl ) => {
 	const isSafeInternalUrl = new RegExp( '^/' ).test( url );
 	// The replace function removes the protocol.
 	const isSafeWpAdminUrl = new RegExp( `^${ wpAdminUrl?.replace( /^https?:\/\//, '' ) }` ).test(
@@ -24,7 +24,7 @@ const sanitizeUrl = ( url, wpAdminUrl, siteUrl ) => {
 	);
 	const isSafeJetpackRedirectUrl =
 		new RegExp( '^https://jetpack.com/redirect/' ).test( url ) &&
-		url?.includes( `site=${ siteUrl.replace( /^https?:\/\//, '' ) }` );
+		url?.includes( `site=${ siteUrl }` );
 
 	if ( isSafeWpAdminUrl ) {
 		url = addQueryArgs(
