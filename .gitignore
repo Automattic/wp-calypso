@@ -29,9 +29,7 @@ test-results*.xml
 /client/style.json
 spec-xunit-reporter-0.0.1.tgz
 *xunit_*.xml
-lerna-debug.log
 /vendor
-yarn-error.log
 
 # added during build
 /config/secrets.json
@@ -96,3 +94,13 @@ cached-requests.json
 
 # TeamCity Kotlin compilation
 .teamcity/target
+
+# Yarn
+yarn-error.log
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

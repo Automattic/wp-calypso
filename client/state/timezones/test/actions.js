@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { requestTimezones, timezonesReceive } from '../actions';
 import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'calypso/state/action-types';
+import { requestTimezones, timezonesReceive } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {

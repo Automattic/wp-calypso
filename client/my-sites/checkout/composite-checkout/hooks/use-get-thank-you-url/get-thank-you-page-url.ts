@@ -1,18 +1,17 @@
-/**
- * External dependencies
- */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import debugFactory from 'debug';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-
-const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import {
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_RESET_PLANS,
+	JETPACK_REDIRECT_URL,
+	PLAN_BUSINESS,
+	redirectCheckoutToWpAdmin,
+	findFirstSimilarPlanKey,
+	getPlan,
+	isPlan,
+	isWpComPremiumPlan,
+} from '@automattic/calypso-products';
+import debugFactory from 'debug';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -24,19 +23,18 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
-	hasMonthlyCartItem,
 	hasTrafficGuide,
+	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import { managePurchase } from 'calypso/me/purchases/paths';
-import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import {
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_RESET_PLANS,
-	JETPACK_REDIRECT_URL,
-	redirectCheckoutToWpAdmin,
-} from '@automattic/calypso-products';
-import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+
+const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
@@ -59,6 +57,7 @@ export default function getThankYouPageUrl( {
 	isInEditor,
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
+	adminPageRedirect,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -77,6 +76,7 @@ export default function getThankYouPageUrl( {
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
+	adminPageRedirect?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -151,7 +151,7 @@ export default function getThankYouPageUrl( {
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
-				jetpackTemporarySiteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrlSiteLess
 		);
@@ -165,6 +165,7 @@ export default function getThankYouPageUrl( {
 		cart,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
+		adminPageRedirect,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
@@ -272,6 +273,7 @@ function getFallbackDestination( {
 	cart,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
+	adminPageRedirect,
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
@@ -280,6 +282,7 @@ function getFallbackDestination( {
 	cart: ResponseCart | undefined;
 	isJetpackNotAtomic: boolean;
 	productAliasFromUrl: string | undefined;
+	adminPageRedirect?: string;
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -312,12 +315,14 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
+			const adminPath = adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+
 			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
 			if ( isJetpackCloud() ) {
 				if ( redirectCheckoutToWpAdmin() && adminUrl ) {
 					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
-					return `${ adminUrl }admin.php?page=jetpack#/recommendations`;
+					return adminUrl + adminPath;
 				}
 				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
 				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
@@ -326,7 +331,7 @@ function getFallbackDestination( {
 			}
 			// Otherwise if not Jetpack Cloud:
 			return redirectCheckoutToWpAdmin() && adminUrl
-				? `${ adminUrl }admin.php?page=jetpack#/recommendations`
+				? adminUrl + adminPath
 				: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 
@@ -354,6 +359,30 @@ function getFallbackDestination( {
 	return '/';
 }
 
+/**
+ * This function returns the product slug of the next higher plan of the plan item in the cart.
+ * Currently, it only supports premium plans.
+ *
+ * @param {ResponseCart} cart the cart object
+ * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
+ */
+function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
+	const currentPlanSlug = cart && getAllCartItems( cart ).filter( isPlan )[ 0 ]?.product_slug;
+	if ( ! currentPlanSlug ) {
+		return;
+	}
+
+	const currentPlan = getPlan( currentPlanSlug );
+
+	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
+		return getPlan(
+			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } )
+		)?.getPathSlug();
+	}
+
+	return;
+}
+
 function maybeShowPlanBumpOffer( {
 	pendingOrReceiptId,
 	cart,
@@ -368,9 +397,11 @@ function maybeShowPlanBumpOffer( {
 	if ( orderId ) {
 		return;
 	}
-	if ( hasPremiumPlan( cart ) ) {
-		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
-		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+	if ( cart && hasPremiumPlan( cart ) ) {
+		const upgradeItem = getNextHigherPlanSlug( cart );
+		if ( upgradeItem ) {
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+		}
 	}
 
 	return;
@@ -400,6 +431,7 @@ function getRedirectUrlForConciergeNudge( {
 		cart &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
+		! hasDIFMProduct( cart ) &&
 		( hasBloggerPlan( cart ) ||
 			hasPersonalPlan( cart ) ||
 			hasPremiumPlan( cart ) ||

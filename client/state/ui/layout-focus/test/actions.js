@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { setLayoutFocus, setNextLayoutFocus, activateNextLayoutFocus } from '../actions';
 import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
 } from 'calypso/state/action-types';
+import { setLayoutFocus, setNextLayoutFocus, activateNextLayoutFocus } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'setLayoutFocus', () => {

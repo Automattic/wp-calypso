@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { merge, set } from 'lodash';
 
 const analyticsMocks = [

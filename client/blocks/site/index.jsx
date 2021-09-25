@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
-import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -101,7 +90,7 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { isAtomicAndEditingToolkitDeactivated, isSiteUnlaunched, site, translate } = this.props;
+		const { isSiteUnlaunched, site, translate } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -120,17 +109,15 @@ class Site extends React.Component {
 			'is-compact': this.props.compact,
 		} );
 
-		// We show public coming soon badge only when the site is not private and the editing toolkit is available.
+		// We show public coming soon badge only when the site is not private.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
-		const shouldShowPublicComingSoonSiteBadge =
-			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
+		const shouldShowPublicComingSoonSiteBadge = ! site.is_private && this.props.site.is_coming_soon;
 
 		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
 		const shouldShowPrivateByDefaultComingSoonBadge =
-			( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
-			! isAtomicAndEditingToolkitDeactivated;
+			this.props.site.is_coming_soon || isPrivateAndUnlaunched;
 
 		return (
 			<div className={ siteClass }>
@@ -215,10 +202,6 @@ function mapStateToProps( state, ownProps ) {
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
-			state,
-			siteId
-		),
 		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	};
 }

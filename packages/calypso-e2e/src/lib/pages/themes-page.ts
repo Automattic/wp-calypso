@@ -1,5 +1,4 @@
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Main themes listing
@@ -22,36 +21,29 @@ const selectors = {
 
 /**
  * Component representing the Apperance > Themes page.
- *
- * @augments {BaseContainer}
  */
-export class ThemesPage extends BaseContainer {
+export class ThemesPage {
+	private page: Page;
+
 	/**
-	 * Post initialization steps.
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Initialization steps.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _postInit(): Promise< void > {
+	private async pageSettled(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
 		] );
-	}
-
-	/**
-	 * Filters the themes on page according to the pricing structure.
-	 *
-	 * @param {string} type Pre-defined types of themes.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-		const selector = `a[role="radio"]:has-text("${ type }")`;
-		await this.page.click( selector );
-		const button = await this.page.waitForSelector( selector );
-
-		// Wait for placeholder to disappear (indicating load is completed).
-		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
 	}
 
 	/**
@@ -61,6 +53,8 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( keyword: string ): Promise< void > {
+		await this.pageSettled();
+
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await Promise.all( [ this.page.waitForNavigation(), searchInput.fill( keyword ) ] );
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );

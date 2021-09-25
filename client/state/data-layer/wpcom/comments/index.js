@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { compact, get, startsWith, pickBy, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
@@ -14,10 +8,6 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSitePost } from 'calypso/state/posts/selectors';
 import { requestCommentsList } from 'calypso/state/comments/actions';
 import {
 	getPostOldestCommentDate,
@@ -25,8 +15,11 @@ import {
 	getPostCommentsCountAtDate,
 	getSiteComment,
 } from 'calypso/state/comments/selectors';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
 
 const isDate = ( date ) => date instanceof Date && ! isNaN( date );
 

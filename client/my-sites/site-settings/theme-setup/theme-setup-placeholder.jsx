@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 
 const ThemeSetupPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

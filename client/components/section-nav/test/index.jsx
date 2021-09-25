@@ -2,22 +2,14 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
-import sinon from 'sinon';
+import TestUtils from 'react-dom/test-utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
-/**
- * Internal dependencies
- */
+import sinon from 'sinon';
 import SectionNav from '../';
 
-jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
 jest.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
 } ) );

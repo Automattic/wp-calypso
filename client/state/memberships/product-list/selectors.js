@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/memberships/init';
 
 const EMPTY_LIST = [];

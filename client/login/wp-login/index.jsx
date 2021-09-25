@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,7 +8,6 @@ import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
 import AutomatticLogo from 'calypso/components/automattic-logo';
 import DocumentHead from 'calypso/components/data/document-head';
-import Gridicon from 'calypso/components/gridicon';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
@@ -250,6 +250,7 @@ export class Login extends React.Component {
 				footer={ footer }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
+				signupUrl={ signupUrl }
 			/>
 		);
 	}

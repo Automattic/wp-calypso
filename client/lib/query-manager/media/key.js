@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import PaginatedQueryKey from '../paginated/key';
 import { DEFAULT_MEDIA_QUERY } from './constants';
 

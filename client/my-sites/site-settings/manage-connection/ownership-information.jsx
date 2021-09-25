@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import HappychatButton from 'calypso/components/happychat/button';

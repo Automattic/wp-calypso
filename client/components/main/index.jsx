@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function Main( {

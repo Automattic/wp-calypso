@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { CredentialsTestProgress as Progress } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
 import getJetpackCredentialsUpdateError, {

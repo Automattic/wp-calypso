@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { keyframes } from '@emotion/core';
-
-/**
- * Internal dependencies
- */
-import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import type { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
+import React from 'react';
+import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-line-item';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	MobileHiddenHorizontalRule,
 	FullWidthButton,
 } from 'calypso/my-sites/marketplace/components';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
 
 interface PropsForMarketplaceShoppingCart {
 	onCheckout: () => void;
@@ -161,7 +155,8 @@ export default function MarketplaceShoppingCart(
 		isExpandedBasketView,
 		toggleExpandedBasketView,
 	} = props;
-	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
 	const { products, sub_total_display } = responseCart;
 	const isBasketLoading = isLoading || isPendingUpdate;
 	const translate = useTranslate();

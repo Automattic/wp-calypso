@@ -8,9 +8,9 @@ Suggestions is a component which displays suggested search terms.
 A suggestion whose `label` property matches the `query` prop will be highlighted.
 
 ```jsx
+import { Suggestions } from '@automattic/components';
 import React, { useCallback, useMemo, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { Suggestions } from '@automattic/components';
 
 export default function SuggestionsExample() {
 	const [ query, setQuery ] = useState( '' );

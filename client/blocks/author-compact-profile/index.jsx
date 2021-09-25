@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import classnames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import PropTypes from 'prop-types';
+import React from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { getStreamUrl } from 'calypso/reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class AuthorCompactProfile extends React.Component {

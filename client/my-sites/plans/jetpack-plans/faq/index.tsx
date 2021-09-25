@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const JetpackFAQ: React.FC = () => {
@@ -47,7 +37,20 @@ const JetpackFAQ: React.FC = () => {
 				<h2 className="jetpack-faq__heading">{ translate( 'Frequently Asked Questions' ) }</h2>
 
 				<FoldableFAQ
-					id="faq-1"
+					id="priority-support"
+					question={ translate( 'Is priority support included in all plans?' ) }
+					onToggle={ onFaqToggle }
+				>
+					{ translate(
+						'Yes, our expert Happiness Engineers provide priority support to all customers with paid plans and services! Have a question or a problem? Just {{helpLink}}contact support{{/helpLink}} and we’ll get back to you in no time.',
+						{
+							components: { helpLink: getHelpLink( 'more_questions' ) },
+						}
+					) }
+				</FoldableFAQ>
+
+				<FoldableFAQ
+					id="cancellation-policy"
 					question={ translate( 'What is your cancellation policy?' ) }
 					onToggle={ onFaqToggle }
 				>
@@ -61,7 +64,7 @@ const JetpackFAQ: React.FC = () => {
 				</FoldableFAQ>
 
 				<FoldableFAQ
-					id="faq-2"
+					id="wpcom-account"
 					question={ translate( 'Why do I need a WordPress.com account?' ) }
 					onToggle={ onFaqToggle }
 				>
@@ -73,7 +76,7 @@ const JetpackFAQ: React.FC = () => {
 				</FoldableFAQ>
 
 				<FoldableFAQ
-					id="faq-3"
+					id="hosting-requirements"
 					question={ translate( 'What are the hosting requirements?' ) }
 					onToggle={ onFaqToggle }
 				>
@@ -83,7 +86,7 @@ const JetpackFAQ: React.FC = () => {
 				</FoldableFAQ>
 
 				<FoldableFAQ
-					id="faq-4"
+					id="multisite-network"
 					question={ translate( 'Does this work with a multisite network?' ) }
 					onToggle={ onFaqToggle }
 				>
@@ -95,7 +98,7 @@ const JetpackFAQ: React.FC = () => {
 				</FoldableFAQ>
 
 				<FoldableFAQ
-					id="faq-5"
+					id="more-questions"
 					question={ translate( 'Have more questions?' ) }
 					onToggle={ onFaqToggle }
 				>

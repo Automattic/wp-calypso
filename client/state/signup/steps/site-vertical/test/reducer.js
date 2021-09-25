@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
-import { JETPACK_CONNECT_AUTHORIZE } from 'calypso/state/jetpack-connect/action-types';
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'calypso/state/action-types';
+import { JETPACK_CONNECT_AUTHORIZE } from 'calypso/state/jetpack-connect/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should update the site vertical and merge with state', () => {

@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import SupportInfo from 'calypso/components/support-info';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
-import SupportInfo from 'calypso/components/support-info';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class SharingButtonsAppearance extends Component {
 	static propTypes = {
@@ -90,8 +81,6 @@ class SharingButtonsAppearance extends Component {
 
 	getPreviewElement() {
 		if ( this.props.initialized ) {
-			const changeLabel = partial( this.props.onChange, 'sharing_label' );
-
 			return (
 				<ButtonsPreview
 					isPrivateSite={ this.props.isPrivate }
@@ -100,7 +89,7 @@ class SharingButtonsAppearance extends Component {
 					buttons={ this.props.buttons }
 					showLike={ this.isLikeButtonEnabled() }
 					showReblog={ ! this.props.isJetpack && this.isReblogButtonEnabled() }
-					onLabelChange={ changeLabel }
+					onLabelChange={ ( value ) => this.props.onChange( 'sharing_label', value ) }
 					onButtonsChange={ this.props.onButtonsChange }
 				/>
 			);
@@ -166,7 +155,6 @@ class SharingButtonsAppearance extends Component {
 	render() {
 		// Disable classname namespace because `sharing-buttons` makes the most sense here
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const changeButtonStyle = partial( this.props.onChange, 'sharing_button_style' );
 		return (
 			<div className="sharing-buttons__panel sharing-buttons-appearance">
 				<p className="sharing-buttons-appearance__description">
@@ -179,7 +167,7 @@ class SharingButtonsAppearance extends Component {
 
 				<div className="sharing-buttons__fieldset-group">
 					<ButtonsStyle
-						onChange={ changeButtonStyle }
+						onChange={ ( value ) => this.props.onChange( 'sharing_button_style', value ) }
 						value={ this.props.values.sharing_button_style }
 						disabled={ ! this.props.initialized }
 					/>
@@ -216,4 +204,4 @@ const connectComponent = connect(
 	{ recordGoogleEvent, recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize )( SharingButtonsAppearance );
+export default connectComponent( localize( SharingButtonsAppearance ) );

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import { Card } from '@automattic/components';
+import React from 'react';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 
 const ReaderAuthorLinkExample = () => {
 	const author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };

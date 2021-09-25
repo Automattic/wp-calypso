@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Dropdown from '../dropdown';
 import Item from '../item';
 
@@ -26,8 +19,8 @@ describe( 'Dropdown', () => {
 		const select = wrapper.find( '.sub-masterbar-nav__select' );
 		const selected = select.find( Item );
 
-		expect( selected ).prop( 'label' ).to.equal( 'Select option' );
-		expect( selected ).prop( 'icon' ).to.equal( 'home' );
+		expect( selected.prop( 'label' ) ).to.equal( 'Select option' );
+		expect( selected.prop( 'icon' ) ).to.equal( 'home' );
 
 		const list = wrapper.find( '.sub-masterbar-nav__items' );
 		const items = list.find( Item );

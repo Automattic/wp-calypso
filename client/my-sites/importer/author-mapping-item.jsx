@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
-import { defer } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import AuthorSelector from 'calypso/blocks/author-selector';
 import User from 'calypso/components/user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './author-mapping-item.scss';
 
 const userShape = ( nameField ) =>

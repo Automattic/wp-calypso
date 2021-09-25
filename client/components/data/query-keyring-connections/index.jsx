@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 
 class QueryKeyringConnections extends Component {
 	static propTypes = {

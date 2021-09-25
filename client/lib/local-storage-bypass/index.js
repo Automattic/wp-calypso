@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import debugModule from 'debug';
 
 const debug = debugModule( 'calypso:support-user' );

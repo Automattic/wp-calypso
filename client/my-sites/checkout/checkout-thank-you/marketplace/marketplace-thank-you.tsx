@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
+import { ThemeProvider } from '@emotion/react';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
-import { ThemeProvider } from 'emotion-theming';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
+import { ThankYou } from 'calypso/components/thank-you';
+import Item from 'calypso/layout/masterbar/item';
+import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import theme from 'calypso/my-sites/marketplace/theme';
+import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getIsPluginInstalledDuringPurchase } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
 	isFetchingAutomatedTransferStatus,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import Item from 'calypso/layout/masterbar/item';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
-import theme from 'calypso/my-sites/marketplace/theme';
-import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { ThankYou } from 'calypso/components/thank-you';
-import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
+import { getIsPluginInstalledDuringPurchase } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * style dependencies
- */
 import './style.scss';
 
 const MarketplaceThankYou = () => {

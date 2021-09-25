@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { LOCALE_SET } from 'calypso/state/action-types';
 

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { CONNECTION_LOST, CONNECTION_RESTORED } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'state/application reducer', () => {
 	describe( '#connectionState()', () => {

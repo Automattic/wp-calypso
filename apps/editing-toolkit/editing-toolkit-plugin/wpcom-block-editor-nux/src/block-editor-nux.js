@@ -60,6 +60,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			);
 		}
 
+		// This case is redundant now and it will be cleaned up in a follow-up PR
 		if ( variant === 'modal' && Guide && GuidePage ) {
 			return <WpcomNux />;
 		}

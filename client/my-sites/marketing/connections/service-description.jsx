@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 class SharingServiceDescription extends Component {
 	static propTypes = {
@@ -141,6 +133,17 @@ class SharingServiceDescription extends Component {
 
 				return this.props.translate( 'Connect to your Google My Business account.', {
 					comment: 'Description for Google My Business when no account is connected',
+				} );
+			},
+			slack: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Connected this P2 to your Slack Workspace.', {
+						comment: 'Get slack notifications on new P2 posts.',
+					} );
+				}
+
+				return this.props.translate( 'Connect your Slack Workspace to this P2.', {
+					comment: 'Get slack notifications on new P2 posts.',
 				} );
 			},
 		} ),

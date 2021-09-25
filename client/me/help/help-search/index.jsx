@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import getHelpLinks from 'calypso/state/selectors/get-help-links';
-import HelpResults from 'calypso/me/help/help-results';
-import NoResults from 'calypso/my-sites/no-results';
 import QueryHelpLinks from 'calypso/components/data/query-help-links';
 import SearchCard from 'calypso/components/search-card';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import HelpResults from 'calypso/me/help/help-results';
+import NoResults from 'calypso/my-sites/no-results';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getHelpLinks from 'calypso/state/selectors/get-help-links';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class HelpSearch extends React.PureComponent {

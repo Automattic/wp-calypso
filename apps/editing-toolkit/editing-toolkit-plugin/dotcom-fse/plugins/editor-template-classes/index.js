@@ -4,6 +4,7 @@ import { withSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import classNames from 'classnames';
 import { get, map } from 'lodash';
+import { useEffect } from 'react';
 
 const EditorTemplateClasses = withSelect( ( select ) => {
 	const { getEntityRecord } = select( 'core' );
@@ -23,21 +24,34 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 	} );
 	return { templateClasses };
 } )( ( { templateClasses } ) => {
-	const blockListInception = setInterval( () => {
-		const blockListParent = document.querySelector( '.block-editor-writing-flow' );
-
-		if ( ! blockListParent ) {
+	useEffect( () => {
+		// templateClasses will be an array with an undefined element when loading.
+		if ( ! templateClasses.some( ( templateClass ) => templateClass ) ) {
 			return;
 		}
-		clearInterval( blockListInception );
 
-		blockListParent.className = classNames(
-			'block-editor-writing-flow',
-			'a8c-template-editor fse-template-part',
-			...templateClasses
-		);
-	} );
+		const blockListInception = setInterval( () => {
+			const blockListParent = document.querySelector(
+				'.editor-styles-wrapper > .block-editor-block-list__layout'
+			);
 
+			if ( ! blockListParent ) {
+				return;
+			}
+
+			clearInterval( blockListInception );
+
+			if ( ! blockListParent.className.includes( 'a8c-template-editor fse-template-part' ) ) {
+				blockListParent.className = classNames(
+					blockListParent.className,
+					'a8c-template-editor fse-template-part',
+					...templateClasses
+				);
+			}
+		}, 100 );
+
+		return () => clearInterval( blockListInception );
+	}, [ ...templateClasses ] ); // eslint-disable-line react-hooks/exhaustive-deps
 	return null;
 } );
 

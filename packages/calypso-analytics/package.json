@@ -1,14 +1,19 @@
 {
 	"name": "@automattic/calypso-analytics",
-	"version": "1.0.0-alpha.1",
+	"version": "1.0.0",
 	"description": "Automattic Analytics",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": true,
-	"main": "dist/cjs/index.js",
-	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.ts",
+	"type": "module",
+	"exports": {
+		"calypso:src": "./src/index.ts",
+		"import": "./dist/esm/index.js"
+	},
+	"engines": {
+		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -26,8 +31,8 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -39,5 +44,8 @@
 		"lodash": "^4.17.21",
 		"tslib": "^2.3.0",
 		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.3"
 	}
 }

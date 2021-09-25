@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import TokenField from 'calypso/components/token-field';
 import { unescapeAndFormatSpaces } from 'calypso/lib/formatting';
 

@@ -1,3 +1,4 @@
+import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -16,10 +17,8 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 } from '@automattic/calypso-products';
-import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
-
-const cartItems = require( '../cart-items' );
 const { getPlan, getTermDuration } = require( '@automattic/calypso-products' );
+const cartItems = require( '../cart-items' );
 const {
 	planItem,
 	isNextDomainFree,
@@ -31,10 +30,6 @@ const {
 	getRenewalItemFromProduct,
 	supportsPrivacyProtectionPurchase,
 } = cartItems;
-
-/**
- * External dependencies
- */
 
 describe( 'planItem()', () => {
 	test( 'should return null for free plan', () => {

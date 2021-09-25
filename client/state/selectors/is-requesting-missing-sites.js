@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 

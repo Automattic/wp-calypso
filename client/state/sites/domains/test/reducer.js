@@ -1,12 +1,15 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import {
+	DOMAIN_PRIVACY_ENABLE_SUCCESS,
+	DOMAIN_PRIVACY_DISABLE_SUCCESS,
+	SITE_DOMAINS_RECEIVE,
+	SITE_DOMAINS_REQUEST,
+	SITE_DOMAINS_REQUEST_SUCCESS,
+	SITE_DOMAINS_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	domainsRequestAction,
 	domainsRequestSuccessAction,
@@ -26,17 +29,6 @@ import {
 	DOMAIN_NOT_PRIMARY as secondDomain,
 	ERROR_MESSAGE_RESPONSE as errorMessageResponse,
 } from './fixture';
-import {
-	DOMAIN_PRIVACY_ENABLE_SUCCESS,
-	DOMAIN_PRIVACY_DISABLE_SUCCESS,
-	SITE_DOMAINS_RECEIVE,
-	SITE_DOMAINS_REQUEST,
-	SITE_DOMAINS_REQUEST_SUCCESS,
-	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
-import { serialize, deserialize } from 'calypso/state/utils';
-
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;

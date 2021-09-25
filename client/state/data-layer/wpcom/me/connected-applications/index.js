@@ -1,14 +1,10 @@
-/**
- * Internal dependencies
- */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import schema from './schema';
 import { CONNECTED_APPLICATIONS_REQUEST } from 'calypso/state/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receiveConnectedApplications } from 'calypso/state/connected-applications/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import schema from './schema';
 
 const noop = () => {};
 

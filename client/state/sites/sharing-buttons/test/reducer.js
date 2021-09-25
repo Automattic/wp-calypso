@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, requesting, saveRequests } from '../reducer';
 import {
 	SHARING_BUTTONS_RECEIVE,
 	SHARING_BUTTONS_REQUEST,
@@ -20,6 +12,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { items, requesting, saveRequests } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

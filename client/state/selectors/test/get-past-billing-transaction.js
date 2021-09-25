@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { clone } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 
 describe( 'getPastBillingTransaction()', () => {

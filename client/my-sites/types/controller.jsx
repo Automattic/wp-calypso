@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import Types from './main';
 import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
+import Types from './main';
 
 export function list( context, next ) {
 	const search = context.query.s;

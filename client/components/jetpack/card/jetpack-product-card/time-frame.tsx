@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
 import { TERM_MONTHLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
-
-/**
- * Internal dependencies
- */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Type dependencies
- */
-import type { Moment } from 'moment';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { Moment } from 'moment';
 
 interface Props {
 	expiryDate?: Moment;

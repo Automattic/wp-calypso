@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import getUpcomingBillingTransactions from 'calypso/state/selectors/get-upcoming-billing-transactions';
 

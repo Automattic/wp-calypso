@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import classNames from 'classnames';
+import React, { PureComponent } from 'react';
 import Count from 'calypso/components/count';
 import SupportInfo from 'calypso/components/support-info';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class SectionHeader extends PureComponent {

@@ -30,12 +30,12 @@ Environment Variables are values that are defined at the system level to serve a
 
 | Name            | Description                                                   | Example          | Required | Store in file? |
 | --------------- | ------------------------------------------------------------- | ---------------- | -------- | -------------- |
-| DISPLAYSIZE     | Specify the target browser window size.                       | desktop          | No       | **NO**         |
 | HEADLESS        | Configure browser headless/headful mode.                      | 1                | No       | **NO**         |
 | LOCALE          | Specify the target browser locale.                            | en               | No       | **NO**         |
 | SCREENSHOTDIR   | Override the default path for screenshots to be written.      | /tmp/screenshots | No       | **NO**         |
 | TEMP_ASSET_PATH | Override the base artifacts path.                             | /tmp/artifacts   | No       | **NO**         |
 | VIDEODIR        | Override the default path for video recordings to be written. | /tmp/recordings  | No       | **NO**         |
+| TARGET_DEVICE   | Specify the device type to be used.                           | desktop          | No       | **NO**         |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
 

@@ -22,11 +22,9 @@ import ImageEditor from 'calypso/blocks/image-editor/docs/example';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import LikeButtons from 'calypso/blocks/like-button/docs/example';
 import Login from 'calypso/blocks/login/docs/example';
-import NpsSurvey from 'calypso/blocks/nps-survey/docs/example';
 import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
-import PostItem from 'calypso/blocks/post-item/docs/example';
 import PostLikes from 'calypso/blocks/post-likes/docs/example';
 import PostShare from 'calypso/blocks/post-share/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
@@ -143,7 +141,6 @@ export default class AppComponents extends React.Component {
 					<PlanCompareCard />
 					<DomainTip />
 					<RelatedPostCard />
-					<PostItem readmeFilePath="post-item" />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
@@ -160,7 +157,6 @@ export default class AppComponents extends React.Component {
 					<DailyPostButton readmeFilePath="daily-post-button" />
 					<PostLikes readmeFilePath="post-likes" />
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
-					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey readmeFilePath="nps-survey" /> }
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />

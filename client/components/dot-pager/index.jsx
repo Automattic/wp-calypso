@@ -1,20 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Children, useState, useEffect, useRef } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { times } from 'lodash';
-import classnames from 'classnames';
-import { Icon, arrowRight } from '@wordpress/icons';
 import { useResizeObserver } from '@wordpress/compose';
+import { Icon, arrowRight } from '@wordpress/icons';
+import classnames from 'classnames';
+import { useTranslate, useRtl } from 'i18n-calypso';
+import { times } from 'lodash';
+import React, { Children, useState, useEffect, useRef } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 	if ( numberOfPages < 2 ) {
 		return null;
 	}
@@ -49,7 +44,10 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 						icon={ arrowRight }
 						size={ 18 }
 						fill="currentColor"
-						style={ { transform: 'scaleX(-1)' } }
+						style={
+							/* Flip the icon for languages with LTR direction. */
+							! isRtl ? { transform: 'scaleX(-1)' } : null
+						}
 					/>
 					{ showControlLabels && translate( 'Previous' ) }
 				</button>
@@ -62,7 +60,15 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
 					{ showControlLabels && translate( 'Next' ) }
-					<Icon icon={ arrowRight } size={ 18 } fill="currentColor" />
+					<Icon
+						icon={ arrowRight }
+						size={ 18 }
+						fill="currentColor"
+						style={
+							/* Flip the icon for languages with RTL direction. */
+							isRtl ? { transform: 'scaleX(-1)' } : null
+						}
+					/>
 				</button>
 			</li>
 		</ul>
@@ -74,12 +80,14 @@ export const DotPager = ( {
 	hasDynamicHeight = false,
 	children,
 	className,
+	onPageSelected,
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ pagesStyle, setPagesStyle ] = useState();
 	const pagesRef = useRef();
 	const [ resizeObserver, sizes ] = useResizeObserver();
+	const numPages = Children.count( children );
 
 	useEffect( () => {
 		if ( ! hasDynamicHeight ) {
@@ -89,7 +97,13 @@ export const DotPager = ( {
 		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
 
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle ] );
+	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
+
+	useEffect( () => {
+		if ( currentPage >= numPages ) {
+			setCurrentPage( numPages - 1 );
+		}
+	}, [ numPages ] );
 
 	return (
 		<div className={ className } { ...props }>
@@ -97,8 +111,11 @@ export const DotPager = ( {
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
-				numberOfPages={ Children.count( children ) }
-				setCurrentPage={ setCurrentPage }
+				numberOfPages={ numPages }
+				setCurrentPage={ ( index ) => {
+					onPageSelected && onPageSelected( index );
+					setCurrentPage( index );
+				} }
 			/>
 			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
 				{ Children.map( children, ( child, index ) => (

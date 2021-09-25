@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-
-/**
- * Internal dependencies
- */
-import { Button, ScreenReaderText } from '@automattic/components';
+import React, { FunctionComponent } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

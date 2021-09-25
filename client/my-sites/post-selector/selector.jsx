@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import { connect } from 'react-redux';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import classNames from 'classnames';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
-import { AutoSizer, List } from '@automattic/react-virtualized';
+import { localize } from 'i18n-calypso';
 import {
 	debounce,
 	memoize,
@@ -20,26 +14,25 @@ import {
 	isEqual,
 	includes,
 } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import QueryPosts from 'calypso/components/data/query-posts';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import NoResults from './no-results';
-import QueryPosts from 'calypso/components/data/query-posts';
-import QueryPostTypes from 'calypso/components/data/query-post-types';
-import Search from './search';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
 import {
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 	isRequestingPostsForQueryIgnoringPage,
 } from 'calypso/state/posts/selectors';
-import { getPostTypes } from 'calypso/state/post-types/selectors';
+import NoResults from './no-results';
+import Search from './search';
 
 /**
  * Constants

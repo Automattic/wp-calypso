@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, requesting } from '../reducer';
 import {
 	READER_THUMBNAIL_REQUEST,
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
 } from 'calypso/state/reader/action-types';
+import { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	const embedUrl = 'embedUrl';

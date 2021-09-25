@@ -1,20 +1,49 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import {
+	isPersonal,
+	isPremium,
+	isBusiness,
+	isEcommerce,
+	isPlan,
+	isComplete,
+	isDomainProduct,
+	isDomainRegistration,
+	isDomainMapping,
+	isDomainTransfer,
+	isGoogleWorkspace,
+	isGSuiteOrGoogleWorkspace,
+	isTheme,
+	isJetpackProduct,
+	isConciergeSession,
+	isTitanMail,
+	applyTestFiltersToPlansList,
+	isWpComMonthlyPlan,
+	JETPACK_PLANS,
+	JETPACK_LEGACY_PLANS,
+	JETPACK_PRODUCTS_LIST,
+	isP2Plus,
+	getMonthlyPlanByYearly,
+} from '@automattic/calypso-products';
+import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-
-/**
- * Internal Dependencies
- */
+import { connect } from 'react-redux';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
+import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
-import config from '@automattic/calypso-config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
@@ -39,86 +68,48 @@ import {
 	getName,
 	shouldRenderMonthlyRenewalOption,
 } from 'calypso/lib/purchases';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
+import { addQueryArgs } from 'calypso/lib/url';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import ProductLink from 'calypso/me/purchases/product-link';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserId,
+} from 'calypso/state/current-user/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	hasLoadedSitePurchasesFromServer,
+	isPurchaseManagementLocked,
+	getRenewableSitePurchases,
+	shouldRevertAtomicSiteBeforeDeactivation,
+} from 'calypso/state/purchases/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
+import PurchaseSiteHeader from '../purchases-site/header';
+import RemovePurchase from '../remove-purchase';
 import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
 	isJetpackTemporarySitePurchase,
 } from '../utils';
-import {
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-	hasLoadedSitePurchasesFromServer,
-	getRenewableSitePurchases,
-} from 'calypso/state/purchases/selectors';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import Gridicon from 'calypso/components/gridicon';
-import HeaderCake from 'calypso/components/header-cake';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import {
-	isPersonal,
-	isPremium,
-	isBusiness,
-	isEcommerce,
-	isPlan,
-	isComplete,
-	isDomainProduct,
-	isDomainRegistration,
-	isDomainMapping,
-	isDomainTransfer,
-	isGoogleWorkspace,
-	isGSuiteOrGoogleWorkspace,
-	isJetpackSearch,
-	isTheme,
-	isJetpackProduct,
-	isConciergeSession,
-	isTitanMail,
-	applyTestFiltersToPlansList,
-	isWpComMonthlyPlan,
-	JETPACK_PLANS,
-	JETPACK_LEGACY_PLANS,
-	JETPACK_PRODUCTS_LIST,
-	isP2Plus,
-	getMonthlyPlanByYearly,
-} from '@automattic/calypso-products';
-import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import ProductLink from 'calypso/me/purchases/product-link';
-import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
-import PurchaseSiteHeader from '../purchases-site/header';
-import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import RemovePurchase from '../remove-purchase';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import titles from 'calypso/me/purchases/titles';
-import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import {
-	currentUserHasFlag,
-	getCurrentUser,
-	getCurrentUserId,
-} from 'calypso/state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { hasCustomDomain } from 'calypso/lib/site/utils';
-import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
-import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import Badge from 'calypso/components/badge';
-import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
-import { addQueryArgs } from 'calypso/lib/url';
+import PurchaseMeta from './purchase-meta';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ManagePurchase extends Component {
@@ -443,7 +434,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, translate } = this.props;
+		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
 		const { id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
@@ -453,13 +444,7 @@ class ManagePurchase extends Component {
 		let text;
 		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if (
-			isAtomicSite &&
-			isSubscription( purchase ) &&
-			! isGSuiteOrGoogleWorkspace( purchase ) &&
-			! isTitanMail( purchase ) &&
-			! isJetpackSearch( purchase )
-		) {
+		if ( shouldRevertAtomicSiteBeforeCancel && ! config.isEnabled( 'atomic/automated-revert' ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
 		} else if ( hasAmountAvailableToRefund( purchase ) ) {
@@ -721,6 +706,7 @@ class ManagePurchase extends Component {
 			siteSlug,
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
+			canManagePurchase,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -775,34 +761,30 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
-					{ isProductOwner && ! preventRenewal && this.renderRenewButton() }
+					{ isProductOwner && canManagePurchase && (
+						<>
+							{ preventRenewal && this.renderSelectNewButton() }
+							{ ! preventRenewal && this.renderRenewButton() }
+						</>
+					) }
 				</Card>
 				<PurchasePlanDetails
 					purchaseId={ this.props.purchaseId }
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					! renderMonthlyRenewalOption &&
-					this.renderRenewNowNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					renderMonthlyRenewalOption &&
-					this.renderRenewAnnuallyNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					renderMonthlyRenewalOption &&
-					this.renderRenewMonthlyNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					! isJetpackTemporarySite &&
-					this.renderUpgradeNavItem() }
-				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
-				{ isProductOwner && this.renderCancelPurchaseNavItem() }
-				{ isProductOwner && ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+				{ isProductOwner && canManagePurchase && (
+					<>
+						{ preventRenewal && this.renderSelectNewNavItem() }
+						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
+						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
+						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
+						{ ! preventRenewal && ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ this.renderEditPaymentMethodNavItem() }
+						{ this.renderCancelPurchaseNavItem() }
+						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+					</>
+				) }
 			</Fragment>
 		);
 	}
@@ -851,6 +833,9 @@ class ManagePurchase extends Component {
 					<QueryUserPurchases userId={ this.props.userId } />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
+				{ purchase?.siteId && config.isEnabled( 'atomic/automated-revert' ) && (
+					<QueryBlogStickers blogId={ purchase.siteId } />
+				) }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>
@@ -945,5 +930,10 @@ export default connect( ( state, props ) => {
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+		shouldRevertAtomicSiteBeforeCancel: shouldRevertAtomicSiteBeforeDeactivation(
+			state,
+			purchase?.id
+		),
+		canManagePurchase: ! isPurchaseManagementLocked( state, purchase?.id ),
 	};
 } )( localize( ManagePurchase ) );

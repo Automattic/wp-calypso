@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getGuidedTransferIssue } from 'calypso/state/sites/guided-transfer/selectors';
-
-/**
- * Internal dependencies
- */
 import Notice from 'calypso/components/notice';
+import { getGuidedTransferIssue } from 'calypso/state/sites/guided-transfer/selectors';
 
 /**
  * This implements a list of notices for warnings which *don't prevent a transfer*.

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
 import Preference from './preference';
 
 class PreferenceList extends Component {

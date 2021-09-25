@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import React from 'react';
 import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 
 const GuidedTransferInProgress = ( { translate } ) => (

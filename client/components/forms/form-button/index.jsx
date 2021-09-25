@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import React, { Children } from 'react';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class FormButton extends React.Component {

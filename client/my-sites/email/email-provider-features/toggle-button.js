@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 
 function EmailProviderFeaturesToggleButton( { handleClick, isRelatedContentExpanded } ) {
 	const translate = useTranslate();

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestTimezones } from 'calypso/state/timezones/actions';
 
 export class QueryTimezones extends Component {

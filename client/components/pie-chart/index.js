@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
+import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
+import { localize } from 'i18n-calypso';
+import { sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
-import { sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import DataType from './data-type';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SVG_SIZE = 300;

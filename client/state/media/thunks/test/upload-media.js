@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { uploadMedia as uploadMediaThunk } from 'calypso/state/media/thunks/upload-media';
 import * as syncActions from 'calypso/state/media/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
+import { uploadMedia as uploadMediaThunk } from 'calypso/state/media/thunks/upload-media';
 
 jest.mock( 'calypso/state/media/utils/is-file-list', () => ( {
 	isFileList: jest.fn(),

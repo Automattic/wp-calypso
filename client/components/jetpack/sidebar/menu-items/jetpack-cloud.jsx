@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import SidebarItem from 'calypso/layout/sidebar/item';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
-import SidebarItem from 'calypso/layout/sidebar/item';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import JetpackIcons from './jetpack-icons';
 import JetpackSidebarMenuItems from '.';
 
 export default ( { path } ) => {
@@ -47,8 +41,7 @@ export default ( { path } ) => {
 			/>
 			{ shouldShowSettings && (
 				<SidebarItem
-					materialIcon="settings"
-					materialIconStyle="filled"
+					customIcon={ <JetpackIcons icon="settings" /> }
 					label={ translate( 'Settings', {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef } from 'react';
 import { useSetStepComplete } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { useEffect, useRef } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-skip-to-last-step-if-form-complete' );
 

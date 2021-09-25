@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getLanguage } from 'calypso/lib/i18n-utils/utils';
 import { withoutHttp } from 'calypso/lib/url';
 

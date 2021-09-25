@@ -82,6 +82,7 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
+	isReskinnedFlow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -115,8 +116,10 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
-function isReskinnedFlow( flowName ) {
-	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+function showProgressIndicator( flowName ) {
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site' ];
+
+	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
 
 class Signup extends React.Component {
@@ -578,11 +581,15 @@ class Signup extends React.Component {
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
+			const destination = this.signupFlowController.getDestination();
 
 			return (
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
+					// If destination is not setup-site flow, we'll apply default design now
+					// because the user cannot choose design in current flow
+					hasAppliedDesign={ ! destination.startsWith( '/start/setup-site' ) }
 				/>
 			);
 		}
@@ -696,8 +703,6 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 
 		return (
@@ -708,7 +713,7 @@ class Signup extends React.Component {
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
 						rightComponent={
-							showProgressIndicator && (
+							showProgressIndicator( this.props.flowName ) && (
 								<FlowProgressIndicator
 									positionInFlow={ this.getPositionInFlow() }
 									flowLength={ this.getInteractiveStepsCount() }

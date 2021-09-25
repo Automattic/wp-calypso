@@ -1,36 +1,30 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupFailed from './status-card/backup-failed';
-import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupInProgress from './status-card/backup-in-progress';
+import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
+import VisibleDaysLimit from './status-card/visible-days-limit';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) => {
@@ -59,6 +53,14 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 			backupPreviouslyInProgress.current = backupCurrentlyInProgress;
 		}
 	}, [ backupCurrentlyInProgress ] );
+
+	// If display rules are enabled,
+	// and we're looking at a date that should not be visible,
+	// display a status to reflect this.
+	const isDateVisible = useIsDateVisible( siteId );
+	if ( ! isDateVisible( selectedDate ) ) {
+		return <VisibleDaysLimit selectedDate={ selectedDate } />;
+	}
 
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch
@@ -129,12 +131,14 @@ DailyBackupStatus.propTypes = {
 };
 
 const Wrapper = ( props ) => {
+	const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
 	const siteId = useSelector( getSelectedSiteId );
 
 	// Fetch the status of the most recent backups
 	// to see if there's a backup currently in progress
 	return (
 		<Card className="daily-backup-status">
+			{ displayRulesEnabled && <QueryRewindPolicies siteId={ siteId } /> }
 			<QueryRewindBackups siteId={ siteId } />
 			<DailyBackupStatus { ...props } />
 		</Card>

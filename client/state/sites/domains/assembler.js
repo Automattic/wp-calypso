@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import { camelCase, mapKeys } from 'lodash';
 import {
 	getDomainRegistrationAgreementUrl,
 	getDomainType,
 	getGdprConsentStatus,
 	getTransferStatus,
 } from 'calypso/lib/domains/utils';
-import { camelCase, mapKeys } from 'lodash';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	if ( ! googleAppsSubscription ) {
@@ -48,9 +45,11 @@ export const createSiteDomainObject = ( domain ) => {
 		autoRenewalDate: String( domain.auto_renewal_date ),
 		adminEmail: domain.admin_email,
 		autoRenewing: Boolean( domain.auto_renewing ),
+		beginTransferUntilDate: String( domain.begin_transfer_until_date ),
 		blogId: Number( domain.blog_id ),
 		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
+		connectionMode: String( domain.connection_mode ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
 		currentUserCanAddEmail: Boolean( domain.current_user_can_add_email ),

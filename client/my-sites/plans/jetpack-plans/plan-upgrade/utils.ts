@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
 import {
 	isJetpackPurchasableItem,
 	isJetpackLegacyItem,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import { COMPARE_PLANS_QUERY_PARAM } from './constants';
-
-/**
- * Type dependencies
- */
+import type { Duration } from '../types';
+import type { PlanRecommendation } from './types';
 import type {
 	JetpackLegacyPlanSlug,
 	JetpackPurchasableItemSlug,
 } from '@automattic/calypso-products';
-import type { PlanRecommendation } from './types';
-import type { Duration } from '../types';
 
 export function getComparePlansFromContext( {
 	query,

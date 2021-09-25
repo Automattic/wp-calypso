@@ -52,7 +52,7 @@ export { default as Notices } from 'calypso/components/notice/docs/example';
 export { default as PaginationExample } from 'calypso/components/pagination/docs/example';
 export { default as PaymentLogo } from 'calypso/components/payment-logo/docs/example';
 export { default as PieChart } from 'calypso/components/pie-chart/docs/example';
-export { default as Popovers } from 'calypso/components/popover/docs/example';
+export { default as Popovers } from 'calypso/components/popover-menu/docs/example';
 export { default as ProgressBar } from '@automattic/components/src/progress-bar/docs/example';
 export { default as PromoSection } from 'calypso/components/promo-section/docs/example';
 export { default as PromoCard } from 'calypso/components/promo-section/promo-card/docs/example';

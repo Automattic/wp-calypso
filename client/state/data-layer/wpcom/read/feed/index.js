@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
+import { translate } from 'i18n-calypso';
 import { map, truncate } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'calypso/state/reader/action-types';
-import { receiveFeedSearch } from 'calypso/state/reader/feed-searches/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { translate } from 'i18n-calypso';
+import { READER_FEED_SEARCH_REQUEST, READER_FEED_REQUEST } from 'calypso/state/reader/action-types';
+import { receiveFeedSearch } from 'calypso/state/reader/feed-searches/actions';
 import queryKey from 'calypso/state/reader/feed-searches/query-key';
 import {
 	receiveReaderFeedRequestSuccess,
 	receiveReaderFeedRequestFailure,
 } from 'calypso/state/reader/feeds/actions';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function fromApi( apiResponse ) {
 	const feeds = map( apiResponse.feeds, ( feed ) => ( {

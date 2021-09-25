@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React, { useCallback, useMemo } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import debugFactory from 'debug';
-import { useSelector, useDispatch } from 'react-redux';
+import { useStripe } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
 import {
 	CheckoutProvider,
 	CheckoutStepAreaWrapper,
@@ -15,90 +9,83 @@ import {
 	defaultRegistry,
 	Button,
 } from '@automattic/composite-checkout';
-import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
-import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import colorStudio from '@automattic/color-studio';
-import { useStripe } from '@automattic/calypso-stripe';
-import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import wp from 'calypso/lib/wp';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import { ThemeProvider } from '@emotion/react';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import React, { useCallback, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
-import useStoredCards from './hooks/use-stored-cards';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import wp from 'calypso/lib/wp';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import EmptyCart from './components/empty-cart';
+import WPCheckout from './components/wp-checkout';
+import useActOnceOnStrings from './hooks/use-act-once-on-strings';
+import useAddProductsFromUrl from './hooks/use-add-products-from-url';
+import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
-import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
+import useCountryList from './hooks/use-country-list';
+import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import webPayProcessor from './lib/web-pay-processor';
-import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
+import useDetectedCountryCode from './hooks/use-detected-country-code';
+import useGetThankYouUrl from './hooks/use-get-thank-you-url';
+import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
+import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
+import useRecordCartLoaded from './hooks/use-record-cart-loaded';
+import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
+import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
+import useStoredCards from './hooks/use-stored-cards';
+import { useWpcomStore } from './hooks/wpcom-store';
+import existingCardProcessor from './lib/existing-card-processor';
+import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
 import fullCreditsProcessor from './lib/full-credits-processor';
-import weChatProcessor from './lib/we-chat-processor';
 import genericRedirectProcessor from './lib/generic-redirect-processor';
-import existingCardProcessor from './lib/existing-card-processor';
+import getContactDetailsType from './lib/get-contact-details-type';
+import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
-import useGetThankYouUrl from './hooks/use-get-thank-you-url';
-import createAnalyticsEventHandler from './record-analytics';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useCountryList from './hooks/use-country-list';
-import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import useActOnceOnStrings from './hooks/use-act-once-on-strings';
-import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
-import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
-import useRecordCartLoaded from './hooks/use-record-cart-loaded';
-import useAddProductsFromUrl from './hooks/use-add-products-from-url';
-import useDetectedCountryCode from './hooks/use-detected-country-code';
-import WPCheckout from './components/wp-checkout';
-import { useWpcomStore } from './hooks/wpcom-store';
+import weChatProcessor from './lib/we-chat-processor';
+import webPayProcessor from './lib/web-pay-processor';
+import createAnalyticsEventHandler from './record-analytics';
+import { CountryListItem } from './types/country-list-item';
+import { StoredCard } from './types/stored-cards';
 import {
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
 } from './types/wpcom-store-state';
-import { StoredCard } from './types/stored-cards';
-import { CountryListItem } from './types/country-list-item';
-import doesValueExist from './lib/does-value-exist';
-import EmptyCart from './components/empty-cart';
-import getContactDetailsType from './lib/get-contact-details-type';
 import type { ReactStandardAction } from './types/analytics';
-import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
-import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
 import type { PaymentProcessorOptions } from './types/payment-processors';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const { select, registerStore } = defaultRegistry;
 
-const wpcom = wp.undocumented();
-
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcomGetStoredCards = (): StoredCard[] => wpcom.getStoredCards();
+const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
-	getStoredCards,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -120,7 +107,6 @@ export default function CompositeCheckout( {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
-	getStoredCards?: () => StoredCard[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -159,17 +145,6 @@ export default function CompositeCheckout( {
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
-			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ) )
-			);
-		},
-		[ reduxDispatch, translate ]
-	);
-
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
 			debug( 'error', error );
@@ -181,22 +156,6 @@ export default function CompositeCheckout( {
 			);
 		},
 		[ reduxDispatch, translate ]
-	);
-
-	const showInfoMessage = useCallback(
-		( message ) => {
-			debug( 'info', message );
-			reduxDispatch( infoNotice( message ) );
-		},
-		[ reduxDispatch ]
-	);
-
-	const showSuccessMessage = useCallback(
-		( message ) => {
-			debug( 'success', message );
-			reduxDispatch( successNotice( message ) );
-		},
-		[ reduxDispatch ]
 	);
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
@@ -227,6 +186,7 @@ export default function CompositeCheckout( {
 		jetpackPurchaseToken,
 	} );
 
+	const cartKey = useCartKey();
 	const {
 		couponStatus,
 		applyCoupon,
@@ -239,7 +199,7 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
@@ -306,13 +266,13 @@ export default function CompositeCheckout( {
 	useCachedDomainContactDetails( updateLocation );
 
 	// Record errors adding products to the cart
-	useActOnceOnStrings( [ cartProductPrepError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
 		);
 	} );
 
-	useActOnceOnStrings( [ cartLoadingError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ cartLoadingError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
 		);
@@ -325,7 +285,7 @@ export default function CompositeCheckout( {
 		cartLoadingError,
 		stripeLoadingError?.message,
 		cartProductPrepError,
-	].filter( doesValueExist );
+	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
 			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
@@ -334,7 +294,7 @@ export default function CompositeCheckout( {
 
 	const errors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
-		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
+		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
 
 	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
@@ -347,11 +307,11 @@ export default function CompositeCheckout( {
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
-		getStoredCards || wpcomGetStoredCards,
+		wpcomGetStoredCards,
 		Boolean( isLoggedOutCart )
 	);
 
-	useActOnceOnStrings( [ storedCardsError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
 		);
@@ -461,6 +421,7 @@ export default function CompositeCheckout( {
 			siteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
+			stripe,
 		} ),
 		[
 			contactDetails,
@@ -472,6 +433,7 @@ export default function CompositeCheckout( {
 			reduxDispatch,
 			responseCart,
 			siteId,
+			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
 		]
@@ -539,6 +501,8 @@ export default function CompositeCheckout( {
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
 		} );
+	} else {
+		debug( 'no longer loading' );
 	}
 
 	useRecordCheckoutLoaded( {
@@ -566,12 +530,25 @@ export default function CompositeCheckout( {
 	} );
 
 	const handlePaymentComplete = useCallback(
-		( args: PaymentCompleteCallbackArguments ) => {
+		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 		},
 		[ onPaymentComplete, onAfterPaymentComplete ]
 	);
+
+	const handlePaymentError = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
+		},
+		[ reduxDispatch, translate ]
+	);
+
+	const handlePaymentRedirect = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -582,6 +559,7 @@ export default function CompositeCheckout( {
 			isInitialCartLoading,
 		} )
 	) {
+		debug( 'rendering empty cart page' );
 		const goToPlans = () => {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
@@ -630,9 +608,8 @@ export default function CompositeCheckout( {
 				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
+				onPaymentError={ handlePaymentError }
+				onPaymentRedirect={ handlePaymentRedirect }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }

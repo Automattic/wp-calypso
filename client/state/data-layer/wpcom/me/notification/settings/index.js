@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { NOTIFICATION_SETTINGS_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { NOTIFICATION_SETTINGS_REQUEST } from 'calypso/state/action-types';
-import { updateNotificationSettings } from 'calypso/state/notification-settings/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { updateNotificationSettings } from 'calypso/state/notification-settings/actions';
 
 /**
  * Returns an action for HTTP request to fetch the current user notification settings

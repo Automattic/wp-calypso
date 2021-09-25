@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 describe( 'isPrivateSite()', () => {

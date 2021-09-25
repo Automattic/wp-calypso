@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 import 'calypso/state/email-accounts/init';
 

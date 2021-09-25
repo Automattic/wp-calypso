@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import { compact } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
+import { compact } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getSelectedSiteId, isSiteSection } from 'calypso/state/ui/selectors';
-import getSiteTitle from 'calypso/state/sites/selectors/get-site-title';
-import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
+import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
+import getSiteTitle from 'calypso/state/sites/selectors/get-site-title';
+import { getSelectedSiteId, isSiteSection } from 'calypso/state/ui/selectors';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/document-head/init';
 import 'calypso/state/ui/init';
 

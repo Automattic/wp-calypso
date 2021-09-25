@@ -1,37 +1,30 @@
-/**
- * External dependencies
- */
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wp from 'calypso/lib/wp';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
-import Notice from 'calypso/components/notice';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import { successNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { successNotice } from 'calypso/state/notices/actions';
 
 const wpcom = wp.undocumented();
 

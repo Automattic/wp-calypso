@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import {
@@ -16,9 +9,6 @@ import {
 	getThreatVulnerability,
 } from 'calypso/components/jetpack/threat-item/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

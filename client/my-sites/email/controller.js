@@ -1,22 +1,16 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
-import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
-import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
-import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
-import TitanSetupMailbox from 'calypso/my-sites/email/titan-setup-mailbox';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
-import TitanSetupThankYou from 'calypso/my-sites/email/titan-setup-thank-you';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
+import InboxManagement from 'calypso/my-sites/email/inbox';
+import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
+import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
+import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
@@ -66,10 +60,10 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetupMailbox( pageContext, next ) {
+	emailManagementTitanSetUpMailbox( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<TitanSetupMailbox selectedDomainName={ pageContext.params.domain } />
+				<TitanSetUpMailbox selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
 		);
 
@@ -79,7 +73,10 @@ export default {
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersComparison selectedDomainName={ pageContext.params.domain } />
+				<EmailProvidersComparison
+					comparisonContext="email-purchase"
+					selectedDomainName={ pageContext.params.domain }
+				/>
 			</CalypsoShoppingCartProvider>
 		);
 
@@ -98,9 +95,9 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetupThankYou( pageContext, next ) {
+	emailManagementTitanSetUpThankYou( pageContext, next ) {
 		pageContext.primary = (
-			<TitanSetupThankYou
+			<TitanSetUpThankYou
 				domainName={ pageContext.params.domain }
 				emailAddress={ pageContext.query.email }
 			/>
@@ -122,6 +119,11 @@ export default {
 			</CalypsoShoppingCartProvider>
 		);
 
+		next();
+	},
+
+	emailManagementInbox( pageContext, next ) {
+		pageContext.primary = <InboxManagement />;
 		next();
 	},
 };

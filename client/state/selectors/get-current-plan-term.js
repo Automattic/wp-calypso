@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPlan } from '@automattic/calypso-products';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 

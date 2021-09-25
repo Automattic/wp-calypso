@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
+import { localize, translate } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import { localize, translate } from 'i18n-calypso';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
+import Main from 'calypso/components/main';
 import { getSelectedDomain, isRegisteredDomain } from 'calypso/lib/domains';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ChangeSiteAddress extends React.Component {

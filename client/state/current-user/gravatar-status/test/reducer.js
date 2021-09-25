@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer, { isUploading, tempImage } from '../reducer';
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import reducer, { isUploading, tempImage } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {

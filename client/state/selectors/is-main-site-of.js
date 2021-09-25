@@ -1,13 +1,9 @@
-/**
- * Internal dependencies
- */
-
+import { withoutHttp } from 'calypso/lib/url';
 import {
 	getSiteOption,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-import { withoutHttp } from 'calypso/lib/url';
 
 /**
  * Returns true if site mainSiteId is the main site of site secondarySiteId and false otherwise.

@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
+import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
-import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { TransactionRequest } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
+import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
-import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import getDomainDetails from './get-domain-details';
-import getPostalCode from './get-postal-code';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { TransactionRequest } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
 
@@ -41,14 +34,14 @@ export default async function existingCardProcessor(
 		throw new Error( 'Required purchase data is missing' );
 	}
 	const {
-		stripeConfiguration,
+		stripe,
 		recordEvent,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
 	} = dataForProcessor;
-	if ( ! stripeConfiguration ) {
-		throw new Error( 'Stripe configuration is required' );
+	if ( ! stripe ) {
+		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
 
 	const domainDetails = getDomainDetails( contactDetails, {
@@ -80,7 +73,7 @@ export default async function existingCardProcessor(
 				// 3DS authentication required
 				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
-					stripeConfiguration,
+					stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
 			}

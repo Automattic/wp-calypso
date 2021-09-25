@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -19,31 +18,26 @@ class MasterbarItemNotifications extends Component {
 		tooltip: TranslatableString,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
+		hasUnseenNotifications: PropTypes.bool,
 	};
 
 	notificationLink = createRef();
+
 	state = {
 		animationState: 0,
+		newNote: this.props.hasUnseenNotifications,
 	};
 
-	UNSAFE_componentWillMount() {
-		this.setState( {
-			newNote: this.props.hasUnseenNotifications,
-		} );
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
-
-		if ( ! this.props.isNotificationsOpen && isOpen ) {
-			recordOpening( {
+		if ( ! this.props.isNotificationsOpen && nextProps.isNotificationsOpen ) {
+			nextProps.recordTracksEvent( 'calypso_notification_open', {
 				unread_notifications: store.get( 'wpnotes_unseen_count' ),
 			} );
 			this.setNotesIndicator( 0 );
 		}
 
 		// focus on main window if we just closed the notes panel
-		if ( this.props.isNotificationsOpen && ! isOpen ) {
+		if ( this.props.isNotificationsOpen && ! nextProps.isNotificationsOpen ) {
 			this.notificationLink.current.blur();
 			window.focus();
 		}
@@ -145,7 +139,7 @@ const mapStateToProps = ( state ) => {
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
-	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
+	recordTracksEvent,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

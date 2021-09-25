@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import { moduleData as MODULE_DATA_FIXTURE } from './fixtures/jetpack-modules';
 

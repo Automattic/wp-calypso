@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -15,7 +9,6 @@ import {
 	getSectionGroup,
 	isSiteSection,
 } from '../selectors';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getSelectedSite()', () => {
@@ -54,8 +47,6 @@ describe( 'selectors', () => {
 				name: 'WordPress.com Example Blog',
 				URL: 'https://example.com',
 				domain: 'example.com',
-				hasConflict: false,
-				is_previewable: false,
 				options: {},
 				slug: 'example.com',
 				title: 'WordPress.com Example Blog',

@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
+import { compact, pickBy } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { compact, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ThemesSelection from './themes-selection';
-import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import UpworkBanner from 'calypso/blocks/upwork-banner';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
-import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import ThemePreview from './theme-preview';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import config from '@automattic/calypso-config';
-import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
@@ -37,18 +30,15 @@ import {
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import UpworkBanner from 'calypso/blocks/upwork-banner';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import RecommendedThemes from './recommended-themes';
-import TrendingThemes from './trending-themes';
+import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import FseThemes from './fse-themes';
-import Badge from 'calypso/components/badge';
+import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import RecommendedThemes from './recommended-themes';
+import ThemePreview from './theme-preview';
+import ThemesSearchCard from './themes-magic-search-card';
+import ThemesSelection from './themes-selection';
+import TrendingThemes from './trending-themes';
 
-/**
- * Style dependencies
- */
 import './theme-showcase.scss';
 
 const subjectsMeta = {
@@ -231,6 +221,7 @@ class ThemeShowcase extends React.Component {
 	};
 
 	onFilterClick = ( tabFilter ) => {
+		const scrollPos = window.pageYOffset;
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
@@ -238,7 +229,10 @@ class ThemeShowcase extends React.Component {
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
 		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
-			callback = () => this.onTierSelect( { value: 'all' } );
+			callback = () => {
+				this.onTierSelect( { value: 'all' } );
+				window.scrollTo( 0, scrollPos );
+			};
 		}
 		this.setState( { tabFilter }, callback );
 	};
@@ -295,10 +289,9 @@ class ThemeShowcase extends React.Component {
 			pathName,
 			title,
 			filterString,
-			isMultisite,
 			locale,
 		} = this.props;
-		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
+		const tier = '';
 
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 
@@ -391,7 +384,6 @@ class ThemeShowcase extends React.Component {
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (

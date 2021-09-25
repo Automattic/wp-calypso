@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function EmailStepSideBar() {

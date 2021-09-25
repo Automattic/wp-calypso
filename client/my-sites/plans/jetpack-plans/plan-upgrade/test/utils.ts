@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
+import { COMPARE_PLANS_QUERY_PARAM } from '../constants';
 import {
 	getComparePlansFromContext,
 	getItemSlugByDuration,
 	getPlanRecommendationFromContext,
 } from '../utils';
-import { COMPARE_PLANS_QUERY_PARAM } from '../constants';
 
 const PURCHASABLE_ITEMS = [ 'jetpack_personal', 'jetpack_backup_daily', 'jetpack_scan' ];
 const NON_PURCHASABLE_ITEMS = [ 'jetpack_abc', 'jetpack_qwerty' ];

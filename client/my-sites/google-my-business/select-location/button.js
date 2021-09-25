@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { connectGoogleMyBusinessLocation } from 'calypso/state/google-my-business/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
 import { withEnhancers } from 'calypso/state/utils';
 
 const noop = () => {};

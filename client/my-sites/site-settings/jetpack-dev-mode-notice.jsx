@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const JetpackDevModeNotice = ( { isJetpackSiteInDevMode, siteId, siteIsJetpack, translate } ) => {
 	if ( ! siteIsJetpack ) {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,

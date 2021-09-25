@@ -2,24 +2,17 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { EditGravatar } from 'calypso/blocks/edit-gravatar';
+import ImageEditor from 'calypso/blocks/image-editor';
+import DropZone from 'calypso/components/drop-zone';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
-import ImageEditor from 'calypso/blocks/image-editor';
-import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
-import DropZone from 'calypso/components/drop-zone';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'calypso/lib/oauth-token', () => ( {

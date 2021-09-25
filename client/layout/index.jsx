@@ -2,11 +2,9 @@ import config from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
-import { startsWith, flowRight as compose, some } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import SitePreview from 'calypso/blocks/site-preview';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -21,7 +19,6 @@ import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
-import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -171,8 +168,8 @@ class Layout extends Component {
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
 			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
-				this.props.currentRoute?.startsWith( startsWithString )
+			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
+				this.props.currentRoute.startsWith( startsWithString )
 			)
 		);
 	}
@@ -197,8 +194,8 @@ class Layout extends Component {
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
 			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
-				this.props.currentRoute?.startsWith( startsWithString )
+			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
+				this.props.currentRoute.startsWith( startsWithString )
 			)
 		);
 	}
@@ -279,9 +276,6 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/nps-survey-notice' ) && ! isE2ETest() && (
-					<AsyncLoad require="calypso/layout/nps-survey-notice" placeholder={ null } />
-				) }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -320,7 +314,6 @@ class Layout extends Component {
 								placeholder={ null }
 							/>
 					  ) }
-				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="calypso/components/happychat" />
 				) }
@@ -360,18 +353,17 @@ class Layout extends Component {
 	}
 }
 
-export default compose(
-	withCurrentRoute,
+export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
 		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
-		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
+		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
-			startsWith( currentRoute, '/checkout/jetpack' );
+			currentRoute.startsWith( '/checkout/jetpack' );
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
@@ -427,5 +419,5 @@ export default compose(
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
-	} )
-)( Layout );
+	} )( Layout )
+);

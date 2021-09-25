@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import 'calypso/state/purchases/init';
 
 export {
@@ -18,7 +15,9 @@ export { getPurchasesError } from './get-purchases-error';
 export { getRenewableSitePurchases } from './get-renewable-site-purchases';
 export { getSitePurchases } from './get-site-purchases';
 export { getUserPurchases } from './get-user-purchases';
+export { isPurchaseManagementLocked } from './is-purchase-management-locked';
 export { isUserPaid } from './is-user-paid';
+export { shouldRevertAtomicSiteBeforeDeactivation } from './should-revert-atomic-site-before-deactivation';
 export { siteHasBackupProductPurchase } from './site-has-backup-product-purchase';
 export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
 export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';

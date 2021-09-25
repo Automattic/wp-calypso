@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import ExternalLink from 'calypso/components/external-link';
+import Button from 'calypso/components/forms/form-button';
+import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
+import PopoverMenu from 'calypso/components/popover-menu';
 import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
-import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
-import PopoverMenu from 'calypso/components/popover/menu';
-import Button from 'calypso/components/forms/form-button';
 import { Activity } from '../types';
-
-/**
- * Style dependencies
- */
-import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
 import downloadIcon from './download-icon.svg';
 
 type SingleSiteOwnProps = {

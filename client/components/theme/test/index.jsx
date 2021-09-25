@@ -2,24 +2,17 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import { parse } from 'url';
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 import React from 'react';
 import ReactDom from 'react-dom';
-import sinon from 'sinon';
 import TestUtils from 'react-dom/test-utils';
-import { assert } from 'chai';
-import { parse } from 'url';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import sinon from 'sinon';
 import { Theme } from '../';
 
-jest.mock( 'calypso/components/popover/menu', () => 'components--popover--menu' );
-jest.mock( 'calypso/components/popover/menu-item', () => 'components--popover--menu-item' );
+jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
+jest.mock( 'calypso/components/popover-menu/item', () => 'components--popover--menu-item' );
 
 describe( 'Theme', () => {
 	let props;

@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -11,6 +7,7 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const items = keyedReducer( 'siteId', ( state = null, action ) => {
 	switch ( action.type ) {

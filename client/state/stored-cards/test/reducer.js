@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items } from '../reducer';
-import { STORED_CARDS_FROM_API, SELECTED_STORED_CARDS } from './fixture';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
@@ -20,6 +11,8 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items } from '../reducer';
+import { STORED_CARDS_FROM_API, SELECTED_STORED_CARDS } from './fixture';
 
 describe( 'items', () => {
 	useSandbox( ( sandbox ) => {

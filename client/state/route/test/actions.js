@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { setRoute } from '../actions';
 import { ROUTE_SET } from 'calypso/state/action-types';
+import { setRoute } from '../actions';
 
 describe( 'setRoute()', () => {
 	const route = '/foo';

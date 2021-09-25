@@ -1,12 +1,4 @@
 /**
- * Exernal dependencies
- */
-
-/**
- * Internal dependencies
- */
-
-/**
  * Current list of verticals that have/will have landing pages.
  * A user who comes in via a landing page will not see the Site Topic dropdown.
  */

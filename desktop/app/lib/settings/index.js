@@ -8,7 +8,6 @@ const settingsFile = require( './settings-file' );
  * Module variables
  */
 let settings = false;
-const USE_LOCALHOST = process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined;
 
 function Settings() {
 	this.settings = false;
@@ -33,8 +32,8 @@ Settings.prototype.isDebug = function () {
  * If no default setting then fall back to false
  */
 Settings.prototype.getSetting = function ( setting ) {
-	if ( USE_LOCALHOST && setting === constants.LAST_LOCATION ) {
-		return 'http://calypso.localhost:3000';
+	if ( process.env.WP_DESKTOP_BASE_URL !== undefined && setting === constants.LAST_LOCATION ) {
+		return process.env.WP_DESKTOP_BASE_URL;
 	}
 
 	const value = this._getAll()[ setting ];
@@ -72,7 +71,7 @@ Settings.prototype.getSettingGroup = function ( existing, group, values ) {
 };
 
 Settings.prototype.saveSetting = function ( group, groupData ) {
-	if ( USE_LOCALHOST && group === constants.LAST_LOCATION ) {
+	if ( process.env.WP_DESKTOP_DEBUG !== undefined && group === constants.LAST_LOCATION ) {
 		return;
 	}
 	this.settings = settingsFile.save( group, groupData );

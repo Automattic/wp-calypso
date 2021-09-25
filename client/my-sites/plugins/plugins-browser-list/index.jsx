@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
-import { Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
+import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;

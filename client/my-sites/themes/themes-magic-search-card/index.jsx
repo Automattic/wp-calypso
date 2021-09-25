@@ -1,32 +1,18 @@
-/**
- * External dependencies
- */
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import React from 'react';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { intersection, difference, includes, flowRight as compose } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import Search from 'calypso/components/search';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
+import Search from 'calypso/components/search';
 import StickyPanel from 'calypso/components/sticky-panel';
-import config from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
-import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
-import Popover from 'calypso/components/popover';
+import MagicSearchWelcome from './welcome';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 //We want those taxonomies if they are used to be presented in this order
@@ -34,19 +20,11 @@ const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', '
 
 class ThemesMagicSearchCard extends React.Component {
 	static propTypes = {
-		tier: PropTypes.string,
-		select: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		onSearch: PropTypes.func.isRequired,
 		search: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		showTierThemesControl: PropTypes.bool,
 		isBreakpointActive: PropTypes.bool, // comes from withMobileBreakpoint HOC
-	};
-
-	static defaultProps = {
-		tier: 'all',
-		showTierThemesControl: true,
 	};
 
 	constructor( props ) {
@@ -290,15 +268,8 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	render() {
-		const { translate, filters, showTierThemesControl } = this.props;
+		const { translate, filters } = this.props;
 		const { isPopoverVisible } = this.state;
-		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-
-		const tiers = [
-			{ value: 'all', label: translate( 'All' ) },
-			{ value: 'free', label: translate( 'Free' ) },
-			{ value: 'premium', label: translate( 'Premium' ) },
-		];
 
 		const filtersKeys = [
 			...intersection( preferredOrderOfTaxonomies, Object.keys( filters ) ),
@@ -392,14 +363,6 @@ class ThemesMagicSearchCard extends React.Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
-						{ isPremiumThemesEnabled && showTierThemesControl && (
-							<SimplifiedSegmentedControl
-								key={ this.props.tier }
-								initialSelected={ this.props.tier ? this.props.tier : 'all' }
-								options={ tiers }
-								onSelect={ this.props.select }
-							/>
-						) }
 					</div>
 				</StickyPanel>
 			</div>

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';

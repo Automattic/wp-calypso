@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import page from 'page';
+import EmptyContent from 'calypso/components/empty-content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import { Button } from '@automattic/components';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

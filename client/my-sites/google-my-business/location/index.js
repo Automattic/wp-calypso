@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {

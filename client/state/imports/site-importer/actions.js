@@ -1,21 +1,7 @@
-/**
- * External dependencies
- */
-import { stringify } from 'qs';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { toApi, fromApi } from 'calypso/state/imports/api';
+import { stringify } from 'qs';
+import { prefetchmShotsPreview } from 'calypso/lib/mshots';
 import wpcom from 'calypso/lib/wp';
-import {
-	mapAuthor,
-	startMappingAuthors,
-	startImporting,
-	finishUpload,
-} from 'calypso/state/imports/actions';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -26,13 +12,17 @@ import {
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	SITE_IMPORTER_VALIDATION_ERROR_SET,
 } from 'calypso/state/action-types';
-import { getImporterStatus } from 'calypso/state/imports/selectors';
-import { prefetchmShotsPreview } from 'calypso/lib/mshots';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	mapAuthor,
+	startMappingAuthors,
+	startImporting,
+	finishUpload,
+} from 'calypso/state/imports/actions';
+import { toApi, fromApi } from 'calypso/state/imports/api';
+import { getImporterStatus } from 'calypso/state/imports/selectors';
 
-/**
- * Redux dependencies
- */
 import 'calypso/state/imports/init';
 
 const sortAndStringify = ( items ) => items.slice( 0 ).sort().join( ', ' );

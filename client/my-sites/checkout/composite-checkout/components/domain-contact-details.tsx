@@ -1,30 +1,29 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type { DomainContactDetailsErrors, ManagedValue } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
+import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
-import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
-import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type {
+	DomainContactDetailsErrors,
+	ManagedContactDetails,
+	ManagedContactDetailsRequiredMask,
+} from '@automattic/wpcom-checkout';
 
 export default function DomainContactDetails( {
 	domainNames,
 	contactDetails,
 	contactDetailsErrors,
 	updateDomainContactFields,
+	updateRequiredDomainFields,
+	getIsFieldRequired,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
@@ -34,13 +33,21 @@ export default function DomainContactDetails( {
 	contactDetails: DomainContactDetailsData;
 	contactDetailsErrors: DomainContactDetailsErrors;
 	updateDomainContactFields: ( details: DomainContactDetailsData ) => void;
+	updateRequiredDomainFields?: (
+		details: ManagedContactDetails,
+		requiredMask: ManagedContactDetailsRequiredMask
+	) => ManagedContactDetails;
+	getIsFieldRequired?: (
+		field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' >
+	) => boolean;
 	shouldShowContactDetailsValidationErrors: boolean;
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
 	emailOnly?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const needsOnlyGoogleAppsDetails =
 		hasGoogleApps( responseCart ) &&
 		! hasDomainRegistration( responseCart ) &&
@@ -48,11 +55,6 @@ export default function DomainContactDetails( {
 	const getIsFieldDisabled = () => isDisabled;
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
-	const { updateRequiredDomainFields } = useDispatch( 'wpcom' );
-	const contactInfo = useSelect< Record< string, ManagedValue > >( ( select ) =>
-		select( 'wpcom' ).getContactInfo()
-	);
-	const getIsFieldRequired = ( field: string ) => contactInfo[ field ].isRequired;
 
 	return (
 		<React.Fragment>

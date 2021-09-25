@@ -1,56 +1,58 @@
-import path from 'path';
 import { ElementHandle, Page } from 'playwright';
-import { waitForElementEnabled } from '../../element-helper';
-import { BaseContainer } from '../base-container';
+import { waitForElementEnabled, clickNavTab } from '../../element-helper';
 
 const selectors = {
-	// Navigation tabs
-	navTabs: '.section-nav-tabs',
-	navTabsDropdownOptions: '.select-dropdown__option',
-
 	// Gallery view
 	gallery: '.media-library__content',
 	items: '.media-library__list-item',
+	selectedItems: '.media-library__list-item.is-selected',
 	placeholder: '.is-placeholder',
+	uploadSpinner: '.media-library__list-item-spinner',
+	notReadyOverlay: `.is-transient`,
 	editButton: 'button[data-e2e-button="edit"]',
+	deleteButton: 'button[data-e2e-button="delete"]',
 	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
-	// Modal view
-	mediaModal: '.editor-media-modal__content',
-	mediaModalEditButton:
-		'.editor-media-modal-detail__edition-bar .editor-media-modal-detail__edit:visible',
-	mediaModalPreview: '.editor-media-modal-detail__preview',
+	// Edit File modal
+	editFileModal: '.editor-media-modal__content',
+	editImageButton: 'button:has-text("Edit Image"):visible',
 
-	// Editor view
+	// Iamge Editor
 	imageEditorCanvas: '.image-editor__canvas-container',
-	imageEditorToolbarButton: '.image-editor__toolbar-button',
+	imageEditorToolbarButton: ( text: string ) =>
+		`.image-editor__toolbar-button span:text("${ text }")`,
 	imageEditorResetButton: 'button[data-e2e-button="reset"]',
 	imageEditorCancelButton: 'button[data-e2e-button="cancel"]',
 };
 
 /**
  * Represents an instance of the WPCOM Media library page.
- *
- * @augments {BaseContainer}
  */
-export class MediaPage extends BaseContainer {
+export class MediaPage {
+	private page: Page;
+
 	/**
-	 * Constructs an instance of the MediaPage object.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Underlying page on which interactions take place.
+	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.gallery );
+		this.page = page;
 	}
 
 	/**
-	 * Post-initialization steps.
-	 *
-	 * @returns {Promise<void>} No return value.
+	 * Waits until the Media page gallery is loaded and ready.
 	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
+	async waitUntilLoaded(): Promise< ElementHandle > {
+		// Wait for all placeholders to disappear.
+		// Alternatively, waiting for `networkidle` will achieve the same objective
+		// at the cost of much longer resolving time (~20s).
+		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+
+		const gallery = await this.page.waitForSelector( selectors.gallery );
+		await gallery.waitForElementState( 'stable' );
+		return gallery;
 	}
 
 	/**
@@ -84,35 +86,37 @@ export class MediaPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
-		const navTabs = await this.page.waitForSelector( selectors.navTabs );
-		const gallery = await this.page.waitForSelector( selectors.gallery );
-		const isDropdown = await navTabs
-			.getAttribute( 'class' )
-			.then( ( value ) => value?.includes( 'is-dropdown' ) );
-		if ( isDropdown ) {
-			// Mobile view - navtabs become a dropdown.
-			await navTabs.click();
-			await this.page.click( `${ selectors.navTabsDropdownOptions } >> text=${ name }` );
-		} else {
-			// Desktop view - navtabs are constantly visible tabs.
-			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
-		}
-		// Wait for all placeholders to disappear.
-		// Alternatively, waiting for `networkidle` will achieve the same objective
-		// at the cost of much longer resolving time (~20s).
-		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		await gallery.waitForElementState( 'stable' );
+		await this.waitUntilLoaded();
+		await clickNavTab( this.page, name );
 	}
 
 	/**
-	 * Given that a gallery item is selected, enter the edit screen.
+	 * Launches the edit item modal where file attributes can be modified.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * This method expects at least one gallery element supporting editing
+	 * to be selected. If no images are selected, this method will throw.
+	 *
+	 * @throws {Error} If no gallery items are selected.
 	 */
-	async editImage(): Promise< void > {
+	async editSelectedItem(): Promise< void > {
+		// Check that an item has been selected.
+		try {
+			await this.page.waitForSelector( selectors.selectedItems );
+		} catch ( error ) {
+			throw new Error( 'Unable to edit files: no item(s) were selected.' );
+		}
+
 		await this.page.click( selectors.editButton );
-		await this.page.click( selectors.mediaModalEditButton );
-		await this.page.waitForSelector( selectors.imageEditorCanvas );
+	}
+
+	/**
+	 * Launches the image editor from within the edit item modal.
+	 *
+	 * This option is only available for files that are classified as 'images' in WPCOM.
+	 */
+	async launchImageEditor(): Promise< void > {
+		await this.page.waitForSelector( selectors.editFileModal );
+		await this.page.click( selectors.editImageButton );
 	}
 
 	/**
@@ -122,8 +126,7 @@ export class MediaPage extends BaseContainer {
 	 */
 	async rotateImage(): Promise< void > {
 		await this.page.waitForSelector( selectors.imageEditorCanvas );
-		const selector = `${ selectors.imageEditorToolbarButton } span:text("Rotate")`;
-		await this.page.click( selector );
+		await this.page.click( selectors.imageEditorToolbarButton( 'Rotate' ) );
 		await waitForElementEnabled( this.page, selectors.imageEditorResetButton );
 	}
 
@@ -134,7 +137,7 @@ export class MediaPage extends BaseContainer {
 	 */
 	async cancelImageEdit(): Promise< void > {
 		await this.page.click( selectors.imageEditorCancelButton );
-		await this.page.waitForSelector( selectors.mediaModal );
+		await this.page.waitForSelector( selectors.editFileModal );
 	}
 
 	/**
@@ -143,30 +146,31 @@ export class MediaPage extends BaseContainer {
 	 * @param {string} fullPath Full path to the file on disk.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async upload( fullPath: string ): Promise< ElementHandle > {
-		const filename = path.basename( fullPath );
-		const itemSelector = `figure[title="${ filename }"]`;
+	async upload( fullPath: string ): Promise< void > {
+		await this.waitUntilLoaded();
 
-		// Simulate the action of user selecting a file then clicking confirm.
+		// Set the file input to the full path of file on disk.
 		await this.page.setInputFiles( selectors.fileInput, fullPath );
 
-		// Wait until the spinner for the file being uploaded is hidden.
-		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
-		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
-		await this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
-			state: 'hidden',
-		} );
+		await Promise.all( [
+			// Delete file button is disabled during uploads.
+			this.page.waitForSelector( `${ selectors.deleteButton }[disabled]`, {
+				state: 'hidden',
+			} ),
+			this.page.waitForSelector( selectors.uploadSpinner, { state: 'hidden' } ),
+			this.page.waitForSelector( selectors.notReadyOverlay, { state: 'hidden' } ),
+		] );
 
-		// At this point, if the rejection notice is visible, it means the file was not a supported
-		// file type. Throw the error containing the rejection banner text for handling.
-		if ( await this.page.isVisible( selectors.uploadRejectionNotice ) ) {
+		// For both Simple and Atomic, the rejection banner is shown after the upload progress
+		// elements are removed from page.
+		const rejected = await this.page.isVisible( selectors.uploadRejectionNotice );
+
+		if ( rejected ) {
 			throw new Error(
 				await this.page
 					.waitForSelector( selectors.uploadRejectionNotice )
 					.then( ( element ) => element.innerText() )
 			);
-		} else {
-			return await this.page.waitForSelector( itemSelector );
 		}
 	}
 }

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { find, map, pickBy, includes } from 'lodash';
-import i18n, { getLocaleSlug } from 'i18n-calypso';
-import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import languages from '@automattic/languages';
 import { getUrlParts } from '@automattic/calypso-url';
+import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
+import languages from '@automattic/languages';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
+import { find, map, pickBy, includes } from 'lodash';
 
 /**
  * a locale can consist of three component

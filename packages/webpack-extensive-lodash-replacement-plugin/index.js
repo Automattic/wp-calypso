@@ -1,6 +1,5 @@
 const path = require( 'path' );
 const semver = require( 'semver' );
-
 const LODASH_MODULE_NAMES = require( './module-names' );
 
 function createError( message, error = null ) {

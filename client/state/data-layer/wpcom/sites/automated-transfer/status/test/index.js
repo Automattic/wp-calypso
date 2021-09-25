@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestStatus, receiveStatus } from '../';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	fetchAutomatedTransferStatus,
@@ -15,6 +7,7 @@ import {
 } from 'calypso/state/automated-transfer/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
+import { requestStatus, receiveStatus } from '../';
 
 const siteId = 1916284;
 

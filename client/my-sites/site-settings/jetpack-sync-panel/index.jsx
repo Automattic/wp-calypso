@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { CompactCard, ProgressBar } from '@automattic/components';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import debugModule from 'debug';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CompactCard, ProgressBar } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import syncSelectors from 'calypso/state/jetpack-sync/selectors';
-import { getSyncStatus, scheduleJetpackFullysync } from 'calypso/state/jetpack-sync/actions';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { getSyncStatus, scheduleJetpackFullysync } from 'calypso/state/jetpack-sync/actions';
+import syncSelectors from 'calypso/state/jetpack-sync/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /*
@@ -132,17 +122,18 @@ class JetpackSyncPanel extends React.Component {
 
 		const finished = get( this.props, 'syncStatus.finished' );
 		const { isPendingSyncStart, isFullSyncing, moment, translate } = this.props;
-		const finishedTimestamp = moment( parseInt( finished, 10 ) * 1000 );
+		const finishedTimestamp = parseInt( finished, 10 ) * 1000;
+		const finishedTimestampObj = moment( finishedTimestamp );
 
 		let text = '';
 		if ( isPendingSyncStart ) {
 			text = translate( 'Full sync will begin shortly' );
 		} else if ( isFullSyncing ) {
 			text = translate( 'Full sync in progress' );
-		} else if ( finishedTimestamp.isValid() ) {
+		} else if ( finishedTimestamp > 1000 && finishedTimestampObj.isValid() ) {
 			text = translate( 'Last fully synced %(ago)s', {
 				args: {
-					ago: finishedTimestamp.fromNow(),
+					ago: finishedTimestampObj.fromNow(),
 				},
 			} );
 		}
@@ -166,7 +157,7 @@ class JetpackSyncPanel extends React.Component {
 		const { translate } = this.props;
 		return (
 			<CompactCard className="jetpack-sync-panel">
-				<div className="jetpack-sync-panel__action">
+				<div className="jetpack-sync-panel__action" id="jetpackSyncPanelAction">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
 							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. '
@@ -177,7 +168,9 @@ class JetpackSyncPanel extends React.Component {
 							'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.',
 							{
 								components: {
-									link: <a href="" onClick={ this.onSyncRequestButtonClick } />,
+									link: (
+										<a href="#jetpackSyncPanelAction" onClick={ this.onSyncRequestButtonClick } />
+									),
 								},
 							}
 						) }

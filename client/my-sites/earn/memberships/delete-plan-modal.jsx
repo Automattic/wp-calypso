@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import { Dialog } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestDeleteProduct } from 'calypso/state/memberships/product-list/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const RecurringPaymentsPlanDeleteModal = ( { closeDialog, deleteProduct, product, siteId } ) => {
 	const translate = useTranslate();

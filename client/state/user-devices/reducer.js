@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-
 import { USER_DEVICES_ADD } from 'calypso/state/action-types';
 
 const reducer = ( state = {}, action ) => {

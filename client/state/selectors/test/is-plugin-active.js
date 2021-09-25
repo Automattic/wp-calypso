@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 
 const helloDolly = {

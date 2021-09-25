@@ -1,36 +1,24 @@
-/**
- * External dependencies
- */
-import { useDispatch, useSelector } from 'react-redux';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useState } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { defaultRewindConfig, RewindConfig } from './types';
+import { useDispatch, useSelector } from 'react-redux';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
-import CheckYourEmail from './rewind-flow-notice/check-your-email';
-import Error from './error';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import Gridicon from 'calypso/components/gridicon';
-import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import Error from './error';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-
-/**
- * Type dependencies
- */
-import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 
 interface Props {
 	backupDisplayDate: string;

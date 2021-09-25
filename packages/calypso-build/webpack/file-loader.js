@@ -13,7 +13,7 @@ const path = require( 'path' );
 module.exports.loader = ( {
 	outputPath = 'images/',
 	name = '[name]-[hash][ext]',
-	publicPath = '/',
+	publicPath,
 	emitFile = true,
 } = {} ) => ( {
 	test: /\.(?:gif|jpg|jpeg|png|svg)$/i,

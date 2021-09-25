@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import isOutsideCalypso from '../is-outside-calypso';
 
 describe( 'isOutsideCalypso', () => {

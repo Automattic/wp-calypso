@@ -98,7 +98,7 @@ elif [ "$MODE" = "path" ] ; then
 	CODE=${key_value}
 elif [ "$MODE" = "npm" ] ; then
 	# Way back to wp-calypso root:
-	CODE="../../node_modules/newspack-blocks"
+	CODE="../../node_modules/@automattic/newspack-blocks"
 fi
 
 if [ ! -d "$CODE" ] ; then
@@ -139,7 +139,7 @@ fi
 
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
-	NEW_VERSION=`sed -En 's|.*"newspack-blocks": "github:Automattic/newspack-blocks#?(.*)".*|\1|p' package.json`
+	NEW_VERSION=v$(yarn info @automattic/newspack-blocks --json | jq -r .children.Version)
 	# Replaces the line containing the version definition with the new version.
 	sed "${sedi[@]}" -e "s|define( 'NEWSPACK_BLOCKS__VERSION', '\(.*\)' );|define( 'NEWSPACK_BLOCKS__VERSION', '$NEW_VERSION' );|" $ENTRY
 	echo "Updated Newspack version '$NEW_VERSION'";

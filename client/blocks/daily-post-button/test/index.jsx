@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import pageSpy from 'page';
 import { parse } from 'qs';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { DailyPostButton } from '../index';
 import { sites, dailyPromptPost } from './fixtures';
 

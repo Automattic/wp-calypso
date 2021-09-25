@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	createAlipayMethod,
-	createAlipayPaymentMethodStore,
-	createSofortMethod,
-	createSofortPaymentMethodStore,
-} from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	createApplePayMethod,
 	createGooglePayMethod,
@@ -23,15 +14,15 @@ import {
 	createPayPalMethod,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
+	createSofortMethod,
+	createSofortPaymentMethodStore,
+	createAlipayMethod,
+	createAlipayPaymentMethodStore,
+	isValueTruthy,
 } from '@automattic/wpcom-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
+import { useMemo } from 'react';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -40,16 +31,18 @@ import {
 	createEbanxTefPaymentMethodStore,
 	createEbanxTefMethod,
 } from '../../payment-methods/ebanx-tef';
+import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
+import { createFullCreditsMethod } from '../../payment-methods/full-credits';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
-import { createFullCreditsMethod } from '../../payment-methods/full-credits';
-import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
-import doesValueExist from '../../lib/does-value-exist';
 import type { StoredCard } from '../../types/stored-cards';
+import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
+import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
 
@@ -105,13 +98,9 @@ export function useCreateCreditCard( {
 function useCreateAlipay( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createAlipayPaymentMethodStore(), [] );
@@ -120,11 +109,9 @@ function useCreateAlipay( {
 			shouldLoad
 				? createAlipayMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -220,13 +207,9 @@ function useCreateWeChat( {
 function useCreateIdeal( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createIdealPaymentMethodStore(), [] );
@@ -235,24 +218,18 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateSofort( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
@@ -261,24 +238,18 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateEps( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
@@ -287,11 +258,9 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -405,22 +374,19 @@ export default function useCreatePaymentMethods( {
 	storedCards: StoredCard[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	const paypalMethod = useCreatePayPal( {} );
 
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const alipayMethod = useCreateAlipay( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const p24Method = useCreateP24( {
@@ -441,8 +407,6 @@ export default function useCreatePaymentMethods( {
 	const epsMethod = useCreateEps( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const ebanxTefMethod = useCreateEbanxTef();
@@ -452,8 +416,6 @@ export default function useCreatePaymentMethods( {
 	const sofortMethod = useCreateSofort( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const wechatMethod = useCreateWeChat( {
@@ -500,6 +462,8 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const existingCardMethods = useCreateExistingCards( {
+		isStripeLoading,
+		stripeLoadingError,
 		storedCards,
 	} );
 
@@ -521,5 +485,5 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-	].filter( doesValueExist );
+	].filter( isValueTruthy );
 }

@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -103,7 +94,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -124,7 +114,6 @@ import {
 	FEATURE_SPELLING_CORRECTION_V2,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
@@ -139,9 +128,11 @@ import {
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
 } from '@automattic/calypso-products';
-import MaterialIcon from 'calypso/components/material-icon';
+import i18n from 'i18n-calypso';
+import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
 export const FEATURES_LIST = {
@@ -236,7 +227,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () => {
 			return i18n.translate(
-				'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+				'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
 			);
 		},
 	},
@@ -291,15 +282,6 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ FEATURE_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
-			),
-	},
-
 	[ FEATURE_MONETISE ]: {
 		getSlug: () => FEATURE_MONETISE,
 		getTitle: () => i18n.translate( 'Monetize your site with ads' ),
@@ -328,7 +310,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -487,22 +469,6 @@ export const FEATURES_LIST = {
 					'to a previous point in time with just a click! While you’re at it, ' +
 					'improve your SEO with our Advanced SEO tools and automate social media sharing.'
 			),
-	},
-
-	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_UNLIMITED_PREMIUM_THEMES,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Unlimited{{/strong}} Premium themes', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, ' +
-					'including designs specifically tailored for businesses.'
-			),
-		getStoreSlug: () => 'unlimited_themes',
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
@@ -736,7 +702,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -973,7 +939,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Business features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.'
+				'Including the ability to upload plugins and themes, priority support and advanced monetization options.'
 			),
 	},
 
@@ -1083,7 +1049,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
-		getTitle: () => i18n.translate( 'Comment and form protection' ),
+		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
@@ -1189,7 +1155,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => FEATURE_SECURE_STORAGE_V2,
-		getTitle: () => i18n.translate( 'Unlimited site storage' ),
+		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 
 	[ FEATURE_ONE_CLICK_RESTORE_V2 ]: {

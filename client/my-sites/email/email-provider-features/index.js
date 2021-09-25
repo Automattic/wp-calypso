@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function EmailProviderFeature( { title } ) {

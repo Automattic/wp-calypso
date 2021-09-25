@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 export const StartOfWeekOption = ( { disabled, onChange, startOfWeek } ) => {
 	const translate = useTranslate();

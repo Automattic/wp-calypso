@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import { disableSubmitButton } from './with-contact-details-validation';
 
 const ciraAgreementUrl = 'https://cira.ca/agree';
@@ -124,12 +116,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	handleChangeEvent = ( event ) => {
 		const { value, checked, type, id } = event.target;
 		const newContactDetails = {};
-
-		if ( id === 'legal-type' ) {
-			this.props.updateRequiredDomainFields( {
-				organization: this.isCorporationLegalType( value ),
-			} );
-		}
 
 		newContactDetails.extra = {
 			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },

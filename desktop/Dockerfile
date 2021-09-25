@@ -1,6 +1,6 @@
 FROM debian:latest
 
-ARG NODE_VERSION=16.5.0
+ARG NODE_VERSION=16.7.0
 
 # prepare .ssh dir
 RUN mkdir -p /root/.ssh/

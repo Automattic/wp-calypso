@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
@@ -7,10 +8,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -102,6 +102,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
+			signupUrl: this.props.query?.signup_url,
 		};
 
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
@@ -286,14 +287,10 @@ export class LoginLinks extends React.Component {
 			usernameOrEmail,
 		} = this.props;
 
-		const signupUrl = getSignupUrl(
-			query,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		// use '?signup_url' if explicitly passed as URL query param
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;

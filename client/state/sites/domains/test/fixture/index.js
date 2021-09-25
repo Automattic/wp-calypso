@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
@@ -26,9 +23,11 @@ export const DOMAIN_PRIMARY = {
 	autoRenewalDate: '2017-02-07T00:00:00+00:00',
 	autoRenewing: true,
 	adminEmail: null,
+	beginTransferUntilDate: typeof undefined,
 	blogId: SITE_ID_FIRST,
 	bundledPlanSubscriptionId: null,
 	canSetAsPrimary: true,
+	connectionMode: typeof undefined,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
 	currentUserCanAddEmail: true,
@@ -102,9 +101,11 @@ export const DOMAIN_NOT_PRIMARY = {
 	autoRenewalDate: '',
 	autoRenewing: false,
 	adminEmail: null,
+	beginTransferUntilDate: typeof undefined,
 	blogId: SITE_ID_SECOND,
 	bundledPlanSubscriptionId: null,
 	canSetAsPrimary: true,
+	connectionMode: typeof undefined,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
 	currentUserCanAddEmail: false,

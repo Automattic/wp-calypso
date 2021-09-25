@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { WORDADS_EARNINGS_RECEIVE } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';
 

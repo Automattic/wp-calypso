@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class NonPrimaryDomainDialog extends Component {

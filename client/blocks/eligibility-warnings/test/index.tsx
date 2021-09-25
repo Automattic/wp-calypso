@@ -2,24 +2,18 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import { fireEvent, render } from '@testing-library/react';
 import page from 'page';
 import React, { ReactChild } from 'react';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import { fireEvent, render } from '@testing-library/react';
+import { createStore } from 'redux';
+import EligibilityWarnings from '..';
+
 import '@testing-library/jest-dom/extend-expect';
 
-/**
- * Internal dependencies
- */
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
-
-import EligibilityWarnings from '..';
 
 function renderWithStore( element: ReactChild, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );

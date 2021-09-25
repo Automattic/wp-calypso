@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { isCommentsTreeInitialized } from 'calypso/state/comments/selectors';
 
 describe( 'isCommentsTreeInitialized()', () => {

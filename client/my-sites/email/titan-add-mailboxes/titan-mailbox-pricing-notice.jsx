@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
 import {
 	getTitanExpiryDate,
 	getTitanMailboxPurchaseCost,
 	getTitanMailboxRenewalCost,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import Notice from 'calypso/components/notice';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const doesAdditionalPriceMatchStandardPrice = ( domain, titanMonthlyProduct ) => {
 	if ( ! domain || ! hasTitanMailWithUs( domain ) ) {

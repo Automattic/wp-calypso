@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
@@ -12,8 +9,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { billingTransactionsSchema } from './schema';
 import individualTransactions from './individual-transactions/reducer';
+import { billingTransactionsSchema } from './schema';
 import ui from './ui/reducer';
 
 /**

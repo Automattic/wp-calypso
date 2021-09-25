@@ -1,21 +1,12 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
-import { partialRight } from 'lodash';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { URL } from 'calypso/types';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 type ClickCallback = () => void;
 
@@ -89,7 +80,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	isPrimary,
 	hasPlanFeature,
 } ) => {
-	const ctaBtnProps = partialRight( buttonProps, true === isPrimary );
+	const ctaBtnProps = ( button: CtaButton ) => buttonProps( button, true === isPrimary );
 	let ctaBtn;
 	const translate = useTranslate();
 	let learnMore = null;

@@ -4,76 +4,80 @@
  */
 
 import config from 'config';
-import { chromium } from 'playwright';
-import { getViewportSize } from './browser-helper';
-import { getVideoDir } from './media-helper';
-import { viewportSize } from './types';
+import { BrowserType } from 'playwright';
+import {
+	getDefaultLoggerConfiguration,
+	getHeadless,
+	getLaunchConfiguration,
+} from './browser-helper';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
 
 export interface LaunchOptions {
-	logger: Logger[ 'log' ];
+	logger: Logger;
 }
 
 /**
- * Familiar entrypoint to initialize the browser from a test writer's perspective.
+ * Returns a new instance of a BrowserContext object.
  *
- * @param launchOptions Options to pass to `browser.newContext()`.
- * @returns {Promise<Page>} New Page instance.
- */
-export async function start( launchOptions: LaunchOptions ): Promise< Page > {
-	return await launchPage( launchOptions );
-}
-
-/**
- * Returns a new instance of a Page.
+ * A BrowserContext represents an isolated environment, akin to incognito mode.
+ * Instances of BrowserContext do not share cookies or authenticated states with other contexts.
  *
- * This function wraps and sets additional parameters before returning a new instance
- * of a Page.
- * Page represents a tab in a browser where the actual test are run.
- *
- * @param launchOptions Options to pass to `browser.newContext()`.
- * @returns {Promise<Page>} New Page instance.
- */
-export async function launchPage( launchOptions: LaunchOptions ): Promise< Page > {
-	const browserContext = await launchBrowserContext( launchOptions );
-	return await browserContext.newPage();
-}
-
-/**
- * Returns a new instance of a BrowserContext.
- *
- * A BrowserContext represents an isolated environment, akin to incognito mode
- * inside which a single test suite is run.
- * BrowserContexts are cheap to create and incur low overhead costs while allowing
- * for parallelization of test suites.
- *
- * @param options Options to pass to `browser.newContext()`.
- * @param {Logger} options.logger Logger sink for Playwright logging.
+ * @param {LaunchOptions} [launchOptions] Options to pass to `browser.newContext()`.
  * @returns {Promise<BrowserContext>} New BrowserContext instance.
+ * @throws {Error} If no instance of a browser is found.
  */
-export async function launchBrowserContext( { logger }: LaunchOptions ): Promise< BrowserContext > {
-	// If no existing instance of a Browser, then launch a new instance.
+export async function newBrowserContext(
+	launchOptions?: LaunchOptions
+): Promise< BrowserContext > {
 	if ( ! browser ) {
-		browser = await launchBrowser();
+		throw new Error( 'No browser instance found.' );
 	}
 
-	// By default, record video for each browser context.
-	const videoDir = getVideoDir();
-	const dimension: viewportSize = getViewportSize();
-	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await browser.version() } Safari/537.36`;
+	// Get basic configuration (devices, browser agent string, etc).
+	const config = getLaunchConfiguration( browser.version() );
 
-	// Generate a new BrowserContext.
-	return await browser.newContext( {
-		viewport: null, // Do not override window size set in the browser launch parameters.
-		recordVideo: { dir: videoDir, size: { width: dimension.width, height: dimension.height } },
-		userAgent: userAgent,
-		logger: {
-			isEnabled: ( name ) => name === 'api',
-			log: logger,
-		},
-	} );
+	// Add logging details.
+	if ( launchOptions?.logger ) {
+		config.logger = launchOptions.logger;
+	}
+
+	// Launch a new BrowserContext with launch configuration.
+	return await browser.newContext( config );
+}
+
+/**
+ * Returns a new instance of a Page object.
+ *
+ * If the optional parameter `context` is provivided, this method will return a
+ * new instance of a Page belonging to the supplied BrowserContext.
+ * Alternatively, if optional parameter
+ * Otherwise, a new instance of a Page is returned from the most recent BrowserContext.
+ *
+ * @param param0 Keyed object parameter.
+ * @param {BrowserContext} [param0.context] BrowserContext on which the new Page should be created.
+ * @param {boolean} [param0.newContext] If a new BrowserContext is desired.
+ * @returns {Promise<Page>} Instance of a new Page object.
+ */
+export async function newPage( {
+	context,
+	newContext = false,
+}: { context?: BrowserContext; newContext?: boolean } = {} ): Promise< Page > {
+	// If caller supplies the target BrowserContext.
+	if ( context ) {
+		return await context.newPage();
+	}
+
+	// If caller wants the Page object in a new BrowserContext.
+	if ( newContext ) {
+		const newContext = await newBrowserContext( await getDefaultLoggerConfiguration() );
+		return await newContext.newPage();
+	}
+
+	// Default case - launch a new Page object in the most recent BrowserContext.
+	const contexts = browser.contexts();
+	return await contexts[ contexts.length - 1 ].newPage();
 }
 
 /**
@@ -83,17 +87,37 @@ export async function launchBrowserContext( { logger }: LaunchOptions ): Promise
  * Considerable overhead and costs are incurred when launching a new Browser instance.
  * Where possible, use BrowserContexts.
  *
+ * @param {BrowserType} browserType Type of browser to use.
  * @returns {Promise<Browser>} New Browser instance.
  */
-export async function launchBrowser(): Promise< Browser > {
-	const isHeadless = process.env.HEADLESS === 'true' || config.has( 'headless' );
+export async function startBrowser( browserType: BrowserType ): Promise< Browser > {
+	if ( browser ) {
+		return browser;
+	}
 
-	const dimension: viewportSize = getViewportSize();
-
-	return await chromium.launch( {
-		headless: isHeadless,
-		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
+	browser = await browserType.launch( {
+		headless: getHeadless(),
+		args: [ '--window-position=0,0' ],
 	} );
+	return browser;
+}
+
+/**
+ * Closes the target page passed in as parameter, and optionally closes the BrowserContext as well.
+ *
+ * @param {Page} page Target page to close.
+ * @param param0 Parameter object.
+ * @param {boolean} param0.closeContext Whether to also close the BrowserContext to which the page belongs.
+ */
+export async function closePage(
+	page: Page,
+	{ closeContext = false }: { closeContext?: boolean } = {}
+): Promise< void > {
+	if ( closeContext ) {
+		await page.context().close();
+	} else {
+		await page.close();
+	}
 }
 
 /**
@@ -104,7 +128,7 @@ export async function launchBrowser(): Promise< Browser > {
  *
  * @returns {Promise<void>} No return value.
  */
-export async function close(): Promise< void > {
+export async function closeBrowser(): Promise< void > {
 	if ( browser ) {
 		await browser.close();
 	} else {
@@ -133,4 +157,43 @@ export async function clearAuthenticationState( page: Page ): Promise< void > {
 	await browserContext.clearCookies();
 	// Previous steps navigated page away from target page. Return page to the original URL.
 	await page.goto( currentURL );
+}
+
+/**
+ * Sets the store cookie, used for simulating payment processing.
+ *
+ * Optinally, set the `currency` parameter to specify the currency to be used in the checkout.
+ *
+ * @param {Page} page Object representing a page launched by Playwright.
+ * @param {string} currency ISO 4217-compliant currency code.
+ */
+export async function setStoreCookie(
+	page: Page,
+	{ currency }: { currency?: string } = {}
+): Promise< void > {
+	const browserContext = page.context();
+
+	await browserContext.addCookies( [
+		{
+			name: 'store_sandbox',
+			value: config.get( 'storeSandboxCookieValue' ) as string,
+			domain: '.wordpress.com',
+			path: '/',
+			sameSite: 'None',
+			secure: true,
+		},
+	] );
+
+	if ( currency ) {
+		await browserContext.addCookies( [
+			{
+				name: 'landingpage_currency',
+				value: currency,
+				domain: '.wordpress.com',
+				path: '/',
+				sameSite: 'None',
+				secure: true,
+			},
+		] );
+	}
 }

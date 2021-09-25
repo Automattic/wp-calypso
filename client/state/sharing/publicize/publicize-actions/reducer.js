@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omit, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST_SUCCESS,

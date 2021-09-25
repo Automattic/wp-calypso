@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_SEARCH_PRODUCTS, getPriceTierForUnits } from '@automattic/calypso-products';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { createElement } from 'react';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from 'calypso/components/external-link';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-import { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
-import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
+import type { PriceTierEntry } from '@automattic/calypso-products';
 
 /**
  * Gets tooltip for product.

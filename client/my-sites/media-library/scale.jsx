@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import FormRange from 'calypso/components/forms/range';
 import SegmentedControl from 'calypso/components/segmented-control';
-import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 import { SCALE_CHOICES, SCALE_TOUCH_GRID } from 'calypso/lib/media/constants';
+import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 
 /**
  * Constants
@@ -143,6 +135,6 @@ class MediaLibraryScale extends Component {
 }
 
 export default connect( null, {
-	setMediaScalePreference: partial( setPreference, 'mediaScale' ),
-	saveMediaScalePreference: partial( savePreference, 'mediaScale' ),
+	setMediaScalePreference: ( value ) => setPreference( 'mediaScale', value ),
+	saveMediaScalePreference: ( value ) => savePreference( 'mediaScale', value ),
 } )( localize( MediaLibraryScale ) );

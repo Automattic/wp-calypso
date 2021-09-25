@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-
-const chalk = require( 'chalk' );
 const fs = require( 'fs' );
 const path = require( 'path' );
+const chalk = require( 'chalk' );
 
 /** @type {string} path to configuration file directory */
 const configRoot = path.resolve( __dirname, '../config' );

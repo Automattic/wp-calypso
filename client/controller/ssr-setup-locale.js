@@ -39,10 +39,7 @@ export function ssrSetupLocaleMiddleware() {
 			context.store.dispatch( setLocaleRawData( cachedTranslations ) );
 			next();
 		} else {
-			readFile(
-				getAssetFilePath( context.target, `languages/${ context.lang }-v1.1.json` ),
-				'utf-8'
-			)
+			readFile( getAssetFilePath( `languages/${ context.lang }-v1.1.json` ), 'utf-8' )
 				.then( ( data ) => {
 					const translations = JSON.parse( data );
 

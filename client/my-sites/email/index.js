@@ -1,16 +1,11 @@
-/**
- * External dependencies
- */
+import { translate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
@@ -18,8 +13,37 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 
 const commonHandlers = [ siteSelection, navigation ];
 
+const emailInboxSiteSelectionHeader = ( context, next ) => {
+	context.getSiteSelectionHeaderText = () => {
+		return translate( 'Select a site to open {{strong}}My Inbox{{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} );
+	};
+
+	next();
+};
+
 export default function () {
 	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
+
+	page(
+		paths.emailManagementInbox(),
+		siteSelection,
+		emailInboxSiteSelectionHeader,
+		sites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.emailManagementInbox( ':site' ),
+		...commonHandlers,
+		controller.emailManagementInbox,
+		makeLayout,
+		clientRender
+	);
 
 	registerMultiPage( {
 		paths: [
@@ -120,16 +144,16 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetupMailbox(
+			paths.emailManagementTitanSetUpMailbox(
 				':site',
 				':domain',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanSetupMailbox( ':site', ':domain' ),
+			paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
-			controller.emailManagementTitanSetupMailbox,
+			controller.emailManagementTitanSetUpMailbox,
 			makeLayout,
 			clientRender,
 		],
@@ -150,17 +174,17 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetupThankYouPage(
+			paths.emailManagementTitanSetUpThankYou(
 				':site',
 				':domain',
 				null,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanSetupThankYouPage( ':site', ':domain' ),
+			paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
-			controller.emailManagementTitanSetupThankYou,
+			controller.emailManagementTitanSetUpThankYou,
 			makeLayout,
 			clientRender,
 		],

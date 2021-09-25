@@ -1,32 +1,20 @@
-/**
- * External dependencies
- */
-
+import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty, isEqual, some } from 'lodash';
+import photon from 'photon';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { get, isEmpty, isEqual, some } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import photon from 'photon';
-
-/**
- * Internal dependencies
- */
-import { Card, Ribbon, Button } from '@automattic/components';
-import ThemeMoreButton from './more-button';
 import Badge from 'calypso/components/badge';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import InfoPopover from 'calypso/components/info-popover';
-import { decodeEntities } from 'calypso/lib/formatting';
+import PulsingDot from 'calypso/components/pulsing-dot';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
+import ThemeMoreButton from './more-button';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

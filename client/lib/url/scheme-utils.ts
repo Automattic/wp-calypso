@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { URL as URLString, Scheme } from 'calypso/types';
 
 const schemeRegex = /^\w+:\/\//;

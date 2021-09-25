@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FormButton from 'calypso/components/forms/form-button';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import Security2faStatus from 'calypso/me/security-2fa-status';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import Security2faCodePrompt from 'calypso/me/security-2fa-code-prompt';
+import Security2faStatus from 'calypso/me/security-2fa-status';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Security2faDisable extends Component {

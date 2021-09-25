@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { requestSubscribedLists } from 'calypso/state/reader/lists/actions';
+import { isRequestingSubscribedLists } from 'calypso/state/reader/lists/selectors';
 
 class QueryReaderLists extends Component {
 	UNSAFE_componentWillMount() {

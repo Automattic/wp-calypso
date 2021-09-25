@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import type { AnyAction, Dispatch } from 'redux';
-
-/**
- * Internal dependencies
- */
-import 'calypso/state/marketplace/init';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
 import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_RESET_PURCHASE_FLOW,
@@ -15,17 +9,15 @@ import {
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
 	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 } from 'calypso/state/action-types';
-import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
 import {
 	getPurchaseFlowState,
 	getIsPluginInformationLoaded,
 } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins, installPlugin } from 'calypso/state/plugins/installed/actions';
-import { initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
 import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import {
 	PLUGIN_INSTALLATION_COMPLETED,
@@ -34,10 +26,11 @@ import {
 } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPlugin } from 'calypso/state/plugins/wporg/selectors';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { IAppState } from 'calypso/state/types';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
-import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
-import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { AnyAction, Dispatch } from 'redux';
+import 'calypso/state/marketplace/init';
 
 export function setPrimaryDomainCandidate( domainName: string | undefined ): AnyAction {
 	return {

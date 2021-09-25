@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { filter, find, get, some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { filter, find, get, some } from 'lodash';
 
 import 'calypso/state/plugins/init';
 

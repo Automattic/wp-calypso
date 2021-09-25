@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { findIndex, last, takeRightWhile, takeWhile, filter, uniqWith } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { keyedReducer, combineReducers } from 'calypso/state/utils';
+import { keysAreEqual } from 'calypso/reader/post-key';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -18,7 +11,7 @@ import {
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
 } from 'calypso/state/reader/action-types';
-import { keysAreEqual } from 'calypso/reader/post-key';
+import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
 
 /*

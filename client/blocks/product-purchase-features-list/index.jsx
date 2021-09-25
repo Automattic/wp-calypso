@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	GROUP_WPCOM,
@@ -27,34 +18,33 @@ import {
 	TERM_MONTHLY,
 	getPlans,
 } from '@automattic/calypso-products';
-import FindNewTheme from './find-new-theme';
-import UploadPlugins from './upload-plugins';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
-import CustomizeTheme from './customize-theme';
-import CustomCSS from './custom-css';
-import VideoAudioPosts from './video-audio-posts';
-import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
+import CustomCSS from './custom-css';
 import CustomDomain from './custom-domain';
+import CustomizeTheme from './customize-theme';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
 import JetpackPublicize from './jetpack-publicize';
 import MobileApps from './mobile-apps';
+import MonetizeSite from './monetize-site';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isEnabled } from '@automattic/calypso-config';
-import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
-import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
-/**
- * Style dependencies
- */
+import UploadPlugins from './upload-plugins';
+import VideoAudioPosts from './video-audio-posts';
+
 import './style.scss';
 
 const PLANS_LIST = getPlans();
@@ -95,7 +85,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -147,7 +136,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<BusinessOnboarding
 						isWpcomPlan
 						onClick={ this.handleBusinessOnboardingClick }
-						link={ `/me/concierge/${ selectedSite.slug }/book` }
+						link={ `/me/quickstart/${ selectedSite.slug }/book` }
 					/>
 				) }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
@@ -160,7 +149,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -298,7 +286,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 
 				{ isEnabled( 'jetpack/concierge-sessions' ) && (
 					<BusinessOnboarding
@@ -326,7 +313,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
@@ -347,7 +333,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<JetpackPublicize selectedSite={ selectedSite } />
 				<SellOnlinePaypal isJetpack />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
 				<HappinessSupportCard
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }

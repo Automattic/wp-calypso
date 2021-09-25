@@ -32,6 +32,8 @@ const PlansButton: React.FunctionComponent = () => {
 				to={ makePath( Step.PlansModal ) }
 				label={ planLabel }
 				className={ classnames( 'plans-button', { 'is-highlighted': !! plan } ) }
+				data-e2e-string={ plan ? '%s Plan' : 'View plans' }
+				data-e2e-string-params={ plan && JSON.stringify( [ plan.title ] ) }
 			>
 				{ isDesktop && planLabel }
 				<JetpackLogo className="plans-button__jetpack-logo" size={ 16 } monochrome />

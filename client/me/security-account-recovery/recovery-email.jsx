@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ManageContact from './manage-contact';
-import EditEmail from './edit-email';
+import React, { Component } from 'react';
 import accept from 'calypso/lib/accept';
+import EditEmail from './edit-email';
+import ManageContact from './manage-contact';
 
 class RecoveryEmail extends Component {
 	render() {

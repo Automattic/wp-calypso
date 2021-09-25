@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/inline-support-article/init';
 
 /**

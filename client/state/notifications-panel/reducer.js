@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { NOTIFICATIONS_FORCE_REFRESH } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 /**

@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASES_USER_FETCH,
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH_COMPLETED,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	const userId = '1337';

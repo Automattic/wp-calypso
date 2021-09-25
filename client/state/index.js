@@ -1,28 +1,13 @@
-/**
- * External dependencies
- */
-import thunkMiddleware from 'redux-thunk';
+import { isEnabled } from '@automattic/calypso-config';
 import { createStore, applyMiddleware, compose } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
-
-/**
- * Internal dependencies
- */
-import initialReducer from './reducer';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Store enhancers
- */
+import thunkMiddleware from 'redux-thunk';
+import { enhancer as httpDataEnhancer } from 'calypso/state/data-layer/http-data';
+import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
+import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 import actionLogger from './action-log';
 import consoleDispatcher from './console-dispatch';
-import { enhancer as httpDataEnhancer } from 'calypso/state/data-layer/http-data';
-import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
-
-/**
- * Redux middleware
- */
-import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
+import initialReducer from './reducer';
 
 /**
  * @typedef {object} ReduxStore

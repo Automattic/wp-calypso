@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,12 +9,12 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
-/**
- * Style dependencies
- */
 import './style.scss';
+
+const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
 class Security2faCodePrompt extends React.Component {
 	static displayName = 'Security2faCodePrompt';

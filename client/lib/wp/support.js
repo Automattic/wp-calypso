@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { parse, stringify } from 'qs';
 
 export default function wpcomSupport( wpcom ) {

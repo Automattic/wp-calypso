@@ -1,32 +1,24 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StatsListLegend from '../stats-list/legend';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsList from '../stats-list';
-import ErrorPanel from '../stats-error';
-import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ErrorPanel from '../stats-error';
+import StatsList from '../stats-list';
+import StatsListLegend from '../stats-list/legend';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
 
 class StatModuleFollowers extends Component {
 	state = {

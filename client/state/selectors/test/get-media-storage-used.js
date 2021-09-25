@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 
 describe( 'getMediaStorageUsed()', () => {

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import fromActivityTypeApi from 'calypso/state/data-layer/wpcom/sites/activity-types/from-api';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestHttpData } from 'calypso/state/data-layer/http-data';
 import { filterStateToApiQuery } from 'calypso/state/activity-log/utils';
+import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import fromActivityTypeApi from 'calypso/state/data-layer/wpcom/sites/activity-types/from-api';
 
 const requestActivityActionTypeCounts = ( siteId, filter, { freshness = 10 * 1000 } = {} ) => {
 	const before = filter && filter.before ? filter.before : '';

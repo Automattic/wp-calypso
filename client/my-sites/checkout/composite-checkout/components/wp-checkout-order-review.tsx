@@ -1,30 +1,24 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import joinClasses from './join-classes';
-import Coupon from './coupon';
-import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 } from '@automattic/calypso-products';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { styled } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import Coupon from './coupon';
+import joinClasses from './join-classes';
+import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
@@ -90,7 +84,8 @@ export default function WPCheckoutOrderReview( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
-	const { responseCart, removeCoupon, couponStatus } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 
 	const selectedSiteData = useSelector( getSelectedSite );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE } from 'calypso/state/action-types';
 import { getErrorFromWPCOMError } from 'calypso/state/login/utils';
 

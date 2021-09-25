@@ -1,53 +1,30 @@
-/**
- * External dependencies
- */
-import React, { FC, useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
-import classNames from 'classnames';
-import { Button, Card } from '@automattic/components';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import { openPopupWidget } from 'react-calendly';
-
-/**
- * Internal dependencies
- */
-import { resemblesUrl } from 'calypso/lib/url';
-import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
-import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import { addOnboardingCallInternalNote } from './utils';
-
-/**
- * Type dependencies
- */
+import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
+import { addQueryArgs, resemblesUrl } from 'calypso/lib/url';
+import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import {
+	isProductsListFetching as getIsProductListFetching,
+	getProductName,
+} from 'calypso/state/products-list/selectors';
+import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import type { UserData } from 'calypso/lib/user/user';
-
-interface CalendlyEvent {
-	data: {
-		event: string;
-		payload: {
-			event: {
-				uri: string;
-			};
-		};
-	};
-}
 
 interface Props {
 	forScheduling: boolean;
@@ -156,42 +133,22 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		}
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
 
-	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
-	useEffect( () => {
-		const dispatchCalendlyEventScheduled = async ( event: CalendlyEvent ) => {
-			if ( event && event.data?.event === 'calendly.event_scheduled' ) {
-				const eventUri = event.data.payload?.event?.uri || '';
-				// The last part of the pathname is the ID of the Calendly event
-				const eventId = new URL( eventUri ).pathname.split( '/' ).pop();
-				const result = await addOnboardingCallInternalNote( receiptId, eventId );
-				if ( result ) {
-					dispatch(
-						recordTracksEvent( 'calypso_siteless_checkout_schedule_onboarding_call', {
-							product_slug: productSlug,
-							receipt_id: receiptId,
-							event_id: eventId,
-						} )
-					);
-				}
-			}
-		};
-
-		window.addEventListener( 'message', dispatchCalendlyEventScheduled );
-
-		return () => {
-			window.removeEventListener( 'message', dispatchCalendlyEventScheduled );
-		};
-	}, [] );
-
 	useEffect( () => {
 		if ( supportTicketStatus === 'success' ) {
-			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+			const thankYouCompletedUrl = addQueryArgs(
+				{
+					siteId: jetpackTemporarySiteId,
+					receiptId,
+				},
+				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
+			);
+			page( thankYouCompletedUrl );
 		} else if ( supportTicketStatus === 'failed' ) {
 			setError(
 				translate( 'There was a problem submitting your website address, please try again.' )
 			);
 		}
-	}, [ supportTicketStatus, productSlug, translate ] );
+	}, [ jetpackTemporarySiteId, receiptId, supportTicketStatus, productSlug, translate ] );
 
 	useEffect( () => {
 		if ( forScheduling ) {
@@ -203,9 +160,14 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
 			<PageViewTracker
-				path="/checkout/jetpack/thank-you/no-site/:product"
-				title="Checkout > Jetpack Siteless Thank You"
+				options={ { useJetpackGoogleAnalytics: true } }
+				path={
+					forScheduling
+						? '/checkout/jetpack/schedule-happiness-appointment'
+						: '/checkout/jetpack/thank-you/no-site/:product'
+				}
 				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Siteless Thank You"
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">

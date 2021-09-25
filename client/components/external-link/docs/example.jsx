@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
 import { Card } from '@automattic/components';
+import React from 'react';
+import ExternalLink from 'calypso/components/external-link';
 
 export default class extends React.Component {
 	static displayName = 'ExternalLink';

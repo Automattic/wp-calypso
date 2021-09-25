@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
 	MANAGE_PURCHASES_FAQ_CANCELLING,
 } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

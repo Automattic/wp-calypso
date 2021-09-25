@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	USER_SUGGESTIONS_RECEIVE,

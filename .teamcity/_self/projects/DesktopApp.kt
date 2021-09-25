@@ -3,6 +3,7 @@ package _self.projects
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
@@ -25,6 +26,12 @@ object E2ETests : BuildType({
 	id("WpDesktop_DesktopE2ETests")
 	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+			onDependencyFailure = FailureAction.FAIL_TO_START
+		}
+	}
 
 	artifactRules = """
 		desktop/release => release
@@ -49,18 +56,7 @@ object E2ETests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
-				yarn run build-desktop:install-app-deps
-			"""
-			dockerImage = "%docker_image_desktop%"
-		}
-
-		bashNodeScript {
-			name = "Build Calypso source"
-			scriptContent = """
-				export WEBPACK_OPTIONS='--progress=profile'
-
-				# Build desktop
-				yarn run build-desktop:source
+				cd desktop && yarn install --frozen-lockfile
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}
@@ -72,7 +68,7 @@ object E2ETests : BuildType({
 				export USE_HARD_LINKS=false
 
 				# Build app
-				yarn run build-desktop:app
+				cd desktop && yarn run build
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}
@@ -80,15 +76,27 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
+				set -x
+
+				chmod +x ./bin/get-calypso-live-url.sh
+				URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. URL contains stderr
+					echo ${'$'}URL
+					exit 1
+				fi
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
+				export WP_DESKTOP_BASE_URL="${'$'}URL"
 
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
 
+				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
-				yarn run test-desktop:e2e
+				cd desktop && node ./e2e/run.js
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/

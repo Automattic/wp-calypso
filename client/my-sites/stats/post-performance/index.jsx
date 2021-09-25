@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import Emojify from 'calypso/components/emojify';
-import SectionHeader from 'calypso/components/section-header';
-import QueryPosts from 'calypso/components/data/query-posts';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
+import QueryPosts from 'calypso/components/data/query-posts';
+import Emojify from 'calypso/components/emojify';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SectionHeader from 'calypso/components/section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isRequestingPostsForQuery, getPostsForQuery } from 'calypso/state/posts/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsPostPerformance extends Component {

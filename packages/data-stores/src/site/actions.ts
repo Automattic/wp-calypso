@@ -63,7 +63,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield receiveNewSite( newSite );
 			return true;
 		} catch ( err ) {
-			yield receiveNewSiteFailed( err );
+			yield receiveNewSiteFailed( err as NewSiteErrorResponse );
 			return false;
 		}
 	}

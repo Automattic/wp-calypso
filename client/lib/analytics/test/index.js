@@ -2,27 +2,20 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import url from 'url';
+import { loadScript } from '@automattic/load-script';
 import cookie from 'cookie';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent, tracksEvents } from 'calypso/lib/analytics/tracks';
+import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
-import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
+import { recordTracksEvent, tracksEvents } from 'calypso/lib/analytics/tracks';
 
 jest.mock( '@automattic/calypso-config', () => require( './mocks/config' ) );
 jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
 	recordAliasInFloodlight: jest.fn(),
 } ) );
-import { loadScript } from '@automattic/load-script';
 
 jest.mock( '@automattic/load-script', () => ( {
 	loadScript: jest.fn( () => Promise.reject() ),

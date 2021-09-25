@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import React, { Fragment, FunctionComponent, ReactNode } from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import GSuiteNewUser from './new-user';
+import React, { Fragment, FunctionComponent, ReactNode } from 'react';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
 	sanitizeEmail,
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
+import GSuiteNewUser from './new-user';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {
@@ -28,7 +17,6 @@ interface Props {
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
-	showLabels?: boolean;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
@@ -43,7 +31,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	users,
 	onReturnKeyPress,
 	autoFocus = false,
-	showLabels = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -90,7 +77,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
 						onReturnKeyPress={ onReturnKeyPress }
-						showLabels={ showLabels }
 						showTrashButton={ index > 0 }
 					/>
 

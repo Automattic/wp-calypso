@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
 import nock from 'nock';
-
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-
-/**
- * Internal dependencies
- */
-import { receiveThumbnail, requestThumbnail } from '../actions';
-import sampleVimeoResponse from './fixtures/sample-vimeo-response.js';
 import {
 	READER_THUMBNAIL_REQUEST,
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
 } from 'calypso/state/reader/action-types';
+import { receiveThumbnail, requestThumbnail } from '../actions';
+import sampleVimeoResponse from './fixtures/sample-vimeo-response.js';
 
 describe( 'actions', () => {
 	const spy = jest.fn();

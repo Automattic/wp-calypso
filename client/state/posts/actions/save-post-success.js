@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { POST_SAVE_SUCCESS } from 'calypso/state/action-types';
-import { restorePost } from 'calypso/state/posts/actions';
 import { successNotice, removeNotice } from 'calypso/state/notices/actions';
+import { restorePost } from 'calypso/state/posts/actions';
 
 import 'calypso/state/posts/init';
 

@@ -6,6 +6,26 @@ import * as driverHelper from '../driver-helper';
  * Abstract class containing shared code for editor-related classes.
  */
 export default class AbstractEditorComponent extends AsyncBaseContainer {
+	static async Expect( driver, editorType ) {
+		const page = new this( driver, null, editorType );
+		await page._expectInit();
+
+		// The `wpcom-editor-welcome-tour-frame` popup could get in the way
+		// of the actual publish click, so we need to check if it's visible
+		// and click `Skip` to close it.
+		await page.dismissNuxWelcomeModalIfDisplayed();
+
+		return page;
+	}
+
+	async _preInit() {
+		if ( this.editorType !== 'iframe' ) {
+			return;
+		}
+		await this.driver.switchTo().defaultContent();
+		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
+	}
+
 	/**
 	 * Insert a child block into a parent block using the inline block inserter.
 	 *
@@ -33,6 +53,12 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 
+	async openBlockInserterAndSearch( searchTerm ) {
+		await this.openBlockInserter();
+		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
+		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
+	}
+
 	/**
 	 * Set the running context for operating on the DOM, i.e switch to the right
 	 * iframe. By default, it's defined here as a noop, but can be overriden in
@@ -43,5 +69,20 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 	 */
 	async runInCanvas( cb ) {
 		return await cb();
+	}
+
+	async dismissNuxWelcomeModalIfDisplayed() {
+		const isNuxWelcomeDialogDisplayed = await driverHelper.isElementEventuallyLocatedAndVisible(
+			this.driver,
+			By.css( '.wpcom-editor-welcome-tour-frame' ),
+			1000
+		);
+
+		if ( isNuxWelcomeDialogDisplayed ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				driverHelper.createTextLocator( By.css( 'button' ), 'Skip' )
+			);
+		}
 	}
 }

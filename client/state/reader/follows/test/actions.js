@@ -1,13 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	recordFollow,
-	recordUnfollow,
-	recordFollowError,
-	subscribeToNewPostNotifications,
-	unsubscribeToNewPostNotifications,
-} from '../actions';
 import {
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
@@ -15,6 +5,13 @@ import {
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 } from 'calypso/state/reader/action-types';
+import {
+	recordFollow,
+	recordUnfollow,
+	recordFollowError,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
+} from '../actions';
 
 jest.mock( 'calypso/state/reader/posts/actions', () => ( {
 	receivePosts: ( posts ) => Promise.resolve( posts ),

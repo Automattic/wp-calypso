@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import i18n from 'i18n-calypso';
+import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { intersection } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import i18n from 'i18n-calypso';
 import { allowedSearchWelcomeTaxonomies, taxonomyToGridicon } from './taxonomies-config.js';
 
 const noop = () => {};

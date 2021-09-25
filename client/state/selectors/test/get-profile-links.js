@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getProfileLinks from 'calypso/state/selectors/get-profile-links';
 
 describe( 'getProfileLinks()', () => {

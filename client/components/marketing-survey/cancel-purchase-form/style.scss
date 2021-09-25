@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .dialog__content input[type='text'].cancel-purchase-form__reason-input.form-text-input {
 	margin: 4px 0 0 24px;
 	width: calc( 100% - 24px );
@@ -29,4 +32,258 @@
 .dialog__action-buttons {
 	display: flex;
 	justify-content: flex-end;
+}
+
+.cancel-purchase-form__site-slug {
+	margin-left: 0.25rem;
+	background-color: var( --studio-gray-0 );
+	color: var( --studio-gray-70 );
+	padding: 0.25rem 0.75rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 4px;
+	max-width: calc( 100vw - 250px );
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.cancel-purchase-form__step {
+	position: absolute;
+	right: 1.5rem;
+	display: none;
+
+	@include break-small {
+		display: inline-block;
+	}
+}
+
+.cancel-purchase-form__feedback,
+.cancel-purchase-form__atomic-revert {
+	max-width: 730px;
+	margin: 0 auto 3rem;
+}
+
+.cancel-purchase-form__feedback-questions {
+	max-width: 540px;
+	margin: 0 auto;
+}
+
+.cancel-purchase-form__feedback-question {
+	margin-bottom: 1.5rem;
+}
+
+.cancel-purchase-form__atomic-revert {
+	.formatted-header {
+		margin-bottom: 1.5rem;
+	}
+
+	> p {
+		color: var( --studio-gray-50 );
+
+		@include break-small {
+			text-align: center;
+		}
+	}
+
+	strong.is-highlighted {
+		background-color: var( --studio-yellow-5 );
+		padding: 0.25rem 0.5rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		color: var( --stugio-gray-80 );
+	}
+
+	.components-base-control__field {
+		background-color: var( --studio-white );
+		padding: 0.8125rem 1.25rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
+		border: 1px solid var( --studio-gray-5 );
+		display: flex;
+		align-items: center;
+
+		.components-checkbox-control__label {
+			font-size: 0.875rem;
+			color: var( --studio-gray-60 );
+		}
+
+		.components-checkbox-control__input[type=checkbox]:checked {
+			background: var( --studio-black );
+			border-color: var( --studio-black );
+		}
+
+		.components-checkbox-control__input[type=checkbox]:focus {
+			box-shadow: 0 0 0 2px var( --studio-white ), 0 0 0 4px var( --studio-black );
+		}
+
+		.components-checkbox-control__input-container,
+		.components-checkbox-control__input[type=checkbox],
+		svg.components-checkbox-control__checked {
+			width: 1rem;
+			height: 1rem;
+		}
+
+		svg.components-checkbox-control__checked {
+			left: 0;
+			top: 0;
+		}
+	}
+}
+
+.cancel-purchase-form__backups {
+	background-color: var( --studio-blue-0 );
+	border: 1px solid var( --studio-blue-5 );
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 5px;
+	padding: 1.25rem;
+	margin-top: 2rem;
+	font-size: 0.875rem;
+
+	h4 {
+		color: var( --studio-gray-80 );
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+		font-size: 1rem;
+	}
+}
+
+.cancel-purchase-form__actions {
+	@include break-small {
+		max-width: 730px;
+		display: block;
+		margin: 0 auto;
+		text-align: center;
+		overflow: hidden;
+	}
+}
+
+.cancel-purchase-form__buttons {
+	display: inline-block;
+	position: relative;
+
+	@include break-small {
+		// Line decorations.
+		&::before,
+		&::after {
+			content: '';
+			display: block;
+			width: 730px;
+			height: 0;
+			border-top: 1px solid var( --studio-gray-5 );
+			top: 50%;
+			position: absolute;
+		}
+
+		&::before {
+			right: 100%;
+			margin-right: 1rem;
+		}
+
+		&::after {
+			left: 100%;
+			margin-left: 1rem;
+		}
+	}
+
+	.components-button {
+		margin-right: 1rem;
+		padding: 0.625rem 1rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 4px;
+
+		@include break-small {
+			margin: 0 0.625rem;
+			padding: 0.625rem 2rem;
+		}
+	}
+}
+
+.cancel-purchase-form__actions .precancellation-chat-button__main-button {
+	font-size: 0;
+	float: none;
+	right: 1rem;
+	color: var( --studio-gray-50 );
+	display: inline-block;
+	position: absolute;
+
+	@include break-small {
+		margin: 1rem auto;
+		font-size: inherit;
+		position: relative;
+		display: block;
+	}
+
+	.material-icon {
+		fill: var( --studio-gray-50 );
+		width: 1.5rem;
+		height: 1.5rem;
+
+		@include break-small {
+			width: 1rem;
+			height: 1rem;
+		}
+	}
+}
+
+.cancel-purchase-form__upsell {
+	padding: 1.5rem;
+	background-color: var( --studio-green-0 );
+	border: 1px solid var( --studio-green-5 );
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 5px;
+	display: flex;
+
+	.cancel-purchase-form__upsell-image {
+		display: none;
+		width: 100px;
+		height: fit-content;
+		margin-right: 1.5rem;
+
+		@include break-small {
+			display: block;
+		}
+	}
+
+	.form-section-heading {
+		font-size: 1rem;
+		line-height: 1.25rem;
+		margin-bottom: 0.5rem;
+		font-weight: 600;
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+
+		p {
+			font-size: 0.875rem;
+			line-height: 1.25rem;
+			margin-bottom: 0.5rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.components-button {
+		margin-top: 1rem;
+		padding: 0.625rem 2rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 4px;
+
+		&:not( .is-primary ) {
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+			margin-left: 0.5rem;
+		}
+	}
+
+	.button {
+		// Hide buttons rendered by old components, so we can still re-use them for rendering rest of content.
+		display: none;
+	}
 }

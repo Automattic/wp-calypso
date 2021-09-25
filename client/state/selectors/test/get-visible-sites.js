@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { userState } from './fixtures/user-state';
 
@@ -59,8 +52,6 @@ describe( 'getVisibleSites()', () => {
 				title: 'WordPress.com Example Blog',
 				domain: 'example.com',
 				slug: 'example.com',
-				hasConflict: false,
-				is_previewable: false,
 				options: {
 					unmapped_url: 'http://example.com',
 				},

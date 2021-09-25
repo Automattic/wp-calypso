@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,

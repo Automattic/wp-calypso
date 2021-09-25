@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { cloneDeep } from 'lodash';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { cloneDeep } from 'lodash';
 import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
 
 describe( 'getBillingTransactionAppFilterValues()', () => {

@@ -24,7 +24,6 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
@@ -58,7 +57,6 @@
 		"lasagna": false,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
-		"layout/nps-survey-notice": true,
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": true,
@@ -89,10 +87,10 @@
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
-		"upgrades/premium-themes": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"redirect-fallback-browsers": true
 	}
 }

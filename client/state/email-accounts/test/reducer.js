@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { emailAccountsReducer } from '../reducer';
-
 import { EMAIL_ACCOUNTS_REQUEST_SUCCESS } from 'calypso/state/action-types';
+import { emailAccountsReducer } from '../reducer';
 
 describe( "emailAccountsReducer's", () => {
 	const account = {

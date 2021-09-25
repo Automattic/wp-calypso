@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 import {
 	STATUS_ERROR,
 	STATUS_INITIALIZING,
 	STATUS_READY,
 	STATUS_UNINITIALIZED,
 } from 'calypso/state/help/directly/constants';
+import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 
 describe( 'isDirectlyUninitialized()', () => {
 	test( 'should be true when uninitialized', () => {

@@ -126,7 +126,7 @@ class EmailsStep extends React.Component {
 			'Add a custom email address to start sending and receiving emails from {{strong}}%(domainName)s{{/strong}} today.',
 			{
 				args: { domainName },
-				components: { strong: <strong /> },
+				components: { strong: <strong className="emails__register-email-step--domain-name" /> },
 				comment: '%(domainName)s is a domain name chosen by the user',
 			}
 		);
@@ -146,10 +146,10 @@ class EmailsStep extends React.Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
 				hideSkip={ false }
-				isTopButtons={ false }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }
+				skipButtonAlign={ 'bottom' }
 				align={ 'left' }
 				isWideLayout={ true }
 			/>

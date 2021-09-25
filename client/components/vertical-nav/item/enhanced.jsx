@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Icon = ( { gridicon, materialIcon } ) => {

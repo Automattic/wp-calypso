@@ -170,9 +170,12 @@ export function useLocalizeUrl() {
 	);
 }
 
-export const withLocalizeUrl = createHigherOrderComponent< {
-	localizeUrl: ReturnType< typeof useLocalizeUrl >;
-} >( ( InnerComponent ) => {
+export const withLocalizeUrl = createHigherOrderComponent<
+	{
+		localizeUrl: ReturnType< typeof useLocalizeUrl >;
+	},
+	any
+>( ( InnerComponent ) => {
 	return ( props ) => {
 		const localizeUrl = useLocalizeUrl();
 		return <InnerComponent localizeUrl={ localizeUrl } { ...props } />;

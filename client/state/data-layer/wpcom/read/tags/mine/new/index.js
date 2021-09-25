@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
+import { translate } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { READER_FOLLOW_TAG_REQUEST } from 'calypso/state/reader/action-types';
-import { receiveTags as receiveTagsAction } from 'calypso/state/reader/tags/items/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { fromApi as transformTagFromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { translate } from 'i18n-calypso';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { READER_FOLLOW_TAG_REQUEST } from 'calypso/state/reader/action-types';
+import { receiveTags as receiveTagsAction } from 'calypso/state/reader/tags/items/actions';
 
 export function requestFollowTag( action ) {
 	return http( {

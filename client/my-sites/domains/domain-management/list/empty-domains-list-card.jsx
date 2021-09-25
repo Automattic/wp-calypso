@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import { isFreePlan } from '@automattic/calypso-products';
+import { Card, Button } from '@automattic/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
-import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
 import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
-import { isFreePlan } from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -24,6 +17,7 @@ function EmptyDomainsListCard( {
 	hasDomainCredit,
 	isCompact,
 	dispatchRecordTracksEvent,
+	hasNonWpcomDomains,
 } ) {
 	const translate = useTranslate();
 
@@ -38,10 +32,6 @@ function EmptyDomainsListCard( {
 	const siteHasPaidPlan =
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
-	if ( siteHasPaidPlan && ! hasDomainCredit ) {
-		return null;
-	}
-
 	let title = translate( 'Get your domain' );
 	let line = translate( 'Get a free one-year domain registration or transfer with any paid plan.' );
 	let action = translate( 'Upgrade to a plan' );
@@ -49,6 +39,19 @@ function EmptyDomainsListCard( {
 	let secondaryAction = translate( 'Just search for a domain' );
 	let secondaryActionURL = domainAddNew( selectedSite.slug );
 	let contentType = 'no_plan';
+
+	if ( siteHasPaidPlan && ! hasDomainCredit ) {
+		if ( hasNonWpcomDomains ) {
+			return null;
+		}
+		title = translate( 'Add your domain' );
+		line = translate( 'You have no domains added to this site.' );
+		action = translate( 'Search for a domain' );
+		actionURL = domainAddNew( selectedSite.slug );
+		secondaryAction = translate( 'I have a domain' );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
+		contentType = 'paid_plan_with_no_free_domain_credits';
+	}
 
 	if ( siteHasPaidPlan && hasDomainCredit ) {
 		title = translate( 'Claim your free domain' );
@@ -58,7 +61,7 @@ function EmptyDomainsListCard( {
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
-		secondaryActionURL = domainUseYourDomain( selectedSite.slug );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
 		contentType = 'free_domain_credit';
 	}
 
@@ -67,9 +70,9 @@ function EmptyDomainsListCard( {
 	);
 
 	return (
-		<Card>
+		<Card className="empty-domains-list-card">
 			<div
-				className={ classNames( 'empty-domains-list-card', {
+				className={ classNames( 'empty-domains-list-card__wrapper', {
 					'is-compact': isCompact,
 					'has-title-only': title && ! line,
 				} ) }
@@ -111,6 +114,7 @@ EmptyDomainsListCard.propTypes = {
 	isCompact: PropTypes.bool,
 	domains: PropTypes.array,
 	dispatchRecordTracksEvent: PropTypes.func,
+	hasNonWpcomDomains: PropTypes.bool,
 };
 
 export default connect( null, { dispatchRecordTracksEvent: recordTracksEvent } )(

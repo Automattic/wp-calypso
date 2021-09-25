@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 const EMPTY_OPTIONS = Object.freeze( {} );

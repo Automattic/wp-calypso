@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items, isFetching } from '../reducer';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
@@ -16,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items, isFetching } from '../reducer';
 
 const originalCountryStates = [
 	{ code: 'AL', name: 'Alabama' },

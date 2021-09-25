@@ -1,9 +1,18 @@
+@import '@automattic/onboarding/styles/mixins';
 // domain search
 
 .domain-search__content {
 	overflow: visible;
 	padding: 0 0 20px;
 	position: static;
+	.domain-search__go-back {
+		margin-bottom: 18px;
+		&.is-link {
+			@include onboarding-medium-text;
+			text-decoration: none;
+			color: var( --studio-gray-50 );
+		}
+	}
 }
 
 .domain-search-page-wrapper h2 {
@@ -17,6 +26,6 @@
 	word-wrap: break-word;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: 17px;
+		font-size: 17px; /* stylelint-disable-line */
 	}
 }

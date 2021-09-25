@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { selectedSiteId } from '../reducer';
 import { HELP_CONTACT_FORM_SITE_SELECT } from 'calypso/state/action-types';
+import { selectedSiteId } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {

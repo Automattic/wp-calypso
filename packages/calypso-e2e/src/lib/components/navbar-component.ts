@@ -1,35 +1,62 @@
-import { BaseContainer } from '../base-container';
+import { Page } from 'playwright';
 
 const selectors = {
-	mySiteButton: 'text=My Site',
+	// Buttons on navbar
+	mySiteButton: '[data-tip-target="my-sites"]',
 	writeButton: '*css=a >> text=Write',
 	notificationsButton: 'a[href="/notifications"]',
-
-	// Notification pane
-	notificationsPane: '#wpnc-panel',
+	meButton: 'a[data-tip-target="me"]',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
- *
- * @augments {BaseContainer}
  */
-export class NavbarComponent extends BaseContainer {
+export class NavbarComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Wait for load state of the page.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	private async pageSettled(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
 	/**
 	 * Locates and clicks on the new post button on the nav bar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
+		await this.pageSettled();
 		await this.page.click( selectors.writeButton );
 	}
 
 	/**
-	 * Clicks on `My Sites` on the top left of WPCOM dashboard.
+	 * Clicks on `My Sites` on the top left of Home dashboard.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
+		await this.pageSettled();
 		await this.page.click( selectors.mySiteButton );
+	}
+
+	/**
+	 * Click on `Me` on top right of the Home dashboard.
+	 */
+	async clickMe(): Promise< void > {
+		await this.pageSettled();
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.meButton ) ] );
 	}
 
 	/**
@@ -44,6 +71,8 @@ export class NavbarComponent extends BaseContainer {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
+		await this.pageSettled();
+
 		const notificationsButton = await this.page.waitForSelector( selectors.notificationsButton, {
 			state: 'visible',
 		} );
@@ -51,10 +80,11 @@ export class NavbarComponent extends BaseContainer {
 			this.page.waitForLoadState( 'networkidle' ),
 			notificationsButton.waitForElementState( 'stable' ),
 		] );
+
 		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
 		}
 
-		await this.page.click( selectors.notificationsButton );
+		return await this.page.click( selectors.notificationsButton );
 	}
 }

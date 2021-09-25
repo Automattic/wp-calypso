@@ -1,29 +1,19 @@
-/**
- * External Dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import FollowersCount from 'calypso/blocks/followers-count';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import Intervals from './intervals';
-import FollowersCount from 'calypso/blocks/followers-count';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { navItems, intervals as intervalConstants } from './constants';
-import config from '@automattic/calypso-config';
+import Intervals from './intervals';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsNavigation extends Component {

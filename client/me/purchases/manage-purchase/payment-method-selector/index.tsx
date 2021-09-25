@@ -1,33 +1,22 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
+import { Card, Gridicon } from '@automattic/components';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
 } from '@automattic/composite-checkout';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-import { Card } from '@automattic/components';
+import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
-import type { TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import React, { useCallback, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
-import Gridicon from 'calypso/components/gridicon';
-import {
-	useHandleRedirectChangeError,
-	useHandleRedirectChangeComplete,
-} from './url-event-handlers';
 import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
@@ -35,9 +24,13 @@ import {
 } from './assignment-processor-functions';
 import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
 import TosText from './tos-text';
+import {
+	useHandleRedirectChangeError,
+	useHandleRedirectChangeComplete,
+} from './url-event-handlers';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -55,19 +48,20 @@ export default function PaymentMethodSelector( {
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			const message = error?.toString ? error.toString() : error;
-			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
-		},
-		[ reduxDispatch ]
-	);
+	const showRedirectMessage = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
-	const showInfoMessage = useCallback(
-		( message ) => {
-			reduxDispatch( infoNotice( message ) );
+	const showErrorMessage = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice(
+					transactionError ||
+						translate( 'There was a problem assigning that payment method. Please try again.' )
+				)
+			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -82,9 +76,10 @@ export default function PaymentMethodSelector( {
 	);
 
 	useHandleRedirectChangeError( () => {
-		showErrorMessage(
-			translate( 'There was a problem assigning that payment method. Please try again.' )
+		const message = translate(
+			'There was a problem assigning that payment method. Please try again.'
 		);
+		reduxDispatch( errorNotice( message ) );
 	} );
 	useHandleRedirectChangeComplete( () => {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
@@ -97,18 +92,19 @@ export default function PaymentMethodSelector( {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			showErrorMessage( stripeLoadingError );
+			reduxDispatch( errorNotice( stripeLoadingError ) );
 		}
-	}, [ stripeLoadingError, showErrorMessage ] );
+	}, [ stripeLoadingError, reduxDispatch ] );
+
+	const elements = useElements();
 
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
 				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
 			}
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
+			onPaymentRedirect={ showRedirectMessage }
+			onPaymentError={ showErrorMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
 				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
@@ -121,6 +117,7 @@ export default function PaymentMethodSelector( {
 							translate,
 							stripe,
 							stripeConfiguration,
+							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
 						},
 						data

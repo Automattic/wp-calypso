@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { receiveRecommendedSites } from '../actions';
 import { items, pagingOffset } from '../reducer';
 

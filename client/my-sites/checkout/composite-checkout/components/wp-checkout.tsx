@@ -1,10 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import {
 	Checkout,
 	CheckoutStep,
@@ -23,51 +18,38 @@ import {
 	useTotal,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
-import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import useCouponFieldState from '../hooks/use-coupon-field-state';
-import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
-import WPCheckoutOrderReview from './wp-checkout-order-review';
-import WPCheckoutOrderSummary from './wp-checkout-order-summary';
-import WPContactForm from './wp-contact-form';
-import WPContactFormSummary from './wp-contact-form-summary';
-import { isCompleteAndValid } from '../types/wpcom-store-state';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
-import Gridicon from 'calypso/components/gridicon';
-import SecondaryCartPromotions from './secondary-cart-promotions';
-import {
-	handleContactValidationResult,
-	isContactValidationResponseValid,
-	getDomainValidationResult,
-	getTaxValidationResult,
-	getSignupEmailValidationResult,
-	getGSuiteValidationResult,
-} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
-import { login } from 'calypso/lib/paths';
-import getContactDetailsType from '../lib/get-contact-details-type';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import { addQueryArgs } from 'calypso/lib/route';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import PaymentMethodStep from './payment-method-step';
-import CheckoutHelpLink from './checkout-help-link';
-import type { CountryListItem } from '../types/country-list-item';
-import type { OnChangeItemVariant } from '../components/item-variation-picker';
-
-import badge7Src from './assets/icons/badge-7.svg';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
+import { validateContactDetails } from '../lib/contact-validation';
+import getContactDetailsType from '../lib/get-contact-details-type';
 import badge14Src from './assets/icons/badge-14.svg';
+import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import CheckoutHelpLink from './checkout-help-link';
+import PaymentMethodStep from './payment-method-step';
+import SecondaryCartPromotions from './secondary-cart-promotions';
+import WPCheckoutOrderReview from './wp-checkout-order-review';
+import WPCheckoutOrderSummary from './wp-checkout-order-summary';
+import WPContactForm from './wp-contact-form';
+import WPContactFormSummary from './wp-contact-form-summary';
+import type { OnChangeItemVariant } from '../components/item-variation-picker';
+import type { CountryListItem } from '../types/country-list-item';
+import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -78,7 +60,8 @@ const ContactFormTitle = (): JSX.Element => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	if ( contactDetailsType === 'domain' ) {
@@ -154,12 +137,13 @@ export default function WPCheckout( {
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
 } ): JSX.Element {
+	const cartKey = useCartKey();
 	const {
 		responseCart,
 		applyCoupon,
 		updateLocation,
 		isPendingUpdate: isCartPendingUpdate,
-	} = useShoppingCart();
+	} = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
@@ -173,8 +157,9 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo: ManagedContactDetails =
-		useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
+	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
+		sel( 'wpcom' ).getContactInfo()
+	);
 	const {
 		setSiteId,
 		touchContactFields,
@@ -186,162 +171,6 @@ export default function WPCheckout( {
 		shouldShowContactDetailsValidationErrors,
 		setShouldShowContactDetailsValidationErrors,
 	] = useState( false );
-
-	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
-		const { href, pathname } = window.location;
-		const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
-
-		// Users with a WP.com account should return to the checkout page
-		// once they are logged in to complete the process. The flow for them is
-		// checkout -> login -> checkout.
-		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
-		const redirectTo = isJetpackCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
-			: '/checkout/no-site?cart=no-user';
-
-		const loginUrl = login( { redirectTo, emailAddress } );
-
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
-				email: emailAddress,
-				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
-			} )
-		);
-
-		return translate(
-			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
-			{
-				components: {
-					a: (
-						<a
-							onClick={ () =>
-								reduxDispatch(
-									recordTracksEvent( 'calypso_checkout_composite_login_click', {
-										email: emailAddress,
-										checkout_flow: isJetpackCheckout
-											? 'site_only_checkout'
-											: 'wpcom_registrationless',
-									} )
-								)
-							}
-							href={ loginUrl }
-						/>
-					),
-				},
-			}
-		);
-	};
-
-	const validateContactDetailsAndDisplayErrors = async () => {
-		debug( 'validating contact details and reporting errors' );
-		if ( isLoggedOutCart ) {
-			const email = contactInfo.email?.value ?? '';
-			const validationResult = await getSignupEmailValidationResult(
-				email,
-				emailTakenLoginRedirectMessage
-			);
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-				clearDomainContactErrorMessages,
-			} );
-			const isSignupValidationValid = isContactValidationResponseValid(
-				validationResult,
-				contactInfo
-			);
-
-			if ( ! isSignupValidationValid ) {
-				return false;
-			}
-		}
-
-		if ( contactDetailsType === 'tax' ) {
-			const validationResult = await getTaxValidationResult( contactInfo );
-			debug( 'validating contact details result', validationResult );
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-				clearDomainContactErrorMessages,
-			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'domain' ) {
-			const validationResult = await getDomainValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-				clearDomainContactErrorMessages,
-			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'gsuite' ) {
-			const validationResult = await getGSuiteValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			handleContactValidationResult( {
-				recordEvent: onEvent,
-				showErrorMessage: showErrorMessageBriefly,
-				paymentMethodId: activePaymentMethod?.id ?? '',
-				validationResult,
-				applyDomainContactValidationResults,
-				clearDomainContactErrorMessages,
-			} );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		}
-		return isCompleteAndValid( contactInfo );
-	};
-	const validateContactDetails = async () => {
-		debug( 'validating contact details without reporting errors' );
-		if ( isLoggedOutCart ) {
-			const email = contactInfo.email?.value ?? '';
-			const validationResult = await getSignupEmailValidationResult(
-				email,
-				emailTakenLoginRedirectMessage
-			);
-			const isSignupValidationValid = isContactValidationResponseValid(
-				validationResult,
-				contactInfo
-			);
-
-			if ( ! isSignupValidationValid ) {
-				return false;
-			}
-		}
-
-		if ( contactDetailsType === 'tax' ) {
-			const validationResult = await getTaxValidationResult( contactInfo );
-			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'domain' ) {
-			const validationResult = await getDomainValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( contactDetailsType === 'gsuite' ) {
-			const validationResult = await getGSuiteValidationResult(
-				responseCart.products,
-				contactInfo
-			);
-			debug( 'validating contact details result', validationResult );
-			return isContactValidationResponseValid( validationResult, contactInfo );
-		}
-		return isCompleteAndValid( contactInfo );
-	};
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -510,7 +339,19 @@ export default function WPCheckout( {
 								// Touch the fields so they display validation errors
 								touchContactFields();
 								updateCartContactDetails();
-								return validateContactDetailsAndDisplayErrors();
+								return validateContactDetails(
+									contactInfo,
+									isLoggedOutCart,
+									activePaymentMethod,
+									responseCart,
+									onEvent,
+									showErrorMessageBriefly,
+									applyDomainContactValidationResults,
+									clearDomainContactErrorMessages,
+									reduxDispatch,
+									translate,
+									true
+								);
 							} }
 							activeStepContent={
 								<WPContactForm
@@ -518,7 +359,21 @@ export default function WPCheckout( {
 									shouldShowContactDetailsValidationErrors={
 										shouldShowContactDetailsValidationErrors
 									}
-									contactValidationCallback={ validateContactDetails }
+									contactValidationCallback={ () =>
+										validateContactDetails(
+											contactInfo,
+											isLoggedOutCart,
+											activePaymentMethod,
+											responseCart,
+											onEvent,
+											showErrorMessageBriefly,
+											applyDomainContactValidationResults,
+											clearDomainContactErrorMessages,
+											reduxDispatch,
+											translate,
+											false
+										)
+									}
 									contactDetailsType={ contactDetailsType }
 									isLoggedOutCart={ isLoggedOutCart }
 								/>
@@ -673,7 +528,8 @@ function SubmitButtonHeader() {
 }
 
 const SubmitButtonFooter = () => {
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 
 	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>

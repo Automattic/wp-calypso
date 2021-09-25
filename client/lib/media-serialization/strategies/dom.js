@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { MediaTypes } from '../constants';
 
 /**

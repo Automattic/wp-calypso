@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { withShoppingCart } from '@automattic/shopping-cart';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import PopoverCart from './popover-cart';
 
@@ -29,10 +22,6 @@ class HeaderCart extends React.Component {
 			};
 		} );
 	};
-
-	componentDidMount() {
-		this.props.shoppingCartManager.reloadFromServer();
-	}
 
 	render() {
 		const isCartEmpty = getAllCartItems( this.props.cart ).length === 0;

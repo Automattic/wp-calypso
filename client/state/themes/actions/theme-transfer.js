@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { delay } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import {
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
@@ -15,7 +9,6 @@ import {
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
 } from 'calypso/state/themes/action-types';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
 import 'calypso/state/themes/init';
 

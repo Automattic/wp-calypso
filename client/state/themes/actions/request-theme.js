@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { fetchThemeInformation as fetchWporgThemeInformation } from 'calypso/lib/wporg';
 import {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_FOLLOW,
 	READER_FOLLOW_ERROR,

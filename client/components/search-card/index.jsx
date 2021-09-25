@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import React from 'react';
 import Search from 'calypso/components/search';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SearchCard = ( { className, ...props }, ref ) => (

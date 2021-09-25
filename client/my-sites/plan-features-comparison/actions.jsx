@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const noop = () => {};

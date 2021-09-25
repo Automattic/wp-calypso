@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import { Button } from '@automattic/components';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import DocumentHead from 'calypso/components/data/document-head';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import usePostsQuery from 'calypso/data/posts/use-posts-query';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import CardHeading from 'calypso/components/card-heading';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import usePostsQuery from 'calypso/data/posts/use-posts-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+
+import './style.scss';
 
 const query = {
 	author: null,

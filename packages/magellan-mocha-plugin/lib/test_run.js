@@ -3,10 +3,10 @@
 //   - Non-browser testing, or regular node.js mocha tests
 //
 
+const fs = require( 'fs' );
+const path = require( 'path' );
 const _ = require( 'lodash' );
 const mochaSettings = require( './settings' );
-const path = require( 'path' );
-const fs = require( 'fs' );
 
 const MochaTestRun = function ( options ) {
 	// Share assets directory with mocha tests
@@ -41,7 +41,11 @@ const MochaTestRun = function ( options ) {
 
 // return the command line path to the test framework binary
 MochaTestRun.prototype.getCommand = function () {
-	return './node_modules/.bin/mocha';
+	const mochaPath = path.dirname( require.resolve( 'mocha/package.json' ) );
+	const json = require( path.join( mochaPath, './package.json' ) );
+	const relativePathToBin = json.bin.mocha;
+	const absolutePathToBin = require.resolve( path.join( mochaPath, relativePathToBin ) );
+	return absolutePathToBin;
 };
 
 // return the environment

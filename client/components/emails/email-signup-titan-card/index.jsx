@@ -1,28 +1,16 @@
-/**
- * External dependencies
- */
-
+import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
+import { Button, Card, Gridicon } from '@automattic/components';
+import { Icon } from '@wordpress/icons';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { Button, Card } from '@automattic/components';
-import { Icon } from '@wordpress/icons';
-
-/**
- * Internal dependencies
- */
+import tip from 'calypso/components/domains/register-domain-step/tip';
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import Gridicon from 'calypso/components/gridicon';
-import tip from 'calypso/components/domains/register-domain-step/tip';
-import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class EmailSignupTitanCard extends React.Component {

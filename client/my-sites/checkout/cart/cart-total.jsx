@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { shouldShowTax } from 'calypso/lib/cart-values';
 
 class CartTotal extends React.Component {

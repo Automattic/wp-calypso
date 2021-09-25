@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { subscriptionsFromApi, isValidApiResponse } from '../utils';
 
 const successfulApiResponse = freeze( {

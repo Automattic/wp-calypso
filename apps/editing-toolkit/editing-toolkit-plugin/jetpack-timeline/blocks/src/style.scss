@@ -34,7 +34,7 @@ $timeline-border-width: 4px;
 			background-color: currentColor;
 			position: absolute;
 			top: 50%;
-			transform: translateY( -( $timeline-border-width / 2 ) );
+			transform: translateY( -( $timeline-border-width * 0.5 ) );
 			left: -$timeline-width;
 		}
 
@@ -77,7 +77,7 @@ $timeline-border-width: 4px;
 
 		// Bubbles.
 		.wp-block-jetpack-timeline-item {
-			width: calc( 50% - #{ $timeline-width } + #{ $timeline-border-width / 2 } );
+			width: calc( 50% - #{ $timeline-width } + #{ $timeline-border-width * 0.5 } );
 		}
 
 		// Left aligned.

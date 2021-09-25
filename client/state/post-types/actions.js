@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { POST_TYPES_RECEIVE, POST_TYPES_REQUEST } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/post-types';

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
 import PaymentMethodsComponent from 'calypso/me/purchases/payment-methods/main';
 

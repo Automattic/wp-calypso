@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { omit, mapValues } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { omit, mapValues } from 'lodash';
+import wp from 'calypso/lib/wp';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -20,7 +13,7 @@ import {
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/jetpack/init';
 

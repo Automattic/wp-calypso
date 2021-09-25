@@ -1,14 +1,10 @@
-/**
- * Internal dependencies
- */
-
+import wp from 'calypso/lib/wp';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
 
 /**
  * Request the Jetpack connection status for a certain site.

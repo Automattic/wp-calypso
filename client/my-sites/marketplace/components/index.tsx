@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { HorizontalRule } from '@wordpress/components';
-import styled from '@emotion/styled';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
+import { HorizontalRule } from '@wordpress/components';
 import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
 
 export const MobileHiddenHorizontalRule = styled( HorizontalRule )< MarketplaceThemeProps >`

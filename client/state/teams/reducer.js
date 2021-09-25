@@ -1,12 +1,5 @@
-/**
- * External Dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { get } from 'lodash';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';

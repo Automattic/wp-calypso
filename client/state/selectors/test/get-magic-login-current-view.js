@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 
 describe( 'getMagicLoginCurrentView()', () => {

@@ -26,9 +26,9 @@
 	.search {
 		position: relative;
 		flex: 0 1 auto;
-		margin: 0 5px 0 10px;
 		height: 36px;
 		border: solid 1px var( --color-neutral-10 );
+		margin: 10px;
 
 		&.has-focus,
 		&.has-focus:hover {
@@ -256,6 +256,7 @@
 }
 
 .button.themes-magic-search-card__advanced-toggle {
+	display: flex;
 	font-size: 0.75rem;
 	white-space: nowrap;
 	border: 0;

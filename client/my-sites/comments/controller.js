@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import { startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import React from 'react';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
-import CommentsManagement from './main';
 import CommentView from 'calypso/my-sites/comment/main';
 import { removeNotice } from 'calypso/state/notices/actions';
 import { getNotices } from 'calypso/state/notices/selectors';
+import CommentsManagement from './main';
 
 const mapPendingStatusToUnapproved = ( status ) => ( 'pending' === status ? 'unapproved' : status );
 

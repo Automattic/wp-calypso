@@ -1,17 +1,10 @@
-/**
- * Externap dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { registerReducer } from 'calypso/state/redux-store';
-import reducer from 'calypso/state/partner-portal/reducer';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import partner from 'calypso/state/partner-portal/partner/handlers';
 import licenses from 'calypso/state/partner-portal/licenses/handlers';
+import partner from 'calypso/state/partner-portal/partner/handlers';
+import reducer from 'calypso/state/partner-portal/reducer';
+import { registerReducer } from 'calypso/state/redux-store';
 
 const debug = debugFactory( 'partner-portal' );
 

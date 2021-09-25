@@ -1,18 +1,3 @@
-/**
- * External dependencies
- */
-import { useEffect, useMemo, useReducer } from 'react';
-import { useSelector } from 'react-redux';
-import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
-import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { decodeProductFromUrl } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
@@ -21,12 +6,19 @@ import {
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
-import doesValueExist from '../lib/does-value-exist';
-import useStripProductsFromUrl from './use-strip-products-from-url';
-import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo, useReducer } from 'react';
+import { useSelector } from 'react-redux';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
+import useStripProductsFromUrl from './use-strip-products-from-url';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -125,7 +117,8 @@ export default function usePrepareProductsForCart( {
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
-	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	const doNotStripProducts = Boolean( ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
 	return state;
 }
@@ -310,7 +303,7 @@ function useAddRenewalItems( {
 				}
 				return createRenewalItemToAddToCart( productSlug, product.product_id, subscriptionId );
 			} )
-			.filter( doesValueExist );
+			.filter( isValueTruthy );
 
 		if ( productsForCart.length < 1 ) {
 			debug( 'creating renewal products failed', productAlias );
@@ -387,7 +380,7 @@ function useAddProductFromSlug( {
 						? { ...validProduct, internal_product_alias: productAlias }
 						: undefined;
 				} )
-				.filter( doesValueExist ) ?? [],
+				.filter( isValueTruthy ) ?? [],
 		[ isJetpackNotAtomic, productAliasFromUrl, products ]
 	);
 
@@ -449,6 +442,8 @@ function useAddProductFromSlug( {
 		validProducts,
 		isJetpackCheckout,
 		dispatch,
+		jetpackSiteSlug,
+		jetpackPurchaseToken,
 	] );
 }
 
@@ -507,7 +502,10 @@ function createRenewalItemToAddToCart(
  * about which type of site the user has.
  */
 function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
-	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
+	if (
+		productAlias &&
+		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+	) {
 		if ( isJetpackNotAtomic ) {
 			productAlias = productAlias.includes( 'monthly' )
 				? PRODUCT_JETPACK_SEARCH_MONTHLY

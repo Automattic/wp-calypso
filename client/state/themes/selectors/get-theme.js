@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/themes/init';
 
 /**

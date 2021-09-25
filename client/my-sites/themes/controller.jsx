@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
-import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import LoggedOutComponent from './logged-out';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -120,4 +113,13 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 		redirectedSection = 'setup';
 	}
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
+}
+
+export function redirectTiers( { res, originalUrl }, next ) {
+	const redirectUrl = originalUrl.replace( /\/(free|premium|type)/g, '' );
+	if ( redirectUrl === originalUrl ) {
+		return next();
+	}
+
+	res.redirect( 301, redirectUrl );
 }

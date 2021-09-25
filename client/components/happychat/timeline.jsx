@@ -1,35 +1,24 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { useAutoscroll } from './autoscroll';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { connect } from 'react-redux';
 import Emojify from 'calypso/components/emojify';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useScrollbleed } from './scrollbleed';
-import { addSchemeIfMissing, setUrlScheme } from './url';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { sendEvent } from 'calypso/state/happychat/connection/actions';
+import { useAutoscroll } from './autoscroll';
+import { useScrollbleed } from './scrollbleed';
+import { addSchemeIfMissing, setUrlScheme } from './url';
 
-/**
- * Style dependencies
- */
 import './timeline.scss';
 
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
-const MessageParagraph = ( { message, isEdited, twemojiUrl } ) => (
-	<p>
+const MessageParagraph = ( { message, isEdited, isOptimistic, twemojiUrl } ) => (
+	<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
 		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
 		{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 	</p>
@@ -86,7 +75,14 @@ const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId(
  * Given a message and array of links contained within that message, returns the message
  * with clickable links inside of it.
  */
-const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl } ) => {
+const MessageWithLinks = ( {
+	message,
+	messageId,
+	isEdited,
+	isOptimistic,
+	links,
+	isExternalUrl,
+} ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -134,7 +130,7 @@ const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl 
 	}
 
 	return (
-		<p>
+		<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
 			{ children.parts }
 			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 		</p>
@@ -171,16 +167,18 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 					message={ event.message }
 					messageId={ event.id }
 					isEdited={ event.isEdited }
+					isOptimistic={ event.isOptimistic }
 					links={ event.links }
 					twemojiUrl={ twemojiUrl }
 					isExternalUrl={ isExternalUrl }
 				/>
-				{ rest.map( ( { message, id, isEdited, links } ) => (
+				{ rest.map( ( { message, id, isEdited, isOptimistic, links } ) => (
 					<MessageText
 						key={ id }
 						message={ message }
 						messageId={ event.id }
 						isEdited={ isEdited }
+						isOptimistic={ isOptimistic }
 						links={ links }
 						twemojiUrl={ twemojiUrl }
 						isExternalUrl={ isExternalUrl }

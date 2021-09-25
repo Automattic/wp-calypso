@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	JETPACK_SCAN_ENQUEUE_UPDATE,
 	JETPACK_SCAN_ENQUEUE_REQUEST,
 	JETPACK_SCAN_ENQUEUE_REQUEST_SUCCESS,
 	JETPACK_SCAN_ENQUEUE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 // NOTE: This is currently a mock endpoint.
 // It always returns the following payload:

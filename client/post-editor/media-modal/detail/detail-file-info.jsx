@@ -80,7 +80,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 	renderFileSize = () => {
 		const fileSize = this.getItemValue( 'size' );
 
-		if ( ! fileSize || fileSize === 0 ) {
+		if ( ! fileSize || fileSize === 0 || fileSize === '0.00 B' ) {
 			return;
 		}
 

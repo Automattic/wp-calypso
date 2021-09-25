@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { keyToString } from 'calypso/reader/post-key';
 import {

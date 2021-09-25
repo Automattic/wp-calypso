@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/*
- * Internal Dependencies
- */
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and

@@ -1,8 +1,21 @@
 import phrase from 'asana-phrase';
 import config from 'config';
-import { getViewportName } from './browser-helper';
+import { getTargetDeviceName } from './browser-helper';
 
+export type DateFormat = 'ISO';
 export { config };
+
+export interface PaymentDetails {
+	cardHolder: string;
+	cardNumber: string;
+	expiryMonth: string;
+	expiryYear: string;
+	cvv: string;
+	countryCode: string;
+	postalCode: string;
+}
+
+export type CreditCardIssuers = 'Visa';
 
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
@@ -15,6 +28,41 @@ export function getRandomInteger( min: number, max: number ): number {
 	min = Math.ceil( min );
 	max = Math.floor( max );
 	return Math.floor( Math.random() * ( max - min ) + min );
+}
+
+/**
+ * Returns the current date as a time stamp.
+ *
+ * @returns {string} Date represented as a timestamp.
+ */
+export function getTimestamp(): string {
+	return new Date().getTime().toString();
+}
+
+/**
+ * Returns the date string in the requested format.
+ *
+ * @param {DateFormat} format Date format supported by NodeJS.
+ * @returns {string|null} If valid date format string is supplied, string is returned. Otherwise, null.
+ */
+export function getDateString( format: DateFormat ): string | null {
+	if ( format === 'ISO' ) {
+		return new Date().toISOString();
+	}
+	return null;
+}
+
+/**
+ * Generates a new name for test blog with prefix `e2eflowtesting`.
+ *
+ * Examples:
+ * 	e2eflowtesting16900000102
+ * 	e2eflowtesting14928337999
+ *
+ * @returns {string} Generated blog name.
+ */
+export function getBlogName(): string {
+	return `e2eflowtesting${ getTimestamp() }${ getRandomInteger( 100, 999 ) }`;
 }
 
 /**
@@ -62,11 +110,16 @@ export function getAccountCredential( accountType: string ): string[] {
  * Returns the site URL for a specified account from the secrets file.
  *
  * @param {string} accountType Type of the account for which the site URL is to be obtained.
+ * @param {{key: string}: boolean} param1 Keyed object parameter.
+ * @param {boolean} param1.protocol Whether to include the protocol in the returned URL. Defaults to true.
  * @returns {string} Site URL for the given username.
  * @throws {Error} If the accountType does not have a site URL defined, or accountType does not have an entry in the file.
  * @throws {ReferenceError} If URL is not defined for the accountType.
  */
-export function getAccountSiteURL( accountType: string ): string {
+export function getAccountSiteURL(
+	accountType: string,
+	{ protocol = true }: { protocol?: boolean } = {}
+): string {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
 		throw new Error( `Secrets file did not contain URL for requested user ${ accountType }.` );
@@ -77,7 +130,61 @@ export function getAccountSiteURL( accountType: string ): string {
 		throw new ReferenceError( `Secrets entry for ${ accountType } has no site URL defined.` );
 	}
 
-	return new URL( `https://${ url }` ).toString();
+	if ( protocol ) {
+		return new URL( `https://${ url }` ).toString();
+	}
+
+	return url.toString();
+}
+
+/**
+ * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
+ *
+ * @param param0 Keyed parameter object.
+ * @param {string} param0.inboxId Existing inbox ID on mailosaur.
+ * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.
+ * @returns {string} Unique test email.
+ */
+export function getTestEmailAddress( {
+	inboxId,
+	prefix = '',
+}: {
+	inboxId: string;
+	prefix: string;
+} ): string {
+	const domain = 'mailosaur.io';
+	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
+	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+}
+
+/**
+ * Returns an object containing test credit card payment information.
+ *
+ * Simulated credit card information is supplied by Stripe. For more information, see https://stripe.com/docs/testing#cards.
+ *
+ * @returns {PaymentDetails} Object that implements the PaymentDetails interface.
+ */
+export function getTestPaymentDetails(): PaymentDetails {
+	// Only Visa is implemented for now.
+	return {
+		cardHolder: 'End to End Testing',
+		cardNumber: '4242 4242 4242 4242',
+		expiryMonth: '02',
+		expiryYear: '28',
+		cvv: '999',
+		countryCode: 'TR', // Set to Turkey to force Strip to process payments.
+		postalCode: '06123',
+	};
+}
+
+/**
+ * Adjusts the user invite link to the correct environment.
+ *
+ * @param {string} inviteURL Invitation link.
+ * @returns {string} Adjusted invitation link with the correct hostname.
+ */
+export function adjustInviteLink( inviteURL: string ): string {
+	return inviteURL.replace( 'https://wordpress.com', config.get( 'calypsoBaseURL' ) );
 }
 
 /**
@@ -112,7 +219,7 @@ export function toTitleCase( words: string[] | string ): string {
  *
  * @returns {string} Generated text.
  */
-export function randomPhrase(): string {
+export function getRandomPhrase(): string {
 	const generated: Array< string > = phrase.default32BitFactory().randomPhrase();
 	return toTitleCase( generated );
 }
@@ -127,7 +234,7 @@ export function createSuiteTitle( title: string ): string {
 	const parts = [
 		`[${ getJetpackHost() }]`,
 		`${ toTitleCase( title ) }:`,
-		`(${ getViewportName() })`,
+		`(${ getTargetDeviceName() })`,
 		'@parallel',
 	];
 

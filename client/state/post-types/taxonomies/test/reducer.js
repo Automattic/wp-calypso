@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { requesting, items } from '../reducer';
-import { receivePostTypeTaxonomies } from '../actions';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
@@ -17,6 +8,8 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { receivePostTypeTaxonomies } from '../actions';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { COMMENTS_LIKE, COMMENTS_UNLIKE } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const likeComment = ( action ) =>
 	http(

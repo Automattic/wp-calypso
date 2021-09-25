@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 
 import 'calypso/state/oauth2-clients/init';

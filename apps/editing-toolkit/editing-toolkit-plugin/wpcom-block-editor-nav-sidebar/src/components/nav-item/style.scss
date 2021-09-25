@@ -14,7 +14,7 @@ $nav-item-untitled-text-color: #b5bcc2; // former $light-gray-800
 	width: 100%;
 	height: auto;
 	margin: 0;
-	padding: ( $grid-unit-20 / 2 ) $grid-unit-20;
+	padding: ( $grid-unit-20 * 0.5 ) $grid-unit-20;
 	text-align: initial;
 	color: $white;
 
@@ -29,7 +29,7 @@ $nav-item-untitled-text-color: #b5bcc2; // former $light-gray-800
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;
-		padding: ( ( $grid-unit-20 / 2 ) - 1 ) ( $grid-unit-20 - 1 );
+		padding: ( ( $grid-unit-20 * 0.5 ) - 1 ) ( $grid-unit-20 - 1 );
 	}
 
 	&.is-selected {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-connection-status';
 
 /**

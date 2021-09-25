@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestPostCounts } from 'calypso/state/posts/counts/actions';
 import { isRequestingPostCounts } from 'calypso/state/posts/counts/selectors';
 

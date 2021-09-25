@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-import PropTypes from 'prop-types';
-
-/**
- * Internal Dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import ActionCard from 'calypso/components/action-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import {
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
@@ -20,9 +13,6 @@ import {
 	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
 } from 'calypso/me/concierge/constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ConciergeBanner extends Component {
@@ -72,7 +62,7 @@ class ConciergeBanner extends Component {
 					}
 				);
 				buttonText = translate( 'Session dashboard' );
-				buttonHref = '/me/concierge';
+				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
 
@@ -87,7 +77,7 @@ class ConciergeBanner extends Component {
 					}
 				);
 				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/concierge';
+				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
 
@@ -98,7 +88,7 @@ class ConciergeBanner extends Component {
 						'Quick Start Session is a one-on-one video session between the user and our support staff.',
 				} );
 				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/concierge';
+				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
 

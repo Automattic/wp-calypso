@@ -101,7 +101,11 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 			className={ classnames( 'site-title', { 'is-touched': isTouched } ) }
 			onSubmit={ handleFormSubmit }
 		>
-			<label htmlFor="site-title__input" className="site-title__input-label">
+			<label
+				htmlFor="site-title__input"
+				className="site-title__input-label"
+				data-e2e-string="My site is called"
+			>
 				{ inputLabel }
 			</label>
 			<div className="site-title__input-wrapper">
@@ -122,7 +126,9 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 				<p className="site-title__input-hint">
 					<Icon icon={ tip } size={ 18 } />
 					{ /* translators: The "it" here refers to the site title. */ }
-					<span>{ __( "Don't worry, you can change it later." ) }</span>
+					<span data-e2e-string="Don't worry, you can change it later.">
+						{ __( "Don't worry, you can change it later." ) }
+					</span>
 				</p>
 			</div>
 		</form>

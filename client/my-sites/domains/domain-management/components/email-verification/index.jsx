@@ -1,24 +1,12 @@
-/**
- * External dependencies
- *
- */
+import { Button, Card, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class EmailVerificationCard extends React.Component {

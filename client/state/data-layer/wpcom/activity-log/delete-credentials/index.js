@@ -1,16 +1,12 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 
 const noop = () => {};
 

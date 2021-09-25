@@ -10,10 +10,6 @@ const Settings = require( '../../lib/settings' );
 
 const webBase = Config.baseURL();
 
-/**
- *
- * Module dependencies
- */
 const delay = promisify( setTimeout );
 
 let notificationBadgeCount = 0;
@@ -105,12 +101,16 @@ module.exports = function ( { window, view } ) {
 				if ( navigate ) {
 					// if we have a specific URL, then navigate Calypso there
 					log.info( `Navigating user to URL: ${ navigate }` );
-					if ( isCalypso( view ) ) {
+
+					if ( navigate.startsWith( 'http' ) ) {
+						view.webContents.loadURL( navigate );
+					} else if ( isCalypso( view ) ) {
 						log.info( `Navigating to '${ navigate }'` );
 						view.webContents.send( 'navigate', navigate );
 					} else {
-						log.info( `Navigating to '${ webBase + navigate }'` );
-						view.webContents.loadURL( webBase + navigate );
+						const path = stripLeadingSlashFromPath( navigate );
+						log.info( `Navigating to '${ webBase + path }'` );
+						view.webContents.loadURL( webBase + path );
 					}
 				} else {
 					// else just display the notifications panel
@@ -136,3 +136,7 @@ module.exports = function ( { window, view } ) {
 		}
 	} );
 };
+
+function stripLeadingSlashFromPath( path ) {
+	return path.replace( /^\/+/g, '' );
+}

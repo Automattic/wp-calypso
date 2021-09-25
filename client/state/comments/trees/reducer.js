@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, map, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,

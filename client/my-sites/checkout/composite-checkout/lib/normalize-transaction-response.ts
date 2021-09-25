@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
 const emptyResponse: WPCOMTransactionEndpointResponse = {

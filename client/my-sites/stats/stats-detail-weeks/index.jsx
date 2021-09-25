@@ -1,25 +1,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
+
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleContent from '../stats-module/content-text';
+import React from 'react';
+import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
+import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import StatsModuleContent from '../stats-module/content-text';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailWeeks = ( props ) => {

@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-
-import FormattedHeader from 'calypso/components/formatted-header';
 import { translate } from 'i18n-calypso';
-import InstallThemeButton from './install-theme-button';
+import React from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import InstallThemeButton from './install-theme-button';
 
-/**
- * Style dependencies
- */
 import './themes-header.scss';
 
 const ThemesHeader = () => {
@@ -26,7 +15,14 @@ const ThemesHeader = () => {
 				brandFont
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
-				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
+				subHeaderText={ translate(
+					'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+						},
+					}
+				) }
 				align="left"
 				hasScreenOptions
 			/>

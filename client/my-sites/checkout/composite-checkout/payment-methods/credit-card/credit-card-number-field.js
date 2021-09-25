@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { CardNumberElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { CardNumberElement } from '@stripe/react-stripe-js';
+import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 
@@ -55,7 +48,10 @@ export default function CreditCardNumberField( {
 			<LabelText>{ __( 'Card number' ) }</LabelText>
 			<StripeFieldWrapper className="number" hasError={ cardNumberError }>
 				<CardNumberElement
-					style={ stripeElementStyle }
+					options={ {
+						style: stripeElementStyle,
+						disabled: isDisabled,
+					} }
 					onReady={ () => {
 						setIsStripeFullyLoaded( true );
 					} }

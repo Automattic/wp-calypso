@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import activeDiscounts from './active-discounts';
 
 function getDiscountByName( discountName, endsAt = null ) {

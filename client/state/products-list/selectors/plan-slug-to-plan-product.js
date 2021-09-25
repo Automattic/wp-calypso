@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPlan, applyTestFiltersToPlansList } from '@automattic/calypso-products';
 
 /**

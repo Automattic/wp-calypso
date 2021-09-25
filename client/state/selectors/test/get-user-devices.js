@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getUserDevices from 'calypso/state/selectors/get-user-devices';
 
 describe( '#getUserDevices()', () => {

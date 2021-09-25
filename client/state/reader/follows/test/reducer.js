@@ -1,11 +1,13 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import {
+	READER_UNFOLLOW,
+	READER_RECORD_FOLLOW,
+	READER_RECORD_UNFOLLOW,
+	READER_FOLLOWS_RECEIVE,
+	READER_FOLLOW_ERROR,
+	READER_SITE_REQUEST_SUCCESS,
+} from 'calypso/state/reader/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -19,15 +21,6 @@ import {
 	syncComplete,
 } from '../actions';
 import { items, itemsCount } from '../reducer';
-import {
-	READER_UNFOLLOW,
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
-	READER_FOLLOWS_RECEIVE,
-	READER_FOLLOW_ERROR,
-	READER_SITE_REQUEST_SUCCESS,
-} from 'calypso/state/reader/action-types';
-import { serialize, deserialize } from 'calypso/state/utils';
 
 const exampleFollow = {
 	is_following: true,

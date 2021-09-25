@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { cloneDeep } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 
 describe( 'getBillingTransactionFilters()', () => {

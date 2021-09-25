@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { has, keyBy, get, omit } from 'lodash';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { has, keyBy, get, omit } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,

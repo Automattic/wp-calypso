@@ -1,33 +1,25 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
-import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import { Field, styled } from '@automattic/wpcom-checkout';
 import {
 	isDomainProduct,
 	isDomainTransfer,
 	isDomainMapping,
 	getDomain,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { useSelect, useDispatch } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { Field, styled } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
 	isValid,
 } from '../types/wpcom-store-state';
-import type { CountryListItem } from '../types/country-list-item';
-import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
-import getCountries from 'calypso/state/selectors/get-countries';
-import { useSelector } from 'react-redux';
+import TaxFields from './tax-fields';
+import type { CountryListItem } from '../types/country-list-item';
+import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;
@@ -51,7 +43,8 @@ export default function ContactDetailsContainer( {
 	isLoggedOutCart: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const domainNames: string[] = responseCart.products
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
@@ -66,16 +59,13 @@ export default function ContactDetailsContainer( {
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-	const countries = useSelector( ( state ) => getCountries( state, 'domains' ) );
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
 		updateDomainContactFields( details );
-		updateRequiredDomainFields( {
-			postalCode:
-				countries?.find( ( country ) => country.code === details.countryCode )?.has_postal_codes ??
-				true,
-		} );
 	};
+
+	const getIsFieldRequired = ( field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' > ) =>
+		contactInfo[ field ]?.isRequired ?? false;
 
 	switch ( contactDetailsType ) {
 		case 'domain':
@@ -91,6 +81,8 @@ export default function ContactDetailsContainer( {
 						contactDetails={ contactDetails }
 						contactDetailsErrors={ contactDetailsErrors }
 						updateDomainContactFields={ updateDomainContactRelatedData }
+						updateRequiredDomainFields={ updateRequiredDomainFields }
+						getIsFieldRequired={ getIsFieldRequired }
 						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }

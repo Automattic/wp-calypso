@@ -1,17 +1,10 @@
-/**
- * Internal dependencies
- */
+import { includes } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
 
 import 'calypso/state/stats/init';
 

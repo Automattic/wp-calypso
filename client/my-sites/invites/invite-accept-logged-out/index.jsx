@@ -1,32 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Card } from '@automattic/components';
+import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
-import debugModule from 'debug';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/route';
 import SignupForm from 'calypso/blocks/signup-form';
-import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
-import { login } from 'calypso/lib/paths';
-import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
-import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
+const noop = () => {};
 
 class InviteAcceptLoggedOut extends React.Component {
 	state = { bearerToken: false, userData: false, submitting: false };
@@ -49,7 +44,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		window.location = signInLink;
 	};
 
-	submitForm = ( form, userData ) => {
+	submitForm = ( form, userData, _, afterSubmitCallback = noop ) => {
 		const { invite } = this.props;
 
 		this.setState( { submitting: true } );
@@ -73,7 +68,8 @@ class InviteAcceptLoggedOut extends React.Component {
 				debug( 'Create account error: ' + JSON.stringify( error ) );
 				store.remove( 'invite_accepted' );
 				this.setState( { submitting: false } );
-			} );
+			} )
+			.finally( afterSubmitCallback );
 	};
 
 	renderFormHeader = () => {
@@ -155,6 +151,18 @@ class InviteAcceptLoggedOut extends React.Component {
 	render() {
 		if ( this.props.forceMatchingEmail && this.props.invite.knownUser ) {
 			return this.renderSignInLinkOnly();
+		}
+
+		if ( this.props.invite?.site?.is_wpforteams_site ) {
+			return P2InviteAcceptLoggedOut( {
+				...this.props,
+				onClickSignInLink: this.clickSignInLink,
+				isSubmitting: this.state.submitting,
+				save: this.save,
+				submitForm: this.submitForm,
+				userData: this.state.userData,
+				loginUser: this.loginUser,
+			} );
 		}
 
 		return (

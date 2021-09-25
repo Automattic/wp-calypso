@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import { resendIcannVerification } from 'calypso/lib/domains';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

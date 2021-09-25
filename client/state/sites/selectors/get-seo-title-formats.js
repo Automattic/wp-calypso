@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSeoTitleFormatsForSite from './get-seo-title-formats-for-site';
 

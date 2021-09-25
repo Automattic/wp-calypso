@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { gutenframeUpdateImageBlocks as gutenframeUpdateImageBlocksThunk } from 'calypso/state/media/thunks/gutenframe-update-image-blocks';
 
 describe( 'media - thunks - gutenframeUpdateImageBlocks', () => {

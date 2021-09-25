@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isDownloadableFromWpcom } from 'calypso/state/themes/selectors';
 

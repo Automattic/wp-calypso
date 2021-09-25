@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/stats/visits';
 

@@ -1,49 +1,9 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
 .domain-management-list__notice {
 	margin-bottom: 0;
-}
-
-.domain-management-list__cancel-change-primary-button {
-	margin-top: 1px;
-	margin-bottom: 2px;
-}
-
-.list__header-primary-domain {
-	display: flex;
-	align-items: center;
-
-	.list__header-primary-domain-info {
-		text-align: left;
-		flex: 1;
-		font-size: $font-body-small;
-
-		button {
-			margin-left: 5px;
-			vertical-align: middle;
-		}
-	}
-
-	.list__header-primary-domain-buttons {
-		display: flex;
-	}
-}
-
-.list__item-primary-domain {
-	.list__header-primary-domain-url {
-		color: inherit;
-		text-decoration: none;
-		word-break: break-all;
-	}
-}
-
-.domain-management-list__primary-domain {
-	margin-bottom: 24px;
-
-	.list__item-primary-domain {
-		font-size: $font-title-large;
-	}
 }
 
 .domain-management-list-item {
@@ -125,28 +85,6 @@
 	}
 }
 
-.domain-management-list-item__upsell,
-.domain-item__upsell {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	span {
-		margin-right: 16px;
-		flex: 1;
-	}
-}
-
-.list-all__container .list-all__site {
-	margin-bottom: 10px;
-}
-
-.domain-management__claim-free-domain {
-	@include breakpoint-deprecated( '>660px' ) {
-		display: none;
-	}
-}
-
 .domain-item,
 .list-header {
 	display: flex;
@@ -161,10 +99,6 @@
 	.info-popover {
 		vertical-align: middle;
 		margin-left: 2px;
-	}
-
-	@include breakpoint-deprecated( '<960px' ) {
-		display: none;
 	}
 
 	div {
@@ -182,10 +116,25 @@
 	margin-right: 8px;
 	flex: 1;
 	overflow: hidden;
+
+	.domain-notice {
+		display: inline-block;
+		margin-top: 16px;
+		font-size: $font-body-small;
+
+		.material-icon {
+			transform: translateY( 4px );
+		}
+	}
+
+	.domain-item__status .domain-notice {
+		margin-top: 0;
+	}
 }
 
 .domain-item__title {
-	font-size: $font-body;
+	font-size: $font-title-small;
+	font-weight: 500; /* stylelint-disable-line */
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-left: 4px;
@@ -200,14 +149,49 @@
 		margin-left: 1px;
 		transform: translateY( -1px );
 	}
+
+	.domain-item__meta-item {
+		margin-left: 14px;
+
+		button.domain-item__email-button {
+			color: var( --color-link );
+			background: none;
+			border: none;
+			padding: 0;
+			line-height: 1.5;
+			box-shadow: none;
+			font-size: $font-body-small;
+
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		.domain-item__meta-item {
+			display: none;
+		}
+		margin-top: 4px;
+	}
 }
 
-.domain-item__status-info {
+.domain-item__meta.domain-item__meta-placeholder {
+	width: 30%;
+	@include placeholder( --color-neutral-5 );
+}
+
+.domain-item__status-info,
+.domain-item__status-verifying {
 	border-left: 3px solid var( --color-success-50 );
 }
 
 .domain-item__status-warning {
 	border-left: 3px solid var( --color-warning-40 );
+}
+
+.domain-item__status-transfer-warning {
+	border-left: 3px solid var( --studio-orange-50 );
 }
 
 .domain-item__status-alert {
@@ -222,15 +206,16 @@
 	display: flex;
 	flex-wrap: wrap;
 	margin-left: -4px;
+	margin-bottom: 4px;
+	align-items: center;
 
 	.domain-notice {
 		margin-left: 4px;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		flex-direction: column;
+		display: inline;
 		margin-left: 0;
-		flex-wrap: nowrap;
 		overflow: hidden;
 
 		.domain-item__title {
@@ -243,44 +228,8 @@
 	}
 }
 
-.list__domain-transfer-lock,
-.list__domain-auto-renew,
-.list__domain-privacy,
-.list__domain-email {
-	flex-shrink: 0;
-	text-align: center;
-	font-size: $font-body-small;
-	margin-right: 8px;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		display: none;
-	}
-
-	span {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-}
-
-.list__domain-transfer-lock {
-	width: 105px;
-}
-
-.list__domain-auto-renew {
-	width: 96px;
-}
-
-.list__domain-privacy {
-	width: 80px;
-}
-
-.list__domain-email {
-	width: 90px;
-}
-
 .list__domain-options {
-	width: 65px;
+	width: 23px;
 	font-size: $font-body-small;
 	text-align: center;
 	button {
@@ -288,30 +237,8 @@
 	}
 }
 
-.domain-item__icon {
-	fill: var( --color-text-subtle );
-}
-
-.domain-item__primary {
-	font-weight: 600;
-}
-
-.list__view-all {
-	margin-top: 24px;
-}
-
 .list__action_item_placeholder {
 	@include placeholder( --color-neutral-5 );
-}
-
-.domain-item__enable-selection {
-	> .list__domain-transfer-lock,
-	> .list__domain-privacy,
-	> .list__domain-auto-renew,
-	> .list__domain-email,
-	> .list__domain-options {
-		visibility: hidden;
-	}
 }
 
 .domain-item__overlay {
@@ -332,13 +259,24 @@
 		margin-left: auto;
 		margin-right: 5px;
 	}
+}
 
-	.domain-item__upsell {
-		margin-left: auto;
+.domain-item .domain-item__primary-badge {
+	margin-left: 8px;
+	border-radius: 4px; /* stylelint-disable-line */
+	font-size: 0.75rem;
+	font-weight: 500; /* stylelint-disable-line */
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-left: 0;
 	}
 }
 
-.empty-domains-list-card {
+.domain-management-list__items + .empty-domains-list-card {
+	margin-top: 24px;
+}
+
+.empty-domains-list-card__wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -369,12 +307,11 @@
 	}
 
 	.empty-domains-list-card__actions {
-		text-align: center;
+		display: inline-flex;
+		justify-content: center;
+		flex-wrap: wrap;
 		& > .button {
-			margin: 16px 16px 0 0;
-		}
-		& > .button:last-child {
-			margin-right: 0;
+			margin: 16px 8px 0;
 		}
 	}
 

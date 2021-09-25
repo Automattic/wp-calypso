@@ -1,16 +1,25 @@
-/**
- * External dependencies
- */
+import {
+	getPlan,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	JETPACK_LEGACY_PLANS,
+	isDomainRegistration,
+	isDomainTransfer,
+	isConciergeSession,
+	isJetpackPlan,
+	isJetpackProduct,
+	getProductFromSlug,
+} from '@automattic/calypso-products';
+import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { times } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import UserItem from 'calypso/components/user';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
 	isExpired,
@@ -26,31 +35,15 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getByPurchaseId, isPurchaseManagementLocked } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import AutoRenewToggle from './auto-renew-toggle';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
-import UserItem from 'calypso/components/user';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
-import {
-	getPlan,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
-	JETPACK_LEGACY_PLANS,
-	isDomainRegistration,
-	isDomainTransfer,
-	isConciergeSession,
-	isJetpackPlan,
-	isJetpackProduct,
-	getProductFromSlug,
-} from '@automattic/calypso-products';
-import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import AutoRenewToggle from './auto-renew-toggle';
 import PaymentInfoBlock from './payment-info-block';
-import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
@@ -389,6 +382,9 @@ function PurchaseMetaExpiration( {
 	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
+	const canManagePurchase = useSelector(
+		( state ) => ! isPurchaseManagementLocked( state, purchase?.id )
+	);
 
 	if ( isDomainTransfer( purchase ) ) {
 		return null;
@@ -428,7 +424,7 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ site && ! hideAutoRenew && isProductOwner && (
+				{ site && ! hideAutoRenew && isProductOwner && canManagePurchase && (
 					<span className="manage-purchase__detail">
 						<AutoRenewToggle
 							planName={ site.plan.product_name_short }

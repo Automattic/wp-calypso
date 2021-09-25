@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,

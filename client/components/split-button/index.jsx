@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import PopoverMenu from 'calypso/components/popover-menu';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import PopoverMenu from 'calypso/components/popover/menu';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

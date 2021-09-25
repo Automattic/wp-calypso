@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -25,6 +17,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
@@ -34,12 +28,9 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
-import { Iterations } from './iterations';
+import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
-
-/**
- * Type dependencies
- */
+import { getForCurrentCROIteration, Iterations } from './iterations';
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
@@ -178,7 +169,14 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
  * Constants that contain products including option and regular types.
  */
 
-export const SELECTOR_PLANS = [
+export const SELECTOR_PLANS = getForCurrentCROIteration( {
+	[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
+		PLAN_JETPACK_SECURITY_T1_YEARLY,
+		PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		PLAN_JETPACK_COMPLETE,
+		PLAN_JETPACK_COMPLETE_MONTHLY,
+	],
+} ) ?? [
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,

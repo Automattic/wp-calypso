@@ -1,44 +1,33 @@
-/**
- * External dependencies
- */
+import path from 'path';
+import { Dialog, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import path from 'path';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { ALLOWED_FILE_EXTENSIONS } from './constants';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { Dialog } from '@automattic/components';
-import FilePicker from 'calypso/components/file-picker';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import Gravatar from 'calypso/components/gravatar';
-import { isCurrentUserUploadingGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
-import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import Spinner from 'calypso/components/spinner';
-import {
-	receiveGravatarImageFailed,
-	uploadGravatar,
-} from 'calypso/state/current-user/gravatar-status/actions';
 import ImageEditor from 'calypso/blocks/image-editor';
-import InfoPopover from 'calypso/components/info-popover';
-import ExternalLink from 'calypso/components/external-link';
-import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import DropZone from 'calypso/components/drop-zone';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
+import ExternalLink from 'calypso/components/external-link';
+import FilePicker from 'calypso/components/file-picker';
+import Gravatar from 'calypso/components/gravatar';
+import InfoPopover from 'calypso/components/info-popover';
+import Spinner from 'calypso/components/spinner';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
+import {
+	receiveGravatarImageFailed,
+	uploadGravatar,
+} from 'calypso/state/current-user/gravatar-status/actions';
+import { isCurrentUserUploadingGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class EditGravatar extends Component {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import TextDiff from 'calypso/components/text-diff';
 
 export default function TextDiffExample() {

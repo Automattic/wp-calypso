@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { items, queuedRequests } from '../reducer';
 import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
+import { items, queuedRequests } from '../reducer';
 
 describe( 'items', () => {
 	test( 'should store the posts by global_ID', () => {

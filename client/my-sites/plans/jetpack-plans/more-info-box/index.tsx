@@ -1,25 +1,10 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
 import React from 'react';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { PLAN_COMPARISON_PAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Type dependencies
- */
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type MoreInfoProps = {

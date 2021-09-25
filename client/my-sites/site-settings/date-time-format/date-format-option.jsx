@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormInput from 'calypso/components/forms/form-text-input';
 import { getDefaultDateFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 

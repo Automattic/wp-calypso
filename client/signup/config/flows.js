@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -46,6 +47,8 @@ function getRedirectDestination( dependencies ) {
 			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
 		) {
 			return dependencies.oauth2_redirect;
+		} else if ( dependencies.redirect ) {
+			return dependencies.redirect;
 		}
 	} catch {
 		return '/';
@@ -54,12 +57,16 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( dependencies ) {
-	if ( 'no-site' === dependencies.siteSlug ) {
+function getSignupDestination( { siteSlug } ) {
+	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
 
-	return `/home/${ dependencies.siteSlug }`;
+	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
+		return addQueryArgs( { siteSlug }, '/start/setup-site' );
+	}
+
+	return `/home/${ siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {

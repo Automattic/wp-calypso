@@ -1,24 +1,17 @@
 /**
  * Collapse Sidebar Menu Item
  *
- **/
-
-/**
- * External dependencies
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import SidebarItem from 'calypso/layout/sidebar/item';
+import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
-import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
+import SidebarItem from 'calypso/layout/sidebar/item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import TranslatableString from 'calypso/components/translatable/proptype';
+import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export const CollapseSidebar = ( { title, icon } ) => {
 	const reduxDispatch = useDispatch();

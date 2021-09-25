@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_RECEIVE,

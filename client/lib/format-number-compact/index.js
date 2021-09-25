@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import i18n, { numberFormat } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { THOUSANDS } from './thousands';
 
 /**

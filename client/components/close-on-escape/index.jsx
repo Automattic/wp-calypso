@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { filter, isEmpty, last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

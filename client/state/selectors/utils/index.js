@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getPublicizeConnection from 'calypso/state/selectors/get-publicize-connection';
 
 /**

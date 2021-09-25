@@ -1,6 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import * as i18n from '@wordpress/i18n';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import type { Locale } from './locales';
 
 export const localeContext = createContext< string | null >( null );
 
@@ -13,10 +14,32 @@ export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) =>
 );
 
 /**
+ * Returns locale slug
+ *
+ * @param {string} locale locale to be converted e.g. "en_US".
+ * @returns locale string e.g. "en"
+ */
+function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
+	if ( ! locale ) {
+		return '';
+	}
+
+	const TARGET_LOCALES = [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn', 'zh_sg', 'zh-sg' ];
+	const lowerCaseLocale = locale.toLowerCase();
+	const formattedLocale = TARGET_LOCALES.includes( lowerCaseLocale )
+		? lowerCaseLocale.replace( '_', '-' )
+		: lowerCaseLocale.replace( /([-_].*)$/i, '' );
+
+	return formattedLocale || 'en';
+}
+
+/**
  * Get the current locale slug from the @wordpress/i18n locale data
  */
 function getWpI18nLocaleSlug(): string | undefined {
-	return i18n.getLocaleData && i18n.getLocaleData()?.[ '' ]?.language;
+	const language = i18n.getLocaleData ? i18n.getLocaleData()?.[ '' ]?.language : '';
+
+	return mapWpI18nLangToLocaleSlug( language );
 }
 
 /**
@@ -60,7 +83,6 @@ export function useLocale(): string {
  *
  * @param InnerComponent Component that will receive `locale` as a prop
  * @returns Component enhanced with locale
- *
  * @example
  *
  * import { withLocale } from '@automattic/i18n-utils';
@@ -69,9 +91,12 @@ export function useLocale(): string {
  * }
  * export default withLocale( MyComponent );
  */
-export const withLocale = createHigherOrderComponent< { locale: string } >( ( InnerComponent ) => {
-	return ( props ) => {
-		const locale = useLocale();
-		return <InnerComponent locale={ locale } { ...props } />;
-	};
-}, 'withLocale' );
+export const withLocale = createHigherOrderComponent< { locale: string }, any >(
+	( InnerComponent ) => {
+		return ( props ) => {
+			const locale = useLocale();
+			return <InnerComponent locale={ locale } { ...props } />;
+		};
+	},
+	'withLocale'
+);

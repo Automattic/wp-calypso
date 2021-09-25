@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import ThankYouCard from 'calypso/components/thank-you-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 

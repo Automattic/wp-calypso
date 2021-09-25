@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { CompactCard } from '@automattic/components';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import Badge from 'calypso/components/badge';
-import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
-import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
-import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
-import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
-import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
+import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
+import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
+import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
+import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 
 const getListHeaderTextForAccountType = ( accountType, translate ) => {
 	if ( accountType === EMAIL_ACCOUNT_TYPE_FORWARD ) {

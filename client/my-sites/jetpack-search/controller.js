@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import JetpackSearchDisconnected from './disconnected';
 import JetpackSearchMainJetpack from './main-jetpack';
 import JetpackSearchMainWpcomSimple from './main-wpcom-simple';
-import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
-import JetpackSearchDisconnected from './disconnected';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 export function showJetpackIsDisconnected( context, next ) {
 	context.primary = (

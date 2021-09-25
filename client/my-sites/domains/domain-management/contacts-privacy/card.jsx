@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
+import { Card, Gridicon } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import ContactDisplay from './contact-display';
 import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	enableDomainPrivacy,
 	disableDomainPrivacy,
@@ -21,6 +12,7 @@ import {
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
+import ContactDisplay from './contact-display';
 
 class ContactsPrivacyCard extends React.Component {
 	static propTypes = {

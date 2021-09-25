@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { filter, size } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getStateKey } from 'calypso/state/comments/utils';
 
 import 'calypso/state/comments/init';

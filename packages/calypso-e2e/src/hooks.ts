@@ -1,22 +1,28 @@
-/**
- * External dependencies
- */
-import { beforeAll, afterAll } from '@jest/globals';
-import type { Page, Video } from 'playwright';
+import { mkdir, rename } from 'fs/promises';
 import path from 'path';
-import { mkdtemp, mkdir, rename, appendFile } from 'fs/promises';
-import { getState } from 'expect';
-
-import { getTestNameWithTime } from './media-helper';
-
-/**
- * Internal dependencies
- */
-import { start, close } from './browser-manager';
+import { beforeAll, afterAll } from '@jest/globals';
+import { chromium, Page, Video } from 'playwright';
+import { getDefaultLoggerConfiguration, getArtifactDir } from './browser-helper';
+import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
+import { getDateString } from './data-helper';
 
 // These are defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
 declare const __CURRENT_TEST_FAILED__: boolean;
 declare const __CURRENT_TEST_NAME__: string;
+
+/**
+ * Generates a filename using the test name and a date string.
+ *
+ * @param {string} testName The test name.
+ * @returns The filename.
+ */
+function getTestNameWithTime( testName: string ): string {
+	// Clean up the test name to be entirely lowercase and removing whitespace.
+	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	// Obtain the ISO date string and replace non-supported filename chars with hyphens.
+	const dateTime = getDateString( 'ISO' )!.split( '.' )[ 0 ].replace( /:/g, '-' );
+	return `${ currentTestName }-${ dateTime }`;
+}
 
 /**
  * Set up hoooks used for Jest tests.
@@ -32,26 +38,23 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 	let tempDir: string;
 
 	beforeAll( async () => {
-		// Create dir for storing test files
-		const { testPath } = getState() as { testPath: string };
-		const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
-		const resultsPath = path.join( process.cwd(), 'results' );
-		await mkdir( resultsPath, { recursive: true } );
-		tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
-
+		tempDir = await getArtifactDir();
+		// Get default logging configuration, which will create a directory to store
+		// artifacts.
+		const loggingConfiguration = await getDefaultLoggerConfiguration();
 		// Start the browser
-		page = await start( {
-			logger: async ( name, severity, message ) => {
-				await appendFile(
-					path.join( tempDir, 'playwright.log' ),
-					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-				);
-			},
-		} );
+		await startBrowser( chromium );
+		// Launch context with logging.
+		const context = await newBrowserContext( loggingConfiguration );
+		// Launch a new page within the context.
+		page = await context.newPage();
 		callback( { page } );
 	} );
 
 	afterAll( async () => {
+		if ( ! browser ) {
+			throw new Error( 'No browser instance found.' );
+		}
 		const testName = __CURRENT_TEST_NAME__;
 
 		// Take screenshot for failed tests
@@ -86,6 +89,6 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			await ( page.video() as Video ).delete();
 		}
 
-		await close();
+		await closeBrowser();
 	} );
 };

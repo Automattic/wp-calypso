@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import getSiteBySlug from './get-site-by-slug';
 import getJetpackComputedAttributes from './get-jetpack-computed-attributes';
+import getSiteBySlug from './get-site-by-slug';
 import getSiteComputedAttributes from './get-site-computed-attributes';
 
 /**

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import ProgressItem from './progress-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Security2faProgress extends React.Component {

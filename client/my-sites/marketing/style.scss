@@ -1035,10 +1035,14 @@
 	color: var( --color-neutral-70 );
 }
 
-.sharing-buttons-preview__panel-instructions,
-.sharing-buttons-preview__panel-notice {
+.sharing-buttons-preview__panel-instructions {
 	display: block;
 	color: var( --color-neutral-light );
+	margin: 8px 0;
+}
+
+.sharing-buttons-preview__panel-notice > * {
+	display: block;
 	margin: 8px 0;
 }
 

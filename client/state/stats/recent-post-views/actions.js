@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	STATS_RECENT_POST_VIEWS_REQUEST,
 	STATS_RECENT_POST_VIEWS_RECEIVE,

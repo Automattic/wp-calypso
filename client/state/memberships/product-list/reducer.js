@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import productListSchema from './schema';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
 	MEMBERSHIPS_PRODUCT_DELETE,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import productListSchema from './schema';
 
 /**
  * Edits existing product if one with matching ID found.

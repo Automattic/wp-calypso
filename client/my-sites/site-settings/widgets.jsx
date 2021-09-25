@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SupportInfo from 'calypso/components/support-info';
 
 class Widgets extends Component {
 	static defaultProps = {

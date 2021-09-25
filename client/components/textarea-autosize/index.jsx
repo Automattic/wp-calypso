@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import autosize from 'autosize';
-
-/**
- * Internal dependencies
- */
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class TextareaAutosize extends Component {

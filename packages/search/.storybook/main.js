@@ -1,10 +1,10 @@
-const path = require( 'path' );
+const storybookDefaultConfig = require( '../../../bin/storybook-default-config' );
+const webpack = require('webpack');
 
-module.exports = {
-	stories: [ '../src/*.stories.{js,jsx,ts,tsx}' ],
-	addons: [ '@storybook/addon-actions', '@storybook/preset-scss' ],
-	typescript: {
-		check: false,
-		reactDocgen: false,
-	},
-};
+module.exports = storybookDefaultConfig({
+	plugins: [
+		new webpack.ProvidePlugin( {
+			process: 'process/browser.js',
+		} ),
+	]
+});

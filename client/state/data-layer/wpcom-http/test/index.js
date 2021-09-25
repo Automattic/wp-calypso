@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import { extendAction } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { failureMeta, queueRequest, successMeta } from '../';
+import { expect } from 'chai';
 import useNock, { nock } from 'calypso/test-helpers/use-nock';
+import { failureMeta, queueRequest, successMeta } from '../';
 
 const processInbound = ( action ) => action;
 const processOutbound = ( action, store, data, error ) => ( {

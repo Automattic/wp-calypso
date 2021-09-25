@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './list-item-file-details.scss';
 
 export default class extends React.Component {

@@ -1,0 +1,389 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.connect-domain-step {
+	&.card {
+		margin-bottom: 16px;
+	}
+
+	& &__heading {
+		font-size: $font-title-medium;
+		font-weight: 500; /* stylelint-disable-line */
+		margin: 0 0 16px;
+	}
+
+	& &__sub-heading {
+		font-size: $font-title-small;
+		font-weight: 500; /* stylelint-disable-line */
+
+		&-icon {
+			fill: var( --color-text );
+			position: relative;
+			bottom: -4px;
+			margin-right: 8px;
+		}
+	}
+
+	& &__text {
+		color: var( --color-text );
+		max-width: 660px;
+	}
+
+	&__info-links {
+		& + & {
+			margin-top: 8px;
+		}
+
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+		padding: 0 16px;
+
+		@include break-mobile {
+			padding: 0;
+		}
+
+		&-icon {
+			position: relative;
+			bottom: -3px;
+			fill: var( --studio-gray-50 );
+			margin-right: 4px;
+		}
+	}
+
+	& &__progress {
+		margin-bottom: 24px;
+		display: flex;
+		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
+		&-step-separator {
+			display: none;
+			margin: 0 16px;
+			position: relative;
+			bottom: -3px;
+			fill: #dcdcde;
+
+			@include break-mobile {
+				display: initial;
+			}
+		}
+
+		&-step {
+			display: flex;
+			flex-direction: row;
+			margin-top: 8px;
+
+			&:first-of-type {
+				margin-top: 0;
+			}
+
+			@include break-mobile {
+				margin-top: 0;
+			}
+		}
+
+		&-number {
+			border: 1px solid #dcdcde;
+			height: 24px;
+			width: 24px;
+			display: inline-block;
+			text-align: center;
+			font-size: $font-body-small;
+			color: var( --color-text-subtle );
+			box-sizing: border-box;
+			border-radius: 50%; /* stylelint-disable-line */
+			flex-shrink: 0;
+
+			&.current-step {
+				background-color: var( --studio-blue-50 );
+				border: 1px solid var( --studio-blue-50 );
+				color: #ffffff;
+			}
+
+			&.completed-step {
+				background-color: var( --studio-green-50 );
+				border: 1px solid var( --studio-green-50 );
+				color: #ffffff;
+			}
+
+			&-checkmark {
+				position: relative;
+				bottom: -3px;
+			}
+		}
+
+		&-step-name {
+			font-size: $font-body-small;
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --color-text-subtle );
+			margin-left: 8px;
+			position: relative;
+			bottom: -1px;
+
+			&.current-step {
+				color: var( --color-text );
+			}
+		}
+	}
+
+	&__records-list {
+		margin-bottom: 24px;
+
+		&-header,
+		&-record {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+
+			@include break-mobile {
+				flex-direction: row;
+			}
+		}
+
+		&-header {
+			margin-bottom: 8px;
+		}
+
+		&-record-label,
+		&-record-item-label {
+			color: var( --studio-gray-50 );
+		}
+
+		&-record {
+			& + & {
+				margin-top: 8px;
+			}
+
+			&-item {
+				display: flex;
+				align-self: center;
+				width: 100%;
+
+				& + & {
+					margin-top: 8px;
+				}
+
+				.connect-domain-step__records-list-record-label {
+					width: 50px;
+					margin-right: 8px;
+					align-self: center;
+				}
+
+				@include break-mobile {
+					display: block;
+
+					& + & {
+						margin-left: 8px;
+						margin-top: 0;
+					}
+
+					&.type {
+						width: 100px;
+					}
+
+					&.name {
+						width: 309px;
+					}
+
+					&.value {
+						width: 309px;
+					}
+
+					.connect-domain-step__records-list-record-label {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+
+	&__suggested-records {
+		.connect-domain-step__records-list-record {
+			width: 100%;
+			@include break-mobile {
+				width: 314px;
+			}
+
+			max-width: 100%;
+
+			&-item {
+				width: 100%;
+			}
+		}
+	}
+
+	&__advanced-records {
+		.connect-domain-step__records-list-header {
+			display: none;
+
+			@include break-mobile {
+				display: flex;
+			}
+		}
+
+		.connect-domain-step__records-list-record + .connect-domain-step__records-list-record {
+			margin-top: 24px;
+
+			@include break-mobile {
+				margin-top: 8px;
+			}
+		}
+	}
+
+	& &__clipboard-button {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		justify-content: space-between;
+		background-color: var( --studio-gray-0 );
+		padding: 8px;
+		max-height: 40px;
+
+		&:hover {
+			background-color: var( --studio-gray-0 );
+
+			.connect-domain-step__clipboard-button-blue {
+				color: var( --studio-blue-70 );
+			}
+		}
+
+		&-blue {
+			color: var( --studio-blue-50 );
+		}
+
+		&-text {
+			font-size: $font-body;
+			color: var( --color-text );
+			line-height: 24px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		&-state {
+			display:flex;
+			align-items: center;
+
+			&-icon.gridicon { /* need .gridicon for increased specificity */
+				margin-right: 4px;
+				height: 20px;
+				width: 20px;
+				top: 1px;
+			}
+
+			&-text {
+				font-size: $font-body-small;
+				font-weight: 600;
+				line-height: 20px;
+			}
+		}
+	}
+
+	&__advanced-start-notice .notice__text {
+		display: flex;
+		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.notice__action {
+			padding-left: 0;
+			padding-bottom: 0;
+
+			@include break-mobile {
+				padding-top: 0;
+				padding-left: initial;
+			}
+
+			color: var( --studio-gray-20 );
+			text-decoration: none;
+		}
+	}
+
+	&__change_mode_link,
+	&__info-links a {
+		cursor: pointer;
+	}
+
+	&__action-button {
+		margin-top: 32px;
+	}
+
+	&__text:last-of-type {
+		margin-bottom: 32px;
+	}
+
+	&__actions {
+		.button + .button {
+			margin-left: 16px;
+		}
+	}
+
+	&__connected {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 40px 16px;
+
+		@include break-mobile {
+			padding: 56px;
+		}
+
+		&-illustration {
+			margin-bottom: 24px;
+		}
+
+		& &-heading {
+			margin-top: 0;
+			margin-bottom: 16px;
+			text-align: center;
+
+			&-checkmark {
+				fill: var( --studio-green-50 );
+				margin-right: 8px;
+				position: relative;
+				bottom: -3px;
+			}
+		}
+
+		&-content {
+			margin-bottom: 32px;
+
+			&-text {
+				font-weight: 400;
+				color: var( --color-text );
+				font-size: $font-body;
+				text-align: center;
+
+				& + & {
+					margin-top: 16px;
+				}
+			}
+		}
+	}
+
+	&__authorization-code {
+		margin-bottom: 32px;
+
+		& input.form-text-input {
+			@include break-mobile {
+				width: 314px;
+			}
+		}
+	}
+}
+
+button.action_buttons__button.action-buttons__back.connect-domain-step__go-back {
+	@include break-mobile {
+		margin: 0 0 18px;
+	}
+
+	margin: 16px 0 0 16px;
+	text-decoration: none;
+}

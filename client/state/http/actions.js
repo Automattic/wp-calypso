@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { HTTP_REQUEST } from 'calypso/state/action-types';
 
 /**

@@ -13,7 +13,6 @@ const {
 	cssNameFromFilename,
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
-const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
@@ -21,17 +20,15 @@ const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
-const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
-const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-
 /**
  * Internal variables
  */
@@ -54,6 +51,7 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
+const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
 
 function filterEntrypoints( entrypoints ) {
@@ -143,7 +141,6 @@ const fileLoader = FileConfig.loader(
 				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
 				outputPath: '../images/',
-				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
 		  }
 );
 
@@ -216,18 +213,12 @@ const webpackConfig = {
 					// This is required because Calypso imports `@automattic/notifications` and that package defines its
 					// own `postcss.config.js` that they use for their webpack bundling process.
 					config: false,
-					plugins: [
-						autoprefixerPlugin(),
-						browserslistEnv === 'defaults' &&
-							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
-					].filter( Boolean ),
+					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
-				...( shouldUsePersistentCache
-					? {}
-					: {
-							cacheDirectory: path.resolve( cachePath, 'css-loader' ),
-					  } ),
+				prelude: `@use '${ path.join(
+					__dirname,
+					'assets/stylesheets/shared/_utils.scss'
+				) }' as *;`,
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -246,27 +237,20 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
-		alias: Object.assign(
-			{
-				debug: path.resolve( __dirname, '../node_modules/debug' ),
-				store: 'store/dist/store.modern',
-				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
-				// By using the path of the package we let Webpack parse the package's `package.json`
-				// and use `mainFields` to decide what is the main file.
-				'@wordpress/data': findPackage( '@wordpress/data' ),
-				'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
-				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
-				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
-				calypso: __dirname,
+		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
+		alias: Object.assign( {
+			debug: path.resolve( __dirname, '../node_modules/debug' ),
+			store: 'store/dist/store.modern',
+			// By using the path of the package we let Webpack parse the package's `package.json`
+			// and use `mainFields` to decide what is the main file.
+			'@wordpress/data': findPackage( '@wordpress/data' ),
+			'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
+			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
+			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
+			calypso: __dirname,
 
-				// Node polyfills
-				process: 'process/browser',
-				util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
-			},
-			getAliasesForExtensions( {
-				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
-			} )
-		),
+			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
+		} ),
 	},
 	node: false,
 	plugins: [
@@ -281,8 +265,9 @@ const webpackConfig = {
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
 		} ),
+		// Node polyfills
 		new webpack.ProvidePlugin( {
-			process: 'process/browser',
+			process: 'process/browser.js',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
@@ -292,9 +277,8 @@ const webpackConfig = {
 			minify: ! isDevelopment,
 		} ),
 		new AssetsWriter( {
-			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
+			filename: `assets.json`,
 			path: path.join( outputDir, 'build' ),
-			assetExtraPath: extraPath,
 		} ),
 		shouldCheckForDuplicatePackages && new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
@@ -324,7 +308,7 @@ const webpackConfig = {
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
+				output: path.resolve( './public/chunks-map.json' ),
 			} ),
 		new RequireChunkCallbackPlugin(),
 		/*
@@ -342,14 +326,6 @@ const webpackConfig = {
 				res.request = 'calypso/components/empty-component';
 			}
 		} ),
-		/*
-		 * Use "evergreen" polyfill config, rather than fallback.
-		 */
-		browserslistEnv === 'evergreen' &&
-			new webpack.NormalModuleReplacementPlugin(
-				/^@automattic\/calypso-polyfills$/,
-				'@automattic/calypso-polyfills/browser-evergreen'
-			),
 		/*
 		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
 		 */
@@ -369,6 +345,8 @@ const webpackConfig = {
 
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
+
+		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 

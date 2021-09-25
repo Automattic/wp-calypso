@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-
 import { POST_STATUSES } from '../constants';
 
 import 'calypso/state/posts/init';

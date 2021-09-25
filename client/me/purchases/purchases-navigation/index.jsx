@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-
+import { isEnabled } from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import {
@@ -19,9 +14,6 @@ import {
 	purchasesRoot,
 } from 'calypso/me/purchases/paths.js';
 import titles from 'calypso/me/purchases/titles';
-import SectionNav from 'calypso/components/section-nav';
-import { isEnabled } from '@automattic/calypso-config';
-import Search from 'calypso/components/search';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
 export default function PurchasesNavigation( { section } ) {

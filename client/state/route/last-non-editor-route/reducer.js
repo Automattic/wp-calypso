@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
 
 /**

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items } from '../reducer';
 import { READER_DISMISS_SITE, READER_DISMISS_POST } from 'calypso/state/reader/action-types';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

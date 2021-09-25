@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import schema from './schema';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JETPACK_PRODUCT_INSTALL_STATUS_REQUEST } from 'calypso/state/action-types';
-import { receiveJetpackProductInstallStatus } from 'calypso/state/jetpack-product-install/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receiveJetpackProductInstallStatus } from 'calypso/state/jetpack-product-install/actions';
+import schema from './schema';
 
 const noop = () => {};
 

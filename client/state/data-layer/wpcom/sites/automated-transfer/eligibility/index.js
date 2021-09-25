@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { get, isEmpty, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST } from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { updateEligibility } from 'calypso/state/automated-transfer/actions';
 import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 
 /**

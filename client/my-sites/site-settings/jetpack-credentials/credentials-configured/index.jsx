@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { CompactCard, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import Gridicon from 'calypso/components/gridicon';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import FoldableCard from 'calypso/components/foldable-card';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
-import siteSupportsRealtimeBackup from 'calypso/state/selectors/site-supports-realtime-backup';
-import { CompactCard, Button } from '@automattic/components';
 import { deleteCredentials } from 'calypso/state/jetpack/credentials/actions';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import siteSupportsRealtimeBackup from 'calypso/state/selectors/site-supports-realtime-backup';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CredentialsConfigured extends Component {

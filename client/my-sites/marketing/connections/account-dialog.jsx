@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-
+import { Dialog } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { filter, find, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, find, isEqual } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
-
-/**
- * Internal dependencies
- */
-import AccountDialogAccount from './account-dialog-account';
-import { Dialog } from '@automattic/components';
 import { warningNotice } from 'calypso/state/notices/actions';
+import AccountDialogAccount from './account-dialog-account';
 
-/**
- * Style dependencies
- */
 import './account-dialog.scss';
 
 class AccountDialog extends Component {

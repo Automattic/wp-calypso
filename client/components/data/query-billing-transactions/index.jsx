@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 import { requestBillingTransactions } from 'calypso/state/billing-transactions/actions';
+import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 
 class QueryBillingTransactions extends Component {
 	static propTypes = {

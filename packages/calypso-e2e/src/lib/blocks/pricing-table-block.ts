@@ -17,6 +17,7 @@ const selectors = {
 export class PricingTableBlock {
 	// Static properties.
 	static blockName = 'Pricing Table';
+	static blockEditorSelector = '[aria-label="Block: Pricing Table"]';
 	static gutterValues = gutterValuesArray;
 	block: ElementHandle;
 

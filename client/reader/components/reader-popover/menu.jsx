@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import React from 'react';
-import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenu from 'calypso/components/popover-menu';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 
 const ReaderPopoverMenu = ( props ) => {

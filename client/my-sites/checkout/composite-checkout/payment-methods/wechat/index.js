@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import debugFactory from 'debug';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -19,15 +11,17 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React, { useEffect, useState } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
@@ -143,7 +137,8 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
-	const { responseCart: cart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart: cart } = useShoppingCart( cartKey );
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
 
 	useScrollQRCodeIntoView( !! stripeResponseWithCode );

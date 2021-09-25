@@ -1,12 +1,10 @@
-/**
- * Internal dependencies
- */
 import {
 	makeLayout,
 	ssrSetupLocale,
 	setHrefLangLinks,
 	setLocalizedCanonicalUrl,
 } from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -14,9 +12,9 @@ import {
 	redirectSearchAndType,
 	redirectFilterAndType,
 	redirectToThemeDetails,
+	redirectTiers,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 export default function ( router ) {
 	// Redirect interim showcase route to permanent one
@@ -34,6 +32,7 @@ export default function ( router ) {
 	];
 	router(
 		showcaseRoutes,
+		redirectTiers,
 		ssrSetupLocale,
 		fetchThemeFilters,
 		validateVertical,
@@ -52,10 +51,12 @@ export default function ( router ) {
 			'/themes/:site?/type/:tier(free|premium)',
 			'/themes/:site?/search/:search/type/:tier(free|premium)',
 		],
+		redirectTiers,
 		redirectSearchAndType
 	);
 	router(
 		[ '/themes/:site?/filter/:filter', '/themes/:site?/filter/:filter/type/:tier(free|premium)' ],
+		redirectTiers,
 		redirectFilterAndType
 	);
 	router(

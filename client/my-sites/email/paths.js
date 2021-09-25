@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
@@ -78,8 +71,23 @@ export function emailManagementNewTitanAccount( siteName, domainName, relativeTo
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
 }
 
-export function emailManagementTitanSetupMailbox( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/setup-mailbox', relativeTo );
+export function emailManagementTitanSetUpMailbox( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo );
+}
+
+export function emailManagementTitanSetUpThankYou(
+	siteName,
+	domainName,
+	emailAddress = null,
+	relativeTo = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/set-up-mailbox/thank-you',
+		relativeTo,
+		emailAddress ? { email: emailAddress } : {}
+	);
 }
 
 export function emailManagementTitanControlPanelRedirect(
@@ -94,21 +102,6 @@ export function emailManagementTitanControlPanelRedirect(
 		'titan/control-panel',
 		relativeTo,
 		urlParameters
-	);
-}
-
-export function emailManagementTitanSetupThankYouPage(
-	siteName,
-	domainName,
-	emailAddress = null,
-	relativeTo = null
-) {
-	return emailManagementEdit(
-		siteName,
-		domainName,
-		'titan/setup-mailbox/thank-you',
-		relativeTo,
-		emailAddress ? { email: emailAddress } : {}
 	);
 }
 
@@ -174,6 +167,13 @@ export function emailManagementEdit(
 		siteName +
 		urlParameterString
 	);
+}
+
+export function emailManagementInbox( siteName = null ) {
+	if ( siteName ) {
+		return `/inbox/${ siteName }`;
+	}
+	return `/inbox`;
 }
 
 export function isUnderEmailManagementAll( path ) {

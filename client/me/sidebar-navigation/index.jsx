@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import Gravatar from 'calypso/components/gravatar';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function MeSidebarNavigation( { currentUser } ) {

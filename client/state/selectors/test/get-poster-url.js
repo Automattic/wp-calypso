@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPosterUrl from 'calypso/state/selectors/get-poster-url';
 
 describe( 'getPosterUrl()', () => {

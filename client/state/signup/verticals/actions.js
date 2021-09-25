@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SIGNUP_VERTICALS_REQUEST, SIGNUP_VERTICALS_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/signup/verticals';

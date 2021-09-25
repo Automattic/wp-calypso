@@ -1,38 +1,28 @@
-/**
- * External dependencies
- */
+import { Card, Dialog } from '@automattic/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal Dependencies
- */
-import { Card, Dialog } from '@automattic/components';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
-import { domainManagementEdit, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import wp from 'calypso/lib/wp';
+import FormSelect from 'calypso/components/forms/form-select';
+import Main from 'calypso/components/main';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
-import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import wp from 'calypso/lib/wp';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { domainManagementEdit, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import useUsersQuery from 'calypso/data/users/use-users-query';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const wpcom = wp.undocumented();

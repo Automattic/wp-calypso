@@ -30,7 +30,7 @@
 
 		// Some type helpers from our webpack/
 		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ],
-		"types": [ "jest", "@emotion/core" ]
+		"types": [ "jest", "@emotion/react" ]
 	},
 	"exclude": [ "node_modules" ],
 	"references": [

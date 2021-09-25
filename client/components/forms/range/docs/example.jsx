@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import FormRange from '../';
 
 export default class extends React.PureComponent {

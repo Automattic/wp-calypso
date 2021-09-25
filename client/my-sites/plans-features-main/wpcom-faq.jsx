@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
 import HappychatButton from 'calypso/components/happychat/button';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isEnabled } from '@automattic/calypso-config';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -73,7 +66,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				question={ translate( 'Can I install my own theme?' ) }
 				answer={ translate(
 					"Yes! With the WordPress.com Business or eCommerce plan you can install any theme you'd like." +
-						' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
+						' All plans give you access to our {{a}}directory of free themes{{/a}}.' +
 						' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 					{
 						components: { a: <a href={ `/themes/${ siteSlug }` } /> },

@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import BackButton from 'calypso/components/back-button';
-import { Button } from '@automattic/components';
-import DateRangeSelector from './date-range-selector';
-import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import ActionTypeSelector from './action-type-selector';
+import DateRangeSelector from './date-range-selector';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class Filterbar extends Component {

@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { getEmptyResponseCart } from './empty-carts';
-import type { TempResponseCart } from './shopping-cart-endpoint';
 import type {
+	TempResponseCart,
 	CartLocation,
 	RequestCart,
 	RequestCartProduct,

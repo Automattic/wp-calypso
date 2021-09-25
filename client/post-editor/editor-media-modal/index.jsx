@@ -1,4 +1,4 @@
-import { partial, map, get } from 'lodash';
+import { map, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -26,7 +26,7 @@ class EditorMediaModal extends Component {
 		let media;
 		let stat;
 
-		const getItemMarkup = partial( markup.get, site );
+		const getItemMarkup = ( item ) => markup.get( site, item );
 
 		switch ( type ) {
 			case 'gallery':

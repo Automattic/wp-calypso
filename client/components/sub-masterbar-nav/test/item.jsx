@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'calypso/components/gridicon';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Item from '../item';
 
 describe( 'Item', () => {

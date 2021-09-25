@@ -1,68 +1,55 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { find, findIndex, get, times, isEmpty } from 'lodash';
-import page from 'page';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import DomainOnly from './domain-only';
-import ListItemPlaceholder from './item-placeholder';
-import Main from 'calypso/components/main';
-import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { Button, Card, CompactCard } from '@automattic/components';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
-import EmptyContent from 'calypso/components/empty-content';
-import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
 import { type } from 'calypso/lib/domains/constants';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
+import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
+import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import getSites from 'calypso/state/selectors/get-sites';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getSites from 'calypso/state/selectors/get-sites';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import DomainItem from './domain-item';
+import DomainOnly from './domain-only';
+import ListItemPlaceholder from './item-placeholder';
+import ListHeader from './list-header';
 import {
 	filterOutWpcomDomains,
 	getDomainManagementPath,
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
 } from './utils';
-import DomainItem from './domain-item';
-import ListHeader from './list-header';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import InfoPopover from 'calypso/components/info-popover';
-import ExternalLink from 'calypso/components/external-link';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
-import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
-import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
@@ -79,14 +66,11 @@ export class List extends React.Component {
 	};
 
 	static defaultProps = {
-		enablePrimaryDomainMode: noop,
-		disablePrimaryDomainMode: noop,
 		changePrimary: noop,
 	};
 
 	state = {
 		settingPrimaryDomain: false,
-		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
 	};
 
@@ -115,9 +99,9 @@ export class List extends React.Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, translate } = this.props;
-		const { changePrimaryDomainModeEnabled, settingPrimaryDomain } = this.state;
-		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
+		const { selectedSite, domains, currentRoute, translate, isAtomicSite } = this.props;
+		const { settingPrimaryDomain } = this.state;
+		const disabled = settingPrimaryDomain;
 
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
 		const wpcomDomain = domains.find(
@@ -131,23 +115,32 @@ export class List extends React.Component {
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ translate( 'Site Domains' ) }
-						subHeaderText={ translate( 'Manage the domains connected to your site.' ) }
+						subHeaderText={ translate(
+							'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+								},
+							}
+						) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">
-						<HeaderCart selectedSite={ selectedSite } currentRoute={ currentRoute } />
-						{ this.addDomainButton() }
+						<HeaderCart
+							selectedSite={ this.props.selectedSite }
+							currentRoute={ this.props.currentRoute }
+						/>
+						{ this.optionsDomainButton() }
 					</div>
 				</div>
 
 				{ this.domainWarnings() }
 
-				<div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div>
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
+						hasNonWpcomDomains={ false }
 					/>
 				) }
 
@@ -158,6 +151,7 @@ export class List extends React.Component {
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
 						isCompact={ true }
+						hasNonWpcomDomains={ true }
 					/>
 				) }
 
@@ -166,6 +160,7 @@ export class List extends React.Component {
 				{ wpcomDomain && (
 					<WpcomDomainItem
 						key="wpcom-domain-item"
+						isAtomicSite={ isAtomicSite }
 						currentRoute={ currentRoute }
 						domain={ wpcomDomain }
 						disabled={ disabled }
@@ -216,7 +211,7 @@ export class List extends React.Component {
 				);
 			}
 
-			if ( isEmpty( filterOutWpcomDomains( this.props.domains ) ) ) {
+			if ( filterOutWpcomDomains( this.props.domains ).length === 0 ) {
 				return null;
 			}
 		}
@@ -237,7 +232,7 @@ export class List extends React.Component {
 	isFreshDomainOnlyRegistration() {
 		const domainName = this.props.selectedSite.domain;
 		const domain =
-			! this.isLoading() && find( this.props.domains, ( { name } ) => name === domainName );
+			! this.isLoading() && this.props.domains.find( ( { name } ) => name === domainName );
 
 		return (
 			domain &&
@@ -249,33 +244,12 @@ export class List extends React.Component {
 		);
 	}
 
-	clickAddDomain = () => {
-		this.props.addDomainClick();
-		page( `/domains/add/${ this.props.selectedSite.slug }` );
-	};
-
-	enableChangePrimaryDomainMode = () => {
-		this.props.enablePrimaryDomainMode();
-		this.setState( {
-			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: findIndex( this.props.domains, { isPrimary: true } ),
-		} );
-	};
-
-	disableChangePrimaryDomainMode = () => {
-		this.props.disablePrimaryDomainMode();
-		this.setState( {
-			changePrimaryDomainModeEnabled: false,
-			primaryDomainIndex: -1,
-		} );
-	};
-
-	addDomainButton() {
+	optionsDomainButton() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			return null;
 		}
 
-		return <AddDomainButton />;
+		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {
@@ -298,7 +272,7 @@ export class List extends React.Component {
 
 		this.props.changePrimary( domainName, 'wpcom_domain_manage_click' );
 
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryIndex = this.props.domains.findIndex( ( { isPrimary } ) => isPrimary );
 		this.setState( { settingPrimaryDomain: true, primaryDomainIndex: -1 } );
 
 		return this.setPrimaryDomain( domainName )
@@ -325,14 +299,11 @@ export class List extends React.Component {
 		}
 
 		this.props.changePrimary( domain, mode );
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryIndex = this.props.domains.findIndex( ( { isPrimary } ) => isPrimary );
 		const currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
-			this.setState( {
-				changePrimaryDomainModeEnabled: false,
-			} );
 			return;
 		}
 
@@ -345,7 +316,6 @@ export class List extends React.Component {
 			() => {
 				this.setState( {
 					settingPrimaryDomain: false,
-					changePrimaryDomainModeEnabled: false,
 				} );
 
 				showUpdatePrimaryDomainSuccessNotice( domain.name );
@@ -380,70 +350,20 @@ export class List extends React.Component {
 		);
 	}
 
-	renderPrimaryDomain() {
-		const { domains, selectedSite, translate } = this.props;
-		const primaryDomain = find( domains, 'isPrimary' );
-
-		if ( this.isLoading() || ! primaryDomain ) {
-			return <ListItemPlaceholder />;
-		}
-
-		const moreThanOneDomain = domains.filter( ( domain ) => domain?.canSetAsPrimary ).length > 1;
-
-		return [
-			<CompactCard className="list__header-primary-domain" key="primary-domain-header">
-				<div className="list__header-primary-domain-info">
-					{ translate( 'Primary domain' ) }
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'Your primary domain is the address visitors will see in their address bar when visiting your blog. All other domains will redirect to the primary domain.'
-						) }
-					</InfoPopover>
-				</div>
-				<div className="list__header-primary-domain-buttons">
-					<Button
-						compact
-						disabled={ ! moreThanOneDomain }
-						className="list__change-primary-domain"
-						onClick={
-							this.state.changePrimaryDomainModeEnabled
-								? this.disableChangePrimaryDomainMode
-								: this.enableChangePrimaryDomainMode
-						}
-					>
-						{ this.state.changePrimaryDomainModeEnabled
-							? translate( 'Cancel primary domain change' )
-							: translate( 'Change primary domain' ) }
-					</Button>
-				</div>
-			</CompactCard>,
-			<CompactCard className="list__item-primary-domain" key="primary-domain-content">
-				<div className="list__header-primary-domain-content">
-					<ExternalLink
-						className="list__header-primary-domain-url"
-						href={ selectedSite.URL }
-						title={ translate( 'Launch your site' ) }
-						target="_blank"
-						icon={ true }
-					>
-						{ primaryDomain.name }
-					</ExternalLink>
-				</div>
-			</CompactCard>,
-		];
-	}
-
 	listNewItems() {
 		if ( this.isLoading() ) {
-			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return [
+				<ListItemPlaceholder key="item-1" />,
+				<ListItemPlaceholder key="item-2" />,
+				<ListItemPlaceholder key="item-3" />,
+			];
 		}
 
-		const { currentRoute, translate, selectedSite, hasSingleSite } = this.props;
-
-		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
+		const { currentRoute, selectedSite } = this.props;
+		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 
 		const domains = filterOutWpcomDomains( this.props.domains );
-		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
+		const disabled = settingPrimaryDomain;
 
 		const domainListItems = domains.map( ( domain, index ) => (
 			<DomainItem
@@ -455,36 +375,20 @@ export class List extends React.Component {
 				isManagingAllSites={ false }
 				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
 				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
-				isChecked={ changePrimaryDomainModeEnabled && index === primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
 				disabled={ disabled }
-				enableSelection={ changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
-				onSelect={ this.handleUpdatePrimaryDomain }
-				onUpgradeClick={ this.goToPlans }
 				shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
 			/>
 		) );
 
-		const manageAllDomainsLink = hasSingleSite ? null : (
-			<Card className="list__view-all" key="manage-all-domains" href={ domainManagementRoot() }>
-				{ translate( 'Manage all your domains' ) }
-			</Card>
-		);
-
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
-			<ListHeader
-				key="domains-header"
-				headerClasses={ {
-					'domain-item__enable-selection': this.state.changePrimaryDomainModeEnabled,
-				} }
-			/>,
+			domains.length > 0 && <ListHeader key="domains-header" isManagingAllSites={ false } />,
 			...domainListItems,
-			manageAllDomainsLink,
 		];
 	}
 
@@ -492,36 +396,7 @@ export class List extends React.Component {
 		const { selectedSite, currentRoute } = this.props;
 		page( getDomainManagementPath( domain.name, domain.type, selectedSite.slug, currentRoute ) );
 	};
-
-	goToPlans = () => {
-		this.props.upsellUpgradeClick();
-		page( `/plans/${ this.props.selectedSite.slug }` );
-	};
 }
-
-const addDomainClick = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
-		recordTracksEvent( 'calypso_domain_management_list_add_domain_click' )
-	);
-
-const enablePrimaryDomainMode = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Change Primary" button in List' ),
-		recordTracksEvent( 'calypso_domain_management_list_enable_primary_domain_mode_click' )
-	);
-
-const disablePrimaryDomainMode = () =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "X" button to disable change primary mode in List'
-		),
-		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
-	);
-
-const upsellUpgradeClick = () =>
-	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
 
 const changePrimary = ( domain, mode ) =>
 	composeAnalytics(
@@ -539,11 +414,11 @@ const changePrimary = ( domain, mode ) =>
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = get( ownProps, 'selectedSite.ID', null );
+		const siteId = ownProps?.selectedSite?.ID || null;
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		const selectedSite = get( ownProps, 'selectedSite', null );
-		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
-		const siteCount = get( getSites( state ), 'length', 0 );
+		const selectedSite = ownProps?.selectedSite || null;
+		const isOnFreePlan = selectedSite?.plan?.is_free || false;
+		const siteCount = getSites( state )?.length || 0;
 
 		return {
 			currentRoute: getCurrentRoute( state ),
@@ -561,20 +436,10 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			clickClaimDomainNotice: () =>
-				dispatch(
-					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
-						cta_name: 'domain_info_notice',
-					} )
-				),
 			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
-			addDomainClick: () => dispatch( addDomainClick() ),
-			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
-			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
 			changePrimary: ( domain, mode ) => dispatch( changePrimary( domain, mode ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
-			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
 		};
 	}
 )( localize( withLocalizedMoment( List ) ) );

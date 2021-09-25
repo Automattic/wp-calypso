@@ -1,32 +1,23 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { preventWidows } from 'calypso/lib/formatting';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import CommentList from './comment-list';
 import CommentTree from './comment-tree';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { preventWidows } from 'calypso/lib/formatting';
-import { isEnabled } from '@automattic/calypso-config';
 import { NEWEST_FIRST } from './constants';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class CommentsManagement extends Component {
@@ -81,7 +72,12 @@ export class CommentsManagement extends Component {
 						className="comments__page-heading"
 						headerText={ translate( 'Comments' ) }
 						subHeaderText={ translate(
-							'View, reply to, and manage all the comments across your site.'
+							'View, reply to, and manage all the comments across your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="comments" showIcon={ false } />,
+								},
+							}
 						) }
 						align="left"
 						hasScreenOptions

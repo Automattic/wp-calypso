@@ -4,9 +4,6 @@ import React from 'react';
 import { iconToProductSlugMap, paths } from './config';
 import type { SupportedSlugs } from './config';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Props = {

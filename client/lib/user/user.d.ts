@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 import { URL } from '../../types';
 
 export type UserMetaData = {

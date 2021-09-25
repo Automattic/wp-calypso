@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
+import { getPlan } from '@automattic/calypso-products';
+import classNames from 'classnames';
 import React, { ReactElement, useState, ReactNode, useEffect, ComponentType, useMemo } from 'react';
 import { connect, DefaultRootState } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import Main from 'calypso/components/main';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteProducts, getSitePlan } from 'calypso/state/sites/selectors';
-import { getPlan } from '@automattic/calypso-products';
-
-/**
- * Type dependencies
- */
-import type { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
+import type { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
 
 type QueryComponentProps = {
 	siteId: number | null;

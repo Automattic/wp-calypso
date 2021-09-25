@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 
 export class GooglePhotos extends SharingService {
 	static propTypes = {
@@ -29,9 +21,6 @@ export class GooglePhotos extends SharingService {
 
 	/**
 	 * Deletes the passed connections.
-	 *
-	 * @param {Array} connections Optional. Connections to be deleted.
-	 *                            Default: All connections for this service.
 	 */
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
@@ -76,7 +65,7 @@ export class GooglePhotos extends SharingService {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<img
 				className="sharing-service__logo"
-				src="/calypso/images/sharing/google-photos-logo.svg"
+				src="/calypso/images/sharing/google-photos-logo.svg?v=20210921"
 				width="48"
 				height="48"
 				alt=""

@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { isDomainRegistration } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { getCurrencyDefaults } from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { getCurrencyDefaults } from '@automattic/format-currency';
-
-/**
- * Internal Dependencies
- */
-import { Button } from '@automattic/components';
-import { cancelAndRefundPurchase, cancelPurchase } from 'calypso/lib/purchases/actions';
-import { clearPurchases } from 'calypso/state/purchases/actions';
+import { connect } from 'react-redux';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import {
@@ -23,19 +15,19 @@ import {
 	isOneTimePurchase,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { isDomainRegistration } from '@automattic/calypso-products';
+import { cancelAndRefundPurchase, cancelPurchase } from 'calypso/lib/purchases/actions';
 import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
 		getConfirmCancelDomainUrlFor: PropTypes.func,
-		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -171,12 +163,12 @@ class CancelPurchaseButton extends Component {
 					return;
 				}
 
+				if ( response.status === 'completed' ) {
+					this.props.refreshSitePlans( purchase.siteId );
+					this.props.clearPurchases();
+				}
+
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
-
-				this.props.refreshSitePlans( purchase.siteId );
-
-				this.props.clearPurchases();
-
 				page.redirect( this.props.purchaseListUrl );
 			}
 		);
@@ -206,12 +198,12 @@ class CancelPurchaseButton extends Component {
 					return;
 				}
 
+				if ( response.status === 'completed' ) {
+					this.props.refreshSitePlans( purchase.siteId );
+					this.props.clearPurchases();
+				}
+
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
-
-				this.props.refreshSitePlans( purchase.siteId );
-
-				this.props.clearPurchases();
-
 				page.redirect( this.props.purchaseListUrl );
 			}
 		);
@@ -251,7 +243,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, selectedSite, translate } = this.props;
+		const { purchase, translate } = this.props;
 		let text;
 		let onClick;
 
@@ -298,7 +290,6 @@ class CancelPurchaseButton extends Component {
 					disableButtons={ disableButtons }
 					defaultContent={ this.renderCancellationEffect() }
 					purchase={ purchase }
-					selectedSite={ selectedSite }
 					isVisible={ this.state.showDialog }
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }

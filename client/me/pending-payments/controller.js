@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
 import PendingPaymentsComponent from './index';
 

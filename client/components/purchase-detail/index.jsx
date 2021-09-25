@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import PurchaseButton from './purchase-button';
 import TipInfo from './tip-info';
-import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { filter, some, get, includes, keyBy, map, omit, reject } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { filter, some, get, includes, keyBy, map, omit, reject } from 'lodash';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_DELETE,

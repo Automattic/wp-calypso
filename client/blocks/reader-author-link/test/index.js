@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ReaderAuthorLink from '../index';
 
 jest.mock( 'calypso/reader/stats', () => ( {

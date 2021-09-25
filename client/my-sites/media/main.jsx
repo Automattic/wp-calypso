@@ -1,41 +1,31 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import MediaLibrary from 'calypso/my-sites/media-library';
-import QueryMedia from 'calypso/components/data/query-media';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
-import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
-import { getMimeType } from 'calypso/lib/media/utils';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryMedia from 'calypso/components/data/query-media';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getMimeType } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
-import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
+import MediaLibrary from 'calypso/my-sites/media-library';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Media extends Component {
@@ -375,7 +365,12 @@ class Media extends Component {
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
 					subHeaderText={ translate(
-						'Manage all the media on your site, including images, video, and more.'
+						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="media" showIcon={ false } />,
+							},
+						}
 					) }
 					align="left"
 					hasScreenOptions

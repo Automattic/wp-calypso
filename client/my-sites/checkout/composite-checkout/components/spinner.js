@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { keyframes } from '@emotion/core';
+import React from 'react';
 
 export default function Spinner( { className } ) {
 	return <SpinnerWrapper className={ className } />;

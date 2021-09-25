@@ -2,6 +2,15 @@
 
 ## trunk
 
+- Dropped `cache-loader`, as it is not compatible with Webpack 5.
+- Dropped `cacheDirectory` option in Sass loader
+- Updated dependencies:
+  - sass to ^1.37.5
+  - sass-loader to ^12.1.0
+- Set `quietDeps: true` in dart sass options. This avoids printing deprecation
+  warnings for stylesheets imported from node_modules.
+- Stopped defaulting `publicPath` option to `/` in `webpack/file-loader`, using the global default that treats paths as relative to the importing script URL.
+
 ## 9.0.0
 
 - Added new, extensible TypeScript config for modern TS and JS packages in `./typescript/[tj]-package.json`

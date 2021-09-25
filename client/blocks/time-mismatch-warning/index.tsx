@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React, { FC } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import Notice from 'calypso/components/notice';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import { preventWidows } from 'calypso/lib/formatting';
-import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 
 interface ExternalProps {
 	status?: string;

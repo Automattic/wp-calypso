@@ -1,43 +1,32 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize, LocalizeProps } from 'i18n-calypso';
-import { includes } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_PERFORMANCE,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
 } from '@automattic/calypso-products';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import { includes } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { Button, CompactCard } from '@automattic/components';
-import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import HoldList, { hasBlockingHold } from './hold-list';
-import WarningList from './warning-list';
-import { launchSite } from 'calypso/state/sites/launch/actions';
-import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import getRequest from 'calypso/state/selectors/get-request';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import HoldList, { hasBlockingHold } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
+import WarningList from './warning-list';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
+import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { compact, isEqual, property, snakeCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { trackClick } from './helpers';
 import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -26,12 +18,8 @@ import {
 	isInstallingTheme,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import { setThemePreviewOptions } from 'calypso/state/themes/actions';
-import config from '@automattic/calypso-config';
+import { trackClick } from './helpers';
 
-/**
- * Style dependencies
- */
 import './themes-selection.scss';
 
 class ThemesSelection extends Component {
@@ -201,16 +189,7 @@ function bindGetPremiumThemePrice( state, siteId ) {
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{
-			filter,
-			page,
-			search,
-			tier,
-			vertical,
-			siteId,
-			source,
-			isLoading: isCustomizedThemeListLoading,
-		}
+		{ filter, page, search, vertical, siteId, source, isLoading: isCustomizedThemeListLoading }
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
@@ -228,7 +207,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: config.isEnabled( 'upgrades/premium-themes' ) ? tier : 'free',
+			tier: '',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};

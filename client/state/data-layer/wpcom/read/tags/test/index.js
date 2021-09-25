@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { requestTags, receiveTagsSuccess, receiveTagsError } from '../';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
@@ -15,6 +7,7 @@ import {
 	requestTags as requestTagsAction,
 	receiveTags as receiveTagsAction,
 } from 'calypso/state/reader/tags/items/actions';
+import { requestTags, receiveTagsSuccess, receiveTagsError } from '../';
 
 const successfulFollowedTagsResponse = deepFreeze( {
 	tags: [
