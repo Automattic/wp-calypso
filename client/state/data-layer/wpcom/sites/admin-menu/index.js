@@ -23,7 +23,7 @@ const sanitizeUrl = ( url, wpAdminUrl, siteUrl ) => {
 		url?.replace( /^https?:\/\//, '' )
 	);
 	const isSafeJetpackRedirectUrl =
-		new RegExp( '^https://jetpack.com/redirect/' ) &&
+		new RegExp( '^https://jetpack.com/redirect/' ).test( url ) &&
 		url?.includes( `site=${ siteUrl.replace( /^https?:\/\//, '' ) }` );
 
 	if ( isSafeWpAdminUrl ) {
