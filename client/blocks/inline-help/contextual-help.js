@@ -577,9 +577,9 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://wordpress.com/support/webmaster-tools/' ),
+			link: localizeUrl( 'https://wordpress.com/support/site-verification-services/' ),
 			post_id: 5022,
-			title: translate( 'Webmaster Tools' ),
+			title: translate( 'Site Verification Services' ),
 			description: translate(
 				'Learn how to verify your WordPress.com site for the webmaster tools that many search engines provide.'
 			),
