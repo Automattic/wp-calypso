@@ -317,7 +317,7 @@ class SiteVerification extends Component {
 									supportLink: (
 										<InlineSupportLink
 											supportPostId={ 5022 }
-											supportLink="https://wordpress.com/support/webmaster-tools/"
+											supportLink="https://wordpress.com/support/site-verification-services/"
 										>
 											{ translate( 'full instructions', {
 												comment: 'Full phrase: Read the full instructions',
