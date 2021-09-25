@@ -24,7 +24,7 @@ export const sanitizeUrl = ( url, wpAdminUrl, siteUrl ) => {
 	);
 	const isSafeJetpackRedirectUrl =
 		new RegExp( '^https://jetpack.com/redirect/' ).test( url ) &&
-		url?.includes( `site=${ siteUrl }` );
+		url?.includes( `site=${ siteUrl.replace( /^https?:\/\//, '' ) }` );
 
 	if ( isSafeWpAdminUrl ) {
 		url = addQueryArgs(

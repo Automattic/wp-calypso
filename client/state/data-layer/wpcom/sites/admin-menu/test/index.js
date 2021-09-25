@@ -102,16 +102,17 @@ describe( 'handlers', () => {
 	} );
 
 	test( 'should allow safe Jetpack Redirect URLs', () => {
-		const siteUrl = 'example.wordpress.com';
+		const site = 'example.wordpress.com';
+		const siteUrl = 'http://example.wordpress.com';
 		const wpAdminUrl = 'https://example.wordpress.com/wp-admin';
 		const jetpackRedirectUrl = 'https://jetpack.com/redirect/';
 
 		const sanitizedJetpackRedirectUrl = sanitizeUrl(
-			`${ jetpackRedirectUrl }?site=${ siteUrl }`,
+			`${ jetpackRedirectUrl }?site=${ site }`,
 			wpAdminUrl,
 			siteUrl
 		);
 
-		expect( sanitizedJetpackRedirectUrl ).toEqual( `${ jetpackRedirectUrl }?site=${ siteUrl }` );
+		expect( sanitizedJetpackRedirectUrl ).toEqual( `${ jetpackRedirectUrl }?site=${ site }` );
 	} );
 } );
