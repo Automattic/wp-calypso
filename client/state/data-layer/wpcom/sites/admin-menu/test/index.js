@@ -5,7 +5,7 @@
 import { addQueryArgs } from 'calypso/lib/url';
 import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestFetchAdminMenu, handleSuccess } from '../';
+import { requestFetchAdminMenu, handleSuccess, sanitizeUrl } from '../';
 
 describe( 'requestFetchAdminMenu', () => {
 	test( 'should create the correct http request action', () => {
@@ -99,5 +99,19 @@ describe( 'handlers', () => {
 
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 		expect( dispatch ).toHaveBeenCalledWith( expect.objectContaining( action ) );
+	} );
+
+	test( 'should allow safe Jetpack Redirect URLs', () => {
+		const siteUrl = 'example.wordpress.com';
+		const wpAdminUrl = 'https://example.wordpress.com/wp-admin';
+		const jetpackRedirectUrl = 'https://jetpack.com/redirect/';
+
+		const sanitizedJetpackRedirectUrl = sanitizeUrl(
+			`${ jetpackRedirectUrl }?site=${ siteUrl }`,
+			wpAdminUrl,
+			siteUrl
+		);
+
+		expect( sanitizedJetpackRedirectUrl ).toEqual( `${ jetpackRedirectUrl }?site=${ siteUrl }` );
 	} );
 } );
