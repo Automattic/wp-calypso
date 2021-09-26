@@ -1,6 +1,6 @@
-import { createClass } from 'react';
+import React from 'react';
 
-const PrettyComponent = createClass( {
+const PrettyComponent = React.createClass( {
 	render() {
 		this.translate( 'codemods are fun' );
 	},
