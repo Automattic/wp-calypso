@@ -177,7 +177,7 @@ __metadata:
   dependencies:
     core-js: ^3.6.3
     isomorphic-fetch: ^2.2.1
-    regenerator-runtime: ^0.13.3
+    regenerator-runtime: ^0.13.9
   languageName: unknown
   linkType: soft
 
@@ -975,7 +975,7 @@ __metadata:
     "@automattic/viewport": ^1.0.0
     "@babel/runtime": ^7.15.3
     "@wordpress/compose": ^5.0.2
-    regenerator-runtime: ^0.13.4
+    regenerator-runtime: ^0.13.9
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -986,7 +986,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
-    regenerator-runtime: ^0.13.4
+    regenerator-runtime: ^0.13.9
   languageName: unknown
   linkType: soft
 
@@ -12095,7 +12095,7 @@ __metadata:
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.3.0
     refx: ^3.1.1
-    regenerator-runtime: ^0.13.4
+    regenerator-runtime: ^0.13.9
     resize-observer-polyfill: ^1.5.1
     rtlcss: ^3.1.2
     semver: ^7.3.2
@@ -32073,10 +32073,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.3, regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.7":
-  version: 0.13.7
-  resolution: "regenerator-runtime@npm:0.13.7"
-  checksum: 4731a13643ced51020fcb20eaf77ff7b50aa11e5e53d8bf0affccb8c2beb9ce7f881059b961be4e1df959eb396e8c2daed2ecf6e8409b235fbc234e6c63784d0
+"regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.7, regenerator-runtime@npm:^0.13.9":
+  version: 0.13.9
+  resolution: "regenerator-runtime@npm:0.13.9"
+  checksum: b0f26612204f061a84064d2f3361629eae09993939112b9ffc3680bb369ecd125764d6654eace9ef11b36b44282ee52b988dda946ea52d372e7599a30eea73ee
   languageName: node
   linkType: hard
 
@@ -38973,7 +38973,7 @@ typescript@^4.4.3:
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
     redux: ^4.0.5
-    regenerator-runtime: ^0.13.4
+    regenerator-runtime: ^0.13.9
     replace: ^1.1.5
     request: ^2.88.2
     sass: ^1.37.5
