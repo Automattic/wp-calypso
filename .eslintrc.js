@@ -215,7 +215,8 @@ module.exports = {
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
-
+		'jsdoc/require-param-type': 'error',
+		'jsdoc/check-types': 'error',
 		'jest/expect-expect': [
 			'error',
 			{
