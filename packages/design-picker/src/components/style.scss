@@ -110,6 +110,7 @@
 		position: relative;
 		overflow: hidden;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		transition: border-color 0.15s ease-in-out;
 
 		img {
 			position: absolute;
@@ -205,6 +206,13 @@
 			}
 		}
 	}
+
+	.design-button-container:hover,
+	.design-button-container:focus-within {
+		.design-picker__design-option .design-picker__image-frame {
+			border-color: var( --studio-white );
+		}
+	}
 }
 
 // light theme styles
@@ -248,6 +256,13 @@
 			}
 		}
 	}
+
+	.design-button-container:hover,
+	.design-button-container:focus-within {
+		.design-picker__design-option .design-picker__image-frame {
+			border-color: var( --studio-blue-20 );
+		}
+	}
 }
 
 .design-button-container {
@@ -270,7 +285,7 @@
 		justify-content: center;
 		z-index: 1;
 		opacity: 0;
-		transition: opacity 0.3s ease-in-out;
+		transition: opacity 0.15s ease-in-out;
 
 		&::before {
 			content: '';
@@ -305,7 +320,8 @@
 		}
 	}
 
-	&:hover {
+	&:hover,
+	&:focus-within {
 		.design-button-cover {
 			opacity: 1;
 		}
