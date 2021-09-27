@@ -73,7 +73,7 @@
 		"mocha-teamcity-reporter": "^3.0.0",
 		"node-slack-upload": "^1.2.1",
 		"png-itxt": "^1.3.0",
-		"postcss": "^8.2.15",
+		"postcss": "^8.3.11",
 		"prettier": "npm:wp-prettier@2.2.1-beta-1",
 		"push-receiver": "^2.0.0",
 		"react": "^17.0.2",

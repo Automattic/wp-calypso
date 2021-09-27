@@ -30,7 +30,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@automattic/calypso-typescript-config": "^1.0.0",
-		"postcss": "^8.2.15",
+		"postcss": "^8.3.11",
 		"postcss-custom-properties": "^11.0.0",
 		"sass": "^1.37.5"
 	}
