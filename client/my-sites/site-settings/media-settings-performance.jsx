@@ -177,9 +177,8 @@ export default connect( ( state ) => {
 		isVideoPressFreeTier:
 			isJetpackSite( state, selectedSiteId ) &&
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
-			( ! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) ||
-				false ||
-				false ), // ! VP product or ! Security or ! Complete // todo: remove Security once that is a fact
+			! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) &&
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ), // Jetpack Pro is the feature used in current plans that include VP
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
 		sitePlanSlug,
