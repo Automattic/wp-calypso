@@ -6,7 +6,6 @@ import { get } from 'lodash';
 import page from 'page';
 import React from 'react';
 import titlecase from 'to-title-case';
-import Emojify from 'calypso/components/emojify';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { flagUrl } from 'calypso/lib/flags';
@@ -256,11 +255,11 @@ class StatsListItem extends React.Component {
 
 				itemLabel = (
 					<a onClick={ onClickHandler } href={ href } title={ labelItem.linkTitle }>
-						<Emojify>{ decodeEntities( labelText ) }</Emojify>
+						{ decodeEntities( labelText ) }
 					</a>
 				);
 			} else {
-				itemLabel = <Emojify>{ decodeEntities( labelText ) }</Emojify>;
+				itemLabel = decodeEntities( labelText );
 			}
 
 			return (

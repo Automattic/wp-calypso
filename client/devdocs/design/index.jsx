@@ -33,7 +33,6 @@ import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
 import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
-import EmojifyExample from 'calypso/components/emojify/docs/example';
 import EmptyContent from 'calypso/components/empty-content/docs/example';
 import ExternalLink from 'calypso/components/external-link/docs/example';
 import FAQ from 'calypso/components/faq/docs/example';
@@ -190,7 +189,6 @@ export default class DesignAssets extends React.Component {
 					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
-					<EmojifyExample readmeFilePath="emojify" />
 					<EmptyContent readmeFilePath="empty-content" />
 					<ExternalLink readmeFilePath="external-link" />
 					<FAQ readmeFilePath="faq" />

@@ -3,7 +3,6 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const noop = () => {};
@@ -116,7 +115,7 @@ class PostPhoto extends React.Component {
 							href={ post.URL }
 							onClick={ this.props.onClick }
 						>
-							<Emojify>{ linkTitle }</Emojify>
+							{ linkTitle }
 						</a>
 					</h2>
 				</AutoDirection>
