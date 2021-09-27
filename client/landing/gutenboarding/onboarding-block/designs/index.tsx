@@ -20,29 +20,34 @@ const Designs: React.FunctionComponent = () => {
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts, resetFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
-		select( ONBOARD_STORE )
-	);
+
+	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) => {
+		const onboardStore = select( ONBOARD_STORE );
+
+		return {
+			getSelectedDesign: onboardStore.getSelectedDesign(),
+			hasPaidDesign: onboardStore.hasPaidDesign(),
+			getRandomizedDesigns: onboardStore.getRandomizedDesigns(),
+		};
+	} );
 	const isAnchorFmSignup = useIsAnchorFm();
 
-	const selectedDesign = getSelectedDesign();
-
 	useTrackStep( 'DesignSelection', () => ( {
-		selected_design: selectedDesign?.slug,
-		is_selected_design_premium: hasPaidDesign(),
+		selected_design: getSelectedDesign?.slug,
+		is_selected_design_premium: hasPaidDesign,
 	} ) );
 
 	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
 
 	React.useEffect( () => {
-		if ( selectedDesign && userHasSelectedDesign ) {
+		if ( getSelectedDesign && userHasSelectedDesign ) {
 			// The `userHasSelectedDesign` local state variable is used to delay
 			// the call to `goNext()` by at least 1 re-render. This is to allow
 			// time for the `goNext()` function to update and correctly skip the
 			// `style` step when necessary
 			goNext();
 		}
-	}, [ goNext, userHasSelectedDesign, selectedDesign ] );
+	}, [ goNext, userHasSelectedDesign, getSelectedDesign ] );
 
 	return (
 		<div className="gutenboarding-page designs">
@@ -62,7 +67,7 @@ const Designs: React.FunctionComponent = () => {
 				</ActionButtons>
 			</div>
 			<DesignPicker
-				designs={ getRandomizedDesigns().featured.filter(
+				designs={ getRandomizedDesigns?.featured.filter(
 					( design ) =>
 						// TODO Add finalized design templates to available designs config
 						// along with `is_anchorfm` prop (config is stored in the
