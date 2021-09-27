@@ -168,6 +168,16 @@ export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbrande
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
+// Jetpack tiered product features
+export const FEATURE_TIERED_REAL_TIME_BACKUPS = 'jetpack-tiered-real-time-backups';
+export const FEATURE_TIERED_CLOUD_BASED_BACKUPS = 'jetpack-tiered-cloud-based-backups';
+export const FEATURE_TIERED_20GB_BACKUP_STORAGE = 'jetpack-tiered-20gb-backup-storage';
+export const FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS =
+	'jetpack-tiered-one-click-restores-30-days';
+export const FEATURE_TIERED_PRODUCT_BACKUP = 'jetpack-tiered-product-backup';
+export const FEATURE_TIERED_PRODUCT_SCAN = 'jetpack-tiered-product-scan';
+export const FEATURE_TIERED_COMMENT_FORM_PROTECTION = 'jetpack-tiered-comment-form-protection';
+
 // P2 project features
 export const FEATURE_P2_3GB_STORAGE = 'p2-3gb-storage';
 export const FEATURE_P2_UNLIMITED_USERS = 'p2-unlimited-users';

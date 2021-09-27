@@ -132,6 +132,13 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
+	FEATURE_TIERED_20GB_BACKUP_STORAGE,
+	FEATURE_TIERED_CLOUD_BASED_BACKUPS,
+	FEATURE_TIERED_COMMENT_FORM_PROTECTION,
+	FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS,
+	FEATURE_TIERED_PRODUCT_BACKUP,
+	FEATURE_TIERED_PRODUCT_SCAN,
+	FEATURE_TIERED_REAL_TIME_BACKUPS,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -822,12 +829,14 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate( 'Browse or restore any backup made since you activated the service.' ),
 	},
+
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
 		getSlug: () => FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited backup storage space' ),
 		getDescription: () =>
 			i18n.translate( 'Absolutely no limits on storage space for your backups.' ),
 	},
+
 	[ FEATURE_AUTOMATED_RESTORES ]: {
 		getSlug: () => FEATURE_AUTOMATED_RESTORES,
 		getTitle: () => i18n.translate( 'Automated restores' ),
@@ -1344,6 +1353,46 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_STORAGE,
 		getTitle: () => i18n.translate( '1TB of storage' ),
 	},
+
+	/* START - Jetpack tiered product-specific features */
+	[ FEATURE_TIERED_REAL_TIME_BACKUPS ]: {
+		getSlug: () => FEATURE_TIERED_REAL_TIME_BACKUPS,
+		getTitle: () =>
+			i18n.translate( 'Real-time backups {{noHighlight}}(as you edit){{/noHighlight}}', {
+				components: {
+					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
+					noHighlight: <span className="not-highlighted" />,
+				},
+			} ),
+		isHighlighted: () => true,
+	},
+	[ FEATURE_TIERED_CLOUD_BASED_BACKUPS ]: {
+		getSlug: () => FEATURE_TIERED_CLOUD_BASED_BACKUPS,
+		getTitle: () => i18n.translate( 'Backups are cloud based' ),
+	},
+	[ FEATURE_TIERED_20GB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_TIERED_20GB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( '20GB of backup storage' ),
+	},
+	[ FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS ]: {
+		getSlug: () => FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS,
+		getTitle: () => i18n.translate( 'One-click restore from last 30 days' ),
+	},
+	[ FEATURE_TIERED_PRODUCT_BACKUP ]: {
+		getSlug: () => FEATURE_TIERED_PRODUCT_BACKUP,
+		getTitle: () => i18n.translate( 'All Backup features' ),
+		isHighlighted: () => true,
+	},
+	[ FEATURE_TIERED_PRODUCT_SCAN ]: {
+		getSlug: () => FEATURE_TIERED_PRODUCT_SCAN,
+		getTitle: () => i18n.translate( 'Scan (real-time & automated)' ),
+		isHighlighted: () => true,
+	},
+	[ FEATURE_TIERED_COMMENT_FORM_PROTECTION ]: {
+		getSlug: () => FEATURE_TIERED_COMMENT_FORM_PROTECTION,
+		getTitle: () => i18n.translate( 'Comment and form protection' ),
+	},
+	/* END - Jetpack tiered product-specific features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
