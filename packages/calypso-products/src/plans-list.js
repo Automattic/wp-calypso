@@ -115,6 +115,9 @@ import {
 	FEATURE_SITE_STATS,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_STANDARD_SECURITY_TOOLS,
+	FEATURE_TIERED_COMMENT_FORM_PROTECTION,
+	FEATURE_TIERED_PRODUCT_BACKUP,
+	FEATURE_TIERED_PRODUCT_SCAN,
 	FEATURE_TRAFFIC_TOOLS,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UPLOAD_PLUGINS,
@@ -845,14 +848,13 @@ const getPlanJetpackSecurityT1Details = () => ( {
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+			'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
 		),
-	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
 	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
-		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-		FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		FEATURE_TIERED_PRODUCT_BACKUP,
+		FEATURE_TIERED_PRODUCT_SCAN,
+		FEATURE_TIERED_COMMENT_FORM_PROTECTION,
+		FEATURE_VIDEO_HOSTING_V2,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T1_YEARLY,
@@ -871,29 +873,12 @@ const getPlanJetpackSecurityT1Details = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
-	getInferiorFeatures: () => [
-		FEATURE_JETPACK_BACKUP_DAILY,
-		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-		FEATURE_BACKUP_ARCHIVE_30,
-	],
+	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
 const getPlanJetpackSecurityT2Details = () => ( {
-	group: GROUP_JETPACK,
+	...getPlanJetpackSecurityT1Details(),
 	type: TYPE_SECURITY_T2,
-	getTitle: () => translate( 'Security' ),
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
-	getDescription: () =>
-		translate(
-			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
-		),
-	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
-	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
-		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-		FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T2_YEARLY,
 		FEATURE_JETPACK_BACKUP_T2_MONTHLY,
