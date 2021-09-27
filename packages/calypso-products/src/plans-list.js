@@ -920,13 +920,22 @@ const getPlanJetpackCompleteDetails = () => ( {
 			'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
-	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
-		FEATURE_BACKUP_REALTIME_V2,
-		FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		FEATURE_CRM_V2,
-		FEATURE_PRODUCT_SEARCH_V2,
-	],
+	getPlanCardFeatures: () =>
+		isEnabled( 'jetpack/only-realtime-products' )
+			? [
+					FEATURE_TIERED_PRODUCT_SECURITY,
+					FEATURE_CRM_V2,
+					FEATURE_TIERED_UNLIMITED_BACKUP_STORAGE,
+					FEATURE_PRODUCT_SEARCH_V2,
+					FEATURE_TIERED_ONE_CLICK_RESTORES_UNLIMITED,
+			  ]
+			: [
+					FEATURE_PLAN_SECURITY_DAILY,
+					FEATURE_BACKUP_REALTIME_V2,
+					FEATURE_PRODUCT_SCAN_REALTIME_V2,
+					FEATURE_CRM_V2,
+					FEATURE_PRODUCT_SEARCH_V2,
+			  ],
 	getIncludedFeatures: () =>
 		isEnabled( 'jetpack/only-realtime-products' )
 			? [
