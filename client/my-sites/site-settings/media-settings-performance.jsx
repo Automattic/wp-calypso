@@ -1,4 +1,5 @@
 import {
+	isJetpackVideoPress,
 	planHasFeature,
 	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_VIDEO_UPLOADS,
@@ -18,6 +19,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -157,6 +159,8 @@ class MediaSettingsPerformance extends Component {
 		);
 	}
 }
+const checkForJetpackVideoPressProduct = ( purchase ) =>
+	purchase.active && isJetpackVideoPress( purchase );
 
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
@@ -173,7 +177,9 @@ export default connect( ( state ) => {
 		isVideoPressFreeTier:
 			isJetpackSite( state, selectedSiteId ) &&
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
-			( true || true ), // ! VP product or ! Security
+			( ! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) ||
+				false ||
+				false ), // ! VP product or ! Security or ! Complete // todo: remove Security once that is a fact
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
 		sitePlanSlug,
