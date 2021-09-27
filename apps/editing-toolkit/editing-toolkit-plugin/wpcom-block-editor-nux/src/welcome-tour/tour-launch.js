@@ -184,7 +184,7 @@ function WelcomeTourMinimized( { onMaximize, onDismiss, currentCardIndex, lastCa
 				</Flex>
 			</Button>
 			<Button
-				onClick={ () => onDismiss( 'close-btn-minimized' ) }
+				onClick={ onDismiss( 'close-btn-minimized' ) }
 				aria-label={ __( 'Close Tour', 'full-site-editing' ) }
 			>
 				<Icon icon={ close } size={ 24 } />
