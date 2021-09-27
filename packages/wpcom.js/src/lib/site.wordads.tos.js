@@ -17,7 +17,7 @@ export default function SiteWordAdsTOS( sid, wpcom ) {
 /**
  * GET site's WordAds TOS
  *
- * *Example:*
+ * Example:
  *    // Get site TOS information
  *    wpcom
  *    .site( 'my-blog.wordpress.com' )
@@ -26,7 +26,7 @@ export default function SiteWordAdsTOS( sid, wpcom ) {
  *    .get( function( err, data ) {
  *      // `settings` information object
  *    } );
-
+ *
  * @param {object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
@@ -38,7 +38,7 @@ SiteWordAdsTOS.prototype.get = function ( query, fn ) {
 /**
  * UPDATE site's WordAds TOS
  *
- * *Example:*
+ * Example:
  *    // Update TOS
  *    wpcom
  *    .site( 'my-blog.wordpress.com' )
@@ -61,7 +61,7 @@ SiteWordAdsTOS.prototype.update = function ( query, body, fn ) {
 /**
  * SIGN site's WordAds TOS
  *
- * *Example:*
+ * Example:
  *    // Sign TOS
  *    wpcom
  *    .site( 'my-blog.wordpress.com' )
