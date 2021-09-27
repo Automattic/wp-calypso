@@ -13,7 +13,6 @@ import SupportInfo from 'calypso/components/support-info';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPostTypes } from 'calypso/state/post-types/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -275,7 +274,6 @@ const connectComponent = connect(
 		const postTypes = filter( values( getPostTypes( state, siteId ) ), 'public' );
 
 		return {
-			buttons: getSharingButtons( state, siteId ),
 			initialized: !! postTypes || !! getSiteSettings( state, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			path,
