@@ -231,7 +231,7 @@ export class WebPreviewContent extends Component {
 		} else {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
-		if ( ! this.props.disableRedirects && this.checkForIframeLoadFailure( caller ) ) {
+		if ( this.checkForIframeLoadFailure( caller ) ) {
 			if ( this.props.showClose ) {
 				window.open( this.state.iframeUrl, '_blank' );
 				this.props.onClose();
@@ -391,8 +391,6 @@ WebPreviewContent.propTypes = {
 	overridePost: PropTypes.object,
 	// A customized Toolbar element
 	toolbarComponent: PropTypes.elementType,
-	// Disable page redirect if loading iframe is failed
-	disableRedirects: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
