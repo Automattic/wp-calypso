@@ -97,6 +97,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 
 	useEffect( () => {
 		selectedTab === tabList[ 0 ] ? setPrimaryButton( 'Personal' ) : setPrimaryButton( 'Business' );
+		setTermLength( 'annually' );
 		dispatch(
 			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
 				tab: selectedTab,
@@ -123,7 +124,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 								className={ `tabbed-plans__tab-${ index + 1 }` }
 								onClick={ toggleTab }
 							>
-								{ item }
+								<span>{ item }</span>
 							</SelectedTab>
 						) : (
 							<Tab
@@ -131,7 +132,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 								className={ `tabbed-plans__tab-${ index + 1 }` }
 								onClick={ toggleTab }
 							>
-								{ item }
+								<a href={ `?selectTab=${ tabList[ index ] } ` }>{ item }</a>
 							</Tab>
 						)
 					) }
@@ -198,9 +199,14 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 							<TermDescription className={ `tabbed-plans__term-desc-${ index + 1 }` }>
 								{ item.planName === 'Free' && <span>Limited features</span> }
 								{ item.termLength === 'annually' && item.planName !== 'Free' && (
-									<>
-										<span>per month, billed annually</span>
-										<Savings>
+									<span>per month, billed annually</span>
+								) }
+								{ termLength === 'monthly' && item.planName !== 'Free' && (
+									<span>per month, billed monthly</span>
+								) }
+								<Savings>
+									{ selectedTab === 'Professional' && termLength === 'annually' ? (
+										<>
 											{ "You're saving " +
 												Math.round(
 													( ( item.rawPriceForMonthly - item.rawPrice ) /
@@ -208,12 +214,11 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 														100
 												) +
 												'% by paying annually' }
-										</Savings>
-									</>
-								) }
-								{ termLength === 'monthly' && item.planName !== 'Free' && (
-									<span>per month, billed monthly</span>
-								) }
+										</>
+									) : (
+										<>&nbsp;</>
+									) }
+								</Savings>
 							</TermDescription>
 							{ item.planName !== 'Free' && (
 								<CtaButton
@@ -1153,6 +1158,10 @@ const Tabs = styled.ul`
 const Tab = styled.li`
 	padding: 6px 36px;
 	cursor: pointer;
+
+	a {
+		color: #1d2327;
+	}
 `;
 
 const SelectedTab = styled( Tab )`

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
@@ -16,7 +17,6 @@ import { Experiment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import TabbedPlans from 'calypso/signup/steps/plans/tabbed-plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
@@ -126,7 +126,8 @@ export class PlansStep extends Component {
 		);
 
 		const treatmentPlanDisplay = (
-			<TabbedPlans
+			<AsyncLoad
+				require="calypso/signup/steps/plans/tabbed-plans"
 				flowName={ flowName }
 				onUpgradeClick={ this.onSelectPlan }
 				plans={ [
