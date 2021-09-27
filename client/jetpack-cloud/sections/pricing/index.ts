@@ -6,10 +6,17 @@ import './style.scss';
 
 export default function (): void {
 	// Redirects
+	page( '/:locale/plans/storage/:site', ( { params } ) =>
+		page.redirect( `/${ params.locale }/pricing/storage/${ params.site }` )
+	);
+	page( '/plans/storage/:site', ( { params } ) =>
+		page.redirect( `/pricing/storage/${ params.site }` )
+	);
 	page( '/:locale/plans', ( { params } ) => page.redirect( `/${ params.locale }/pricing` ) );
 	page( '/plans/:site', ( { params } ) => page.redirect( `/pricing/${ params.site }` ) );
 	page( '/plans', '/pricing' );
 
+	jetpackStoragePlans( '/:locale/pricing', loggedInSiteSelection, jetpackPricingContext );
 	jetpackStoragePlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
 	jetpackPlans( '/:locale/pricing', jetpackPricingContext );
 	jetpackPlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
