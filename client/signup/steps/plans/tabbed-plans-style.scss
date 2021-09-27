@@ -32,7 +32,7 @@
 	display: none;
 }
 
-@media ( max-width: 600px ) {
+@media ( max-width: 660px ) {
 	.tabbed-plans__grid-container {
 		margin-left: 0;
 		grid-template-columns: 1fr;
@@ -156,21 +156,21 @@
 
 .tabbed-plans__top-button-1 {
 	grid-area: top-button-1;
-	@media ( max-width: 600px ) {
+	@media ( max-width: 660px ) {
 		display: none;
 	}
 }
 
 .tabbed-plans__top-button-2 {
 	grid-area: top-button-2;
-	@media ( max-width: 600px ) {
+	@media ( max-width: 660px ) {
 		display: none;
 	}
 }
 
 .tabbed-plans__top-button-3 {
 	grid-area: top-button-3;
-	@media ( max-width: 600px ) {
+	@media ( max-width: 660px ) {
 		display: none;
 	}
 }
