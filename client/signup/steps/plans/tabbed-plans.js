@@ -6,12 +6,12 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Popover } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -44,6 +44,45 @@ function SharedFeatures( { className = '', featureDescription, sharedFeatures } 
 					</SharedFeature>
 				) ) }
 		</div>
+	);
+}
+
+function TermToggleRadioButton( {
+	checked,
+	children,
+	isDisabled = false,
+	name,
+	popoverMessage = null,
+	toggleAction,
+} ) {
+	const [ showPopover, setShowPopover ] = useState( false );
+	const radioPopoverRef = useRef( null );
+
+	const handleClick = () => ( popoverMessage ? setShowPopover( true ) : null );
+	const handleClose = () => setShowPopover( false );
+
+	const PopoverMessage = styled.div`
+		padding: 10px;
+		width: 150px;
+		text-align: left;
+	`;
+
+	return (
+		<RadioButtonLabel isDisabled={ isDisabled } onClick={ handleClick }>
+			<input type="radio" checked={ checked } name={ name } onChange={ toggleAction } />
+			<Checkmark />
+			<span ref={ radioPopoverRef }>{ children }</span>
+			{ showPopover && popoverMessage && (
+				<Popover
+					context={ radioPopoverRef.current }
+					isVisible
+					onClose={ handleClose }
+					position="bottom"
+				>
+					<PopoverMessage>{ popoverMessage }</PopoverMessage>
+				</Popover>
+			) }
+		</RadioButtonLabel>
 	);
 }
 function TabbedPlans( { onUpgradeClick, planProperties } ) {
@@ -139,30 +178,28 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 				</Tabs>
 			</TabWrapper>
 			<Grid className="tabbed-plans__grid-container">
-				{ selectedTab === 'Professional' && (
-					<TermToggles className="tabbed-plans__term-toggles">
-						<RadioButtonLabel>
-							<input
-								type="radio"
-								checked={ termLength === 'annually' ? 'checked' : '' }
-								name="annually"
-								onChange={ toggleTerm }
-							/>
-							<Checkmark></Checkmark>
-							<span>{ 'Pay annually' }</span>
-						</RadioButtonLabel>
-						<RadioButtonLabel>
-							<input
-								type="radio"
-								checked={ termLength === 'monthly' ? 'checked' : '' }
-								name="monthly"
-								onChange={ toggleTerm }
-							/>
-							<Checkmark></Checkmark>
-							<span>{ 'Pay monthly' }</span>
-						</RadioButtonLabel>
-					</TermToggles>
-				) }
+				<TermToggles className="tabbed-plans__term-toggles">
+					<TermToggleRadioButton
+						checked={ termLength === 'annually' ? 'checked' : '' }
+						name="annually"
+						toggleAction={ selectedTab === 'Professional' ? toggleTerm : null }
+					>
+						<span>Pay annually</span>
+					</TermToggleRadioButton>
+					<TermToggleRadioButton
+						checked={ termLength === 'monthly' ? 'checked' : '' }
+						isDisabled={ selectedTab === 'Starter' }
+						name="monthly"
+						popoverMessage={
+							selectedTab === 'Starter'
+								? `Monthly payments are only available for our Professional plans.`
+								: null
+						}
+						toggleAction={ selectedTab === 'Professional' ? toggleTerm : null }
+					>
+						<span>Pay monthly</span>
+					</TermToggleRadioButton>
+				</TermToggles>
 
 				<PlanBorderOne />
 				<PlanBorderTwo featured={ true } />
@@ -1156,7 +1193,10 @@ const Tabs = styled.ul`
 `;
 
 const Tab = styled.li`
-	padding: 6px 36px;
+	padding: 6px 0;
+	box-sizing: border-box;
+	text-align: center;
+	width: 150px;
 	cursor: pointer;
 
 	a {
@@ -1186,7 +1226,7 @@ const FeaturedPlanStarter = styled.div`
 `;
 
 const TermToggles = styled.div`
-	padding-top: 10px;
+	padding-top: 24px;
 	display: flex;
 	flex-flow: column nowrap;
 	justify-content: flex-start;
@@ -1210,7 +1250,7 @@ const RadioButtonLabel = styled.label`
 		font-weight: 500;
 		font-size: 14px;
 		letter-spacing: -0.16px;
-		color: #2c3338;
+		color: ${ ( props ) => ( props.isDisabled ? '#a8aaad' : '#2c3338' ) };
 	}
 
 	input {
@@ -1234,7 +1274,7 @@ const RadioButtonLabel = styled.label`
 	}
 
 	&:hover input + span {
-		background-color: #ccc;
+		background-color: ${ ( props ) => ( props.isDisabled ? '' : '#ccc' ) };
 	}
 
 	/** Indicator dot styling */
@@ -1255,10 +1295,6 @@ const Checkmark = styled.span`
 	background-color: #fff;
 	border-radius: 40px;
 	border: 1px solid #dcdcde;
-
-	&:hover {
-		background-color: #2196f3;
-	}
 
 	&:after {
 		content: '';
