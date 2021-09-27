@@ -5,6 +5,7 @@ import { exec } from 'child_process';
 import { EventEmitter } from 'events';
 import chokidar from 'chokidar';
 import runAll from 'npm-run-all';
+import treeKill from 'tree-kill';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
@@ -34,13 +35,25 @@ const { argv } = yargs( hideBin( process.argv ) ).options( {
 	},
 	verbose: { type: 'boolean', default: false, alias: 'v' },
 } );
-await runBuilder( argv );
+const VERBOSE = argv.versbose;
 
-async function runBuilder( { sync, localPath, remotePath, verbose } ) {
+try {
+	await runBuilder( argv );
+} catch ( e ) {
+	const { pid } = process;
+	if ( VERBOSE ) {
+		console.log( `Removing children of PID: ${ pid }` );
+	}
+	treeKill( pid );
+	showTips( e.tasks );
+	console.error( e.message );
+}
+
+async function runBuilder( { sync, localPath, remotePath } ) {
 	const shouldWatch = process.env.NODE_ENV === 'development';
 
-	if ( verbose ) {
-		console.info( `Watch mode: ${ shouldWatch ? 'yes' : 'no' }\nSync mode: ${
+	if ( VERBOSE ) {
+		console.log( `Watch mode: ${ shouldWatch ? 'yes' : 'no' }\nSync mode: ${
 			sync ? 'yes' : 'no'
 		}\nLocal path: ${ localPath }\nRemote path: ${ remotePath }
 		` );
@@ -50,73 +63,77 @@ async function runBuilder( { sync, localPath, remotePath, verbose } ) {
 		stdout: process.stdout,
 		stderr: process.stderr,
 		printLabel: true,
+		parallel: true,
 	};
 	console.log( 'Cleaning...' );
-	await runAll( 'clean', runOpts );
+	await runAll( [ 'clean' ], runOpts );
 
 	console.log( 'Starting webpack...' );
-	// Run build tasks in parallel
-	runAll( [ 'build:*' ], { ...runOpts, parallel: true } )
-		.then( () => {
+	return Promise.all( [
+		runAll( [ 'build:*' ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
 			if ( ! shouldWatch && sync ) {
 				// In non-watch + sync mode, we sync only once after the build has finished.
 				setupRemoteSync( localPath, remotePath );
 			}
-		} )
-		.catch( ( e ) => {
-			console.error( 'The build failed.' );
-			console.error( `Reported build error: ${ e.message }` );
-			showTips( e.results );
-			process.exit( 1 );
-		} );
-
-	// In dev mode, we start watching to sync while the webpack build is happening.
-	if ( shouldWatch && sync ) {
-		setupRemoteSync( localPath, remotePath, true );
-	}
+		} ),
+		// In dev mode, we start watching to sync while the webpack build is happening.
+		shouldWatch && sync && setupRemoteSync( localPath, remotePath, true ),
+	] );
 }
 
 /**
  * Sets up remote syncing. In watch mode, schedules syncs to the remote after changes
  * have stoped happening and existing syncs have stopped. In non-watch mode, does
- * a single sync.
- *
- * @param localPath   The path to the changes to watch locally.
- * @param remotePath  The path the changes should be synced to on the sandbox.
- * @param shouldWatch Whether to watch for changes.
+ * a single sync. Rejects if any errors happen during rsync. Resolves in non-watch
+ * mode after a full sync. Is otherwise pending until the user kills the process.
  */
 function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
-	let rsync = null;
-	const debouncedSync = debouncer( () => {
-		console.info( 'Performing sync...' );
-		if ( rsync ) {
-			rsync.kill();
-		}
-		rsync = exec(
-			`rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }`,
-			( err ) => {
-				rsync = null;
-				// SIGTERM is how we manually kill an existing rsync process so
-				// it's not an error condition for our program.
-				if ( err && err.signal !== 'SIGTERM' ) {
-					throw err;
-				}
+	return new Promise( ( resolve, reject ) => {
+		let rsync = null;
+		const debouncedSync = debouncer( () => {
+			if ( VERBOSE ) {
+				console.log( 'Attempting sync...' );
 			}
-		);
-	} );
+			if ( rsync ) {
+				rsync.kill( 'SIGINT' );
+			}
+			rsync = exec(
+				`rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }`,
+				( err ) => {
+					rsync = null;
+					if ( err && err.signal !== 'SIGINT' ) {
+						// If there's an error other than sigint, reject and abort.
+						reject( err );
+						return;
+					} else if ( err?.signal === 'SIGINT' ) {
+						// Sigint just means that we want to restart rsync.
+						if ( VERBOSE ) {
+							console.log( 'Restarting sync.' );
+						}
+						return;
+					}
 
-	if ( shouldWatch ) {
-		chokidar.watch( localPath ).on( 'change', debouncedSync );
-	} else {
-		debouncedSync();
-	}
+					// A full sync was completed.
+					console.log( 'Sync to sandbox completed.' );
+					if ( ! shouldWatch ) {
+						// We only needed to sync once, so we can resolve the sync promise.
+						resolve();
+					}
+				}
+			);
+		} );
+
+		if ( shouldWatch ) {
+			chokidar.watch( localPath ).on( 'change', debouncedSync );
+		} else {
+			debouncedSync();
+		}
+	} );
 }
 
 /**
  * A debouncer that calls `cb` after it has not been called for at least 1s.
- *
- * @param cb A function to call after other debouncing is completed.
  */
 function debouncer( cb ) {
 	let timeout = null;
@@ -128,7 +145,6 @@ function debouncer( cb ) {
 	};
 }
 
-// Based on the completed tasks, show tips.
 function showTips( tasks ) {
 	if ( ! Array.isArray( tasks ) ) {
 		return;
@@ -140,7 +156,7 @@ function showTips( tasks ) {
 
 	const numFailed = tasks.reduce( ( total, { code } ) => total + ( code ? 1 : 0 ), 0 );
 	if ( numFailed === tasks.length ) {
-		console.info(
+		console.log(
 			'Since all builds failed, there is likely an issue with webpack or node modules.'
 		);
 		return;
@@ -149,7 +165,7 @@ function showTips( tasks ) {
 	// If only individual tasks failed, print individual tips.
 	tasks.forEach( ( { code, name } ) => {
 		if ( code !== 0 && tips[ name ] ) {
-			console.info( tips[ name ] );
+			console.log( tips[ name ] );
 		}
 	} );
 }
