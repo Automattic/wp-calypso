@@ -23,7 +23,11 @@ const pressThis = function ( postURL ) {
 	} else if ( docGetSel ) {
 		sel = docGetSel();
 	} else {
-		sel = docSel ? docSel.createRange().text : 0;
+		sel = docSel ? docSel.createRange().text : '';
+	}
+
+	if ( ! encodeURIComponent( sel ) ) {
+		sel = doc.title;
 	}
 
 	const url =
