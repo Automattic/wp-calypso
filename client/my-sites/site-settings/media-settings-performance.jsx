@@ -21,6 +21,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -169,7 +170,10 @@ export default connect( ( state ) => {
 	return {
 		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 		isVideoPressAvailable,
-		isVideoPressFreeTier: isJetpackSite( state, selectedSiteId ) && ( true || true ), // ! VP product or ! Security
+		isVideoPressFreeTier:
+			isJetpackSite( state, selectedSiteId ) &&
+			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
+			( true || true ), // ! VP product or ! Security
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
 		sitePlanSlug,
