@@ -60,7 +60,6 @@ class DesignPickerStep extends Component {
 	updateScrollPosition() {
 		if ( this.props.stepSectionName ) {
 			this.setState( { scrollTop: document.scrollingElement.scrollTop } );
-			document.scrollingElement.scrollTop = 0;
 		} else {
 			// Defer restore scroll position to ensure DesignPicker is rendered
 			window.setTimeout( () => {

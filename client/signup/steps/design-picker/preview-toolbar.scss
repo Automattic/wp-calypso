@@ -5,6 +5,8 @@
 	// Move spinner to the bottom of browser header
 	& ~ hr.spinner-line {
 		top: 16px;
+		left: 50%;
+		transform: translateX( -50% );
 
 		@include break-small {
 			top: 68px;
@@ -30,7 +32,7 @@
 }
 
 // Need the extra specificity here to override core
-.preview-toolbar__button.preview-toolbar__button {
+.button.preview-toolbar__button {
 	color: var( --studio-gray-10 );
 	height: auto;
 	margin: 0 13px;
