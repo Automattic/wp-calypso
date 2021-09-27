@@ -142,6 +142,7 @@ import {
 	FEATURE_TIERED_ONE_CLICK_RESTORES_UNLIMITED,
 	FEATURE_TIERED_PRODUCT_BACKUP,
 	FEATURE_TIERED_PRODUCT_SCAN,
+	FEATURE_TIERED_PRODUCT_SECURITY,
 	FEATURE_TIERED_REAL_TIME_BACKUPS,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
@@ -1406,6 +1407,11 @@ export const FEATURES_LIST = {
 	[ FEATURE_TIERED_PRODUCT_SCAN ]: {
 		getSlug: () => FEATURE_TIERED_PRODUCT_SCAN,
 		getTitle: () => i18n.translate( 'Scan (real-time & automated)' ),
+		isHighlighted: () => true,
+	},
+	[ FEATURE_TIERED_PRODUCT_SECURITY ]: {
+		getSlug: () => FEATURE_TIERED_PRODUCT_SECURITY,
+		getTitle: () => i18n.translate( 'All Security features' ),
 		isHighlighted: () => true,
 	},
 	[ FEATURE_TIERED_COMMENT_FORM_PROTECTION ]: {

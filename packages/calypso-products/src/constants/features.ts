@@ -181,6 +181,7 @@ export const FEATURE_TIERED_ONE_CLICK_RESTORES_UNLIMITED =
 	'jetpack-tiered-one-click-restores-unlimited';
 export const FEATURE_TIERED_PRODUCT_BACKUP = 'jetpack-tiered-product-backup';
 export const FEATURE_TIERED_PRODUCT_SCAN = 'jetpack-tiered-product-scan';
+export const FEATURE_TIERED_PRODUCT_SECURITY = 'jetpack-tiered-product-security';
 export const FEATURE_TIERED_COMMENT_FORM_PROTECTION = 'jetpack-tiered-comment-form-protection';
 
 // P2 project features
