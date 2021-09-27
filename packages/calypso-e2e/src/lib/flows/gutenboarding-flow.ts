@@ -42,6 +42,9 @@ const selectors = {
 			'Select'
 		) }`,
 
+	// Post-signup design selection (for Free plans only)
+	skipForNowButton: 'button:text("Skip for now")',
+
 	// Language
 	languagePicker: 'a:has(.gutenboarding__header-site-language-label)',
 	languageButton: ( target: string ) => `button:has(span[lang="${ target }"])`,
@@ -213,6 +216,14 @@ export class GutenboardingFlow {
 		// The plan item with the `has-badge` attribute is the one that is recommended based on features.
 		const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.has-badge` );
 		await elementHandle.waitForSelector( `div:text-is("${ name }")` );
+	}
+
+	/**
+	 * Skips the Design selection screen if WordPress.com Free plan is selected.
+	 */
+	async skipDesign(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+		await this.page.click( selectors.skipForNowButton );
 	}
 
 	/* Other actions */
