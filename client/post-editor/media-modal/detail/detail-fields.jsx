@@ -31,20 +31,19 @@ class EditorMediaModalDetailFields extends Component {
 
 	constructor() {
 		super( ...arguments );
-
-		// Save changes to server after 1000 second delay
-		this.delayedSaveChange = debounce( this.saveChange, 1000 );
+		this.persistChange = debounce( this._persistChange, 1000 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
-			this.updateChange( true );
+			this.persistChange.cancel();
+			this._persistChange();
 			this.setState( { modifiedItem: null } );
 		}
 	}
 
 	componentWillUnmount() {
-		this.updateChange( true );
+		this._persistChange();
 	}
 
 	bumpTitleStat = () => {
@@ -71,29 +70,13 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	updateChange( saveImmediately = false ) {
-		const siteId = this.props.site?.ID;
-		const itemId = this.props.item?.ID;
-		const modifiedItem = this.state?.modifiedItem;
-		const hasChanges = siteId && itemId && modifiedItem;
-
-		if ( ! hasChanges ) {
+	_persistChange() {
+		if ( ! this.props.site || ! this.state?.modifiedItem ) {
 			return;
 		}
 
-		// Update changes to local state immediately
-		this.props.onUpdate( itemId, modifiedItem );
-
-		// Save changes immediately or after a delay
-		if ( saveImmediately ) {
-			this.saveChange( siteId, modifiedItem );
-		} else {
-			this.delayedSaveChange( siteId, modifiedItem );
-		}
-	}
-
-	saveChange( siteId, modifiedItem ) {
-		this.props.updateMedia( siteId, modifiedItem )
+		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
+		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
 	}
 
 	setFieldByName = ( name, value ) => {
@@ -103,7 +86,7 @@ class EditorMediaModalDetailFields extends Component {
 			{ [ name ]: value }
 		);
 
-		this.setState( { modifiedItem }, this.updateChange );
+		this.setState( { modifiedItem }, this.persistChange );
 	};
 
 	setFieldValue = ( { target } ) => {
