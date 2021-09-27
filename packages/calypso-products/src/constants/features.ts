@@ -177,6 +177,8 @@ export const FEATURE_TIERED_UNLIMITED_BACKUP_STORAGE = 'jetpack-tiered-unlimited
 export const FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS =
 	'jetpack-tiered-one-click-restores-30-days';
 export const FEATURE_TIERED_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-tiered-one-click-restores-1-year';
+export const FEATURE_TIERED_ONE_CLICK_RESTORES_UNLIMITED =
+	'jetpack-tiered-one-click-restores-unlimited';
 export const FEATURE_TIERED_PRODUCT_BACKUP = 'jetpack-tiered-product-backup';
 export const FEATURE_TIERED_PRODUCT_SCAN = 'jetpack-tiered-product-scan';
 export const FEATURE_TIERED_COMMENT_FORM_PROTECTION = 'jetpack-tiered-comment-form-protection';
