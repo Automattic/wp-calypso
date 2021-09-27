@@ -156,18 +156,18 @@ const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
 	return (
 		<div className="mailbox-selection-list__loader-error-container">
 			<section>
-				<img src={ unsupportedBrowserIllustration } alt={ translate( 'Google Workspace icon' ) } />
+				<img src={ unsupportedBrowserIllustration } alt={ translate( 'Loading error icon' ) } />
 				<FormattedHeader
 					align="center"
 					brandFont
 					headerText={ translate( "Something's broken" ) }
 					subHeaderText={ translate(
-						'There has been an error in loading your mailboxes. Please try to refresh the page, and reach out to support if the issue persists.'
+						'There has been an error in loading your mailboxes. Please use the reload button, and reach out to support if the issue persists.'
 					) }
 				/>
 				<footer>
 					<Button primary onClick={ reloadMailboxes }>
-						{ translate( 'Refresh the page' ) }
+						{ translate( 'Reload mailboxes' ) }
 					</Button>
 					<Button borderless primary href={ CALYPSO_CONTACT }>
 						{ translate( 'Contact support' ) }
