@@ -112,7 +112,7 @@ export default function useOnSiteCreation(): void {
 
 			let destination;
 			if ( design?.is_fse ) {
-				destination = `/site-editor/${ newSite.site_slug }/`;
+				destination = `/home/${ newSite.site_slug }/`;
 			} else {
 				destination = `/page/${ newSite.site_slug }/home`;
 			}
