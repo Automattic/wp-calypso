@@ -86,7 +86,7 @@ const NewMailboxUpsell = () => {
 	const selectedSiteSlug = selectedSite?.slug;
 
 	const handleClick = useCallback( () => {
-		page.redirect( `/email/${ selectedSiteSlug }` );
+		page( `/email/${ selectedSiteSlug }` );
 	}, [ selectedSiteSlug ] );
 
 	return (
