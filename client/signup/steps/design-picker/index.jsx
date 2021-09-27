@@ -15,8 +15,6 @@ import './style.scss';
 // themes? e.g. `link-in-bio` or `no-fold`
 const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
 
-const SUBJECTS_TO_EXCLUDE = [ 'podcast' ];
-
 class DesignPickerStep extends Component {
 	static propTypes = {
 		goToNextStep: PropTypes.func.isRequired,
@@ -74,23 +72,16 @@ class DesignPickerStep extends Component {
 			// component itself. The `/new` environment needs helpers for making authenticated requests to
 			// the theme API before we can do this.
 			// taxonomies.theme_subject probably maps to category
-			designs = this.props.themes
-				.filter(
-					( { taxonomies } ) =>
-						! taxonomies.theme_subject?.find( ( subject ) =>
-							SUBJECTS_TO_EXCLUDE.includes( subject.slug )
-						)
-				)
-				.map( ( { id, name } ) => ( {
-					categories: [],
-					features: [],
-					is_premium: false,
-					slug: id,
-					template: id,
-					theme: id,
-					title: name,
-					...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-				} ) );
+			designs = this.props.themes.map( ( { id, name } ) => ( {
+				categories: [],
+				features: [],
+				is_premium: false,
+				slug: id,
+				template: id,
+				theme: id,
+				title: name,
+				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+			} ) );
 		}
 
 		return (
