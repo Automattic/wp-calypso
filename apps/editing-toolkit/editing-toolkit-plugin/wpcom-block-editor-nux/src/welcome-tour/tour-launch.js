@@ -61,7 +61,7 @@ function LaunchWpcomWelcomeTour() {
 }
 
 function WelcomeTourFrame() {
-	const ref = useRef( null );
+	const tourContainerRef = useRef( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
@@ -119,10 +119,10 @@ function WelcomeTourFrame() {
 				onDismiss={ handleDismiss }
 				onNextCardProgression={ handleNextCardProgression }
 				onPreviousCardProgression={ handlePreviousCardProgression }
-				focusRef={ ref }
+				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className="wpcom-editor-welcome-tour-frame" ref={ ref }>
+			<div className="wpcom-editor-welcome-tour-frame" ref={ tourContainerRef }>
 				{ ! isMinimized ? (
 					<>
 						<WelcomeTourCard

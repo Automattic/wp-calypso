@@ -13,7 +13,7 @@ interface Props {
 	onDismiss: ( target: string ) => () => void;
 	onNextCardProgression: () => void;
 	onPreviousCardProgression: () => void;
-	focusRef: React.MutableRefObject< null | HTMLElement >;
+	tourContainerRef: React.MutableRefObject< null | HTMLElement >;
 	isMinimized: boolean;
 }
 
@@ -22,7 +22,7 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 	onDismiss,
 	onNextCardProgression,
 	onPreviousCardProgression,
-	focusRef,
+	tourContainerRef,
 	isMinimized,
 } ) => {
 	function ExpandedTourNav() {
@@ -35,11 +35,11 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 	}
 
 	function MinimizedTourNav() {
-		useKeydownHandler( { onEscape: onDismiss( 'esc-key' ) } );
+		useKeydownHandler( { onEscape: onDismiss( 'esc-key-minimized' ) } );
 		return null;
 	}
 
-	const isTourFocused = useFocusHandler( focusRef );
+	const isTourFocused = useFocusHandler( tourContainerRef );
 
 	if ( ! isTourFocused ) {
 		return null;
