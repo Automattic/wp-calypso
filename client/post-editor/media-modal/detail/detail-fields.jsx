@@ -31,19 +31,20 @@ class EditorMediaModalDetailFields extends Component {
 
 	constructor() {
 		super( ...arguments );
-		this.persistChange = debounce( this._persistChange, 1000 );
+
+		// Save changes to server after 1000 second delay
+		this.delayedSaveChange = debounce( this.saveChange, 1000 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
-			this.persistChange.cancel();
-			this._persistChange();
-			this.setState( { modifiedItem: null } );
+			this.updateChange( true );
+			this.setState( { modifiedChanges: null } );
 		}
 	}
 
 	componentWillUnmount() {
-		this._persistChange();
+		this.updateChange( true );
 	}
 
 	bumpTitleStat = () => {
@@ -70,23 +71,39 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	_persistChange() {
-		if ( ! this.props.site || ! this.state?.modifiedItem ) {
+	updateChange( saveImmediately = false ) {
+		const siteId = this.props.site?.ID;
+		const itemId = this.props.item?.ID;
+		const modifiedChanges = this.state?.modifiedChanges;
+		const hasChanges = siteId && itemId && modifiedChanges;
+
+		if ( ! hasChanges ) {
 			return;
 		}
 
-		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
-		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
+		// Update changes to local state immediately
+		this.props.onUpdate( itemId, modifiedChanges );
+
+		// Save changes immediately or after a delay
+		if ( saveImmediately ) {
+			this.saveChange( siteId, modifiedChanges );
+		} else {
+			this.delayedSaveChange( siteId, modifiedChanges );
+		}
+	}
+
+	saveChange( siteId, modifiedChanges ) {
+		this.props.updateMedia( siteId, modifiedChanges );
 	}
 
 	setFieldByName = ( name, value ) => {
-		const modifiedItem = Object.assign(
+		const modifiedChanges = Object.assign(
 			{ ID: this.props.item.ID },
-			get( this.state, 'modifiedItem', {} ),
+			get( this.state, 'modifiedChanges', {} ),
 			{ [ name ]: value }
 		);
 
-		this.setState( { modifiedItem }, this.persistChange );
+		this.setState( { modifiedChanges }, this.updateChange );
 	};
 
 	setFieldValue = ( { target } ) => {
@@ -104,7 +121,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	getItemValue( attribute ) {
-		const modifiedValue = get( this.state, [ 'modifiedItem', attribute ], null );
+		const modifiedValue = get( this.state, [ 'modifiedChanges', attribute ], null );
 		if ( modifiedValue !== null ) {
 			return modifiedValue;
 		}

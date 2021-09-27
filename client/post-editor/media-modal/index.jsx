@@ -438,18 +438,18 @@ export class EditorMediaModal extends Component {
 		this.setState( { gallerySettings } );
 	};
 
-	updateItem = ( itemId, item ) => {
+	updateItem = ( itemId, itemChanges ) => {
 		const { updatedItems } = this.state;
 
-		const index = updatedItems.findIndex( ( updatedItem ) => updatedItem.ID === item.ID );
+		const index = updatedItems.findIndex( ( updatedItem ) => updatedItem.ID === itemId );
 
 		this.setState( {
 			updatedItems:
 				index === -1
-					? [ ...updatedItems, item ]
-					: updatedItems.map( ( updatedItem ) =>
-							updatedItem.itemID === item.ID ? item : updatedItem
-					  ),
+					? [ ...updatedItems, itemChanges ]
+					: updatedItems.map( ( updatedItem ) => {
+							return updatedItem.ID === itemId ? { ...updatedItem, ...itemChanges } : updatedItem;
+					  } ),
 		} );
 	};
 
