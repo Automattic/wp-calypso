@@ -9,7 +9,9 @@
 	.plans,
 	.domains,
 	.create-site,
-	.create-site-error {
+	.create-site-error,
+	.fse-beta-opt-in,
+	.features {
 		--contrastColor: var( --studio-white );
 		// TODO: This should be Gutenberg's main color
 		--mainColor: var( --studio-gray-100 );
