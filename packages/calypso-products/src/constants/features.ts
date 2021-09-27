@@ -173,6 +173,7 @@ export const FEATURE_TIERED_REAL_TIME_BACKUPS = 'jetpack-tiered-real-time-backup
 export const FEATURE_TIERED_CLOUD_BASED_BACKUPS = 'jetpack-tiered-cloud-based-backups';
 export const FEATURE_TIERED_20GB_BACKUP_STORAGE = 'jetpack-tiered-20gb-backup-storage';
 export const FEATURE_TIERED_1TB_BACKUP_STORAGE = 'jetpack-tiered-1tb-backup-storage';
+export const FEATURE_TIERED_UNLIMITED_BACKUP_STORAGE = 'jetpack-tiered-unlimited-backup-storage';
 export const FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS =
 	'jetpack-tiered-one-click-restores-30-days';
 export const FEATURE_TIERED_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-tiered-one-click-restores-1-year';
