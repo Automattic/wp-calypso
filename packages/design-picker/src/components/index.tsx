@@ -1,17 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { isEnabled } from '@automattic/calypso-config';
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
-import {
-	getAvailableDesigns,
-	getDesignImageUrl,
-	getDesignUrl,
-	mShotOptions,
-	isBlankCanvasDesign,
-} from '../utils';
+import { getAvailableDesigns, getDesignUrl, mShotOptions, isBlankCanvasDesign } from '../utils';
 import MShotsImage from './mshots-image';
 export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
@@ -25,18 +18,15 @@ interface DesignPreviewImageProps {
 	locale: string;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) =>
-	isEnabled( 'gutenboarding/mshot-preview' ) ? (
-		<MShotsImage
-			url={ getDesignUrl( design, locale ) }
-			aria-labelledby={ makeOptionId( design ) }
-			alt=""
-			options={ mShotOptions() }
-			scrollable={ design.preview !== 'static' }
-		/>
-	) : (
-		<img alt="" aria-labelledby={ makeOptionId( design ) } src={ getDesignImageUrl( design ) } />
-	);
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) => (
+	<MShotsImage
+		url={ getDesignUrl( design, locale ) }
+		aria-labelledby={ makeOptionId( design ) }
+		alt=""
+		options={ mShotOptions() }
+		scrollable={ design.preview !== 'static' }
+	/>
+);
 
 interface DesignButtonProps {
 	design: Design;
@@ -68,9 +58,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			<span
 				className={ classnames(
 					'design-picker__image-frame',
-					isEnabled( 'gutenboarding/landscape-preview' )
-						? 'design-picker__image-frame-landscape'
-						: 'design-picker__image-frame-portrait',
+					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
 					{ 'design-picker__image-frame-blank': isBlankCanvas }
 				) }

@@ -1,7 +1,7 @@
 import '@automattic/calypso-config';
 
 import '../../constants';
-import { getDesignUrl, getDesignImageUrl, getAvailableDesigns } from '../available-designs';
+import { getDesignUrl, getAvailableDesigns } from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
 import { shuffleArray } from '../shuffle';
 import type { Design } from '../../types';
@@ -128,16 +128,6 @@ describe( 'Design Picker design utils', () => {
 
 			expect( getDesignUrl( mockDesignWithoutFonts, mockLocale ) ).toEqual(
 				`https://public-api.wordpress.com/rest/v1/template/demo/${ mockDesignWithoutFonts.theme }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
-			);
-		} );
-	} );
-
-	describe( 'getDesignImageUrl', () => {
-		it( 'should compose the correct design API URL', () => {
-			const mockDesign = availableDesignsConfig.featured[ 0 ];
-
-			expect( getDesignImageUrl( mockDesign ) ).toMatchInlineSnapshot(
-				`"/calypso/images/design-screenshots/mock-design-slug_mock-design-template_mock-design-theme.webp?v=3"`
 			);
 		} );
 	} );

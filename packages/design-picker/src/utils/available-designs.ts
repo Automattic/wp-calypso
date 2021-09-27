@@ -1,21 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
-import { DESIGN_IMAGE_FOLDER } from '../constants';
 import { availableDesignsConfig } from './available-designs-config';
 import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
-
-function getCanUseWebP() {
-	if ( typeof window !== 'undefined' ) {
-		const elem = document.createElement( 'canvas' );
-		if ( elem.getContext?.( '2d' ) ) {
-			return elem.toDataURL( 'image/webp' ).indexOf( 'data:image/webp' ) === 0;
-		}
-	}
-	return false;
-}
 
 export const getDesignUrl = ( design: Design, locale: string ): string => {
 	const theme = encodeURIComponent( design.theme );
@@ -38,22 +27,7 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 // Used for both prefetching and loading design screenshots
 export const mShotOptions = (): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
-	if ( isEnabled( 'gutenboarding/long-previews' ) ) {
-		return { vpw: 1600, vph: 1600, w: 600, screen_height: 3600 };
-	}
-	if ( isEnabled( 'gutenboarding/landscape-preview' ) ) {
-		return { vpw: 1600, vph: 1600, w: 600, h: 600 };
-	}
-	return { vpw: 1600, vph: 3000, w: 600, h: 1124 };
-};
-
-const canUseWebP = getCanUseWebP();
-
-// Bump the version query param here to cache bust the images after running bin/generate-gutenboarding-design-thumbnails.js
-export const getDesignImageUrl = ( design: Design ): string => {
-	return `/calypso/${ DESIGN_IMAGE_FOLDER }/${ design.slug }_${ design.template }_${
-		design.theme
-	}.${ canUseWebP ? 'webp' : 'jpg' }?v=3`;
+	return { vpw: 1600, vph: 1600, w: 600, screen_height: 3600 };
 };
 
 interface AvailableDesignsOptions {
