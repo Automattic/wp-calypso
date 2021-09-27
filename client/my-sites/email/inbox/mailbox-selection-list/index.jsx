@@ -6,9 +6,9 @@ import React, { useCallback } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import unsupportedBrowserIllustration from 'calypso/assets/images/illustrations/unsupported-browser.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getMailboxesCacheKey, useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
+import errorIllustration from 'calypso/landing/browsehappy/illustration.svg';
 import {
 	getEmailAddress,
 	isEmailForwardAccount,
@@ -85,7 +85,7 @@ const NewMailboxUpsell = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
 
-	const handleClick = useCallback( () => {
+	const handleCreateNewMailboxClick = useCallback( () => {
 		page( `/email/${ selectedSiteSlug }` );
 	}, [ selectedSiteSlug ] );
 
@@ -96,7 +96,9 @@ const NewMailboxUpsell = () => {
 				<div>{ translate( 'Create new and activate immediately' ) }</div>
 			</div>
 			<div className="mailbox-selection-list__new-mailbox-upsell-cta">
-				<Button onClick={ handleClick }>{ translate( 'Create a new mailbox' ) }</Button>
+				<Button onClick={ handleCreateNewMailboxClick }>
+					{ translate( 'Create a new mailbox' ) }
+				</Button>
 			</div>
 		</div>
 	);
@@ -156,7 +158,7 @@ const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
 	return (
 		<div className="mailbox-selection-list__loader-error-container">
 			<section>
-				<img src={ unsupportedBrowserIllustration } alt={ translate( 'Loading error icon' ) } />
+				<img src={ errorIllustration } alt={ translate( 'Error image' ) } />
 				<FormattedHeader
 					align="center"
 					brandFont
@@ -187,11 +189,12 @@ const MailboxSelectionList = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID ?? null;
+
 	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
 		retry: 2,
 	} );
 
-	if ( isLoading ) {
+	if ( isLoading || selectedSiteId === null ) {
 		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
 	}
 

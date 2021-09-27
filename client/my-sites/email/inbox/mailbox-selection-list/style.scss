@@ -35,7 +35,6 @@ body.is-section-inbox {
 			}
 
 			.formatted-header__title {
-				color: var( --studio-gray-80 );
 				font-size: $font-title-large;
 				margin-bottom: 10px;
 
@@ -45,7 +44,7 @@ body.is-section-inbox {
 			}
 
 			.formatted-header__subtitle {
-				color: var( --studio-gray-60 );
+				color: var( --color-text-subtle );
 				font-size: $font-body;
 				margin-bottom: 0;
 
