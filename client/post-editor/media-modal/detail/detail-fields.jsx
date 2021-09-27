@@ -32,7 +32,7 @@ class EditorMediaModalDetailFields extends Component {
 	constructor() {
 		super( ...arguments );
 
-		// Save changes to server after 1000 second delay
+		// Save changes to server after 1 second delay
 		this.delayedSaveChange = debounce( this.saveChange, 1000 );
 	}
 
