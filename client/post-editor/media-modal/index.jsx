@@ -134,7 +134,7 @@ export class EditorMediaModal extends Component {
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
 			gallerySettings: props.initialGallerySettings,
-			selectedItems: props.selectedItems,
+			updatedItems: [],
 		};
 	}
 
@@ -161,7 +161,7 @@ export class EditorMediaModal extends Component {
 
 	confirmSelection = () => {
 		const { view } = this.props;
-		const { selectedItems } = this.state;
+		const selectedItems = this.getSelectedItems();
 
 		if ( areMediaActionsDisabled( view, selectedItems, this.props.isParentReady ) ) {
 			return;
@@ -438,22 +438,29 @@ export class EditorMediaModal extends Component {
 		this.setState( { gallerySettings } );
 	};
 
-	updateItem = ( itemId, detail ) => {
-		const { selectedItems } = this.state;
-		const index = selectedItems.findIndex( ( item ) => item.ID === itemId );
+	updateItem = ( itemId, item ) => {
+		const { updatedItems } = this.state;
 
-		if ( index === -1 ) {
-			return;
-		}
-
-		selectedItems.splice( index, 1, {
-			...selectedItems[ index ],
-			...detail,
-		} );
+		const index = updatedItems.findIndex( ( updatedItem ) => updatedItem.ID === item.ID );
 
 		this.setState( {
-			...this.state,
-			selectedItems,
+			updatedItems:
+				index === -1
+					? [ ...updatedItems, item ]
+					: updatedItems.map( ( updatedItem ) =>
+							updatedItem.itemID === item.ID ? item : updatedItem
+					  ),
+		} );
+	};
+
+	getSelectedItems = () => {
+		const { selectedItems } = this.props;
+		const { updatedItems } = this.state;
+
+		// Apply updated changes over the selected items
+		return selectedItems.map( ( selectedItem ) => {
+			const index = updatedItems.findIndex( ( updatedItem ) => selectedItem.ID === updatedItem.ID );
+			return index > -1 ? { ...selectedItem, ...updatedItems[ index ] } : selectedItem;
 		} );
 	};
 
