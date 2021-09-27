@@ -13,7 +13,7 @@ export function isTreatmentPlansReorderTest( state: AppState ): boolean {
 }
 
 export function getJetpackSaleCoupon( state: AppState ): JetpackSaleCoupon | null {
-	return state.marketing.jetpackSaleCoupon;
+	return state?.marketing?.jetpackSaleCoupon;
 }
 
 export function getJetpackSaleCouponDiscountRatio( state: AppState ): number {
