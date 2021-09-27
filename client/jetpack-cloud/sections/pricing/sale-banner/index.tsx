@@ -1,10 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
+import type { JetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 
 import './style.scss';
 
@@ -19,15 +19,18 @@ const getTimeLeftFromSecondsLeft = ( timeDiff: number ) => {
 	};
 };
 
-const SaleBanner: React.FC = () => {
+type Props = {
+	coupon: JetpackSaleCoupon;
+};
+
+const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
 	const [ isClosed, setIsClosed ] = useState( false );
-	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const now = moment.utc().unix();
-	const expiryDate = moment.utc( jetpackSaleCoupon?.expiry_date ).unix();
-	const isBeforeExpiry = jetpackSaleCoupon && now <= expiryDate;
+	const expiryDate = moment.utc( coupon?.expiry_date ).unix();
+	const isBeforeExpiry = coupon && now <= expiryDate;
 	const [ timeLeft, setTimeLeft ] = useState( getTimeLeftFromSecondsLeft( expiryDate - now ) );
 	const { days, hours, minutes, seconds } = timeLeft;
 
@@ -54,7 +57,7 @@ const SaleBanner: React.FC = () => {
 							<b>{ translate( 'End of Summer Sale!' ) }</b>
 							&nbsp;
 							{ translate( 'Get %(discount)d%% off your first year of Jetpack', {
-								args: { discount: jetpackSaleCoupon.discount },
+								args: { discount: coupon.discount },
 							} ) }
 						</div>
 						<span className="sale-banner__countdown-timer">

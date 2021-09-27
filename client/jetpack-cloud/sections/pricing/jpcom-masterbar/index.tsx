@@ -2,10 +2,12 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import './style.scss';
 import antiSpamIcon from './assets/icons/anti-spam.svg';
 import backupIcon from './assets/icons/backup.svg';
@@ -111,6 +113,7 @@ const JetpackComMasterbar: React.FC = () => {
 		[ translate ]
 	);
 
+	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
 
 	const toggleMenu = () => {
@@ -151,7 +154,7 @@ const JetpackComMasterbar: React.FC = () => {
 
 	return (
 		<>
-			<JetpackSaleBanner />
+			{ jetpackSaleCoupon && <JetpackSaleBanner coupon={ jetpackSaleCoupon } /> }
 			<nav className="jpcom-masterbar">
 				<div className="jpcom-masterbar__inner">
 					<ExternalLink

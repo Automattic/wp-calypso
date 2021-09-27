@@ -13,7 +13,7 @@ import 'calypso/state/marketing/init';
 export const jetpackSaleCoupon = ( state = null, action ) => {
 	switch ( action.type ) {
 		case MARKETING_JETPACK_SALE_COUPON_RECEIVE:
-			return action.jetpackSaleCoupon;
+			return action.jetpackSaleCoupon.coupon;
 	}
 
 	return state;
