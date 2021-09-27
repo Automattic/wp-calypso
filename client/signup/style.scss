@@ -149,7 +149,7 @@ body.is-section-signup .layout.gravatar {
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		button:not( .is-compact ):not( .is-primary ) {
+		.layout:not( .is-horizontal-layout ) button:not( .is-compact ):not( .is-primary ) {
 			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;

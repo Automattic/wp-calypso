@@ -47,13 +47,15 @@ const IntentScreen: React.FC< Props > = ( { onSelect, translate } ) => {
 				{ intents.map( ( { title, description, icon, actionText, intent } ) => (
 					<div key={ intent } className="intent-screen__card">
 						<Icon className="intent-screen__card-icon" icon={ icon } size={ 24 } />
-						<div className="intent-screen__card-info">
-							<h2 className="intent-screen__card-title">{ title }</h2>
-							<p className="intent-screen__card-description">{ description }</p>
+						<div className="intent-screen__card-info-wrapper">
+							<div className="intent-screen__card-info">
+								<h2 className="intent-screen__card-title">{ title }</h2>
+								<p className="intent-screen__card-description">{ description }</p>
+							</div>
+							<Button className="intent-screen__card-button" onClick={ () => onSelect( intent ) }>
+								{ actionText }
+							</Button>
 						</div>
-						<Button className="intent-screen__card-button" onClick={ () => onSelect( intent ) }>
-							{ actionText }
-						</Button>
 					</div>
 				) ) }
 			</div>

@@ -92,7 +92,7 @@
 	}
 }
 
-.step-wrapper__image {
+.step-wrapper__header-image {
 	margin-top: 24px;
 	display: none;
 
@@ -118,19 +118,19 @@
 	// Some steps (intent gathering) use a horizontal layout
 	&.is-horizontal-layout {
 		align-items: flex-start;
-		margin-top: 20%;
+		justify-content: space-between;
+		max-width: 1024px;
 		padding: 0 20px;
+		margin-top: 44px;
 
 		@include break-small {
 			display: flex;
+			margin-top: 25vh;
 		}
 
 		.step-wrapper__header {
 			display: block;
 			margin-top: 0;
-		}
-		.step-wrapper__content {
-			margin-left: auto;
 		}
 	}
 

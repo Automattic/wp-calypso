@@ -201,7 +201,7 @@ class StepWrapper extends Component {
 								align={ align }
 							/>
 							{ headerImageUrl && (
-								<div className="step-wrapper__image">
+								<div className="step-wrapper__header-image">
 									<img src={ headerImageUrl } alt="" />
 								</div>
 							) }

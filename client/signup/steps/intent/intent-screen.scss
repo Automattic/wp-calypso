@@ -36,6 +36,14 @@
 			left: -48px;
 		}
 	}
+	
+	&-info-wrapper {
+		@include break-mobile {
+			display: flex;
+			align-items: flex-start;
+			width: 100%;
+		}
+	}
 
 	&-info {
 		flex: 1;
@@ -56,8 +64,12 @@
 	}
 
 	&-button {
+		margin-top: 24px;
 		border-radius: 4px; /* stylelint-disable-line */
 		min-width: 130px;
+		@include break-mobile {
+			margin-top: 0;
+		}
 	}
 
 	& + & {
