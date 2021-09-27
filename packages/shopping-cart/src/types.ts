@@ -319,9 +319,9 @@ export interface IntroductoryOfferTerms {
 }
 
 export interface CartLocation {
-	countryCode: string | null;
-	postalCode: string | null;
-	subdivisionCode: string | null;
+	countryCode?: string;
+	postalCode?: string;
+	subdivisionCode?: string;
 }
 
 export interface ResponseCartProductExtra {

@@ -76,17 +76,12 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
 
-			if ( ! ownsBackupT1 ) {
+			// If neither T1 or T2 backups are owned, then show T1 backups.
+			// Otherwise the one owned will be displayed via purchasedProducts.
+			if ( ! ownsBackupT1 && ! ownsBackupT2 ) {
 				backupProductsToShow.push(
 					PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 					PRODUCT_JETPACK_BACKUP_T1_MONTHLY
-				);
-			}
-
-			if ( ! ownsBackupT2 ) {
-				backupProductsToShow.push(
-					PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-					PRODUCT_JETPACK_BACKUP_T2_MONTHLY
 				);
 			}
 		} else {

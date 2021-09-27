@@ -10,6 +10,7 @@ import {
 	stepsHeadingAdvanced,
 	stepsHeadingOwnershipVerification,
 	stepsHeadingSuggested,
+	stepsHeadingTransfer,
 	stepSlug,
 } from './constants';
 
@@ -29,6 +30,9 @@ export default function ConnectDomainStepLogin( {
 
 	useEffect( () => {
 		switch ( mode ) {
+			case modeType.TRANSFER:
+				setHeading( stepsHeadingTransfer );
+				return;
 			case modeType.SUGGESTED:
 				setHeading( stepsHeadingSuggested );
 				return;

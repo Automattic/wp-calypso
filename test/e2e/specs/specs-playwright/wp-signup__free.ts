@@ -16,6 +16,7 @@ import {
 	BrowserHelper,
 	CloseAccountFlow,
 	LoginFlow,
+	GutenboardingFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -60,6 +61,11 @@ describe(
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
 				await signupPickPlanPage.selectPlan( 'Free' );
+			} );
+
+			it( 'Skip the design selection prompt', async function () {
+				const gutenboardingFlow = new GutenboardingFlow( page );
+				await gutenboardingFlow.skipDesign();
 			} );
 		} );
 

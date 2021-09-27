@@ -28,6 +28,7 @@ import {
 	transformMailboxForCart,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
@@ -309,4 +310,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) );
+)( withShoppingCart( withCartKey( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );

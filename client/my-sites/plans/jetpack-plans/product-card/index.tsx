@@ -139,6 +139,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		<JetpackProductCard
 			productSlug={ item.productSlug }
 			productName={ item.displayName }
+			subheader={ item.subheader }
 			headingLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			currencyCode={ item.displayCurrency }

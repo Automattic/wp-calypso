@@ -48,6 +48,7 @@ import {
 	transformMailboxForCart,
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
@@ -751,4 +752,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( withShoppingCart( localize( EmailProvidersComparison ) ) );
+)( withShoppingCart( withCartKey( localize( EmailProvidersComparison ) ) ) );

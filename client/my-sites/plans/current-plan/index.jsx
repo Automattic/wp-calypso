@@ -46,7 +46,7 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
@@ -106,7 +106,7 @@ class CurrentPlan extends Component {
 	};
 
 	renderThankYou() {
-		const { currentPlan, product, selectedSite } = this.props;
+		const { currentPlan, jetpackSearchCustomizeUrl, product } = this.props;
 
 		if ( JETPACK_BACKUP_PRODUCTS.includes( product ) ) {
 			return <BackupProductThankYou />;
@@ -125,8 +125,7 @@ class CurrentPlan extends Component {
 		}
 
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
-			const jetpackVersion = selectedSite?.options?.jetpack_version ?? 0;
-			return <SearchProductThankYou { ...{ jetpackVersion } } />;
+			return <SearchProductThankYou { ...{ jetpackSearchCustomizeUrl } } />;
 		}
 
 		if (
@@ -293,6 +292,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		purchases,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, selectedSiteId ),
 		selectedSite,
 		selectedSiteId,
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,

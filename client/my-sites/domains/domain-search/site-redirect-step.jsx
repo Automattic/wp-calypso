@@ -13,6 +13,7 @@ import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { canRedirect } from 'calypso/lib/domains';
 import { withoutHttp } from 'calypso/lib/url';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -196,4 +197,4 @@ export default connect( null, {
 	recordInputFocus,
 	recordGoButtonClick,
 	recordFormSubmit,
-} )( withShoppingCart( localize( SiteRedirectStep ) ) );
+} )( withShoppingCart( withCartKey( localize( SiteRedirectStep ) ) ) );

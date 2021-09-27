@@ -35,7 +35,8 @@ const mapDispatchToProps = { recordTracksEvent, requestGuidedTour };
 
 export type ThankYouCtaType = React.FC< {
 	dismissUrl: string;
-	jetpackVersion: string;
+	jetpackSearchCustomizeUrl?: string;
+	jetpackVersion?: string;
 	recordThankYouClick: ( productName: string, value?: string ) => void;
 	siteAdminUrl: string;
 	startChecklistTour: () => void;

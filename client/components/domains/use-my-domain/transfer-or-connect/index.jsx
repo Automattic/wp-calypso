@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -17,7 +18,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getOptionInfo,
 	connectDomainAction,
-	transferDomainAction as defaultTransferHandler,
+	defaultTransferDomainAction as defaultTransferHandler,
 } from '../utilities';
 import OptionContent from './option-content';
 
@@ -126,4 +127,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( withShoppingCart( DomainTransferOrConnect ) );
+)( withShoppingCart( withCartKey( DomainTransferOrConnect ) ) );

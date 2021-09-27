@@ -7,6 +7,7 @@ import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
+import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
@@ -122,7 +123,7 @@ export default {
 	},
 
 	emailManagementInbox( pageContext, next ) {
-		pageContext.primary = null;
+		pageContext.primary = <InboxManagement />;
 		next();
 	},
 };

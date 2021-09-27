@@ -337,7 +337,6 @@
 	}
 }
 
-
 .floating-happychat-button {
 	position: fixed;
 	right: 24px;
@@ -375,3 +374,25 @@
 	}
 }
 
+// layout adjustments for docked Happychat window
+@include breakpoint-deprecated( '>1040px' ) {
+	.layout.has-docked-chat {
+		// add space in the main column for the docked sidebar
+		.layout__content {
+			padding: 79px 304px 32px;
+		}
+
+		// make space in customizer
+		.main.customize.is-iframe {
+			right: 272px;
+		}
+
+		// adjust when scroll arrows show up in stats insights when chat panel is open
+		&.is-section-stats {
+			.post-trends__scroll-left,
+			.post-trends__scroll-right {
+				display: block;
+			}
+		}
+	}
+}

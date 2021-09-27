@@ -79,6 +79,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -1637,4 +1638,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( withShoppingCart( localize( RegisterDomainStep ) ) );
+)( withShoppingCart( withCartKey( localize( RegisterDomainStep ) ) ) );

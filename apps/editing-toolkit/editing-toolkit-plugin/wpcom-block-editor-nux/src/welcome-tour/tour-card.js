@@ -114,7 +114,7 @@ function CardNavigation( {
 			/>
 			<div>
 				{ currentCardIndex === 0 ? (
-					<Button isTertiary={ true } onClick={ () => onDismiss( 'no-thanks-btn' ) }>
+					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
 						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
@@ -154,7 +154,7 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
-					onClick={ () => onDismiss( 'close-btn' ) }
+					onClick={ onDismiss( 'close-btn' ) }
 				></Button>
 			</Flex>
 		</div>

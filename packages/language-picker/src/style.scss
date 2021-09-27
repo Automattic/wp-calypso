@@ -30,7 +30,7 @@
 
 		.components-custom-select-control__button {
 			// less the width of the search button plus the border
-			width: calc( 100% - 52px );
+			width: calc( 100% - 60px );
 			height: 100%;
 			font-size: 0.875rem;
 		}
@@ -136,11 +136,16 @@
 		}
 	}
 
+	$language_button_width: 165px;
+
 	.language-picker-component__language-buttons {
 		display: flex;
 		flex-wrap: wrap;
 		align-content: flex-start;
 		width: 100%;
+
+		// Allow up to five columns of buttons.
+		max-width: $language_button_width * 5;
 
 		@include break-small() {
 			width: initial;
@@ -150,7 +155,7 @@
 	.language-picker-component__language-button {
 		width: 100%;
 		@include break-small() {
-			width: 165px;
+			width: $language_button_width;
 		}
 	}
 }
