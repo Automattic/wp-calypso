@@ -116,7 +116,7 @@ __metadata:
     postcss: ^8.2.15
     react: ^17.0.2
     react-dom: ^17.0.2
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   bin:
     calypso-build: ./bin/calypso-build.js
     copy-assets: ./bin/copy-assets.js
@@ -241,7 +241,7 @@ __metadata:
     style-loader: ^1.2.1
     typescript: ^4.4.3
     utility-types: ^3.10.0
-    webpack: ^5.36.2
+    webpack: ^5.54.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -274,7 +274,7 @@ __metadata:
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     typescript: ^4.4.3
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -685,7 +685,7 @@ __metadata:
     react-redux: ^7.2.4
     redux: ^4.1.1
     redux-thunk: ^2.3.0
-    webpack: ^5.53.0
+    webpack: ^5.54.0
     webpack-dev-server: ^3.11.2
     wpcom: ^6.0.0
     wpcom-proxy-request: ^6.0.0
@@ -722,7 +722,7 @@ __metadata:
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
     redux: ^4.0.5
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -880,7 +880,7 @@ __metadata:
     style-loader: ^1.2.1
     tslib: ^2.3.0
     typescript: ^4.4.3
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -996,7 +996,7 @@ __metadata:
   dependencies:
     rimraf: ^3.0.0
   peerDependencies:
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -1006,7 +1006,7 @@ __metadata:
   dependencies:
     semver: ^7.0.0
   peerDependencies:
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -1015,9 +1015,9 @@ __metadata:
   resolution: "@automattic/webpack-inline-constant-exports-plugin@workspace:packages/webpack-inline-constant-exports-plugin"
   dependencies:
     rimraf: ^3.0.0
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   peerDependencies:
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -1030,9 +1030,9 @@ __metadata:
     css-loader: ^5.2.4
     mini-css-extract-plugin: ^1.6.0
     rtlcss: ^3.1.2
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   peerDependencies:
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -1116,7 +1116,7 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     tinymce: ^4.9.6
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -1217,7 +1217,7 @@ __metadata:
     redux: ^4.1.1
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
-    webpack: ^5.53.0
+    webpack: ^5.54.0
   languageName: unknown
   linkType: soft
 
@@ -12118,7 +12118,7 @@ __metadata:
     utility-types: ^3.10.0
     uuid: ^8.3.2
     valid-url: ^1.0.9
-    webpack: ^5.53.0
+    webpack: ^5.54.0
     webpack-bundle-analyzer: ^4.4.2
     webpack-dev-middleware: ^5.1.0
     webpack-hot-middleware: ^2.25.0
@@ -16103,13 +16103,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.8.0, enhanced-resolve@npm:^5.8.2":
-  version: 5.8.2
-  resolution: "enhanced-resolve@npm:5.8.2"
+"enhanced-resolve@npm:^5.8.2, enhanced-resolve@npm:^5.8.3":
+  version: 5.8.3
+  resolution: "enhanced-resolve@npm:5.8.3"
   dependencies:
     graceful-fs: ^4.2.4
     tapable: ^2.2.0
-  checksum: 08612893157753824920db12c8b6a89c8ed3e9435c93c57751880ea72946c9cbc8a0ef9a68d829d6a1a9fc431ba8fe08637806a9855ac56595bac43ef79ab433
+  checksum: c50de36c067359833577fb031de6a3b3d0eeb0627cb81fea1e132116d0b5a4fc746e0c8525f683de0a656f25aad08d3da773775b27608db1695ac47ac64ff673
   languageName: node
   linkType: hard
 
@@ -16324,10 +16324,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "es-module-lexer@npm:0.7.1"
-  checksum: 411cb77f01419ea21576786b23d78487815542b14b9eaa674d4892efeeb64a58ce4abe0ea49db7750b498c2276da6722ea4aa9413629715e3f57ca863ec5d6eb
+"es-module-lexer@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "es-module-lexer@npm:0.9.0"
+  checksum: b5215a14da3fc8777131f6482272b0890c4971620ce90e49a2adb3ff7b71ec80e8075b239d1521a81dfe1c09ecf855b3c573b7515fb25da26cc29ba368e803d3
   languageName: node
   linkType: hard
 
@@ -38482,9 +38482,9 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.36.2, webpack@npm:^5.47.1, webpack@npm:^5.53.0, webpack@npm:^5.9.0":
-  version: 5.53.0
-  resolution: "webpack@npm:5.53.0"
+"webpack@npm:^5.47.1, webpack@npm:^5.54.0, webpack@npm:^5.9.0":
+  version: 5.54.0
+  resolution: "webpack@npm:5.54.0"
   dependencies:
     "@types/eslint-scope": ^3.7.0
     "@types/estree": ^0.0.50
@@ -38495,8 +38495,8 @@ typescript@^4.4.3:
     acorn-import-assertions: ^1.7.6
     browserslist: ^4.14.5
     chrome-trace-event: ^1.0.2
-    enhanced-resolve: ^5.8.0
-    es-module-lexer: ^0.7.1
+    enhanced-resolve: ^5.8.3
+    es-module-lexer: ^0.9.0
     eslint-scope: 5.1.1
     events: ^3.2.0
     glob-to-regexp: ^0.4.1
@@ -38515,7 +38515,7 @@ typescript@^4.4.3:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 79f717f38c1d867f1c427f5042da7cea4f2f35c65f8d00edb64cf7df49fde0739d2230e492d7befcb71671071c9d1bcc0f5223436af3a5f46daf86374909f7ef
+  checksum: d13c3b974b13955fe0c700ae0ca667a098ebd9fd5319621fdb50ef119e68a94f18c327bf709fb86b90549b706167889a80d0d8242cf47e71ef1bc122df4c3b69
   languageName: node
   linkType: hard
 
@@ -38978,7 +38978,7 @@ typescript@^4.4.3:
     terser-webpack-plugin: ^5.2.4
     tslib: ^2.3.0
     typescript: ^4.4.3
-    webpack: ^5.53.0
+    webpack: ^5.54.0
     webpack-bundle-analyzer: ^4.4.2
     webpack-cli: ^4.8.0
     webpack-dev-middleware: ^5.1.0
@@ -39113,7 +39113,7 @@ typescript@^4.4.3:
     debug: ^4.1.1
     npm-run-all: ^4.1.5
     qs: ^6.5.2
-    webpack: ^5.53.0
+    webpack: ^5.54.0
     webpack-cli: ^4.8.0
     wpcom-oauth-cors: ^1.0.2-beta
     wpcom-proxy-request: ^6.0.0
