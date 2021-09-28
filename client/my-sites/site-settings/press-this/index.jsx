@@ -40,7 +40,7 @@ class PressThis extends Component {
 						<ul>
 							<li>
 								{ translate(
-									'Drag and drop the "Press This" button below to your bookmarks bar, or right-click the button to copy the link, then add the link to your favourites.'
+									'Drag and drop the "Press This" button below to your bookmarks bar, or right-click the button to copy the link, then add the link to your favorites.'
 								) }
 							</li>
 							<li>
