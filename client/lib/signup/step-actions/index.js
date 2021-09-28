@@ -347,6 +347,23 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 		} );
 }
 
+export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
+	if ( ! siteTitle && ! tagline ) {
+		defer( callback );
+		return;
+	}
+
+	const settings = {
+		apiVersion: '1.4',
+		blogname: siteTitle,
+		blogdescription: tagline,
+	};
+
+	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
+}
+
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.

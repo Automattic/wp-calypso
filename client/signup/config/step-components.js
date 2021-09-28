@@ -43,6 +43,7 @@ const stepNameToModuleName = {
 	'site-style': 'site-style',
 	'site-title': 'site-title',
 	'site-title-without-domains': 'site-title',
+	'site-options': 'site-options',
 	'site-topic': 'site-topic',
 	'site-topic-with-theme': 'site-topic',
 	'site-type': 'site-type',

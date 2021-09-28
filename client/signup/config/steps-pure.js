@@ -28,6 +28,7 @@ export function generateSteps( {
 	currentPage = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
+	setOptionsOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -175,6 +176,13 @@ export function generateSteps( {
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
+		},
+
+		'site-options': {
+			stepName: 'site-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
 		},
 
 		test: {

@@ -1,8 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import intentImageUrl from 'calypso/assets/images/intent-screen/intent.svg';
+import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import flows from 'calypso/signup/config/flows';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import IntentScreen from './intent-screen';
@@ -28,6 +29,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 
 		dispatch( submitSignupStep( { stepName }, { intent } ) );
 
+		// TODO: Better way to handle branch steps
 		if ( intent === 'write' ) {
 			dispatch(
 				submitSignupStep(
@@ -40,6 +42,9 @@ export default function IntentStep( props: Props ): React.ReactNode {
 					}
 				)
 			);
+			flows.excludeStep( 'design-setup-site' );
+		} else if ( intent === 'build' ) {
+			flows.excludeStep( 'site-options' );
 		}
 
 		goToNextStep();

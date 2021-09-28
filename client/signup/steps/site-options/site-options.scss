@@ -1,0 +1,42 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.site-options__form-fieldset {
+	$gray-60: #50575e;
+
+	margin-bottom: 24px;
+
+	.form-label {
+		margin-bottom: 8px;
+		color: $gray-60;
+
+		.form-label__optional {
+			font-size: inherit;
+
+			&::before {
+				content: '(';
+			}
+
+			&::after {
+				content: ')';
+			}
+		}
+
+		@include break-small {
+			font-size: $font-body;
+		}
+	}
+
+	.form-setting-explanation {
+		display: flex;
+		align-items: center;
+		margin: 16px 0;
+		font-style: normal;
+	}
+}
+
+.site-options__submit-button {
+	padding-left: 48px;
+	padding-right: 48px;
+	border-radius: 4px; /* stylelint-disable-line scales/radii */
+}
