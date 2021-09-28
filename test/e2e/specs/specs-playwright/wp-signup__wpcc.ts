@@ -65,7 +65,10 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 	describe( 'Navigate to WordPress.com', function () {
 		it( 'Navigate to WordPress.com', async function () {
-			await page.goto( DataHelper.getCalypsoURL() );
+			// Cursory check to ensure the newly registered account does not have a site.
+			// Waiting for `networkidle` is required so Calypso loading won't swallow up
+			// the click on navbar in the Close Account steps.
+			await page.goto( DataHelper.getCalypsoURL(), { waitUntil: 'networkidle' } );
 		} );
 	} );
 
