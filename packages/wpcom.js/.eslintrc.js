@@ -25,4 +25,12 @@ module.exports = {
 			},
 		},
 	],
+	rules: {
+		'jsdoc/no-undefined-types': [
+			'error',
+			{
+				definedTypes: [ 'WPCOM' ],
+			},
+		],
+	},
 };

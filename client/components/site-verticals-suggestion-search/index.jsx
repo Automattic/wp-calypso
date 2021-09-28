@@ -64,14 +64,14 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * Show the popular topics component when the search field is empty and
 	 * `props.showPopular` tell us to.
 	 *
-	 * @returns {Bool} Whether we should display the popular topics component.
+	 * @returns {boolean} Whether we should display the popular topics component.
 	 */
 	shouldShowPopularTopics = () => ! this.state.inputValue && this.props.showPopular;
 
 	/**
 	 * Checks for the existence of vertical results. If there are none we assume
 	 *
-	 * @returns {Bool} Whether we should display the popular topics component.
+	 * @returns {boolean} Whether we should display the popular topics component.
 	 */
 	isVerticalSearchPending = () => this.state.inputValue && 0 === this.props.verticals.length;
 

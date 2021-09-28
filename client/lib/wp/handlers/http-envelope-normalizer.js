@@ -32,8 +32,8 @@ export function requestHandler( handler ) {
 /**
  * Wraps the given wpcom request handler with httpEnvelopeHandler
  *
- * @param {WPCOM} wpcom - wpcom instance
- * @returns {WPCOM} wpcom instance with the new request handler
+ * @param {object} wpcom - wpcom instance
+ * @returns {object} wpcom instance with the new request handler
  */
 
 export function injectHandler( wpcom ) {
