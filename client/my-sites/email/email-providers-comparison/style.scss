@@ -2,7 +2,6 @@
 @import '@wordpress/base-styles/mixins';
 
 .email-providers-comparison__action-panel {
-	flex-direction: row;
 
 	&.is-primary {
 		flex-direction: column;
@@ -56,6 +55,8 @@
 
 .email-providers-comparison__providers-wordpress-com-email {
 	color: var( --color-wordpress-com );
+	height: 48px;
+	width: 48px;
 }
 
 .email-providers-comparison__action-panel {
@@ -71,7 +72,6 @@
 }
 
 .email-providers-comparison__provider-card.promo-card {
-	flex-direction: row;
 	.action-panel__figure {
 		float: right;
 		max-width: 208px;
