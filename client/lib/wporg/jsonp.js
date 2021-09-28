@@ -28,8 +28,7 @@ function noop() {}
  *
  * @param {string} url
  * @param {object} query params
- * @param {Function} optional callback
- * @param fn
+ * @param {Function} fn optional callback
  */
 function jsonp( url, query, fn ) {
 	const prefix = '__jp';

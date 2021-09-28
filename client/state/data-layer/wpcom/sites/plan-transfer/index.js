@@ -34,6 +34,7 @@ export const requestPlanOwnershipTransfer = ( action ) =>
  * Dispatches a success notice when the request succeeded.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.siteId
  * @returns {object} Success notice action
  */
 export const handleTransferSuccess = ( { siteId } ) => [
@@ -48,7 +49,9 @@ export const handleTransferSuccess = ( { siteId } ) => [
  * Dispatches an error notice when the request failed.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.siteId
  * @param   {object} error  Error object
+ * @param   {string} error.message
  * @returns {object} Error notice action
  */
 export const handleTransferError = ( { siteId }, { message } ) =>
