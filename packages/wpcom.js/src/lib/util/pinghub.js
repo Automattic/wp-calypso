@@ -5,9 +5,8 @@ const debug = debugFactory( 'wpcom:pinghub' );
 /**
  * Create a `Pinghub` instance
  *
- * @param {WPCOM} wpcom - wpcom instance
+ * @param {object} wpcom - wpcom instance
  * @returns {null} null
- * @api public
  */
 export default function Pinghub( wpcom ) {
 	if ( ! ( this instanceof Pinghub ) ) {
@@ -23,7 +22,6 @@ export default function Pinghub( wpcom ) {
  *
  * @param {string} path - request path
  * @param {Function} fn - callback function
- * @api public
  */
 Pinghub.prototype.connect = function ( path, fn ) {
 	debug( 'connect', path, fn );
@@ -49,7 +47,6 @@ Pinghub.prototype.connect = function ( path, fn ) {
  * Close a websocket connection (unsubscribe)
  *
  * @param {string} path - request path
- * @api public
  */
 Pinghub.prototype.disconnect = function ( path ) {
 	debug( 'disconnect', path );
@@ -65,7 +62,6 @@ Pinghub.prototype.disconnect = function ( path ) {
  * Remove a dead connection
  *
  * @param {string} path - pinghub channel
- * @api private
  */
 Pinghub.prototype.remove = function ( path ) {
 	debug( 'remove', path );
