@@ -60,9 +60,8 @@ const Markup = {
 	 * Adapted from WordPress.
 	 *
 	 * @copyright 2015 by the WordPress contributors.
-	 * @license See CREDITS.md.
+	 * @license LGPL-2.1
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
-	 *
 	 * @param  {object} site           A site object
 	 * @param  {(object|string)} media A media object or markup string
 	 * @returns {string}                A caption React element, or null if not
