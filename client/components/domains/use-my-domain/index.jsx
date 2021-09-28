@@ -51,7 +51,6 @@ function UseMyDomain( {
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const [ domainLockStatus, setDomainLockStatus ] = useState( domainLockStatusType.LOCKED );
 	const [ isDomainTransferrable, setIsDomainTransferrable ] = useState( false );
-	const [ isFetchingDomainLockStatus, setIsFetchingDomainLockStatus ] = useState( false );
 	const [ transferDomainStepsDefinition, setTransferDomainStepsDefinition ] = useState(
 		transferLockedDomainStepsDefinition
 	);
@@ -257,7 +256,6 @@ function UseMyDomain( {
 				onTransfer={ onTransfer }
 				onSetPage={ setTransferDomainFlowPageSlug }
 				stepsDefinition={ transferDomainStepsDefinition }
-				isFetchingDomainLockStatus={ isFetchingDomainLockStatus }
 				domainLockStatus={ domainLockStatus }
 			/>
 		);
