@@ -422,6 +422,13 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			pageTitle: translate( 'Setup your site' ),
 		},
+		{
+			name: 'do-it-for-me',
+			steps: [ 'user', 'site-info-collection', 'domains' ],
+			destination: getSignupDestination,
+			description: 'The current best performing flow in AB tests',
+			lastModified: '2019-06-20',
+		},
 	];
 
 	// convert the array to an object keyed by `name`

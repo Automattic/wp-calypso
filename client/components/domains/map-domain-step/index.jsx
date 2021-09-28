@@ -14,6 +14,7 @@ import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'calypso/l
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -276,4 +277,4 @@ export default connect(
 		recordInputFocusInMapDomain,
 		recordGoButtonClickInMapDomain,
 	}
-)( withShoppingCart( localize( MapDomainStep ) ) );
+)( withShoppingCart( withCartKey( localize( MapDomainStep ) ) ) );

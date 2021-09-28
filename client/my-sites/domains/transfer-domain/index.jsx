@@ -14,6 +14,7 @@ import {
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -192,4 +193,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( withShoppingCart( TransferDomain ) );
+} ) )( withShoppingCart( withCartKey( TransferDomain ) ) );

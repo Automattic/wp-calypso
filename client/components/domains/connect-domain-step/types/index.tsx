@@ -27,11 +27,23 @@ export type AuthCodeValidationHandler = (
 	onDone?: ( error?: Maybe< AuthCodeValidationError >, callbackData?: unknown ) => void
 ) => unknown;
 
+export type StartStepProps = {
+	domain: string;
+	className: string;
+	pageSlug: PossibleSlugs;
+	onNextStep: () => void;
+	stepContent: JSX.Element;
+	progressStepList: Record< PossibleSlugs, string >;
+	isFetchingDomainLockStatus: boolean;
+	setPage: ( page: PossibleSlugs ) => void;
+};
+
 export type DomainStepAuthCodeProps = {
 	authCodeDescription: JSX.Element;
 	buttonMessage: string;
 	className: string;
 	domain: string;
+	customHeading?: string;
 	onBeforeValidate: () => void;
 	validateHandler: AuthCodeValidationHandler;
 	pageSlug: PossibleSlugs;

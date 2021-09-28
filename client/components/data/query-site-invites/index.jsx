@@ -1,40 +1,22 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { isRequestingInvitesForSite } from 'calypso/state/invites/selectors';
 
-class QuerySiteInvites extends Component {
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingInvitesForSite( getState(), siteId ) ) {
+		dispatch( requestSiteInvites( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
-		}
+function QuerySiteInvites( { siteId } ) {
+	const dispatch = useDispatch();
 
-		this.request( nextProps );
-	}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
-			return;
-		}
-
-		props.requestSiteInvites( props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { siteId } = ownProps;
-		return {
-			requesting: isRequestingInvitesForSite( state, siteId ),
-		};
-	},
-	{ requestSiteInvites }
-)( QuerySiteInvites );
+export default QuerySiteInvites;

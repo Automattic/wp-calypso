@@ -725,6 +725,12 @@ export function generateSteps( {
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 		},
+		'site-info-collection': {
+			stepName: 'site-info-collection',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			apiRequestFunction: addPlanToCart,
+		},
 	};
 }
 

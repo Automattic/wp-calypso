@@ -415,6 +415,74 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#themeActivated()', () => {
+		// block theme
+		const maylandBlocksTheme = {
+			id: 'mayland-blocks',
+			stylesheet: 'pub/mayland-blocks',
+			taxonomies: {
+				theme_feature: [
+					{
+						name: 'Block Templates',
+						slug: 'block-templates',
+						term_id: '230717188',
+					},
+				],
+			},
+		};
+		// classic theme
+		const twentyfifteenTheme = {
+			id: 'twentyfifteen',
+			stylesheet: 'pub/twentyfifteen',
+			taxonomies: {
+				theme_feature: [
+					{
+						name: 'Auto Loading Homepage',
+						slug: 'auto-loading-homepage',
+						term_id: '687694703',
+					},
+				],
+			},
+		};
+
+		const fakeGetState = () => ( {
+			themes: {
+				activeThemes: {
+					2211667: 'twentyfifteen',
+				},
+				lastQuery: {
+					2211667: {
+						search: 'simple, white',
+					},
+				},
+				queries: {
+					wpcom: new ThemeQueryManager( {
+						items: {
+							[ maylandBlocksTheme.id ]: maylandBlocksTheme,
+							[ twentyfifteenTheme.id ]: twentyfifteenTheme,
+						},
+					} ),
+				},
+			},
+			sites: {
+				items: {
+					197431737: {
+						ID: 197431737,
+						jetpack: false,
+					},
+				},
+			},
+		} );
+
+		describe( 'when switching between any theme', () => {
+			test( 'should refresh the admin bar', () => {
+				themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetState );
+				expect( spy ).to.have.been.calledWith( {
+					type: 'ADMIN_MENU_REQUEST',
+					siteId: 2211667,
+				} );
+			} );
+		} );
+
 		test( 'should return an action object', () => {
 			const expectedActivationSuccess = {
 				meta: {
@@ -440,20 +508,6 @@ describe( 'actions', () => {
 				themeStylesheet: 'pub/twentysixteen',
 				siteId: 2211667,
 			};
-
-			const fakeGetState = () => ( {
-				themes: {
-					activeThemes: {
-						2211667: 'twentyfifteen',
-					},
-					lastQuery: {
-						2211667: {
-							search: 'simple, white',
-						},
-					},
-				},
-			} );
-
 			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
 			expect( spy ).to.have.been.calledWith( expectedActivationSuccess );
 		} );
@@ -805,47 +859,36 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch status update', () => {
-			return pollThemeTransferStatus(
-				siteId,
-				3,
-				'themes',
-				20
-			)( spy ).then( () => {
-				// Two 'progress' then a 'complete'
-				expect( spy ).to.have.callCount( 4 );
-				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_STATUS_RECEIVE,
-					siteId: siteId,
-					transferId: 3,
-					status: 'progress',
-					message: 'in progress',
-					themeId: undefined,
-				} );
-				expect( spy ).to.have.been.calledWith( {
-					type: THEME_TRANSFER_STATUS_RECEIVE,
-					siteId: siteId,
-					transferId: 3,
-					status: 'complete',
-					message: 'all done',
-					themeId: 'mood',
-				} );
+		test( 'should dispatch status update', async () => {
+			await pollThemeTransferStatus( siteId, 3, 'themes', 20 )( spy );
+			// Two 'progress' then a 'complete'
+			expect( spy ).to.have.callCount( 4 );
+			expect( spy ).to.have.been.calledWith( {
+				type: THEME_TRANSFER_STATUS_RECEIVE,
+				siteId: siteId,
+				transferId: 3,
+				status: 'progress',
+				message: 'in progress',
+				themeId: undefined,
+			} );
+			expect( spy ).to.have.been.calledWith( {
+				type: THEME_TRANSFER_STATUS_RECEIVE,
+				siteId: siteId,
+				transferId: 3,
+				status: 'complete',
+				message: 'all done',
+				themeId: 'mood',
 			} );
 		} );
 
-		test( 'should dispatch failure on receipt of error', () => {
-			return pollThemeTransferStatus(
+		test( 'should dispatch failure on receipt of error', async () => {
+			await pollThemeTransferStatus( siteId, 4, 'themes' )( spy );
+			expect( spy ).to.have.been.calledWithMatch( {
+				type: THEME_TRANSFER_STATUS_FAILURE,
 				siteId,
-				4,
-				'themes'
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: THEME_TRANSFER_STATUS_FAILURE,
-					siteId,
-					transferId: 4,
-				} );
-				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
+				transferId: 4,
 			} );
+			expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
 		} );
 	} );
 
@@ -880,8 +923,8 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( sinon.match.func );
 			} );
 		} );
-
 		test( 'should dispatch failure on error', () => {
+			/* eslint-disable jest/no-conditional-expect */
 			return initiateThemeTransfer( siteId )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledOnce;
 
@@ -891,6 +934,7 @@ describe( 'actions', () => {
 				} );
 				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
 			} );
+			/* eslint-enable jest/no-conditional-expect */
 		} );
 	} );
 

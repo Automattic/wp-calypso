@@ -110,10 +110,18 @@ type TracksFeaturesSelectEventProperties = {
 	has_selected_video_storage: boolean | undefined;
 };
 
+type TracksFseBetaOptInProperties = {
+	/**
+	 * If the user selected the FSE beta opt-in
+	 */
+	selected_fse_beta_opt_in: boolean | undefined;
+};
+
 export type TracksEventProperties =
 	| TracksAcquireIntentEventProperties
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
 	| TracksDomainSelectEventProperties
 	| TracksPlanSelectEventProperties
-	| TracksFeaturesSelectEventProperties;
+	| TracksFeaturesSelectEventProperties
+	| TracksFseBetaOptInProperties;

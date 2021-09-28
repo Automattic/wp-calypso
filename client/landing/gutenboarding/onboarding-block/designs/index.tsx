@@ -1,9 +1,9 @@
-import DesignPicker from '@automattic/design-picker';
+import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import React, { useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import Badge from '../../components/badge';
 import useStepNavigation from '../../hooks/use-step-navigation';
@@ -18,14 +18,19 @@ const Designs: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { goBack, goNext } = useStepNavigation();
-
-	const { setSelectedDesign, setFonts, resetFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
-		select( ONBOARD_STORE )
+	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } = useDispatch(
+		ONBOARD_STORE
 	);
+	const {
+		getSelectedDesign,
+		hasPaidDesign,
+		getRandomizedDesigns,
+		shouldEnrollInFseBeta,
+	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const selectedDesign = getSelectedDesign();
+	const isEnrollingInFseBeta = shouldEnrollInFseBeta();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: selectedDesign?.slug,
@@ -34,7 +39,7 @@ const Designs: React.FunctionComponent = () => {
 
 	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( selectedDesign && userHasSelectedDesign ) {
 			// The `userHasSelectedDesign` local state variable is used to delay
 			// the call to `goNext()` by at least 1 re-render. This is to allow
@@ -43,6 +48,16 @@ const Designs: React.FunctionComponent = () => {
 			goNext();
 		}
 	}, [ goNext, userHasSelectedDesign, selectedDesign ] );
+
+	useEffect( () => {
+		// Make sure we're using the right designs since we can't rely on config variables
+		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
+		const availableDesigns = getAvailableDesigns( {
+			useFseDesigns: isEnrollingInFseBeta,
+			randomize: true,
+		} );
+		setRandomizedDesigns( availableDesigns );
+	}, [ isEnrollingInFseBeta, setRandomizedDesigns ] );
 
 	return (
 		<div className="gutenboarding-page designs">

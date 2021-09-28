@@ -16,5 +16,6 @@ export interface SiteData {
 export interface SiteDataOptions {
 	admin_url: string | undefined;
 	is_mapped_domain: boolean;
+	jetpack_version: string | undefined;
 	// TODO: fill out the rest of this
 }

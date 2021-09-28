@@ -49,5 +49,8 @@ export default createSelector(
 			woocommerce_setup: getSiteUrl( state, siteId ) + '/wp-admin/admin.php?page=wc-admin',
 		};
 	},
-	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
+	( state, siteId ) => [
+		getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ),
+		getFrontPageEditorUrl( state, siteId ),
+	]
 );

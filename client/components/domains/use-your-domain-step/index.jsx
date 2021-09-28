@@ -28,6 +28,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER,
 	MAP_EXISTING_DOMAIN,
 } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -447,4 +448,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( withShoppingCart( localize( UseYourDomainStep ) ) );
+)( withShoppingCart( withCartKey( localize( UseYourDomainStep ) ) ) );
