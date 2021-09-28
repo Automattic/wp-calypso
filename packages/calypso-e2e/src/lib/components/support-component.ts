@@ -6,7 +6,7 @@ const selectors = {
 	// Components
 	supportPopoverButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
-	searchInput: '.inline-help__search input[aria-label="Search"]',
+	searchInput: '[aria-label="Search"]',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
 	spinner: '.spinner',
@@ -136,9 +136,7 @@ export class SupportComponent {
 		}
 
 		await this.page.click( `:nth-match(${ selector }, ${ target })` );
-		if ( category === 'article' ) {
-			await this.page.click( selectors.readMoreButton );
-		}
+		await this.page.click( selectors.readMoreButton );
 	}
 
 	/**
