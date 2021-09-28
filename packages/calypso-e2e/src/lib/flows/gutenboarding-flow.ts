@@ -13,7 +13,9 @@ export type Features =
 	| 'Priority support';
 
 const selectors = {
+	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
+	wpLogo: 'div.gutenboarding__header-wp-logo',
 
 	// Start your website
 	siteTitle: '.acquire-intent-text-input__input',
@@ -78,6 +80,13 @@ export class GutenboardingFlow {
 	 */
 	async clickButton( text: string ) {
 		await this.page.click( selectors.button( text ) );
+	}
+
+	/**
+	 * Clicks on the WP Logo on top left.
+	 */
+	async clickWpLogo(): Promise< void > {
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.wpLogo ) ] );
 	}
 
 	/* Initial (landing) screen */
