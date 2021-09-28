@@ -4,11 +4,11 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { managePurchase } from 'calypso/me/purchases/paths';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import { addQueryArgs } from 'calypso/lib/route';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	PurchaseURLCallback,
 	QueryArgs,
@@ -87,8 +87,6 @@ function buildCheckoutURL(
 /**
  * Get the function for generating the URL for the product checkout page
  *
- * @param {SelectorProduct} product The product to add to the cart
- * @param {boolean} isUpgradeableToYearly Whether the product is upgradeable to yearly
  * @param {string} siteSlug Slug of the site
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url
  */

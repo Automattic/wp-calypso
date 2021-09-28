@@ -26,6 +26,7 @@ export const removeConnectedApplication = ( action ) =>
  * Dispatches a user connected application removal success action and notice when the request succeeded.
  *
  * @param   {object} action Redux action
+ * @param   {string} action.appId
  * @returns {object} Dispatched user connected applications add action
  */
 export const handleRemoveSuccess = ( { appId } ) => [

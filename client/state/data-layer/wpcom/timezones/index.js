@@ -14,9 +14,8 @@ const noop = () => {};
  * @example
  * valueLabelToObject( [ { value: 'foo', label: 'bar' }, { value: 'biz', label: 'bat' } ] )
  * // returns { foo: 'bar', biz: 'bat' }
- *
- * @param {ValueLabelRecord[]} pairs - timezone values and display labels
- * @returns {ValueLabelMap} object whose keys are timezone values, values are timezone labels
+ * @param {Array} pairs - timezone values and display labels
+ * @returns {object} object whose keys are timezone values, values are timezone labels
  */
 const timezonePairsToMap = ( pairs ) =>
 	Object.fromEntries( map( pairs, ( { label, value } ) => [ value, label ] ) );
@@ -24,7 +23,6 @@ const timezonePairsToMap = ( pairs ) =>
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.
  *
- * @param {object} data - REST-API response
  * @returns {object} normalized timezones data.
  */
 export const fromApi = ( { manual_utc_offsets, timezones, timezones_by_continent } ) => ( {
