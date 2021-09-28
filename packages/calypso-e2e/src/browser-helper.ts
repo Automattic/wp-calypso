@@ -110,6 +110,8 @@ export function targetGutenbergEdge(): boolean {
 export async function getDefaultLoggerConfiguration(
 	artifactPath: string
 ): Promise< LaunchOptions > {
+	// Unless filename is defined here, every line of logs will trigger creation of a new file.
+	// The timestamp is to prevent multiple contexts or pages from overwriting each other.
 	const filename = `playwright-${ getTimestamp() }.log`;
 	return {
 		logger: {
