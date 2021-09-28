@@ -11,11 +11,11 @@ import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteUsingCoreSiteEditorSelector from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isFullSiteEditingTheme } from 'calypso/utils';
 import ThemeMoreButton from './more-button';
 
 import './style.scss';
