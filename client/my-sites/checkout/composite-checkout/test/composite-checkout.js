@@ -48,6 +48,7 @@ jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
+jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),

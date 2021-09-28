@@ -1,6 +1,8 @@
 import cookie from 'cookie';
 import debug from './debug';
 
+let refreshCountryCodeCookieGdprRequest = null;
+
 /**
  * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
  *
@@ -13,20 +15,35 @@ export default async function refreshCountryCodeCookieGdpr() {
 		return;
 	}
 
-	try {
-		// cache buster
-		const v = new Date().getTime();
-		const res = await fetch( 'https://public-api.wordpress.com/geo/?v=' + v );
-		if ( ! res.ok ) {
-			throw new Error( await res.body() );
-		}
-
-		const json = await res.json();
-		setCountryCodeCookie( json.country_short );
-	} catch ( err ) {
-		debug( 'refreshCountryCodeCookieGdpr: error: ', err );
-		setCountryCodeCookie( 'unknown' );
+	if ( refreshCountryCodeCookieGdprRequest === null ) {
+		refreshCountryCodeCookieGdprRequest = requestCountryCode().then( ( countryCode ) =>
+			setCountryCodeCookie( countryCode )
+		);
 	}
+
+	await refreshCountryCodeCookieGdprRequest;
+	refreshCountryCodeCookieGdprRequest = null;
+}
+
+function requestCountryCode() {
+	// cache buster
+	const v = new Date().getTime();
+	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v )
+		.then( ( res ) => {
+			if ( ! res.ok ) {
+				return res.body().then( ( body ) => {
+					throw new Error( body );
+				} );
+			}
+			return res.json();
+		} )
+		.then( ( json ) => {
+			return json.country_short;
+		} )
+		.catch( ( err ) => {
+			debug( 'refreshCountryCodeCookieGdpr: error: ', err );
+			return 'unknown';
+		} );
 }
 
 function setCountryCodeCookie( countryCode ) {
