@@ -248,7 +248,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				{ ! showCredentialsButton && (
+				{ ! showCredentialsButton && ! enableClone && (
 					<Button compact={ isCompact } disabled={ disableRestore } onClick={ createRewind }>
 						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
 					</Button>
@@ -269,9 +269,11 @@ class ActivityLogItem extends Component {
 					</Button>
 				) }
 
-				<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
-					<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
-				</Button>
+				{ ! enableClone && (
+					<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
+						<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
+					</Button>
+				) }
 
 				{ enableClone && this.renderCloneAction() }
 			</div>
