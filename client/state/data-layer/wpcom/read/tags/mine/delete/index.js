@@ -19,7 +19,7 @@ export function requestUnfollow( action ) {
 /**
  * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
  *
- * @param  {RemovedTag} apiResponse api response from the unfollow
+ * @param  {object} apiResponse api response from the unfollow
  * @returns {number} the ID of the tag that was removed
  */
 export const fromApi = ( apiResponse ) => {
