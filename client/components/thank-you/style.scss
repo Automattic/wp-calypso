@@ -1,48 +1,14 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.layout.focus-content.is-section-checkout-thank-you.has-no-sidebar {
+.is-section-checkout-thank-you {
 	background: var( --studio-white );
+}
 
+.layout.focus-content.is-section-checkout-thank-you.has-no-sidebar {
 	div.layout__content {
 		padding-right: 0;
 		padding-left: 0;
-	}
-}
-
-.thank-you__container-header img {
-	max-width: 200px;
-
-	@media ( max-width: 782px ) {
-		max-width: 150px;
-	}
-}
-
-.thank-you__container-header {
-	flex-direction: column;
-	text-align: center;
-	align-items: center;
-}
-
-.thank-you__step-cta {
-	margin-left: auto;
-	margin-top: 6px;
-	@media ( max-width: $break-mobile ) {
-		margin: 0 auto 20px 0;
-	}
-}
-
-.thank-you__step {
-	flex-direction: column;
-	@include break-mobile {
-		flex-direction: row;
-	}
-
-	div > p {
-		margin-bottom: 12px;
-		@include break-mobile {
-			margin-bottom: 24px;
-		}
 	}
 }
 
@@ -95,6 +61,108 @@
 		&-subtitle {
 			padding-top: 4px;
 			margin-bottom: 0;
+		}
+	}
+}
+
+.thank-you__container {
+
+	margin-top: calc( -79px + var( --masterbar-height ) );
+
+	@include breakpoint-deprecated( '<960px' ) {
+		margin-top: calc( -71px + var( --masterbar-height ) );
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-top: -1px;
+	}
+}
+
+.thank-you {
+
+	&__header {
+		&-title {
+			line-height: 40px;
+		}
+
+		&-subtitle {
+			padding-top: 4px;
+			margin-bottom: 0;
+		}
+	}
+
+	&__body {
+		@include break-zoomed-in {
+			margin-top: 32px;
+		}
+
+		@include break-small {
+			margin-top: 50px;
+		}
+
+		div {
+			min-width: 144px;
+		}
+
+		& > div {
+			padding: 0 24px;
+		}
+	}
+
+	&__step {
+		padding-bottom: 24px;
+		align-items: center;
+		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
+		div > p {
+			@include break-mobile {
+				margin-bottom: 0;
+			}
+		}
+
+		&-cta {
+			margin-top: 0;
+			margin-left: auto;
+
+			@include break-zoomed-in {
+				width: 100%;
+			}
+
+			@include break-mobile {
+				width: 144px;
+			}
+		}
+	}
+
+	&__container-header {
+		width: auto;
+		background-color: var( --studio-blue-50 );
+		padding: 0 20px 35px;
+		box-sizing: border-box;
+		text-align: center;
+		height: auto;
+		flex-direction: column;
+		align-items: center;
+
+
+		img {
+			max-width: 260px;
+		}
+
+		&-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			padding-top: 30px;
+			color: var( --studio-white );
+
+			&-title {
+				font-size: 2rem;
+			}
 		}
 	}
 }
