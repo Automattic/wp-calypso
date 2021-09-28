@@ -1,5 +1,6 @@
+import isShallowEqual from '@wordpress/is-shallow-equal';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { requestSiteTerms } from 'calypso/state/terms/actions';
 import { isRequestingTermsForQuery } from 'calypso/state/terms/selectors';
@@ -10,13 +11,21 @@ const request = ( siteId, taxonomy, query ) => ( dispatch, getState ) => {
 	}
 };
 
+function useMemoized( obj ) {
+	const memoObj = useRef();
+	if ( ! isShallowEqual( obj, memoObj.current ) ) {
+		memoObj.current = obj;
+	}
+	return memoObj;
+}
+
 function QueryTerms( { siteId, taxonomy, query = {} } ) {
 	const dispatch = useDispatch();
-	const stringifiedQuery = JSON.stringify( query );
+	const memoizedQuery = useMemoized( query ).current;
 
 	useEffect( () => {
-		dispatch( request( siteId, taxonomy, JSON.parse( stringifiedQuery ) ) );
-	}, [ dispatch, siteId, taxonomy, stringifiedQuery ] );
+		dispatch( request( siteId, taxonomy, memoizedQuery ) );
+	}, [ dispatch, siteId, taxonomy, memoizedQuery ] );
 
 	return null;
 }
