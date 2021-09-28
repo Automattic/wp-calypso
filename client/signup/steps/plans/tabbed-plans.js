@@ -1040,12 +1040,12 @@ const CtaButton = styled( Button )`
 	border-radius: 4px;
 	font-weight: 500;
 	font-size: 14px;
-	height: 40px;
 	letter-spacing: 0.32px;
 	background: ${ ( props ) => ( props.primary ? '#117ac9' : '#fff' ) };
 	color: ${ ( props ) => ( props.primary ? '#fff' : '#2b2d2f' ) };
 
 	@media ( max-width: 600px ) {
+		height: 40px;
 		margin: 24px 56px;
 		font-size: 14px !important;
 		padding: 0 !important;
