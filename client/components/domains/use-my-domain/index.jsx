@@ -102,6 +102,32 @@ function UseMyDomain( {
 		return ! errorMessage;
 	}, [ domainName ] );
 
+	const setDomainTransferData = useCallback(
+		( isDomainUnlocked, transferEligibleDate ) => {
+			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
+			let lockStatus = UNKNOWN;
+
+			const isTransferrable = null === transferEligibleDate;
+
+			setIsDomainTransferrable( isTransferrable );
+
+			setTransferDomainStepsDefinition(
+				isDomainUnlocked
+					? transferUnlockedDomainStepsDefinition
+					: transferLockedDomainStepsDefinition
+			);
+
+			if ( isDomainUnlocked === null ) {
+				lockStatus = UNKNOWN;
+			} else {
+				lockStatus = isDomainUnlocked ? UNLOCKED : LOCKED;
+			}
+
+			setDomainLockStatus( lockStatus );
+		},
+		[ setIsDomainTransferrable, setTransferDomainStepsDefinition, setDomainLockStatus ]
+	);
+
 	const onNext = useCallback( async () => {
 		if ( ! validateDomainName() ) {
 			return;
@@ -116,10 +142,9 @@ function UseMyDomain( {
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
 			const {
+				unlocked: isDomainUnlocked,
 				transfer_eligible_date: transferEligibleDate,
 			} = await wpcom.undocumented().getInboundTransferStatus( domainName );
-
-			const isTransferrable = null === transferEligibleDate;
 
 			const availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
@@ -132,14 +157,20 @@ function UseMyDomain( {
 			} else {
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
-				setIsDomainTransferrable( isTransferrable );
+				setDomainTransferData( isDomainUnlocked, transferEligibleDate );
 			}
 		} catch ( error ) {
 			setDomainNameValidationError( error );
 		} finally {
 			setIsFetchingAvailability( false );
 		}
-	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
+	}, [
+		domainName,
+		inputMode.transferOrConnect,
+		selectedSite,
+		validateDomainName,
+		setDomainTransferData,
+	] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -159,36 +190,6 @@ function UseMyDomain( {
 		initialValidation.current = true;
 		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
 	}, [ initialQuery, onNext ] );
-
-	const setStepsUsingDomainLockStatus = useCallback( async () => {
-		const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
-		let lockStatus = UNKNOWN;
-		try {
-			setIsFetchingDomainLockStatus( true );
-
-			const { unlocked } = await wpcom.undocumented().getInboundTransferStatus( domainName );
-			setTransferDomainStepsDefinition(
-				unlocked ? transferUnlockedDomainStepsDefinition : transferLockedDomainStepsDefinition
-			);
-
-			if ( unlocked === null ) {
-				lockStatus = UNKNOWN;
-			} else {
-				lockStatus = unlocked ? UNLOCKED : LOCKED;
-			}
-
-			setDomainLockStatus( lockStatus );
-		} catch {
-			setDomainLockStatus( lockStatus );
-		} finally {
-			setIsFetchingDomainLockStatus( false );
-		}
-	}, [ domainName, setIsFetchingDomainLockStatus, setTransferDomainStepsDefinition ] );
-
-	useEffect( () => {
-		if ( mode !== inputMode.transferDomain ) return;
-		setStepsUsingDomainLockStatus();
-	}, [ mode, inputMode, setStepsUsingDomainLockStatus ] );
 
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
