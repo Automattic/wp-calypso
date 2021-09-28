@@ -269,8 +269,8 @@ const getPlanBloggerDetails = () => ( {
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
-	getInferiorHiddenFeatures: () => [],
+	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getInferiorFeatures: () => [],
 } );
 
 const getPlanPersonalDetails = () => ( {
@@ -330,8 +330,8 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
-	getInferiorHiddenFeatures: () => [],
+	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+	getInferiorFeatures: () => [],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -431,7 +431,7 @@ const getPlanEcommerceDetails = () => ( {
 		PREMIUM_DESIGN_FOR_STORES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
 		FEATURE_CLOUDFLARE_ANALYTICS,
@@ -439,7 +439,7 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 	],
-	getInferiorHiddenFeatures: () => [],
+	getInferiorFeatures: () => [],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -511,8 +511,8 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
-	getInferiorHiddenFeatures: () => [],
+	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
+	getInferiorFeatures: () => [],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -603,14 +603,14 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_SFTP_DATABASE,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_GOOGLE_MY_BUSINESS,
 		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 	],
-	getInferiorHiddenFeatures: () => [],
+	getInferiorFeatures: () => [],
 } );
 
 const getJetpackPersonalDetails = () => ( {
@@ -630,7 +630,7 @@ const getJetpackPersonalDetails = () => ( {
 		),
 	getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_ANTISPAM_V2 ],
 	getBillingTimeFrame: () => i18n.translate( 'per year' ),
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 		FEATURE_BACKUP_ARCHIVE_30,
 		FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
@@ -669,7 +669,7 @@ const getJetpackPremiumDetails = () => ( {
 			'Your site is being secured and you have access to marketing tools and priority support.'
 		),
 	getPlanCardFeatures: () => [ FEATURE_BACKUP_DAILY_V2, FEATURE_SCAN_V2, FEATURE_ANTISPAM_V2 ],
-	getHiddenFeatures: () =>
+	getIncludedFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -727,7 +727,7 @@ const getJetpackBusinessDetails = () => ( {
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		FEATURE_ANTISPAM_V2,
 	],
-	getHiddenFeatures: () =>
+	getIncludedFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -755,10 +755,7 @@ const getJetpackBusinessDetails = () => ( {
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 		] ),
-	getInferiorHiddenFeatures: () => [
-		FEATURE_JETPACK_BACKUP_DAILY,
-		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-	],
+	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
 const getPlanJetpackSecurityDailyDetails = () => ( {
@@ -777,7 +774,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		FEATURE_ANTISPAM_V2,
 		FEATURE_VIDEO_HOSTING_V2,
 	],
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_JETPACK_SCAN_DAILY,
@@ -821,7 +818,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 	],
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_REALTIME,
 		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		FEATURE_JETPACK_SCAN_DAILY,
@@ -838,7 +835,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
-	getInferiorHiddenFeatures: () => [
+	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
@@ -861,7 +858,7 @@ const getPlanJetpackSecurityT1Details = () => ( {
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 	],
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T1_YEARLY,
 		FEATURE_JETPACK_BACKUP_T1_MONTHLY,
 		FEATURE_JETPACK_SCAN_DAILY,
@@ -878,7 +875,7 @@ const getPlanJetpackSecurityT1Details = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
-	getInferiorHiddenFeatures: () => [
+	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
@@ -901,7 +898,7 @@ const getPlanJetpackSecurityT2Details = () => ( {
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 	],
-	getHiddenFeatures: () => [
+	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T2_YEARLY,
 		FEATURE_JETPACK_BACKUP_T2_MONTHLY,
 		FEATURE_JETPACK_SCAN_DAILY,
@@ -918,7 +915,7 @@ const getPlanJetpackSecurityT2Details = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
-	getInferiorHiddenFeatures: () => [
+	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
@@ -946,7 +943,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		FEATURE_CRM_V2,
 		FEATURE_PRODUCT_SEARCH_V2,
 	],
-	getHiddenFeatures: () =>
+	getIncludedFeatures: () =>
 		isEnabled( 'jetpack/only-realtime-products' )
 			? [
 					FEATURE_JETPACK_BACKUP_T2_YEARLY,
@@ -990,7 +987,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 					FEATURE_GOOGLE_ANALYTICS,
 					FEATURE_PREMIUM_SUPPORT,
 			  ],
-	getInferiorHiddenFeatures: () => [
+	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
@@ -1041,8 +1038,8 @@ export const PLANS_LIST = {
 			FEATURE_FREE_THEMES_SIGNUP,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getHiddenFeatures: () => [],
-		getInferiorHiddenFeatures: () => [],
+		getIncludedFeatures: () => [],
+		getInferiorFeatures: () => [],
 	},
 
 	[ PLAN_BLOGGER ]: {
@@ -1340,7 +1337,7 @@ export const PLANS_LIST = {
 					' — perfectly packaged and optimized for everyone.'
 			),
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
-		getHiddenFeatures: () => [
+		getIncludedFeatures: () => [
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS,
@@ -1512,12 +1509,12 @@ export const PLANS_LIST = {
 
 		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities
-		getHiddenFeatures: () => [
+		getIncludedFeatures: () => [
 			FEATURE_AUDIO_UPLOADS,
 			FEATURE_JETPACK_SEARCH,
 			FEATURE_JETPACK_SEARCH_MONTHLY,
 		],
-		getInferiorHiddenFeatures: () => [],
+		getInferiorFeatures: () => [],
 
 		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
 		getAudience: () => i18n.translate( 'Best for bloggers' ),

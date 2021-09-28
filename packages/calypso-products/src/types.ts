@@ -83,6 +83,6 @@ export interface Plan {
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getTagline: () => TranslateResult;
-	getHiddenFeatures?: () => Feature[];
-	getInferiorHiddenFeatures?: () => Feature[];
+	getIncludedFeatures?: () => Feature[];
+	getInferiorFeatures?: () => Feature[];
 }

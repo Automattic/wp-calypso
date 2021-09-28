@@ -79,8 +79,8 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 			const sitePlanDetails = getPlan( sitePlan.product_slug );
 			productsList = [
 				...productsList,
-				...sitePlanDetails.getHiddenFeatures(),
-				...( sitePlanDetails.getInferiorHiddenFeatures?.() ?? [] ),
+				...sitePlanDetails.getIncludedFeatures(),
+				...( sitePlanDetails.getInferiorFeatures?.() ?? [] ),
 			];
 		}
 		return !! productsList.find( productSlugTest );
