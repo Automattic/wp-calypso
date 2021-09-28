@@ -18,6 +18,7 @@ export function getOptionInfo( {
 	currencyCode,
 	domain,
 	isSignupStep,
+	isDomainTransferrable,
 	onConnect,
 	onTransfer,
 	primaryWithPlansOnly,
@@ -101,6 +102,10 @@ export function getOptionInfo( {
 			break;
 		default:
 			transferContent = optionInfo.transferNotSupported;
+	}
+
+	if ( ! isDomainTransferrable ) {
+		transferContent = optionInfo.transferNotSupported;
 	}
 
 	let connectContent;

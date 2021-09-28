@@ -50,6 +50,7 @@ function UseMyDomain( {
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const [ domainLockStatus, setDomainLockStatus ] = useState( domainLockStatusType.LOCKED );
+	const [ isDomainTransferrable, setIsDomainTransferrable ] = useState( false );
 	const [ isFetchingDomainLockStatus, setIsFetchingDomainLockStatus ] = useState( false );
 	const [ transferDomainStepsDefinition, setTransferDomainStepsDefinition ] = useState(
 		transferLockedDomainStepsDefinition
@@ -101,7 +102,7 @@ function UseMyDomain( {
 		return ! errorMessage;
 	}, [ domainName ] );
 
-	const onNext = useCallback( () => {
+	const onNext = useCallback( async () => {
 		if ( ! validateDomainName() ) {
 			return;
 		}
@@ -109,25 +110,35 @@ function UseMyDomain( {
 		setIsFetchingAvailability( true );
 		setDomainAvailabilityData( {} );
 
-		wpcom
-			.domain( domainName )
-			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } )
-			.then( ( availabilityData ) => {
-				const availabilityErrorMessage = getAvailabilityErrorMessage( {
-					availabilityData,
-					domainName,
-					selectedSite,
-				} );
+		try {
+			const availabilityData = await wpcom
+				.domain( domainName )
+				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
-				if ( availabilityErrorMessage ) {
-					setDomainNameValidationError( availabilityErrorMessage );
-				} else {
-					setMode( inputMode.transferOrConnect );
-					setDomainAvailabilityData( availabilityData );
-				}
-			} )
-			.catch( ( error ) => setDomainNameValidationError( error ) )
-			.finally( () => setIsFetchingAvailability( false ) );
+			const {
+				transfer_eligible_date: transferEligibleDate,
+			} = await wpcom.undocumented().getInboundTransferStatus( domainName );
+
+			const isTransferrable = null === transferEligibleDate;
+
+			const availabilityErrorMessage = getAvailabilityErrorMessage( {
+				availabilityData,
+				domainName,
+				selectedSite,
+			} );
+
+			if ( availabilityErrorMessage ) {
+				setDomainNameValidationError( availabilityErrorMessage );
+			} else {
+				setMode( inputMode.transferOrConnect );
+				setDomainAvailabilityData( availabilityData );
+				setIsDomainTransferrable( isTransferrable );
+			}
+		} catch ( error ) {
+			setDomainNameValidationError( error );
+		} finally {
+			setIsFetchingAvailability( false );
+		}
 	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
 
 	const onDomainNameChange = ( event ) => {
@@ -206,6 +217,7 @@ function UseMyDomain( {
 		return (
 			<DomainTransferOrConnect
 				availability={ domainAvailabilityData }
+				isDomainTransferrable={ isDomainTransferrable }
 				domain={ domainName }
 				isSignupStep={ isSignupStep }
 				onConnect={
