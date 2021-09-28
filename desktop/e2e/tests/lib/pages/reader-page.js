@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const { By } = require( 'selenium-webdriver' );
 const AsyncBaseContainer = require( '../async-base-container' );
 
