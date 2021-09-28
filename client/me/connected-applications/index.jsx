@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { times } from 'lodash';
+import { times, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -73,7 +73,8 @@ class ConnectedApplications extends PureComponent {
 			return this.renderEmptyContent();
 		}
 
-		return apps.map( ( connection ) => (
+		// Some applications (eg. gravatar-upload) are in lower case.
+		return sortBy( apps, ( app ) => app.title.toLowerCase() ).map( ( connection ) => (
 			<ConnectedAppItem connection={ connection } key={ connection.ID } />
 		) );
 	}
