@@ -124,7 +124,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 
 		it( 'Verify site is not yet launched', async function () {
 			// Obtain a new Page in a separate BrowserContext.
-			const testPage = await BrowserManager.newPage( { newContext: true } );
+			const testContext = await BrowserManager.newBrowserContext();
+			const testPage = await BrowserManager.newPage( { context: testContext } );
 			// TODO: make a utility to obtain the blog URL.
 			await testPage.goto( `https://${ blogName }.wordpress.com` );
 			// View site without logging in.
