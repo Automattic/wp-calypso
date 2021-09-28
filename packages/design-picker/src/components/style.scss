@@ -305,7 +305,10 @@
 	.design-button-cover__button-groups {
 		display: flex;
 		flex-direction: column;
-		gap: 8px;
+
+		.design-button-cover__button:not( :first-child ) {
+			margin-top: 8px;
+		}
 	}
 
 	.design-button-cover__button {
