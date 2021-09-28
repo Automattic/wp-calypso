@@ -16,13 +16,15 @@ const SPACE_CHARACTERS = {
 
 /**
  * Checks whether a character is a space character
+ *
  * @param {string} character character to examine
- * @returns {bool} true if character is a space character, false otherwise
+ * @returns {boolean} true if character is a space character, false otherwise
  */
 const isSpaceCharacter = ( character ) => !! SPACE_CHARACTERS[ character ];
 
 /**
  * Get index of the first character that is not within a tag
+ *
  * @param {string} text text to examine
  * @returns {number} index not within a tag
  */
@@ -49,6 +51,7 @@ const getTaglessIndex = ( text ) => {
 
 /**
  * Gets text content from react element in case that's a leaf element
+ *
  * @param {React.Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
@@ -196,6 +199,7 @@ const setChildDirection = ( child, isRtl ) => {
 
 /**
  * Auto direction component that will set direction to child components according to their text content
+ *
  * @param {object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
