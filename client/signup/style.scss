@@ -402,7 +402,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.25rem; /* stylelint-disable-line */
+			font-size: 2.15rem; /* stylelint-disable-line */
 
 			@include break-xlarge {
 				font-size: 2.75rem; /* stylelint-disable-line */
