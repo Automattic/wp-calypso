@@ -1,7 +1,15 @@
 const contextLinks = {
+	autorenewal: {
+		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
+		post_id: 111349,
+	},
 	billing: {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
+	},
+	cancel_purchase: {
+		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
+		post_id: 111349,
 	},
 	comments: {
 		link: 'https://wordpress.com/support/comments/',
