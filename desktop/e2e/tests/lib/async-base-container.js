@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const driverHelper = require( './driver-helper' );
 
 class AsyncBaseContainer {
