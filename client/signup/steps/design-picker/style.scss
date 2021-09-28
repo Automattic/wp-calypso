@@ -38,7 +38,7 @@
 
 	// Ugly, but necessary to cancel out some signup styles
 	// without causing regressions to other parts of `/start`
-	button:not( .is-primary ) {
+	button {
 		body.is-section-signup .layout:not( .dops ) & {
 			font-size: inherit;
 			padding-top: 0;
