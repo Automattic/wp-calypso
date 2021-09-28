@@ -47,10 +47,10 @@ function UseMyDomain( {
 	);
 
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
+	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const [ domainLockStatus, setDomainLockStatus ] = useState( domainLockStatusType.LOCKED );
-	const [ isDomainTransferrable, setIsDomainTransferrable ] = useState( false );
 	const [ transferDomainStepsDefinition, setTransferDomainStepsDefinition ] = useState(
 		transferLockedDomainStepsDefinition
 	);
@@ -102,13 +102,9 @@ function UseMyDomain( {
 	}, [ domainName ] );
 
 	const setDomainTransferData = useCallback(
-		( isDomainUnlocked, transferEligibleDate ) => {
+		( isDomainUnlocked ) => {
 			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
 			let lockStatus = UNKNOWN;
-
-			const isTransferrable = null === transferEligibleDate;
-
-			setIsDomainTransferrable( isTransferrable );
 
 			setTransferDomainStepsDefinition(
 				isDomainUnlocked
@@ -124,7 +120,7 @@ function UseMyDomain( {
 
 			setDomainLockStatus( lockStatus );
 		},
-		[ setIsDomainTransferrable, setTransferDomainStepsDefinition, setDomainLockStatus ]
+		[ setTransferDomainStepsDefinition, setDomainLockStatus ]
 	);
 
 	const onNext = useCallback( async () => {
@@ -140,10 +136,22 @@ function UseMyDomain( {
 				.domain( domainName )
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
-			const {
-				unlocked: isDomainUnlocked,
-				transfer_eligible_date: transferEligibleDate,
-			} = await wpcom.undocumented().getInboundTransferStatus( domainName );
+			const inboundTransferStatusResult = await wpcom
+				.undocumented()
+				.getInboundTransferStatus( domainName );
+
+			const inboundTransferStatusInfo = {
+				creationDate: inboundTransferStatusResult.creation_date,
+				email: inboundTransferStatusResult.admin_email,
+				inRedemption: inboundTransferStatusResult.in_redemption,
+				losingRegistrar: inboundTransferStatusResult.registrar,
+				losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
+				privacy: inboundTransferStatusResult.privacy,
+				termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
+				transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
+				transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
+				unlocked: inboundTransferStatusResult.unlocked,
+			};
 
 			const availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
@@ -156,7 +164,11 @@ function UseMyDomain( {
 			} else {
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
-				setDomainTransferData( isDomainUnlocked, transferEligibleDate );
+				setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
+				setDomainTransferData(
+					inboundTransferStatusInfo.isDomainUnlocked,
+					inboundTransferStatusInfo.transferEligibleDate
+				);
 			}
 		} catch ( error ) {
 			setDomainNameValidationError( error );
@@ -217,7 +229,7 @@ function UseMyDomain( {
 		return (
 			<DomainTransferOrConnect
 				availability={ domainAvailabilityData }
-				isDomainTransferrable={ isDomainTransferrable }
+				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
 				domain={ domainName }
 				isSignupStep={ isSignupStep }
 				onConnect={

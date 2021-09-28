@@ -6,6 +6,7 @@ export { getMappingPriceText } from './get-mapping-price-text';
 export { getOptionInfo } from './get-option-info';
 export { getTransferFreeText } from './get-transfer-free-text';
 export { getTransferPriceText } from './get-transfer-price-text';
+export { getTransferRestrictionMessage } from './get-transfer-restriction-message';
 export { getTransferSalePriceText } from './get-transfer-sale-price-text';
 export { isFreeTransfer } from './is-free-transfer';
 export { optionInfo } from './option-info';
