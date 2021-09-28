@@ -47,10 +47,10 @@ function UseMyDomain( {
 	);
 
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
+	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const [ domainLockStatus, setDomainLockStatus ] = useState( domainLockStatusType.LOCKED );
-	const [ isFetchingDomainLockStatus, setIsFetchingDomainLockStatus ] = useState( false );
 	const [ transferDomainStepsDefinition, setTransferDomainStepsDefinition ] = useState(
 		transferLockedDomainStepsDefinition
 	);
@@ -101,7 +101,29 @@ function UseMyDomain( {
 		return ! errorMessage;
 	}, [ domainName ] );
 
-	const onNext = useCallback( () => {
+	const setDomainTransferData = useCallback(
+		( isDomainUnlocked ) => {
+			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
+			let lockStatus = UNKNOWN;
+
+			setTransferDomainStepsDefinition(
+				isDomainUnlocked
+					? transferUnlockedDomainStepsDefinition
+					: transferLockedDomainStepsDefinition
+			);
+
+			if ( isDomainUnlocked === null ) {
+				lockStatus = UNKNOWN;
+			} else {
+				lockStatus = isDomainUnlocked ? UNLOCKED : LOCKED;
+			}
+
+			setDomainLockStatus( lockStatus );
+		},
+		[ setTransferDomainStepsDefinition, setDomainLockStatus ]
+	);
+
+	const onNext = useCallback( async () => {
 		if ( ! validateDomainName() ) {
 			return;
 		}
@@ -109,26 +131,57 @@ function UseMyDomain( {
 		setIsFetchingAvailability( true );
 		setDomainAvailabilityData( {} );
 
-		wpcom
-			.domain( domainName )
-			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } )
-			.then( ( availabilityData ) => {
-				const availabilityErrorMessage = getAvailabilityErrorMessage( {
-					availabilityData,
-					domainName,
-					selectedSite,
-				} );
+		try {
+			const availabilityData = await wpcom
+				.domain( domainName )
+				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
-				if ( availabilityErrorMessage ) {
-					setDomainNameValidationError( availabilityErrorMessage );
-				} else {
-					setMode( inputMode.transferOrConnect );
-					setDomainAvailabilityData( availabilityData );
-				}
-			} )
-			.catch( ( error ) => setDomainNameValidationError( error ) )
-			.finally( () => setIsFetchingAvailability( false ) );
-	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
+			const inboundTransferStatusResult = await wpcom
+				.undocumented()
+				.getInboundTransferStatus( domainName );
+
+			const inboundTransferStatusInfo = {
+				creationDate: inboundTransferStatusResult.creation_date,
+				email: inboundTransferStatusResult.admin_email,
+				inRedemption: inboundTransferStatusResult.in_redemption,
+				losingRegistrar: inboundTransferStatusResult.registrar,
+				losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
+				privacy: inboundTransferStatusResult.privacy,
+				termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
+				transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
+				transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
+				unlocked: inboundTransferStatusResult.unlocked,
+			};
+
+			const availabilityErrorMessage = getAvailabilityErrorMessage( {
+				availabilityData,
+				domainName,
+				selectedSite,
+			} );
+
+			if ( availabilityErrorMessage ) {
+				setDomainNameValidationError( availabilityErrorMessage );
+			} else {
+				setMode( inputMode.transferOrConnect );
+				setDomainAvailabilityData( availabilityData );
+				setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
+				setDomainTransferData(
+					inboundTransferStatusInfo.isDomainUnlocked,
+					inboundTransferStatusInfo.transferEligibleDate
+				);
+			}
+		} catch ( error ) {
+			setDomainNameValidationError( error );
+		} finally {
+			setIsFetchingAvailability( false );
+		}
+	}, [
+		domainName,
+		inputMode.transferOrConnect,
+		selectedSite,
+		validateDomainName,
+		setDomainTransferData,
+	] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -148,36 +201,6 @@ function UseMyDomain( {
 		initialValidation.current = true;
 		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
 	}, [ initialQuery, onNext ] );
-
-	const setStepsUsingDomainLockStatus = useCallback( async () => {
-		const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
-		let lockStatus = UNKNOWN;
-		try {
-			setIsFetchingDomainLockStatus( true );
-
-			const { unlocked } = await wpcom.undocumented().getInboundTransferStatus( domainName );
-			setTransferDomainStepsDefinition(
-				unlocked ? transferUnlockedDomainStepsDefinition : transferLockedDomainStepsDefinition
-			);
-
-			if ( unlocked === null ) {
-				lockStatus = UNKNOWN;
-			} else {
-				lockStatus = unlocked ? UNLOCKED : LOCKED;
-			}
-
-			setDomainLockStatus( lockStatus );
-		} catch {
-			setDomainLockStatus( lockStatus );
-		} finally {
-			setIsFetchingDomainLockStatus( false );
-		}
-	}, [ domainName, setIsFetchingDomainLockStatus, setTransferDomainStepsDefinition ] );
-
-	useEffect( () => {
-		if ( mode !== inputMode.transferDomain ) return;
-		setStepsUsingDomainLockStatus();
-	}, [ mode, inputMode, setStepsUsingDomainLockStatus ] );
 
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
@@ -206,6 +229,7 @@ function UseMyDomain( {
 		return (
 			<DomainTransferOrConnect
 				availability={ domainAvailabilityData }
+				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
 				domain={ domainName }
 				isSignupStep={ isSignupStep }
 				onConnect={
@@ -244,7 +268,6 @@ function UseMyDomain( {
 				onTransfer={ onTransfer }
 				onSetPage={ setTransferDomainFlowPageSlug }
 				stepsDefinition={ transferDomainStepsDefinition }
-				isFetchingDomainLockStatus={ isFetchingDomainLockStatus }
 				domainLockStatus={ domainLockStatus }
 			/>
 		);
