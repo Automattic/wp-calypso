@@ -11,7 +11,7 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import getReaderFollowedSitesByUpdated from 'calypso/state/reader/follows/selectors/get-reader-followed-sites-by-updated';
 import ReaderSidebarFollowingItem from './item';
 import '../style.scss';
 
@@ -86,7 +86,7 @@ export default connect(
 	( state, ownProps ) => {
 		return {
 			isFollowingOpen: isFollowingOpen( state, ownProps.path ),
-			sites: getReaderFollowedSites( state ),
+			sites: getReaderFollowedSitesByUpdated( state ),
 		};
 	},
 	{
