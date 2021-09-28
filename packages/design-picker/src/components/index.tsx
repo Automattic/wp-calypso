@@ -16,14 +16,15 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
+	highRes: boolean;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) => (
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => (
 	<MShotsImage
 		url={ getDesignUrl( design, locale ) }
 		aria-labelledby={ makeOptionId( design ) }
 		alt=""
-		options={ mShotOptions() }
+		options={ mShotOptions( design, highRes ) }
 		scrollable={ design.preview !== 'static' }
 	/>
 );
@@ -33,6 +34,7 @@ interface DesignButtonProps {
 	locale: string;
 	onSelect: ( design: Design ) => void;
 	premiumBadge?: React.ReactNode;
+	highRes: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -40,6 +42,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	onSelect,
 	design,
 	premiumBadge,
+	highRes,
 } ) => {
 	const { __ } = useI18n();
 
@@ -69,7 +72,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } />
+						<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
 					</div>
 				) }
 			</span>
@@ -98,6 +101,7 @@ export interface DesignPickerProps {
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
 	className?: string;
+	highResThumbnails?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -110,6 +114,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isGridMinimal,
 	theme = 'light',
 	className,
+	highResThumbnails = false,
 } ) => {
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
@@ -121,6 +126,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						locale={ locale }
 						onSelect={ onSelect }
 						premiumBadge={ premiumBadge }
+						highRes={ highResThumbnails }
 					/>
 				) ) }
 			</div>
