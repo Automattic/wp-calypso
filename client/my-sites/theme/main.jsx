@@ -31,6 +31,7 @@ import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -56,7 +57,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isFullSiteEditingTheme } from 'calypso/utils';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
