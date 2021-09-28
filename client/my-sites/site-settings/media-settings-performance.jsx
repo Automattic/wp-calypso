@@ -178,7 +178,10 @@ export default connect( ( state ) => {
 			isJetpackSite( state, selectedSiteId ) &&
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
 			! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) &&
-			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ), // Jetpack Pro is the feature used in current plans that include VP
+			// These features are used in current plans that include VP
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) &&
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) &&
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ),
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
 		sitePlanSlug,
