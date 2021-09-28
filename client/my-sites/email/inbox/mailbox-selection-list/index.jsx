@@ -3,10 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
+import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
+import { getMailboxesCacheKey, useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
+import errorIllustration from 'calypso/landing/browsehappy/illustration.svg';
 import {
 	getEmailAddress,
 	isEmailForwardAccount,
@@ -15,6 +17,7 @@ import {
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
@@ -82,8 +85,8 @@ const NewMailboxUpsell = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
 
-	const handleClick = useCallback( () => {
-		page.redirect( `/email/${ selectedSiteSlug }` );
+	const handleCreateNewMailboxClick = useCallback( () => {
+		page( `/email/${ selectedSiteSlug }` );
 	}, [ selectedSiteSlug ] );
 
 	return (
@@ -93,7 +96,9 @@ const NewMailboxUpsell = () => {
 				<div>{ translate( 'Create new and activate immediately' ) }</div>
 			</div>
 			<div className="mailbox-selection-list__new-mailbox-upsell-cta">
-				<Button onClick={ handleClick }>{ translate( 'Create a new mailbox' ) }</Button>
+				<Button onClick={ handleCreateNewMailboxClick }>
+					{ translate( 'Create a new mailbox' ) }
+				</Button>
 			</div>
 		</div>
 	);
@@ -138,27 +143,63 @@ const MailboxListStatus = ( { isError, statusMessage } ) => {
 
 MailboxListStatus.propType = {
 	isError: PropTypes.bool,
-	statusMessage: PropTypes.string.isRequired,
+	statusMessage: PropTypes.node.isRequired,
+};
+
+const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
+	const translate = useTranslate();
+	const queryClient = useQueryClient();
+
+	const reloadMailboxes = () => {
+		queryClient.removeQueries( getMailboxesCacheKey( siteId ) );
+		refetchMailboxes();
+	};
+
+	return (
+		<div className="mailbox-selection-list__loader-error-container">
+			<section>
+				<img src={ errorIllustration } alt={ translate( 'Error image' ) } />
+				<FormattedHeader
+					align="center"
+					brandFont
+					headerText={ translate( "Something's broken" ) }
+					subHeaderText={ translate(
+						'There has been an error in loading your mailboxes. Please use the reload button, and reach out to support if the issue persists.'
+					) }
+				/>
+				<footer>
+					<Button primary onClick={ reloadMailboxes }>
+						{ translate( 'Reload mailboxes' ) }
+					</Button>
+					<Button borderless primary href={ CALYPSO_CONTACT }>
+						{ translate( 'Contact support' ) }
+					</Button>
+				</footer>
+			</section>
+		</div>
+	);
+};
+
+MailboxLoaderError.propType = {
+	refetchMailboxes: PropTypes.func.isRequired,
+	siteId: PropTypes.number.isRequired,
 };
 
 const MailboxSelectionList = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const { data, error, isLoading } = useGetMailboxes( selectedSite?.ID ?? null, {
-		retry: false,
+	const selectedSiteId = selectedSite?.ID ?? null;
+
+	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
+		retry: 2,
 	} );
 
-	if ( isLoading ) {
+	if ( isLoading || selectedSiteId === null ) {
 		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
 	}
 
-	if ( error ) {
-		return (
-			<MailboxListStatus
-				isError
-				statusMessage={ translate( 'There was an error loading your mailboxes.' ) }
-			/>
-		);
+	if ( isError ) {
+		return <MailboxLoaderError refetchMailboxes={ refetch } siteId={ selectedSiteId } />;
 	}
 
 	const mailboxes = data?.mailboxes ?? [];
