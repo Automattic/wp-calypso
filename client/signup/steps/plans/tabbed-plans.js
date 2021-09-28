@@ -940,7 +940,7 @@ function getSharedFeatures() {
 			},
 			{
 				icon: 'lock',
-				description: 'Free SSL certificante',
+				description: 'Free SSL certificate',
 			},
 			{
 				icon: 'image',
