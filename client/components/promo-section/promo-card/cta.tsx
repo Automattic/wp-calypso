@@ -119,7 +119,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, Props >( ( state, { cta } ) => {
+export default connect< ConnectedProps, unknown, Props >( ( state, { cta } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {

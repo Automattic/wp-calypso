@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 
-type Props = {};
+type Props = Record< never, never >;
 
 const PlanRenewalMessage: FunctionComponent< Props > = () => {
 	const translate = useTranslate();

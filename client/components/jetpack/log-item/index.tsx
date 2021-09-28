@@ -15,7 +15,7 @@ export interface Props {
 	summary?: string | ReactNode;
 	expandedSummary?: string | ReactNode;
 	clickableHeader?: boolean;
-	onClick?: Function;
+	onClick?: () => void;
 }
 
 class LogItem extends React.PureComponent< Props > {

@@ -36,15 +36,15 @@ interface AcceptedProps {
 	dark?: boolean;
 	keepRepositioning?: boolean;
 	next?: string;
-	onTargetDisappear?: Function;
+	onTargetDisappear?: ( callbacks: { quit?: () => void; next?: () => void } ) => void;
 	placement?: DialogPosition;
 	scrollContainer?: string;
 	shouldScrollTo?: boolean;
 	style?: CSSProperties;
 	target?: string;
-	wait?: Function;
+	wait?: ( props: Props, context: typeof contextTypes ) => Promise< void >;
 	waitForTarget?: boolean;
-	when?: Function;
+	when?: ( ...args: unknown[] ) => boolean;
 }
 
 interface DefaultProps {

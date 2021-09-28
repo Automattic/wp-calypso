@@ -10,8 +10,8 @@ import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
 import './style.scss';
 
 interface Props {
-	onCloseDialog: Function;
-	onConfirmation: Function;
+	onCloseDialog: React.MouseEventHandler;
+	onConfirmation: React.MouseEventHandler;
 	showDialog: boolean;
 	threats: Array< FixableThreat >;
 }
