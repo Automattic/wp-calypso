@@ -42,6 +42,10 @@ export function getPlansSlugs() {
 	return Object.keys( getPlans() );
 }
 
+/**
+ * @param   {string} planKey - A key that represents a plan.
+ * @returns {import("./types.ts").Plan} A Plan object that corresponds to the supplied key.
+ */
 export function getPlan( planKey ) {
 	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
 		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {

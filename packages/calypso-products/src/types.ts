@@ -83,6 +83,21 @@ export interface Plan {
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getTagline: () => TranslateResult;
+
+	/**
+	 * Features that are included as part of this plan.
+	 *
+	 * NOTE: Some parts of Calypso use the result of this method
+	 * to determine what a given plan *may* be capable of doing
+	 * before verifying with an API.
+	 */
 	getIncludedFeatures?: () => Feature[];
+
+	/**
+	 * Features that are superseded by another feature included in this plan.
+	 *
+	 * Example: if a plan has 1TB of storage space,
+	 * a feature for 20GB of storage space would be inferior to it.
+	 */
 	getInferiorFeatures?: () => Feature[];
 }
