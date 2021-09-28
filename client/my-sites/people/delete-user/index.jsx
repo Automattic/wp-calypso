@@ -13,8 +13,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import User from 'calypso/components/user';
 import accept from 'calypso/lib/accept';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -220,7 +222,34 @@ class DeleteUser extends Component {
 	};
 
 	renderSingleSite = () => {
-		const { translate } = this.props;
+		const { translate, user, isJetpack } = this.props;
+
+		// A user should not be able to remove the site owner.
+		if ( ! isJetpack && user.ID ) {
+			return (
+				<Card className="delete-user__single-site">
+					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
+					<p className="delete-user__explanation">
+						{ translate(
+							'You cannot delete the site owner. Please transfer ownership of this site to a different account before deleting this user. {{supportLink}}Learn more.{{/supportLink}}',
+							{
+								components: {
+									supportLink: (
+										<InlineSupportLink
+											supportPostId={ 102743 }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
+											) }
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+				</Card>
+			);
+		}
+
 		return (
 			<Card className="delete-user__single-site">
 				<form onSubmit={ this.deleteUser }>
