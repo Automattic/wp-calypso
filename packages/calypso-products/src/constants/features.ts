@@ -169,20 +169,18 @@ export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
 // Jetpack tiered product features
-export const FEATURE_TIERED_REAL_TIME_BACKUPS = 'jetpack-tiered-real-time-backups';
-export const FEATURE_TIERED_CLOUD_BASED_BACKUPS = 'jetpack-tiered-cloud-based-backups';
-export const FEATURE_TIERED_20GB_BACKUP_STORAGE = 'jetpack-tiered-20gb-backup-storage';
-export const FEATURE_TIERED_1TB_BACKUP_STORAGE = 'jetpack-tiered-1tb-backup-storage';
-export const FEATURE_TIERED_UNLIMITED_BACKUP_STORAGE = 'jetpack-tiered-unlimited-backup-storage';
-export const FEATURE_TIERED_ONE_CLICK_RESTORES_30_DAYS =
-	'jetpack-tiered-one-click-restores-30-days';
-export const FEATURE_TIERED_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-tiered-one-click-restores-1-year';
-export const FEATURE_TIERED_ONE_CLICK_RESTORES_UNLIMITED =
-	'jetpack-tiered-one-click-restores-unlimited';
-export const FEATURE_TIERED_PRODUCT_BACKUP = 'jetpack-tiered-product-backup';
-export const FEATURE_TIERED_PRODUCT_SCAN = 'jetpack-tiered-product-scan';
-export const FEATURE_TIERED_PRODUCT_SECURITY = 'jetpack-tiered-product-security';
-export const FEATURE_TIERED_COMMENT_FORM_PROTECTION = 'jetpack-tiered-comment-form-protection';
+export const FEATURE_JETPACK_REAL_TIME_BACKUPS = 'jetpack-real-time-backups';
+export const FEATURE_JETPACK_CLOUD_BASED_BACKUPS = 'jetpack-cloud-based-backups';
+export const FEATURE_JETPACK_20GB_BACKUP_STORAGE = 'jetpack-20gb-backup-storage';
+export const FEATURE_JETPACK_1TB_BACKUP_STORAGE = 'jetpack-1tb-backup-storage';
+export const FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE = 'jetpack-unlimited-backup-storage';
+export const FEATURE_JETPACK_ONE_CLICK_RESTORES_30_DAYS = 'jetpack-one-click-restores-30-days';
+export const FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-one-click-restores-1-year';
+export const FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED = 'jetpack-one-click-restores-unlimited';
+export const FEATURE_JETPACK_PRODUCT_BACKUP = 'jetpack-product-backup';
+export const FEATURE_JETPACK_PRODUCT_SCAN = 'jetpack-product-scan';
+export const FEATURE_JETPACK_PRODUCT_SECURITY = 'jetpack-product-security';
+export const FEATURE_JETPACK_COMMENT_FORM_PROTECTION = 'jetpack-comment-form-protection';
 
 // P2 project features
 export const FEATURE_P2_3GB_STORAGE = 'p2-3gb-storage';
