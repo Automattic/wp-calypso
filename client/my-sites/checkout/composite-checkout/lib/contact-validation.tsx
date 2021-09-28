@@ -148,14 +148,27 @@ export async function validateContactDetails(
 		return isContactValidationResponseValid( validationResult, contactInfo );
 	};
 
-	if (
-		isLoggedOutCart &&
-		! isContactValidationResponseValid(
-			await runLoggedOutEmailValidationCheck( contactInfo, reduxDispatch, translate ),
-			contactInfo
-		)
-	) {
-		return false;
+	if ( isLoggedOutCart ) {
+		const loggedOutValidationResult = await runLoggedOutEmailValidationCheck(
+			contactInfo,
+			reduxDispatch,
+			translate
+		);
+		if ( shouldDisplayErrors ) {
+			handleContactValidationResult( {
+				translate,
+				recordEvent: onEvent,
+				showErrorMessage: showErrorMessageBriefly,
+				paymentMethodId: activePaymentMethod?.id ?? '',
+				validationResult: loggedOutValidationResult,
+				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
+			} );
+		}
+
+		if ( ! isContactValidationResponseValid( loggedOutValidationResult, contactInfo ) ) {
+			return false;
+		}
 	}
 
 	return completeValidationCheck( await runContactValidationCheck( contactInfo, responseCart ) );
