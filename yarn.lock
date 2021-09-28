@@ -12073,7 +12073,6 @@ __metadata:
     qrcode.react: ^1.0.1
     qs: ^6.9.1
     react: ^17.0.2
-    react-calendly: ^2.2.1
     react-click-outside: ^3.0.1
     react-day-picker: ^7.4.10
     react-dom: ^17.0.2
@@ -30773,16 +30772,6 @@ fsevents@~2.1.2:
     react: ^0.14.0 || ^15.0.0 || ^16.0.0
     react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0
   checksum: 3b791f2455808682241c9fc00cccce31804cb696c489a4800cd124fce8be6b624a4c21836e06568b6d7d45b6a8e4945460249c77235990ce015f9899cda10a7f
-  languageName: node
-  linkType: hard
-
-"react-calendly@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "react-calendly@npm:2.2.1"
-  peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0
-    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: ee504f000c55d320a62d1dea425123597ad32beab1e579826dc709474bbcec29c3985f9095e3002ef55b01ac43e9b3800cdb183cc98bc45f42a0364a00782cbf
   languageName: node
   linkType: hard
 
