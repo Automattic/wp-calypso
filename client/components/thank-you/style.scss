@@ -1,6 +1,15 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.layout.focus-content.is-section-checkout-thank-you.has-no-sidebar {
+	background: var( --studio-white );
+
+	div.layout__content {
+		padding-right: 0;
+		padding-left: 0;
+	}
+}
+
 .thank-you__container-header img {
 	max-width: 200px;
 
@@ -38,8 +47,15 @@
 }
 
 .thank-you__step-cta > a.button:not( .is-primary ) {
-	border-color: var( --color-accent );
-	color: var( --color-accent );
+	border-color: var( --studio-gray-10 );
+	color: var( --studio-gray-80 );
+	background-color: var( --studio-white );
+}
+
+.thank-you__step-cta > a.button {
+	border-color: var( --studio-pink-50 );
+	color: var( --studio-white );
+	background-color: var( --studio-pink-50 );
 }
 
 .thank-you__help-link {
@@ -58,4 +74,27 @@
 
 .thank-you__help-text {
 	margin-bottom: 0.5em;
+}
+
+.thank-you {
+
+	&__container {
+
+		margin-top: calc( -79px + var( --masterbar-height ) );
+
+		@include breakpoint-deprecated( '<660px' ) {
+			margin-top: -1px;
+		}
+	}
+
+	&__header {
+		&-title {
+			line-height: 40px;
+		}
+
+		&-subtitle {
+			padding-top: 4px;
+			margin-bottom: 0;
+		}
+	}
 }

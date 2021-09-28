@@ -16,8 +16,6 @@ import './style.scss';
 const ThankYouContainer = styled.div`
 	background-color: #fff;
 	-ms-overflow-style: none;
-	/* Negative value to counteract default content padding */
-	margin-top: calc( -79px + var( --masterbar-height ) );
 `;
 
 const ThankYouSectionTitle = styled.h1`

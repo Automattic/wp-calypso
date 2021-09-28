@@ -4,11 +4,3 @@
 .titan-set-up-thank-you__icon-external {
 	margin-left: 4px;
 }
-
-.titan-set-up-thank-you__container {
-	margin: calc( -79px + var( --masterbar-height ) ) -32px -33px -34px;
-
-	@media ( max-width: 660px ) {
-		padding: 0 32px 34px 34px;
-	}
-}
