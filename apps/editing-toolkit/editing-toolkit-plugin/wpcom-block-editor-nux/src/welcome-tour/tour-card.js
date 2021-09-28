@@ -33,7 +33,7 @@ function WelcomeTourCard( {
 	onNextCardProgression,
 	onPreviousCardProgression,
 	isGutenboarding,
-	tourStartFocusedRef,
+	focusedOnLaunchRef,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastCard = currentCardIndex === lastCardIndex;
@@ -86,7 +86,7 @@ function WelcomeTourCard( {
 						setCurrentCardIndex={ setCurrentCardIndex }
 						onNextCardProgression={ onNextCardProgression }
 						onPreviousCardProgression={ onPreviousCardProgression }
-						tourStartFocusedRef={ tourStartFocusedRef }
+						focusedOnLaunchRef={ focusedOnLaunchRef }
 					></CardNavigation>
 				) }
 			</CardFooter>
@@ -101,7 +101,7 @@ function CardNavigation( {
 	setCurrentCardIndex,
 	onNextCardProgression,
 	onPreviousCardProgression,
-	tourStartFocusedRef,
+	focusedOnLaunchRef,
 } ) {
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
@@ -130,7 +130,7 @@ function CardNavigation( {
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
 					onClick={ onNextCardProgression }
-					ref={ tourStartFocusedRef }
+					ref={ focusedOnLaunchRef }
 				>
 					{ currentCardIndex === 0 ? startTourLabel : nextLabel }
 				</Button>

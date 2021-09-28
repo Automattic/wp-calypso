@@ -68,7 +68,7 @@ function LaunchWpcomWelcomeTour() {
 
 function WelcomeTourFrame() {
 	const tourContainerRef = useRef( null );
-	const tourStartFocusedRef = useRef( null );
+	const focusedOnLaunchRef = useRef( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
@@ -118,7 +118,7 @@ function WelcomeTourFrame() {
 
 	useEffect( () => {
 		// focus the Next/Begin button as the first interactive element when tour loads
-		setTimeout( () => tourStartFocusedRef.current?.focus() );
+		setTimeout( () => focusedOnLaunchRef.current?.focus() );
 	}, [] );
 
 	// Preload card images
@@ -150,7 +150,7 @@ function WelcomeTourFrame() {
 							onNextCardProgression={ handleNextCardProgression }
 							onPreviousCardProgression={ handlePreviousCardProgression }
 							isGutenboarding={ isGutenboarding }
-							tourStartFocusedRef={ tourStartFocusedRef }
+							focusedOnLaunchRef={ focusedOnLaunchRef }
 						/>
 					</>
 				) : (
