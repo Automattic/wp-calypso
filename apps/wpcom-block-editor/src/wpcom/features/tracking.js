@@ -438,11 +438,11 @@ const trackEnableComplementaryArea = ( scope, id ) => {
 	// We are tracking both global styles open here and when global styles
 	// is closed by opening another sidebar in its place.
 	if ( activeArea !== 'edit-site/global-styles' && id === 'edit-site/global-styles' ) {
-		tracksRecordEvent( 'wpcom_block_editor_toggle_global_styles_panel', {
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_panel_toggle', {
 			open: true,
 		} );
 	} else if ( activeArea === 'edit-site/global-styles' && id !== 'edit-site/global-styles' ) {
-		tracksRecordEvent( 'wpcom_block_editor_toggle_global_styles_panel', {
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_panel_toggle', {
 			open: false,
 		} );
 	}
@@ -451,7 +451,7 @@ const trackEnableComplementaryArea = ( scope, id ) => {
 const trackDisableComplementaryArea = ( scope ) => {
 	const activeArea = select( 'core/interface' ).getActiveComplementaryArea( scope );
 	if ( activeArea === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
-		tracksRecordEvent( 'wpcom_block_editor_toggle_global_styles_panel', {
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_panel_toggle', {
 			open: false,
 		} );
 	}

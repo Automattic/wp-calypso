@@ -136,7 +136,7 @@ const clickGlobalStylesMenuItem = async ( driver, menuTitle ) => {
 const getGlobalStylesToggleEvents = async ( driver ) => {
 	const eventsStack = await getEventsStack( driver );
 	return eventsStack.filter(
-		( [ eventName ] ) => eventName === 'wpcom_block_editor_toggle_global_styles_panel'
+		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_panel_toggle'
 	);
 };
 
@@ -431,7 +431,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		// Temporarily skip these tests until we can deploy wpcom-block-editor changes from
 		// https://github.com/Automattic/wp-calypso/pull/56551
 		describe.skip( 'Global styles panel events', function () {
-			describe( 'Tracks "wpcom_block_editor_toggle_global_styles_panel', function () {
+			describe( 'Tracks "wpcom_block_editor_global_styles_panel_toggle', function () {
 				it( 'when Global Styles sidebar is opened', async function () {
 					const editor = await SiteEditorComponent.Expect( this.driver );
 
