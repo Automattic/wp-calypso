@@ -136,7 +136,7 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { tracksEvent, tracksOptions, statsGroup, statsName } = ownProps;
+	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
 	return {
 		openDialog: ( event, supportPostId, supportLink ) => {
 			if ( ! supportPostId ) {
@@ -144,6 +144,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 			}
 			event.preventDefault();
 			const analyticsEvents = [
+				...[
+					recordTracksEvent( 'calypso_inlinesupportlink_click', {
+						support_context: supportContext || null,
+						support_link: supportLink,
+					} ),
+				],
 				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
 				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
 			];
