@@ -16,6 +16,11 @@ interface Props {
 	stepName: string;
 }
 
+const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
+	write: [ 'design-setup-site' ],
+	build: [ 'site-options' ],
+};
+
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -26,29 +31,17 @@ export default function IntentStep( props: Props ): React.ReactNode {
 
 	const submitIntent = ( intent: IntentFlag ) => {
 		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
-
 		dispatch( submitSignupStep( { stepName }, { intent } ) );
 
 		// TODO: Better way to handle branch steps
-		if ( intent === 'write' ) {
-			dispatch(
-				submitSignupStep(
-					{ stepName: 'design-setup-site' },
-					{
-						selectedDesign: {
-							theme: 'independent-publisher-2',
-							slug: 'independent-publisher-2',
-						},
-					}
-				)
-			);
-			flows.excludeStep( 'design-setup-site' );
-		} else if ( intent === 'build' ) {
-			flows.excludeStep( 'site-options' );
-		}
+		EXCLUDE_STEPS[ intent ].forEach( ( step ) => flows.excludeStep( step ) );
 
 		goToNextStep();
 	};
+
+	React.useEffect( () => {
+		flows.resetExcludedSteps();
+	}, [] );
 
 	return (
 		<StepWrapper
