@@ -1077,6 +1077,15 @@ async function preselectParentPage() {
 	}
 }
 
+function setupConfigData( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage( { action: 'getConfigData' }, [ port2 ] );
+	port1.onmessage = ( { data: { configData } } ) => {
+		window.configData = configData;
+		port1.close();
+	};
+}
+
 function handleCheckoutModalOpened( calypsoPort, data ) {
 	const { port1, port2 } = new MessageChannel();
 
@@ -1244,6 +1253,8 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleInlineHelpButton( calypsoPort );
+
+		setupConfigData( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

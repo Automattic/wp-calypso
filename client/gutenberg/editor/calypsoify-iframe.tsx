@@ -120,6 +120,7 @@ enum EditorActions {
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
+	GetConfigData = 'getConfigData',
 }
 
 type ComponentProps = Props &
@@ -487,6 +488,12 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					blockCount: payload.blockCount,
 				} );
 			}
+		}
+
+		if ( EditorActions.GetConfigData === action ) {
+			ports[ 0 ].postMessage( {
+				configData: window.configData,
+			} );
 		}
 	};
 
