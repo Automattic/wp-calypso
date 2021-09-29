@@ -8,6 +8,7 @@ import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
+import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/payment-method-backup-toggle';
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
 	getAllStoredCards,
@@ -48,6 +49,7 @@ class PaymentMethodList extends Component {
 						expiry={ card.expiry }
 						isExpired={ card.is_expired }
 					/>
+					<PaymentMethodBackupToggle card={ card } />
 					<PaymentMethodDelete card={ card } />
 				</PaymentMethod>
 			);
