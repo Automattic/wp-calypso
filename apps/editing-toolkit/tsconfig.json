@@ -42,6 +42,7 @@
 		{ "path": "../../packages/launch" },
 		{ "path": "../../packages/tour-kit" },
 		{ "path": "../../packages/plans-grid" },
-		{ "path": "../../packages/i18n-utils" }
+		{ "path": "../../packages/i18n-utils" },
+		{ "path": "../../packages/viewport" }
 	]
 }
