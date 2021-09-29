@@ -99,6 +99,7 @@
 		border: 1px solid;
 		position: relative;
 		overflow: hidden;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
 
 		img {
 			position: absolute;
