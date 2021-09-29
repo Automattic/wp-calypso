@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import builderReferral from 'calypso/assets/images/illustrations/builder-referral.svg';
 import { TASK_DIFM_LITE_IN_PROGRESS } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
