@@ -2,7 +2,7 @@ import { By, Key } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
-import * as SlackNotifier from '../slack-notifier';
+import PostsPage from '../pages/posts-page';
 import GutenbergEditorComponent from './gutenberg-editor-component';
 
 export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer {
@@ -245,25 +245,15 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		const trashLocator = By.css( 'button.editor-post-trash' );
 
 		await this.selectDocumentTab();
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, trashLocator );
 		await driverHelper.clickWhenClickable( this.driver, trashLocator );
 
-		// wait for 'Move to trash' button to disappear
-		try {
-			return await driverHelper.waitUntilElementNotLocated(
-				this.driver,
-				trashLocator,
-				this.explicitWaitMS * 3
-			);
-		} catch ( e ) {
-			// if it's still present send slack notification, post is deleted
-			return await SlackNotifier.warn(
-				'"Move to trash" button is still present, but post is deleted.',
-				{
-					suppressDuplicateMessages: true,
-				}
-			);
-		}
+		/**
+		 * After trashing the post, user is immediately redirected to the posts page
+		 * in Calypso. WebDriver isn't aware that the context has changed so we need
+		 * to do it manually.
+		 */
+		await this.driver.switchTo().defaultContent();
+		await PostsPage.Expect( this.driver );
 	}
 
 	async enterImageAltText( fileDetails ) {
