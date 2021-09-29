@@ -66,6 +66,7 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/build-tools/dist/
 /apps/*/.cache/
 
 # webpack assets
