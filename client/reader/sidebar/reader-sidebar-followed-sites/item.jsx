@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { useDispatch } from 'react-redux';
 import Count from 'calypso/components/count';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
