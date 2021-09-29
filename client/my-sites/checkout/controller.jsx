@@ -34,6 +34,7 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
+	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
 import { getDomainOrProductFromContext } from './utils';
 
@@ -252,6 +253,9 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
+	} else if ( context.path.includes( 'offer-professional-email' ) ) {
+		upsellType = PROFESSIONAL_EMAIL_UPSELL;
+		upgradeItem = null;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

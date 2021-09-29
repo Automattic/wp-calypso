@@ -21,6 +21,7 @@ import {
 	isContactValidationResponseValid,
 	getTaxValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
+import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import {
 	retrieveSignupDestination,
@@ -67,6 +68,7 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
+export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
 export class UpsellNudge extends React.Component {
 	static propTypes = {
@@ -297,6 +299,9 @@ export class UpsellNudge extends React.Component {
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
+
+			case PROFESSIONAL_EMAIL_UPSELL:
+				return <ProfessionalEmailUpsell />;
 		}
 	}
 
