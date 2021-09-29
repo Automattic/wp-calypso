@@ -14,6 +14,7 @@ export default function TransferDomainStepStart( {
 	pageSlug,
 	onNextStep,
 	progressStepList,
+	isFetchingDomainLockStatus,
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => null;
@@ -49,7 +50,7 @@ export default function TransferDomainStepStart( {
 					}
 				) }
 			</p>
-			<Button primary onClick={ onNextStep }>
+			<Button primary onClick={ onNextStep } busy={ isFetchingDomainLockStatus }>
 				{ __( 'Start setup' ) }
 			</Button>
 		</div>

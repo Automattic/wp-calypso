@@ -6,7 +6,6 @@ import { PureComponent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
-import { getTransferRestrictionMessage } from '../use-my-domain/utilities';
 
 class TransferRestrictionMessage extends PureComponent {
 	static propTypes = {
@@ -26,7 +25,16 @@ class TransferRestrictionMessage extends PureComponent {
 	};
 
 	render() {
-		const { domain, goBack, transferEligibleDate, translate, moment } = this.props;
+		const {
+			creationDate,
+			domain,
+			goBack,
+			termMaximumInYears,
+			transferEligibleDate,
+			transferRestrictionStatus,
+			translate,
+			moment,
+		} = this.props;
 
 		const transferEligibleMoment = moment( transferEligibleDate );
 
@@ -53,7 +61,35 @@ class TransferRestrictionMessage extends PureComponent {
 			}
 		);
 
-		const reason = getTransferRestrictionMessage( this.props );
+		let reason = null;
+
+		if ( 'max_term' === transferRestrictionStatus ) {
+			reason = translate(
+				'Transferring this domain would extend the registration period beyond the maximum allowed term ' +
+					'of %(termMaximumInYears)d years. It can be transferred starting %(transferEligibleDate)s.',
+				{
+					args: {
+						termMaximumInYears: termMaximumInYears,
+						transferEligibleDate: transferEligibleMoment.format( 'LL' ),
+					},
+				}
+			);
+		} else if ( 'initial_registration_period' === transferRestrictionStatus ) {
+			reason = translate(
+				'Newly-registered domains are not eligible for transfer. {{strong}}%(domain)s{{/strong}} was registered ' +
+					'%(daysAgoRegistered)s days ago, and can be transferred starting %(transferEligibleDate)s.',
+				{
+					args: {
+						domain,
+						daysAgoRegistered: this.props.moment().diff( creationDate, 'days' ),
+						transferEligibleDate: transferEligibleMoment.format( 'LL' ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		}
 
 		return (
 			<Card>
