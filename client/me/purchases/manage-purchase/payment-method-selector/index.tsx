@@ -90,6 +90,11 @@ export default function PaymentMethodSelector( {
 		translate( 'Assign this payment method to all of my subscriptions' )
 	);
 
+	const [ useAsBackupMethod, setUseAsBackupMethod ] = useState< boolean >( true );
+	const useAsBackupMethodText = String(
+		translate( 'Use this payment method as a backup on my other subscriptions' )
+	);
+
 	useEffect( () => {
 		if ( stripeLoadingError ) {
 			reduxDispatch( errorNotice( stripeLoadingError ) );
@@ -155,6 +160,19 @@ export default function PaymentMethodSelector( {
 					</FormLabel>
 				) }
 
+				{ true && (
+					<FormLabel className="payment-method-selector__backup-method-checkbox-label">
+						<FormInputCheckbox
+							className="payment-method-selector__backup-method-checkbox"
+							checked={ useAsBackupMethod }
+							onChange={ () => setUseAsBackupMethod( ( isChecked ) => ! isChecked ) }
+							aria-label={ useAsBackupMethodText }
+						/>
+						{ useAsBackupMethodText }
+						<BackupMethodEffectWarning useAsBackupMethod={ useAsBackupMethod } />
+					</FormLabel>
+				) }
+
 				<CheckoutSubmitButton />
 			</Card>
 		</CheckoutProvider>
@@ -179,6 +197,27 @@ function AllSubscriptionsEffectWarning( {
 		<span className="payment-method-selector__all-subscriptions-effect-warning">
 			{ translate(
 				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
+			) }
+		</span>
+	);
+}
+
+function BackupMethodEffectWarning( { useAsBackupMethod }: { useAsBackupMethod: boolean } ) {
+	const translate = useTranslate();
+
+	if ( useAsBackupMethod ) {
+		return (
+			<span className="payment-method-selector__backup-method-effect-warning">
+				{ translate(
+					'This card may be used as a backup in case the primary payment method on any of your subscriptions fails during a future renewal. This setting can be changed later.'
+				) }
+			</span>
+		);
+	}
+	return (
+		<span className="payment-method-selector__backup-method-effect-warning">
+			{ translate(
+				'This card will not be used as a backup payment method on any other subscriptions. This setting can be changed later.'
 			) }
 		</span>
 	);

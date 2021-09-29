@@ -47,15 +47,18 @@
 	}
 }
 
-.payment-method-selector__all-subscriptions-checkbox-label {
+.payment-method-selector__all-subscriptions-checkbox-label,
+.payment-method-selector__backup-method-checkbox-label {
 	margin-bottom: 1.5em;
 }
 
-.form-checkbox.payment-method-selector__all-subscriptions-checkbox {
+.form-checkbox.payment-method-selector__all-subscriptions-checkbox,
+.form-checkbox.payment-method-selector__backup-method-checkbox {
 	margin: 2px 8px 2px 0;
 }
 
-.payment-method-selector__all-subscriptions-effect-warning {
+.payment-method-selector__all-subscriptions-effect-warning,
+.payment-method-selector__backup-method-effect-warning {
 	font-size: $font-body-small;
 	font-style: italic;
 }
