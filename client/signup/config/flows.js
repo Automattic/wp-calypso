@@ -57,13 +57,22 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { siteSlug } ) {
+function getSignupDestination( { domainItem, siteId, siteSlug } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
 
 	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
-		return addQueryArgs( { siteSlug }, '/start/setup-site' );
+		let slugQueryParam = siteSlug;
+		if ( domainItem ) {
+			// If the user is purchasing a domain then the site's primary url might change from
+			// `siteSlug` to something else during the checkout process, which means the
+			// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
+			// case we use the ID because we know it won't change depending on whether the user
+			// successfully completes the checkout process or not.
+			slugQueryParam = siteId;
+		}
+		return addQueryArgs( { siteSlug: slugQueryParam }, '/start/setup-site' );
 	}
 
 	return `/home/${ siteSlug }`;
