@@ -11,6 +11,10 @@
 	}
 }
 
+.email-providers-comparison__provider-card.promo-card {
+	flex-direction: row;
+}
+
 .email-providers-comparison__providers {
 	display: flex;
 	flex-direction: row;
