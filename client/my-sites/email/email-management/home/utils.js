@@ -5,6 +5,7 @@ import {
 	hasUnusedMailboxWarning,
 	hasUnverifiedEmailForward,
 } from 'calypso/lib/emails';
+import { isDevelopmentMode } from 'calypso/lib/explat/internals/misc';
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
@@ -19,6 +20,7 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
 export function getNumberOfMailboxesText( domain ) {
@@ -166,4 +168,19 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 	}
 
 	return activeStatus;
+}
+
+/**
+ * Tracks an event for the key 'calypso_email_app_launch'. It will not track events from development mode.
+ *
+ * @param {app, context, provider} - app/context/provider should be string and must be provided.
+ */
+export function recordEmailActionTrackEvent( { app, context, provider } ) {
+	if ( ! isDevelopmentMode ) {
+		recordTracksEvent( 'calypso_email_app_launch', {
+			app,
+			context,
+			provider,
+		} );
+	}
 }

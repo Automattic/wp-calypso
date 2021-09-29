@@ -18,9 +18,13 @@ import {
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { recordEmailActionTrackEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
+/**
+ * Import styles
+ */
 import './style.scss';
 
 const getExternalUrl = ( mailbox ) => {
@@ -51,6 +55,31 @@ const MailboxItemIcon = ( { mailbox } ) => {
 	return null;
 };
 
+const getProvider = ( { mailbox } ) => {
+	if ( isTitanMailAccount( mailbox ) ) {
+		return 'titan';
+	}
+
+	if ( isGoogleEmailAccount( mailbox ) ) {
+		return 'google';
+	}
+
+	if ( isEmailForwardAccount( mailbox ) ) {
+		return 'forward';
+	}
+
+	return null;
+};
+
+const trackEvent = ( { mailbox, app, context } ) => {
+	const provider = getProvider( mailbox );
+	recordEmailActionTrackEvent( {
+		app,
+		context,
+		provider,
+	} );
+};
+
 MailboxItemIcon.propType = {
 	mailbox: PropTypes.object.isRequired,
 };
@@ -62,6 +91,9 @@ const MailboxItem = ( { mailbox } ) => {
 
 	return (
 		<Card
+			onClick={ () =>
+				trackEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
+			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox ) }
 			target="external"
@@ -78,6 +110,7 @@ const MailboxItem = ( { mailbox } ) => {
 
 MailboxItem.propType = {
 	mailbox: PropTypes.object.isRequired,
+	key: PropTypes.string,
 };
 
 const NewMailboxUpsell = () => {

@@ -41,6 +41,7 @@ import {
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
+import { recordEmailActionTrackEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -74,6 +75,13 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'webmail',
+					context: 'email-management-menu',
+					provider: 'titan',
+				} );
+			},
 		},
 		{
 			href: getTitanCalendarlUrl( email ),
@@ -82,6 +90,13 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Calendar', {
 				comment: 'View the Calendar application for Titan',
 			} ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'calendar',
+					context: 'email-management-menu',
+					provider: 'titan',
+				} );
+			},
 		},
 		{
 			href: getTitanContactsUrl( email ),
@@ -90,6 +105,13 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Contacts', {
 				comment: 'View the Contacts application for Titan',
 			} ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'contacts',
+					context: 'email-management-menu',
+					provider: 'titan',
+				} );
+			},
 		},
 		{
 			isInternalLink: true,
@@ -130,6 +152,13 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 			image: gmailIcon,
 			imageAltText: translate( 'Gmail icon' ),
 			title: translate( 'View Gmail' ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'webmail',
+					context: 'email-management-menu',
+					provider: 'google',
+				} );
+			},
 		},
 		...( isEmailUserAdmin( mailbox )
 			? [
@@ -138,6 +167,13 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 						image: googleAdminIcon,
 						imageAltText: translate( 'Google Admin icon' ),
 						title: translate( 'View Admin' ),
+						onClick: () => {
+							recordEmailActionTrackEvent( {
+								app: 'admin',
+								context: 'email-management-menu',
+								provider: 'google',
+							} );
+						},
 					},
 			  ]
 			: [] ),
@@ -146,30 +182,65 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 			image: googleCalendarIcon,
 			imageAltText: translate( 'Google Calendar icon' ),
 			title: translate( 'View Calendar' ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'calendar',
+					context: 'email-management-menu',
+					provider: 'google',
+				} );
+			},
 		},
 		{
 			href: getGoogleDocsUrl( email ),
 			image: googleDocsIcon,
 			imageAltText: translate( 'Google Docs icon' ),
 			title: translate( 'View Docs' ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'docs',
+					context: 'email-management-menu',
+					provider: 'google',
+				} );
+			},
 		},
 		{
 			href: getGoogleDriveUrl( email ),
 			image: googleDriveIcon,
 			imageAltText: translate( 'Google Drive icon' ),
 			title: translate( 'View Drive' ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'drive',
+					context: 'email-management-menu',
+					provider: 'google',
+				} );
+			},
 		},
 		{
 			href: getGoogleSheetsUrl( email ),
 			image: googleSheetsIcon,
 			imageAltText: translate( 'Google Sheets icon' ),
 			title: translate( 'View Sheets' ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					provider: 'google',
+					app: 'sheets',
+					context: 'email-management-menu',
+				} );
+			},
 		},
 		{
 			href: getGoogleSlidesUrl( email ),
 			image: googleSlidesIcon,
 			imageAltText: translate( 'Google Slides icon' ),
 			title: translate( 'View Slides' ),
+			onClick: () => {
+				recordEmailActionTrackEvent( {
+					app: 'slides',
+					context: 'email-management-menu',
+					provider: 'google',
+				} );
+			},
 		},
 	];
 };

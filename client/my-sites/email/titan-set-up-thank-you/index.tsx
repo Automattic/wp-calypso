@@ -6,6 +6,7 @@ import { ThankYou } from 'calypso/components/thank-you';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
+import { recordEmailActionTrackEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
 	emailManagementTitanControlPanelRedirect,
@@ -73,7 +74,17 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 					"Access your email on the go with Titan's Android and iOS apps."
 				),
 				stepCta: (
-					<FullWidthButton href={ titanControlPanelUrl } target="_blank">
+					<FullWidthButton
+						href={ titanControlPanelUrl }
+						target="_blank"
+						onClick={ () => {
+							recordEmailActionTrackEvent( {
+								provider: 'titan',
+								app: 'app',
+								context: 'checkout-thank-you',
+							} );
+						} }
+					>
 						{ translate( 'Get app' ) }
 						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
@@ -86,7 +97,18 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 					'Add or delete mailboxes, migrate existing emails, configure a catch-all email, and much more.'
 				),
 				stepCta: (
-					<FullWidthButton href={ emailManagementPath }>{ translate( 'Manage' ) }</FullWidthButton>
+					<FullWidthButton
+						href={ emailManagementPath }
+						onClick={ () => {
+							recordEmailActionTrackEvent( {
+								provider: 'titan',
+								app: 'manage',
+								context: 'checkout-thank-you',
+							} );
+						} }
+					>
+						{ translate( 'Manage' ) }
+					</FullWidthButton>
 				),
 			},
 		],
