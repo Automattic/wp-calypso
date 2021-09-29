@@ -2374,9 +2374,19 @@ describe( '#getRecommendedThemesFilter', () => {
 	const state = {
 		sites: {
 			items: {
-				[ 123 ]: { is_core_site_editor_enabled: true },
-				[ 321 ]: { is_core_site_editor_enabled: false },
+				[ 123 ]: {
+					jetpack: true,
+					options: { jetpack_version: '4.7' },
+				},
+				[ 321 ]: {
+					jetpack: true,
+					options: { jetpack_version: '4.7' },
+				},
 			},
+		},
+		gutenbergFSESettings: {
+			[ 123 ]: { isCoreFSEEligible: true },
+			[ 321 ]: { isCoreFSEEligible: false },
 		},
 	};
 
