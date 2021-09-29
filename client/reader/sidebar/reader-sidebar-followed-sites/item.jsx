@@ -54,7 +54,7 @@ const ReaderSidebarFollowingItem = ( props ) => {
 				<span className="sidebar__menu-item-sitename">
 					{ site.name || formatUrlForDisplay( site.URL ) }
 					<span className="sidebar__menu-item-last-updated">
-						{ site.last_updated && moment( new Date( site.last_updated ) ).fromNow() }
+						{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 					</span>
 				</span>
 				{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
