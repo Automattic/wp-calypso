@@ -1,5 +1,5 @@
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
-import 'calypso/state/themes/init';
+import isCoreFSEEligible from 'calypso/state/selectors/is-core-fse-eligible';
+import 'calypso/state/gutenberg-fse-settings/init';
 
 /**
  * We currently support two types of theme filtering for recommended themes,
@@ -11,6 +11,5 @@ import 'calypso/state/themes/init';
  * @returns {string}           The string to filter on in an API request.
  */
 export function getRecommendedThemesFilter( state, siteId ) {
-	const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
-	return isUsingSiteEditor ? 'block-templates' : 'auto-loading-homepage';
+	return isCoreFSEEligible( state, siteId ) ? 'block-templates' : 'auto-loading-homepage';
 }
