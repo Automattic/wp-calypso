@@ -290,7 +290,7 @@ function UseMyDomain( {
 		}
 	};
 
-	const getHeaderText = () => {
+	const headerText = useMemo( () => {
 		switch ( mode ) {
 			case inputMode.domainInput:
 				return __( 'Use a domain I own' );
@@ -301,7 +301,7 @@ function UseMyDomain( {
 				/* translators: %s - the name of the domain the user will add to their site */
 				return sprintf( __( 'Use a domain I own: %s' ), domainName );
 		}
-	};
+	}, [ domainName, mode, inputMode ] );
 
 	return (
 		<>
@@ -312,7 +312,7 @@ function UseMyDomain( {
 			<FormattedHeader
 				brandFont
 				className={ baseClassName + '__page-heading' }
-				headerText={ getHeaderText() }
+				headerText={ headerText }
 				align="left"
 			/>
 			{ renderContent() }
