@@ -6,7 +6,6 @@ import {
 	setupHooks,
 	DataHelper,
 	LoginFlow,
-	GutenbergEditorPage,
 	SidebarComponent,
 	GutenboardingFlow,
 	GeneralSettingsPage,
@@ -67,11 +66,6 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 
 	it( 'Select free plan', async function () {
 		await gutenboardingFlow.selectPlan( 'Free' );
-	} );
-
-	it( 'See the Gutenberg editor', async function () {
-		const gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.waitUntilLoaded();
 	} );
 
 	it( `Delete created site`, async function () {
