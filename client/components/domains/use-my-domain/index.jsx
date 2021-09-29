@@ -126,7 +126,7 @@ function UseMyDomain( {
 					setDomainAvailabilityData( availabilityData );
 				}
 			} )
-			.catch( ( error ) => setDomainNameValidationError( error ) )
+			.catch( ( error ) => setDomainNameValidationError( error.message ) )
 			.finally( () => setIsFetchingAvailability( false ) );
 	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
 
