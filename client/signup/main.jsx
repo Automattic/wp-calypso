@@ -61,6 +61,7 @@ import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/act
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import getSiteByUnmappedSlug from 'calypso/state/sites/selectors/get-site-by-unmapped-slug';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -742,7 +743,12 @@ class Signup extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
-		const siteId = getSiteId( state, signupDependencies.siteSlug );
+		// The `siteSlug` query param could be either the primary url or (in the case of the site-setup flow where
+		// we've been redirected using a url that was generated from before the domain purchase was complete) the
+		// unmapped *.wordpress.com url.
+		const siteId =
+			getSiteId( state, signupDependencies.siteSlug ) ||
+			getSiteByUnmappedSlug( state, signupDependencies.siteSlug )?.ID;
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const shouldStepShowSitePreview = get(
 			steps[ ownProps.stepName ],
