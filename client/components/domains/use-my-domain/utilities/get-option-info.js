@@ -23,7 +23,9 @@ const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
 	if ( ! result.transferrable ) {
 		result.domainTransferContent = {
 			...optionInfo.transferNotSupported,
-			topText: getTransferRestrictionMessage( domainInboundTransferStatusInfo ),
+			topText:
+				getTransferRestrictionMessage( domainInboundTransferStatusInfo ) ??
+				optionInfo.transferNotSupported.topText,
 		};
 	}
 

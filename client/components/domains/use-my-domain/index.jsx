@@ -20,6 +20,7 @@ import {
 	getDomainNameValidationErrorMessage,
 } from 'calypso/components/domains/use-my-domain/utilities';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
@@ -136,9 +137,14 @@ function UseMyDomain( {
 				.domain( domainName )
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
-			const inboundTransferStatusResult = await wpcom
-				.undocumented()
-				.getInboundTransferStatus( domainName );
+			let inboundTransferStatusResult = {};
+			try {
+				inboundTransferStatusResult = await wpcom
+					.undocumented()
+					.getInboundTransferStatus( domainName );
+			} catch {
+				availabilityData.status = domainAvailability.TLD_NOT_SUPPORTED;
+			}
 
 			const inboundTransferStatusInfo = {
 				creationDate: inboundTransferStatusResult.creation_date,
