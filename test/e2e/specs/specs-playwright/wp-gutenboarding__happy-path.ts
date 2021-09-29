@@ -68,6 +68,12 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		await gutenboardingFlow.selectPlan( 'Free' );
 	} );
 
+	it( 'Land in Home dashboard', async function () {
+		await page.waitForURL( '**/home/**' );
+		const currentURL = page.url();
+		expect( currentURL ).toContain( siteTitle );
+	} );
+
 	it( `Delete created site`, async function () {
 		const settingsURL = DataHelper.getCalypsoURL( `settings/general/${ siteURL }` );
 		await page.goto( settingsURL, { waitUntil: 'load' } );
