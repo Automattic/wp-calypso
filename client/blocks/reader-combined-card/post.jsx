@@ -13,7 +13,6 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import Emojify from 'calypso/components/emojify';
 import TimeSince from 'calypso/components/time-since';
 import {
 	canBeMarkedAsSeen,
@@ -144,7 +143,7 @@ class ReaderCombinedCardPost extends React.Component {
 					<AutoDirection>
 						<h1 className="reader-combined-card__post-title">
 							<a className="reader-combined-card__post-title-link" href={ post.URL }>
-								<Emojify>{ post.title }</Emojify>
+								{ post.title }
 							</a>
 						</h1>
 					</AutoDirection>

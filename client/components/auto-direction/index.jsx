@@ -1,7 +1,6 @@
 import { useRtl } from 'i18n-calypso';
 import { get } from 'lodash';
 import React from 'react';
-import Emojify from 'calypso/components/emojify';
 import { stripHTML } from 'calypso/lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 
@@ -147,7 +146,6 @@ const getChildDirection = ( child, isRtl ) => {
 	return null;
 };
 
-const inlineComponents = [ Emojify ];
 /**
  * Sets a react component child directionality according to it's text content
  * That function intended to be used recursively with React.Children.map
@@ -166,12 +164,8 @@ const setChildDirection = ( child, isRtl ) => {
 	}
 
 	if ( child && child.props.children ) {
-		let innerChildDirection = null;
 		const children = React.Children.map( child.props.children, ( innerChild ) => {
 			if ( ! innerChild ) {
-				return innerChild;
-			}
-			if ( innerChildDirection ) {
 				return innerChild;
 			}
 
@@ -179,19 +173,10 @@ const setChildDirection = ( child, isRtl ) => {
 				return innerChild;
 			}
 
-			if ( inlineComponents.some( ( inlineComponent ) => innerChild.type === inlineComponent ) ) {
-				innerChildDirection = getChildDirection( innerChild, isRtl );
-				return innerChild;
-			}
-
 			return setChildDirection( innerChild, isRtl );
 		} );
 
-		return React.cloneElement(
-			child,
-			innerChildDirection ? getDirectionProps( child, innerChildDirection ) : null,
-			children
-		);
+		return React.cloneElement( child, null, children );
 	}
 
 	return child;

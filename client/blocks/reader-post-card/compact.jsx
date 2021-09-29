@@ -3,7 +3,6 @@ import React from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import FeaturedAsset from './featured-asset';
 
 const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
@@ -26,7 +25,7 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>{ post.title }</Emojify>
+							{ post.title }
 						</a>
 					</h2>
 				</AutoDirection>

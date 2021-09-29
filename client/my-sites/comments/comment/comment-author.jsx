@@ -4,7 +4,6 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -89,7 +88,7 @@ export class CommentAuthor extends Component {
 							</Fragment>
 						) }
 						<strong className="comment__author-name">
-							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
+							{ authorDisplayName || translate( 'Anonymous' ) }
 						</strong>
 						{ isBulkMode && ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
 					</div>
@@ -109,7 +108,7 @@ export class CommentAuthor extends Component {
 							<span className="comment__author-url">
 								<span className="comment__author-url-separator">&middot;</span>
 								<ExternalLink href={ authorUrl } tabIndex={ isBulkMode ? -1 : 0 }>
-									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+									{ urlToDomainAndPath( authorUrl ) }
 								</ExternalLink>
 							</span>
 						) }

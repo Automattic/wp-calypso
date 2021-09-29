@@ -2,7 +2,6 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 
 import './style.scss';
 
@@ -26,12 +25,10 @@ class PostExcerpt extends React.Component {
 
 		return (
 			<AutoDirection>
-				<Emojify>
-					<div
-						className={ classes }
-						dangerouslySetInnerHTML={ { __html: this.props.content } } // eslint-disable-line react/no-danger
-					/>
-				</Emojify>
+				<div
+					className={ classes }
+					dangerouslySetInnerHTML={ { __html: this.props.content } } // eslint-disable-line react/no-danger
+				/>
 			</AutoDirection>
 		);
 	}
