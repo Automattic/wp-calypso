@@ -63,16 +63,16 @@ function getSignupDestination( { domainItem, siteId, siteSlug } ) {
 	}
 
 	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
-		let slugQueryParam = siteSlug;
+		let queryParam = { siteSlug };
 		if ( domainItem ) {
 			// If the user is purchasing a domain then the site's primary url might change from
 			// `siteSlug` to something else during the checkout process, which means the
 			// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
 			// case we use the ID because we know it won't change depending on whether the user
 			// successfully completes the checkout process or not.
-			slugQueryParam = siteId;
+			queryParam = { siteId };
 		}
-		return addQueryArgs( { siteSlug: slugQueryParam }, '/start/setup-site' );
+		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
 	return `/home/${ siteSlug }`;

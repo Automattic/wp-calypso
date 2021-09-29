@@ -34,6 +34,7 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -122,6 +123,20 @@ export default class SignupFlowController {
 		this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 		this._resetSiteSlugIfUserEnteredAnotherFlow(); // reset the site slug if user entered another flow
+
+		if (
+			this._flow.providesDependenciesInQuery?.includes( 'siteId' ) &&
+			options.providedDependencies[ 'siteId' ] &&
+			! options.providedDependencies[ 'siteSlug' ]
+		) {
+			const siteSlug = getSiteSlug(
+				this._reduxStore.getState(),
+				options.providedDependencies[ 'siteId' ]
+			);
+			if ( siteSlug ) {
+				options.providedDependencies[ 'siteSlug' ] = siteSlug;
+			}
+		}
 
 		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );

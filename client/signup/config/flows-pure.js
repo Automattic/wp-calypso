@@ -419,7 +419,7 @@ export function generateFlows( {
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-09-02',
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			pageTitle: translate( 'Setup your site' ),
 		},
 		{
