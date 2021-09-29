@@ -42,6 +42,10 @@ export function getPlansSlugs() {
 	return Object.keys( getPlans() );
 }
 
+/**
+ * @param   {string} planKey - A key that represents a plan.
+ * @returns {import("./types.ts").Plan} A Plan object that corresponds to the supplied key.
+ */
 export function getPlan( planKey ) {
 	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
 		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
@@ -131,7 +135,6 @@ export function planHasFeature( plan, feature ) {
  *
  * @param {object|string} plan	Plan object or plan name
  * @param {[string]} features	Array of feature names
- *
  * @returns {boolean}			Whether or not the specified plan has one of the features
  */
 export function planHasAtLeastOneFeature( plan, features ) {
@@ -157,7 +160,7 @@ export function getAllFeaturesForPlan( plan ) {
 		'getSignupFeatures',
 		'getBlogSignupFeatures',
 		'getPortfolioSignupFeatures',
-		'getHiddenFeatures',
+		'getIncludedFeatures',
 	].reduce(
 		( featuresArray, featureMethodName ) => [
 			...( planConstantObj?.[ featureMethodName ]?.() ?? [] ),
@@ -178,7 +181,7 @@ export function getAllFeaturesForPlan( plan ) {
  */
 export function planHasSuperiorFeature( plan, feature ) {
 	const planConstantObj = getPlan( plan );
-	const features = planConstantObj.getInferiorHiddenFeatures?.() ?? [];
+	const features = planConstantObj.getInferiorFeatures?.() ?? [];
 
 	return features.includes( feature );
 }
@@ -340,7 +343,6 @@ export function isP2PlusPlan( planSlug ) {
 
 /**
  * @see findSimilarPlansKeys
- *
  * @param {string|object} planKey Source plan to compare to
  * @param {object} diff Properties that should differ in matched plan. @see planMatches
  * @returns {string|undefined} Matched plan

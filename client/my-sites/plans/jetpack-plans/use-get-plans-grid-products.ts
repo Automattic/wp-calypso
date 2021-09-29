@@ -34,7 +34,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 	const includedInPlanProducts: string[] =
-		( currentPlan && getPlan( currentPlan )?.getHiddenFeatures() ) || [];
+		( currentPlan && getPlan( currentPlan )?.getIncludedFeatures() ) || [];
 
 	// Owned products from direct purchases
 	const purchasedProducts =
