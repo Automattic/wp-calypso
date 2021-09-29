@@ -4,9 +4,9 @@ import 'calypso/state/reader/init';
 
 export const sorter = ( a, b ) => {
 	const updatedA =
-		typeof a.last_updated === 'number' && ! isNaN( a.last_updated ) ? a.last_updated : 999;
+		typeof a.last_updated === 'number' && ! isNaN( a.last_updated ) ? a.last_updated : 0;
 	const updatedB =
-		typeof b.last_updated === 'number' && ! isNaN( b.last_updated ) ? b.last_updated : 999;
+		typeof b.last_updated === 'number' && ! isNaN( b.last_updated ) ? b.last_updated : 0;
 	// Most Recently updated at top
 	if ( updatedA < updatedB ) {
 		return 1;
