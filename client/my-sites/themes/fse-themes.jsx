@@ -24,6 +24,7 @@ const FseThemes = localize( ( { translate, ...restProps } ) => {
 		<ConnectedThemesSelection
 			isLoading={ isLoading }
 			customizedThemesList={ data?.themes ?? [] }
+			filters={ [ 'block-templates' ] }
 			{ ...restProps }
 		/>
 	);

@@ -251,9 +251,10 @@ class ThemeShowcase extends React.Component {
 		if ( isJetpackSite ) {
 			return children;
 		}
+		// TODO: Double check need for empty filters attr
 		return (
 			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themeProps } />
+				<ThemesSelection { ...themeProps } filters={ [] } />
 			</div>
 		);
 	};

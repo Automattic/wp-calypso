@@ -56,6 +56,7 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
+		// TODO: Replace references to singular query with queries
 		const { query, customizedThemesList } = this.props;
 		if ( ! customizedThemesList && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
@@ -63,6 +64,7 @@ class ThemesSelection extends Component {
 	}
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
+		// TODO: Replace references to singular query with queries
 		const { query, filterString } = this.props;
 		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
@@ -145,11 +147,12 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl } = this.props;
+		// TODO: Remove references to singular query
+		const { source, query, queries = [ {} ], upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
-				<QueryThemes query={ query } siteId={ source } />
+				<QueryThemes query={ query } queries={ queries } siteId={ source } />
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }
@@ -184,12 +187,34 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
+function generateThemeQueries( filters, queryTemplate, vertical ) {
+	// Queries all themes when no filter is specified
+	if ( ! filters.length ) {
+		return [ queryTemplate ];
+	}
+
+	return filters.map( ( filter ) => ( {
+		...queryTemplate,
+		filter: compact( [ filter, vertical ] ).join( ',' ),
+	} ) );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{ filter, page, search, vertical, siteId, source, isLoading: isCustomizedThemeListLoading }
+		// TODO: Remove references to singular filter
+		{
+			filter,
+			filters = [],
+			page,
+			search,
+			vertical,
+			siteId,
+			source,
+			isLoading: isCustomizedThemeListLoading,
+		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
@@ -204,6 +229,13 @@ export const ConnectedThemesSelection = connect(
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
 		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 30;
+		const queryTemplate = {
+			search,
+			page,
+			tier: '',
+			filter: '',
+			number,
+		};
 		const query = {
 			search,
 			page,
@@ -211,8 +243,12 @@ export const ConnectedThemesSelection = connect(
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
+
+		const queries = generateThemeQueries( filters, queryTemplate, vertical );
+
 		return {
 			query,
+			queries,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
