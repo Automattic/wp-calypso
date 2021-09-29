@@ -2,11 +2,11 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
 import './style.scss';
 
-export default class Rating extends React.PureComponent {
+export default class Rating extends PureComponent {
 	static defaultProps = {
 		rating: 0,
 		size: 24,

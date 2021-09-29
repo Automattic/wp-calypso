@@ -29,7 +29,7 @@ import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import AsyncLoad from 'calypso/components/async-load';
@@ -110,7 +110,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-export class CheckoutThankYou extends React.Component {
+export class CheckoutThankYou extends Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,

@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 export default function FormTelInput( { className, isError, isValid, ...props } ) {

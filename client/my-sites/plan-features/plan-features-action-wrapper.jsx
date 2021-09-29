@@ -1,7 +1,6 @@
 import { TYPE_BLOGGER, planMatches, isFreePlan, getPlanClass } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import PlanFeaturesActions from './actions';
 

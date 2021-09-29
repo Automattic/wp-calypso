@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import React from 'react';
 import { spy } from 'sinon';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import { PageViewTracker } from '../';

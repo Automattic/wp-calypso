@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import checklistIllustration from 'calypso/assets/images/customer-home/illustration--checklist-complete.svg';
 import { NOTICE_CELEBRATE_SITE_SETUP_COMPLETE } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';

@@ -1,4 +1,3 @@
-import React from 'react';
 import ReaderPostCardBlock from 'calypso/blocks/reader-post-card';
 import { posts, site } from './fixtures';
 

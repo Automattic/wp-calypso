@@ -8,7 +8,7 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import {
 	LeftColumn,
 	RightColumn,
@@ -175,11 +175,11 @@ const StripeFields = styled.div`
 
 function LoadingFields() {
 	return (
-		<React.Fragment>
+        <Fragment>
 			<LoadingIndicator />
 			<CreditCardLoading />
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 const LoadingIndicator = styled( Spinner )`

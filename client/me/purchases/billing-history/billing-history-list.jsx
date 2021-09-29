@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -22,7 +22,7 @@ import {
 	renderTransactionQuantitySummary,
 } from './utils';
 
-class BillingHistoryList extends React.Component {
+class BillingHistoryList extends Component {
 	static displayName = 'BillingHistoryList';
 
 	static defaultProps = {

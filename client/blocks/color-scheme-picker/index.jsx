@@ -1,7 +1,7 @@
 import { translate, localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';

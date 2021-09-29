@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import AutoDirection from 'calypso/components/auto-direction';

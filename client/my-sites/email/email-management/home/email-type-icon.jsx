@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import emailForwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';

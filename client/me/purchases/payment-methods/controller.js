@@ -1,7 +1,7 @@
-import React from 'react';
+import { createElement } from 'react';
 import PaymentMethodsComponent from 'calypso/me/purchases/payment-methods/main';
 
 export function paymentMethods( context, next ) {
-	context.primary = React.createElement( PaymentMethodsComponent );
+	context.primary = createElement( PaymentMethodsComponent );
 	next();
 }

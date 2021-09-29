@@ -3,7 +3,7 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { useEffect, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -54,7 +54,7 @@ function SidebarScrollSynchronizer( { enabled } ) {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = enabled && ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( active ) {
 			window.addEventListener( 'scroll', handleScroll );
 			window.addEventListener( 'resize', handleScroll );
@@ -85,7 +85,7 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 		}
 	};
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( layoutFocus !== 'sites' ) {
 			// The sidebar menu uses a flyout design that requires the overflowing content
 			// to be visible. However, `overflow` isn't an animatable CSS property, so we

@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import page from 'page';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';

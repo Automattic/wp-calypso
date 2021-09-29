@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Tabs from 'calypso/my-sites/stats/stats-tabs';
 import Tab from 'calypso/my-sites/stats/stats-tabs/tab';

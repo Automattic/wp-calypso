@@ -2,7 +2,7 @@ import { Button, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import SectionHeader from 'calypso/components/section-header';

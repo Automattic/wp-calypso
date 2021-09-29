@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Fragment } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import {
 	buildNewTitanMailbox,
@@ -63,9 +63,9 @@ const TitanNewMailboxList = ( {
 	};
 
 	return (
-		<div className="titan-new-mailbox-list__main">
+        <div className="titan-new-mailbox-list__main">
 			{ mailboxes.map( ( mailbox, index ) => (
-				<React.Fragment key={ `${ index }:${ mailbox.uuid }` }>
+				<Fragment key={ `${ index }:${ mailbox.uuid }` }>
 					{ index > 0 && (
 						<CardHeading
 							className="titan-new-mailbox-list__numbered-heading"
@@ -101,7 +101,7 @@ const TitanNewMailboxList = ( {
 					</div>
 
 					<hr className="titan-new-mailbox-list__separator" />
-				</React.Fragment>
+				</Fragment>
 			) ) }
 
 			<div className="titan-new-mailbox-list__supplied-actions">
@@ -114,7 +114,7 @@ const TitanNewMailboxList = ( {
 				{ children }
 			</div>
 		</div>
-	);
+    );
 };
 
 TitanNewMailboxList.propTypes = {

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { find, size } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import DeviceSelector from './device-selector';
 import StreamHeader from './stream-header';

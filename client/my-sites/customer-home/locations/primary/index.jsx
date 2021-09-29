@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useEffect, useRef } from 'react';
+import { createElement, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -93,7 +93,7 @@ const Primary = ( { cards, trackCard } ) => {
 	const isUrgent = cards.length === 1 && cards[ 0 ] === TASK_RENEW_EXPIRED_PLAN;
 
 	return (
-		<DotPager
+        <DotPager
 			className={ classnames( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
@@ -104,14 +104,14 @@ const Primary = ( { cards, trackCard } ) => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
+					createElement( cardComponents[ card ], {
 						key: index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 						card,
 					} )
 			) }
 		</DotPager>
-	);
+    );
 };
 
 const trackCardImpression = ( card ) => {

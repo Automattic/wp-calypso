@@ -5,7 +5,6 @@
 import { shallow } from 'enzyme';
 import page from 'page';
 import QRCode from 'qrcode.react';
-import React from 'react';
 import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 import { WechatPaymentQRCode } from '../payment-methods/wechat/wechat-payment-qrcode';
 

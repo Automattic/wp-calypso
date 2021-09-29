@@ -1,6 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { savePreference, setPreference } from 'calypso/state/preferences/actions';

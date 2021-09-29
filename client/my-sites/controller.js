@@ -3,7 +3,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
@@ -98,7 +98,7 @@ export function createNavigation( context ) {
 export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( NoSitesMessage );
+	context.primary = createElement( NoSitesMessage );
 
 	makeLayout( context, noop );
 	clientRender( context );
@@ -113,7 +113,7 @@ export function renderNoVisibleSites( context ) {
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( EmptyContentComponent, {
+	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate(
 			'You have %(hidden)d hidden WordPress site.',
 			'You have %(hidden)d hidden WordPress sites.',

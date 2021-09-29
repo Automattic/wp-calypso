@@ -2,12 +2,12 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
 import './style.scss';
 
-class PodcastIndicator extends React.Component {
+class PodcastIndicator extends Component {
 	static propTypes = {
 		size: PropTypes.number,
 		tooltipType: PropTypes.oneOf( [ 'category', 'episode', null ] ),
@@ -22,7 +22,7 @@ class PodcastIndicator extends React.Component {
 		tooltipVisible: false,
 	};
 
-	tooltipContext = React.createRef();
+	tooltipContext = createRef();
 
 	showTooltip = () => {
 		this.setState( { tooltipVisible: true } );

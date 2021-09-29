@@ -3,7 +3,7 @@
  */
 
 import { mount } from 'enzyme';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { asyncLoader } from '../';
 
 const runAfterEvents = ( f ) =>

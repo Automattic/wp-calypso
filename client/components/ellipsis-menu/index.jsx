@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 
 import './style.scss';
@@ -29,7 +29,7 @@ class EllipsisMenu extends Component {
 		isMenuVisible: false,
 	};
 
-	popoverContext = React.createRef();
+	popoverContext = createRef();
 
 	handleClick = ( event ) => {
 		const { onClick } = this.props;

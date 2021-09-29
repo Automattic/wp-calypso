@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from '../helpers/stats';
 import { html } from '../indices-to-html';
@@ -7,7 +7,7 @@ import noticon2gridicon from '../utils/noticon2gridicon';
 import Gridicon from './gridicons';
 import ImagePreloader from './image-loader';
 
-export class SummaryInList extends React.Component {
+export class SummaryInList extends Component {
 	handleClick = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();

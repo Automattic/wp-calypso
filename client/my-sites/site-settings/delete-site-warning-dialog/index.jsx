@@ -1,7 +1,6 @@
 import { Dialog, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 
 import './style.scss';

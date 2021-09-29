@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import wp from 'calypso/lib/wp';

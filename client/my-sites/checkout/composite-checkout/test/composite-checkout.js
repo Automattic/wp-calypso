@@ -14,7 +14,6 @@ import {
 } from '@testing-library/react';
 import nock from 'nock';
 import page from 'page';
-import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

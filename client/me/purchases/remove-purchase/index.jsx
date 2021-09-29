@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';

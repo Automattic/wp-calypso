@@ -6,7 +6,7 @@ import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { find, get, isEmpty, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';

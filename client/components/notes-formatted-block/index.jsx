@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Blocks from './blocks';
 
 export const FormattedBlockRenderer = ( blockTypeMapping ) => ( {

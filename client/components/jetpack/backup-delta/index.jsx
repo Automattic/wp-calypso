@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import ActivityCard from 'calypso/components/activity-card';
 import Pagination from 'calypso/components/pagination';
 

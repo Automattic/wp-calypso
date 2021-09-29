@@ -1,8 +1,8 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
-class SegmentedControlDemo extends React.PureComponent {
+class SegmentedControlDemo extends PureComponent {
 	static displayName = 'SegmentedControl';
 
 	static defaultProps = {

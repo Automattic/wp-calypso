@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import SocialSignupForm from './social';
 

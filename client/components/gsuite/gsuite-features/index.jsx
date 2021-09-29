@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
 import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';

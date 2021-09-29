@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
@@ -16,7 +16,7 @@ import ListItem from './list-item';
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
 
-	const [ query, updateQuery ] = React.useState( '' );
+	const [ query, updateQuery ] = useState( '' );
 	const queryIsUrl = resemblesUrl( query );
 	const followResults = useSelector( ( state ) =>
 		filterFollowsByQuery( query, getReaderFollows( state ) ).slice( 0, 7 )

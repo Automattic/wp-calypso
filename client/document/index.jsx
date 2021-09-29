@@ -1,7 +1,7 @@
 import path from 'path';
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
-import React from 'react';
+import { Component } from 'react';
 import EnvironmentBadge, {
 	Branch,
 	AuthHelper,
@@ -16,7 +16,7 @@ import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
-class Document extends React.Component {
+class Document extends Component {
 	render() {
 		const {
 			app,

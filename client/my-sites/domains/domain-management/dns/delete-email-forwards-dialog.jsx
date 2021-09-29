@@ -1,10 +1,10 @@
 import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 
-class DeleteEmailForwardsDialog extends React.Component {
+class DeleteEmailForwardsDialog extends Component {
 	static propTypes = {
 		onClose: PropTypes.func,
 		visible: PropTypes.bool.isRequired,

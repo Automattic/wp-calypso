@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -7,7 +7,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import { toggleWPcomEmailSetting } from 'calypso/state/notification-settings/actions';
 
-class EmailCategory extends React.Component {
+class EmailCategory extends Component {
 	static propTypes = {
 		name: PropTypes.string,
 		isEnabled: PropTypes.bool,

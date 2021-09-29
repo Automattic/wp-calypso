@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placeholder';

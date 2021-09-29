@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { filter, some } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -14,7 +14,7 @@ import ButtonsPreviewAction from './preview-action';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsTray from './tray';
 
-class SharingButtonsPreview extends React.Component {
+class SharingButtonsPreview extends Component {
 	static displayName = 'SharingButtonsPreview';
 
 	static propTypes = {

@@ -1,4 +1,3 @@
-import React from 'react';
 import Badge from 'calypso/components/badge';
 
 const BadgeExample = () => this.props.exampleCode;

@@ -1,7 +1,7 @@
 import { registerStore, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
+import { Fragment } from 'react';
 import { maskField } from 'calypso/lib/checkout';
 import {
 	VisaLogo,
@@ -208,11 +208,11 @@ function CreditCardSummary() {
 function CreditCardLabel() {
 	const { __ } = useI18n();
 	return (
-		<React.Fragment>
+        <Fragment>
 			<span>{ __( 'Credit or debit card' ) }</span>
 			<CreditCardLogos />
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 function CreditCardLogos() {

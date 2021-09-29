@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
@@ -17,7 +17,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class Site extends React.Component {
+class Site extends Component {
 	static defaultProps = {
 		// onSelect callback
 		onSelect: noop,

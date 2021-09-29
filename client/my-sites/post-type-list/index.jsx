@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

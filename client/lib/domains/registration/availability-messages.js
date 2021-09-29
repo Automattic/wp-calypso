@@ -2,7 +2,6 @@
 
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import {

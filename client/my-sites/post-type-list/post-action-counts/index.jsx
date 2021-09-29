@@ -2,7 +2,7 @@ import { ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -22,7 +22,7 @@ class PostActionCounts extends PureComponent {
 		showLikesPopover: false,
 	};
 
-	liRef = React.createRef();
+	liRef = createRef();
 
 	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;

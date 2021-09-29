@@ -1,6 +1,6 @@
 import i18n from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import FeedError from 'calypso/reader/feed-error';
@@ -31,7 +31,7 @@ function userHasHistory( context ) {
 }
 
 function renderFeedError( context, next ) {
-	context.primary = React.createElement( FeedError );
+	context.primary = createElement( FeedError );
 	next();
 }
 
@@ -138,7 +138,7 @@ export function following( context, next ) {
 	setPageTitle( context, i18n.translate( 'Following' ) );
 
 	// warn: don't async load this only. we need it to keep feed-post-store in the reader bundle
-	context.primary = React.createElement( StreamComponent, {
+	context.primary = createElement( StreamComponent, {
 		key: 'following',
 		listName: i18n.translate( 'Followed Sites' ),
 		streamKey: 'following',

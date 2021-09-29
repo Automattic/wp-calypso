@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import HappychatButton from 'calypso/components/happychat/button';
@@ -345,7 +345,7 @@ class ActivityLogItem extends Component {
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 
 		return (
-			<React.Fragment>
+            <Fragment>
 				{ mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
@@ -407,8 +407,8 @@ class ActivityLogItem extends Component {
 						summary={ this.renderItemAction() }
 					/>
 				</div>
-			</React.Fragment>
-		);
+			</Fragment>
+        );
 	}
 }
 

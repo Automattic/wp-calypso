@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';

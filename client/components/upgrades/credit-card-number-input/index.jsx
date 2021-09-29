@@ -1,8 +1,8 @@
-import React from 'react';
+import { Component } from 'react';
 import { getCreditCardType } from 'calypso/lib/checkout';
 import Input from 'calypso/my-sites/domains/components/form/input';
 
-class CreditCardNumberInput extends React.Component {
+class CreditCardNumberInput extends Component {
 	render() {
 		return (
 			<div className="credit-card-number-input">

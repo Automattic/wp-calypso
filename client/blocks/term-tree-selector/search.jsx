@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './search.scss';

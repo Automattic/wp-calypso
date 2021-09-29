@@ -1,6 +1,5 @@
 import deepFreeze from 'deep-freeze';
 import { shallow } from 'enzyme';
-import React from 'react';
 import Notice from 'calypso/components/notice';
 import { GlobalNotices } from '..';
 

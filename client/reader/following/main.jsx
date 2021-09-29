@@ -2,7 +2,6 @@ import { CompactCard, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flatMap, trim } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import SearchInput from 'calypso/components/search';
 import SectionHeader from 'calypso/components/section-header';

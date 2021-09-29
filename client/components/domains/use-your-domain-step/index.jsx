@@ -7,7 +7,7 @@ import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 import themesImage from 'calypso/assets/images/illustrations/themes.svg';
@@ -44,7 +44,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class UseYourDomainStep extends React.Component {
+class UseYourDomainStep extends Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,

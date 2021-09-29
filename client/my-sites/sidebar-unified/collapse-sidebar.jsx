@@ -4,7 +4,6 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';

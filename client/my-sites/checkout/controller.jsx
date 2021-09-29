@@ -3,7 +3,6 @@ import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';

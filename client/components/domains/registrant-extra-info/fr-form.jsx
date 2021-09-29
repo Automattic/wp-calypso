@@ -2,7 +2,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { defaults, get, isEmpty, map, set } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -48,7 +48,7 @@ function renderValidationError( message ) {
 	return <FormInputValidation isError key={ message } text={ message } />;
 }
 
-class RegistrantExtraInfoFrForm extends React.PureComponent {
+class RegistrantExtraInfoFrForm extends PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
 		ccTldDetails: PropTypes.object.isRequired,

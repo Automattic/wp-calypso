@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { InView } from 'react-intersection-observer';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -273,7 +273,7 @@ class ListAll extends Component {
 		const actionResult = this.getActionResult( domain.name );
 
 		return (
-			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
+            <Fragment key={ `domain-item-${ index }-${ domain.name }` }>
 				{ domain?.blogId && ! isContactEmailEditContext ? (
 					<InView triggerOnce>
 						{ ( { inView, ref } ) => (
@@ -307,8 +307,8 @@ class ListAll extends Component {
 						}
 					/>
 				) }
-			</React.Fragment>
-		);
+			</Fragment>
+        );
 	}
 
 	handleDomainListHeaderToggle = ( selected ) => {

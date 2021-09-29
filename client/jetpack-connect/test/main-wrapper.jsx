@@ -5,7 +5,6 @@
 jest.mock( 'calypso/components/data/document-head', () => 'DocumentHead' );
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import Main from 'calypso/components/main';
 import { JetpackConnectMainWrapper } from '../main-wrapper';
 

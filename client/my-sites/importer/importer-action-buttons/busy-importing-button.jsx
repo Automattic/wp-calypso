@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import ImporterActionButton from './action-button';
 
 export const BusyImportingButton = ( { translate } ) => (

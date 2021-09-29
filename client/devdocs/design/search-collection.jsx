@@ -1,5 +1,5 @@
 import { map, chunk } from 'lodash';
-import React from 'react';
+import { Children } from 'react';
 import { InView } from 'react-intersection-observer';
 import ReadmeViewer from 'calypso/components/readme-viewer';
 import ComponentPlayground from 'calypso/devdocs/design/component-playground';
@@ -58,7 +58,7 @@ const Collection = ( {
 		window.scrollTo( 0, 0 );
 	};
 
-	const examples = React.Children.map( children, ( example ) => {
+	const examples = Children.map( children, ( example ) => {
 		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
 		}

@@ -1,13 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { hasConciergeSession } from 'calypso/lib/cart-values/cart-items';
 import { REFUNDS } from 'calypso/lib/url/support';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class ConciergeRefundPolicy extends React.Component {
+class ConciergeRefundPolicy extends Component {
 	static displayName = 'RegistrationRefundPolicy';
 
 	recordRefundsSupportClick = () => {

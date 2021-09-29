@@ -1,6 +1,5 @@
 import { isEqual, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';

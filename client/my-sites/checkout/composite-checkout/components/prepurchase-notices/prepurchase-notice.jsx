@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './style.scss';
 
 const PrePurchaseNotice = ( { message, linkUrl, linkText } ) => (

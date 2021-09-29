@@ -1,4 +1,3 @@
-import React from 'react';
 import ActionPanelCta from './cta';
 
 const ActionPanelFooter = ( { children } ) => {

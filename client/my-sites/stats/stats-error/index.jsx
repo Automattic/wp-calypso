@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
 import './style.scss';
 
-class StatsError extends React.PureComponent {
+class StatsError extends PureComponent {
 	static displayName = 'StatsError';
 
 	static propTypes = {

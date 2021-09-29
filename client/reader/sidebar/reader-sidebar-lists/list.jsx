@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 
-export class ReaderSidebarListsList extends React.Component {
+export class ReaderSidebarListsList extends Component {
 	static propTypes = {
 		lists: PropTypes.array,
 		path: PropTypes.string.isRequired,

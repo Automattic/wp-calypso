@@ -2,7 +2,7 @@
 
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
@@ -15,8 +15,8 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class Team extends React.Component {
-	infiniteList = React.createRef();
+class Team extends Component {
+	infiniteList = createRef();
 
 	renderPerson = ( user ) => (
 		<PeopleListItem key={ user.ID } user={ user } type="user" site={ this.props.site } />

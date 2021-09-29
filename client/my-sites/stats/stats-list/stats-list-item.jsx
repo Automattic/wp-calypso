@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import titlecase from 'to-title-case';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -18,7 +18,7 @@ import Spam from './action-spam';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
 
-class StatsListItem extends React.Component {
+class StatsListItem extends Component {
 	static displayName = 'StatsListItem';
 
 	state = {

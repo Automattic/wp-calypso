@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';

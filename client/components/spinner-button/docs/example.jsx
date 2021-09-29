@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import SpinnerButton from '../index';
 
 export default class SpinnerButtonExample extends Component {

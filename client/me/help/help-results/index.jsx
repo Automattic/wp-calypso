@@ -1,10 +1,10 @@
 import { CompactCard } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import HelpResult from './item';
 
 import './style.scss';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'HelpResults';
 
 	render() {

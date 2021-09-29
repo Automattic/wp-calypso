@@ -3,7 +3,7 @@ import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
+import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import {

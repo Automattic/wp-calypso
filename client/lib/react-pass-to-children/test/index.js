@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import React from 'react';
+import { Component, Children } from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import passToChildren from '../';
 
@@ -8,7 +8,7 @@ import passToChildren from '../';
  */
 const DUMMY_PROPS = { data: [ 1, 2, 3 ] };
 
-const PassThrough = class extends React.Component {
+const PassThrough = class extends Component {
 	render() {
 		return passToChildren( this, DUMMY_PROPS );
 	}
@@ -42,9 +42,9 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( React.Children.count( result ) ).to.equal( 1 );
+		expect( Children.count( result ) ).to.equal( 1 );
 		expect( result.type ).to.eql( 'div' );
-		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
+		expect( Children.count( result.props.children ) ).to.equal( 2 );
 	} );
 
 	test( 'should accept multiple children and pass along props to each', () => {
@@ -57,7 +57,7 @@ describe( 'index', () => {
 			);
 			const result = renderer.getRenderOutput();
 
-			React.Children.forEach( result.props.children, function ( child, i ) {
+			Children.forEach( result.props.children, function ( child, i ) {
 				expect( child.type ).to.equal( 'div' );
 				expect( child.props ).to.eql( DUMMY_PROPS );
 
@@ -77,8 +77,8 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( React.Children.count( result.props.children ) ).to.equal( 1 );
-		expect( React.Children.toArray( result.props.children )[ 0 ].props ).to.eql( DUMMY_PROPS );
+		expect( Children.count( result.props.children ) ).to.equal( 1 );
+		expect( Children.toArray( result.props.children )[ 0 ].props ).to.eql( DUMMY_PROPS );
 	} );
 
 	test( 'should preserve props passed to the children', () => {

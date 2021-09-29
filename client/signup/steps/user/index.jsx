@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
 import AsyncLoad from 'calypso/components/async-load';

@@ -1,6 +1,6 @@
 import { useRtl } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
+import { cloneElement, Children } from 'react';
 import { stripHTML } from 'calypso/lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 
@@ -51,7 +51,7 @@ const getTaglessIndex = ( text ) => {
 /**
  * Gets text content from react element in case that's a leaf element
  *
- * @param {React.Element} reactElement react element
+ * @param {Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
 const getContent = ( reactElement ) => {
@@ -152,19 +152,19 @@ const getChildDirection = ( child, isRtl ) => {
  * It will set directionality only to the leaf components - because it does so according
  * to text content and only leaf components have those.
  *
- * @param {React.Element} child element to transform
+ * @param {Element} child element to transform
  * @param {boolean}       isRtl whether current language is RTL
- * @returns {React.Element} transformed child
+ * @returns {Element} transformed child
  */
 const setChildDirection = ( child, isRtl ) => {
 	const childDirection = getChildDirection( child, isRtl );
 
 	if ( childDirection ) {
-		return React.cloneElement( child, getDirectionProps( child, childDirection ) );
+		return cloneElement( child, getDirectionProps( child, childDirection ) );
 	}
 
 	if ( child && child.props.children ) {
-		const children = React.Children.map( child.props.children, ( innerChild ) => {
+		const children = Children.map( child.props.children, ( innerChild ) => {
 			if ( ! innerChild ) {
 				return innerChild;
 			}
@@ -176,7 +176,7 @@ const setChildDirection = ( child, isRtl ) => {
 			return setChildDirection( innerChild, isRtl );
 		} );
 
-		return React.cloneElement( child, null, children );
+		return cloneElement( child, null, children );
 	}
 
 	return child;
@@ -186,7 +186,7 @@ const setChildDirection = ( child, isRtl ) => {
  * Auto direction component that will set direction to child components according to their text content
  *
  * @param {object.children} props react element props that must contain some children
- * @returns {React.Element} returns a react element with adjusted children
+ * @returns {Element} returns a react element with adjusted children
  */
 export default function AutoDirection( { children } ) {
 	const isRtl = useRtl();

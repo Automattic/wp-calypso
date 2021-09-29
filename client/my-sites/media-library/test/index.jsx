@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import React from 'react';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
 import MediaLibrary from '..';
 

@@ -1,6 +1,5 @@
 import { last, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 

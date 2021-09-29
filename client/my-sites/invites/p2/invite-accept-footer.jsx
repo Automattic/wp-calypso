@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './style.scss';
 
 const P2InviteAcceptFooter = ( props ) => {

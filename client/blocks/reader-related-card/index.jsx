@@ -2,7 +2,6 @@ import { CompactCard as Card } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';

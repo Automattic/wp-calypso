@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
 
 import './style.scss';

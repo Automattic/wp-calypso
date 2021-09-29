@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import ActionCard from 'calypso/components/action-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

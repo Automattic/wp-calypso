@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 

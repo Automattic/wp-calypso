@@ -1,10 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import Spinner from 'calypso/components/spinner';
 import { flagUrl } from 'calypso/lib/flags';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'PhoneInputCountryFlag';
 
 	static propTypes = {

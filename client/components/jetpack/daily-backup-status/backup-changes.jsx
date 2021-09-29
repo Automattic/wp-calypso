@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import mediaImage from 'calypso/assets/images/illustrations/media.svg';
 
 // const renderMetaDiff = ( metaDiff ) => {

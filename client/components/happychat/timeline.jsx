@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Component, useCallback, useEffect, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -23,7 +23,7 @@ const MessageParagraph = ( { message, isEdited, isOptimistic } ) => (
 	</p>
 );
 
-class MessageLink extends React.Component {
+class MessageLink extends Component {
 	handleClick = () => {
 		const { href, messageId, sendEventMessage, userId } = this.props;
 

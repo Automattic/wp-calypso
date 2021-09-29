@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import InfoPopover from 'calypso/components/info-popover';

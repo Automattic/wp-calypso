@@ -1,16 +1,16 @@
 import classNames from 'classnames';
-import React from 'react';
+import { Fragment } from 'react';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { isExpiring, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 
 function WrapDomainStatusButtons( props ) {
 	const wrapperClassNames = classNames( 'domain-types__wrap-me', props.className );
 	return (
-		<React.Fragment>
+        <Fragment>
 			<div className="domain-types__break" />
 			<div className={ wrapperClassNames }>{ props.children }</div>
-		</React.Fragment>
-	);
+		</Fragment>
+    );
 }
 
 function DomainExpiryOrRenewal( { domain, isLoadingPurchase, moment, purchase, translate } ) {

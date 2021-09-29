@@ -1,6 +1,5 @@
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 export function acceptedNotice( invite, displayOnNextPage = true ) {

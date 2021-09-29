@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import EditorMediaModalDetailPreviewMediaFile from './detail-preview-media-file';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'EditorMediaModalDetailPreviewAudio';
 
 	static propTypes = {

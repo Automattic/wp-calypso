@@ -1,4 +1,3 @@
-import React from 'react';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 

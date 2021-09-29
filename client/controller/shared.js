@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import React from 'react';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';

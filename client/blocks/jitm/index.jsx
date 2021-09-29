@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';

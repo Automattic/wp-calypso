@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const ProductCardPromoNudge = ( { badgeText, text } ) => {
 	const className = classNames( 'product-card__promo-nudge', {

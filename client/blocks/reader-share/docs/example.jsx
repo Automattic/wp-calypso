@@ -1,4 +1,3 @@
-import React from 'react';
 import { posts } from 'calypso/blocks/reader-post-card/docs/fixtures';
 import ReaderShare from 'calypso/blocks/reader-share';
 

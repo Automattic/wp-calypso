@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import CardHeading from 'calypso/components/card-heading';

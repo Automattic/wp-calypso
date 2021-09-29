@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { reject } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import Count from 'calypso/components/count';
 import HeaderButton from 'calypso/components/header-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -19,7 +19,7 @@ import CartEmpty from './cart-empty';
 
 import './style.scss';
 
-class PopoverCart extends React.Component {
+class PopoverCart extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		shoppingCartManager: PropTypes.object.isRequired,
@@ -34,7 +34,7 @@ class PopoverCart extends React.Component {
 		compact: false,
 	};
 
-	toggleButtonRef = React.createRef();
+	toggleButtonRef = createRef();
 	hasUnmounted = false;
 
 	componentWillUnmount() {

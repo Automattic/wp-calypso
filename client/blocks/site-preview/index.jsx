@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import WebPreview from 'calypso/components/web-preview';
 import { addQueryArgs } from 'calypso/lib/route';

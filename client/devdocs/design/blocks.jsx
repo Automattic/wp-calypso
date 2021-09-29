@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
@@ -66,7 +66,7 @@ import PlanCompareCard from 'calypso/my-sites/plan-compare-card/docs/example';
 import PlanPrice from 'calypso/my-sites/plan-price/docs/example';
 import PostSelector from 'calypso/my-sites/post-selector/docs/example';
 
-export default class AppComponents extends React.Component {
+export default class AppComponents extends Component {
 	static displayName = 'AppComponents';
 	state = { filter: '' };
 
@@ -85,18 +85,18 @@ export default class AppComponents extends React.Component {
 		} );
 
 		return (
-			<Main className={ className }>
+            <Main className={ className }>
 				<DocumentHead title="Blocks" />
 
 				{ this.props.component ? (
-					<React.Fragment>
+					<Fragment>
 						<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 							{ slugToCamelCase( this.props.component ) }
 						</HeaderCake>
 						{ isEnabled( 'devdocs/color-scheme-picker' ) && (
 							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 						) }
-					</React.Fragment>
+					</Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
@@ -172,6 +172,6 @@ export default class AppComponents extends React.Component {
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 				</Collection>
 			</Main>
-		);
+        );
 	}
 }

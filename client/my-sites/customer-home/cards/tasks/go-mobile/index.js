@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import { preventWidows } from 'calypso/lib/formatting';
 import {

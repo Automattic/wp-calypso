@@ -1,7 +1,7 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import Edit from './index';
 
-class TransferIn extends React.PureComponent {
+class TransferIn extends PureComponent {
 	render() {
 		return <Edit { ...this.props } isTransfer={ true } />;
 	}

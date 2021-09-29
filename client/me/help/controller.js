@@ -1,5 +1,4 @@
 import i18n from 'i18n-calypso';
-import React from 'react';
 import { login } from 'calypso/lib/paths';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

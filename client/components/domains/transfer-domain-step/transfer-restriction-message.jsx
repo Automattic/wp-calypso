@@ -2,13 +2,13 @@ import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import { getTransferRestrictionMessage } from '../use-my-domain/utilities';
 
-class TransferRestrictionMessage extends React.PureComponent {
+class TransferRestrictionMessage extends PureComponent {
 	static propTypes = {
 		creationDate: PropTypes.string,
 		domain: PropTypes.string,

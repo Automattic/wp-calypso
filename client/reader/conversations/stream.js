@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import React from 'react';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 import DocumentHead from 'calypso/components/data/document-head';
 import Stream from 'calypso/reader/stream';

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { map, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
@@ -40,7 +40,7 @@ import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 
 import './style.scss';
 
-class ConfirmCancelDomain extends React.Component {
+class ConfirmCancelDomain extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
 		getCancelPurchaseUrlFor: PropTypes.func,
@@ -270,7 +270,7 @@ class ConfirmCancelDomain extends React.Component {
 		const domain = getDomainName( purchase );
 
 		return (
-			<React.Fragment>
+            <Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -316,8 +316,8 @@ class ConfirmCancelDomain extends React.Component {
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
-			</React.Fragment>
-		);
+			</Fragment>
+        );
 	}
 }
 

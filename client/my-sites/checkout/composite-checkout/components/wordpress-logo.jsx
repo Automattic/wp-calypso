@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import React from 'react';
 
 const PaymentMethodLogos = styled.span`
 	height: 16px;

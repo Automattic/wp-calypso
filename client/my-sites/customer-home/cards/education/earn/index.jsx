@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

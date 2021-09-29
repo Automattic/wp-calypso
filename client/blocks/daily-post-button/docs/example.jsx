@@ -1,4 +1,3 @@
-import React from 'react';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 const DailyPostButtonExample = () => {
 	return (

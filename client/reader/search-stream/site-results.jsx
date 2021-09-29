@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import withDimensions from 'calypso/lib/with-dimensions';
@@ -17,7 +17,7 @@ import {
 	getReaderFeedsCountForQuery,
 } from 'calypso/state/reader/feed-searches/selectors';
 
-class SiteResults extends React.Component {
+class SiteResults extends Component {
 	static propTypes = {
 		query: PropTypes.string,
 		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),

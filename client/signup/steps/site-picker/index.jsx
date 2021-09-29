@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import SitePickerSubmit from './site-picker-submit';

@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
 import { SEARCH_RESULTS } from 'calypso/reader/follow-sources';
 import HeaderBack from 'calypso/reader/header-back';

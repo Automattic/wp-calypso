@@ -1,6 +1,5 @@
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { SiteSettingsSecurity } from '../main';
 
 const props = {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import Count from 'calypso/components/count';
 import Favicon from 'calypso/reader/components/favicon';

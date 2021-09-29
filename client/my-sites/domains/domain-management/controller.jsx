@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {

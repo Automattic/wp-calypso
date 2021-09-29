@@ -4,7 +4,7 @@ import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { get, pick } from 'lodash';
 import Lru from 'lru';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
@@ -63,7 +63,7 @@ export function renderJsx( view, props ) {
 	to join the fun, visit: https://automattic.com/work-with-us/
 
 -->`;
-	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
+	return doctype + ReactDomServer.renderToStaticMarkup( createElement( component, props ) );
 }
 
 /**

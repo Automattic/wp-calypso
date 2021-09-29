@@ -3,7 +3,7 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { has } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
@@ -22,7 +22,7 @@ import {
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 
-class ReaderCombinedCardPost extends React.Component {
+class ReaderCombinedCardPost extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,

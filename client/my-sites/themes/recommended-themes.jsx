@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
 import {
@@ -9,7 +9,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ConnectedThemesSelection } from './themes-selection';
 
-class RecommendedThemes extends React.Component {
+class RecommendedThemes extends Component {
 	componentDidMount() {
 		if ( ! this.props.customizedThemesList.length ) {
 			this.fetchThemes();

@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import {
@@ -11,7 +11,7 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 
-class NameserversToggle extends React.PureComponent {
+class NameserversToggle extends PureComponent {
 	static propTypes = {
 		onToggle: PropTypes.func.isRequired,
 		enabled: PropTypes.bool.isRequired,
