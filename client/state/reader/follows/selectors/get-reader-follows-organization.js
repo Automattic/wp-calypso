@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { sorter } from 'calypso/state/reader/follows/selectors/get-reader-followed-sites-by-updated';
+import { sorter } from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import 'calypso/state/reader/init';
 
 /**
