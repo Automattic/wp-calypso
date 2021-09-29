@@ -132,8 +132,9 @@
 	}
 
 	.design-picker__image-frame-blank-canvas__title {
-		color: var( --studio-gray-40 );
-		font-weight: 600;
+		color: var( --studio-gray-80 );
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-size: $font-title-small;
 	}
 
 	.design-picker__image-frame-inside {
@@ -162,7 +163,8 @@
 	.design-picker__option-name {
 		align-items: center;
 		display: inline-flex;
-		font-size: $font-body-small;
+		font-size: $font-body;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		margin-top: -0.1em;
 	}
 
@@ -198,7 +200,7 @@
 // light theme styles
 .design-picker.design-picker--theme-light {
 	.design-picker__option-name {
-		color: var( --studio-gray-40 );
+		color: var( --studio-gray-80 );
 	}
 	.design-picker__design-option {
 		.design-picker__image-frame {
