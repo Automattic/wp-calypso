@@ -18,13 +18,21 @@ function isSupportedBrowser( req ) {
 	} );
 }
 
+// We don't want to redirect some of our public landing pages, so we include them
+// here.
+function shouldRedirectPath( path ) {
+	const allowedPaths = [ 'browsehappy', 'log-in', 'start', 'new', 'themes' ];
+	return ! allowedPaths.includes( path.slice( 1 ) );
+}
+
 export default () => ( req, res, next ) => {
 	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
 		next();
 		return;
 	}
 
-	if ( req.path === '/browsehappy' ) {
+	// Permitted paths even if the browser is unsupported.
+	if ( ! shouldRedirectPath( req.path ) ) {
 		next();
 		return;
 	}
