@@ -1,5 +1,7 @@
 # WordPress.com End to End Tests
 
+foobar
+
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
 
 ## Table of contents
