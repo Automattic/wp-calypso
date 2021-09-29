@@ -56,7 +56,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 						<div>
 							<b>{ translate( 'End of Summer Sale!' ) }</b>
 							&nbsp;
-							{ translate( 'Get %(discount)d%% off your first year of Jetpack', {
+							{ translate( 'Get %(discount)d%% off your first year of Jetpack.', {
 								args: { discount: coupon.discount },
 							} ) }
 						</div>
