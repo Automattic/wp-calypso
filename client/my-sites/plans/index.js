@@ -7,7 +7,8 @@ import {
 	wpForTeamsP2PlusNotSupportedRedirect,
 	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
-import jetpackPlans, { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
 import {
 	features,
 	plans,

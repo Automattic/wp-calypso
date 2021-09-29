@@ -1,6 +1,7 @@
 import page from 'page';
 import { loggedInSiteSelection } from 'calypso/my-sites/controller';
-import jetpackPlans, { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
 import { jetpackPricingContext } from './controller';
 import './style.scss';
 
