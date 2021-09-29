@@ -7,34 +7,37 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { tip } from './icons';
+import type { SiteOptionsFormValues } from './types';
 import './site-options.scss';
-
-interface FormElements extends HTMLFormControlsCollection {
-	siteTitle: HTMLInputElement;
-	tagline: HTMLInputElement;
-}
-
-interface SiteOptionFormElement extends HTMLFormElement {
-	readonly elements: FormElements;
-}
 
 interface Props {
 	defaultSiteTitle: string;
 	defaultTagline: string;
-	onSubmit: ( siteTitle: string, tagline: string ) => void;
+	onSubmit: ( siteOptionsFormValues: SiteOptionsFormValues ) => void;
 	translate: LocalizeProps[ 'translate' ];
 }
 
 const SiteOptions: React.FC< Props > = ( {
-	defaultSiteTitle,
-	defaultTagline,
+	defaultSiteTitle = '',
+	defaultTagline = '',
 	onSubmit,
 	translate,
 } ) => {
-	const handleSubmit = ( event: React.FormEvent< SiteOptionFormElement > ) => {
+	const [ formValues, setFormValues ] = React.useState( {
+		siteTitle: defaultSiteTitle,
+		tagline: defaultTagline,
+	} );
+
+	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		setFormValues( ( value ) => ( {
+			...value,
+			[ event.target.name ]: event.target.value,
+		} ) );
+	};
+
+	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
-		const { siteTitle, tagline } = event.currentTarget.elements;
-		onSubmit( siteTitle.value, tagline.value );
+		onSubmit( formValues );
 	};
 
 	return (
@@ -43,19 +46,29 @@ const SiteOptions: React.FC< Props > = ( {
 				<FormLabel htmlFor="siteTitle" optional>
 					{ translate( 'Blog name' ) }
 				</FormLabel>
-				<FormInput name="siteTitle" id="siteTitle" value={ defaultSiteTitle } />
+				<FormInput
+					name="siteTitle"
+					id="siteTitle"
+					value={ formValues.siteTitle }
+					onChange={ onChange }
+				/>
 			</FormFieldset>
 			<FormFieldset className="site-options__form-fieldset">
 				<FormLabel htmlFor="tagline" optional>
 					{ translate( 'Tagline' ) }
 				</FormLabel>
-				<FormInput name="tagline" id="tagline" value={ defaultTagline } />
+				<FormInput name="tagline" id="tagline" value={ formValues.tagline } onChange={ onChange } />
 				<FormSettingExplanation>
 					<Icon icon={ tip } size={ 20 } />
 					{ translate( 'In a few words, explain what your blog is about.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
-			<Button className="site-options__submit-button" type="submit" primary>
+			<Button
+				className="site-options__submit-button"
+				type="submit"
+				primary
+				disabled={ Object.values( formValues ).every( ( value ) => ! value ) }
+			>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

@@ -6,6 +6,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SiteOptions from './site-options';
+import type { SiteOptionsFormValues } from './types';
 import './index.scss';
 
 interface Props {
@@ -21,7 +22,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const headerText = translate( "First, let's give your blog a name" );
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
-	const submitSiteOptions = ( siteTitle: string, tagline: string ) => {
+	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_submit_site_options', { siteTitle, tagline } );
 		dispatch( submitSignupStep( { stepName }, { siteTitle, tagline } ) );
 		goToNextStep();
