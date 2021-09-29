@@ -119,6 +119,7 @@ export default function PaymentMethodSelector( {
 						{
 							purchase,
 							useForAllSubscriptions,
+							useAsBackupMethod,
 							translate,
 							stripe,
 							stripeConfiguration,

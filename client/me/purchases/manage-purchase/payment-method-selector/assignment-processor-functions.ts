@@ -39,6 +39,7 @@ export async function assignNewCardProcessor(
 	{
 		purchase,
 		useForAllSubscriptions,
+		useAsBackupMethod,
 		translate,
 		stripe,
 		stripeConfiguration,
@@ -47,6 +48,7 @@ export async function assignNewCardProcessor(
 	}: {
 		purchase: Purchase | undefined;
 		useForAllSubscriptions?: boolean;
+		useAsBackupMethod?: boolean;
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
@@ -100,6 +102,7 @@ export async function assignNewCardProcessor(
 			token,
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+			useAsBackupMethod: Boolean( useAsBackupMethod ),
 		} );
 
 		return makeSuccessResponse( result );

@@ -9,15 +9,18 @@ export async function saveCreditCard( {
 	token,
 	stripeConfiguration,
 	useForAllSubscriptions,
+	useAsBackupMethod,
 }: {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
+	useAsBackupMethod: boolean;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		useForAllSubscriptions,
+		useAsBackupMethod,
 	} );
 	const response = await wp.req.post(
 		{
@@ -68,17 +71,21 @@ function getParamsForApi( {
 	stripeConfiguration,
 	purchase,
 	useForAllSubscriptions,
+	useAsBackupMethod,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
 	purchase?: Purchase | undefined;
 	useForAllSubscriptions?: boolean;
+	useAsBackupMethod?: boolean;
 } ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
 		paygate_token: cardToken,
 		...( useForAllSubscriptions === true ? { use_for_existing: true } : {} ),
 		...( useForAllSubscriptions === false ? { use_for_existing: false } : {} ), // if undefined, we do not add this property
+		...( useAsBackupMethod === true ? { use_as_backup: true } : {} ),
+		...( useAsBackupMethod === false ? { use_as_backup: false } : {} ), // if undefined, we do not add this property
 		...( purchase ? { purchaseId: purchase.id } : {} ),
 	};
 }
