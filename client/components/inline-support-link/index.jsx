@@ -146,7 +146,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 			const analyticsEvents = [
 				...[
 					recordTracksEvent( 'calypso_inlinesupportlink_click', {
-						support_context: supportContext,
+						support_context: supportContext || null,
 						support_link: supportLink,
 					} ),
 				],
