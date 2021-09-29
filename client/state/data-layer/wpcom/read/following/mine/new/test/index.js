@@ -39,6 +39,7 @@ describe( 'receiveFollow', () => {
 				date_subscribed: '1976-09-15T12:00:00Z',
 				delivery_methods: {},
 				is_owner: false,
+				last_updated: null,
 			},
 		};
 		const result = receiveFollow( action, response );
@@ -53,6 +54,7 @@ describe( 'receiveFollow', () => {
 					date_subscribed: 211636800000,
 					delivery_methods: {},
 					is_owner: false,
+					last_updated: NaN,
 				} )
 			)
 		);
