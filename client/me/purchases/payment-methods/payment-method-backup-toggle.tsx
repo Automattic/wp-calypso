@@ -18,30 +18,35 @@ async function setIsBackup(
 	} );
 }
 
-export interface UpdateError {
-	message: string;
-	error: string;
-}
-
 export default function PaymentMethodBackupToggle( { card }: { card: StoredCard } ): JSX.Element {
 	const translate = useTranslate();
 	const storedDetailsId = card.stored_details_id;
 	const initialIsBackup =
-		card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value === 'yes' ?? false;
+		card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value === 'yes';
 	const queryClient = useQueryClient();
 	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >(
 		[ 'payment-method-backup-toggle', storedDetailsId ],
 		() => fetchIsBackup( storedDetailsId ),
-		{ initialData: { is_backup: initialIsBackup } }
+		{
+			initialData: { is_backup: initialIsBackup },
+			refetchOnMount: false,
+			refetchOnWindowFocus: false,
+		}
 	);
 	const mutation = useMutation( ( isBackup: boolean ) => setIsBackup( storedDetailsId, isBackup ), {
+		onMutate: ( isBackup ) => {
+			// Optimistically update the toggle
+			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], {
+				is_backup: isBackup,
+			} );
+		},
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], data );
 		},
 	} );
 	const toggleIsBackup = useCallback(
 		( event: React.ChangeEvent< HTMLInputElement > ) => {
-			mutation.mutate( event.currentTarget.value !== 'checked' );
+			mutation.mutate( event.currentTarget.checked );
 		},
 		[ mutation ]
 	);
