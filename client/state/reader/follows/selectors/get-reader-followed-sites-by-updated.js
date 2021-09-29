@@ -2,7 +2,7 @@ import { createSelector } from '@automattic/state-utils';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import 'calypso/state/reader/init';
 
-const sorter = ( a, b ) => {
+export const sorter = ( a, b ) => {
 	const updatedA =
 		typeof a.last_updated === 'number' && ! isNaN( a.last_updated ) ? a.last_updated : 999;
 	const updatedB =
