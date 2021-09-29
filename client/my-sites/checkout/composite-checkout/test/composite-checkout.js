@@ -365,6 +365,7 @@ describe( 'CompositeCheckout', () => {
 		{ complete: 'does', valid: 'valid', name: 'plan', email: 'passes', logged: 'out' },
 		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'passes', logged: 'out' },
 		{ complete: 'does not', valid: 'valid', name: 'domain', email: 'fails', logged: 'out' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'out' },
 	] )(
 		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
 		async ( { complete, valid, name, email, logged } ) => {
@@ -438,8 +439,17 @@ describe( 'CompositeCheckout', () => {
 						body.email === validContactDetails.email
 					);
 				} )
-				.reply( 200, {
-					success: email === 'passes',
+				.reply( 200, () => {
+					if ( logged === 'out' && email === 'fails' ) {
+						return {
+							success: false,
+							messages: { email: { taken: 'An account with this email already exists.' } },
+						};
+					}
+
+					return {
+						success: email === 'passes',
+					};
 				} );
 
 			render(
@@ -479,7 +489,16 @@ describe( 'CompositeCheckout', () => {
 				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
 				// Make sure the error message is displayed
 				if ( valid !== 'valid' ) {
-					expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					if ( logged === 'out' && email === 'fails' ) {
+						expect(
+							screen.getByText( ( content ) =>
+								content.startsWith( 'That email address is already in use' )
+							)
+						);
+					} else if ( email === 'passes' ) {
+						expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					}
+
 					if ( name === 'domain' ) {
 						expect( screen.getByText( 'Missing CIRA agreement' ) ).toBeInTheDocument();
 					}
