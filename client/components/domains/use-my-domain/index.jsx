@@ -290,11 +290,18 @@ function UseMyDomain( {
 		}
 	};
 
-	const headerText =
-		mode === inputMode.domainInput
-			? __( 'Use a domain I own' )
-			: /* translators: %s - the name of the domain the user will add to their site */
-			  sprintf( __( 'Use a domain I own: %s' ), domainName );
+	const getHeaderText = () => {
+		switch ( mode ) {
+			case inputMode.domainInput:
+				return __( 'Use a domain I own' );
+			case inputMode.transferDomain:
+				/* translators: %s - the name of the domain the user will add to their site */
+				return sprintf( __( 'Transfer %s' ), domainName );
+			default:
+				/* translators: %s - the name of the domain the user will add to their site */
+				return sprintf( __( 'Use a domain I own: %s' ), domainName );
+		}
+	};
 
 	return (
 		<>
@@ -305,7 +312,7 @@ function UseMyDomain( {
 			<FormattedHeader
 				brandFont
 				className={ baseClassName + '__page-heading' }
-				headerText={ headerText }
+				headerText={ getHeaderText() }
 				align="left"
 			/>
 			{ renderContent() }
