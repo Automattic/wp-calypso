@@ -638,7 +638,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% specs/specs-playwright/wp-stats
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -757,7 +757,7 @@ object PreReleaseE2ETests : BuildType({
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
