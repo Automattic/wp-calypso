@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 interface Props {
-	onCloseDialog: Function;
+	onCloseDialog: ( action?: string ) => void;
 	showDialog: boolean;
 	skipServerCredentials?: boolean;
 	isSingular?: boolean;

@@ -126,7 +126,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >(
+export default connect< ConnectedProps, unknown, unknown >(
 	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );

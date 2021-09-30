@@ -14,8 +14,8 @@ interface Props {
 	action: 'fix' | 'ignore';
 	siteName: string;
 	showDialog: boolean;
-	onCloseDialog: Function;
-	onConfirmation: Function;
+	onCloseDialog: ( action?: string | React.MouseEvent ) => void;
+	onConfirmation: React.MouseEventHandler;
 }
 
 const ThreatDialog: React.FC< Props > = ( {
