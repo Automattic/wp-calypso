@@ -8,6 +8,7 @@ import {
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
+	STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
@@ -149,6 +150,44 @@ describe( 'items', () => {
 			isDeleting: {},
 			hasLoadedFromServer: true,
 		} );
+	} );
+
+	test( 'should modify the stored card is_backup property correctly when is_backup is enabled', () => {
+		const state = reducer(
+			deepFreeze( {
+				items: STORED_CARDS_FROM_API,
+				isFetching: false,
+				hasLoadedFromServer: true,
+			} ),
+			{
+				type: STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
+				stored_details_id: STORED_CARDS_FROM_API[ 0 ].stored_details_id,
+				is_backup: 'yes',
+			}
+		);
+
+		expect(
+			state.items[ 0 ].meta.find( ( meta ) => meta.meta_key === 'is_backup' ).meta_value
+		).to.be.eql( 'yes' );
+	} );
+
+	test( 'should modify the stored card is_backup property correctly when is_backup is disabled', () => {
+		const state = reducer(
+			deepFreeze( {
+				items: STORED_CARDS_FROM_API,
+				isFetching: false,
+				hasLoadedFromServer: true,
+			} ),
+			{
+				type: STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
+				stored_details_id: STORED_CARDS_FROM_API[ 0 ].stored_details_id,
+				is_backup: false,
+			}
+		);
+
+		expect(
+			state.items[ 0 ].meta.find( ( meta ) => meta.meta_key === 'is_backup' ).meta_value
+		).to.be.eql( null );
 	} );
 
 	describe( 'persistence', () => {
