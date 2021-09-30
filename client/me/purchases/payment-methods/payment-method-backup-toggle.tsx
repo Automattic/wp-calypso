@@ -1,7 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import { updateStoredCardIsBackupComplete } from 'calypso/state/stored-cards/actions';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 async function fetchIsBackup( storedDetailsId: string ): Promise< { is_backup: boolean } > {
@@ -19,6 +21,7 @@ async function setIsBackup(
 }
 
 export default function PaymentMethodBackupToggle( { card }: { card: StoredCard } ): JSX.Element {
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const storedDetailsId = card.stored_details_id;
 	const initialIsBackup =
@@ -42,6 +45,8 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 		},
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], data );
+			// Update the data in the stored cards Redux store to match the changes made here
+			reduxDispatch( updateStoredCardIsBackupComplete( storedDetailsId, data.is_backup ) );
 		},
 	} );
 	const toggleIsBackup = useCallback(
