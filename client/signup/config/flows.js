@@ -175,9 +175,10 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
+	 * @typedef {import('../types').Flow} Flow
 	 * @param {string} flowName The name of the flow to return
 	 * @param {boolean} isUserLoggedIn Whether the user is logged in
-	 * @returns {object} A flow object
+	 * @returns {Flow} A flow object
 	 */
 	getFlow( flowName, isUserLoggedIn ) {
 		let flow = Flows.getFlows()[ flowName ];
