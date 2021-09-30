@@ -416,15 +416,16 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.step-wrapper__header {
-		margin: 48px 20px 40px;
+		margin: 24px 20px;
 
-		@include breakpoint-deprecated( '<660px' ) {
-			margin-top: 24px;
+		@include break-large {
+			margin: 48px 0 40px;
 		}
 	}
 
 	.step-wrapper__header-button {
 		@include breakpoint-deprecated( '<660px' ) {
+			margin-top: 16px;
 			margin-bottom: -16px;
 		}
 	}

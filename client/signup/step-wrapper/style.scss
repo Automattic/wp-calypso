@@ -41,7 +41,6 @@
 .step-wrapper__header-button {
 	@include breakpoint-deprecated( '<660px' ) {
 		flex-basis: 100%;
-		padding: 0 20px;
 	}
 }
 
