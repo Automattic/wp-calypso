@@ -15,6 +15,18 @@ export interface PaymentDetails {
 	postalCode: string;
 }
 
+export interface RegistrarDetails {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone: string;
+	countryCode: string;
+	address: string;
+	city: string;
+	stateCode: string;
+	postalCode: string;
+}
+
 export type CreditCardIssuers = 'Visa';
 
 /**
@@ -174,6 +186,25 @@ export function getTestPaymentDetails(): PaymentDetails {
 		cvv: '999',
 		countryCode: 'TR', // Set to Turkey to force Strip to process payments.
 		postalCode: '06123',
+	};
+}
+
+/**
+ * Returns an object containing test domain registrar details.
+ *
+ * @param {string} email Email address of the user.
+ */
+export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails {
+	return {
+		firstName: 'End to End',
+		lastName: 'Testing',
+		email: email,
+		phone: '0422 888 888',
+		countryCode: 'AU',
+		address: '888 Queen Street',
+		city: 'Brisbane',
+		stateCode: 'QLD',
+		postalCode: '4000',
 	};
 }
 
