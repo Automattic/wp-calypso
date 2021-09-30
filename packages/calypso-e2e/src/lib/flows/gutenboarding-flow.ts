@@ -220,7 +220,7 @@ export class GutenboardingFlow {
 	}
 
 	/**
-	 * Creates an account (if Gutenboarding was initiated whiel logged out).
+	 * Creates an account (if Gutenboarding was initiated while logged out).
 	 *
 	 * @param {string} email Email address.
 	 * @param {string} password Password of user.

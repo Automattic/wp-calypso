@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Search for and select a WordPress.comdomain name', async function () {
+		it( 'Search for and select a WordPress.com domain name', async function () {
 			await gutenboardingFlow.searchDomain( siteTitle );
 			await gutenboardingFlow.selectDomain( siteTitle.concat( '.wordpress.com' ) );
 			await gutenboardingFlow.clickButton( 'Continue' );
