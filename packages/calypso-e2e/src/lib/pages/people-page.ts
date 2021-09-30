@@ -52,6 +52,16 @@ export class PeoplePage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PeoplePageTabs ): Promise< void > {
+		// For Invites tab, wait for the full request to be completed.
+		if ( name === 'Invites' ) {
+			await Promise.all( [
+				this.page.waitForResponse(
+					( response ) => response.url().includes( 'invites?' ) && response.status() === 200
+				),
+				clickNavTab( this.page, name ),
+			] );
+			return;
+		}
 		await clickNavTab( this.page, name );
 	}
 
@@ -113,13 +123,6 @@ export class PeoplePage {
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
-		await this.waitUntilLoaded();
-
-		// Ensure the card for the invited user is stable and loaded before clicking,
-		// otherwise the click is ignored.
-		const elementHandle = await this.page.waitForSelector( selectors.invitedUser( emailAddress ) );
-		await elementHandle.waitForElementState( 'stable' );
-
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitedUser( emailAddress ) ),
