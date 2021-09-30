@@ -43,6 +43,7 @@ interface Dependencies {
 interface Flow {
 	destination: string | ( ( dependencies: Dependencies ) => string );
 	providesDependenciesInQuery?: string[];
+	optionalDependenciesInQuery?: string[];
 	steps: string[];
 }
 
@@ -207,6 +208,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedDependenciesFromConfig( providedDependencies: Dependencies ) {
 		const dependencyDiff = difference(
 			this._flow.providesDependenciesInQuery,
+			this._flow.optionalDependenciesInQuery || [],
 			keys( providedDependencies )
 		);
 		if ( dependencyDiff.length > 0 ) {
