@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	hasGoogleAccountTOSWarning,
@@ -20,7 +21,6 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
 export function getNumberOfMailboxesText( domain ) {
