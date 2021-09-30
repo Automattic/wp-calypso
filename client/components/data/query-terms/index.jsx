@@ -16,12 +16,12 @@ function useMemoized( obj ) {
 	if ( ! isShallowEqual( obj, memoObj.current ) ) {
 		memoObj.current = obj;
 	}
-	return memoObj;
+	return memoObj.current;
 }
 
 function QueryTerms( { siteId, taxonomy, query = {} } ) {
 	const dispatch = useDispatch();
-	const memoizedQuery = useMemoized( query ).current;
+	const memoizedQuery = useMemoized( query );
 
 	useEffect( () => {
 		dispatch( request( siteId, taxonomy, memoizedQuery ) );
