@@ -124,6 +124,8 @@ export default class SignupFlowController {
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 		this._resetSiteSlugIfUserEnteredAnotherFlow(); // reset the site slug if user entered another flow
 
+		// If we have access to the siteId, then make sure we've also loaded the siteSlug into
+		// the dependency store, because some code depends on the slug instead of the id.
 		if (
 			this._flow.providesDependenciesInQuery?.includes( 'siteId' ) &&
 			options.providedDependencies[ 'siteId' ] &&
