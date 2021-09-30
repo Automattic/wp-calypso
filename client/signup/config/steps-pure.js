@@ -183,6 +183,7 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
 		},
 
 		test: {
@@ -736,6 +737,7 @@ export function generateSteps( {
 				showOnlyThemes: true,
 			},
 			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
@@ -745,10 +747,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
-		},
-		'intent-screen': {
-			stepName: 'intent-screen',
-			dependencies: [ 'siteSlug' ],
 		},
 	};
 }

@@ -2,11 +2,11 @@ import DesignPicker from '@automattic/design-picker';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import './style.scss';
@@ -40,6 +40,8 @@ class DesignPickerStep extends Component {
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
 		if ( this.props.showOnlyThemes ) {
 			this.fetchThemes();
 		}
@@ -142,5 +144,5 @@ export default connect(
 			themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
 		};
 	},
-	{ fetchRecommendedThemes, submitSignupStep }
+	{ fetchRecommendedThemes, saveSignupStep, submitSignupStep }
 )( localize( DesignPickerStep ) );
