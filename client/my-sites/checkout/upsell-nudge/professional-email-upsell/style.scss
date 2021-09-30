@@ -142,16 +142,11 @@
 }
 
 .professional-email-upsell__titan-logo {
-	align-self: center;
 	margin-top: 2em;
 	margin-bottom: 3em;
 	max-width: 160px;
 
 	@include break-mobile {
 		margin-bottom: 0;
-	}
-
-	@include break-medium {
-		align-self: unset;
 	}
 }
