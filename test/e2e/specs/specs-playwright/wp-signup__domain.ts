@@ -85,10 +85,14 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		it( 'Check out', async function () {
 			// This step is affected by an issue with page redirect of the post-checkout page.
 			// See: https://github.com/Automattic/wp-calypso/issues/56548
+			// The extra-long timeout is due to frequent back-end failures to process payment
+			// in a timely manner.
+			// See https://github.com/Automattic/wp-calypso/issues/56716.
 			await Promise.all( [
 				page.waitForNavigation( {
 					url: '**/checkout/thank-you/no-site/**',
 					waitUntil: 'networkidle',
+					timeout: 120000,
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
@@ -98,6 +102,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 			await page.waitForNavigation( {
 				url: '**/checkout/thank-you/no-site/**',
 				waitUntil: 'networkidle',
+				timeout: 120000,
 			} );
 		} );
 	} );
