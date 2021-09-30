@@ -9,6 +9,7 @@ import {
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
+	STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { storedCardsSchema } from './schema';
@@ -36,6 +37,21 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 			return state.filter(
 				( item ) => ! card.allStoredDetailsIds.includes( item.stored_details_id )
 			);
+		}
+		case STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED: {
+			const { stored_details_id, is_backup } = action;
+			return state.map( ( item ) => {
+				if ( item.stored_details_id === stored_details_id && item.meta ) {
+					return {
+						...item,
+						meta: [
+							...item.meta?.filter( ( meta ) => meta.meta_key !== 'is_backup' ),
+							{ meta_key: 'is_backup', meta_value: is_backup ? 'yes' : null },
+						],
+					};
+				}
+				return item;
+			} );
 		}
 	}
 
