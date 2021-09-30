@@ -27,8 +27,14 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 export class PlansStep extends Component {
+	state = {
+		isDesktop: isDesktop(),
+	};
+
 	componentDidMount() {
-		this.unsubscribe = subscribeIsDesktop( () => this.forceUpdate() );
+		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
+			this.setState( { isDesktop: matchesDesktop } )
+		);
 	}
 
 	componentWillUnmount() {
@@ -158,13 +164,13 @@ export class PlansStep extends Component {
 				domainName={ this.getDomainName() }
 				customerType={ this.getCustomerType() }
 				disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-				plansWithScroll={ isDesktop() }
+				plansWithScroll={ this.state.isDesktop }
 				planTypes={ planTypes }
 				flowName={ flowName }
 				showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 				isAllPaidPlansShown={ true }
 				isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+				shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 				isReskinned={ isReskinned }
 			/>
 		);
@@ -185,7 +191,7 @@ export class PlansStep extends Component {
 	getHeaderText() {
 		const { headerText, translate } = this.props;
 
-		if ( isDesktop() ) {
+		if ( this.state.isDesktop ) {
 			return translate( 'Choose a plan' );
 		}
 
@@ -196,7 +202,7 @@ export class PlansStep extends Component {
 		const { hideFreePlan, subHeaderText, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
-			if ( isDesktop() ) {
+			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 					{
@@ -214,7 +220,7 @@ export class PlansStep extends Component {
 			} );
 		}
 
-		if ( isDesktop() ) {
+		if ( this.state.isDesktop ) {
 			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
