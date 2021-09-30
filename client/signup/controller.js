@@ -345,7 +345,7 @@ export default {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
 		} else {
-			// Fetch the site by siteSlugOrId and then try to select again
+			// Fetch the site by siteIdOrSlug and then try to select again
 			dispatch( requestSite( siteIdOrSlug ) )
 				.catch( () => null )
 				.then( () => {
