@@ -17,8 +17,10 @@
 		top: var( --marketing-message-height );
 	}
 
-	.is-wide-layout .step-wrapper__navigation {
-		top: calc( var( --marketing-message-height ) + 2px );
+	@media screen and ( min-width: 600px ) {
+		.is-wide-layout .step-wrapper__navigation {
+			top: calc( var( --marketing-message-height ) + 2px );
+		}
 	}
 
 	.plans-step {
