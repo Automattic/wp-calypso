@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group gutenberg
  */
 
 import { setupHooks, DataHelper, GutenboardingFlow } from '@automattic/calypso-e2e';

@@ -98,10 +98,6 @@ export class GutenboardingFlow {
 	 */
 	async getSiteTitleLabel(): Promise< string > {
 		const elementHandle = await this.page.waitForSelector( selectors.siteTitleLabel );
-		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle' ),
-			elementHandle.waitForElementState( 'stable' ),
-		] );
 		return await elementHandle.innerText();
 	}
 
@@ -266,7 +262,10 @@ export class GutenboardingFlow {
 		// Clicking on a language button triggers a navigation to a URL containing
 		// the ISO 639-1 code eg. /new/ja.
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForResponse(
+				( response ) =>
+					response.status() === 200 && response.url().includes( `details?locale=${ target }` )
+			),
 			this.page.click( selectors.languageButton( target ) ),
 		] );
 	}
