@@ -35,6 +35,7 @@ export class PlansStep extends Component {
 		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
 			this.setState( { isDesktop: matchesDesktop } )
 		);
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
 	componentWillUnmount() {
