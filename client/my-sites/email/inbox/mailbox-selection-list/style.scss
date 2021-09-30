@@ -111,7 +111,6 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 		width: 310px;
 
 		@include break-medium {
-			padding: 16px;
 			width: 343px;
 		}
 
@@ -172,7 +171,6 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 
 					@include break-medium {
 						line-height: 34px;
-						margin-bottom: 8px;
 					}
 				}
 
@@ -203,6 +201,7 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 			display: flex;
 			margin-bottom: 1px;
 			padding: 12px;
+			height: 85px;
 
 			.gridicons-external {
 				width: 20px;
