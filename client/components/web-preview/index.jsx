@@ -1,4 +1,3 @@
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 
 const WebPreview = ( props ) => {
@@ -6,7 +5,13 @@ const WebPreview = ( props ) => {
 		return null;
 	}
 
-	return <AsyncLoad { ...props } require="calypso/components/web-preview/component" />;
+	return (
+		<AsyncLoad
+			{ ...props }
+			require="calypso/components/web-preview/component"
+			placeholder={ null }
+		/>
+	);
 };
 
 export default WebPreview;

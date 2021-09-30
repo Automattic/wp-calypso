@@ -219,12 +219,12 @@ export function deleteSite( siteId ) {
 					dispatch(
 						errorNotice(
 							translate(
-								'Your P2 has spaces. You must delete all spaces before you can delete this P2.'
+								'Your P2 Workspace has P2s. You must delete all P2s in this workspace before you can delete it.'
 							),
 							{
 								id: siteDeletionNoticeId,
 								showDismiss: false,
-								button: translate( 'Manage P2 spaces' ),
+								button: translate( 'Manage P2s' ),
 								href: hubUrl,
 							}
 						)

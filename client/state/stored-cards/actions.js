@@ -13,10 +13,17 @@ import {
 import 'calypso/state/stored-cards/init';
 
 export const addStoredCard = ( cardData ) => ( dispatch ) => {
-	return wp
-		.undocumented()
-		.me()
-		.storedCardAdd( cardData.token, cardData.additionalData )
+	return wp.req
+		.post(
+			{
+				path: '/me/stored-cards',
+			},
+			{
+				payment_key: cardData.token,
+				use_for_existing: true,
+				...( cardData.additionalData ?? {} ),
+			}
+		)
 		.then( ( item ) => {
 			dispatch( {
 				type: STORED_CARDS_ADD_COMPLETED,
@@ -30,9 +37,8 @@ export const fetchStoredCards = () => ( dispatch ) => {
 		type: STORED_CARDS_FETCH,
 	} );
 
-	return wp
-		.undocumented()
-		.getPaymentMethods( { expired: 'include' } )
+	return wp.req
+		.get( '/me/payment-methods', { expired: 'include' } )
 		.then( ( data ) => {
 			dispatch( {
 				type: STORED_CARDS_FETCH_COMPLETED,
@@ -55,7 +61,7 @@ export const deleteStoredCard = ( card ) => ( dispatch ) => {
 
 	return Promise.all(
 		card.allStoredDetailsIds.map( ( storedDetailsId ) =>
-			wp.undocumented().me().storedCardDelete( { stored_details_id: storedDetailsId } )
+			wp.req.post( { path: '/me/stored-cards/' + storedDetailsId + '/delete' } )
 		)
 	)
 		.then( () => {

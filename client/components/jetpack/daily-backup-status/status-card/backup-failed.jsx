@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';

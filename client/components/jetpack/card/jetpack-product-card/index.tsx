@@ -1,13 +1,14 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { Button, ProductIcon } from '@automattic/components';
+import { Button, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { createElement, ReactNode, useEffect, useRef } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
 import starIcon from './assets/star.svg';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import JetpackProductCardTimeFrame from './time-frame';
@@ -23,6 +24,7 @@ type OwnProps = {
 	iconSlug?: string;
 	productSlug: string;
 	productName: TranslateResult;
+	subheader?: TranslateResult;
 	headingLevel?: number;
 	description?: ReactNode;
 	currencyCode?: string | null;
@@ -72,6 +74,11 @@ const DisplayPrice = ( {
 	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
+	const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
+	const DISCOUNT_PERCENTAGE =
+		billingTerm === TERM_ANNUALLY && jetpackSaleDiscountRatio
+			? 1 - jetpackSaleDiscountRatio
+			: FRESHPACK_PERCENTAGE;
 
 	if ( isDeprecated ) {
 		return (
@@ -136,21 +143,21 @@ const DisplayPrice = ( {
 
 	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
 	const couponDiscountedPrice = parseFloat(
-		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
+		( ( discountedPrice ?? originalPrice ) * DISCOUNT_PERCENTAGE ).toFixed( 2 )
 	);
 	const discountElt =
 		billingTerm === TERM_ANNUALLY
-			? translate( '* Save %(percent)d%% for the first year', {
+			? translate( 'Save %(percent)d%% for the first year ✢', {
 					args: {
 						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
 					},
-					comment: 'Asterisk clause describing the displayed price adjustment',
+					comment: '✢ clause describing the displayed price adjustment',
 			  } )
-			: translate( '* You Save %(percent)d%%', {
+			: translate( 'You Save %(percent)d%% ✢', {
 					args: {
 						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
 					},
-					comment: 'Asterisk clause describing the displayed price adjustment',
+					comment: '✢ clause describing the displayed price adjustment',
 			  } );
 
 	return (
@@ -205,6 +212,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	iconSlug,
 	productSlug,
 	productName,
+	subheader,
 	headingLevel,
 	description,
 	currencyCode,
@@ -237,6 +245,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 	const parsedHeadingLevel = Number.isFinite( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
 		: 2;
+	const parsedSubheadingLevel = Math.min( parsedHeadingLevel + 1, 6 );
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -273,6 +282,12 @@ const JetpackProductCard: React.FC< Props > = ( {
 					{ className: 'jetpack-product-card__product-name' },
 					<>{ productName }</>
 				) }
+				{ subheader &&
+					createElement(
+						`h${ parsedSubheadingLevel }`,
+						{ className: 'jetpack-product-card__product-subheader' },
+						<>{ subheader }</>
+					) }
 
 				<DisplayPrice
 					isDeprecated={ isDeprecated }
@@ -321,7 +336,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 						</Button>
 					) ) }
 
-				<p className="jetpack-product-card__description">{ description }</p>
+				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 				{ features && features.items.length > 0 && (
 					<JetpackProductCardFeatures features={ features } />
 				) }

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
+import Gridicon from '@automattic/components/src/gridicon/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
@@ -9,7 +10,7 @@ import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import ActionCard from 'calypso/components/action-card/docs/example';
@@ -32,7 +33,6 @@ import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
 import DotPager from 'calypso/components/dot-pager/docs/example';
 import DropZones from 'calypso/components/drop-zone/docs/example';
 import EllipsisMenu from 'calypso/components/ellipsis-menu/docs/example';
-import EmojifyExample from 'calypso/components/emojify/docs/example';
 import EmptyContent from 'calypso/components/empty-content/docs/example';
 import ExternalLink from 'calypso/components/external-link/docs/example';
 import FAQ from 'calypso/components/faq/docs/example';
@@ -51,7 +51,6 @@ import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
 import Gravatar from 'calypso/components/gravatar/docs/example';
-import Gridicon from 'calypso/components/gridicon/docs/example';
 import GSuiteExamples from 'calypso/components/gsuite/docs/example';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'calypso/components/header-button/docs/example';
@@ -116,7 +115,7 @@ import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 
-export default class DesignAssets extends React.Component {
+export default class DesignAssets extends Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
 
@@ -142,14 +141,14 @@ export default class DesignAssets extends React.Component {
 				<DocumentHead title="UI Components" />
 
 				{ component ? (
-					<React.Fragment>
+					<Fragment>
 						<HeaderCake onClick={ this.backToComponents } backText="All Components">
 							{ slugToCamelCase( component ) }
 						</HeaderCake>
 						{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
 							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 						) }
-					</React.Fragment>
+					</Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
@@ -190,7 +189,6 @@ export default class DesignAssets extends React.Component {
 					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
-					<EmojifyExample readmeFilePath="emojify" />
 					<EmptyContent readmeFilePath="empty-content" />
 					<ExternalLink readmeFilePath="external-link" />
 					<FAQ readmeFilePath="faq" />

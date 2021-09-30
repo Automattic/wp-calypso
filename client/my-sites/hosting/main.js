@@ -1,6 +1,6 @@
 import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -29,6 +29,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import MiscellaneousCard from './miscellaneous-card';
 import PhpVersionCard from './php-version-card';
 import PhpMyAdminCard from './phpmyadmin-card';
+import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
 import SiteBackupCard from './site-backup-card';
 import SupportCard from './support-card';
@@ -157,6 +158,7 @@ class Hosting extends Component {
 							<SFTPCard disabled={ isDisabled } />
 							<PhpMyAdminCard disabled={ isDisabled } />
 							<PhpVersionCard disabled={ isDisabled } />
+							<RestorePlanSoftwareCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />
 							<WebServerLogsCard disabled={ isDisabled } />
 						</Column>

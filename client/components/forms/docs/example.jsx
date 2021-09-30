@@ -4,7 +4,7 @@ import { Card } from '@automattic/components';
 import { CURRENCIES } from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
@@ -39,7 +39,7 @@ const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol 
 	label: `${ code } ${ symbol }`,
 } ) );
 
-class FormFields extends React.PureComponent {
+class FormFields extends PureComponent {
 	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
 	};

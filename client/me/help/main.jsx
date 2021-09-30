@@ -1,9 +1,9 @@
 import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
-import { Button, CompactCard, Card } from '@automattic/components';
+import { Button, CompactCard, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
@@ -15,7 +15,6 @@ import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -25,6 +24,7 @@ import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/curr
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
@@ -38,7 +38,7 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:help-search' );
 
-class Help extends React.PureComponent {
+class Help extends PureComponent {
 	static displayName = 'Help';
 
 	state = {
@@ -225,10 +225,10 @@ class Help extends React.PureComponent {
 	};
 
 	supportSessionCard = () => {
-		const { translate, hasAppointment, scheduleId } = this.props;
+		const { translate, hasAppointment, scheduleId, isUserBlocked } = this.props;
 
 		//If we already have an appointment or the scheduleId has not been loaded, bail
-		if ( hasAppointment || null === scheduleId ) {
+		if ( hasAppointment || null === scheduleId || isUserBlocked ) {
 			return;
 		}
 
@@ -353,6 +353,7 @@ export const mapStateToProps = ( state ) => {
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
 	const hasAppointment = getConciergeNextAppointment( state );
 	const scheduleId = getConciergeScheduleId( state );
+	const isUserBlocked = getConciergeUserBlocked( state );
 	const showCoursesTeaser = isBusinessPlanUser;
 
 	return {
@@ -363,6 +364,7 @@ export const mapStateToProps = ( state ) => {
 		isEmailVerified,
 		hasAppointment,
 		scheduleId,
+		isUserBlocked,
 	};
 };
 

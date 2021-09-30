@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
 import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
@@ -12,7 +12,7 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
-class EmailsStep extends React.Component {
+class EmailsStep extends Component {
 	componentDidMount() {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
@@ -146,10 +146,10 @@ class EmailsStep extends React.Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
 				hideSkip={ false }
-				isTopButtons={ false }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }
+				skipButtonAlign={ 'bottom' }
 				align={ 'left' }
 				isWideLayout={ true }
 			/>

@@ -101,7 +101,6 @@ function getName( purchase ) {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta;
 	}
-
 	return purchase.productName;
 }
 

@@ -51,7 +51,7 @@
 				min-width: 144px;
 			}
 
-			.domain-mapping-thank-you__button {
+			.domain-thank-you__button {
 				width: 144px;
 			}
 
@@ -76,7 +76,7 @@
 				@include break-zoomed-in {
 					width: 100%;
 
-					.domain-mapping-thank-you__button {
+					.domain-thank-you__button {
 						margin-top: 4px;
 						width: 100%;
 					}
@@ -85,10 +85,14 @@
 				@include break-mobile {
 					width: 144px;
 
-					.domain-mapping-thank-you__button {
+					.domain-thank-you__button {
 						margin-top: 0;
 						width: 144px;
 					}
+				}
+
+				.domain-thank-you__button {
+					padding: 8px;
 				}
 			}
 		}
@@ -115,6 +119,14 @@
 				&-title {
 					font-size: 2rem;
 				}
+			}
+		}
+
+		&__notice {
+			@include breakpoint-deprecated( '<480px' ) {
+				padding: 14px 24px;
+				align-items: flex-start;
+				height: auto;
 			}
 		}
 	}

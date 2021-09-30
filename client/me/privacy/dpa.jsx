@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import wp from 'calypso/lib/wp';
@@ -9,7 +9,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 const NOTICE_ID = 'request-dpa-notice';
 
 const DPA = () => {
-	const [ isLoading, setLoading ] = React.useState( false );
+	const [ isLoading, setLoading ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

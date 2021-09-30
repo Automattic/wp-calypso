@@ -1,3 +1,6 @@
+/**
+ * External Dependencies
+ */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Flex } from '@wordpress/components';
@@ -5,7 +8,11 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
+/**
+ * Internal Dependencies
+ */
 import maximize from './icons/maximize';
+import KeyboardNavigation from './keyboard-navigation';
 import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
 
@@ -31,6 +38,7 @@ function LaunchWpcomWelcomeTour() {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
 			return;
 		}
+
 		portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 		document.body.appendChild( portalParent );
 
@@ -39,6 +47,7 @@ function LaunchWpcomWelcomeTour() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isManuallyOpened,
 		} );
+
 		return () => {
 			document.body.removeChild( portalParent );
 		};
@@ -52,72 +61,96 @@ function LaunchWpcomWelcomeTour() {
 }
 
 function WelcomeTourFrame() {
-	const localeSlug = useLocale();
-	const cardContent = getTourContent( localeSlug );
+	const tourContainerRef = useRef( null );
+	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
-
-	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
+	const localeSlug = useLocale();
+	const cardContent = getTourContent( localeSlug );
+	const lastCardIndex = cardContent.length - 1;
+	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 
 	const handleDismiss = ( source ) => {
-		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		return () => {
+			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
+				is_gutenboarding: isGutenboarding,
+				slide_number: currentCardIndex + 1,
+				action: source,
+			} );
+			setShowWelcomeGuide( false, { openedManually: false } );
+		};
+	};
+
+	const handleNextCardProgression = () => {
+		if ( lastCardIndex > currentCardIndex ) {
+			setCurrentCardIndex( currentCardIndex + 1 );
+		}
+	};
+
+	const handlePreviousCardProgression = () => {
+		currentCardIndex && setCurrentCardIndex( currentCardIndex - 1 );
+	};
+
+	const handleMinimize = () => {
+		setIsMinimized( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
+			is_gutenboarding: isGutenboarding,
 			slide_number: currentCardIndex + 1,
-			action: source,
 		} );
-		setShowWelcomeGuide( false, { openedManually: false } );
+	};
+
+	const handleMaximize = () => {
+		setIsMinimized( false );
+		setJustMaximized( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
+			is_gutenboarding: isGutenboarding,
+			slide_number: currentCardIndex + 1,
+		} );
 	};
 
 	// Preload card images
 	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
 
-	// Some editor menus close when they lose focus (onblur), but when the tour is open or minimized the user should
-	// be able to interact with menus (ex: the Block Inserter). To make that happen we capture the onMouseDown event
-	const captureWelcomeTourFrameClick = ( e ) => {
-		e.preventDefault();
-	};
-
 	return (
-		<div
-			className="wpcom-editor-welcome-tour-frame"
-			onMouseDownCapture={ captureWelcomeTourFrameClick }
-		>
-			{ ! isMinimized ? (
-				<WelcomeTourCard
-					cardContent={ cardContent[ currentCardIndex ] }
-					cardIndex={ currentCardIndex }
-					justMaximized={ justMaximized }
-					key={ currentCardIndex }
-					lastCardIndex={ cardContent.length - 1 }
-					onDismiss={ handleDismiss }
-					onMinimize={ setIsMinimized }
-					setJustMaximized={ setJustMaximized }
-					setCurrentCardIndex={ setCurrentCardIndex }
-				/>
-			) : (
-				<WelcomeTourMinimized
-					onMaximize={ setIsMinimized }
-					setJustMaximized={ setJustMaximized }
-					slideNumber={ currentCardIndex + 1 }
-				/>
-			) }
-		</div>
+		<>
+			<KeyboardNavigation
+				onMinimize={ handleMinimize }
+				onDismiss={ handleDismiss }
+				onNextCardProgression={ handleNextCardProgression }
+				onPreviousCardProgression={ handlePreviousCardProgression }
+				tourContainerRef={ tourContainerRef }
+				isMinimized={ isMinimized }
+			/>
+			<div className="wpcom-editor-welcome-tour-frame" ref={ tourContainerRef }>
+				{ ! isMinimized ? (
+					<>
+						<WelcomeTourCard
+							cardContent={ cardContent[ currentCardIndex ] }
+							currentCardIndex={ currentCardIndex }
+							justMaximized={ justMaximized }
+							key={ currentCardIndex }
+							lastCardIndex={ lastCardIndex }
+							onDismiss={ handleDismiss }
+							onMinimize={ handleMinimize }
+							setJustMaximized={ setJustMaximized }
+							setCurrentCardIndex={ setCurrentCardIndex }
+							onNextCardProgression={ handleNextCardProgression }
+							onPreviousCardProgression={ handlePreviousCardProgression }
+							isGutenboarding={ isGutenboarding }
+						/>
+					</>
+				) : (
+					<WelcomeTourMinimized onMaximize={ handleMaximize } />
+				) }
+			</div>
+		</>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize, setJustMaximized, slideNumber } ) {
-	const handleOnMaximize = () => {
-		onMaximize( false );
-		setJustMaximized( true );
-		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			slide_number: slideNumber,
-		} );
-	};
-
+function WelcomeTourMinimized( { onMaximize } ) {
 	return (
-		<Button onClick={ handleOnMaximize } className="wpcom-editor-welcome-tour__resume-btn">
+		<Button onClick={ onMaximize } className="wpcom-editor-welcome-tour__resume-btn">
 			<Flex gap={ 13 }>
 				<p>{ __( 'Click to resume tutorial', 'full-site-editing' ) }</p>
 				<Icon icon={ maximize } size={ 24 } />

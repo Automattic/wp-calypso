@@ -48,6 +48,7 @@ export { default as isCurrentSitePlan } from './is-current-site-plan';
 export { default as isJetpackMinimumVersion } from './is-jetpack-minimum-version';
 export { default as isJetpackModuleActive } from './is-jetpack-module-active';
 export { default as isJetpackSite } from './is-jetpack-site';
+export { default as isJetpackProductSite } from './is-jetpack-product-site';
 export { default as isJetpackSiteMainNetworkSite } from './is-jetpack-site-main-network-site';
 export { default as isJetpackSiteMultiSite } from './is-jetpack-site-multi-site';
 export { default as isJetpackSiteSecondaryNetworkSite } from './is-jetpack-site-secondary-network-site';
@@ -63,3 +64,5 @@ export { default as getSelectedSiteWithFallback } from './get-site-with-fallback
 export { default as getSiteWooCommerceUrl } from './get-site-woocommerce-url';
 export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-wizard-url';
 export { default as getSiteWordPressSeoWizardUrl } from './get-site-wordpress-seo-wizard-url';
+export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-customize-url';
+export { default as getJetpackVersion } from './get-jetpack-version';

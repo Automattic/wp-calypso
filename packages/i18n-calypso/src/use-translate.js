@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 
 export default function ( i18n ) {
 	function bindTranslate() {
@@ -8,9 +8,9 @@ export default function ( i18n ) {
 	}
 
 	return function useTranslate() {
-		const [ translate, setTranslate ] = React.useState( bindTranslate );
+		const [ translate, setTranslate ] = useState( bindTranslate );
 
-		React.useEffect( () => {
+		useEffect( () => {
 			const onChange = () => setTranslate( bindTranslate );
 			i18n.on( 'change', onChange );
 			return () => i18n.off( 'change', onChange );

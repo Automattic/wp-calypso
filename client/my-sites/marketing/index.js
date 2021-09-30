@@ -33,7 +33,7 @@ export default function () {
 
 	if ( config.isEnabled( 'difm-lite-pilot' ) ) {
 		paths.push( '/marketing/do-it-for-me/landing' );
-		paths.push( '/marketing/do-it-for-me/site-info-lite' );
+		paths.push( '/marketing/do-it-for-me/site-info' );
 	}
 
 	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );

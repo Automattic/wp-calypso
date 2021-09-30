@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subscription-status';
 
 /**
  * Given a domain object, does that domain have G Suite with us.
@@ -7,7 +7,7 @@ import { get } from 'lodash';
  * @returns {boolean} - true if the domain is under our management, false otherwise
  */
 export function hasGSuiteWithUs( domain ) {
-	const defaultValue = '';
-	const domainStatus = get( domain, 'googleAppsSubscription.status', defaultValue );
-	return ! [ defaultValue, 'no_subscription', 'other_provider' ].includes( domainStatus );
+	const status = getGSuiteSubscriptionStatus( domain );
+
+	return ! [ '', 'no_subscription', 'other_provider' ].includes( status );
 }

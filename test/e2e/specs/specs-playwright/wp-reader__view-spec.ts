@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	DataHelper,
 	LoginFlow,
@@ -25,21 +29,17 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 
 	it( 'View the Reader stream', async function () {
 		readerPage = new ReaderPage( page );
-		await readerPage.verifyReaderPage();
-	} );
-
-	it( 'The latest post is on the expected test site', async function () {
 		const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
 		const siteOfLatestPost = await readerPage.siteOfLatestPost();
 		expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
 	} );
 
-	it( 'Comment on the latest post', async function () {
-		await readerPage.commentOnLatestPost( comment );
+	it( 'Visit latest post', async function () {
+		await readerPage.visitPost( { index: 1 } );
 	} );
 
-	it( 'Wait for the comment to appear', async function () {
-		await readerPage.waitForCommentToAppear( comment );
+	it( 'Comment and confirm it is shown', async function () {
+		await readerPage.comment( comment );
 	} );
 
 	it( 'Log in as test site owner', async function () {

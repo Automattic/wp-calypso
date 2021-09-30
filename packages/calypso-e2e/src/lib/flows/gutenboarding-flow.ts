@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
-import { getViewportName } from '../../browser-helper';
+import { getTargetDeviceName } from '../../browser-helper';
+import type { Plans } from '../../types';
 
-export type Plans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type Features =
 	| 'Custom domains'
 	| 'Store'
@@ -41,6 +41,13 @@ const selectors = {
 		`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) ${ selectors.button(
 			'Select'
 		) }`,
+
+	// Create account
+	email: 'input[type="email"]',
+	password: 'input[type="password"]',
+
+	// Post-signup design selection (for Free plans only)
+	skipForNowButton: 'button:text("Skip for now")',
 
 	// Language
 	languagePicker: 'a:has(.gutenboarding__header-site-language-label)',
@@ -150,7 +157,7 @@ export class GutenboardingFlow {
 	 */
 	async selectFont( name: string ): Promise< void > {
 		// Font selector depends on the viewport name but lumps non-mobile into desktop.
-		const viewportName = getViewportName() === 'mobile' ? 'mobile' : 'desktop';
+		const viewportName = getTargetDeviceName() === 'mobile' ? 'mobile' : 'desktop';
 
 		// Mobile viewport puts the buttons behind a dropdown.
 		if ( viewportName === 'mobile' ) {
@@ -198,10 +205,7 @@ export class GutenboardingFlow {
 	async selectPlan( name: Plans ): Promise< void > {
 		// First, expand the accordion.
 		await this.page.click( ':text-is("Show all plans")' );
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.selectPlanButton( name ) ),
-		] );
+		await this.page.click( selectors.selectPlanButton( name ) );
 	}
 
 	/**
@@ -213,6 +217,26 @@ export class GutenboardingFlow {
 		// The plan item with the `has-badge` attribute is the one that is recommended based on features.
 		const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.has-badge` );
 		await elementHandle.waitForSelector( `div:text-is("${ name }")` );
+	}
+
+	/**
+	 * Creates an account (if Gutenboarding was initiated while logged out).
+	 *
+	 * @param {string} email Email address.
+	 * @param {string} password Password of user.
+	 */
+	async signup( email: string, password: string ): Promise< void > {
+		await this.page.fill( selectors.email, email );
+		await this.page.fill( selectors.password, password );
+		await this.page.click( selectors.button( 'Create account' ) );
+	}
+
+	/**
+	 * Skips the Design selection screen if WordPress.com Free plan is selected.
+	 */
+	async skipDesign(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+		await this.page.click( selectors.skipForNowButton );
 	}
 
 	/* Other actions */

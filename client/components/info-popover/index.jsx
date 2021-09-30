@@ -1,9 +1,8 @@
-import { Popover } from '@automattic/components';
+import { Popover, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { createRef, Component, Fragment } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 import './style.scss';
@@ -43,7 +42,7 @@ export default class InfoPopover extends Component {
 		showOnHover: false,
 	};
 
-	iconRef = React.createRef();
+	iconRef = createRef();
 
 	state = { showPopover: false };
 

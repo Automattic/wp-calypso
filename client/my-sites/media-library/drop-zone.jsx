@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
-import Gridicon from 'calypso/components/gridicon';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { userCan } from 'calypso/lib/site/utils';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
@@ -12,7 +12,7 @@ import { addMedia } from 'calypso/state/media/thunks';
 
 const noop = () => {};
 
-class MediaLibraryDropZone extends React.Component {
+class MediaLibraryDropZone extends Component {
 	static displayName = 'MediaLibraryDropZone';
 
 	static propTypes = {

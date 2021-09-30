@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,7 +9,7 @@ import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 
 import './style.scss';
 
-class ProfileLinksAddOther extends React.Component {
+class ProfileLinksAddOther extends Component {
 	state = {
 		title: '',
 		value: '',

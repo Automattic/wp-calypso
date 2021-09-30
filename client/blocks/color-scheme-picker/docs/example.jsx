@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 
 class ColorSchemePickerExample extends PureComponent {

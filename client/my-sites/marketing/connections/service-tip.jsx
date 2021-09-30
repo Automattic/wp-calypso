@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**

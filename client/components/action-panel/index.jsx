@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
-import React from 'react';
 
 import './style.scss';
 

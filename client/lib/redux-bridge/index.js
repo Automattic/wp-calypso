@@ -14,7 +14,7 @@ export function setReduxStore( store ) {
  * Asynchronously get the current Redux store. Returns a Promise that gets resolved only
  * after the store is set by `setReduxStore`.
  *
- * @returns {Promise<ReduxStore>} Promise of the Redux store object.
+ * @returns {Promise<object>} Promise of the Redux store object.
  */
 export function getReduxStore() {
 	return reduxStorePromise;
@@ -35,7 +35,7 @@ export function reduxGetState() {
 /**
  * Dispatch an action against the current redux store
  *
- * @returns {mixed} Result of the dispatch
+ * @returns {any} Result of the dispatch
  */
 export function reduxDispatch( ...args ) {
 	if ( ! reduxStore ) {

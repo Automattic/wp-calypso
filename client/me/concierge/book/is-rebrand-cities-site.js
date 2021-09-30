@@ -15,7 +15,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 
 const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';

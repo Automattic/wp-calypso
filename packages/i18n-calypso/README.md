@@ -316,9 +316,9 @@ Hook function that returns the `isRtl` boolean flag and automatically rerenders 
 Example:
 
 ```jsx
+import { Gridicon } from '@automattic/components';
 import { useRtl } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 export default function Header() {
 	const isRtl = useRtl();
@@ -339,9 +339,9 @@ The same functionality is also exposed as a HOC that passes an `isRtl` prop to t
 Example:
 
 ```jsx
+import { Gridicon } from '@automattic/components';
 import { withRtl } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 function Header( { isRtl } ) {
 	const icon = isRtl ? 'arrow-left' : 'arrow-right';

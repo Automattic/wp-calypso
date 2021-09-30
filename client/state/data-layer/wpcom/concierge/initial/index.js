@@ -23,10 +23,15 @@ export const fetchConciergeInitial = ( action ) =>
 export const storeFetchedConciergeInitial = ( action, initial ) =>
 	updateConciergeInitial( initial );
 
-export const conciergeInitialFetchError = () =>
-	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
+export const conciergeInitialFetchError = ( errorMessage ) =>
+	errorMessage
+		? errorNotice( errorMessage )
+		: errorNotice( translate( 'Something went wrong with Quick Start. Please try again later.' ) );
 
-export const showConciergeInitialFetchError = () => conciergeInitialFetchError();
+export const showConciergeInitialFetchError = ( action ) => {
+	const errorMessage = action?.meta?.dataLayer?.error?.message;
+	return conciergeInitialFetchError( errorMessage );
+};
 
 registerHandlers( 'state/data-layer/wpcom/concierge/schedules/initial/index.js', {
 	[ CONCIERGE_INITIAL_REQUEST ]: [

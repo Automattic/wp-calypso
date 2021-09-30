@@ -1,6 +1,6 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
@@ -11,7 +11,7 @@ import {
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import TransferOutWarning from './warning.jsx';
 
-class Unlocked extends React.Component {
+class Unlocked extends Component {
 	state = {
 		sent: ! this.isDomainAlwaysTransferrable(),
 	};

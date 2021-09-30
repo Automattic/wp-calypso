@@ -1,9 +1,9 @@
 import path from 'path';
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import DropZone from 'calypso/components/drop-zone';
@@ -11,7 +11,6 @@ import VerifyEmailDialog from 'calypso/components/email-verification/email-verif
 import ExternalLink from 'calypso/components/external-link';
 import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import Spinner from 'calypso/components/spinner';
 import {

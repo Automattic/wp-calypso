@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryTimezones from 'calypso/components/data/query-timezones';
 import FormSelect from 'calypso/components/forms/form-select';

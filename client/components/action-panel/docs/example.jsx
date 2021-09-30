@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import React from 'react';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelCta from 'calypso/components/action-panel/cta';

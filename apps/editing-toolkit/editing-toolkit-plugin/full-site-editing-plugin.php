@@ -340,3 +340,12 @@ function load_tags_education() {
 	require_once __DIR__ . '/tags-education/class-tags-education.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
+
+/**
+ * WP.com-specific Site Editor changes.
+ * (Core Full Site Editing)
+ */
+function load_wpcom_site_editor() {
+	require_once __DIR__ . '/wpcom-site-editor/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_site_editor', 11 ); // load just after the Gutenberg plugin.

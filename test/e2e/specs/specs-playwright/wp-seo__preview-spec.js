@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	DataHelper,
 	LoginFlow,
@@ -26,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 
 	it( 'Click on Traffic tab', async function () {
 		marketingPage = new MarketingPage( page );
-		await marketingPage.clickTabItem( 'Traffic' );
+		await marketingPage.clickTab( 'Traffic' );
 	} );
 
 	it( 'Enter SEO meta description', async function () {

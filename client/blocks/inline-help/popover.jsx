@@ -1,16 +1,14 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
@@ -34,7 +32,7 @@ class InlineHelpPopover extends Component {
 		selectedResult: null,
 	};
 
-	secondaryViewRef = React.createRef();
+	secondaryViewRef = createRef();
 
 	openResultView = ( event, result ) => {
 		event.preventDefault();
@@ -75,7 +73,6 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide`, {
 			location: 'inline-help-popover',
 		} );
-		this.props.resetContactForm();
 		this.setState( {
 			activeSecondaryView: null,
 			selectedResult: null,
@@ -140,6 +137,7 @@ class InlineHelpPopover extends Component {
 
 	renderSecondaryView = () => {
 		const { onClose, setDialogState } = this.props;
+		const { selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
@@ -159,9 +157,9 @@ class InlineHelpPopover extends Component {
 						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
-								result={ this.state.selectedResult }
 								setDialogState={ setDialogState }
 								closePopover={ onClose }
+								result={ selectedResult }
 							/>
 						),
 					}[ this.state.activeSecondaryView ]
@@ -198,7 +196,6 @@ function mapStateToProps( state ) {
 
 const mapDispatchToProps = {
 	recordTracksEvent,
-	resetContactForm: resetInlineHelpContactForm,
 };
 
 export default withMobileBreakpoint(

@@ -1,7 +1,6 @@
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { CardExpiryElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
-import { CardExpiryElement } from 'react-stripe-elements';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 
@@ -48,7 +47,10 @@ export default function CreditCardExpiryField( {
 			<LabelText>{ translate( 'Expiry date' ) }</LabelText>
 			<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
 				<CardExpiryElement
-					style={ stripeElementStyle }
+					options={ {
+						style: stripeElementStyle,
+						disabled: isDisabled,
+					} }
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }

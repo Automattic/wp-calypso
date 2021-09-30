@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -67,7 +67,7 @@ class StatsOverview extends Component {
 				.format( 'YYYY-MM-DD' );
 
 			return (
-				<React.Fragment key={ site.ID }>
+				<Fragment key={ site.ID }>
 					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
 						<DatePicker period={ period } date={ date } />
 					) }
@@ -79,7 +79,7 @@ class StatsOverview extends Component {
 						title={ site.title }
 						siteSlug={ site.slug }
 					/>
-				</React.Fragment>
+				</Fragment>
 			);
 		} );
 

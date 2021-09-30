@@ -2,6 +2,7 @@ export {
 	Button,
 	Card,
 	CompactCard,
+	Gridicon,
 	Popover,
 	ProgressBar,
 	Ribbon,
@@ -32,7 +33,6 @@ export { default as DateRange } from 'calypso/components/date-range';
 export { default as DiffViewer } from 'calypso/components/diff-viewer';
 export { default as DropZones } from 'calypso/components/drop-zone';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu';
-export { default as Emojify } from 'calypso/components/emojify';
 export { default as EmptyContent } from 'calypso/components/empty-content';
 export { default as ExternalLink } from 'calypso/components/external-link';
 export { default as FAQ } from 'calypso/components/faq';
@@ -68,7 +68,6 @@ export { default as FormTextInputWithAffixes } from 'calypso/components/forms/fo
 export { default as Gauge } from 'calypso/components/gauge';
 export { default as GlobalNotices } from 'calypso/components/global-notices';
 export { default as Gravatar } from 'calypso/components/gravatar';
-export { default as Gridicon } from 'calypso/components/gridicon';
 export { default as HeaderCake } from 'calypso/components/header-cake';
 export { default as HeaderButton } from 'calypso/components/header-button';
 export { default as ImagePreloader } from 'calypso/components/image-preloader';

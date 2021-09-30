@@ -7,19 +7,18 @@ import {
 	isEcommerce,
 	isEnterprise,
 } from '@automattic/calypso-products';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes, some } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Count from 'calypso/components/count';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

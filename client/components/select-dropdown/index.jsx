@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Children, cloneElement, Component } from 'react';
 import Count from 'calypso/components/count';
-import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import DropdownItem from './item';
 import DropdownLabel from './label';
@@ -56,7 +56,7 @@ class SelectDropdown extends Component {
 		selected: this.getInitialSelectedItem(),
 	};
 
-	dropdownContainerRef = React.createRef();
+	dropdownContainerRef = createRef();
 
 	itemRefs = [];
 
@@ -133,12 +133,12 @@ class SelectDropdown extends Component {
 
 		if ( this.props.children ) {
 			// add refs and focus-on-click handlers to children
-			return React.Children.map( this.props.children, ( child ) => {
+			return Children.map( this.props.children, ( child ) => {
 				if ( ! child || child.type !== DropdownItem ) {
 					return null;
 				}
 
-				return React.cloneElement( child, {
+				return cloneElement( child, {
 					ref: this.setItemRef( refIndex++ ),
 					onClick: ( event ) => {
 						this.dropdownContainerRef.current.focus();

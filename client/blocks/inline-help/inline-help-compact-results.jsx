@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import InlineHelpCompactResult from 'calypso/blocks/inline-help/inline-help-compact-result';
 
 class InlineHelpCompactResults extends Component {

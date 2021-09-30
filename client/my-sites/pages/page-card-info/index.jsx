@@ -1,8 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryTheme from 'calypso/components/data/query-theme';
-import Gridicon from 'calypso/components/gridicon';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

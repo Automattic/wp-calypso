@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import {
@@ -17,7 +17,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class ThemeSetupDialog extends React.Component {
+class ThemeSetupDialog extends Component {
 	renderButtons( { runThemeSetup, site, isActive, result, translate } ) {
 		const keepContent = {
 			action: 'keep-content',

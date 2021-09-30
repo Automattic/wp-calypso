@@ -1,6 +1,5 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import privateImage from 'calypso/assets/images/illustrations/private.svg';
 
 export default function PrivateSite() {

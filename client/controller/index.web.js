@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';

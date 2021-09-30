@@ -1,9 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
-import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import { getSiteComment } from 'calypso/state/comments/selectors';

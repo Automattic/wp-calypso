@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-import { get, some, startsWith } from 'lodash';
+import { some, startsWith } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
@@ -33,6 +33,7 @@ import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
+	emailManagementInbox,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
@@ -44,25 +45,19 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
-import { getSite, getSiteId, getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -104,7 +99,7 @@ export function createNavigation( context ) {
 export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( NoSitesMessage );
+	context.primary = createElement( NoSitesMessage );
 
 	makeLayout( context, noop );
 	clientRender( context );
@@ -119,7 +114,7 @@ export function renderNoVisibleSites( context ) {
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( EmptyContentComponent, {
+	context.primary = createElement( EmptyContentComponent, {
 		title: i18n.translate(
 			'You have %(hidden)d hidden WordPress site.',
 			'You have %(hidden)d hidden WordPress sites.',
@@ -172,6 +167,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagement,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
+		emailManagementInbox,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
 		emailManagementNewTitanAccount,
@@ -217,39 +213,15 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
-function onSelectedSiteAvailable( context, basePath ) {
+function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-
-	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
-	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
 
 	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
 		page.redirect( `/migrate/${ selectedSite.slug }` );
-		return false;
-	}
-
-	// Redirects Atomic sites to wp-admin
-	if ( userCanManagePlugins && isAtomicSite && /^\/plugins/.test( basePath ) ) {
-		const plugin = get( context, 'params.plugin' );
-		let pluginString = '';
-		if ( plugin ) {
-			pluginString = [
-				'tab=search',
-				`s=${ plugin }`,
-				'type=term',
-				'modal-mode=true',
-				`plugin=${ plugin }`,
-			].join( '&' );
-		}
-
-		const pluginInstallURL = 'plugin-install.php?' + `${ pluginString }`;
-		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
-
-		window.location.replace( pluginLink );
 		return false;
 	}
 
@@ -589,33 +561,6 @@ export function p2RedirectToHubPlans( context, next ) {
 		const hubSlug = getSiteSlug( store.getState(), hubId );
 		if ( hubSlug ) {
 			return page.redirect( `/plans/my-plan/${ hubSlug }` );
-		}
-	}
-
-	next();
-}
-
-/**
- * For P2s, we sometimes want to redirect to the hub of a P2 site. If we are on
- * a P2 site under a hub this will redirect to the same path on the hub.
- *
- * @param {object} context -- Middleware context
- * @param {Function} next -- Call next middleware in chain
- */
-export function p2RedirectToHub( context, next ) {
-	const store = context.store;
-	const selectedSite = getSelectedSite( store.getState() );
-
-	if (
-		selectedSite &&
-		isSiteWPForTeams( store.getState(), selectedSite.ID ) &&
-		! isSiteP2Hub( store.getState(), selectedSite.ID )
-	) {
-		const hubId = getP2HubBlogId( store.getState(), selectedSite.ID );
-		const hubSlug = getSiteSlug( store.getState(), hubId );
-		if ( hubSlug ) {
-			const selectedSiteSlug = getSelectedSiteSlug( store.getState() );
-			return page.redirect( context.path.replace( selectedSiteSlug, hubSlug ) );
 		}
 	}
 

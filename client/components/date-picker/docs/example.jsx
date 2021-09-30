@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import DatePicker from 'calypso/components/date-picker';
 import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 

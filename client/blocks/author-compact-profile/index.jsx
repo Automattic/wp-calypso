@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -13,7 +13,7 @@ import AuthorCompactProfilePlaceholder from './placeholder';
 
 import './style.scss';
 
-class AuthorCompactProfile extends React.Component {
+class AuthorCompactProfile extends Component {
 	static propTypes = {
 		author: PropTypes.object,
 		siteName: PropTypes.string,

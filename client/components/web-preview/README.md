@@ -34,11 +34,10 @@ With those constraints in mind, usage is the following:
 </WithPreviewProps>;
 ```
 
-`isPreviewable` should be a boolean to determine whether the URL should be loaded in WebPreview or externally. Bear in mind that not all front-end links are previewable — Jetpack sites, for instance, may not be supported for a number of reasons, including absent HTTPS support. As of this writing, a suggestion is to rely on the `getSite` (state/sites/selectors) selector, which relies on `lib/site/computed-attributes` to return a `is_previewable` attribute:
+`isPreviewable` should be a boolean to determine whether the URL should be loaded in WebPreview or externally. Bear in mind that not all front-end links are previewable — Jetpack sites, for instance, may not be supported for a number of reasons, including absent HTTPS support. As of this writing, a suggestion is to rely on the `isSitePreviewable` (state/sites/selectors) selector:
 
 ```jsx
-const site = getSite( state, siteId );
-const isPreviewable = get( site, 'is_previewable' );
+const isPreviewable = isSitePreviewable( state, siteId );
 
 <WithPreviewProps url={ url } isPreviewable={ isPreviewable }>
 	{ ( props ) => {

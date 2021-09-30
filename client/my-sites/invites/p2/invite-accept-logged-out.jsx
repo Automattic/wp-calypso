@@ -1,4 +1,3 @@
-import React from 'react';
 import SignupForm from 'calypso/blocks/signup-form';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
@@ -11,7 +10,7 @@ function renderFooterLink( props ) {
 			<div>{ props.translate( 'Already have a WordPress.com account?' ) }</div>
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ props.onClickSignInLink }>
-					{ props.translate( 'Log in instead.' ) }
+					{ props.translate( 'Log in instead' ) }
 				</LoggedOutFormLinkItem>
 			</LoggedOutFormLinks>
 		</div>

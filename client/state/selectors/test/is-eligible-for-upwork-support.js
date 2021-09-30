@@ -4,9 +4,8 @@ import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import isEligibleForUpworkSupport, {
-	UPWORK_LOCALES,
-} from 'calypso/state/selectors/is-eligible-for-upwork-support';
+import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
+import config from '@automattic/calypso-config';
 
 describe( 'isEligibleForUpworkSupport()', () => {
 	test( 'returns false for `en` users and all sites have a free plan', () => {
@@ -28,7 +27,7 @@ describe( 'isEligibleForUpworkSupport()', () => {
 	 */
 	const nonUpworkPlans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
-	describe.each( UPWORK_LOCALES )( 'when locale %s', ( localeSlug ) => {
+	describe.each( config( 'upwork_support_locales' ) )( 'when locale %s', ( localeSlug ) => {
 		test( 'returns true for users without Business and E-Commerce plans', () => {
 			const state = {
 				currentUser: { id: 1, user: { localeSlug } },

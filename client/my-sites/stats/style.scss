@@ -122,3 +122,53 @@
 		margin-right: 16px;
 	}
 }
+
+.stats__parsely-banner {
+	display: flex;
+	font-size: $font-body-small;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	padding: 30px;
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.formatted-header.is-left-align {
+		margin: 0 0 16px;
+	}
+
+	& > div {
+		flex: 1;
+		margin-right: 30px;
+	}
+
+	img {
+		margin-right: 30px;
+		width: 45px;
+		height: auto;
+	}
+
+	p {
+		color: var( --color-text-subtle );
+		@include breakpoint-deprecated( '>960px' ) {
+			margin-bottom: 0;
+		}
+	}
+
+	.button {
+		margin-left: auto;
+		justify-self: flex-end;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			margin-left: 30px;
+		}
+	}
+
+	&::after {
+		display: none;
+	}
+}

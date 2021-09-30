@@ -1,7 +1,6 @@
 import emailValidator from 'email-validator';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
 import wp from 'calypso/lib/wp';

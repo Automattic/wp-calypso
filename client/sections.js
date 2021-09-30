@@ -248,6 +248,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'inbox',
+		paths: [ '/inbox' ],
+		module: 'calypso/my-sites/email',
+		group: 'sites',
+	},
+	{
 		name: 'checkout',
 		paths: [ '/checkout' ],
 		module: 'calypso/my-sites/checkout',
@@ -469,7 +475,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/[^\\/]+/pricing' ],
+		paths: [ '/pricing', '/[^\\/]+/pricing', '/plans', '/[^\\/]+/plans' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,

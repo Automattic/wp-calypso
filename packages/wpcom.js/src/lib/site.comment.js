@@ -131,7 +131,7 @@ Comment.prototype.del = Comment.prototype.delete = function ( query, fn ) {
 /**
  * Create a `commentLike` instance
  *
- * @returns {CommentLink} CommentLink instance
+ * @returns {object} CommentLike instance
  */
 Comment.prototype.like = function () {
 	return commentLike( this._cid, this._sid, this.wpcom );

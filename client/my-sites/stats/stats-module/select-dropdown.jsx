@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 
 const StatsModuleSelectDropdown = ( { initialSelected, options, onSelect = () => {} } ) => {

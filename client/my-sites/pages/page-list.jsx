@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight, isEqual, size, without } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';

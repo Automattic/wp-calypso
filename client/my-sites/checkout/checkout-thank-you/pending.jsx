@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import EmptyContent from 'calypso/components/empty-content';

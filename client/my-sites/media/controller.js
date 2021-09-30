@@ -1,5 +1,5 @@
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
 import MediaComponent from 'calypso/my-sites/media/main';
 
@@ -11,7 +11,7 @@ export default {
 
 		const mediaId = context.params.mediaId ? parseInt( context.params.mediaId ) : null;
 		// Render
-		context.primary = React.createElement( MediaComponent, {
+		context.primary = createElement( MediaComponent, {
 			filter: context.params.filter,
 			search: context.query.s,
 			mediaId,

@@ -1,6 +1,7 @@
 import debugFactory from 'debug';
 import { useEffect, useState } from 'react';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-is-web-pay-available' );
 

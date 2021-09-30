@@ -15,7 +15,7 @@ import {
 	includes,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -42,7 +42,7 @@ const ITEM_HEIGHT = 25;
 const DEFAULT_POSTS_PER_PAGE = 20;
 const LOAD_OFFSET = 10;
 
-class PostSelectorPosts extends React.Component {
+class PostSelectorPosts extends Component {
 	static displayName = 'PostSelectorPosts';
 
 	static propTypes = {

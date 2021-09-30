@@ -1,17 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { isEnabled } from '@automattic/calypso-config';
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
-import {
-	getAvailableDesigns,
-	getDesignImageUrl,
-	getDesignUrl,
-	mShotOptions,
-	isBlankCanvasDesign,
-} from '../utils';
+import { getAvailableDesigns, getDesignUrl, mShotOptions, isBlankCanvasDesign } from '../utils';
 import MShotsImage from './mshots-image';
 export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
@@ -23,26 +16,25 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
+	highRes: boolean;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale } ) =>
-	isEnabled( 'gutenboarding/mshot-preview' ) ? (
-		<MShotsImage
-			url={ getDesignUrl( design, locale ) }
-			aria-labelledby={ makeOptionId( design ) }
-			alt=""
-			options={ mShotOptions() }
-			scrollable={ design.preview !== 'static' }
-		/>
-	) : (
-		<img alt="" aria-labelledby={ makeOptionId( design ) } src={ getDesignImageUrl( design ) } />
-	);
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => (
+	<MShotsImage
+		url={ getDesignUrl( design, locale ) }
+		aria-labelledby={ makeOptionId( design ) }
+		alt=""
+		options={ mShotOptions( design, highRes ) }
+		scrollable={ design.preview !== 'static' }
+	/>
+);
 
 interface DesignButtonProps {
 	design: Design;
 	locale: string;
 	onSelect: ( design: Design ) => void;
 	premiumBadge?: React.ReactNode;
+	highRes: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -50,6 +42,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	onSelect,
 	design,
 	premiumBadge,
+	highRes,
 } ) => {
 	const { __ } = useI18n();
 
@@ -68,9 +61,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			<span
 				className={ classnames(
 					'design-picker__image-frame',
-					isEnabled( 'gutenboarding/landscape-preview' )
-						? 'design-picker__image-frame-landscape'
-						: 'design-picker__image-frame-portrait',
+					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
 					{ 'design-picker__image-frame-blank': isBlankCanvas }
 				) }
@@ -81,7 +72,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } />
+						<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
 					</div>
 				) }
 			</span>
@@ -109,6 +100,8 @@ export interface DesignPickerProps {
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
+	className?: string;
+	highResThumbnails?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -120,9 +113,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',
+	className,
+	highResThumbnails = false,
 } ) => {
 	return (
-		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }` ) }>
+		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
 				{ designs.map( ( design ) => (
 					<DesignButton
@@ -131,6 +126,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						locale={ locale }
 						onSelect={ onSelect }
 						premiumBadge={ premiumBadge }
+						highRes={ highResThumbnails }
 					/>
 				) ) }
 			</div>

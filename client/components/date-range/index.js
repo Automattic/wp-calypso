@@ -1,13 +1,12 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { has } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangeHeader from './header';
 import DateRangeInputs from './inputs';
@@ -111,7 +110,7 @@ export class DateRange extends Component {
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
-		this.triggerButtonRef = React.createRef();
+		this.triggerButtonRef = createRef();
 	}
 
 	/**

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 
 /**
  * Localize a React component
@@ -21,7 +21,7 @@ export default function ( i18n ) {
 	return function ( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		return class extends React.Component {
+		return class extends Component {
 			static displayName = 'Localized(' + componentName + ')';
 
 			boundForceUpdate = this.forceUpdate.bind( this );

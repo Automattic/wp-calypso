@@ -1,12 +1,12 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 import './style.scss';
 
-class PostRelativeTime extends React.PureComponent {
+class PostRelativeTime extends PureComponent {
 	static propTypes = {
 		showPublishedStatus: PropTypes.bool.isRequired,
 		post: PropTypes.object.isRequired,

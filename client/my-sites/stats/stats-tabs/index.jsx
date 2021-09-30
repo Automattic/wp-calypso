@@ -2,12 +2,12 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import StatTab from './tab';
 
 import './style.scss';
 
-class StatsTabs extends React.Component {
+class StatsTabs extends Component {
 	static displayName = 'StatsTabs';
 
 	static propTypes = {

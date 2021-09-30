@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 

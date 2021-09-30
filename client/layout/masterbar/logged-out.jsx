@@ -1,22 +1,19 @@
 import config from '@automattic/calypso-config';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { withCurrentRoute } from 'calypso/components/route';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { isDefaultLocale, addLocaleToPath } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import Item from './item';
 import Masterbar from './masterbar';
 
-class MasterbarLoggedOut extends React.Component {
+class MasterbarLoggedOut extends Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -50,13 +47,13 @@ class MasterbarLoggedOut extends React.Component {
 
 		let loginUrl = login( {
 			// We may know the email from Jetpack connection details
-			emailAddress: isJetpack && get( currentQuery, 'user_email', false ),
+			emailAddress: isJetpack && ( currentQuery?.user_email ?? false ),
 			isJetpack,
 			locale: getLocaleSlug(),
 			redirectTo,
 		} );
 
-		if ( currentQuery && currentQuery.partner_id ) {
+		if ( currentQuery?.partner_id ) {
 			loginUrl = addQueryArgs( { partner_id: currentQuery.partner_id }, loginUrl );
 		}
 
@@ -82,7 +79,7 @@ class MasterbarLoggedOut extends React.Component {
 		 * Hide signup from Jetpack connect authorization step. This step handles signup as part of
 		 * the flow.
 		 */
-		if ( startsWith( currentRoute, '/jetpack/connect/authorize' ) ) {
+		if ( currentRoute.startsWith( '/jetpack/connect/authorize' ) ) {
 			return null;
 		}
 
@@ -90,21 +87,21 @@ class MasterbarLoggedOut extends React.Component {
 		 * Hide signup from the screen when we have been sent to the login page from a redirect
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
-		const redirectTo = get( currentQuery, 'redirect_to', '' );
+		const redirectTo = currentQuery?.redirect_to ?? '';
 		if ( isDomainConnectAuthorizePath( redirectTo ) ) {
 			return null;
 		}
 
 		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
+		const signupFlow = currentQuery?.signup_flow;
 		if (
 			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
+			currentRoute.startsWith( '/log-in/jetpack' )
 		) {
 			// Basic validation that we're in a valid Jetpack Authorization flow
 			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+				currentQuery?.redirect_to?.includes( '/jetpack/connect/authorize' ) &&
+				currentQuery?.redirect_to?.includes( '_wp_nonce' )
 			) {
 				/**
 				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
@@ -164,7 +161,4 @@ class MasterbarLoggedOut extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	currentQuery: getCurrentQueryArguments( state ),
-	currentRoute: getCurrentRoute( state ),
-} ) )( localize( MasterbarLoggedOut ) );
+export default withCurrentRoute( localize( MasterbarLoggedOut ) );

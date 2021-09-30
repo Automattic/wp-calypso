@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { requestTheme, setBackPath } from 'calypso/state/themes/actions';

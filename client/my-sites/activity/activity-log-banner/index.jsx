@@ -1,8 +1,7 @@
-import { Card, ScreenReaderText } from '@automattic/components';
+import { Card, ScreenReaderText, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
 
 import './style.scss';
 

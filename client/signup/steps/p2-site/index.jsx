@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map, deburr, get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -42,7 +42,7 @@ const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 let siteUrlsSearched = [];
 let timesValidationFailed = 0;
 
-class P2Site extends React.Component {
+class P2Site extends Component {
 	static displayName = 'P2Site';
 
 	constructor( props ) {
@@ -387,21 +387,23 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site"
 				>
 					<FormLabel htmlFor="site-address-input">
-						{ this.props.translate( 'Choose an address for your P2' ) }
+						{ this.props.translate( 'Choose an address for your P2 workspace' ) }
 					</FormLabel>
-					<FormTextInput
-						id="site-address-input"
-						autoCapitalize={ 'off' }
-						className="p2-site__site-url"
-						disabled={ fieldDisabled }
-						name="site"
-						value={ formState.getFieldValue( this.state.form, 'site' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'site' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-					/>
-					<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
+					<div className="p2-site__site-url-container">
+						<FormTextInput
+							id="site-address-input"
+							autoCapitalize={ 'off' }
+							className="p2-site__site-url"
+							disabled={ fieldDisabled }
+							name="site"
+							value={ formState.getFieldValue( this.state.form, 'site' ) }
+							isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
+							isValid={ formState.isFieldValid( this.state.form, 'site' ) }
+							onBlur={ this.handleBlur }
+							onChange={ this.handleChangeEvent }
+						/>
+						<span className="p2-site__wordpress-domain-suffix">.wordpress.com</span>
+					</div>
 				</ValidationFieldset>
 			</>
 		);

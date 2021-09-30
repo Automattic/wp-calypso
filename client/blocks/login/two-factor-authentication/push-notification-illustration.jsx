@@ -1,5 +1,4 @@
 import colorStudio from '@automattic/color-studio';
-import React from 'react';
 
 import './push-notification-illustration.scss';
 

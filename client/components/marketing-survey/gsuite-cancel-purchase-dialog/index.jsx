@@ -2,7 +2,7 @@ import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { getName } from 'calypso/lib/purchases';
@@ -105,7 +105,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	removePurchase = async () => {
 		const { domain, productName, purchase, translate, userId } = this.props;
 
-		await this.props.removePurchase( purchase.id, userId );
+		const response = await this.props.removePurchase( purchase.id, userId );
 
 		const { purchasesError } = this.props;
 
@@ -114,19 +114,28 @@ class GSuiteCancelPurchaseDialog extends Component {
 			return false;
 		}
 
-		this.props.successNotice(
-			translate( '%(productName)s was removed from {{domain/}}.', {
-				args: {
-					productName,
-				},
-				components: {
-					domain: <em>{ domain }</em>,
-				},
-			} ),
-			{
-				isPersistent: true,
-			}
-		);
+		let successMessage;
+		if ( response.status === 'completed' ) {
+			successMessage = translate( '%(productName)s was removed from {{domain/}}.', {
+				args: { productName },
+				components: { domain: <em>{ domain }</em> },
+			} );
+		} else if ( response.status === 'queued' ) {
+			successMessage = translate(
+				'We are removing %(productName)s from {{domain/}}.{{br/}}' +
+					'Please give it some time for changes to take effect. ' +
+					'An email will be sent once the process is complete.',
+				{
+					args: { productName },
+					components: { br: <br />, domain: <em>{ domain }</em> },
+				}
+			);
+		} else {
+			this.props.errorNotice( translate( 'There was an error removing the purchase.' ) );
+			return false;
+		}
+
+		this.props.successNotice( successMessage, { isPersistent: true } );
 
 		return true;
 	};
@@ -237,8 +246,8 @@ GSuiteCancelPurchaseDialog.propTypes = {
 export default connect(
 	( state, { purchase } ) => {
 		return {
-			productName: getName( purchase ),
 			domain: purchase.meta,
+			productName: getName( purchase ),
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};

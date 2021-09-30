@@ -1,4 +1,3 @@
-import React from 'react';
 import HappinessSupport from 'calypso/components/happiness-support';
 
 export const HappinessSupportCard = ( {

@@ -1,4 +1,3 @@
-import React from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 

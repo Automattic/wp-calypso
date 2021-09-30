@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -15,7 +15,7 @@ import EditContactInfoFormCard from './form-card';
 import PendingWhoisUpdateCard from './pending-whois-update-card';
 import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
 
-class EditContactInfo extends React.Component {
+class EditContactInfo extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

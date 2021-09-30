@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -91,7 +91,7 @@ export class PlanBillingPeriod extends Component {
 		const isJetpackTemporarySite = isJetpackTemporarySitePurchase( purchase.domain );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<FormSettingExplanation>
 					{ translate( 'Billed monthly' ) }
 					{ site && isProductOwner && (
@@ -118,7 +118,7 @@ export class PlanBillingPeriod extends Component {
 						) }
 					</FormSettingExplanation>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';

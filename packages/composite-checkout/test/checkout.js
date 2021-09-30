@@ -6,7 +6,7 @@ import {
 	fireEvent,
 	act,
 } from '@testing-library/react';
-import React, { useState, useContext } from 'react';
+import { createContext, Fragment, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
 	Checkout,
@@ -24,8 +24,7 @@ import {
 	usePaymentProcessor,
 } from '../src/public-api';
 
-const noop = () => {};
-const myContext = React.createContext();
+const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
 
 describe( 'Checkout', () => {
@@ -40,10 +39,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -106,10 +101,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						registry={ registry }
@@ -172,10 +163,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -217,10 +204,6 @@ describe( 'Checkout', () => {
 					<CheckoutProvider
 						items={ items }
 						total={ total }
-						onPaymentComplete={ noop }
-						showErrorMessage={ noop }
-						showInfoMessage={ noop }
-						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -264,10 +247,6 @@ describe( 'Checkout', () => {
 						<CheckoutProvider
 							items={ items }
 							total={ total }
-							onPaymentComplete={ noop }
-							showErrorMessage={ noop }
-							showInfoMessage={ noop }
-							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
 							paymentProcessors={ getMockPaymentProcessors() }
 							initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -654,12 +633,12 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 		( stepObject ) => stepObject.hasStepNumber
 	);
 	return (
-		<React.Fragment>
+		<Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 			<CheckoutStepArea>
 				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
 			</CheckoutStepArea>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

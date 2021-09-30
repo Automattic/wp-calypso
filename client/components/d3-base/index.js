@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { select as d3Select } from 'd3-selection';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 
 /**
  * Provides foundation to use D3 within React.
@@ -30,7 +30,7 @@ export default class D3Base extends Component {
 		getParams: null,
 	};
 
-	chartRef = React.createRef();
+	chartRef = createRef();
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		let state = {};

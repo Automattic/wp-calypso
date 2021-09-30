@@ -124,38 +124,6 @@ references:
     command: |
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-  desktop-restore-yarn-cache: &desktop-restore-yarn-cache
-    name: Restore yarn cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
-  desktop-save-yarn-cache: &desktop-save-yarn-cache
-    name: Save yarn cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-    paths:
-      - ~/.cache/yarn
-  desktop-restore-packages-cache: &desktop-restore-packages-cache
-    name: Restore packages cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
-  desktop-save-packages-cache: &desktop-save-packages-cache
-    name: Save packages cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
-    paths:
-      - packages
-      - packages-cache-restored
-  desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
-    name: Restore Calypso build cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
-  desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
-    name: Save Calypso build cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - .cache/evergreen/css-loader
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -216,7 +184,7 @@ jobs:
           name: Extract strings
           command: |
             yarn run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+            mv public/calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
@@ -292,7 +260,7 @@ jobs:
           environment:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
-            USE_HARD_LINKS: "false"
+            USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -371,7 +339,7 @@ jobs:
           name: Build Desktop Linux
           environment:
             CSC_LINK: resource/certificates/win.p12
-            USE_HARD_LINKS: "false"
+            USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -580,9 +548,9 @@ workflows:
           filters:
             branches:
               only:
-              - trunk
-              - /release\/.*/
-              - /desktop\/.*/
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets

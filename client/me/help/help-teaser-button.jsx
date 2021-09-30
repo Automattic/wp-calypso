@@ -1,7 +1,5 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 import './help-teaser-button.scss';
 

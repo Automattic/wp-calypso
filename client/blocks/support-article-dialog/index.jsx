@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import isInlineSupportArticleVisible from 'calypso/state/selectors/is-inline-support-article-visible';

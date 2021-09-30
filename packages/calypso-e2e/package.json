@@ -22,10 +22,10 @@
 	},
 	"devDependencies": {
 		"@types/config": "^0.0.39",
-		"@types/jest": "^27.0.1",
+		"@types/jest": "^27.0.2",
 		"@types/node": "^15.0.2",
 		"asana-phrase": "^0.0.8",
-		"typescript": "^4.3.5"
+		"typescript": "^4.4.3"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && npx rimraf dist",

@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
@@ -10,7 +10,7 @@ import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 
-class DnsList extends React.Component {
+class DnsList extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

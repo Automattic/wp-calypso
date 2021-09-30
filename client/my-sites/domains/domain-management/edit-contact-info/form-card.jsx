@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
@@ -31,7 +31,7 @@ const wpcom = wp.undocumented();
 
 import './style.scss';
 
-class EditContactInfoFormCard extends React.Component {
+class EditContactInfoFormCard extends Component {
 	static propTypes = {
 		selectedDomain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,

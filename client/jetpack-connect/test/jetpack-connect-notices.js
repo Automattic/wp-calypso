@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { JetpackConnectNotices } from '../jetpack-connect-notices';
 
 const terminalErrorNoticeType = 'siteBlocked';

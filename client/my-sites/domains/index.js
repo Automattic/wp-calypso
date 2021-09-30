@@ -244,24 +244,6 @@ export default function () {
 			domainsController.redirectToDomainSearchSuggestion
 		);
 
-		[
-			'/domains/add/:registerDomain/google-workspace/:domain',
-			'/domains/add/:registerDomain/gsuite/:domain',
-		].forEach( ( path ) =>
-			page(
-				path,
-				...[
-					siteSelection,
-					navigation,
-					domainsController.redirectIfNoSite( '/domains/add' ),
-					domainsController.jetpackNoDomainsWarning,
-					domainsController.googleAppsWithRegistration,
-					makeLayout,
-					clientRender,
-				]
-			)
-		);
-
 		page(
 			'/domains/add/mapping/:domain',
 			siteSelection,

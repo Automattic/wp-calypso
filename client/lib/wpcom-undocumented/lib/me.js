@@ -98,35 +98,6 @@ UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback
 	return this.wpcom.req.post( args, callback );
 };
 
-/**
- * Get a list of the user's stored cards
- *
- * @param {object} [cardToken] Payment key
- * @param {object} [additionalData] Any additional data to send in the request
- * @returns {Promise} A promise for the request
- */
-UndocumentedMe.prototype.storedCardAdd = function ( cardToken, additionalData = {} ) {
-	debug( '/me/stored-cards', cardToken, additionalData );
-
-	return this.wpcom.req.post(
-		{
-			path: '/me/stored-cards',
-		},
-		{
-			payment_key: cardToken,
-			use_for_existing: true,
-			...additionalData,
-		}
-	);
-};
-
-UndocumentedMe.prototype.storedCardDelete = function ( card, callback ) {
-	const args = {
-		path: '/me/stored-cards/' + card.stored_details_id + '/delete',
-	};
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.backupCodes = function ( callback ) {
 	const args = {
 		apiVersion: '1.1',
@@ -250,50 +221,14 @@ UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function ( callback
 /**
  * Connect the current account with a social service (e.g. Google/Facebook).
  *
- * @param {object} An object containing the keys:
- *	{string} service - Social service associated with token, e.g. google.
- *  {string} access_token - OAuth2 Token returned from service.
- *  {string} id_token - (Optional) OpenID Connect Token returned from service.
- *  {string} user_name - (Optional) The user name associated with this connection, in case it's not part of id_token.
- *  {string} user_email - (Optional) The user name associated with this connection, in case it's not part of id_token.
- *  {string} redirect_to - The URL to redirect to after connecting.
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
- * @param An.access_token
- * @param An.service
+ * @param {object} config Object containing the config.
+ * @param {string} config.service Social service associated with token, e.g. google.
+ * @param {string} config.access_token OAuth2 Token returned from service.
+ * @param {string} config.id_token (Optional) OpenID Connect Token returned from service.
+ * @param {string} config.user_name (Optional) The user name associated with this connection, in case it's not part of id_token.
+ * @param {string} config.user_email (Optional) The user name associated with this connection, in case it's not part of id_token.
+ * @param {string} config.redirect_to - The URL to redirect to after connecting.
  * @param {Function} fn - The callback for the request.
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
- * @param An.id_token
- * @param An.user_name
- * @param An.user_email
- * @param An.redirect_to
  * @returns {Promise} A promise for the request
  */
 UndocumentedMe.prototype.socialConnect = function (

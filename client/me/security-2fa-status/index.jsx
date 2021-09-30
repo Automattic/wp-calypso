@@ -1,12 +1,12 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
-class Security2faStatus extends React.Component {
+class Security2faStatus extends Component {
 	static displayName = 'Security2faStatus';
 
 	componentDidMount() {

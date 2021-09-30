@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';

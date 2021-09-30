@@ -166,6 +166,7 @@ module.exports = {
 				'no-undef': 'off',
 				'no-unused-vars': 'off',
 				'react/jsx-no-undef': 'off',
+				'react/jsx-uses-react': 'off',
 				'react/react-in-jsx-scope': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
@@ -242,6 +243,11 @@ module.exports = {
 		// Only use known tag names plus `jest-environment`.
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 
+		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
+		'jsdoc/require-param-description': 'off',
+		'jsdoc/require-param': 'off',
+		'jsdoc/require-returns-description': 'off',
+
 		// Deprecated rule, fails in some valid cases with custom input components
 		'jsx-a11y/label-has-for': 'off',
 
@@ -259,7 +265,7 @@ module.exports = {
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Prevent importing Redux's combineReducers.
 					{

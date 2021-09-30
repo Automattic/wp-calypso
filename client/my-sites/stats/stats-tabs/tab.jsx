@@ -1,10 +1,10 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
 
-class StatsTabsTab extends React.Component {
+class StatsTabsTab extends Component {
 	static displayName = 'StatsTabsTab';
 
 	static propTypes = {

@@ -210,7 +210,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 	},
 	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: {
-		product_name: translate( 'Backup Pro' ),
+		product_name: translate( 'Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		type: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		term: TERM_ANNUALLY,
@@ -223,7 +223,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 	},
 	[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: {
-		product_name: translate( 'Backup Pro' ),
+		product_name: translate( 'Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		term: TERM_MONTHLY,

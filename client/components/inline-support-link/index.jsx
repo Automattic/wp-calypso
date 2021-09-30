@@ -1,11 +1,11 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	bumpStat,
@@ -136,7 +136,7 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const { tracksEvent, tracksOptions, statsGroup, statsName } = ownProps;
+	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
 	return {
 		openDialog: ( event, supportPostId, supportLink ) => {
 			if ( ! supportPostId ) {
@@ -144,6 +144,12 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 			}
 			event.preventDefault();
 			const analyticsEvents = [
+				...[
+					recordTracksEvent( 'calypso_inlinesupportlink_click', {
+						support_context: supportContext || null,
+						support_link: supportLink,
+					} ),
+				],
 				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
 				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
 			];

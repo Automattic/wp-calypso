@@ -1,8 +1,6 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 function EmailProviderFeaturesToggleButton( { handleClick, isRelatedContentExpanded } ) {
 	const translate = useTranslate();

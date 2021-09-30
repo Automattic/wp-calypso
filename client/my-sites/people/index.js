@@ -1,6 +1,6 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites, p2RedirectToHub } from 'calypso/my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import peopleController from './controller';
 
 export default function () {
@@ -8,7 +8,6 @@ export default function () {
 		'/people/:filter(team|followers|email-followers|viewers)',
 		siteSelection,
 		sites,
-		p2RedirectToHub,
 		makeLayout,
 		clientRender
 	);
@@ -18,19 +17,17 @@ export default function () {
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,
-		p2RedirectToHub,
 		peopleController.people,
 		makeLayout,
 		clientRender
 	);
 
-	page( '/people/invites', siteSelection, sites, p2RedirectToHub, makeLayout, clientRender );
+	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/people/invites/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.peopleInvites,
 		makeLayout,
@@ -41,7 +38,6 @@ export default function () {
 		'/people/invites/:site_id/:invite_key',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.peopleInviteDetails,
 		makeLayout,
@@ -52,7 +48,6 @@ export default function () {
 		'/people/new/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.invitePeople,
 		makeLayout,
@@ -63,7 +58,6 @@ export default function () {
 		'/people/new/:site_id/sent',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.invitePeople,
 		makeLayout,
@@ -74,7 +68,6 @@ export default function () {
 		'/people/edit/:site_id/:user_login',
 		peopleController.enforceSiteEnding,
 		siteSelection,
-		p2RedirectToHub,
 		navigation,
 		peopleController.person,
 		makeLayout,

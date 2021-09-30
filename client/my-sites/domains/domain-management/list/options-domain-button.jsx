@@ -1,11 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
@@ -17,7 +16,7 @@ import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/act
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './options-domain-button.scss';
-class AddDomainButton extends React.Component {
+class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
 		specificSiteActions: PropTypes.bool,
@@ -33,7 +32,7 @@ class AddDomainButton extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		this.addDomainButtonRef = React.createRef();
+		this.addDomainButtonRef = createRef();
 	}
 
 	clickAddDomain = () => {
@@ -61,19 +60,19 @@ class AddDomainButton extends React.Component {
 		if ( specificSiteActions ) {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 			return (
-				<React.Fragment>
+				<Fragment>
 					<PopoverMenuItem onClick={ this.clickAddDomain }>
 						{ translate( 'Search for a domain' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
 						{ translate( 'Use a domain I own' ) }
 					</PopoverMenuItem>
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
 					{ translate( 'Manage all domains' ) }
 				</PopoverMenuItem>
@@ -86,7 +85,7 @@ class AddDomainButton extends React.Component {
 				<PopoverMenuItem href="/start/domain" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain without a site' ) }
 				</PopoverMenuItem>
-			</React.Fragment>
+			</Fragment>
 		);
 	};
 
@@ -98,7 +97,7 @@ class AddDomainButton extends React.Component {
 			: translate( 'Other domain options' );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<Button
 					primary={ this.props.specificSiteActions }
 					compact
@@ -118,7 +117,7 @@ class AddDomainButton extends React.Component {
 				>
 					{ this.renderOptions() }
 				</PopoverMenu>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

@@ -1,11 +1,11 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { filter, get, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import Gridicon from 'calypso/components/gridicon';
 import { getCommentById } from 'calypso/state/comments/selectors';
 import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
 import { getStream } from 'calypso/state/reader/streams/selectors';
@@ -13,7 +13,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class UpdateNotice extends React.PureComponent {
+class UpdateNotice extends PureComponent {
 	static propTypes = {
 		streamKey: PropTypes.string,
 		onClick: PropTypes.func,

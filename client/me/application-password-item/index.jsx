@@ -1,8 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { deleteApplicationPassword } from 'calypso/state/application-passwords/actions';
@@ -10,7 +9,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
 
-class ApplicationPasswordsItem extends React.Component {
+class ApplicationPasswordsItem extends Component {
 	handleRemovePasswordButtonClick = () => {
 		const { password } = this.props;
 

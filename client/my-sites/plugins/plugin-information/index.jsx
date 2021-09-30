@@ -1,11 +1,10 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Version from 'calypso/components/version';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -14,7 +13,7 @@ import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 
 import './style.scss';
 
-class PluginInformation extends React.Component {
+class PluginInformation extends Component {
 	static displayName = 'PluginInformation';
 
 	static propTypes = {

@@ -1,16 +1,6 @@
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Returns milliseconds since registration date of the current user
- *
- * @param {object} state Global state tree
- * @returns {number|boolean} Milliseconds since registration, false if cannot be determined
- */
-function timeSinceUserRegistration( state ) {
-	const user = getCurrentUser( state );
-	const registrationDate = user && Date.parse( user.date );
-	return registrationDate ? Date.now() - registrationDate : false;
-}
+export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 /**
  * Returns a selector that tests if the user is newer than a given time
@@ -19,6 +9,14 @@ function timeSinceUserRegistration( state ) {
  * @returns {Function} Selector function
  */
 export const isUserNewerThan = ( age ) => ( state ) => {
-	const userAge = timeSinceUserRegistration( state );
-	return userAge !== false ? userAge <= age : false;
+	const user = getCurrentUser( state );
+	const registrationDate = user && Date.parse( user.date );
+	if ( ! registrationDate ) {
+		return false;
+	}
+
+	const userAge = Date.now() - registrationDate;
+	return userAge <= age;
 };
+
+export const isNewUser = isUserNewerThan( WEEK_IN_MILLISECONDS );

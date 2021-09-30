@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { createRef, useReducer } from 'react';
 import { act } from 'react-dom/test-utils';
 import Search from '..';
 
@@ -10,7 +10,7 @@ describe( 'search', () => {
 		let ref;
 
 		beforeEach( () => {
-			ref = React.createRef();
+			ref = createRef();
 			render( <Search ref={ ref } /> );
 		} );
 
@@ -168,7 +168,7 @@ describe( 'search', () => {
 
 	it( 'should not call onSearch with current value when the prop changes', () => {
 		function SearchWithHistory() {
-			const [ history, push ] = React.useReducer( ( list, item ) => [ ...list, item ], [] );
+			const [ history, push ] = useReducer( ( list, item ) => [ ...list, item ], [] );
 			return (
 				<div>
 					<Search defaultValue="start" onSearch={ ( keyword ) => push( keyword ) } />

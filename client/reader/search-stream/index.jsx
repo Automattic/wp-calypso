@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { trim, flatMap } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
@@ -100,6 +100,9 @@ class SearchStream extends React.Component {
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );
+		const segmentedControlClass = wideDisplay
+			? 'search-stream__sort-picker is-wide'
+			: 'search-stream__sort-picker';
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -159,22 +162,6 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query && (
-							<SegmentedControl compact className="search-stream__sort-picker">
-								<SegmentedControl.Item
-									selected={ sortOrder !== 'date' }
-									onClick={ this.useRelevanceSort }
-								>
-									{ TEXT_RELEVANCE_SORT }
-								</SegmentedControl.Item>
-								<SegmentedControl.Item
-									selected={ sortOrder === 'date' }
-									onClick={ this.useDateSort }
-								>
-									{ TEXT_DATE_SORT }
-								</SegmentedControl.Item>
-							</SegmentedControl>
-						) }
 					</CompactCard>
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
@@ -191,6 +178,19 @@ class SearchStream extends React.Component {
 								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
 						</div>
+					) }
+					{ query && (
+						<SegmentedControl compact className={ segmentedControlClass }>
+							<SegmentedControl.Item
+								selected={ sortOrder !== 'date' }
+								onClick={ this.useRelevanceSort }
+							>
+								{ TEXT_RELEVANCE_SORT }
+							</SegmentedControl.Item>
+							<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								{ TEXT_DATE_SORT }
+							</SegmentedControl.Item>
+						</SegmentedControl>
 					) }
 					{ query && (
 						<SearchStreamHeader

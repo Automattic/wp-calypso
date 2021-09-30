@@ -4,7 +4,7 @@ import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { get, pick } from 'lodash';
 import Lru from 'lru';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
@@ -63,7 +63,7 @@ export function renderJsx( view, props ) {
 	to join the fun, visit: https://automattic.com/work-with-us/
 
 -->`;
-	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
+	return doctype + ReactDomServer.renderToStaticMarkup( createElement( component, props ) );
 }
 
 /**
@@ -129,8 +129,8 @@ export function render( element, key = JSON.stringify( element ), req ) {
 }
 
 const cachedLanguageManifest = {};
-const getLanguageManifest = ( langSlug, target ) => {
-	const key = `${ target }/${ langSlug }`;
+const getLanguageManifest = ( langSlug ) => {
+	const key = `${ langSlug }`;
 
 	if ( ! cachedLanguageManifest[ key ] ) {
 		const languageManifestFilepath = path.join(
@@ -139,7 +139,6 @@ const getLanguageManifest = ( langSlug, target ) => {
 			'..',
 			'..',
 			'public',
-			target,
 			'languages',
 			`${ langSlug }-language-manifest.json`
 		);
@@ -166,13 +165,12 @@ export function attachI18n( context ) {
 	if ( ! isDefaultLocale( localeSlug ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		const languageManifest = getLanguageManifest( localeSlug, context.target );
+		const languageManifest = getLanguageManifest( localeSlug );
 
 		if ( languageManifest ) {
 			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
 				localeSlug: localeSlug,
 				fileType: 'js',
-				targetBuild: context.target,
 				hash: context?.languageRevisions?.hashes?.[ localeSlug ],
 			} );
 
@@ -185,7 +183,6 @@ export function attachI18n( context ) {
 						chunkId,
 						localeSlug: localeSlug,
 						fileType: 'js',
-						targetBuild: context.target,
 						hash: context?.languageRevisions?.[ localeSlug ],
 					} )
 				);
@@ -295,7 +292,6 @@ export function setShouldServerSideRender( context, next ) {
  * when the sections-specific middlewares are run (examples: context.layout, context.user).
  *
  * @param {object}   context The currently built context
- *
  * @returns {boolean} True if all the app-level criteria are fulfilled.
  */
 function isServerSideRenderCompatible( context ) {

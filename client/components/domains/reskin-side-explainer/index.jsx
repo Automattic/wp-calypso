@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
-class ReskinSideExplainer extends React.Component {
+class ReskinSideExplainer extends Component {
 	getStrings() {
 		const { type, translate } = this.props;
 

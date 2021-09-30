@@ -1,4 +1,3 @@
-import React from 'react';
 import GoogleMyBusinessNewAccount from './new-account';
 import GoogleMyBusinessSelectBusinessType from './select-business-type';
 import GoogleMyBusinessSelectLocation from './select-location';

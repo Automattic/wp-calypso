@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Security2faEnable from 'calypso/me/security-2fa-enable';
 import Security2faInitialSetup from 'calypso/me/security-2fa-initial-setup';

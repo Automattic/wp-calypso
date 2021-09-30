@@ -5,10 +5,10 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	isJetpackAntiSpam,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ExternalLink from 'calypso/components/external-link';
@@ -18,7 +18,6 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import SupportInfo from 'calypso/components/support-info';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';

@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import Notice from 'calypso/components/notice';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';

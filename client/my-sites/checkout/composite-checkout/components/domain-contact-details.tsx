@@ -9,6 +9,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type {
 	DomainContactDetailsErrors,
@@ -45,7 +46,8 @@ export default function DomainContactDetails( {
 	emailOnly?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	const needsOnlyGoogleAppsDetails =
 		hasGoogleApps( responseCart ) &&
 		! hasDomainRegistration( responseCart ) &&

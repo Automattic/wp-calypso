@@ -7,7 +7,6 @@ const selectors = {
 	// iframe and editor
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
-	editorBody: '.edit-post-visual-editor',
 
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
@@ -18,11 +17,14 @@ const selectors = {
 	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
+	blockWarning: '.block-editor-warning',
 
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
+	// there's a hidden button also with the "Preview" text, so using unique class name instead of text selector
+	previewButton: '.edit-post-header .editor-post-preview',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
@@ -33,6 +35,14 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	viewButton: '.editor-post-publish-panel a:has-text("View")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
+	closePublishPanel: 'button[aria-label="Close panel"]',
+
+	// Welcome tour
+	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
+
+	// Block editor sidebar
+	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
+	dashboardLink: 'a[aria-description="Returns to the dashboard"]',
 };
 
 /**
@@ -57,8 +67,10 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		const frame = await this.getEditorFrame();
-		await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
-		await frame.waitForSelector( selectors.editorBody );
+		await this.page.waitForLoadState( 'load' );
+		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
+		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		await frame.waitForSelector( selectors.editorTitle );
 		return frame;
 	}
 
@@ -67,7 +79,7 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
-	private async getEditorFrame(): Promise< Frame > {
+	async getEditorFrame(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
@@ -181,7 +193,17 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Given a name, adds the Gutenberg block matching the name.
+	 * Dismisses the Welcome Tour (card) if it is present.
+	 */
+	async dismissWelcomeTourIfPresent(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		if ( await frame.isVisible( selectors.welcomeTourCloseButton ) ) {
+			await frame.click( selectors.welcomeTourCloseButton );
+		}
+	}
+
+	/**
+	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
@@ -191,9 +213,14 @@ export class GutenbergEditorPage {
 	 * 		- Pay with Paypal
 	 * 		- SyntaxHighlighter Code
 	 *
+	 * The block editor selector should select the top level element of a block in the editor.
+	 * For reference, this element will almost always have the ".wp-block" class.
+	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
+	 *
 	 * @param {string} blockName Name of the block to be inserted.
+	 * @param {string} blockEditorSelector Selector to find the parent block element in the editor.
 	 */
-	async addBlock( blockName: string ): Promise< ElementHandle > {
+	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
 
 		// Click on the editor title. This has the effect of dismissing the block inserter
@@ -204,7 +231,7 @@ export class GutenbergEditorPage {
 		await frame.fill( selectors.blockSearch, blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `*[aria-label="Block: ${ blockName }"].is-selected` );
+		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
 	}
 
 	/**
@@ -292,6 +319,26 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Launches editor preview by clicking toolbar preview button.
+	 *
+	 * @returns {Promise<void} No return value.
+	 */
+	async preview(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.previewButton );
+	}
+
+	/**
+	 * Checks whether the editor has any block warnings/errors displaying.
+	 *
+	 * @returns True if there are block warnings/errors, false otherwise.
+	 */
+	async editorHasBlockWarnings(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.isVisible( selectors.blockWarning );
+	}
+
+	/**
 	 * Visits the published entry from the post-publish sidebar.
 	 *
 	 * @returns {Promise<void>} No return value.
@@ -301,5 +348,21 @@ export class GutenbergEditorPage {
 
 		await Promise.all( [ this.page.waitForNavigation(), frame.click( selectors.viewButton ) ] );
 		await this.page.waitForLoadState( 'networkidle' );
+	}
+
+	/**
+	 * Opens the Nav Sidebar on the left hand side.
+	 */
+	async openNavSidebar(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.openSidebarButton );
+	}
+
+	/**
+	 * Clicks on the Dashboard link within the Block Editor Sidebar.
+	 */
+	async returnToDashboard(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.dashboardLink );
 	}
 }

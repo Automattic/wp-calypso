@@ -30,20 +30,10 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		);
 	}
 
-	static async Expect( driver, editorType ) {
-		const page = new this( driver, null, editorType );
-		await page._expectInit();
-		return page;
-	}
-
-	async _preInit() {
-		if ( this.editorType !== 'iframe' ) {
-			return;
-		}
-		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
-	}
-
+	// @todo discuss/look into refactoring this function. It's strange that
+	// it's an init function that's not always called. Might be better to
+	// either rename it or split it into two, with unconditional portion
+	// moved over to `Expect()`.
 	async initEditor( { dismissPageTemplateLocator = false } = {} ) {
 		if ( dismissPageTemplateLocator ) {
 			await this.dismissPageTemplateLocator();
@@ -100,9 +90,9 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	}
 
 	async getTitle() {
-		return await this.driver
-			.findElement( By.css( '.editor-post-title__input' ) )
-			.getAttribute( 'value' );
+		return await driverHelper.getInputText(
+			await this.driver.findElement( By.css( '.editor-post-title__input' ) )
+		);
 	}
 
 	async enterText( text ) {
@@ -430,11 +420,11 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		return blockClass.Expect( this.driver, blockID );
 	}
 
+	// @todo This and the `getTitle` method in this class look too similar. Refactor to a single method.
 	async titleShown() {
 		const titleLocator = By.css( '.editor-post-title__input' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, titleLocator );
-		const element = await this.driver.findElement( titleLocator );
-		return await element.getAttribute( 'value' );
+		return driverHelper.getInputText( await this.driver.findElement( titleLocator ) );
 	}
 
 	async addImage( fileDetails ) {
@@ -532,7 +522,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 
 	async ensureSaved() {
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
-		const savedLocator = By.css( 'span.is-saved' );
+		const savedLocator = By.css( 'button.is-saved' );
 
 		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, savedLocator );
 	}

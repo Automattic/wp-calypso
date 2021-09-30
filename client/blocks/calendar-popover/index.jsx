@@ -1,7 +1,7 @@
 import { Popover } from '@automattic/components';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PostSchedule from 'calypso/components/post-schedule';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';

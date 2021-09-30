@@ -83,7 +83,6 @@ export function useLocale(): string {
  *
  * @param InnerComponent Component that will receive `locale` as a prop
  * @returns Component enhanced with locale
- *
  * @example
  *
  * import { withLocale } from '@automattic/i18n-utils';
@@ -92,9 +91,12 @@ export function useLocale(): string {
  * }
  * export default withLocale( MyComponent );
  */
-export const withLocale = createHigherOrderComponent< { locale: string } >( ( InnerComponent ) => {
-	return ( props ) => {
-		const locale = useLocale();
-		return <InnerComponent locale={ locale } { ...props } />;
-	};
-}, 'withLocale' );
+export const withLocale = createHigherOrderComponent< { locale: string }, any >(
+	( InnerComponent ) => {
+		return ( props ) => {
+			const locale = useLocale();
+			return <InnerComponent locale={ locale } { ...props } />;
+		};
+	},
+	'withLocale'
+);

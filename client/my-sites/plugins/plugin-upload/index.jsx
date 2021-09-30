@@ -2,7 +2,7 @@ import { Card, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
@@ -32,7 +32,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-class PluginUpload extends React.Component {
+class PluginUpload extends Component {
 	state = {
 		showEligibility: this.props.showEligibility,
 	};

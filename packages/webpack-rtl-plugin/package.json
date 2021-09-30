@@ -27,10 +27,10 @@
 	"devDependencies": {
 		"css-loader": "^5.2.4",
 		"mini-css-extract-plugin": "^1.6.0",
-		"webpack": "^5.46.0"
+		"webpack": "^5.54.0"
 	},
 	"peerDependencies": {
-		"webpack": "^5.46.0"
+		"webpack": "^5.54.0"
 	},
 	"dependencies": {
 		"@romainberger/css-diff": "^1.0.3",

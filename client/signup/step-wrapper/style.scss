@@ -1,3 +1,20 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-wrapper__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	.formatted-header {
+		flex-grow: 1;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
+	}
+}
+
 .step-wrapper__skip-hr {
 	background: var( --color-primary-light );
 	max-width: 270px;
@@ -21,34 +38,56 @@
 	}
 }
 
-.step-wrapper__buttons.is-top-buttons {
-	text-align: center;
-	padding: 5px 0;
-	margin-bottom: 32px;
+.step-wrapper__header-button {
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-basis: 100%;
+	}
 }
 
-.step-wrapper__buttons.is-top-buttons .step-wrapper__skip-wrapper {
-	display: inline-block;
-	background: var( --color-surface );
-	border-radius: 2px;
-	padding: 2px 12px;
-	@include elevation ( 2dp );
-}
+.step-wrapper__navigation.action-buttons {
+	display: flex;
+	align-items: center;
+	font-size: 0.875rem;
 
-.step-wrapper__buttons.is-top-buttons .step-wrapper__skip-heading {
-	display: inline;
-	color: var( --color-text );
-}
+	@mixin unstick {
+		position: absolute;
+		top: 2px;
+		left: 11px;
+		right: 16px;
+		padding: 0;
+		border: none;
+		margin: 0;
+		background-color: transparent;
+	}
 
-.step-wrapper__buttons.is-top-buttons .navigation-link {
-	color: var( --color-accent );
-	text-decoration: underline;
-	transform: none;
-	vertical-align: baseline;
-	margin-left: 0.5em;
-	padding: 7px 0 9px !important;
-}
+	&.no-sticky {
+		@include unstick;
+		height: 36px;
+	}
 
-.step-wrapper__buttons.is-top-buttons .navigation-link svg {
-	display: none;
+	&:not( .is-sticky ) {
+		@include break-small {
+			@include unstick;
+		}
+	}
+
+	.step-wrapper__navigation-link {
+		font-size: 0.875rem;
+		font-weight: 500; /* stylelint-disable-line */
+
+		&.has-underline {
+			text-decoration: underline;
+		}
+
+		&.has-skip-heading {
+			transform: translateY( -3px );
+			// override unessecary super specificity added by another class
+			padding-top: 0 !important;
+		}
+	}
+
+	.step-wrapper__navigation-link.forward,
+	.step-wrapper__skip-wrapper {
+		margin-left: auto;
+	}
 }

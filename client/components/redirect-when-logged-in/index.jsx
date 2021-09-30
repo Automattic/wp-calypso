@@ -1,12 +1,12 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:redirect-when-logged-in' );
 
-class RedirectWhenLoggedIn extends React.Component {
+class RedirectWhenLoggedIn extends Component {
 	static propTypes = {
 		delayAtMount: PropTypes.number,
 		redirectTo: PropTypes.string.isRequired,

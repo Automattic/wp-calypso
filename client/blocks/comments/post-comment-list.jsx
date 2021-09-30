@@ -1,13 +1,12 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
-import Gridicon from 'calypso/components/gridicon';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
@@ -48,7 +47,7 @@ import './post-comment-list.scss';
  *
  */
 
-class PostCommentList extends React.Component {
+class PostCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,

@@ -3,10 +3,9 @@
  */
 
 import { fireEvent, screen } from '@testing-library/react';
-import { render as rtlRender } from 'config/testing-library';
-import React from 'react';
 import jetpack from 'calypso/state/jetpack/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
+import { render as rtlRender } from 'calypso/test-helpers/config/testing-library';
 import ScreenOptionsTab from '../index';
 
 jest.mock( 'react-redux', () => ( {

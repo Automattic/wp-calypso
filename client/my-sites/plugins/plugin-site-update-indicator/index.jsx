@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
@@ -15,7 +15,7 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 
 import './style.scss';
 
-class PluginSiteUpdateIndicator extends React.Component {
+class PluginSiteUpdateIndicator extends Component {
 	static displayName = 'PluginSiteUpdateIndicator';
 
 	static propTypes = {

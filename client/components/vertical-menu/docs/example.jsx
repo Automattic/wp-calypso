@@ -1,4 +1,3 @@
-import React from 'react';
 import VerticalMenu from '../index';
 import { SocialItem } from '../items';
 

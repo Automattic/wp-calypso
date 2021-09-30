@@ -24,7 +24,6 @@ import {
 import Debug from 'debug';
 import { get, some } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
@@ -416,7 +415,10 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 	const urlQueryArgs = context.query;
 
-	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
+	if (
+		config.isEnabled( 'jetpack/siteless-checkout' ) &&
+		! JETPACK_SEARCH_PRODUCTS.includes( planSlug )
+	) {
 		if ( ! urlQueryArgs?.checkoutBackUrl ) {
 			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
 		}

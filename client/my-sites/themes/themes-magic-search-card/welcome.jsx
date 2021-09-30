@@ -1,14 +1,14 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
 import { allowedSearchWelcomeTaxonomies, taxonomyToGridicon } from './taxonomies-config.js';
 
 const noop = () => {};
 
-class MagicSearchWelcome extends React.Component {
+class MagicSearchWelcome extends Component {
 	constructor( props ) {
 		super( props );
 		this.visibleTaxonomies = [];

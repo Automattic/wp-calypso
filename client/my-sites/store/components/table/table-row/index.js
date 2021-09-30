@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
 import getKeyboardHandler from '../../../lib/get-keyboard-handler';
 
 const TableRow = ( { className, isHeader, href, children, ...props } ) => {

@@ -1,15 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, ScreenReaderText } from '@automattic/components';
+import { Button, Gridicon, ScreenReaderText } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import Gridicon from 'calypso/components/gridicon';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -261,7 +260,7 @@ export class EditorMediaModalDetailItem extends Component {
 				break;
 		}
 
-		return React.createElement( Item, {
+		return createElement( Item, {
 			className: 'editor-media-modal-detail__preview',
 			site: site,
 			item: item,

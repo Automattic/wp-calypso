@@ -1,10 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
-import Gridicon from 'calypso/components/gridicon';
 import Image from 'calypso/components/image';
 import Spinner from 'calypso/components/spinner';
 import resizeImageUrl from 'calypso/lib/resize-image-url';

@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, reduce } from 'lodash';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
 import { getTld, isHstsRequired } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
@@ -10,7 +10,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class DomainRegistrationHsts extends React.PureComponent {
+class DomainRegistrationHsts extends PureComponent {
 	getHstsTlds = () => {
 		const { cart, productsList } = this.props;
 		const domains = merge( getDomainRegistrations( cart ), getDomainTransfers( cart ) );

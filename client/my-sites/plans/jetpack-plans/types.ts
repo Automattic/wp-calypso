@@ -25,6 +25,7 @@ export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) 
 interface BasePageProps {
 	rootUrl: string;
 	urlQueryArgs: QueryArgs;
+	nav?: ReactNode;
 	header: ReactNode;
 	footer?: ReactNode;
 }
@@ -98,6 +99,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	monthlyProductSlug?: string;
 	displayName: TranslateResult;
 	shortName: TranslateResult;
+	subheader?: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
 	children?: ReactNode;

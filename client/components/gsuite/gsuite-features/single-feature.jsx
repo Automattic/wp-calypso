@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const GSuiteSingleFeature = ( { compact, description, imagePath, imageAlt, title } ) => {
 	return (

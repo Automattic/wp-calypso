@@ -122,6 +122,7 @@ function getWebpackConfig(
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+			conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,
@@ -133,7 +134,7 @@ function getWebpackConfig(
 				),
 				global: 'window',
 			} ),
-			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+			new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 			...SassConfig.plugins( {
 				chunkFilename: cssChunkFilename,
 				filename: cssFilename,

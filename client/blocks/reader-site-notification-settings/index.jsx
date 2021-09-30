@@ -1,11 +1,11 @@
+import { Gridicon } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import Gridicon from 'calypso/components/gridicon';
 import SegmentedControl from 'calypso/components/segmented-control';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -34,8 +34,8 @@ class ReaderSiteNotificationSettings extends Component {
 		selected: this.props.emailDeliveryFrequency,
 	};
 
-	iconRef = React.createRef();
-	spanRef = React.createRef();
+	iconRef = createRef();
+	spanRef = createRef();
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {

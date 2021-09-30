@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import Debug from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -18,6 +18,7 @@ import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { hideMasterbar } from 'calypso/state/ui/actions';
 import normalizeInvite from './utils/normalize-invite';
 
 import './style.scss';
@@ -27,7 +28,7 @@ import './style.scss';
  */
 const debug = new Debug( 'calypso:invite-accept' );
 
-class InviteAccept extends React.Component {
+class InviteAccept extends Component {
 	state = {
 		invite: false,
 		error: false,
@@ -61,6 +62,10 @@ class InviteAccept extends React.Component {
 			// Replace the plain invite key with the strengthened key
 			// from the url: invite key + secret
 			invite.inviteKey = inviteKey;
+
+			if ( invite?.site?.is_wpforteams_site ) {
+				this.props.hideMasterbar();
+			}
 
 			this.handleFetchInvite( false, invite );
 		} catch ( error ) {
@@ -222,7 +227,7 @@ class InviteAccept extends React.Component {
 		const { user } = this.props;
 
 		const containerClasses = classNames( 'invite-accept', {
-			'is-p2': !! invite?.site?.is_wpforteams_site,
+			'is-p2-invite': !! invite?.site?.is_wpforteams_site,
 		} );
 
 		const formClasses = classNames( 'invite-accept__form', {
@@ -254,5 +259,6 @@ class InviteAccept extends React.Component {
 export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
 	successNotice,
 	infoNotice,
+	hideMasterbar,
 	redirectToLogout,
 } )( localize( InviteAccept ) );

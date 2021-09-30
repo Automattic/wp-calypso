@@ -1,14 +1,13 @@
 import config from '@automattic/calypso-config';
-import { Button, RootChild } from '@automattic/components';
+import { Button, RootChild, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Gridicon from 'calypso/components/gridicon';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';

@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import usePostsQuery from 'calypso/data/posts/use-posts-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

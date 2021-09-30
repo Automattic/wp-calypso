@@ -1,17 +1,10 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
-import {
-	RESULT_ARTICLE,
-	RESULT_LINK,
-	RESULT_TOUR,
-	RESULT_TYPE,
-} from 'calypso/blocks/inline-help/constants';
+import { RESULT_ARTICLE } from 'calypso/blocks/inline-help/constants';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
 import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 
@@ -22,7 +15,7 @@ const HELP_COMPONENT_LOCATION = 'customer-home';
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
-const getResultLink = ( result ) => amendYouTubeLink( result[ RESULT_LINK ] );
+const getResultLink = ( result ) => amendYouTubeLink( result.link );
 
 const HelpSearch = ( { searchQuery, track } ) => {
 	const translate = useTranslate();
@@ -34,8 +27,7 @@ const HelpSearch = ( { searchQuery, track } ) => {
 		}
 
 		const resultLink = getResultLink( result );
-		const type = result[ RESULT_TYPE ] ?? RESULT_ARTICLE;
-		const tour = result[ RESULT_TOUR ];
+		const { type = RESULT_ARTICLE, tour } = result;
 
 		const tracksData = Object.fromEntries(
 			Object.entries( {

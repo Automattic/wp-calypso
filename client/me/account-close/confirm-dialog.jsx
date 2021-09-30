@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Button } from '@automattic/components';
+import { Dialog, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { closeAccount } from 'calypso/state/account/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -16,7 +15,7 @@ import './confirm-dialog.scss';
 
 const noop = () => {};
 
-class AccountCloseConfirmDialog extends React.Component {
+class AccountCloseConfirmDialog extends Component {
 	state = {
 		displayAlternativeOptions: true,
 		inputValue: '',

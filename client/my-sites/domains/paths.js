@@ -58,7 +58,7 @@ export function domainAddNew( siteName, searchTerm ) {
 }
 
 export function domainAddEmailUpsell( siteName, domainName ) {
-	return `/domains/add/${ siteName }/email/${ domainName }`;
+	return `/domains/add/${ domainName }/email/${ siteName }`;
 }
 
 export function domainManagementAllRoot() {

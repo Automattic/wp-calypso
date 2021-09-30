@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
-import React, { Component } from 'react';
+import { Button, Gridicon } from '@automattic/components';
+import { Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import Gridicon from 'calypso/components/gridicon';
 import Table from '..';
 import TableItem from '../table-item';
 import TableRow from '../table-row';

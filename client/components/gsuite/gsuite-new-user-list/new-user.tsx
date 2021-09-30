@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import React, { ChangeEvent, FunctionComponent, useState } from 'react';
@@ -8,7 +8,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import Gridicon from 'calypso/components/gridicon';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
 import GSuiteDomainsSelect from './domains-select';
 

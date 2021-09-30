@@ -4,7 +4,6 @@
 
 import config from '@automattic/calypso-config';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { MySitesSidebar } from '..';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );

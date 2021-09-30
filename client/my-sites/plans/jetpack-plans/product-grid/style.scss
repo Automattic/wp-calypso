@@ -94,10 +94,6 @@
 }
 
 .product-grid__asterisk-item {
-	&::before {
-		content: '*';
-	}
-
 	color: var( --color-neutral-light );
 
 	font-size: $font-body;
@@ -108,7 +104,6 @@
 .product-grid__more.is-detached {
 	margin-top: 48px;
 }
-
 
 /*
  * From this point, rules only apply:

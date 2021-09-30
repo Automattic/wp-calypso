@@ -6,6 +6,7 @@ const STORE_KEY = 'automattic/wpcom-welcome-guide';
 
 beforeAll( () => {
 	register();
+	jest.useFakeTimers(); // Required for wait-for-expect to work.
 } );
 
 let originalFetch;

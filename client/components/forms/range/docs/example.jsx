@@ -1,8 +1,8 @@
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
+import { PureComponent } from 'react';
 import FormRange from '../';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'Ranges';
 
 	state = {

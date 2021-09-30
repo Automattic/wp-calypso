@@ -1,12 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import Gridicon from 'calypso/components/gridicon';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';

@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
 import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -18,7 +18,6 @@ import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -62,7 +61,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
-class ThemeSheet extends React.Component {
+class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
 	static propTypes = {
@@ -734,7 +733,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		if ( hasUpsellBanner ) {
-			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
+			previewUpsellBanner = cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}

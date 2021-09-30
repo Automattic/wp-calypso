@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { groupBy, isEmpty, map, size, values } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
@@ -58,7 +58,7 @@ function getMediaScalePreference( state, isMobile ) {
 	return mediaScale;
 }
 
-export class MediaLibraryContent extends React.Component {
+export class MediaLibraryContent extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,
@@ -323,14 +323,19 @@ export class MediaLibraryContent extends React.Component {
 	};
 
 	renderGooglePhotosConnect() {
-		const connectMessage = this.props.translate(
-			'To show your Google Photos library you need to connect your Google account.'
+		const { translate } = this.props;
+		const connectMessage = translate(
+			'To get started, connect your site to your Google Photos library.'
 		);
 
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<img src="/calypso/images/sharing/google-photos-connect.png" width="400" alt="" />
+					<img
+						src="/calypso/images/sharing/google-photos-logo-text.svg"
+						width="400"
+						alt={ translate( 'Google Photos' ) }
+					/>
 				</p>
 				<p>{ connectMessage }</p>
 

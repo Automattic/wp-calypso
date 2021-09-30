@@ -2,7 +2,6 @@ import { CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import PurchasesNavigation from 'calyspo/me/purchases/purchases-navigation';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import noMembershipsImage from 'calypso/assets/images/illustrations/no-memberships.svg';
 import DocumentHead from 'calypso/components/data/document-head';

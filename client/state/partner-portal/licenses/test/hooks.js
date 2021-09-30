@@ -4,7 +4,6 @@
 
 import { renderHook, act } from '@testing-library/react-hooks';
 import nock from 'nock';
-import React from 'react';
 import { setLogger, QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';

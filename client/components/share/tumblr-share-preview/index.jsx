@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { truncateArticleContent } from '../helpers';
 
 import './style.scss';

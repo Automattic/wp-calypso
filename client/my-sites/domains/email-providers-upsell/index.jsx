@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
@@ -18,6 +17,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 			<EmailProvidersComparison
 				backPath={ domainAddNew( selectedSiteSlug ) }
 				cartDomainName={ domain }
+				comparisonContext="domain-upsell"
 				headerTitle={ translate( 'Register %(domainName)s', {
 					args: { domainName: domain },
 					comment,
@@ -35,7 +35,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 					comment,
 				} ) }
 				selectedDomainName={ domain }
-				skipButtonLabel={ translate( 'Not interested' ) }
+				skipButtonLabel={ translate( 'Skip' ) }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

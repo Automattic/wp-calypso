@@ -24,7 +24,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { SeoPreviewNudge } from '../index';
 
 const props = {

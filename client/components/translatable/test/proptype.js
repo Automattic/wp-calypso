@@ -5,7 +5,6 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
 
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import translatableString from '../proptype';
 
 function assertPasses( validator, { props }, propName = 'translatableString' ) {

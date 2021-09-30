@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { forwardRef } from 'react';
 
 import './style.scss';
 
-const HeaderButton = React.forwardRef( ( props, ref ) => {
+const HeaderButton = forwardRef( ( props, ref ) => {
 	const { icon, label, ...rest } = props;
 
 	return (

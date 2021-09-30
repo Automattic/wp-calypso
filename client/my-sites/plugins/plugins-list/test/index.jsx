@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { PluginsList } from '..';
 import { sites, sitesObject } from './fixtures';
 

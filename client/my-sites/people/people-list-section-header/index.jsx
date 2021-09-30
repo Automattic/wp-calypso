@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import SectionHeader from 'calypso/components/section-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';

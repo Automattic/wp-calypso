@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { cloneElement, Component } from 'react';
 
 class HoverIntent extends Component {
 	constructor() {
@@ -56,7 +56,7 @@ class HoverIntent extends Component {
 		}
 	};
 	render() {
-		return React.cloneElement( this.props.children, {
+		return cloneElement( this.props.children, {
 			ref: ( element ) => {
 				this.element = element;
 			},

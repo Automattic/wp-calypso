@@ -5,7 +5,6 @@
 import { Card } from '@automattic/components';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import React from 'react';
 
 const mockGoBack = jest.fn();
 jest.mock( 'page', () => ( { back: mockGoBack } ) );

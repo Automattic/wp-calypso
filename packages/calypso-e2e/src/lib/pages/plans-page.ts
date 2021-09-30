@@ -1,6 +1,7 @@
 import { Page } from 'playwright';
-import { getViewportName } from '../../browser-helper';
-import { viewportName } from '../../types';
+import { getTargetDeviceName } from '../../browser-helper';
+import { clickNavTab } from '../../element-helper';
+import { TargetDevice } from '../../types';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
@@ -9,15 +10,19 @@ export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
 const selectors = {
 	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
+
+	// Navigation
+	mobileNavTabsToggle: `button.section-nav__mobile-header`,
 	navigationTab: ( tabName: PlansPageTab ) => `.section-nav-tab:has-text("${ tabName }")`,
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
+
 	actionButton: ( {
 		viewport,
 		plan,
 		buttonText,
 	}: {
-		viewport: viewportName;
+		viewport: TargetDevice;
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ) => {
@@ -42,12 +47,20 @@ export class PlansPage {
 	}
 
 	/**
+	 * Wait until the page is loaded and stable.
+	 */
+	private async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
 	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
 	 *
 	 * @param {Plan} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlanInMyPlanTab( expectedPlan: Plan ): Promise< void > {
+		await this.waitUntilLoaded();
 		await this.page.waitForSelector( selectors.myPlanTitle( expectedPlan ) );
 	}
 
@@ -58,7 +71,18 @@ export class PlansPage {
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
-		await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
+		await this.waitUntilLoaded();
+		const targetDevice = getTargetDeviceName();
+
+		// For mobile sized viewport, the currently selected tab name will be shown alongside the
+		// dropdown toggle button, so verify the expected tab name is shown there.
+		if ( targetDevice === 'mobile' ) {
+			await this.page.waitForSelector(
+				`${ selectors.mobileNavTabsToggle }:has-text("${ expectedTab }")`
+			);
+		} else {
+			await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
+		}
 	}
 
 	/**
@@ -66,10 +90,8 @@ export class PlansPage {
 	 *
 	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
-	async clickNavigationTab( targetTab: PlansPageTab ): Promise< void > {
-		await this.page.click( selectors.navigationTab( targetTab ) );
-		// make sure it actually got marked as active!
-		await this.validateActiveNavigationTab( targetTab );
+	async clickTab( targetTab: PlansPageTab ): Promise< void > {
+		await clickNavTab( this.page, targetTab );
 	}
 
 	/**
@@ -86,13 +108,13 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
+		await this.waitUntilLoaded();
 		const selector = selectors.actionButton( {
-			viewport: getViewportName(),
+			viewport: getTargetDeviceName(),
 			plan: plan,
 			buttonText: buttonText,
 		} );
 		// These action buttons trigger real page navigations.
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
-		await this.page.waitForLoadState( 'load' );
 	}
 }

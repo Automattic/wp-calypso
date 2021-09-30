@@ -1,17 +1,16 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import Tooltip from 'calypso/components/tooltip';
@@ -20,7 +19,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-class Security2faBackupCodesList extends React.Component {
+class Security2faBackupCodesList extends Component {
 	static displayName = 'Security2faBackupCodesList';
 
 	static defaultProps = {
@@ -40,9 +39,9 @@ class Security2faBackupCodesList extends React.Component {
 
 	popup = false;
 
-	copyCodesButtonRef = React.createRef();
-	printCodesButtonRef = React.createRef();
-	downloadCodesButtonRef = React.createRef();
+	copyCodesButtonRef = createRef();
+	printCodesButtonRef = createRef();
+	downloadCodesButtonRef = createRef();
 
 	componentDidMount() {
 		// Configure clipboard to be triggered on clipboard button press

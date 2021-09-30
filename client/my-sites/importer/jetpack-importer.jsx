@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

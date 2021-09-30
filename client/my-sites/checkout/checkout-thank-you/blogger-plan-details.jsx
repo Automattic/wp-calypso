@@ -2,7 +2,6 @@ import { isBlogger, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 

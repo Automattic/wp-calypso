@@ -403,19 +403,25 @@ class Site {
 	/**
 	 * Add a domain mapping to a site.
 	 *
-	 * @param {string} domain - donain to map
+	 * @param {string} domain - domain to map
+	 * @param {object} extraData - extra data passed to the endpoint
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
-	addDomainMapping( domain, query, fn ) {
-		return this.wpcom.req.post( `${ this.path }/add-domain-mapping`, query, { domain }, fn );
+	addDomainMapping( domain, extraData, query, fn ) {
+		return this.wpcom.req.post(
+			`${ this.path }/add-domain-mapping`,
+			query,
+			{ domain, ...extraData },
+			fn
+		);
 	}
 
 	/**
 	 * Add a VIP domain mapping
 	 *
-	 * @param {string} domain - donain to map
+	 * @param {string} domain - domain to map
 	 * @param {object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler

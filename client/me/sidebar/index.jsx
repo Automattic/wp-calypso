@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -21,7 +21,7 @@ import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import './style.scss';
 import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
 
-class MeSidebar extends React.Component {
+class MeSidebar extends Component {
 	onNavigate = () => {
 		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );

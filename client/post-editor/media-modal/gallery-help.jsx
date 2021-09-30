@@ -1,19 +1,18 @@
-import { Button, Popover } from '@automattic/components';
+import { Button, Gridicon, Popover } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
 import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
-class EditorMediaModalGalleryHelp extends React.PureComponent {
+class EditorMediaModalGalleryHelp extends PureComponent {
 	static displayName = 'EditorMediaModalGalleryHelp';
 
 	static propTypes = {

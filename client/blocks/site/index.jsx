@@ -1,12 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
-import Gridicon from 'calypso/components/gridicon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
@@ -17,7 +17,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class Site extends React.Component {
+class Site extends Component {
 	static defaultProps = {
 		// onSelect callback
 		onSelect: noop,

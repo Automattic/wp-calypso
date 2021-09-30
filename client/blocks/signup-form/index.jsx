@@ -20,7 +20,7 @@ import {
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component, useEffect } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -49,6 +49,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
+import P2SignupForm from './p2';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -303,6 +304,22 @@ class SignupForm extends Component {
 						} );
 					}
 				}
+			}
+
+			// Catch this early for P2 signup flow.
+			if (
+				this.props.isP2Flow &&
+				fields.username &&
+				fields.password &&
+				fields.username === fields.password
+			) {
+				messages = Object.assign( {}, messages, {
+					password: {
+						invalid: this.props.translate(
+							'Your password cannot be the same as your username. Please pick a different password.'
+						),
+					},
+				} );
 			}
 
 			onComplete( error, messages );
@@ -857,6 +874,19 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
+		if ( flowName === 'p2' ) {
+			return (
+				<div className="signup-form__p2-footer-link">
+					<div>{ this.props.translate( 'Already have a WordPress.com account?' ) }</div>
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+							{ this.props.translate( 'Log in instead' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				</div>
+			);
+		}
+
 		return (
 			<>
 				{ ! this.props.isReskinned && (
@@ -960,6 +990,29 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.isP2Flow ) {
+			const socialProps = pick( this.props, [
+				'isSocialSignupEnabled',
+				'handleSocialResponse',
+				'socialService',
+				'socialServiceResponse',
+			] );
+
+			return (
+				<>
+					{ this.getNotice() }
+					<P2SignupForm
+						formFields={ this.formFields() }
+						formFooter={ this.formFooter() }
+						handleSubmit={ this.handleSubmit }
+						{ ...socialProps }
+						footerLink={ this.props.footerLink || this.footerLink() }
+						error={ this.props?.step?.errors?.[ 0 ] }
+					/>
+				</>
+			);
+		}
+
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
@@ -1011,7 +1064,7 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state ) => ( {
+	( state, props ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
@@ -1019,6 +1072,7 @@ export default connect(
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isP2Flow: props.flowName === 'p2' || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),

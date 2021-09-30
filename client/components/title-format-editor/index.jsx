@@ -1,12 +1,17 @@
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { buildSeoTitle } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import {
+	buildSeoTitle,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
 
@@ -23,6 +28,9 @@ export class TitleFormatEditor extends Component {
 		type: PropTypes.object.isRequired,
 		tokens: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
+		// Connected props
+		titleData: PropTypes.object,
+		shouldShowSeoArchiveTitleButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -214,7 +222,15 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
-		const { disabled, placeholder, titleData, translate, tokens, type } = this.props;
+		const {
+			disabled,
+			placeholder,
+			titleData,
+			translate,
+			tokens,
+			type,
+			shouldShowSeoArchiveTitleButton,
+		} = this.props;
 
 		const previewText =
 			type.value && editorState.getCurrentContent().hasText()
@@ -235,17 +251,32 @@ export class TitleFormatEditor extends Component {
 			<div className={ editorClassNames }>
 				<div className="title-format-editor__header">
 					<span className="title-format-editor__title">{ type.label }</span>
-					{ Object.entries( tokens ).map( ( [ name, title ] ) => (
+					{ Object.entries( tokens ).map( ( [ name, title ] ) => {
+						if ( 'archives' === type.value ) {
+							if ( 'date' === name && shouldShowSeoArchiveTitleButton ) {
+								// [date] is still tokenized, but we no longer show the button to insert a [date] on JP >= 10.2
+								return null;
+							}
+
+							if ( 'archiveTitle' === name && ! shouldShowSeoArchiveTitleButton ) {
+								// [archive_title] provides a more generic option than [date] shown on JP >= 10.2
+								// which supports non date-based archives.
+								return null;
+							}
+						}
+
 						/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-						<span
-							key={ name }
-							className="title-format-editor__button"
-							onClick={ disabled ? noop : this.addToken( title, name ) }
-						>
-							{ title }
-						</span>
+						return (
+							<span
+								key={ name }
+								className="title-format-editor__button"
+								onClick={ disabled ? noop : this.addToken( title, name ) }
+							>
+								{ title }
+							</span>
+						);
 						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-					) ) }
+					} ) }
 				</div>
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
@@ -264,19 +295,30 @@ export class TitleFormatEditor extends Component {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 	const { translate } = ownProps;
-	const formattedDate = moment()
-		.locale( site?.lang ?? '' )
-		.format( 'MMMM YYYY' );
 
-	// Add example content for post/page title, tag name and archive dates
+	let shouldShowSeoArchiveTitleButton = false;
+	if ( isJetpackMinimumVersion( state, siteId, '10.2-alpha' ) ) {
+		shouldShowSeoArchiveTitleButton = true;
+	} else if (
+		! isJetpackSite( state, siteId ) &&
+		hasActiveSiteFeature( state, siteId, FEATURE_ADVANCED_SEO )
+	) {
+		// For non-AT Business plan sites which get SEO features.
+		shouldShowSeoArchiveTitleButton = true;
+	}
+
+	// Add example content for post/page title, tag name and archive title.
 	return {
 		titleData: {
 			site,
 			post: { title: translate( 'Example Title' ) },
 			tag: translate( 'Example Tag' ),
-			date: formattedDate,
+			date: translate( 'Example Archive Title/Date' ),
+			archiveTitle: translate( 'Example Archive Title/Date' ),
 		},
+		shouldShowSeoArchiveTitleButton,
 	};
 };
 

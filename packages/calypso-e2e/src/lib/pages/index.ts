@@ -15,3 +15,9 @@ export * from './site-import-page';
 export * from './invite-people-page';
 export * from './people-page';
 export * from './reader-page';
+export * from './user-signup-page';
+export * from './signup-pick-plan-page';
+export * from './account-closed-page';
+export * from './domains-page';
+
+export * from './me';

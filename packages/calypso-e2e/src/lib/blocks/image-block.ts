@@ -17,6 +17,7 @@ const selectors = {
  */
 export class ImageBlock {
 	static blockName = 'Image';
+	static blockEditorSelector = '[aria-label="Block: Image"]';
 	block: ElementHandle;
 
 	/**

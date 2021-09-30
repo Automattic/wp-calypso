@@ -26,6 +26,7 @@ import type {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
@@ -242,7 +243,7 @@ export function isValid( arg: ManagedValue ): boolean {
 function getInitialManagedValue( initialProperties?: {
 	value?: string;
 	isTouched?: boolean;
-	errors?: Array< string >;
+	errors?: Array< string | TranslateResult >;
 	isRequired?: boolean;
 } ): ManagedValue {
 	return {
@@ -285,7 +286,10 @@ function setValueUnlessTouched(
 	return oldData.isTouched ? oldData : { ...oldData, value: newValue, errors: [] };
 }
 
-function setErrors( errors: string[] | undefined, oldData: ManagedValue ): ManagedValue {
+function setErrors(
+	errors: string[] | TranslateResult[] | undefined,
+	oldData: ManagedValue
+): ManagedValue {
 	return undefined === errors ? { ...oldData, errors: [] } : { ...oldData, errors };
 }
 
@@ -305,9 +309,13 @@ export function isTouched( details: ManagedContactDetails ): boolean {
 
 export function areRequiredFieldsNotEmpty( details: ManagedContactDetails ): boolean {
 	const values = getManagedValuesList( details );
-	return (
-		values.length > 0 && values.every( ( value ) => value.value?.length > 0 || ! value.isRequired )
-	);
+	if ( values.length === 0 ) {
+		return false;
+	}
+	if ( values.some( ( value ) => value.value?.length === 0 && value.isRequired ) ) {
+		return false;
+	}
+	return true;
 }
 
 function setManagedContactDetailsErrors(
@@ -465,7 +473,7 @@ function prepareUkDomainContactExtraDetailsErrors(
 ): UkDomainContactExtraDetailsErrors | null {
 	if ( details.tldExtraFields?.uk ) {
 		// Needed for compatibility with existing component props
-		const toErrorPayload = ( errorMessage: string, index: number ) => {
+		const toErrorPayload = ( errorMessage: string | TranslateResult, index: number ) => {
 			return { errorCode: index.toString(), errorMessage };
 		};
 
@@ -538,24 +546,24 @@ export function prepareDomainContactValidationRequest(
 
 	return {
 		contact_information: {
-			firstName: details.firstName?.value,
-			lastName: details.lastName?.value,
+			first_name: details.firstName?.value,
+			last_name: details.lastName?.value,
 			organization: details.organization?.value,
 			email: details.email?.value,
-			alternateEmail: details.alternateEmail?.value,
+			alternate_email: details.alternateEmail?.value,
 			phone: details.phone?.value,
-			phoneNumberCountry: details.phoneNumberCountry?.value,
-			address1: details.address1?.value,
-			address2: details.address2?.value,
+			phone_number_country: details.phoneNumberCountry?.value,
+			address_1: details.address1?.value,
+			address_2: details.address2?.value,
 			city: details.city?.value,
 			state: details.state?.value,
-			postalCode: tryToGuessPostalCodeFormat(
+			postal_code: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value
 			),
-			countryCode: details.countryCode?.value,
+			country_code: details.countryCode?.value,
 			fax: details.fax?.value,
-			vatId: details.vatId?.value,
+			vat_id: details.vatId?.value,
 			extra,
 		},
 	};
@@ -566,14 +574,14 @@ export function prepareGSuiteContactValidationRequest(
 ): GSuiteContactValidationRequest {
 	return {
 		contact_information: {
-			firstName: details.firstName?.value ?? '',
-			lastName: details.lastName?.value ?? '',
-			alternateEmail: details.alternateEmail?.value ?? '',
-			postalCode: tryToGuessPostalCodeFormat(
+			first_name: details.firstName?.value ?? '',
+			last_name: details.lastName?.value ?? '',
+			alternate_email: details.alternateEmail?.value ?? '',
+			postal_code: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value
 			),
-			countryCode: details.countryCode?.value ?? '',
+			country_code: details.countryCode?.value ?? '',
 		},
 	};
 }
@@ -581,7 +589,7 @@ export function prepareGSuiteContactValidationRequest(
 export function getSignupValidationErrorResponse(
 	response: SignupValidationResponse,
 	email: string,
-	emailTakenLoginRedirect: ( arg0: string ) => string
+	emailTakenLoginRedirect: ( email: string ) => TranslateResult
 ): ManagedContactDetailsErrors {
 	const emailResponse: Record< string, string > = response.messages?.email ?? {};
 
@@ -603,36 +611,36 @@ export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
 	return {
-		firstName: response.messages?.firstName,
-		lastName: response.messages?.lastName,
+		firstName: response.messages?.first_name,
+		lastName: response.messages?.last_name,
 		organization: response.messages?.organization,
 		email: response.messages?.email,
-		alternateEmail: response.messages?.alternateEmail,
+		alternateEmail: response.messages?.alternate_email,
 		phone: response.messages?.phone,
-		phoneNumberCountry: response.messages?.phoneNumberCountry,
-		address1: response.messages?.address1,
-		address2: response.messages?.address2,
+		phoneNumberCountry: response.messages?.phone_number_country,
+		address1: response.messages?.address_1,
+		address2: response.messages?.address_2,
 		city: response.messages?.city,
 		state: response.messages?.state,
-		postalCode: response.messages?.postalCode,
-		countryCode: response.messages?.countryCode,
+		postalCode: response.messages?.postal_code,
+		countryCode: response.messages?.country_code,
 		fax: response.messages?.fax,
-		vatId: response.messages?.vatId,
+		vatId: response.messages?.vat_id,
 		tldExtraFields: {
 			ca: {
 				lang: response.messages?.extra?.ca?.lang,
-				legalType: response.messages?.extra?.ca?.legalType,
-				ciraAgreementAccepted: response.messages?.extra?.ca?.ciraAgreementAccepted,
+				legalType: response.messages?.extra?.ca?.legal_type,
+				ciraAgreementAccepted: response.messages?.extra?.ca?.cira_agreement_accepted,
 			},
 			uk: {
-				registrantType: response.messages?.extra?.uk?.registrantType,
-				registrationNumber: response.messages?.extra?.uk?.registrationNumber,
-				tradingName: response.messages?.extra?.uk?.tradingName,
+				registrantType: response.messages?.extra?.uk?.registrant_type,
+				registrationNumber: response.messages?.extra?.uk?.registration_number,
+				tradingName: response.messages?.extra?.uk?.trading_name,
 			},
 			fr: {
-				registrantType: response.messages?.extra?.fr?.registrantType,
-				trademarkNumber: response.messages?.extra?.fr?.trademarkNumber,
-				sirenSiret: response.messages?.extra?.fr?.sirenSiret,
+				registrantType: response.messages?.extra?.fr?.registrant_type,
+				trademarkNumber: response.messages?.extra?.fr?.trademark_number,
+				sirenSiret: response.messages?.extra?.fr?.siren_siret,
 			},
 		},
 	};
@@ -842,19 +850,19 @@ export function applyContactDetailsRequiredMask(
 }
 
 export const domainRequiredContactDetails: ManagedContactDetailsRequiredMask = {
-	firstName: true,
-	lastName: true,
+	firstName: false,
+	lastName: false,
 	organization: false,
-	email: true,
+	email: false,
 	alternateEmail: false,
-	phone: true,
+	phone: false,
 	phoneNumberCountry: false,
-	address1: true,
+	address1: false,
 	address2: false,
-	city: true,
+	city: false,
 	state: false,
-	postalCode: true,
-	countryCode: true,
+	postalCode: false,
+	countryCode: false,
 	fax: false,
 	vatId: false,
 	tldExtraFields: {},
@@ -872,8 +880,8 @@ export const taxRequiredContactDetails: ManagedContactDetailsRequiredMask = {
 	address2: false,
 	city: false,
 	state: false,
-	postalCode: true,
-	countryCode: true,
+	postalCode: false,
+	countryCode: false,
 	fax: false,
 	vatId: false,
 	tldExtraFields: {},

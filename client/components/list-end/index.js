@@ -1,5 +1,4 @@
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 
 import './style.scss';
 

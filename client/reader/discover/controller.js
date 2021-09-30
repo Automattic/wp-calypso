@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import {

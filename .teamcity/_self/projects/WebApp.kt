@@ -3,6 +3,7 @@ package _self.projects
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
@@ -20,8 +21,9 @@ object WebApp : Project({
 	buildType(BuildDockerImage)
 	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"));
 	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"));
-	buildType(playwrightBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
-	buildType(playwrightBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
+	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
+	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
+	buildType(PreReleaseE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -84,7 +86,7 @@ object BuildDockerImage : BuildType({
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.target=calypso-live
 					--label com.a8c.build-id=%teamcity.build.id%
-					--build-arg workers=16
+					--build-arg workers=32
 					--build-arg node_memory=32768
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
@@ -262,21 +264,13 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Build components storybook"
+			name = "Run storybook tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export NODE_ENV="production"
-
+				set -x
 				yarn components:storybook:start --ci --smoke-test
-			"""
-		}
-		bashNodeScript {
-			name = "Build search storybook"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				export NODE_ENV="production"
-
 				yarn search:storybook:start --ci --smoke-test
+				yarn composite-checkout:storybook:start --ci --smoke-test
 			"""
 		}
 	}
@@ -573,17 +567,18 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 
 		dependencies {
 			snapshot(BuildDockerImage) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
 			}
 		}
 	}
 }
 
-fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
+fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType {
 	return BuildType {
-		id("Calypso_E2E_Playwright_$viewportName")
+		id("Calypso_E2E_Playwright_$targetDevice")
 		uuid = buildUuid
-		name = "Playwright E2E Tests ($viewportName)"
-		description = "Runs Calypso e2e tests in $viewportName size using Playwright"
+		name = "Playwright E2E Tests ($targetDevice)"
+		description = "Runs Calypso e2e tests as $targetDevice using Playwright"
 
 		artifactRules = """
 			reports => reports
@@ -612,7 +607,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests ($viewportName)"
+				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
@@ -637,12 +632,12 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 					# Run the test
-					export VIEWPORT_NAME=$viewportName
+					export TARGET_DEVICE=$targetDevice
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -700,7 +695,106 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 
 		dependencies {
 			snapshot(BuildDockerImage) {
+				onDependencyFailure = FailureAction.FAIL_TO_START
 			}
 		}
 	}
 }
+
+object PreReleaseE2ETests : BuildType({
+	id("Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+				export PLAYWRIGHT_BROWSERS_PATH=0
+
+				# Install modules
+				${_self.yarn_install_cmd}
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Run pre-release e2e tests"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export URL="https://wpcalypso.wordpress.com"
+
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+				export TARGET_DEVICE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = simpleMessageFormat()
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {}
+
+	failureConditions {
+		executionTimeoutMin = 20
+	}
+})

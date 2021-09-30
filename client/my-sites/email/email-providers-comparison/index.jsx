@@ -1,10 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
@@ -16,7 +16,6 @@ import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import Gridicon from 'calypso/components/gridicon';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import HeaderCake from 'calypso/components/header-cake';
@@ -49,6 +48,7 @@ import {
 	transformMailboxForCart,
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
@@ -72,10 +72,11 @@ import './style.scss';
 
 const identityMap = ( item ) => item;
 
-class EmailProvidersComparison extends React.Component {
+class EmailProvidersComparison extends Component {
 	static propTypes = {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,
+		comparisonContext: PropTypes.string,
 		headerTitle: PropTypes.string,
 		hideEmailForwardingCard: PropTypes.bool,
 		hideEmailHeader: PropTypes.bool,
@@ -96,6 +97,10 @@ class EmailProvidersComparison extends React.Component {
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
+	};
+
+	static defaultProps = {
+		comparisonContext: 'email-purchase',
 	};
 
 	isMounted = false;
@@ -167,7 +172,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { domain, domainName, hasCartDomain } = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -179,6 +184,7 @@ class EmailProvidersComparison extends React.Component {
 			: getCurrentUserCannotAddEmailReason( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
+			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
@@ -237,13 +243,14 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { domain, gSuiteProduct, hasCartDomain } = this.props;
+		const { comparisonContext, domain, gSuiteProduct, hasCartDomain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
+			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: 'google',
@@ -314,7 +321,10 @@ class EmailProvidersComparison extends React.Component {
 			gSuiteProduct,
 			hasCartDomain,
 			isGSuiteSupported,
+			onSkipClick,
 			selectedDomainName,
+			showSkipButton,
+			skipButtonLabel,
 			translate,
 		} = this.props;
 
@@ -352,7 +362,9 @@ class EmailProvidersComparison extends React.Component {
 				? newUsers( selectedDomainName )
 				: this.state.googleUsers;
 
-		const buttonLabel = this.isUpgrading()
+		const buttonLabel = this.isUpgrading() ? translate( 'Upgrade' ) : translate( 'Add' );
+
+		const expandButtonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
@@ -379,14 +391,21 @@ class EmailProvidersComparison extends React.Component {
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
-						<Button
-							className="email-providers-comparison__gsuite-user-list-action-continue"
-							primary
-							busy={ this.state.addingToCart }
-							onClick={ this.onGoogleConfirmNewUsers }
-						>
-							{ buttonLabel }
-						</Button>
+						<div className="email-providers-comparison__gsuite-user-list-actions-container">
+							<Button
+								primary
+								busy={ this.state.addingToCart }
+								onClick={ this.onGoogleConfirmNewUsers }
+							>
+								{ buttonLabel }
+							</Button>
+
+							{ showSkipButton && (
+								<Button busy={ this.state.addingToCart } onClick={ onSkipClick }>
+									{ skipButtonLabel }
+								</Button>
+							) }
+						</div>
 					</GSuiteNewUserList>
 				</FormFieldset>
 			) : null;
@@ -407,7 +426,7 @@ class EmailProvidersComparison extends React.Component {
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ buttonLabel }
+				expandButtonLabel={ expandButtonLabel }
 				features={ getGoogleFeatures() }
 			/>
 		);
@@ -448,7 +467,9 @@ class EmailProvidersComparison extends React.Component {
 			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 		);
 
-		const buttonLabel = this.isUpgrading()
+		const buttonLabel = this.isUpgrading() ? translate( 'Upgrade' ) : translate( 'Add' );
+
+		const expandButtonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(titanProductName)s', {
 					args: {
 						titanProductName: getTitanProductName(),
@@ -482,7 +503,15 @@ class EmailProvidersComparison extends React.Component {
 					{ buttonLabel }
 				</Button>
 
-				{ showSkipButton && <Button onClick={ onSkipClick }>{ skipButtonLabel }</Button> }
+				{ showSkipButton && (
+					<Button
+						className="email-providers-comparison__titan-mailbox-action-skip"
+						busy={ this.state.addingToCart }
+						onClick={ onSkipClick }
+					>
+						{ skipButtonLabel }
+					</Button>
+				) }
 			</TitanNewMailboxList>
 		);
 
@@ -501,7 +530,7 @@ class EmailProvidersComparison extends React.Component {
 				discount={ discount }
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ buttonLabel }
+				expandButtonLabel={ expandButtonLabel }
 				features={ getTitanFeatures() }
 			/>
 		);
@@ -587,11 +616,11 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderHeaderSkipButton() {
-		const { showSkipButton, onSkipClick, translate } = this.props;
+		const { showSkipButton, onSkipClick, skipButtonLabel } = this.props;
 
 		return showSkipButton ? (
 			<Button compact borderless onClick={ onSkipClick }>
-				{ translate( 'Skip' ) }
+				{ skipButtonLabel }
 				<Gridicon icon={ 'arrow-right' } size={ 18 } />
 			</Button>
 		) : null;
@@ -614,7 +643,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderDomainEligibilityNotice() {
-		const { domain, domainName } = this.props;
+		const { comparisonContext, domain, domainName } = this.props;
 
 		if ( this.isDomainEligibleForEmail( domain ) ) {
 			return null;
@@ -630,6 +659,7 @@ class EmailProvidersComparison extends React.Component {
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_domain_not_eligible_error_impression"
 					eventProperties={ {
+						context: comparisonContext,
 						domain: domainName,
 						error_code: cannotAddEmailReason.code,
 					} }
@@ -643,6 +673,7 @@ class EmailProvidersComparison extends React.Component {
 
 	render() {
 		const {
+			comparisonContext,
 			domainsWithForwards,
 			hideEmailForwardingCard,
 			isGSuiteSupported,
@@ -676,6 +707,7 @@ class EmailProvidersComparison extends React.Component {
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_view"
 					eventProperties={ {
+						context: comparisonContext,
 						is_gsuite_supported: isGSuiteSupported,
 						layout: 'stacked',
 					} }
@@ -697,9 +729,9 @@ export default connect(
 		const domainName = ownProps.cartDomainName ?? domain.name;
 		const hasCartDomain = Boolean( ownProps.cartDomainName );
 
-		const isGSuiteSupported = domain
-			? canUserPurchaseGSuite( state ) && hasGSuiteSupportedDomain( [ domain ] )
-			: true;
+		const isGSuiteSupported =
+			canUserPurchaseGSuite( state ) &&
+			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
@@ -720,4 +752,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( withShoppingCart( localize( EmailProvidersComparison ) ) );
+)( withShoppingCart( withCartKey( localize( EmailProvidersComparison ) ) ) );

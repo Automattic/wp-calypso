@@ -26,6 +26,7 @@ export const removeApplicationPassword = ( action ) =>
  * Dispatches a user application password removal success action when the request succeeded.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.appPasswordId
  * @returns {object} Dispatched user application passwords add action
  */
 export const handleRemoveSuccess = ( { appPasswordId } ) =>

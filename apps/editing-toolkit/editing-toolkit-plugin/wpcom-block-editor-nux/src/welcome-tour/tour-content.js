@@ -23,7 +23,7 @@ function getTourContent( localeSlug ) {
 		{
 			heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 			description: __(
-				'Continue on with this short tour to learn the fundamentals of the WordPress editor.',
+				'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
 				'full-site-editing'
 			),
 			imgSrc: welcome,

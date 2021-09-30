@@ -1,6 +1,6 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
@@ -10,7 +10,7 @@ import {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class TermsOfService extends React.Component {
+class TermsOfService extends Component {
 	static displayName = 'TermsOfService';
 
 	recordTermsAndConditionsClick = () => {

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
-import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';

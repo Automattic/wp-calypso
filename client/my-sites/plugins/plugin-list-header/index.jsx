@@ -1,14 +1,13 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 import BulkSelect from 'calypso/components/bulk-select';
 import ButtonGroup from 'calypso/components/button-group';
-import Gridicon from 'calypso/components/gridicon';
 import SectionHeader from 'calypso/components/section-header';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

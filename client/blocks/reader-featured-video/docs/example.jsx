@@ -1,4 +1,3 @@
-import React from 'react';
 import ReaderFeaturedVideoBlock from 'calypso/blocks/reader-featured-video';
 
 const exampleVideo = {

@@ -7,18 +7,18 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { Button, Card } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import LoginBlock from 'calypso/blocks/login';
 import SignupForm from 'calypso/blocks/signup-form';
 import FormattedHeader from 'calypso/components/formatted-header';
-import Gridicon from 'calypso/components/gridicon';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';

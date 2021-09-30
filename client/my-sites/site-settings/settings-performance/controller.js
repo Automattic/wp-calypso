@@ -1,7 +1,7 @@
-import React from 'react';
+import { createElement } from 'react';
 import SiteSettingsPerformance from './main';
 
 export function performance( context, next ) {
-	context.primary = React.createElement( SiteSettingsPerformance );
+	context.primary = createElement( SiteSettingsPerformance );
 	next();
 }

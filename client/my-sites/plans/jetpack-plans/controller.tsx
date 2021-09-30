@@ -8,6 +8,8 @@ import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-sl
 import getParamsFromContext from './get-params-from-context';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
+import { StoragePricing } from './storage-pricing';
+import { StoragePricingHeader } from './storage-pricing-header';
 import type { Duration, QueryArgs } from './types';
 
 function stringToDuration( duration?: string ): Duration | undefined {
@@ -25,7 +27,6 @@ function stringToDuration( duration?: string ): Duration | undefined {
  * slug, otherwise, return null.
  *
  * @param {string} productSlug the slug of a Jetpack product
- *
  * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
  */
 function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
@@ -66,6 +67,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 			siteSlug={ siteParam || context.query.site }
 			urlQueryArgs={ urlQueryArgs }
 			highlightedProducts={ highlightedProducts }
+			nav={ context.nav }
 			header={ context.header }
 			footer={ context.footer }
 			planRecommendation={ planRecommendation }
@@ -79,3 +81,19 @@ export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ):
 	context.primary = <JetpackFreeWelcomePage />;
 	next();
 }
+
+export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void ) => {
+	const { site, duration } = getParamsFromContext( context );
+	const urlQueryArgs: QueryArgs = context.query;
+	context.header = <StoragePricingHeader />;
+	context.primary = (
+		<StoragePricing
+			header={ context.header }
+			footer={ context.footer }
+			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }
+			urlQueryArgs={ urlQueryArgs }
+			siteSlug={ site || context.query.site }
+		/>
+	);
+	next();
+};

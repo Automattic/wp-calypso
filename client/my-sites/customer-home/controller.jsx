@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CustomerHome from './main';

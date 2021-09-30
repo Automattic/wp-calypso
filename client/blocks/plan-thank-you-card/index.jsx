@@ -4,7 +4,7 @@ import formatCurrency from '@automattic/format-currency';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -130,7 +130,7 @@ PlanThankYouCard.propTypes = {
 	/**
 	 * Description can be either a string or object to allow either a bare
 	 * string or a description that contains HTML and other components.
-	 **/
+	 */
 	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	heading: PropTypes.string,
 	plan: PropTypes.object,

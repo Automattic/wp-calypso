@@ -10,6 +10,7 @@ const selectors = {
 export class DynamicHRBlock {
 	// Static properties.
 	static blockName = 'Dynamic HR';
+	static blockEditorSelector = '[aria-label="Block: Dynamic HR"]';
 	block: ElementHandle;
 
 	/**

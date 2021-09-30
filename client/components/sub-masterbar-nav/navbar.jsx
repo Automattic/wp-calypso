@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import Gridicon from 'calypso/components/gridicon';
 import Item from './item';
 
 const SIDE_PADDING = 50;

@@ -94,7 +94,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -130,7 +129,6 @@ import {
 	PREMIUM_DESIGN_FOR_STORES,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -228,7 +226,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () => {
 			return i18n.translate(
-				'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+				'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
 			);
 		},
 	},
@@ -280,15 +278,6 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
-			),
-	},
-
-	[ FEATURE_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
 			),
 	},
 
@@ -949,7 +938,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Business features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.'
+				'Including the ability to upload plugins and themes, priority support and advanced monetization options.'
 			),
 	},
 

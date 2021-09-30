@@ -1,12 +1,12 @@
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 // @todo: Convert to import from `components/gridicon`
 // which makes Calypso mysteriously crash at the moment.
 //
 // eslint-disable-next-line no-restricted-imports
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

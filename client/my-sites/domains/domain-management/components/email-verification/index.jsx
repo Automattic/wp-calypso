@@ -1,16 +1,15 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
 
-class EmailVerificationCard extends React.Component {
+class EmailVerificationCard extends Component {
 	static propTypes = {
 		changeEmailHref: PropTypes.string,
 		contactEmail: PropTypes.string.isRequired,

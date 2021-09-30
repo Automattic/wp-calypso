@@ -5,8 +5,9 @@ import React, { useCallback } from 'react';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import PaymentRequestButton from '../payment-request-button';
 import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 

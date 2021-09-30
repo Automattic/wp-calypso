@@ -415,4 +415,10 @@ export default class SignupFlowController {
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName, userLoggedIn );
 	}
+
+	getDestination() {
+		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
+
+		return this._destination( dependencies );
+	}
 }

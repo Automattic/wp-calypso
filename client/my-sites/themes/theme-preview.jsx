@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryTheme from 'calypso/components/data/query-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import WebPreview from 'calypso/components/web-preview';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -19,7 +19,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { connectOptions } from './theme-options';
 
-class ThemePreview extends React.Component {
+class ThemePreview extends Component {
 	static displayName = 'ThemePreview';
 
 	static propTypes = {
@@ -94,7 +94,7 @@ class ThemePreview extends React.Component {
 	};
 
 	render() {
-		const { themeId } = this.props;
+		const { themeId, siteId, demoUrl, children } = this.props;
 		const { showActionIndicator } = this.state;
 		if ( ! themeId ) {
 			return null;
@@ -102,9 +102,9 @@ class ThemePreview extends React.Component {
 
 		return (
 			<div>
-				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-				{ this.props.children }
-				{ this.props.demoUrl && (
+				{ <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
+				{ children }
+				{ demoUrl && (
 					<WebPreview
 						showPreview={ true }
 						showExternal={ false }
@@ -139,6 +139,7 @@ export default connect(
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
 			themeId,
+			siteId,
 			isJetpack,
 			themeOptions,
 			isInstalling: isInstallingTheme( state, themeId, siteId ),

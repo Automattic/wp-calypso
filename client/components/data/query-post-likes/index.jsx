@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Interval } from 'calypso/lib/interval';
 import { requestPostLikes } from 'calypso/state/posts/likes/actions';

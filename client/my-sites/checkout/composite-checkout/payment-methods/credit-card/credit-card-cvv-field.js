@@ -1,7 +1,6 @@
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { CardCvcElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
-import { CardCvcElement } from 'react-stripe-elements';
 import {
 	LeftColumn,
 	RightColumn,
@@ -59,7 +58,10 @@ export default function CreditCardCvvField( {
 				<LeftColumn>
 					<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
 						<CardCvcElement
-							style={ stripeElementStyle }
+							options={ {
+								style: stripeElementStyle,
+								disabled: isDisabled,
+							} }
 							onChange={ ( input ) => {
 								handleStripeFieldChange( input );
 							} }

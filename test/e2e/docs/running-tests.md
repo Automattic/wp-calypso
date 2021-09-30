@@ -83,12 +83,14 @@ First, transpile TypeScript code:
 yarn workspace @automattic/calypso-e2e build --watch
 ```
 
-### All tests
+### A suite of specs
 
-Specify a directory to `Jest`:
+We use [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) to group and run suites of specs.
+
+Use the `--group` arg to provide a suite to test `Jest`. For example, to run all the tests run on a Calypso PR, run...
 
 ```
-yarn jest specs/specs-playwright
+yarn jest --group=calypso-pr
 ```
 
 ### Individual spec file(s)

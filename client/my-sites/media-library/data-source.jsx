@@ -1,17 +1,16 @@
 import config from '@automattic/calypso-config';
-import { Button, ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import GooglePhotosIcon from './google-photos-icon';
+import PexelsIcon from './pexels-icon';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {
@@ -54,14 +53,14 @@ export class MediaLibraryDataSource extends Component {
 			sources.push( {
 				value: 'google_photos',
 				label: translate( 'Google Photos' ),
-				icon: <GooglePhotosIcon />,
+				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
 		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Pexels free photos' ),
-				icon: <Gridicon icon="image-multiple" size={ 24 } />,
+				icon: <PexelsIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
 			} );
 		}
 		return sources.filter( ( { value } ) => ! includes( disabledSources, value ) );

@@ -1,9 +1,9 @@
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { countBy, map, omit, values, flatten } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import SiteInfo from 'calypso/blocks/site';
-import Gridicon from 'calypso/components/gridicon';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /* eslint-disable jsx-a11y/anchor-is-valid */

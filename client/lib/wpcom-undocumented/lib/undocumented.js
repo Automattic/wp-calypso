@@ -250,14 +250,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-// Used to preserve backslash in some known settings fields like custom time and date formats.
-function encode_backslash( value ) {
-	if ( typeof value !== 'string' || value.indexOf( '\\' ) === -1 ) {
-		return value;
-	}
-	return value.replace( /\\/g, '\\\\' );
-}
-
 /**
  * GET/POST site settings
  *
@@ -281,14 +273,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 
 	if ( 'get' === method ) {
 		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	// special treatment to preserve backslash in date_format
-	if ( body.date_format ) {
-		body.date_format = encode_backslash( body.date_format );
-	}
-	if ( body.time_format ) {
-		body.time_format = encode_backslash( body.time_format );
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
@@ -580,42 +564,6 @@ function mapKeysRecursively( object, fn ) {
 	}, {} );
 }
 
-Undocumented.prototype.validateTaxContactInformation = function ( contactInformation ) {
-	return new Promise( ( resolve, reject ) => {
-		let data = {
-			contactInformation,
-		};
-
-		debug( '/me/tax-contact-information/validate query' );
-		data = mapKeysRecursively( data, snakeCase );
-
-		this.wpcom.req.post(
-			{ path: '/me/tax-contact-information/validate' },
-			undefined,
-			data,
-			function ( error, successData ) {
-				if ( error ) {
-					reject( error );
-				}
-
-				// Reshape the error messages to a nested object
-				if ( successData.messages ) {
-					successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
-						set( obj, key, successData.messages[ key ] );
-						return obj;
-					}, {} );
-				}
-
-				const newData = mapKeysRecursively( successData, function ( key ) {
-					return key === '_headers' ? key : camelCase( key );
-				} );
-
-				resolve( newData );
-			}
-		);
-	} );
-};
-
 /**
  * Validates the specified domain contact information against a list of domain names.
  *
@@ -670,46 +618,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 			fn( null, newData );
 		}
 	);
-};
-
-/**
- * Validates the specified Google Apps contact information
- *
- * The contactInformation keys can be in camelCase or snake_case, and will be
- * converted to snake_case before being submitted. The returned data keys will
- * be converted to camelCase before being passed to the callback or the resolved
- * Promise.
- *
- * @param {object} contactInformation - user's contact information
- * @param {string[]} domainNames - domain names for which GSuite is being purchased
- * @param {(error: string, data: object) => void} [callback] The callback function.
- * @returns {Promise|undefined} If no callback, returns a Promise that resolves when the request completes
- */
-Undocumented.prototype.validateGoogleAppsContactInformation = function (
-	contactInformation,
-	domainNames,
-	callback
-) {
-	const { contact_information } = mapKeysRecursively( { contactInformation }, snakeCase );
-	debug( '/me/google-apps/validate', contact_information, domainNames );
-
-	const stripHeadersFromHttpResponse = ( httpResponse ) =>
-		Object.keys( httpResponse )
-			.filter( ( key ) => key !== '_headers' )
-			.reduce( ( newResponse, key ) => ( { ...newResponse, [ key ]: httpResponse[ key ] } ), {} );
-
-	const camelCaseKeys = ( httpResponse ) =>
-		mapKeysRecursively( stripHeadersFromHttpResponse( httpResponse ), ( key ) => camelCase( key ) );
-
-	const camelCaseCallback = ( error, httpResponse ) =>
-		callback( error, error ? null : camelCaseKeys( httpResponse ) );
-
-	const result = this.wpcom.req.post(
-		{ path: '/me/google-apps/validate', body: { contact_information, domain_names: domainNames } },
-		callback ? camelCaseCallback : null
-	);
-
-	return result.then?.( camelCaseKeys );
 };
 
 /**
@@ -871,119 +779,6 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
 			method: 'get',
 			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
- * Get cart.
- *
- * @param {string} cartKey The cart's key.
- * @param {Function} fn The callback function.
- */
-Undocumented.prototype.getCart = function ( cartKey, fn ) {
-	debug( 'GET: /me/shopping-cart/:cart-key' );
-
-	return this._sendRequest(
-		{
-			path: '/me/shopping-cart/' + cartKey,
-			method: 'GET',
-		},
-		fn
-	);
-};
-
-/**
- * Set cart.
- *
- * @param {string} cartKey The cart's key.
- * @param {object} data The POST data.
- * @param {Function} fn The callback function.
- */
-Undocumented.prototype.setCart = function ( cartKey, data, fn ) {
-	debug( 'POST: /me/shopping-cart/:cart-key', data );
-
-	return this._sendRequest(
-		{
-			path: '/me/shopping-cart/' + cartKey,
-			method: 'POST',
-			body: data,
-		},
-		fn
-	);
-};
-
-/**
- * Get a list of the user's stored cards
- *
- * @param {Function} [fn] The callback function.
- * @returns {Promise} Returns a promise when the `callback` is not provided.
- */
-Undocumented.prototype.getStoredCards = function ( fn ) {
-	debug( '/me/stored-cards query' );
-	return this.wpcom.req.get( { path: '/me/stored-cards' }, fn );
-};
-
-/**
- * Get a list of the user's stored payment methods
- *
- * @param {object} query The query parameters
- * @param {Function} [fn] The callback function.
- * @returns {Promise} Returns a promise when the `callback` is not provided.
- */
-Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
-	debug( '/me/payment-methods query', { query } );
-	return this.wpcom.req.get( '/me/payment-methods', query, fn );
-};
-
-/**
- * Get a list of the user's allowed payment methods
- */
-Undocumented.prototype.getAllowedPaymentMethods = function () {
-	debug( '/me/allowed-payment-methods query' );
-	return this.wpcom.req.get( { path: '/me/allowed-payment-methods' } );
-};
-
-/**
- * Assign a stored payment method to a subscription.
- *
- * @param {string} subscriptionId The subscription ID (a.k.a. purchase ID) to be assigned
- * @param {string} stored_details_id The payment method ID to assign
- * @param {Function} [fn] The callback function
- */
-Undocumented.prototype.assignPaymentMethod = function ( subscriptionId, stored_details_id, fn ) {
-	debug( '/upgrades/assign-payment-method query', { subscriptionId, stored_details_id } );
-	return this.wpcom.req.post(
-		{
-			path: '/upgrades/' + subscriptionId + '/assign-payment-method',
-			body: { stored_details_id },
-			apiVersion: '1',
-		},
-		fn
-	);
-};
-
-/**
- * Returns a PayPal Express URL to redirect to for confirming the creation of a billing agreement.
- *
- * @param {string} subscription_id The subscription ID (a.k.a. purchase ID) to assign the billing agreement to after it is created
- * @param {string} success_url The URL to return the user to for a successful billing agreement creation
- * @param {string} cancel_url The URL to return the user to if they cancel the billing agreement creation
- * @param {Function} [fn] The callback function
- */
-Undocumented.prototype.createPayPalAgreement = function (
-	subscription_id,
-	success_url,
-	cancel_url,
-	fn
-) {
-	debug( '/payment-methods/create-paypal-agreement', { subscription_id, success_url, cancel_url } );
-	return this.wpcom.req.post(
-		{
-			path: '/payment-methods/create-paypal-agreement',
-			body: { subscription_id, success_url, cancel_url },
-			apiVersion: '1',
 		},
 		fn
 	);
@@ -1912,19 +1707,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-Undocumented.prototype.getQandA = function ( query, site, fn ) {
-	debug( 'help-contact-qanda/ searchQuery {query}' );
-
-	return this.wpcom.req.get(
-		'/help/qanda',
-		{
-			query,
-			site,
-		},
-		fn
-	);
-};
-
 // TODO: remove this once the auto-renewal toggle has been fully rolled out.
 Undocumented.prototype.cancelPurchase = function ( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
@@ -1959,101 +1741,12 @@ Undocumented.prototype.enableAutoRenew = function ( purchaseId, fn ) {
 	);
 };
 
-Undocumented.prototype.cancelAndRefundPurchase = function ( purchaseId, data, fn ) {
-	debug( 'upgrades/{purchaseId}/cancel' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/cancel`,
-			body: data,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
 	debug( '/upgrades/{planId}/cancel-plan-trial' );
 
 	return this.wpcom.req.post(
 		{
 			path: `/upgrades/${ planId }/cancel-plan-trial`,
-		},
-		fn
-	);
-};
-
-/**
- * Get the Directly configuration for the current user
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getDirectlyConfiguration = function ( fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/help/directly/mine',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.submitKayakoTicket = function (
-	subject,
-	message,
-	locale,
-	client,
-	isChatOverflow,
-	fn
-) {
-	debug( 'submitKayakoTicket' );
-
-	return this.wpcom.req.post(
-		{
-			path: '/help/tickets/kayako/new',
-			body: { subject, message, locale, client, is_chat_overflow: isChatOverflow },
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getKayakoConfiguration = function ( fn ) {
-	return this.wpcom.req.get(
-		{
-			path: '/help/tickets/kayako/mine',
-		},
-		fn
-	);
-};
-
-/**
- * Get the olark configuration for the current user
- *
- * @param {object} client - current user
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getOlarkConfiguration = function ( client, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/help/olark/mine',
-			body: { client },
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.submitSupportForumsTopic = function (
-	subject,
-	message,
-	locale,
-	client,
-	fn
-) {
-	return this.wpcom.req.post(
-		{
-			path: '/help/forums/support/topics/new',
-			body: { subject, message, locale, client },
 		},
 		fn
 	);
@@ -2525,6 +2218,13 @@ Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, 
 			scroll_id: scrollId,
 		}
 	);
+};
+
+Undocumented.prototype.restoreAtomicPlanSoftware = function ( siteIdOrSlug ) {
+	return this.wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 export default Undocumented;

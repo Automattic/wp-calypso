@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './style.scss';
 
 export default function BackupPlaceholder( { showDatePicker = true } ) {

@@ -3,7 +3,7 @@ import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
@@ -36,7 +36,7 @@ import CancelPurchaseRefundInformation from './refund-information';
 
 import './style.scss';
 
-class CancelPurchase extends React.Component {
+class CancelPurchase extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
 		getManagePurchaseUrlFor: PropTypes.func,
@@ -217,7 +217,6 @@ class CancelPurchase extends React.Component {
 						purchase={ purchase }
 						includedDomainPurchase={ this.props.includedDomainPurchase }
 						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
-						selectedSite={ this.props.site }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl }

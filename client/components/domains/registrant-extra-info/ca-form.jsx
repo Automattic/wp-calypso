@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -20,7 +20,7 @@ const defaultValues = {
 	ciraAgreementAccepted: false,
 };
 
-export class RegistrantExtraInfoCaForm extends React.PureComponent {
+export class RegistrantExtraInfoCaForm extends PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		ccTldDetails: PropTypes.object.isRequired,
@@ -116,12 +116,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	handleChangeEvent = ( event ) => {
 		const { value, checked, type, id } = event.target;
 		const newContactDetails = {};
-
-		if ( id === 'legal-type' ) {
-			this.props.updateRequiredDomainFields?.( {
-				organization: this.isCorporationLegalType( value ),
-			} );
-		}
 
 		newContactDetails.extra = {
 			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },

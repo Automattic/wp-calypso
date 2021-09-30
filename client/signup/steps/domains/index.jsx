@@ -2,7 +2,7 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
@@ -25,7 +25,6 @@ import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
-import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import {
@@ -60,7 +59,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
 
-class DomainsStep extends React.Component {
+class DomainsStep extends Component {
 	static propTypes = {
 		forceDesignType: PropTypes.string,
 		domainsWithPlansOnly: PropTypes.bool,
@@ -742,7 +741,7 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, isAllDomains, translate, sites, isReskinned, userLoggedIn } = this.props;
+		const { isAllDomains, translate, sites, isReskinned, userLoggedIn } = this.props;
 		const source = get( this.props, 'queryObject.source' );
 		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
@@ -774,7 +773,6 @@ class DomainsStep extends React.Component {
 
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
-		const showSkip = isDomainStepSkippable( flowName );
 
 		return (
 			<StepWrapper
@@ -796,11 +794,8 @@ class DomainsStep extends React.Component {
 				showSiteMockups={ this.props.showSiteMockups }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
-				hideSkip={ ! showSkip }
-				isTopButtons={ showSkip }
+				hideSkip={ true }
 				goToNextStep={ this.handleSkip }
-				skipHeadingText={ translate( 'Not sure yet?' ) }
-				skipLabelText={ translate( 'Choose a domain later' ) }
 				align={ isReskinned ? 'left' : 'center' }
 				isWideLayout={ isReskinned }
 			/>

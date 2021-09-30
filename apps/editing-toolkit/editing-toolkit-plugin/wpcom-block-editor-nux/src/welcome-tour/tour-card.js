@@ -1,11 +1,16 @@
+/**
+ * External Dependencies
+ */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { subscribeIsMobile, isMobile } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
+/**
+ * Internal Dependencies
+ */
 import minimize from './icons/minimize';
 import thumbsDown from './icons/thumbs_down';
 import thumbsUp from './icons/thumbs_up';
@@ -18,16 +23,20 @@ const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
 
 function WelcomeTourCard( {
 	cardContent,
-	cardIndex,
+	currentCardIndex,
 	justMaximized,
 	lastCardIndex,
 	onMinimize,
 	onDismiss,
 	setJustMaximized,
 	setCurrentCardIndex,
+	onNextCardProgression,
+	onPreviousCardProgression,
+	isGutenboarding,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
-	const isLastCard = cardIndex === lastCardIndex;
+	const isLastCard = currentCardIndex === lastCardIndex;
+
 	// Ensure tracking is recorded once per slide view
 	useEffectOnlyOnce( () => {
 		// Don't track slide view if returning from minimized state
@@ -35,22 +44,18 @@ function WelcomeTourCard( {
 			setJustMaximized( false );
 			return;
 		}
+
 		recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
-			slide_number: cardIndex + 1,
+			slide_number: currentCardIndex + 1,
 			is_last_slide: isLastCard,
 			slide_heading: heading,
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			is_gutenboarding: isGutenboarding,
 		} );
 	} );
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
-			<CardOverlayControls
-				setJustMaximized={ setJustMaximized }
-				onDismiss={ onDismiss }
-				onMinimize={ onMinimize }
-				slideNumber={ cardIndex + 1 }
-			/>
+			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
 				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />
 			</CardMedia>
@@ -71,13 +76,15 @@ function WelcomeTourCard( {
 			</CardBody>
 			<CardFooter>
 				{ isLastCard ? (
-					<TourRating></TourRating>
+					<TourRating isGutenboarding={ isGutenboarding }></TourRating>
 				) : (
 					<CardNavigation
-						cardIndex={ cardIndex }
+						currentCardIndex={ currentCardIndex }
 						lastCardIndex={ lastCardIndex }
 						onDismiss={ onDismiss }
 						setCurrentCardIndex={ setCurrentCardIndex }
+						onNextCardProgression={ onNextCardProgression }
+						onPreviousCardProgression={ onPreviousCardProgression }
 					></CardNavigation>
 				) }
 			</CardFooter>
@@ -85,25 +92,33 @@ function WelcomeTourCard( {
 	);
 }
 
-function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIndex } ) {
+function CardNavigation( {
+	currentCardIndex,
+	lastCardIndex,
+	onDismiss,
+	setCurrentCardIndex,
+	onNextCardProgression,
+	onPreviousCardProgression,
+} ) {
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
-	const startTourLabel = __( 'Start Tour', 'full-site-editing' );
+	const startTourLabel = __( 'Try it out!', 'full-site-editing' );
 	const nextLabel = __( 'Next', 'full-site-editing' );
+
 	return (
 		<>
 			<PaginationControl
-				currentPage={ cardIndex }
+				currentPage={ currentCardIndex }
 				numberOfPages={ lastCardIndex + 1 }
 				setCurrentPage={ setCurrentCardIndex }
 			/>
 			<div>
-				{ cardIndex === 0 ? (
-					<Button isTertiary={ true } onClick={ () => onDismiss( 'no-thanks-btn' ) }>
+				{ currentCardIndex === 0 ? (
+					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
 						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
-					<Button isTertiary={ true } onClick={ () => setCurrentCardIndex( cardIndex - 1 ) }>
+					<Button isTertiary={ true } onClick={ onPreviousCardProgression }>
 						{ __( 'Back', 'full-site-editing' ) }
 					</Button>
 				) }
@@ -111,35 +126,17 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 				<Button
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
-					onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
+					onClick={ onNextCardProgression }
 				>
-					{ cardIndex === 0 ? startTourLabel : nextLabel }
+					{ currentCardIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
 			</div>
 		</>
 	);
 }
 
-function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
-	const [ isMobileView, setIsMobileView ] = useState( isMobile() );
-
-	useEffectOnlyOnce( () => {
-		const unsubscribe = subscribeIsMobile( ( isNarrow ) => setIsMobileView( isNarrow ) );
-		return function cleanup() {
-			unsubscribe();
-		};
-	} );
-
-	const handleOnMinimize = () => {
-		onMinimize( true );
-		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			slide_number: slideNumber,
-		} );
-	};
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls-visible': isMobileView,
-	} );
+function CardOverlayControls( { onMinimize, onDismiss } ) {
+	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
 
 	return (
 		<div className={ buttonClasses }>
@@ -150,21 +147,21 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
 					iconSize={ 24 }
-					onClick={ handleOnMinimize }
+					onClick={ onMinimize }
 				></Button>
 				<Button
 					label={ __( 'Close Tour', 'full-site-editing' ) }
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
-					onClick={ () => onDismiss( 'close-btn' ) }
+					onClick={ onDismiss( 'close-btn' ) }
 				></Button>
 			</Flex>
 		</div>
 	);
 }
 
-function TourRating() {
+function TourRating( { isGutenboarding } ) {
 	let isDisabled = false;
 	const tourRating = useSelect( ( select ) =>
 		select( 'automattic/wpcom-welcome-guide' ).getTourRating()
@@ -182,7 +179,7 @@ function TourRating() {
 		setTourRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 			thumbs_up: isThumbsUp,
-			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			is_gutenboarding: isGutenboarding,
 		} );
 	};
 

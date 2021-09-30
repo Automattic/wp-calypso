@@ -28,8 +28,7 @@ function noop() {}
  *
  * @param {string} url
  * @param {object} query params
- * @param {Function} optional callback
- * @param fn
+ * @param {Function} fn optional callback
  */
 function jsonp( url, query, fn ) {
 	const prefix = '__jp';
@@ -49,6 +48,9 @@ function jsonp( url, query, fn ) {
 			}
 		}, timeout );
 	}
+
+	// create script
+	const script = document.createElement( 'script' );
 
 	function cleanup() {
 		if ( script.parentNode ) {
@@ -77,12 +79,10 @@ function jsonp( url, query, fn ) {
 
 	// add qs component
 	url += '=' + enc( id ) + '?' + stringify( query );
-
 	debug( 'jsonp req "%s"', url );
-
-	// create script
-	const script = document.createElement( 'script' );
 	script.src = url;
+
+	// add the script
 	target.parentNode.insertBefore( script, target );
 
 	return cancel;

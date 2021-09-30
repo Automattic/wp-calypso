@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { VideoPressFileTypes } from 'calypso/lib/media/constants';
@@ -18,7 +18,7 @@ import './upload-button.scss';
 
 const noop = () => {};
 
-class MediaLibraryUploadButton extends React.Component {
+class MediaLibraryUploadButton extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		onAddMedia: PropTypes.func,
@@ -32,7 +32,7 @@ class MediaLibraryUploadButton extends React.Component {
 		href: null,
 	};
 
-	formRef = React.createRef();
+	formRef = createRef();
 
 	onClick = () => {
 		if ( this.props.onClick ) {

@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -48,7 +48,7 @@ const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 
-class ReaderStream extends React.Component {
+class ReaderStream extends Component {
 	static propTypes = {
 		trackScrollPage: PropTypes.func.isRequired,
 		suppressSiteNameLink: PropTypes.bool,
@@ -88,7 +88,7 @@ class ReaderStream extends React.Component {
 		forcePlaceholders: false,
 	};
 
-	listRef = React.createRef();
+	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -359,7 +359,7 @@ class ReaderStream extends React.Component {
 			} );
 
 		return (
-			<React.Fragment key={ itemKey }>
+			<Fragment key={ itemKey }>
 				<PostLifecycle
 					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 					isSelected={ isSelected }
@@ -380,7 +380,7 @@ class ReaderStream extends React.Component {
 					compact={ this.props.useCompactCards }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
-			</React.Fragment>
+			</Fragment>
 		);
 	};
 

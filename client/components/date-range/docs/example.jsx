@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { Fragment, Component } from 'react';
+import { Fragment, Component } from 'react';
 import DateRange from '../index.js';
 
 /*

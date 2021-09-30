@@ -5,10 +5,11 @@ import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domai
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 
-export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {} ) => (
-	dispatch,
-	getState
-) => {
+const noop = () => null;
+export const connectDomainAction = (
+	{ domain, selectedSite, verificationData },
+	onDone = noop
+) => ( dispatch, getState ) => {
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 
 	if ( selectedSite.is_vip ) {
@@ -23,7 +24,7 @@ export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {}
 	} else if ( siteHasPaidPlan ) {
 		wpcom
 			.site( selectedSite.ID )
-			.addDomainMapping( domain )
+			.addDomainMapping( domain, verificationData )
 			.then( () => {
 				dispatch(
 					successNotice(
@@ -37,8 +38,10 @@ export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {}
 				page( domainMappingSetup( selectedSite.slug, domain ) );
 			} )
 			.catch( ( error ) => {
-				dispatch( errorNotice( error.message ) );
-				onDone();
+				if ( 'ownership_verification_failed' !== error.error ) {
+					dispatch( errorNotice( error.message ) );
+				}
+				onDone( error );
 			} );
 	} else {
 		page( '/checkout/' + selectedSite.slug + '/domain-mapping:' + domain );

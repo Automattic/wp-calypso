@@ -1,13 +1,13 @@
 import { getUrlParts } from '@automattic/calypso-url';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Site from 'calypso/blocks/site';
 import Badge from 'calypso/components/badge';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
 import './style.scss';
 
@@ -23,7 +23,7 @@ class SitesBlock extends Component {
 	};
 
 	renderFauxSiteSelector() {
-		const { onUrlChange, url } = this.props;
+		const { onUrlChange, translate, url } = this.props;
 		const { error } = this.state;
 		const isError = !! error;
 
@@ -39,7 +39,7 @@ class SitesBlock extends Component {
 								className="sites-block__faux-site-selector-label"
 								htmlFor="sites-block__faux-site-selector-url-input"
 							>
-								Import from...
+								{ translate( 'Import from…' ) }
 							</FormLabel>
 							<div className="sites-block__faux-site-selector-url">
 								<FormTextInput

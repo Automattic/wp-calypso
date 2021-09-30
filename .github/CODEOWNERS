@@ -20,7 +20,6 @@
 /client/components/domains/contact-details-form-fields/index.jsx @Automattic/letero
 /client/components/gsuite @Automattic/letero
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/letero
-/client/components/upgrades/gsuite @Automattic/letero
 /client/lib/domains/email-forwarding @Automattic/letero
 /client/lib/gsuite @Automattic/letero
 /client/lib/titan @Automattic/letero

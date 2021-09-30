@@ -1,9 +1,8 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { addQueryArgs } from 'calypso/lib/route';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';

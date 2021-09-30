@@ -1,12 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QuerySharePostActions from 'calypso/components/data/query-share-post-actions/index.jsx';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';

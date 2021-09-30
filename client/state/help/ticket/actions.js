@@ -29,9 +29,8 @@ export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
 
 	dispatch( requestAction );
 
-	return wpcom
-		.undocumented()
-		.getKayakoConfiguration()
+	return wpcom.req
+		.get( '/help/tickets/kayako/mine' )
 		.then( ( configuration ) => {
 			dispatch( ticketSupportConfigurationRequestSuccess( configuration ) );
 		} )

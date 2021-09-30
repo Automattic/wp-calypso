@@ -1,10 +1,8 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 
 import '../style.scss';
 

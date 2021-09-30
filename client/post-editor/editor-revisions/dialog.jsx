@@ -2,7 +2,7 @@ import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import EditorRevisions from 'calypso/post-editor/editor-revisions';

@@ -1,7 +1,7 @@
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { debounce, forEach } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import {
 	createPreviewDocumentTitle,
 	getIframeSource,
@@ -39,7 +39,7 @@ export default class SignupSitePreviewIframe extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.iframe = React.createRef();
+		this.iframe = createRef();
 	}
 
 	componentDidMount() {

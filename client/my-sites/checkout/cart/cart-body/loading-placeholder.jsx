@@ -1,4 +1,3 @@
-import React from 'react';
 import CartItemLoadingPlaceholder from 'calypso/my-sites/checkout/cart/cart-item/loading-placeholder';
 
 const CartBodyLoadingPlaceholder = () => (

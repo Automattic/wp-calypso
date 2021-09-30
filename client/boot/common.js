@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
@@ -27,6 +27,7 @@ import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
+import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
@@ -157,8 +158,10 @@ const oauthTokenMiddleware = () => {
 		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
 
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
-			loggedOutRoutes.push( '/pricing' );
-			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
+			loggedOutRoutes.push( '/pricing', '/plans' );
+			getLanguageSlugs().forEach( ( slug ) =>
+				loggedOutRoutes.push( `/${ slug }/pricing`, `/${ slug }/plans` )
+			);
 		}
 
 		// Forces OAuth users to the /login page if no token is present
@@ -337,7 +340,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	if ( ! currentUser ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
-			//see server/pages/index for prod redirect
+			// see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
@@ -345,7 +348,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
 				} else {
 					// pricing page is outside of Calypso, needs a full page load
-					window.location = 'https://wordpress.com/pricing';
+					window.location = isJetpackCloud()
+						? JETPACK_PRICING_PAGE
+						: 'https://wordpress.com/pricing';
 				}
 				return;
 			}
@@ -404,7 +409,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 };
 
 function renderLayout( reduxStore ) {
-	const layoutElement = React.createElement( ProviderWrappedLayout, {
+	const layoutElement = createElement( ProviderWrappedLayout, {
 		store: reduxStore,
 	} );
 

@@ -1,13 +1,12 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { debounce, get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -22,7 +21,7 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
-class PreviewMain extends React.Component {
+class PreviewMain extends Component {
 	state = {
 		previewUrl: null,
 		editUrl: null,

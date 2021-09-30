@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { ImageEditorCanvas } from '../image-editor-canvas';
 
 jest.mock( 'calypso/blocks/image-editor/image-editor-crop', () => {

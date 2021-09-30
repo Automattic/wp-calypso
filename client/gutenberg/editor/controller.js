@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { get, has } from 'lodash';
-import React from 'react';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
