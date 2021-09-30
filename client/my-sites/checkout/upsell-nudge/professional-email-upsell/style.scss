@@ -8,9 +8,6 @@
 .main.professional-email-upsell {
 	max-width: 1040px;
 
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
-
 	@include breakpoint-deprecated( '<660px' ) {
 		padding: 1em;
 	}
@@ -144,7 +141,6 @@
 		}
 
 		.gridicon {
-			fill: var( --color-accent );
 			margin-right: 2px;
 		}
 	}
