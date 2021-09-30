@@ -1,7 +1,7 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
@@ -27,8 +27,19 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 export class PlansStep extends Component {
+	state = {
+		isDesktop: isDesktop(),
+	};
+
 	componentDidMount() {
+		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
+			this.setState( { isDesktop: matchesDesktop } )
+		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+	}
+
+	componentWillUnmount() {
+		this.unsubscribe();
 	}
 
 	onSelectPlan = ( cartItem ) => {
@@ -154,13 +165,13 @@ export class PlansStep extends Component {
 				domainName={ this.getDomainName() }
 				customerType={ this.getCustomerType() }
 				disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-				plansWithScroll={ isDesktop() }
+				plansWithScroll={ this.state.isDesktop }
 				planTypes={ planTypes }
 				flowName={ flowName }
 				showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 				isAllPaidPlansShown={ true }
 				isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+				shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 				isReskinned={ isReskinned }
 			/>
 		);
@@ -181,7 +192,7 @@ export class PlansStep extends Component {
 	getHeaderText() {
 		const { headerText, translate } = this.props;
 
-		if ( isDesktop() ) {
+		if ( this.state.isDesktop ) {
 			return translate( 'Choose a plan' );
 		}
 
@@ -192,7 +203,7 @@ export class PlansStep extends Component {
 		const { hideFreePlan, subHeaderText, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
-			if ( isDesktop() ) {
+			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 					{
@@ -210,7 +221,7 @@ export class PlansStep extends Component {
 			} );
 		}
 
-		if ( isDesktop() ) {
+		if ( this.state.isDesktop ) {
 			return translate( "Pick one that's right for you and unlock features that help you grow." );
 		}
 
