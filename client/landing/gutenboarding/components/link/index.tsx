@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
-import React, { forwardRef, FunctionComponent } from 'react';
+import { forwardRef, FunctionComponent } from 'react';
+import * as React from 'react';
 import { Link as RouterLink, LinkProps } from 'react-router-dom';
 import type { Assign } from 'utility-types';
 

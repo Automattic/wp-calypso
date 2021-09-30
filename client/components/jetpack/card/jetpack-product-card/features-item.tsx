@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { ProductCardFeaturesItem } from './types';
 

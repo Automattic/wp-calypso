@@ -2,7 +2,7 @@ import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';

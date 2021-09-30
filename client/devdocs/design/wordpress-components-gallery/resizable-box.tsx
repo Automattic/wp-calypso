@@ -1,5 +1,5 @@
 import { Flex, FlexItem, ResizableBox } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const ResizableBoxExample = () => {
 	const [ attributes, setAttributes ] = useState( {

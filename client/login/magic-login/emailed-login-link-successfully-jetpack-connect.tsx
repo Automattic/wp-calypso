@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import checkEmailJetpackImage from 'calypso/assets/images/illustrations/check-email-jetpack.svg';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';

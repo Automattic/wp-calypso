@@ -1,5 +1,5 @@
 import { Panel, PanelBody, PanelRow } from '@wordpress/components';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 function ScrollableContainer( { children }: { children: ReactNode } ) {
 	return (

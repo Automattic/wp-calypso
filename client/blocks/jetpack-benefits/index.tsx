@@ -6,7 +6,7 @@ import {
 	isSecurityRealTimePlan,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import {

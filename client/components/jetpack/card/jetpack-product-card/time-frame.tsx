@@ -1,6 +1,7 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';

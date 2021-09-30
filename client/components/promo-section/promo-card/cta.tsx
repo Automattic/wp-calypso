@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

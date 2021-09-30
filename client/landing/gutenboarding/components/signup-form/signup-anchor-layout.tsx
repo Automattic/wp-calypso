@@ -1,6 +1,6 @@
 import { Button, TextControl, Modal, Notice } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import * as React from 'react';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';

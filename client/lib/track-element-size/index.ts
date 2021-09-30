@@ -1,5 +1,6 @@
 import { throttle } from 'lodash';
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import * as React from 'react';
 
 type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;

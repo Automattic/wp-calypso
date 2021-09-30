@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 import './style.scss';

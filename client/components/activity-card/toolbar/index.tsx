@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import { Activity } from '../types';
 import ActionsButton from './actions-button';

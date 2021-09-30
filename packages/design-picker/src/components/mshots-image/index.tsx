@@ -1,7 +1,7 @@
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import debugFactory from 'debug';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import './style.scss';
 

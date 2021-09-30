@@ -1,6 +1,7 @@
 import { CompactCard as Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {

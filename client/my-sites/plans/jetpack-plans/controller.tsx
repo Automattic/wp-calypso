@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
-import React from 'react';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

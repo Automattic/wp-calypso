@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';

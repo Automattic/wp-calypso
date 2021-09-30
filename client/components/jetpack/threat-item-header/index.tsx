@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
 

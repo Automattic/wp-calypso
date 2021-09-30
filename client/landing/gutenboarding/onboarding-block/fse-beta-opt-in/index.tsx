@@ -9,7 +9,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, siteLogo, header, navigation, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import * as React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { trackEventWithFlow } from '../../lib/analytics';

@@ -1,7 +1,7 @@
 import { DomainSuggestions } from '@automattic/data-stores';
 import { mockDomainSuggestion } from '@automattic/domain-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useContext, useState, useEffect } from 'react';
 import LaunchContext from '../context';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import { isDomainProduct } from '../utils';
@@ -10,14 +10,14 @@ import type { DomainProduct } from '../utils';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function useDomainProductFromCart(): DomainProduct | undefined {
-	const { siteId } = React.useContext( LaunchContext );
+	const { siteId } = useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ domainProductFromCart, setDomainProductFromCart ] = React.useState<
-		DomainProduct | undefined
-	>( undefined );
+	const [ domainProductFromCart, setDomainProductFromCart ] = useState< DomainProduct | undefined >(
+		undefined
+	);
 
-	React.useEffect( () => {
+	useEffect( () => {
 		( async function () {
 			const cart = await getCart( siteId );
 			const domainProduct = ( cart.products as ResponseCartProduct[] )?.find(

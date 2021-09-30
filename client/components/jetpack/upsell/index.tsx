@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent, ReactNode } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 
 import './style.scss';
 

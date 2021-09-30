@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import Spinner from 'calypso/components/spinner';
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery-help';

@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';

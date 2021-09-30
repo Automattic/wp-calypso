@@ -1,5 +1,4 @@
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
-import React from 'react';
 import SiteInformationCollection from 'calypso/my-sites/marketing/do-it-for-me/site-info-collection';
 import './style.scss';
 

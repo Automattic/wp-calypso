@@ -2,7 +2,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { getCouponLineItemFromCart, getCreditsLineItemFromCart } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import joinClasses from './join-classes';
 import { NonProductLineItem, LineItem } from './wp-line-item';

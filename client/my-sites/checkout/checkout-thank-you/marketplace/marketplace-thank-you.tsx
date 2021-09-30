@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
 import { ThankYou } from 'calypso/components/thank-you';

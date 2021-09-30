@@ -1,10 +1,4 @@
-import React, {
-	FunctionComponent,
-	ChangeEventHandler,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { FunctionComponent, ChangeEventHandler, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 

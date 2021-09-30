@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';

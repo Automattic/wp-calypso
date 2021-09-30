@@ -1,5 +1,5 @@
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 
 export type ThankYouNextStepProps = {
 	stepCta: React.ReactNode | React.ReactFragment;

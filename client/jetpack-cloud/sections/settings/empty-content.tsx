@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { preventWidows } from 'calypso/lib/formatting';

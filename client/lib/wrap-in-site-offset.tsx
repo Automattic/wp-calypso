@@ -1,4 +1,3 @@
-import React from 'react';
 import { SiteOffsetProvider } from 'calypso/components/site-offset/context';
 import { Context } from './jetpack/types';
 

@@ -5,7 +5,7 @@ import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import * as React from 'react';
 import { FLOW_ID } from '../../constants';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
