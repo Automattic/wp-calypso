@@ -20,9 +20,20 @@ function isSupportedBrowser( req ) {
 
 // We don't want to redirect some of our public landing pages, so we include them
 // here.
-function shouldRedirectPath( path ) {
-	const allowedPaths = [ 'browsehappy', 'log-in', 'start', 'new', 'themes' ];
-	return ! allowedPaths.includes( path.slice( 1 ) );
+function allowPath( path ) {
+	// Strip leading '/'.
+	let parsedPath = path.replace( /^\//, '' );
+	const possiblePathLocales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
+	for ( const locale in possiblePathLocales ) {
+		// Strip leading locale (e.g. 'es/')
+		if ( parsedPath.startsWith( locale ) ) {
+			parsedPath = parsedPath.replace( new RegExp( `^${ locale }/?` ), '' );
+			break;
+		}
+	}
+	// At this point, '/es/themes' is just 'themes', ready to match our allowed paths.
+	const allowedPaths = [ 'browsehappy', 'log-in', 'start', 'new', 'themes', 'theme', 'domains' ];
+	return allowedPaths.some( ( p ) => p.startsWith( path ) );
 }
 
 export default () => ( req, res, next ) => {
@@ -32,7 +43,7 @@ export default () => ( req, res, next ) => {
 	}
 
 	// Permitted paths even if the browser is unsupported.
-	if ( ! shouldRedirectPath( req.path ) ) {
+	if ( allowPath( req.path ) ) {
 		next();
 		return;
 	}
