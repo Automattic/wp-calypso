@@ -1,7 +1,7 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop } from '@automattic/viewport';
+import { isTabletResolution, isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
@@ -27,7 +27,24 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 export class PlansStep extends Component {
+	state = {
+		isDesktop: ! isTabletResolution(),
+	};
+
+	windowResize = () => {
+		this.setState( { plansWithScroll: ! isTabletResolution() } );
+	};
+
+	componentWillUnmount() {
+		if ( typeof window === 'object' ) {
+			window.removeEventListener( 'resize', this.windowResize );
+		}
+	}
+
 	componentDidMount() {
+		if ( typeof window === 'object' ) {
+			window.addEventListener( 'resize', this.windowResize );
+		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
