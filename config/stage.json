@@ -37,7 +37,6 @@
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
-		"domains/new-transfer-flow": false,
 		"domains/premium-domain-purchases": true,
 		"external-media": true,
 		"external-media/google-photos": true,

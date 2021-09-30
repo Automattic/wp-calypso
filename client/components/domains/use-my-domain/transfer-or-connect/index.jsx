@@ -15,11 +15,7 @@ import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	getOptionInfo,
-	connectDomainAction,
-	defaultTransferDomainAction as defaultTransferHandler,
-} from '../utilities';
+import { getOptionInfo, connectDomainAction } from '../utilities';
 import OptionContent from './option-content';
 
 import './style.scss';
@@ -54,9 +50,7 @@ function DomainTransferOrConnect( {
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
-
-		const transferHandler = onTransfer ?? defaultTransferHandler;
-		transferHandler( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
+		onTransfer( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
 	};
 
 	const content = getOptionInfo( {
