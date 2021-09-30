@@ -130,12 +130,13 @@
 	margin: 0;
 
 	li {
-		display: flex;
-		justify-content: space-between;
 		padding-bottom: 0.25em;
 
 		.gridicon {
-			margin-right: 2px;
+			fill: var( --color-neutral-40 );
+			margin-left: 1px;
+			margin-right: 6px;
+			vertical-align: text-bottom;
 		}
 	}
 }

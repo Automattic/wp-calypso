@@ -31,8 +31,8 @@ const noopWithCallback = ( ignored, callback = () => {} ) => {
 const ProfessionalEmailFeature = ( { children } ) => {
 	return (
 		<li>
-			<span>{ children }</span>
 			<Gridicon icon="checkmark" size="18" />
+			<span>{ children }</span>
 		</li>
 	);
 };
