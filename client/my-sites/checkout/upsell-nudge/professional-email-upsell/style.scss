@@ -130,15 +130,9 @@
 	margin: 0;
 
 	li {
-		border-bottom: 1px solid var( --color-neutral-5 );
 		display: flex;
 		justify-content: space-between;
-		padding-bottom: 8px;
-		padding-top: 8px;
-
-		&:last-child {
-			border-bottom: none;
-		}
+		padding-bottom: 0.25em;
 
 		.gridicon {
 			margin-right: 2px;
