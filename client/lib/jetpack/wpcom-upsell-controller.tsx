@@ -6,7 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Context } from './types';
 
 export default function upsellSwitch(
-	UpsellComponent: typeof React.Component
+	UpsellComponent: React.Component
 ): ( context: Context, next: () => void ) => void {
 	return ( context, next ) => {
 		const getState = context.store.getState;

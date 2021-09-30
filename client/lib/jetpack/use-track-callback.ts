@@ -7,7 +7,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 const noop = () => {};
 
 const useTrackCallback = (
-	callback: ( ...args: any[] ) => void = noop,
+	callback: ( ...args: unknown[] ) => void = noop,
 	eventName: string,
 	eventProps = {}
 ) => {
