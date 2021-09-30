@@ -24,7 +24,7 @@ function allowPath( path ) {
 	// Strip leading '/'.
 	let parsedPath = path.replace( /^\//, '' );
 	const possiblePathLocales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
-	for ( const locale in possiblePathLocales ) {
+	for ( const locale of possiblePathLocales ) {
 		// Strip leading locale (e.g. 'es/')
 		if ( parsedPath.startsWith( locale ) ) {
 			parsedPath = parsedPath.replace( new RegExp( `^${ locale }/?` ), '' );
