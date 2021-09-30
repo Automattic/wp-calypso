@@ -154,13 +154,24 @@ export class CartCheckoutPage {
 	 * and a full stop for decimals. Notably, Continental Europe uses the reverse notation
 	 * and this method will produce an unexpected result.
 	 *
-	 * @returns {number} Total value of items in cart.
+	 * If optional parameter `rawString` is specified, the string as obtained is returned.
+	 *
+	 * @param param0 Object parameter.
+	 * @param {boolean} param0.rawString If true, the raw string is returned.
+	 * @returns {Promise<number|string>} Total value of items in cart.
 	 */
-	async getCheckoutTotalAmount(): Promise< number > {
+	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
+		number | string
+	> {
 		const elementHandle = await this.page.waitForSelector(
 			selectors.totalAmount( getTargetDeviceName() )
 		);
 		const stringAmount = await elementHandle.innerText();
+		if ( rawString ) {
+			// Returns the raw string.
+			return stringAmount;
+		}
+
 		const parsedAmount = stringAmount.replace( /,/g, '' ).match( /\d+\.?\d*/g );
 		if ( ! parsedAmount?.length ) {
 			throw new Error( 'Unable to locate or parse cart amount.' );

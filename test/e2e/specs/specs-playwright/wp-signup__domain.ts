@@ -65,11 +65,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 			expect( totalAmount ).toBeGreaterThan( 0 );
 		} );
 
-		it( 'Prices are shown in Japanese Yen', async function () {
-			const buttonText = await cartCheckoutPage.getPaymentButtonText();
-			buttonText.startsWith( '¥' );
-		} );
-
 		it( 'Enter registrar details', async function () {
 			await cartCheckoutPage.enterDomainRegistrarDetails(
 				DataHelper.getTestDomainRegistrarDetails( email )
@@ -78,6 +73,13 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		it( 'Enter credit card details', async function () {
 			await cartCheckoutPage.enterPaymentDetails( DataHelper.getTestPaymentDetails() );
+		} );
+
+		it( 'Prices are shown in Japanese Yen', async function () {
+			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
+				rawString: true,
+			} ) ) as string;
+			expect( cartAmount.startsWith( '¥' ) ).toBe( true );
 		} );
 
 		it( 'Check out', async function () {
