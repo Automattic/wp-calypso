@@ -122,7 +122,7 @@ const ProfessionalEmailUpsell = ( {
 	};
 
 	return (
-		<div className="professional-email-upsell__main">
+		<div>
 			<header className="professional-email-upsell__header">
 				<h3 className="professional-email-upsell__small-title">
 					{ translate( "Hold tight, we're getting your site ready." ) }
