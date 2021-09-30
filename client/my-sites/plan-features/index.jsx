@@ -34,6 +34,7 @@ import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
+import Nudge from 'calypso/components/nudge';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -156,7 +157,10 @@ export class PlanFeatures extends Component {
 
 	renderNotice() {
 		return (
-			this.renderUpgradeDisabledNotice() || this.renderDiscountNotice() || this.renderCreditNotice()
+			this.renderUpgradeDisabledNotice() ||
+			this.renderDiscountNotice() ||
+			this.renderCreditNotice() ||
+			this.renderNudge()
 		);
 	}
 
@@ -278,6 +282,21 @@ export class PlanFeatures extends Component {
 			</Notice>,
 			bannerContainer
 		);
+	}
+
+	renderNudge() {
+		const { siteId, hasPlaceholders, isInSignup } = this.props;
+
+		if ( hasPlaceholders || isInSignup ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal( <Nudge siteId={ siteId } />, bannerContainer );
 	}
 
 	renderMobileView() {
