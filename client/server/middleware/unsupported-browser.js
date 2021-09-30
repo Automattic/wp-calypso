@@ -33,7 +33,7 @@ function allowPath( path ) {
 	}
 	// At this point, '/es/themes' is just 'themes', ready to match our allowed paths.
 	const allowedPaths = [ 'browsehappy', 'log-in', 'start', 'new', 'themes', 'theme', 'domains' ];
-	return allowedPaths.some( ( p ) => p.startsWith( parsedPath ) );
+	return allowedPaths.some( ( p ) => parsedPath.startsWith( p ) );
 }
 
 export default () => ( req, res, next ) => {
