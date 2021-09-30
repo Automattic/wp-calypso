@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { Button, Gridicon } from '@automattic/components';
+import styled from '@emotion/styled';
 import cx from 'classnames';
 import React, { useEffect } from 'react';
 import { useMarketingMessage } from './use-marketing-message';
