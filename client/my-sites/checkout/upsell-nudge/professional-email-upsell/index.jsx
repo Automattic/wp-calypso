@@ -2,10 +2,9 @@ import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-/* TODO: Remove the React import after rebasing -- see PR #56451 */
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -65,7 +64,7 @@ const ProfessionalEmailUpsell = ( {
 
 	const optionalMailboxFields = [ 'alternativeEmail', 'name' ];
 
-	const formattedPrice = translate( '{{price/}} /mailbox /month (billed monthly)', {
+	const formattedPrice = translate( '{{price/}} /mailbox /month', {
 		components: {
 			price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
 		},

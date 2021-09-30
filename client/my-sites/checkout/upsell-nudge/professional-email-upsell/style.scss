@@ -51,14 +51,14 @@
 
 		> div {
 			padding: 1em;
-			flex: 1;
 
 			&:first-of-type {
+				flex: 1;
+				max-width: 550px;
 				padding-right: 3em;
 			}
 
 			&:last-of-type {
-				border-left: 1px solid var( --studio-gray-5 );
 				padding-left: 3em;
 			}
 		}
