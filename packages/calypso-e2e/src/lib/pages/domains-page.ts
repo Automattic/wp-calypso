@@ -3,11 +3,11 @@ import { Page } from 'playwright';
 const selectors = {
 	// Cart popover
 	cartButton: '.popover-cart button',
-	popOver: '.popover',
+	popover: '.popover',
 	removeItemButton: 'button[aria-label="Remove item"]',
 	popOverCartPlaceholder: '.cart-item__loading-placeholder',
 
-	searchForDomainButton: `a:text-matches("(s|S)earch", "i")`,
+	searchForDomainButton: `a:text-matches("search", "i")`,
 };
 
 /**
@@ -54,7 +54,7 @@ export class DomainsPage {
 	async openCart(): Promise< boolean > {
 		if ( await this.cartVisible() ) {
 			await this.page.click( selectors.cartButton );
-			const elementHandle = await this.page.waitForSelector( selectors.popOver );
+			const elementHandle = await this.page.waitForSelector( selectors.popover );
 			await elementHandle.waitForElementState( 'stable' );
 			return true;
 		}
@@ -62,31 +62,29 @@ export class DomainsPage {
 	}
 
 	/**
-	 * Removes item(s) from the cart.
+	 * Removes an item from the cart.
 	 *
-	 * This method can behave in one of two ways:
-	 * 	- if `index` is provided, the cart item at `index` will be removed.
-	 * 	- if `all` is true, all cart items are removed.
-	 *
-	 * By default, the `all` flag is false and the caller is expected to provide
-	 * an index value.
+	 * This method expects the cart popover to be open. Otherwise, this method will throw.
 	 *
 	 * @param param0 Parameter object.
-	 * @param {number} param0.index 1-indexed value.
-	 * @param {boolean} param0.all If true, all items in cart will be removed. Defaults to false.
+	 * @param {number} param0.index 1-indexed value representing the cart item to remove.
 	 */
-	async removeCartItem( {
-		index = 1,
-		all = false,
-	}: { index?: number; all?: boolean } = {} ): Promise< void > {
-		if ( all ) {
-			const items = await this.page.$$( selectors.removeItemButton );
-			for await ( const item of items ) {
-				await item.click();
-				await this.page.waitForSelector( selectors.popOverCartPlaceholder, { state: 'hidden' } );
-			}
-		} else {
-			await this.page.click( `:nth-match( ${ selectors.removeItemButton }, ${ index })` );
+	async removeCartItem( { index = 1 }: { index: number } ): Promise< void > {
+		await this.page.click( `:nth-match( ${ selectors.removeItemButton }, ${ index })` );
+	}
+
+	/**
+	 * Empties the cart.
+	 *
+	 * This method expects the cart popover to be open. Otherwise, this method will throw.
+	 */
+	async emptyCart(): Promise< void > {
+		const items = await this.page.$$( selectors.removeItemButton );
+		for await ( const item of items ) {
+			await item.click();
+			await this.page.waitForSelector( selectors.popOverCartPlaceholder, {
+				state: 'hidden',
+			} );
 		}
 	}
 }

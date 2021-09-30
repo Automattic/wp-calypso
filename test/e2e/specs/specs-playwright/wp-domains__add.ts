@@ -47,8 +47,9 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 	it( 'If required, clear the cart', async function () {
 		domainsPage = new DomainsPage( page );
 		const cartOpened = await domainsPage.openCart();
+		// The cart popover existing implies there are some items that need to be removed.
 		if ( cartOpened ) {
-			await domainsPage.removeCartItem( { all: true } );
+			await domainsPage.emptyCart();
 		}
 	} );
 
