@@ -40,10 +40,9 @@ export function requestThemes( siteId, query = {} ) {
 
 		if ( siteId === 'wporg' ) {
 			request = () => fetchWporgThemesList( query );
-		} else if ( siteId === 'wpcom' ) {
-			request = () => wpcom.undocumented().themes( null, { ...query, apiVersion: '1.2' } );
 		} else {
-			request = () => wpcom.undocumented().themes( siteId, { ...query, apiVersion: '1' } );
+			//TODO: Verify that the v1 themes list sites endpoint is no longer returning expected information
+			request = () => wpcom.undocumented().themes( null, { ...query, apiVersion: '1.2' } );
 		}
 
 		// WP.com returns the number of results in a `found` attr, so we can use that right away.

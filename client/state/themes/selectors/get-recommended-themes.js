@@ -1,4 +1,5 @@
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import 'calypso/state/themes/init';
 
 const emptyList = [];
@@ -12,16 +13,18 @@ const emptyList = [];
  * @returns {Array} the list of recommended themes
  */
 export function getRecommendedThemes( state, siteId ) {
-	// TODO: ensure support for jetpack and wporg queries
-	let recommendedThemes = [];
+	const sourceSiteId = siteId && isJetpackSite( state, siteId ) ? siteId : 'wpcom';
 	const isUsingSiteEditor = isSiteUsingCoreSiteEditor( state, siteId );
-	const blockThemes = state?.themes?.queries?.wpcom?.getItemsIgnoringPage( {
+
+	const blockThemes = state?.themes?.queries[ sourceSiteId ]?.getItemsIgnoringPage( {
 		filter: 'block-templates',
 	} );
 
-	const classicThemes = state?.themes?.queries?.wpcom?.getItemsIgnoringPage( {
+	const classicThemes = state?.themes?.queries[ sourceSiteId ]?.getItemsIgnoringPage( {
 		filter: 'auto-loading-homepage',
 	} );
+
+	let recommendedThemes = [];
 
 	if ( blockThemes && isUsingSiteEditor ) {
 		recommendedThemes = [ ...recommendedThemes, ...blockThemes ];
