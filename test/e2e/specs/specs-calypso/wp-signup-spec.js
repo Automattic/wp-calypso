@@ -41,7 +41,7 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Sign up for a free site, see the site preview, activate email and can publish @signup', function () {
+	describe.skip( 'Sign up for a free site, see the site preview, activate email and can publish @signup', function () {
 		const blogName = dataHelper.getNewBlogName();
 		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -190,7 +190,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @signup', function () {
+	describe.skip( 'Sign up for a domain only purchase coming in from wordpress.com/domains in EUR currency @signup', function () {
 		const siteName = dataHelper.getNewBlogName();
 		const expectedDomainName = `${ siteName }.live`;
 		const emailAddress = dataHelper.getEmailAddress( siteName, signupInboxId );
