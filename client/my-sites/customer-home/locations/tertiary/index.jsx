@@ -11,15 +11,17 @@ const Tertiary = ( { cards } ) => {
 		return null;
 	}
 
-	return <>
-        { cards.map(
-            ( card, index ) =>
-                cardComponents[ card ] &&
-                createElement( cardComponents[ card ], {
-                    key: index,
-                } )
-        ) }
-    </>;
+	return (
+		<>
+			{ cards.map(
+				( card, index ) =>
+					cardComponents[ card ] &&
+					createElement( cardComponents[ card ], {
+						key: index,
+					} )
+			) }
+		</>
+	);
 };
 
 export default Tertiary;

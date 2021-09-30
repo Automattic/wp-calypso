@@ -71,7 +71,7 @@ class MappedDomainType extends Component {
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<div className="mapped-domain-type__main-content">
 					<p>{ setupInstructionsMessage }</p>
 					<DomainMappingInstructions
@@ -85,7 +85,7 @@ class MappedDomainType extends Component {
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</Fragment>
-        );
+		);
 	}
 
 	renderLinkTo( url ) {

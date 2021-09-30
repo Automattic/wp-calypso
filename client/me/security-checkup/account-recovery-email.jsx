@@ -29,11 +29,11 @@ class SecurityCheckupAccountRecoveryEmail extends Component {
 
 		if ( accountRecoveryEmailActionInProgress ) {
 			return (
-                <Fragment>
+				<Fragment>
 					<QueryAccountRecoverySettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
 				</Fragment>
-            );
+			);
 		}
 
 		let icon;

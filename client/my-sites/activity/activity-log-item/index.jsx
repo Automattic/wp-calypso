@@ -345,7 +345,7 @@ class ActivityLogItem extends Component {
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 
 		return (
-            <Fragment>
+			<Fragment>
 				{ mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
@@ -408,7 +408,7 @@ class ActivityLogItem extends Component {
 					/>
 				</div>
 			</Fragment>
-        );
+		);
 	}
 }
 

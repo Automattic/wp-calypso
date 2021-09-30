@@ -610,7 +610,7 @@ class InvitePeople extends Component {
 		const inviteUrlRef = createRef();
 
 		return (
-            <Fragment>
+			<Fragment>
 				<div className="invite-people__link-selector">
 					<FormSelect
 						id="invite-people__link-selector-role"
@@ -646,7 +646,7 @@ class InvitePeople extends Component {
 					</span>
 				</div>
 			</Fragment>
-        );
+		);
 	};
 
 	renderInviteLinkGenerateButton = () => {
@@ -710,7 +710,7 @@ class InvitePeople extends Component {
 		}
 
 		return (
-            <Main className="invite-people">
+			<Main className="invite-people">
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				{ site.ID && <QuerySiteInvites siteId={ site.ID } /> }
 				{ site.ID && isJetpack && <QueryJetpackModules siteId={ site.ID } /> }
@@ -732,7 +732,7 @@ class InvitePeople extends Component {
 					</Fragment>
 				) }
 			</Main>
-        );
+		);
 	}
 }
 

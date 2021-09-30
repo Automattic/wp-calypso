@@ -270,7 +270,7 @@ class ConfirmCancelDomain extends Component {
 		const domain = getDomainName( purchase );
 
 		return (
-            <Fragment>
+			<Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -317,7 +317,7 @@ class ConfirmCancelDomain extends Component {
 					{ this.renderSubmitButton() }
 				</Card>
 			</Fragment>
-        );
+		);
 	}
 }
 

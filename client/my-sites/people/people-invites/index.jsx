@@ -145,7 +145,7 @@ class PeopleInvites extends PureComponent {
 		);
 
 		return (
-            <Fragment>
+			<Fragment>
 				{ hasPendingInvites && (
 					<div className="people-invites__pending">
 						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
@@ -177,7 +177,7 @@ class PeopleInvites extends PureComponent {
 					/>
 				) }
 			</Fragment>
-        );
+		);
 	}
 
 	renderClearAll() {
@@ -193,7 +193,7 @@ class PeopleInvites extends PureComponent {
 		];
 
 		return (
-            <Fragment>
+			<Fragment>
 				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
 					{ translate( 'Clear all accepted' ) }
 				</Button>
@@ -202,7 +202,7 @@ class PeopleInvites extends PureComponent {
 					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
 				</Dialog>
 			</Fragment>
-        );
+		);
 	}
 
 	renderEmptyContent() {

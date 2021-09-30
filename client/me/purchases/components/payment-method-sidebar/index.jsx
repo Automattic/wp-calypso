@@ -11,7 +11,7 @@ export default function PaymentMethodSidebar( { purchase } ) {
 	const translate = useTranslate();
 
 	return (
-        <Fragment>
+		<Fragment>
 			<MainCard purchase={ purchase } />
 
 			<Card className="payment-method-sidebar__security-card">
@@ -30,7 +30,7 @@ export default function PaymentMethodSidebar( { purchase } ) {
 				</p>
 			</Card>
 		</Fragment>
-    );
+	);
 }
 
 function MainCard( { purchase } ) {

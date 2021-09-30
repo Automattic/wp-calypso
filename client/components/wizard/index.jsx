@@ -89,7 +89,7 @@ class Wizard extends Component {
 		const forwardUrl = this.getForwardUrl() || '';
 
 		return (
-            <div className="wizard">
+			<div className="wizard">
 				{ totalSteps > 1 && (
 					<ProgressIndicator stepNumber={ stepIndex } totalSteps={ totalSteps } />
 				) }
@@ -124,7 +124,7 @@ class Wizard extends Component {
 					</div>
 				) }
 			</div>
-        );
+		);
 	}
 }
 

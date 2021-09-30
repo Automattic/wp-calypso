@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
 const toggleInfo = ( WrappedComponent ) =>
-	(class ToggleComponent extends Component {
+	class ToggleComponent extends Component {
 		state = {
 			open: false,
 		};
@@ -18,6 +18,6 @@ const toggleInfo = ( WrappedComponent ) =>
 				<WrappedComponent { ...this.props } toggle={ this.toggle } opened={ this.state.open } />
 			);
 		}
-	});
+	};
 
 export default toggleInfo;

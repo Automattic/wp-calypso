@@ -208,11 +208,11 @@ function CreditCardSummary() {
 function CreditCardLabel() {
 	const { __ } = useI18n();
 	return (
-        <Fragment>
+		<Fragment>
 			<span>{ __( 'Credit or debit card' ) }</span>
 			<CreditCardLogos />
 		</Fragment>
-    );
+	);
 }
 
 function CreditCardLogos() {

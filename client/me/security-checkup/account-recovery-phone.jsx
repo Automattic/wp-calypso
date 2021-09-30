@@ -29,11 +29,11 @@ class SecurityCheckupAccountRecoveryPhone extends Component {
 
 		if ( accountRecoveryPhoneActionInProgress ) {
 			return (
-                <Fragment>
+				<Fragment>
 					<QueryAccountRecoverySettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
 				</Fragment>
-            );
+			);
 		}
 
 		let icon;

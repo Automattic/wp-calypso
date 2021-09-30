@@ -10,9 +10,9 @@ jest.mock( 'store', () => ( {
 jest.mock(
 	'calypso/blocks/upsell-nudge',
 	() =>
-		(function UpsellNudge() {
+		function UpsellNudge() {
 			return <div />;
-		})
+		}
 );
 
 jest.mock( '@automattic/calypso-config', () => {

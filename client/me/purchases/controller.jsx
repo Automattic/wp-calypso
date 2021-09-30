@@ -27,11 +27,11 @@ import VatInfoPage from './vat-info';
 
 const PurchasesWrapper = ( { title = null, children } ) => {
 	return (
-        <Fragment>
+		<Fragment>
 			<DocumentHead title={ title } />
 			{ children }
 		</Fragment>
-    );
+	);
 };
 const noop = () => {};
 const userHasNoSites = ( state ) => getCurrentUserSiteCount( state ) <= 0;

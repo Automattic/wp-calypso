@@ -53,7 +53,7 @@ const LearnGrow = () => {
 	}
 
 	return (
-        <DotPager
+		<DotPager
 			className="learn-grow__content customer-home__card"
 			hasDynamicHeight
 			onPageSelected={ handlePageSelected }
@@ -66,7 +66,7 @@ const LearnGrow = () => {
 					} )
 			) }
 		</DotPager>
-    );
+	);
 };
 
 function useLearnGrowCards() {

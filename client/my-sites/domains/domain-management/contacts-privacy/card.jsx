@@ -60,7 +60,7 @@ class ContactsPrivacyCard extends Component {
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<div className="contacts-privacy__settings">
 					<ToggleControl
 						checked={ privateDomain }
@@ -71,7 +71,7 @@ class ContactsPrivacyCard extends Component {
 				</div>
 				{ privacyProtectionNote }
 			</Fragment>
-        );
+		);
 	}
 
 	getContactInfoDisclosed() {
@@ -101,7 +101,7 @@ class ContactsPrivacyCard extends Component {
 		) : null;
 
 		return (
-            <Fragment>
+			<Fragment>
 				<div className="contacts-privacy__settings">
 					<ToggleControl
 						checked={ contactInfoDisclosed }
@@ -112,7 +112,7 @@ class ContactsPrivacyCard extends Component {
 				</div>
 				{ contactVerificationNotice }
 			</Fragment>
-        );
+		);
 	}
 
 	render() {

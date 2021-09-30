@@ -22,7 +22,7 @@ const DomainManagementHeader = ( props ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-        <Fragment>
+		<Fragment>
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
@@ -36,7 +36,7 @@ const DomainManagementHeader = ( props ) => {
 				<DocumentHead title={ children } />
 			</HeaderCake>
 		</Fragment>
-    );
+	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 

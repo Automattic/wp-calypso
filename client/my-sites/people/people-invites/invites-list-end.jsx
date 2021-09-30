@@ -29,7 +29,7 @@ class InvitesListEnd extends PureComponent {
 		const { shown, found, translate } = this.props;
 
 		return (
-            <Fragment>
+			<Fragment>
 				{ shown < found && (
 					<div className="people-invites__max-items-notice">
 						{ translate(
@@ -43,7 +43,7 @@ class InvitesListEnd extends PureComponent {
 				) }
 				<ListEnd />
 			</Fragment>
-        );
+		);
 	}
 }
 

@@ -27,11 +27,11 @@ class SecurityCheckupTwoFactorBackupCodes extends Component {
 
 		if ( ! areUserSettingsLoaded ) {
 			return (
-                <Fragment>
+				<Fragment>
 					<QueryUserSettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
 				</Fragment>
-            );
+			);
 		}
 
 		// Don't show this item if the user doesn't have 2FA enabled.
@@ -58,7 +58,7 @@ class SecurityCheckupTwoFactorBackupCodes extends Component {
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<QueryUserSettings />
 				<SecurityCheckupNavigationItem
 					path={ '/me/security/two-step' }
@@ -67,7 +67,7 @@ class SecurityCheckupTwoFactorBackupCodes extends Component {
 					description={ description }
 				/>
 			</Fragment>
-        );
+		);
 	}
 }
 

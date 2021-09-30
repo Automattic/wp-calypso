@@ -35,7 +35,7 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 };
 
 const UrlSearch = ( Component ) =>
-	(class extends React.Component {
+	class extends React.Component {
 		static displayName = `UrlSearch(${ Component.displayName || Component.name || '' })`;
 		static defaultProps = {
 			search: '',
@@ -84,6 +84,6 @@ const UrlSearch = ( Component ) =>
 				/>
 			);
 		}
-	});
+	};
 
 export default UrlSearch;

@@ -57,7 +57,7 @@ class PopoverMenu extends Component {
 		} = this.props;
 
 		return (
-            <PopoverComponent
+			<PopoverComponent
 				onClose={ this._onClose }
 				onShow={ this._onShow }
 				autoPosition={ autoPosition }
@@ -83,7 +83,7 @@ class PopoverMenu extends Component {
 					{ Children.map( this.props.children, this._setPropsOnChild, this ) }
 				</div>
 			</PopoverComponent>
-        );
+		);
 	}
 
 	_setPropsOnChild = ( child ) => {

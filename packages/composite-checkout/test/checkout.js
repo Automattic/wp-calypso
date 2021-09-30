@@ -633,13 +633,13 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 		( stepObject ) => stepObject.hasStepNumber
 	);
 	return (
-        <Fragment>
+		<Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 			<CheckoutStepArea>
 				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
 			</CheckoutStepArea>
 		</Fragment>
-    );
+	);
 }
 
 function createStepObjectConverter( paymentData ) {

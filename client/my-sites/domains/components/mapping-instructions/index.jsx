@@ -43,7 +43,7 @@ class DomainMappingInstructions extends Component {
 		);
 
 		return (
-            <Fragment>
+			<Fragment>
 				<p>{ nameServerInstructionsMessage }</p>
 				<ul>
 					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
@@ -51,7 +51,7 @@ class DomainMappingInstructions extends Component {
 					} ) }
 				</ul>
 			</Fragment>
-        );
+		);
 	}
 
 	renderNsRecordsInstructions() {
@@ -67,7 +67,7 @@ class DomainMappingInstructions extends Component {
 		);
 
 		return (
-            <Fragment>
+			<Fragment>
 				<p>{ nameServerInstructionsMessage }</p>
 				<ul>
 					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
@@ -81,7 +81,7 @@ class DomainMappingInstructions extends Component {
 					} ) }
 				</ul>
 			</Fragment>
-        );
+		);
 	}
 
 	renderNsRecordsInstructionsWithHeader() {
@@ -133,7 +133,7 @@ class DomainMappingInstructions extends Component {
 		];
 
 		return (
-            <Fragment>
+			<Fragment>
 				{ isAtomic && (
 					<Notice status="is-warning" showDismiss={ false } translate={ this.props.translate }>
 						{ cnameMappingWarning }
@@ -152,7 +152,7 @@ class DomainMappingInstructions extends Component {
 					) ) }
 				</ul>
 			</Fragment>
-        );
+		);
 	}
 
 	renderCnameInstructionsWithHeader() {

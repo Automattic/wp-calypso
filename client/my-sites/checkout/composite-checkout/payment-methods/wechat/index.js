@@ -241,13 +241,13 @@ function isFormValid( store ) {
 
 function WeChatLabel() {
 	return (
-        <Fragment>
+		<Fragment>
 			<span>WeChat Pay</span>
 			<PaymentMethodLogos className="wechat__logo payment-logos">
 				<WeChatLogo />
 			</PaymentMethodLogos>
 		</Fragment>
-    );
+	);
 }
 
 function WeChatLogo() {

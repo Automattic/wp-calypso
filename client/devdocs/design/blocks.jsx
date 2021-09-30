@@ -85,7 +85,7 @@ export default class AppComponents extends Component {
 		} );
 
 		return (
-            <Main className={ className }>
+			<Main className={ className }>
 				<DocumentHead title="Blocks" />
 
 				{ this.props.component ? (
@@ -172,6 +172,6 @@ export default class AppComponents extends Component {
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 				</Collection>
 			</Main>
-        );
+		);
 	}
 }
