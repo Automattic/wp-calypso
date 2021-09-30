@@ -1,7 +1,9 @@
+import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import wpcom from 'calypso/lib/wp';
 import { updateStoredCardIsBackupComplete } from 'calypso/state/stored-cards/actions';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
@@ -50,28 +52,38 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 		},
 	} );
 	const toggleIsBackup = useCallback(
-		( event: React.ChangeEvent< HTMLInputElement > ) => {
-			mutation.mutate( event.currentTarget.checked );
+		( isChecked: boolean ) => {
+			mutation.mutate( isChecked );
 		},
 		[ mutation ]
 	);
 	if ( isLoading ) {
-		// TODO: Make this better
-		return <div>Loading Placeholder...</div>;
+		return (
+			<div className="payment-method-backup-toggle">
+				<Spinner />
+			</div>
+		);
 	}
 	if ( isError ) {
-		// TODO: do we want to show something here? maybe trigger a notice?
-		return <div>Error</div>;
+		return (
+			<div className="payment-method-backup-toggle">
+				{ translate( 'Error fetching backup status' ) }
+			</div>
+		);
 	}
 	const isBackup = data?.is_backup ?? false;
-	// TODO: show the checkbox
-	// TODO: make this text better and smaller
+	// TODO: add real "Learn more" link because "backup" is not obvious
 	return (
-		<label>
-			{ isBackup
-				? translate( 'Remove this payment method from backups' )
-				: translate( 'Make this payment method a backup' ) }
-			<input type="checkbox" checked={ isBackup } onChange={ toggleIsBackup } />
-		</label>
+		<div className="payment-method-backup-toggle">
+			<CheckboxControl
+				checked={ isBackup }
+				onChange={ toggleIsBackup }
+				label={ translate( 'Use as backup. {{link}}Learn more{{/link}}', {
+					components: {
+						link: <ExternalLink icon href="https://wordpress.com/support/manage-purchases/" />,
+					},
+				} ) }
+			/>
+		</div>
 	);
 }
