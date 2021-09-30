@@ -6,7 +6,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 const SecurityCheckupNavigationItemContents = function ( props ) {
 	const { materialIcon, materialIconStyle, text, description } = props;
 	return (
-        <Fragment>
+		<Fragment>
 			<MaterialIcon
 				icon={ materialIcon }
 				style={ materialIconStyle }
@@ -17,7 +17,7 @@ const SecurityCheckupNavigationItemContents = function ( props ) {
 				<small>{ description }</small>
 			</div>
 		</Fragment>
-    );
+	);
 };
 
 class SecurityCheckupNavigationItem extends Component {

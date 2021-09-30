@@ -84,7 +84,7 @@ class Security extends Component {
 
 		if ( sslStatuses.SSL_PENDING === sslStatus ) {
 			return (
-                <Fragment>
+				<Fragment>
 					<p>
 						{ translate(
 							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most. If you’re running into delays please let us know so we can help you out.'
@@ -94,12 +94,12 @@ class Security extends Component {
 						{ translate( 'Contact support' ) }
 					</Button>
 				</Fragment>
-            );
+			);
 		}
 
 		if ( sslStatuses.SSL_DISABLED === sslStatus ) {
 			return (
-                <Fragment>
+				<Fragment>
 					<p>
 						{ translate(
 							'We have disabled HTTPS encryption because your domain has expired and is no longer active. Renew your domain to reactivate it and turn on HTTPS encryption.'
@@ -116,11 +116,11 @@ class Security extends Component {
 						tracksProps={ { source: 'security-status', domain_status: 'expired' } }
 					/>
 				</Fragment>
-            );
+			);
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<p>
 					{ translate(
 						'Strong encryption is critical to ensure the privacy and security of your site. This is what you get with HTTPS encryption on WordPress.com:'
@@ -139,7 +139,7 @@ class Security extends Component {
 					) ) }
 				</ul>
 			</Fragment>
-        );
+		);
 	}
 
 	handleLearnMoreClicks = ( event ) => {
@@ -152,7 +152,7 @@ class Security extends Component {
 		const { domain, translate } = this.props;
 		const { sslStatus } = domain;
 		return (
-            <Fragment>
+			<Fragment>
 				<CompactCard className="security__header">
 					<span>{ translate( 'HTTPS encryption' ) }</span>
 					{ this.getSSLStatusIcon( domain ) }
@@ -171,7 +171,7 @@ class Security extends Component {
 					</VerticalNav>
 				) }
 			</Fragment>
-        );
+		);
 	}
 
 	render() {

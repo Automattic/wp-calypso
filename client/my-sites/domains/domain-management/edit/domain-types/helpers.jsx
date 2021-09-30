@@ -6,11 +6,11 @@ import { isExpiring, shouldRenderExpiringCreditCard } from 'calypso/lib/purchase
 function WrapDomainStatusButtons( props ) {
 	const wrapperClassNames = classNames( 'domain-types__wrap-me', props.className );
 	return (
-        <Fragment>
+		<Fragment>
 			<div className="domain-types__break" />
 			<div className={ wrapperClassNames }>{ props.children }</div>
 		</Fragment>
-    );
+	);
 }
 
 function DomainExpiryOrRenewal( { domain, isLoadingPurchase, moment, purchase, translate } ) {

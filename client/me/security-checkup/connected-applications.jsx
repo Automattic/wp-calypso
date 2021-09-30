@@ -52,11 +52,11 @@ class SecurityCheckupConnectedApplications extends Component {
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<QueryConnectedApplications />
 				{ content }
 			</Fragment>
-        );
+		);
 	}
 }
 

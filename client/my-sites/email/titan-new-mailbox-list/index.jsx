@@ -63,7 +63,7 @@ const TitanNewMailboxList = ( {
 	};
 
 	return (
-        <div className="titan-new-mailbox-list__main">
+		<div className="titan-new-mailbox-list__main">
 			{ mailboxes.map( ( mailbox, index ) => (
 				<Fragment key={ `${ index }:${ mailbox.uuid }` }>
 					{ index > 0 && (
@@ -114,7 +114,7 @@ const TitanNewMailboxList = ( {
 				{ children }
 			</div>
 		</div>
-    );
+	);
 };
 
 TitanNewMailboxList.propTypes = {

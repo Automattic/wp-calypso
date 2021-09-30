@@ -91,7 +91,7 @@ export class PlanBillingPeriod extends Component {
 		const isJetpackTemporarySite = isJetpackTemporarySitePurchase( purchase.domain );
 
 		return (
-            <Fragment>
+			<Fragment>
 				<FormSettingExplanation>
 					{ translate( 'Billed monthly' ) }
 					{ site && isProductOwner && (
@@ -119,7 +119,7 @@ export class PlanBillingPeriod extends Component {
 					</FormSettingExplanation>
 				) }
 			</Fragment>
-        );
+		);
 	}
 
 	render() {

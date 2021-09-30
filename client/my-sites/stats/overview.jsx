@@ -67,7 +67,7 @@ class StatsOverview extends Component {
 				.format( 'YYYY-MM-DD' );
 
 			return (
-                <Fragment key={ site.ID }>
+				<Fragment key={ site.ID }>
 					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
 						<DatePicker period={ period } date={ date } />
 					) }
@@ -80,7 +80,7 @@ class StatsOverview extends Component {
 						siteSlug={ site.slug }
 					/>
 				</Fragment>
-            );
+			);
 		} );
 
 		return (

@@ -557,7 +557,7 @@ class DomainManagementNavigationEnhanced extends Component {
 
 	renderRegisteredDomainNavigation() {
 		return (
-            <Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getNameServers() }
 				{ this.getEmail() }
@@ -567,22 +567,22 @@ class DomainManagementNavigationEnhanced extends Component {
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
 			</Fragment>
-        );
+		);
 	}
 
 	renderSiteRedirectNavigation() {
 		return (
-            <Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getRedirectSettings() }
 				{ this.getDeleteDomain() }
 			</Fragment>
-        );
+		);
 	}
 
 	renderMappedDomainNavigation() {
 		return (
-            <Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getEmail() }
@@ -593,28 +593,28 @@ class DomainManagementNavigationEnhanced extends Component {
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
 			</Fragment>
-        );
+		);
 	}
 
 	renderTransferInDomainNavigation() {
 		return (
-            <Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getSecurity() }
 				{ this.getDeleteDomain() }
 			</Fragment>
-        );
+		);
 	}
 
 	renderWpcomDomainNavigation() {
 		return (
-            <Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getSiteAddressChange() }
 				{ this.getPickCustomDomain() }
 			</Fragment>
-        );
+		);
 	}
 
 	render() {

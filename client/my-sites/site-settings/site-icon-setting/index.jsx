@@ -197,7 +197,7 @@ class SiteIconSetting extends Component {
 		const { translate, siteId, isSaving, hasIcon } = this.props;
 
 		return (
-            <FormFieldset className="site-icon-setting">
+			<FormFieldset className="site-icon-setting">
 				<FormLabel className="site-icon-setting__heading">
 					{ translate( 'Site icon' ) }
 					<InfoPopover position="bottom right">
@@ -262,7 +262,7 @@ class SiteIconSetting extends Component {
 					/>
 				) }
 			</FormFieldset>
-        );
+		);
 	}
 }
 

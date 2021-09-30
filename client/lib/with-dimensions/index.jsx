@@ -28,7 +28,7 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  * @returns {object} the enhanced component
  */
 export default ( EnhancedComponent ) =>
-	(class WithWidth extends Component {
+	class WithWidth extends Component {
 		static displayName = `WithDimensions( ${
 			EnhancedComponent.displayName || EnhancedComponent.name
 		} )`;
@@ -96,4 +96,4 @@ export default ( EnhancedComponent ) =>
 				</div>
 			);
 		}
-	});
+	};

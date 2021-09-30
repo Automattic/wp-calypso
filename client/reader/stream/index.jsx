@@ -359,7 +359,7 @@ class ReaderStream extends Component {
 			} );
 
 		return (
-            <Fragment key={ itemKey }>
+			<Fragment key={ itemKey }>
 				<PostLifecycle
 					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 					isSelected={ isSelected }
@@ -381,7 +381,7 @@ class ReaderStream extends Component {
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
 			</Fragment>
-        );
+		);
 	};
 
 	render() {

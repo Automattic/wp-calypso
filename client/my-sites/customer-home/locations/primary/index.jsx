@@ -93,7 +93,7 @@ const Primary = ( { cards, trackCard } ) => {
 	const isUrgent = cards.length === 1 && cards[ 0 ] === TASK_RENEW_EXPIRED_PLAN;
 
 	return (
-        <DotPager
+		<DotPager
 			className={ classnames( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
@@ -111,7 +111,7 @@ const Primary = ( { cards, trackCard } ) => {
 					} )
 			) }
 		</DotPager>
-    );
+	);
 };
 
 const trackCardImpression = ( card ) => {

@@ -139,7 +139,7 @@ class NameServers extends Component {
 		const domain = getSelectedDomain( this.props );
 
 		return (
-            <Fragment>
+			<Fragment>
 				<DomainWarnings
 					domain={ domain }
 					position="domain-name-servers"
@@ -160,7 +160,7 @@ class NameServers extends Component {
 					) }
 				</VerticalNav>
 			</Fragment>
-        );
+		);
 	}
 
 	render() {

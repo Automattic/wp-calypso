@@ -66,7 +66,7 @@ export const radioSelectOption = (
 	);
 
 	return (
-        <Fragment key={ `fragment${ key }` }>
+		<Fragment key={ `fragment${ key }` }>
 			<FormLabel key={ key }>
 				<FormRadio
 					name={ groupName }
@@ -78,5 +78,5 @@ export const radioSelectOption = (
 			</FormLabel>
 			{ key === radioValue && selectInput }
 		</Fragment>
-    );
+	);
 };

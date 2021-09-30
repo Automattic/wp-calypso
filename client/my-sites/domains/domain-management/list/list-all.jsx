@@ -273,7 +273,7 @@ class ListAll extends Component {
 		const actionResult = this.getActionResult( domain.name );
 
 		return (
-            <Fragment key={ `domain-item-${ index }-${ domain.name }` }>
+			<Fragment key={ `domain-item-${ index }-${ domain.name }` }>
 				{ domain?.blogId && ! isContactEmailEditContext ? (
 					<InView triggerOnce>
 						{ ( { inView, ref } ) => (
@@ -308,7 +308,7 @@ class ListAll extends Component {
 					/>
 				) }
 			</Fragment>
-        );
+		);
 	}
 
 	handleDomainListHeaderToggle = ( selected ) => {

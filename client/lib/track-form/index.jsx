@@ -4,7 +4,7 @@ import { Component } from 'react';
 const debug = debugFactory( 'calypso:track-form' );
 
 export const trackForm = ( WrappedComponent ) =>
-	(class TrackFormComponent extends Component {
+	class TrackFormComponent extends Component {
 		state = {
 			dirtyFields: [],
 			fields: {},
@@ -55,6 +55,6 @@ export const trackForm = ( WrappedComponent ) =>
 				/>
 			);
 		}
-	});
+	};
 
 export default trackForm;

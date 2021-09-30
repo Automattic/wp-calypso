@@ -59,11 +59,11 @@ function WordPressFreePurchaseLabel() {
 	const { __ } = useI18n();
 
 	return (
-        <Fragment>
+		<Fragment>
 			<div>{ __( 'Free Purchase' ) }</div>
 			<WordPressLogo />
 		</Fragment>
-    );
+	);
 }
 
 function WordPressFreePurchaseSummary() {

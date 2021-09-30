@@ -36,7 +36,7 @@ export function PendingListItem( {
 	}
 
 	return (
-        <Fragment>
+		<Fragment>
 			<PurchaseSiteHeader siteId={ siteId } name={ siteTitle } domain={ siteDomain } />
 			<Card className={ 'pending-payments__list-item is-compact' }>
 				<span className="pending-payments__list-item-wrapper">
@@ -65,7 +65,7 @@ export function PendingListItem( {
 				</span>
 			</Card>
 		</Fragment>
-    );
+	);
 }
 
 PendingListItem.propTypes = {

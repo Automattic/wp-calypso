@@ -31,7 +31,7 @@ export default function WpcomDomainItem( {
 	const handleToggleMenu = () => setMenuVisibility( ! menuVisibility );
 
 	return (
-        <div className="wpcom-domain-item">
+		<div className="wpcom-domain-item">
 			<span className="wpcom-domain-item__description">
 				{ createInterpolateElement(
 					sprintf(
@@ -81,7 +81,7 @@ export default function WpcomDomainItem( {
 				) }
 			</PopoverMenu>
 		</div>
-    );
+	);
 }
 
 WpcomDomainItem.propTypes = {

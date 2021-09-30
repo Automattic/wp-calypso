@@ -70,7 +70,7 @@ function WordPressCreditsLabel() {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	return (
-        <Fragment>
+		<Fragment>
 			<div>
 				{
 					/* translators: %(amount)s is the total amount of credits available in localized currency */
@@ -81,7 +81,7 @@ function WordPressCreditsLabel() {
 			</div>
 			<WordPressLogo />
 		</Fragment>
-    );
+	);
 }
 
 function WordPressCreditsSummary() {

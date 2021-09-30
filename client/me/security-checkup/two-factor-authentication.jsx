@@ -30,11 +30,11 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 
 		if ( ! areUserSettingsLoaded ) {
 			return (
-                <Fragment>
+				<Fragment>
 					<QueryUserSettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
 				</Fragment>
-            );
+			);
 		}
 
 		let icon;
@@ -69,7 +69,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<QueryUserSettings />
 				<SecurityCheckupNavigationItem
 					path={ '/me/security/two-step' }
@@ -78,7 +78,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 					description={ description }
 				/>
 			</Fragment>
-        );
+		);
 	}
 }
 

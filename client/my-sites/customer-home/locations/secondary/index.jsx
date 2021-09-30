@@ -22,15 +22,17 @@ const Secondary = ( { cards } ) => {
 		return null;
 	}
 
-	return <>
-        { cards.map(
-            ( card ) =>
-                cardComponents[ card ] &&
-                createElement( cardComponents[ card ], {
-                    key: card,
-                } )
-        ) }
-    </>;
+	return (
+		<>
+			{ cards.map(
+				( card ) =>
+					cardComponents[ card ] &&
+					createElement( cardComponents[ card ], {
+						key: card,
+					} )
+			) }
+		</>
+	);
 };
 
 export default Secondary;

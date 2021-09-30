@@ -81,7 +81,7 @@ class SiteImporterSitePreview extends Component {
 		} );
 
 		return (
-            <div>
+			<div>
 				{ ! isError ? (
 					<Fragment>
 						{ ! isLoading && (
@@ -145,7 +145,7 @@ class SiteImporterSitePreview extends Component {
 					</Fragment>
 				) }
 			</div>
-        );
+		);
 	};
 }
 

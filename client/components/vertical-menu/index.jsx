@@ -30,7 +30,7 @@ export class VerticalMenu extends PureComponent {
 		const { selectedIndex } = this.state;
 
 		return (
-            <div className="vertical-menu">
+			<div className="vertical-menu">
 				{ Children.map( children, ( Item, index ) =>
 					cloneElement( Item, {
 						isSelected: index === selectedIndex,
@@ -38,7 +38,7 @@ export class VerticalMenu extends PureComponent {
 					} )
 				) }
 			</div>
-        );
+		);
 	}
 }
 

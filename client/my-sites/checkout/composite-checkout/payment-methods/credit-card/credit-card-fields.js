@@ -175,11 +175,11 @@ const StripeFields = styled.div`
 
 function LoadingFields() {
 	return (
-        <Fragment>
+		<Fragment>
 			<LoadingIndicator />
 			<CreditCardLoading />
 		</Fragment>
-    );
+	);
 }
 
 const LoadingIndicator = styled( Spinner )`

@@ -137,7 +137,7 @@ export default class DesignAssets extends Component {
 		} );
 
 		return (
-            <Main className={ className }>
+			<Main className={ className }>
 				<DocumentHead title="UI Components" />
 
 				{ component ? (
@@ -271,6 +271,6 @@ export default class DesignAssets extends Component {
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
 				</Collection>
 			</Main>
-        );
+		);
 	}
 }

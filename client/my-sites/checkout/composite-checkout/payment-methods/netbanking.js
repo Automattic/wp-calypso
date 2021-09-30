@@ -311,13 +311,13 @@ function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 
 function NetBankingLabel() {
 	return (
-        <Fragment>
+		<Fragment>
 			<span>Net Banking</span>
 			<PaymentMethodLogos className="netbanking__logo payment-logos">
 				<NetbankingLogo />
 			</PaymentMethodLogos>
 		</Fragment>
-    );
+	);
 }
 
 const NetbankingLogo = styled( NetbankingLogoImg )`

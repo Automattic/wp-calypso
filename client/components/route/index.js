@@ -18,10 +18,11 @@ export function RouteProvider( {
 } ) {
 	// modify the `currentRouteInfo` object (and trigger rerender of consumers) only if any
 	// of its properties really changes.
-	const currentRouteInfo = useMemo(
-		() => ( { currentSection, currentRoute, currentQuery } ),
-		[ currentSection, currentRoute, currentQuery ]
-	);
+	const currentRouteInfo = useMemo( () => ( { currentSection, currentRoute, currentQuery } ), [
+		currentSection,
+		currentRoute,
+		currentQuery,
+	] );
 	return <RouteContext.Provider value={ currentRouteInfo }>{ children }</RouteContext.Provider>;
 }
 

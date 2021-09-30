@@ -60,7 +60,7 @@ class AddDomainButton extends Component {
 		if ( specificSiteActions ) {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 			return (
-                <Fragment>
+				<Fragment>
 					<PopoverMenuItem onClick={ this.clickAddDomain }>
 						{ translate( 'Search for a domain' ) }
 					</PopoverMenuItem>
@@ -68,11 +68,11 @@ class AddDomainButton extends Component {
 						{ translate( 'Use a domain I own' ) }
 					</PopoverMenuItem>
 				</Fragment>
-            );
+			);
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
 					{ translate( 'Manage all domains' ) }
 				</PopoverMenuItem>
@@ -86,7 +86,7 @@ class AddDomainButton extends Component {
 					{ translate( 'Add a domain without a site' ) }
 				</PopoverMenuItem>
 			</Fragment>
-        );
+		);
 	};
 
 	render() {
@@ -97,7 +97,7 @@ class AddDomainButton extends Component {
 			: translate( 'Other domain options' );
 
 		return (
-            <Fragment>
+			<Fragment>
 				<Button
 					primary={ this.props.specificSiteActions }
 					compact
@@ -118,7 +118,7 @@ class AddDomainButton extends Component {
 					{ this.renderOptions() }
 				</PopoverMenu>
 			</Fragment>
-        );
+		);
 	}
 }
 

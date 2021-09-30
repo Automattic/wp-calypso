@@ -391,13 +391,13 @@ function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 
 function EbanxTefLabel() {
 	return (
-        <Fragment>
+		<Fragment>
 			<span>{ 'Transferência bancária' }</span>
 			<PaymentMethodLogos className="ebanx-tef__logo payment-logos">
 				<EbanxTefLogo />
 			</PaymentMethodLogos>
 		</Fragment>
-    );
+	);
 }
 
 const EbanxTefLogo = styled( EbanxTefLogoImg )`

@@ -72,7 +72,7 @@ class RenewButton extends Component {
 		}
 
 		return (
-            <Fragment>
+			<Fragment>
 				<Button
 					compact={ this.props.compact }
 					primary={ this.props.primary }
@@ -82,7 +82,7 @@ class RenewButton extends Component {
 					{ buttonLabel }
 				</Button>
 			</Fragment>
-        );
+		);
 	}
 }
 

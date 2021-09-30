@@ -86,7 +86,7 @@ class PeopleListItem extends PureComponent {
 		} );
 
 		return (
-            <div className={ className }>
+			<div className={ className }>
 				{ type === 'invite-details' &&
 					( isPending ? (
 						translate( 'Pending' )
@@ -107,7 +107,7 @@ class PeopleListItem extends PureComponent {
 					</Button>
 				) }
 			</div>
-        );
+		);
 	};
 
 	render() {
