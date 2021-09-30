@@ -4,7 +4,6 @@ import moment from 'moment';
 
 export const getTransferRestrictionMessage = ( inboundTransferStatus ) => {
 	const {
-		creationDate,
 		domain,
 		termMaximumInYears,
 		transferEligibleDate,
@@ -30,14 +29,14 @@ export const getTransferRestrictionMessage = ( inboundTransferStatus ) => {
 	} else if ( 'initial_registration_period' === transferRestrictionStatus ) {
 		reason = createInterpolateElement(
 			sprintf(
-				/* translators: %(transferEligibleDate)s: a date formatted according to the user's locale (e.g: September 28, 2021), %(daysAgoRegistered)d: number of days */
+				/* translators:  %(daysUntilTransferEligible)d: number of days, %(transferEligibleDate)s: a date formatted according to the user's locale (e.g: September 28, 2021) */
 				__(
-					'Newly-registered domains are not eligible for transfer. <strong>%(domain)s</strong> was registered ' +
-						'%(daysAgoRegistered)d days ago, and can be transferred starting %(transferEligibleDate)s.'
+					'Newly registered domains cannot be transferred. This domain can be transferred in <strong>%(daysUntilTransferEligible)d days</strong>, ' +
+						"starting %(transferEligibleDate)s. You don't have to wait though, you can connect your domain to your site instead."
 				),
 				{
 					domain,
-					daysAgoRegistered: moment().diff( creationDate, 'days' ),
+					daysUntilTransferEligible: transferEligibleMoment.diff( moment(), 'days' ),
 					transferEligibleDate: transferEligibleMoment.format( 'LL' ),
 				}
 			),
