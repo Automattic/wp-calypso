@@ -102,16 +102,21 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 }
 
 .mailbox-selection-list__container {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 	.mailbox-selection-list {
 		box-sizing: border-box;
-		width: 310px;
+		padding-left: 16px;
+		padding-right: 16px;
 
-		@include break-medium {
-			width: 343px;
+		@include break-mobile {
+			padding-left: 0;
+			padding-right: 0;
+			max-width: 80%;
 		}
 
 		@include break-large {
