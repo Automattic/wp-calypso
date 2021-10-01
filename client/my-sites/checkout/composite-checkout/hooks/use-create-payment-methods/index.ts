@@ -59,6 +59,7 @@ export function useCreateCreditCard( {
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
+	initialUseForAllSubscriptions,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -67,9 +68,13 @@ export function useCreateCreditCard( {
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
+	initialUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
-	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
+	const stripePaymentMethodStore = useMemo(
+		() => createCreditCardPaymentMethodStore( { initialUseForAllSubscriptions } ),
+		[ initialUseForAllSubscriptions ]
+	);
 	const stripeMethod = useMemo(
 		() =>
 			shouldLoadStripeMethod
