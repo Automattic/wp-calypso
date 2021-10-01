@@ -4,7 +4,6 @@ import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
-	useSelect,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
@@ -46,10 +45,6 @@ export default function PaymentMethodSelector( {
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
-
-	const useForAllSubscriptions = useSelect(
-		( select ) => select( 'credit-card' ).useForAllSubscriptions() as boolean
-	);
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
@@ -111,7 +106,6 @@ export default function PaymentMethodSelector( {
 					assignNewCardProcessor(
 						{
 							purchase,
-							useForAllSubscriptions,
 							translate,
 							stripe,
 							stripeConfiguration,
