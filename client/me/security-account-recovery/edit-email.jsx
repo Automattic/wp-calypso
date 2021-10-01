@@ -9,10 +9,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Buttons from './buttons';
 
 class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
-	constructor( props ) {
-		super( props );
-		this.emailInput = createRef();
-	}
 	static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
 
 	static propTypes = {
@@ -26,6 +22,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		storedEmail: null,
 	};
 
+	emailInputRef = createRef();
 	state = {
 		email: this.props.storedEmail || null,
 	};
@@ -66,7 +63,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 						isError={ this.state.isInvalid }
 						onKeyUp={ this.onKeyUp }
 						name="email"
-						ref={ this.emailInput }
+						ref={ this.emailInputRef }
 						value={ this.state.email }
 						onChange={ this.handleChange }
 					/>
@@ -88,7 +85,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 	}
 
 	focusInput = () => {
-		this.emailInput.current.focus();
+		this.emailInputRef.current.focus();
 	};
 
 	isSavable = () => {

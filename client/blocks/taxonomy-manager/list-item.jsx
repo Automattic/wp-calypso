@@ -22,10 +22,6 @@ import { deleteTerm } from 'calypso/state/terms/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class TaxonomyManagerListItem extends Component {
-	constructor( props ) {
-		super( props );
-		this.countRef = createRef();
-	}
 	static propTypes = {
 		canSetAsDefault: PropTypes.bool,
 		deleteTerm: PropTypes.func,
@@ -44,6 +40,8 @@ class TaxonomyManagerListItem extends Component {
 	static defaultProps = {
 		onClick: () => {},
 	};
+
+	countRef = createRef();
 
 	state = {
 		showDeleteDialog: false,
@@ -168,7 +166,11 @@ class TaxonomyManagerListItem extends Component {
 						/>
 					</div>
 				) }
-				<Tooltip context={ this.countRef } isVisible={ this.state.showTooltip } position="left">
+				<Tooltip
+					context={ this.countRef.current }
+					isVisible={ this.state.showTooltip }
+					position="left"
+				>
 					{ this.tooltipText() }
 				</Tooltip>
 				<EllipsisMenu position="bottom left">

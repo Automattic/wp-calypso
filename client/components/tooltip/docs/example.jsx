@@ -4,30 +4,23 @@ import FormSelect from 'calypso/components/forms/form-select';
 import TooltipComponent from 'calypso/components/tooltip';
 
 class Tooltip extends PureComponent {
-	constructor( props ) {
-		super( props );
+	tooltipRef = createRef();
+	state = {
+		position: 'bottom right',
+		show: false,
+	};
 
-		this.open = this.open.bind( this );
-		this.close = this.close.bind( this );
-		this.changePosition = this.changePosition.bind( this );
-		this.tooltip = createRef();
-		this.state = {
-			position: 'bottom right',
-			show: false,
-		};
-	}
-
-	open() {
+	open = () => {
 		this.setState( { show: true } );
-	}
+	};
 
-	close() {
+	close = () => {
 		this.setState( { show: false } );
-	}
+	};
 
-	changePosition( event ) {
+	changePosition = ( event ) => {
 		this.setState( { position: event.target.value } );
-	}
+	};
 
 	render() {
 		const size = 30;
@@ -68,7 +61,7 @@ class Tooltip extends PureComponent {
 						onMouseEnter={ this.open }
 						onMouseLeave={ this.close }
 						onClick={ this.close }
-						ref={ this.tooltip }
+						ref={ this.tooltipRef }
 					>
 						T
 					</span>
@@ -77,7 +70,7 @@ class Tooltip extends PureComponent {
 						isVisible={ this.state.show }
 						onClose={ this.close }
 						position={ this.state.position }
-						context={ this.tooltip }
+						context={ this.tooltipRef.current }
 					>
 						<div style={ { padding: '10px' } }>Simple Tooltip Instance</div>
 					</TooltipComponent>

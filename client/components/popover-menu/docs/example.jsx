@@ -8,48 +8,38 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 const customPosition = { top: 300, left: 500 };
 
 class PopoverExample extends PureComponent {
-	constructor( props ) {
-		super( props );
-
-		this.changePopoverPosition = this.changePopoverPosition.bind( this );
-		this.swapPopoverVisibility = this.swapPopoverVisibility.bind( this );
-		this.closePopover = this.closePopover.bind( this );
-		this.showPopoverMenu = this.showPopoverMenu.bind( this );
-		this.closePopoverMenu = this.closePopoverMenu.bind( this );
-		this.popoverButtonRef = createRef();
-		this.popoverMenuButtonRef = createRef();
-
-		this.state = {
-			popoverPosition: 'bottom left',
-			showPopover: false,
-			showPopoverMenu: false,
-		};
-	}
+	state = {
+		popoverPosition: 'bottom left',
+		showPopover: false,
+		showPopoverMenu: false,
+	};
+	popoverButtonRef = createRef();
+	popoverMenuButtonRef = createRef();
 
 	// set position for all popovers
-	changePopoverPosition( event ) {
+	changePopoverPosition = ( event ) => {
 		this.setState( { popoverPosition: event.target.value } );
-	}
+	};
 
-	swapPopoverVisibility() {
+	swapPopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
-	}
+	};
 
-	closePopover() {
+	closePopover = () => {
 		this.setState( { showPopover: false } );
-	}
+	};
 
-	showPopoverMenu() {
+	showPopoverMenu = () => {
 		this.setState( {
 			showPopoverMenu: ! this.state.showPopoverMenu,
 		} );
-	}
+	};
 
-	closePopoverMenu() {
+	closePopoverMenu = () => {
 		this.setState( { showPopoverMenu: false } );
-	}
+	};
 
-	renderPopover() {
+	renderPopover = () => {
 		return (
 			<div>
 				<button
@@ -65,16 +55,16 @@ class PopoverExample extends PureComponent {
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.popoverButtonRef }
+					context={ this.popoverButtonRef.current }
 					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
 				>
 					<div style={ { padding: '10px' } }>Simple Popover Instance</div>
 				</Popover>
 			</div>
 		);
-	}
+	};
 
-	renderMenuPopover() {
+	renderMenuPopover = () => {
 		return (
 			<div>
 				<button
@@ -92,7 +82,7 @@ class PopoverExample extends PureComponent {
 					isVisible={ this.state.showPopoverMenu }
 					onClose={ this.closePopoverMenu }
 					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.popoverMenuButtonRef }
+					context={ this.popoverMenuButtonRef.current }
 					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
 				>
 					<PopoverMenuItem action="A">Item A</PopoverMenuItem>
@@ -101,7 +91,7 @@ class PopoverExample extends PureComponent {
 				</PopoverMenu>
 			</div>
 		);
-	}
+	};
 
 	render() {
 		return (

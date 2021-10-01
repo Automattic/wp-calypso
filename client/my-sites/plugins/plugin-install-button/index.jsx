@@ -269,7 +269,7 @@ const Notice = ( { isEmbed, warningText, children } ) => {
 				popoverName={ 'Plugin Action Disabled Install' }
 				gaEventCategory="Plugins"
 				ref={ infoPopover }
-				ignoreContext={ disabledInfoLabel }
+				ignoreContext={ disabledInfoLabel.current }
 			>
 				{ children }
 			</InfoPopover>

@@ -3,17 +3,13 @@ import { localize } from 'i18n-calypso';
 import { filter, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
+import { findDOMNode } from 'react-dom';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
 import previewWidget from './preview-widget';
 
 class SharingButtonsPreviewButtons extends Component {
-	constructor( props ) {
-		super( props );
-		this.previewIframe = createRef();
-	}
-
 	static displayName = 'SharingButtonsPreviewButtons';
 
 	static propTypes = {
@@ -32,6 +28,9 @@ class SharingButtonsPreviewButtons extends Component {
 		showMore: false,
 		forceMorePreviewVisible: false,
 	};
+
+	previewIframeRef = createRef();
+	moreButtonRef = createRef();
 
 	state = {
 		morePreviewOffset: null,
@@ -74,10 +73,10 @@ class SharingButtonsPreviewButtons extends Component {
 		let offset;
 
 		// Ensure this only triggers in the context of an official preview
-		if ( ! this.previewIframe.current ) {
+		if ( ! this.previewIframeRef.current ) {
 			return;
 		}
-		const preview = this.previewIframe.current;
+		const preview = this.previewIframeRef.current;
 
 		// Parse the JSON message data
 		let data;
@@ -128,11 +127,11 @@ class SharingButtonsPreviewButtons extends Component {
 		if ( 'official' === this.props.style ) {
 			// To show the more preview when rendering official style buttons,
 			// we request that the frame emit a show message with the offset
-			this.previewIframe.current.contentWindow.postMessage( 'more-show', '*' );
+			this.previewIframeRef.current.contentWindow.postMessage( 'more-show', '*' );
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button
-			moreButton = this.moreButton.current;
+			moreButton = findDOMNode( this.moreButtonRef.current );
 			offset = {
 				top: moreButton.offsetTop + moreButton.clientHeight,
 				left: moreButton.offsetLeft,
@@ -175,7 +174,7 @@ class SharingButtonsPreviewButtons extends Component {
 
 		return (
 			<ResizableIframe
-				ref={ this.previewIframe }
+				ref={ this.previewIframeRef }
 				src={ previewUrl }
 				width="100%"
 				frameBorder="0"
@@ -200,7 +199,7 @@ class SharingButtonsPreviewButtons extends Component {
 		if ( this.props.showMore ) {
 			buttons.push(
 				<ButtonsPreviewButton
-					ref={ this.moreButton }
+					ref={ this.moreButtonRef }
 					key="more"
 					button={ {
 						ID: 'more',

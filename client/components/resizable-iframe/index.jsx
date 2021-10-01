@@ -10,10 +10,6 @@ const debug = debugFactory( 'calypso:resizable-iframe' );
 const noop = () => {};
 
 export default class extends Component {
-	constructor( props ) {
-		super( props );
-		this.iframeRef = createRef();
-	}
 	static displayName = 'ResizableIframe';
 
 	static propTypes = {
@@ -29,6 +25,7 @@ export default class extends Component {
 		onResize: noop,
 	};
 
+	iframeRef = createRef();
 	state = { width: 0, height: 0 };
 
 	componentDidMount() {
