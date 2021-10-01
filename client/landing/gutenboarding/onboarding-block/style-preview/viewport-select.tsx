@@ -1,14 +1,14 @@
 import { SVG, Path, Rect, Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import * as React from 'react';
 import type { Viewport } from './types';
+import type { FunctionComponent } from 'react';
 
 interface ButtonProps {
 	onClick: () => void;
 	isSelected?: boolean;
 }
-const ViewportButton: React.FunctionComponent< ButtonProps > = ( {
+const ViewportButton: FunctionComponent< ButtonProps > = ( {
 	children,
 	onClick,
 	isSelected,
@@ -32,7 +32,7 @@ interface Props {
 	onSelect: ( selection: Viewport ) => void;
 	selected: Viewport;
 }
-const ViewportSelect: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
+const ViewportSelect: FunctionComponent< Props > = ( { onSelect, selected } ) => {
 	const { __ } = useI18n();
 	return (
 		<div className="style-preview__viewport-select">

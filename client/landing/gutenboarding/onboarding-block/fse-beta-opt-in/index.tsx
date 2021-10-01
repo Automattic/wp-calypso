@@ -9,15 +9,15 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, siteLogo, header, navigation, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import * as React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-const FseBetaOptIn: React.FunctionComponent = () => {
+const FseBetaOptIn: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goNext, goBack } = useStepNavigation();
 	const { enrollInFseBeta } = useDispatch( ONBOARD_STORE );
