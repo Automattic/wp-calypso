@@ -1,6 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -30,6 +30,7 @@ const TitanNewMailbox = ( {
 	showLabels = true,
 } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 
 	const hasBeenValidated =
 		[ alternativeEmail, mailbox, name, password ].some( ( value ) => '' !== value ) ||
@@ -78,7 +79,6 @@ const TitanNewMailbox = ( {
 									setNameFieldTouched( hasBeenValidated );
 								} }
 								onKeyUp={ onReturnKeyPress }
-								suffix={ `@${ domain }` }
 							/>
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
@@ -98,7 +98,8 @@ const TitanNewMailbox = ( {
 								setMailboxFieldTouched( hasBeenValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
-							suffix={ `\u200e@${ domain }\u202c` }
+							prefix={ isRtl ? `\u200e@${ domain }\u202c` : null }
+							suffix={ isRtl ? null : `\u200e@${ domain }\u202c` }
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
