@@ -6,7 +6,7 @@
 		"isolatedModules": true,
 		"noEmit": true,
 
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"allowJs": true,
 		"checkJs": false,
 
