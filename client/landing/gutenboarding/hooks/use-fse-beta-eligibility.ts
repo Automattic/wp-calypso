@@ -12,7 +12,7 @@ export default function useFseBetaEligibility(): boolean {
 		return false;
 	}
 
-	// Force the FSE Beta on development environment.
+	// Force the FSE Beta on development and Horizon environments.
 	if ( isEnabled( 'full-site-editing/beta-opt-in' ) ) {
 		return true;
 	}
