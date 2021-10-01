@@ -164,7 +164,10 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				brand: brandReducer( state.brand, action ),
-				shouldAssignToAllPaymentMethods: allPaymentMethodsReducer(),
+				shouldAssignToAllPaymentMethods: allPaymentMethodsReducer(
+					state.shouldAssignToAllPaymentMethods,
+					action
+				),
 			};
 		},
 		actions,
