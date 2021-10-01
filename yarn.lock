@@ -171,6 +171,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-logger@^1.0.0, @automattic/calypso-logger@workspace:packages/calypso-logger":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-logger@workspace:packages/calypso-logger"
+  dependencies:
+    loglevel: ^1.7.1
+    typescript: ^4.4.3
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-polyfills@^2.0.0, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
@@ -11895,6 +11904,7 @@ __metadata:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-logger": ^1.0.0
     "@automattic/calypso-polyfills": ^2.0.0
     "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
@@ -24638,7 +24648,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"loglevel@npm:^1.6.8":
+"loglevel@npm:^1.6.8, loglevel@npm:^1.7.1":
   version: 1.7.1
   resolution: "loglevel@npm:1.7.1"
   checksum: 14b481b7f5a3e2405f2c54c7a5914ba0e65c6cbc961dc90dc8ec67e1cf0ce549330ff5ab9024e52f232f8f2ca78ef27286f72c38f495ba8ab281aff18763b53c

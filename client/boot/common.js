@@ -1,5 +1,6 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
+import { setup as setupLogger, debugFactory2 } from '@automattic/calypso-logger';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import page from 'page';
@@ -50,6 +51,7 @@ import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
+const debug2 = debugFactory2( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
@@ -445,7 +447,13 @@ const boot = ( currentUser, registerRoutes ) => {
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {
+	setupLogger( config( 'env_id' ) === 'production' ? 'warn' : 'trace' );
+
 	const user = await initializeCurrentUser();
-	debug( `Starting ${ appName }. Let's do this.` );
+
+	console.debug( `Starting ${ appName }. Let's do this. 1` );
+	debug( `Starting ${ appName }. Let's do this. 2 ` );
+	debug2( `Starting ${ appName }. Let's do this. 3` );
+
 	boot( user, registerRoutes );
 };
