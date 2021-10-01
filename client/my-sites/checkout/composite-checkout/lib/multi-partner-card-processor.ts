@@ -32,7 +32,7 @@ type StripeCardTransactionRequest = {
 	countryCode: string | undefined;
 	postalCode: string | undefined;
 	cardNumberElement: StripeCardNumberElement;
-	shouldAssignToAllPaymentMethods: boolean;
+	useForAllSubscriptions: boolean;
 };
 
 type EbanxCardTransactionRequest = {
