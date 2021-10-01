@@ -81,13 +81,6 @@
 		flex-shrink: 0;
 	}
 
-	.sidebar__menu-item-last-updated {
-		display: block;
-		font-style: italic;
-		font-size: $font-body-extra-small;
-		color:rgba( var( --color-sidebar-text-rgb ), 0.6 );
-	}
-
 	.sidebar__separator {
 		height: 0;
 	}

@@ -12,14 +12,12 @@ const successfulApiResponse = freeze( {
 			blog_ID: '122463145',
 			URL: 'http://readerpostcards.wordpress.com',
 			date_subscribed: '2017-01-12T03:55:45+00:00',
-			last_updated: '2021-09-29T14:18:21+00:00',
 		},
 		{
 			ID: '123456',
 			blog_ID: '64146350',
 			URL: 'https://fivethirtyeight.com/',
 			date_subscribed: '2016-01-12T03:55:45+00:00',
-			last_updated: null,
 		},
 	],
 } );
@@ -46,7 +44,6 @@ describe( '#subscriptionsFromApi', () => {
 				URL: 'http://readerpostcards.wordpress.com',
 				feed_URL: 'http://readerpostcards.wordpress.com',
 				date_subscribed: Date.parse( '2017-01-12T03:55:45+00:00' ),
-				last_updated: Date.parse( '2021-09-29T14:18:21+00:00' ), // 1632925101000,
 			},
 			{
 				ID: 123456,
@@ -54,7 +51,6 @@ describe( '#subscriptionsFromApi', () => {
 				URL: 'https://fivethirtyeight.com/',
 				feed_URL: 'https://fivethirtyeight.com/',
 				date_subscribed: Date.parse( '2016-01-12T03:55:45+00:00' ),
-				last_updated: NaN, // Date.parse transforms null to NaN
 			},
 		];
 		expect( subscriptionsFromApi( successfulApiResponse ) ).eql( transformedSubs );
