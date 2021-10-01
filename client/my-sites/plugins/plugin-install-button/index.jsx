@@ -194,7 +194,6 @@ export class PluginInstallButton extends Component {
 		if ( siteIsConnected === false ) {
 			return (
 				<Notice warningText={ translate( 'Site unreachable' ) } isEmbed={ isEmbed }>
-					{ ' ' }
 					<div>
 						<p>
 							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
