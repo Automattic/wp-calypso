@@ -92,7 +92,7 @@
 		"lint:php:fix": "../../vendor/bin/phpcbf --standard=../phpcs.xml ./ "
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0",
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^2.0.0",
