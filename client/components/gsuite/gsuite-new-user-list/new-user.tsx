@@ -201,7 +201,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						onClick={ onUserRemove }
 					>
 						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove user' ) }</span>
+						<span>{ translate( 'Remove this mailbox' ) }</span>
 					</Button>
 				) }
 			</FormFieldset>
