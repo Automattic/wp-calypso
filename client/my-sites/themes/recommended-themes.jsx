@@ -39,7 +39,8 @@ class RecommendedThemes extends Component {
 const ConnectedRecommendedThemes = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const filter = getRecommendedThemesFilter( state, siteId );
+		const filter = getRecommendedThemesFilter( siteId );
+
 		return {
 			customizedThemesList: getRecommendedThemesSelector( state, filter ),
 			isLoading: areRecommendedThemesLoading( state, filter ),
