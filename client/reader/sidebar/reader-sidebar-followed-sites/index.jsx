@@ -22,7 +22,6 @@ export class ReaderSidebarFollowedSites extends Component {
 		this.state = {
 			sitePage: 1,
 			sitesToShow: [],
-			allSitesLoaded: false,
 		};
 	}
 
@@ -39,17 +38,10 @@ export class ReaderSidebarFollowedSites extends Component {
 
 	componentDidUpdate( prevProps, prevState ) {
 		const { sitePage } = this.state;
-		const { sitesPerPage, sites } = this.props;
-		const sitesArray = Object.values( sites );
-		const atEnd = sitesPerPage * sitePage >= sitesArray.length ? true : false;
+		const { sitesPerPage } = this.props;
 
-		if (
-			this.props.sites !== prevProps.sites ||
-			this.state.sitePage !== prevState.sitePage ||
-			this.state.allSitesLoaded !== prevState.allSitesLoaded
-		) {
+		if ( this.props.sites !== prevProps.sites || this.state.sitePage !== prevState.sitePage ) {
 			this.setState( {
-				allSitesLoaded: atEnd,
 				sitePage: this.state.sitePage,
 				sitesToShow: Object.values( this.props.sites ).slice( 0, sitesPerPage * sitePage ),
 			} );
@@ -82,16 +74,13 @@ export class ReaderSidebarFollowedSites extends Component {
 	loadMoreSites = () => {
 		const { sitePage } = this.state;
 		const { sites, sitesPerPage } = this.props;
-		const sitesArray = Object.values( sites );
 
 		//If we've reached the end of the set of sites, all sites have loaded
-		if ( sitesPerPage * sitePage >= sitesArray.length ) {
-			this.setState( { allSitesLoaded: true } );
+		if ( sitesPerPage * sitePage >= sites.length ) {
 			return;
 		}
 
 		this.setState( {
-			allSitesLoaded: false,
 			sitePage: this.state.sitePage + 1,
 		} );
 	};
@@ -105,8 +94,9 @@ export class ReaderSidebarFollowedSites extends Component {
 	};
 
 	render() {
-		const { path, translate, sites } = this.props;
-		const { sitesToShow, allSitesLoaded } = this.state;
+		const { path, translate, sites, sitesPerPage } = this.props;
+		const { sitesToShow, sitePage } = this.state;
+		const allSitesLoaded = sitesPerPage * sitePage >= sites.length;
 
 		if ( ! sitesToShow ) {
 			return null;
