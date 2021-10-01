@@ -111,6 +111,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				{ ! allSitesLoaded && (
 					<Button
 						plain
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className="sidebar-streams__following-load-more"
 						onClick={ this.loadMoreSites }
 					>
