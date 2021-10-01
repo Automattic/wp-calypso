@@ -3,9 +3,7 @@ const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 // We implicitly use browserslist configuration in package.json for build targets.
 
 const babelConfig = {
-	presets: [
-		[ '@automattic/calypso-build/babel/default', { bugfixes: true, runtime: 'automatic' } ],
-	],
+	presets: [ [ '@automattic/calypso-build/babel/default', { bugfixes: true } ] ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: true, ignore: ! isBrowser } ] ],
 	env: {
 		production: {

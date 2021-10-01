@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, FunctionComponent } from 'react';
+import { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';

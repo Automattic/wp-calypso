@@ -1,7 +1,7 @@
 import { isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { useMemo, ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -45,7 +45,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	// Don't show the Activity Log promo for Personal or Premium plan owners.
-	const filteredPromos: PromoSectionProps = React.useMemo( () => {
+	const filteredPromos: PromoSectionProps = useMemo( () => {
 		if ( isPersonalPlan( planSlug ) || isPremiumPlan( planSlug ) ) {
 			return { promos: [ promos[ 0 ] ] };
 		}

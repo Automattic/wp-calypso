@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate, TranslateResult, useRtl } from 'i18n-calypso';
-import React, { ChangeEvent, FunctionComponent, useState } from 'react';
+import { ChangeEvent, FunctionComponent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -203,7 +203,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						onClick={ onUserRemove }
 					>
 						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove user' ) }</span>
+						<span>{ translate( 'Remove this mailbox' ) }</span>
 					</Button>
 				) }
 			</FormFieldset>

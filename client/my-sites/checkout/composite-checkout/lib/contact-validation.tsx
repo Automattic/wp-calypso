@@ -8,7 +8,6 @@ import {
 import { useEvents } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';

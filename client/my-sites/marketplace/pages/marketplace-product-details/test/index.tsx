@@ -4,7 +4,6 @@
 
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
 import { render, fireEvent } from '@testing-library/react';
-import React from 'react';
 import PurchaseArea from '../purchase-area';
 
 const onNavigateToCheckoutMockFunction = jest.fn();

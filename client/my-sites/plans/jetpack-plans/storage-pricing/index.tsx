@@ -1,5 +1,6 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';

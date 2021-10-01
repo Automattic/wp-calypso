@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
@@ -13,7 +13,7 @@ const QueryJetpackScan = ( { siteId }: Props ) => {
 	);
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( requestingJetpackScan ) {
 			return;
 		}

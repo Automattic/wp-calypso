@@ -1,6 +1,6 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Moment } from 'moment';
-import React from 'react';
+import { PureComponent } from 'react';
 
 interface Props extends LocalizeProps {
 	dateFormat?: string;
@@ -10,7 +10,7 @@ interface Props extends LocalizeProps {
 	purchaseDateMoment?: Moment;
 }
 
-export class ProductExpiration extends React.PureComponent< Props > {
+export class ProductExpiration extends PureComponent< Props > {
 	static defaultProps = {
 		dateFormat: 'LL',
 		isRefundable: false,

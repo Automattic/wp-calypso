@@ -6,7 +6,8 @@ import { close, search, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import * as React from 'react';
 import { useUpdateEffect } from './utils';
 import type {
 	ReactNode,

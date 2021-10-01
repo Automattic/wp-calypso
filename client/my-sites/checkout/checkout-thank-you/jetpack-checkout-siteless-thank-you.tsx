@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
-import React, { FC, useState, useCallback, useEffect } from 'react';
+import { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import FormButton from 'calypso/components/forms/form-button';

@@ -1,5 +1,4 @@
 import { Animate, Notice } from '@wordpress/components';
-import React from 'react';
 
 const AnimateExample = () => (
 	<Animate type="loading">

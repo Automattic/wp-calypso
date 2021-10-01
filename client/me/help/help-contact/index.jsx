@@ -18,7 +18,6 @@ import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
-import { withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
@@ -276,13 +275,11 @@ class HelpContact extends Component {
 			blogHelpMessage = this.translateForForums( "I don't have a site with WordPress.com yet" );
 		}
 
+		let siteUrl = '';
 		if ( site || userDeclaredUrl ) {
-			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
+			siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = this.translateForForums( 'Site: %s.', {
-				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
-			} );
-
+			blogHelpMessage = '';
 			if ( helpSiteIsWpCom ) {
 				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Yes' );
 			}
@@ -311,14 +308,24 @@ class HelpContact extends Component {
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
+		const requestData = {
+			subject,
+			message: forumMessage,
+			locale: currentUserLocale,
+			client: config( 'client_slug' ),
+			hide_blog_info: userRequestsHidingUrl,
+		};
+
+		if ( site ) {
+			requestData.blog_id = site.ID;
+		}
+
+		if ( siteUrl ) {
+			requestData.blog_url = siteUrl;
+		}
 
 		wpcom.req
-			.post( '/help/forums/support/topics/new', {
-				subject,
-				message: forumMessage,
-				locale: currentUserLocale,
-				client: config( 'client_slug' ),
-			} )
+			.post( '/help/forums/support/topics/new', requestData )
 			.then( ( data ) => {
 				this.setState( {
 					isSubmitting: false,

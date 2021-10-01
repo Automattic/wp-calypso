@@ -1,20 +1,14 @@
 {
 	"name": "@automattic/accessible-focus",
-	"version": "1.0.0",
+	"version": "1.0.0-alpha.0",
 	"description": "A package for detecting keyboard navigation.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": false,
-	"type": "module",
-	"exports": {
-		"calypso:src": "./src/index.ts",
-		"import": "./dist/esm/index.js",
-		"require": "./dist/cjs/index.js"
-	},
-	"engines": {
-		"node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-	},
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -32,8 +26,8 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json --clean && npx rimraf dist",
-		"build": "tsc --build ./tsconfig.json",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},

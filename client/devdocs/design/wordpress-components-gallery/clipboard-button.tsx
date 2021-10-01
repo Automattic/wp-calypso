@@ -1,5 +1,5 @@
 import { ClipboardButton } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const ClipboardButtonExample = () => {
 	const [ isCopied, setCopied ] = useState( false );

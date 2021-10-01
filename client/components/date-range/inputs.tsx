@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useRef, useCallback } from 'react';
+import { FunctionComponent, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';

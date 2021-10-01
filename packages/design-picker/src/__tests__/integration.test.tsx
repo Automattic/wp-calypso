@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import * as React from 'react';
 import DesignPicker from '../components';
 import { getAvailableDesigns } from '../utils';
 import type { DesignPickerProps } from '../components';

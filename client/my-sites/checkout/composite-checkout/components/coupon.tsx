@@ -3,7 +3,6 @@ import { Field, styled } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import joinClasses from './join-classes';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';

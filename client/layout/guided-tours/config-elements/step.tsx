@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import { defer } from 'lodash';
-import React, { Component, CSSProperties, FunctionComponent } from 'react';
+import { Component, CSSProperties, FunctionComponent } from 'react';
 import pathToSection from 'calypso/lib/path-to-section';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import { TimestampMS } from 'calypso/types';

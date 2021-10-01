@@ -5,7 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, wordpress, close } from '@wordpress/icons';
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import Launch from '../launch';
 import LaunchProgress from '../launch-progress';
 import LaunchSidebar from '../launch-sidebar';

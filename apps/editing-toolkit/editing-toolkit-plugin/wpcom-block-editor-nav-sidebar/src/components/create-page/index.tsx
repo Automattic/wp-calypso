@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { get } from 'lodash';
-import React from 'react';
 
 import './style.scss';
 

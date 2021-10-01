@@ -1,6 +1,6 @@
 import { ProcessPayment } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import React, { useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import { GooglePayMark } from '../google-pay-mark';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import PaymentRequestButton from '../payment-request-button';
@@ -28,12 +28,12 @@ export function createGooglePayMethod(
 
 export function GooglePayLabel(): JSX.Element {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>{ 'Google Pay' }</span>
 			<PaymentMethodLogos className="google-pay__logo payment-logos">
 				<GooglePayMark fill="#3C4043" />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 
@@ -89,5 +89,5 @@ export function GooglePaySubmitButton( {
 }
 
 export function GooglePaySummary(): JSX.Element {
-	return <React.Fragment>{ 'Google Pay' }</React.Fragment>;
+	return <Fragment>{ 'Google Pay' }</Fragment>;
 }

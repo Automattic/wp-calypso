@@ -660,12 +660,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return (
-				<>
-					{ this.renderExampleSuggestions() }
-					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
-				</>
-			);
+			return this.renderExampleSuggestions();
 		}
 
 		return this.renderInitialSuggestions( false );

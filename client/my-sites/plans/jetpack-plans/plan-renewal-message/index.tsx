@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 
 const PlanRenewalMessage = (): JSX.Element => {
 	const translate = useTranslate();

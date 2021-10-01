@@ -3,7 +3,7 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';

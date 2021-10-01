@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import React, { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import CardHeading from 'calypso/components/card-heading';

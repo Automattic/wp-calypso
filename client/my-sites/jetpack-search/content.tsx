@@ -1,5 +1,5 @@
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent, ReactNode, Fragment } from 'react';
+import { FunctionComponent, ReactNode, Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackUpsell from 'calypso/components/jetpack/upsell';
 import PromoCard from 'calypso/components/promo-section/promo-card';

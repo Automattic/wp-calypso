@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { compact } from 'lodash';
-import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
+import { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import referralImage from 'calypso/assets/images/earn/referral.svg';

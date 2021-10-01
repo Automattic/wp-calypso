@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';

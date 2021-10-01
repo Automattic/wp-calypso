@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize, translate as TranslateType } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar from 'calypso/layout/sidebar';

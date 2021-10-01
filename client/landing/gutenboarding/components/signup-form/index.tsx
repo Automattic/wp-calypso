@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTrackModal } from '../../hooks/use-track-modal';
 import {
 	initGoogleRecaptcha,
@@ -25,6 +25,7 @@ import { USER_STORE } from '../../stores/user';
 import './style.scss';
 import SignupAnchorLayout from './signup-anchor-layout';
 import SignupDefaultLayout from './signup-default-layout';
+import type { FormEvent } from 'react';
 
 interface Props {
 	onRequestClose: () => void;
@@ -67,7 +68,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		);
 	}, [ setRecaptchaClientId ] );
 
-	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
+	const handleSignUp = async ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		const username_hint = siteTitle || siteVertical?.label || null;

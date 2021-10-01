@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';

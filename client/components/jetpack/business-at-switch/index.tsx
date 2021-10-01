@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import React, { ReactElement, Component } from 'react';
+import { ReactElement, Component } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';

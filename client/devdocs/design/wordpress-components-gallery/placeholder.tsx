@@ -1,6 +1,5 @@
 import { Placeholder, Notice } from '@wordpress/components';
 import { more } from '@wordpress/icons';
-import React from 'react';
 
 const PlaceholderExample = () => (
 	<Placeholder

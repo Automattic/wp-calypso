@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { connect } from 'react-redux';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

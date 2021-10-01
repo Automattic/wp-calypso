@@ -1,4 +1,4 @@
-import React, { PureComponent, ReactNode } from 'react';
+import { PureComponent, ReactNode } from 'react';
 import ActivityList from '../';
 import { LogData } from '../types';
 

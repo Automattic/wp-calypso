@@ -1,3 +1,4 @@
+import nock from 'nock';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -30,7 +31,6 @@ import {
 	restorePost,
 } from 'calypso/state/posts/actions';
 import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
-import useNock from 'calypso/test-helpers/use-nock';
 
 jest.mock( 'calypso/state/posts/actions/save-post-success', () => ( {
 	savePostSuccess: jest.fn(),
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePosts()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
@@ -182,7 +182,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestAllSitesPosts()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/posts' )
@@ -209,7 +209,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePost()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts/413' )
@@ -305,7 +305,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePost()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.2/sites/2916284/posts/new', {
@@ -412,31 +412,29 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving new post fails', () => {
-			return new Promise( ( done ) => {
-				savePost( 77203074, null, { title: 'Hello World' } )( dispatch ).catch( () => {
-					expect( dispatch ).toHaveBeenCalledWith( {
-						type: POST_SAVE_FAILURE,
-						siteId: 77203074,
-						postId: null,
-						error: expect.objectContaining( { message: 'User cannot edit posts' } ),
-					} );
-					done();
-				} );
+		test( 'should dispatch failure action when saving new post fails', async () => {
+			await expect(
+				savePost( 77203074, null, { title: 'Hello World' } )( dispatch )
+			).rejects.toThrow();
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: POST_SAVE_FAILURE,
+				siteId: 77203074,
+				postId: null,
+				error: expect.objectContaining( { message: 'User cannot edit posts' } ),
 			} );
 		} );
 
-		test( 'should dispatch failure action when saving existing post fails', () => {
-			return new Promise( ( done ) => {
-				savePost( 77203074, 102, { title: 'Hello World' } )( dispatch ).catch( () => {
-					expect( dispatch ).toHaveBeenCalledWith( {
-						type: POST_SAVE_FAILURE,
-						siteId: 77203074,
-						postId: 102,
-						error: expect.objectContaining( { message: 'User cannot edit post' } ),
-					} );
-					done();
-				} );
+		test( 'should dispatch failure action when saving existing post fails', async () => {
+			await expect(
+				savePost( 77203074, 102, { title: 'Hello World' } )( dispatch )
+			).rejects.toThrow();
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: POST_SAVE_FAILURE,
+				siteId: 77203074,
+				postId: 102,
+				error: expect.objectContaining( { message: 'User cannot edit post' } ),
 			} );
 		} );
 	} );
@@ -457,7 +455,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deletePost()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
@@ -492,23 +490,20 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when deleting post fails', () => {
-			return new Promise( ( done ) => {
-				deletePost( 77203074, 102 )( dispatch, getState ).catch( () => {
-					expect( dispatch ).toHaveBeenCalledWith( {
-						type: POST_DELETE_FAILURE,
-						siteId: 77203074,
-						postId: 102,
-						error: expect.objectContaining( { message: 'User cannot delete posts' } ),
-					} );
-					done();
-				} );
+		test( 'should dispatch failure action when deleting post fails', async () => {
+			await expect( deletePost( 77203074, 102 )( dispatch, getState ) ).rejects.toThrow();
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: POST_DELETE_FAILURE,
+				siteId: 77203074,
+				postId: 102,
+				error: expect.objectContaining( { message: 'User cannot delete posts' } ),
 			} );
 		} );
 	} );
 
 	describe( 'restorePost()', () => {
-		useNock( ( nock ) => {
+		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/restore' )
@@ -552,17 +547,14 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when restoring post fails', () => {
-			return new Promise( ( done ) => {
-				restorePost( 77203074, 102 )( dispatch, getState ).catch( () => {
-					expect( dispatch ).toHaveBeenCalledWith( {
-						type: POST_RESTORE_FAILURE,
-						siteId: 77203074,
-						postId: 102,
-						error: expect.objectContaining( { message: 'User cannot restore trashed posts' } ),
-					} );
-					done();
-				} );
+		test( 'should dispatch failure action when restoring post fails', async () => {
+			await expect( restorePost( 77203074, 102 )( dispatch, getState ) ).rejects.toThrow();
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: POST_RESTORE_FAILURE,
+				siteId: 77203074,
+				postId: 102,
+				error: expect.objectContaining( { message: 'User cannot restore trashed posts' } ),
 			} );
 		} );
 	} );

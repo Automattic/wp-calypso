@@ -1,5 +1,5 @@
 import { translate, TranslateResult } from 'i18n-calypso';
-import React, { ReactNode } from 'react';
+import { PureComponent, ReactNode } from 'react';
 import DiffViewer from 'calypso/components/diff-viewer';
 import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
 import MarkedLines from 'calypso/components/marked-lines';
@@ -19,7 +19,7 @@ export interface Props {
 	isFixable: boolean;
 }
 
-class ThreatDescription extends React.PureComponent< Props > {
+class ThreatDescription extends PureComponent< Props > {
 	renderTextOrNode( content: string | TranslateResult | ReactNode ) {
 		return <>{ content }</>;
 	}

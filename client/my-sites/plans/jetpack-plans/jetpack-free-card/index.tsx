@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
 import useJetpackFreeButtonProps from './use-jetpack-free-button-props';

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 
 /**
  * Annotate a form field element with a label, description, and an optional

@@ -1,5 +1,4 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import React from 'react';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import wp from 'calypso/lib/wp';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';

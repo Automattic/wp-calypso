@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import * as React from 'react';
+import { createContext } from 'react';
 
 export interface LaunchContextProps {
 	siteId: number;
@@ -21,7 +21,7 @@ const defaultRedirectTo = ( url: string ) => {
 
 const defaultCurrentLaunchFlowUrl = (): string => window.location.href;
 
-const LaunchContext = React.createContext< LaunchContextProps >( {
+const LaunchContext = createContext< LaunchContextProps >( {
 	siteId: 0,
 	redirectTo: defaultRedirectTo,
 	getCurrentLaunchFlowUrl: defaultCurrentLaunchFlowUrl,

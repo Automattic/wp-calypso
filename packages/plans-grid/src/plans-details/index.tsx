@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import { PLANS_STORE } from '../stores';
 import type { Plans } from '@automattic/data-stores';
 

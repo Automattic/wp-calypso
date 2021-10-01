@@ -2,15 +2,15 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import * as React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { usePath, Step } from '../../path';
 import Link from '../link';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-const PlansButton: React.FunctionComponent = () => {
+const PlansButton: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const makePath = usePath();
 
