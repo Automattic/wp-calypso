@@ -1,7 +1,8 @@
-import { Popover, Button } from '@wordpress/components';
 import { info } from '@wordpress/icons';
 import classnames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
+import Button from '../button';
+import Popover from '../popover';
 
 import './style.scss';
 

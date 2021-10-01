@@ -6,7 +6,7 @@ import DomainPicker, {
 } from '@automattic/domain-picker';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboarding';
-import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
+import { TextControl, SVG, Path, InfoTooltip, Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -38,14 +38,6 @@ import './style.scss';
 const bulb = (
 	<SVG viewBox="0 0 24 24">
 		<Path d="M12 15.8c-3.7 0-6.8-3-6.8-6.8s3-6.8 6.8-6.8c3.7 0 6.8 3 6.8 6.8s-3.1 6.8-6.8 6.8zm0-12C9.1 3.8 6.8 6.1 6.8 9s2.4 5.2 5.2 5.2c2.9 0 5.2-2.4 5.2-5.2S14.9 3.8 12 3.8zM8 17.5h8V19H8zM10 20.5h4V22h-4z" />
-	</SVG>
-);
-
-const info = (
-	<SVG className="focused-launch-summary__info-icon" viewBox="0 0 24 24" width="16">
-		<Circle cx="12" cy="12" stroke="#8C8F94" strokeWidth="2" r="10" fill="transparent" />
-		<Rect x="10.5" y="5" width="3" height="3" fill="#8C8F94" />
-		<Rect x="10.5" y="10" width="3" height="8" fill="#8C8F94" />
 	</SVG>
 );
 
@@ -136,15 +128,14 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 					<>
 						<label className="focused-launch-summary__label">
 							{ __( 'Your domain', __i18n_text_domain__ ) }
-							<Tooltip
-								position="top center"
-								text={ __(
-									'Changes to your purchased domain can be managed from your Domains page.',
-									__i18n_text_domain__
-								) }
-							>
-								<span>{ info }</span>
-							</Tooltip>
+							<InfoTooltip position="top center">
+								<div>
+									{ __(
+										'Changes to your purchased domain can be managed from your Domains page.',
+										__i18n_text_domain__
+									) }
+								</div>
+							</InfoTooltip>
 							<p className="focused-launch-summary__mobile-commentary">
 								<Icon icon={ bulb } />
 								<span>
@@ -347,15 +338,14 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 					<>
 						<label className="focused-launch-summary__label">
 							{ __( 'Your plan', __i18n_text_domain__ ) }
-							<Tooltip
-								position="top center"
-								text={ __(
-									'Changes to your purchased plan can be managed from your Plans page.',
-									__i18n_text_domain__
-								) }
-							>
-								<span>{ info }</span>
-							</Tooltip>
+							<InfoTooltip position="top center">
+								<div>
+									{ __(
+										'Changes to your purchased domain can be managed from your Plans page.',
+										__i18n_text_domain__
+									) }
+								</div>
+							</InfoTooltip>
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
 								<span>
@@ -611,7 +601,8 @@ const Summary: React.FunctionComponent = () => {
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
 			onDomainSelect={ onDomainSelect }
-			/** NOTE: this makes the assumption that the user has a free domain,
+			/**
+			 * NOTE: this makes the assumption that the user has a free domain,
 			 * thus when they click the free domain, we just remove the value from the store
 			 * this is a valid strategy in this context because they won't even see this step if
 			 * they already have a paid domain
