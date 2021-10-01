@@ -1,5 +1,4 @@
 import page from 'page';
-import { requestCoreFSESettings } from 'calypso/state/gutenberg-fse-settings/actions';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { setBackPath } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -20,8 +19,6 @@ export function loggedIn( context, next ) {
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
-
-	context.store.dispatch( requestCoreFSESettings( siteId ) );
 
 	context.primary = <SingleSiteComponent { ...getProps( context ) } />;
 

@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
+import { useGutenbergFSESettings } from 'calypso/state/gutenberg-fse-settings/init';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -9,6 +10,8 @@ import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	const { activeTheme, isJetpack, siteId, translate } = props;
+
+	const { isLoading } = useGutenbergFSESettings( siteId );
 
 	const getScreenshotOption = ( themeId ) => {
 		return activeTheme === themeId ? 'customize' : 'info';
@@ -26,6 +29,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 			<SingleSiteThemeShowcaseJetpack
 				{ ...props }
 				siteId={ siteId }
+				isLoadingCoreFSESettings={ isLoading }
 				defaultOption="activate"
 				secondaryOption="tryandcustomize"
 				source="showcase"
@@ -39,6 +43,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 	return (
 		<SingleSiteThemeShowcaseWpcom
 			{ ...props }
+			isLoadingCoreFSESettings={ isLoading }
 			origin="wpcom"
 			siteId={ siteId }
 			defaultOption="activate"
