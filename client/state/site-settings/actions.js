@@ -13,7 +13,7 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import { normalizeSettings } from './utils';
-
+import { requestSite } from 'calypso/state/sites/actions';
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
 
@@ -103,7 +103,7 @@ export function saveSiteSettings( siteId, settings ) {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId,
 				} );
-
+				dispatch( requestSite( siteId ) );
 				return body;
 			} )
 			.catch( ( error ) => {
