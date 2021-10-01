@@ -36,6 +36,9 @@ export function createCreditCardPaymentMethodStore() {
 		setFieldError( key, message ) {
 			return { type: 'FIELD_ERROR_SET', payload: { key, message } };
 		},
+		setAssignToAllPaymentMethods( payload ) {
+			return { type: 'ASSIGN_TO_ALL_PAYMENT_METHODS_SET', payload };
+		},
 		touchAllFields() {
 			return { type: 'TOUCH_ALL_FIELDS' };
 		},
@@ -58,6 +61,9 @@ export function createCreditCardPaymentMethodStore() {
 		},
 		getPaymentPartner( state ) {
 			return state.paymentPartner;
+		},
+		shouldAssignToAllPaymentMethods( state ) {
+			return state.shouldAssignToAllPaymentMethods;
 		},
 	};
 
@@ -133,6 +139,15 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
+	function allPaymentMethodsReducer( state = false, action ) {
+		switch ( action?.type ) {
+			case 'ASSIGN_TO_ALL_PAYMENT_METHODS_SET':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
 	const store = registerStore( 'credit-card', {
 		reducer(
 			state = {
@@ -140,6 +155,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
 				brand: brandReducer(),
+				shouldAssignToAllPaymentMethods: allPaymentMethodsReducer(),
 			},
 			action
 		) {
@@ -148,6 +164,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				brand: brandReducer( state.brand, action ),
+				shouldAssignToAllPaymentMethods: allPaymentMethodsReducer(),
 			};
 		},
 		actions,
