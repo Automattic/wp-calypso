@@ -27,7 +27,7 @@ export class ReaderSidebarFollowedSites extends Component {
 	}
 
 	static defaultProps = {
-		sitesPerPage: 20,
+		sitesPerPage: 50,
 	};
 
 	static propTypes = {
