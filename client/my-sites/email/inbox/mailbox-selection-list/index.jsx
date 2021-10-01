@@ -2,7 +2,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -18,7 +18,7 @@ import {
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { recordEmailActionTrackEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
@@ -55,7 +55,7 @@ const MailboxItemIcon = ( { mailbox } ) => {
 	return null;
 };
 
-const getProvider = ( { mailbox } ) => {
+const getProvider = ( mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
 		return 'titan';
 	}
@@ -71,9 +71,9 @@ const getProvider = ( { mailbox } ) => {
 	return null;
 };
 
-const trackEvent = ( { mailbox, app, context } ) => {
+const tracksEvent = ( { mailbox, app, context } ) => {
 	const provider = getProvider( mailbox );
-	recordEmailActionTrackEvent( {
+	recordEmailAppLaunchEvent( {
 		app,
 		context,
 		provider,
@@ -92,7 +92,7 @@ const MailboxItem = ( { mailbox } ) => {
 	return (
 		<Card
 			onClick={ () =>
-				trackEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
+				tracksEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
 			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox ) }
