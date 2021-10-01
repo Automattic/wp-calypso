@@ -89,6 +89,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 				page.waitForNavigation( {
 					url: '**/checkout/thank-you/no-site/**',
 					waitUntil: 'networkidle',
+					// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
+					timeout: 90 * 1000,
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
