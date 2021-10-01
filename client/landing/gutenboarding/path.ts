@@ -24,6 +24,7 @@ export const Step = {
 	Domains: 'domains',
 	Emails: 'emails',
 	Plans: 'plans',
+	Import: 'import',
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',
 	LanguageModal: 'language-modal',
