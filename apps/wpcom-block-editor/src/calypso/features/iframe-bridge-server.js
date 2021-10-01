@@ -1079,11 +1079,6 @@ async function preselectParentPage() {
 }
 
 function handleSiteEditorFeedbackPlugin( calypsoPort ) {
-	const sendFeedback = ( message ) => {
-		const { port1, port2 } = new MessageChannel();
-		calypsoPort.postMessage( { action: 'feedback-goo', payload: message }, [ port2 ] );
-		port1.onmessage = () => port1.close();
-	};
 	registerPlugin( 'a8c-fse-beta-feedback-plugin', {
 		render: () => {
 			const { PluginSidebar } = window?.wp?.editSite;
@@ -1098,7 +1093,7 @@ function handleSiteEditorFeedbackPlugin( calypsoPort ) {
 					title="FSE Beta Feedback"
 					icon={ comment }
 				>
-					<FeedbackForm submitTicket={ sendFeedback } />
+					<FeedbackForm calypsoPort={ calypsoPort } />
 				</PluginSidebar>
 			);
 		},

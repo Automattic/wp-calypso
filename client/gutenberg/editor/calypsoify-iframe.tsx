@@ -491,9 +491,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.FeedbackGoo === action ) {
-			// console.log( payload );
-			sendSiteEditorBetaFeedback( payload );
-			ports[ 0 ].postMessage( 'close connection' );
+			sendSiteEditorBetaFeedback( payload, ports[ 0 ] );
 		}
 	};
 
