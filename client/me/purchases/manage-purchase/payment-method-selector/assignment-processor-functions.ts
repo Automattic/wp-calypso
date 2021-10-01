@@ -38,7 +38,6 @@ const wpcomCreatePayPalAgreement = (
 export async function assignNewCardProcessor(
 	{
 		purchase,
-		useForAllSubscriptions,
 		translate,
 		stripe,
 		stripeConfiguration,
@@ -46,7 +45,6 @@ export async function assignNewCardProcessor(
 		reduxDispatch,
 	}: {
 		purchase: Purchase | undefined;
-		useForAllSubscriptions?: boolean;
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
@@ -68,7 +66,7 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode } = submitData;
+		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
 
 		const formFieldValues = {
 			country: countryCode,
@@ -146,6 +144,7 @@ interface NewCardSubmitData {
 	name: string;
 	countryCode: string;
 	postalCode: string;
+	useForAllSubscriptions: boolean;
 }
 
 export async function assignExistingCardProcessor(
