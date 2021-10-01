@@ -331,24 +331,31 @@ export default {
 		const { getState, dispatch } = signupStore;
 		const signupDependencies = getSignupDependencyStore( getState() );
 
-		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
-		if ( ! siteSlug ) {
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			query?.siteSlug ||
+			signupDependencies?.siteId ||
+			query?.siteId;
+		if ( ! siteIdOrSlug ) {
 			next();
 			return;
 		}
-		const siteId = getSiteId( getState(), siteSlug );
+		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
 		} else {
-			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) )
-				.catch( () => null )
+			// Fetch the site by siteIdOrSlug and then try to select again
+			dispatch( requestSite( siteIdOrSlug ) )
+				.catch( () => {
+					next();
+					return null;
+				} )
 				.then( () => {
-					let freshSiteId = getSiteId( getState(), siteSlug );
+					let freshSiteId = getSiteId( getState(), siteIdOrSlug );
 
 					if ( ! freshSiteId ) {
-						const wpcomStagingFragment = siteSlug.replace(
+						const wpcomStagingFragment = siteIdOrSlug.replace(
 							/\.wordpress\.com$/,
 							'.wpcomstaging.com'
 						);
@@ -357,10 +364,10 @@ export default {
 
 					if ( freshSiteId ) {
 						dispatch( setSelectedSiteId( freshSiteId ) );
-						next();
 					}
+
+					next();
 				} );
-			next();
 		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
