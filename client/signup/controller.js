@@ -347,7 +347,10 @@ export default {
 		} else {
 			// Fetch the site by siteIdOrSlug and then try to select again
 			dispatch( requestSite( siteIdOrSlug ) )
-				.catch( () => null )
+				.catch( () => {
+					next();
+					return null;
+				} )
 				.then( () => {
 					let freshSiteId = getSiteId( getState(), siteIdOrSlug );
 
@@ -361,10 +364,10 @@ export default {
 
 					if ( freshSiteId ) {
 						dispatch( setSelectedSiteId( freshSiteId ) );
-						next();
 					}
+
+					next();
 				} );
-			next();
 		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
