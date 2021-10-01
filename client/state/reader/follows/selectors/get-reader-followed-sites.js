@@ -29,7 +29,7 @@ export const sorter = ( a, b ) => {
 /**
  * Get sites by organization id
  */
-const getReaderFollowedSitesByUpdated = createSelector(
+const getReaderFollowedSites = createSelector(
 	( state ) => {
 		return Object.values( state.reader.follows.items )
 			.filter( ( blog ) => blog.organization_id === NO_ORG_ID )
@@ -38,4 +38,4 @@ const getReaderFollowedSitesByUpdated = createSelector(
 	( state ) => [ state.reader.follows.items, state.currentUser.capabilities ]
 );
 
-export default getReaderFollowedSitesByUpdated;
+export default getReaderFollowedSites;
