@@ -28,8 +28,8 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const shouldAssignToAllPaymentMethods = useSelect( ( select ) =>
-		select( 'credit-card' ).shouldAssignToAllPaymentMethods()
+	const useForAllSubscriptions = useSelect( ( select ) =>
+		select( 'credit-card' ).useForAllSubscriptions()
 	);
 	const getField = ( key ) => fields[ key ] || {};
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
@@ -45,7 +45,7 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 		changeBrand,
 		setCardDataError,
 		setCardDataComplete,
-		setAssignToAllPaymentMethods,
+		setUseForAllSubscriptions,
 	} = useDispatch( 'credit-card' );
 
 	// We need the countryCode for the country specific payment fields which have
@@ -176,8 +176,8 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 
 					{ shouldShowAssignAllCheckbox && (
 						<AssignToAllPaymentMethods
-							isChecked={ shouldAssignToAllPaymentMethods }
-							onChange={ setAssignToAllPaymentMethods }
+							isChecked={ useForAllSubscriptions }
+							onChange={ setUseForAllSubscriptions }
 						/>
 					) }
 				</div>
