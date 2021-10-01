@@ -308,17 +308,17 @@ export class HelpContactForm extends PureComponent {
 			( userDeclaredUrl &&
 				siteData &&
 				siteData.ID &&
-				( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
+				( ( ! siteData.jetpack && ! siteData.jetpack_connection ) || siteData.is_wpcom_atomic ) ) ||
 			( helpSite &&
 				! userDeclaresUnableToSeeSite &&
 				helpSite &&
 				helpSite.ID &&
-				( ! helpSite.jetpack || helpSite.is_wpcom_atomic ) ) ||
+				( ( ! helpSite.jetpack && ! helpSite.jetpack_connection ) || helpSite.is_wpcom_atomic ) ) ||
 			( userDeclaredUrl && errorData && errorData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
 		const isNonWpComHostedSite =
-			( userDeclaredUrl && siteData && siteData.jetpack ) ||
+			( userDeclaredUrl && siteData && ( siteData.jetpack || siteData.jetpack_connection ) ) ||
 			( userDeclaredUrl &&
 				errorData &&
 				( errorData === 'unknown_blog' || errorData === 'jetpack_error' ) ) ||
