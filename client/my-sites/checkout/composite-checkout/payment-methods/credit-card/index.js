@@ -36,8 +36,8 @@ export function createCreditCardPaymentMethodStore() {
 		setFieldError( key, message ) {
 			return { type: 'FIELD_ERROR_SET', payload: { key, message } };
 		},
-		setAssignToAllPaymentMethods( payload ) {
-			return { type: 'ASSIGN_TO_ALL_PAYMENT_METHODS_SET', payload };
+		setUseForAllSubscriptions( payload ) {
+			return { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET', payload };
 		},
 		touchAllFields() {
 			return { type: 'TOUCH_ALL_FIELDS' };
@@ -62,8 +62,8 @@ export function createCreditCardPaymentMethodStore() {
 		getPaymentPartner( state ) {
 			return state.paymentPartner;
 		},
-		shouldAssignToAllPaymentMethods( state ) {
-			return state.shouldAssignToAllPaymentMethods;
+		useForAllSubscriptions( state ) {
+			return state.useForAllSubscriptions;
 		},
 	};
 
@@ -139,9 +139,9 @@ export function createCreditCardPaymentMethodStore() {
 		}
 	}
 
-	function allPaymentMethodsReducer( state = false, action ) {
+	function allSubscriptionsReducer( state = false, action ) {
 		switch ( action?.type ) {
-			case 'ASSIGN_TO_ALL_PAYMENT_METHODS_SET':
+			case 'USE_FOR_ALL_SUBSCRIPTIONS_SET':
 				return action.payload;
 			default:
 				return state;
@@ -155,7 +155,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
 				brand: brandReducer(),
-				shouldAssignToAllPaymentMethods: allPaymentMethodsReducer(),
+				useForAllSubscriptions: allSubscriptionsReducer(),
 			},
 			action
 		) {
@@ -164,10 +164,7 @@ export function createCreditCardPaymentMethodStore() {
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				brand: brandReducer( state.brand, action ),
-				shouldAssignToAllPaymentMethods: allPaymentMethodsReducer(
-					state.shouldAssignToAllPaymentMethods,
-					action
-				),
+				useForAllSubscriptions: allSubscriptionsReducer( state.useForAllSubscriptions, action ),
 			};
 		},
 		actions,
