@@ -17,6 +17,7 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { queryCache } from 'calypso/state/query-cache';
 import { makeLayoutMiddleware } from './shared.js';
 import { render, hydrate } from './web-util.js';
 
@@ -25,6 +26,10 @@ import { render, hydrate } from './web-util.js';
  */
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
+
+const queryClient = new QueryClient( {
+	queryCache,
+} );
 
 export const ProviderWrappedLayout = ( {
 	store,
