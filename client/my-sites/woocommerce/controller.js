@@ -1,7 +1,7 @@
 import page from 'page';
 import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isEligibleForWooOnPlans from 'calypso/state/selectors/is-eligible-for-woo-on-plans';
 import {
 	getSelectedSiteWithFallback,
 	getSiteOption,
@@ -14,8 +14,7 @@ export function checkPrerequisites( context, next ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
 
-	// Only allow AT sites to access.
-	if ( ! isAtomicSite( state, siteId ) ) {
+	if ( ! isEligibleForWooOnPlans( state, siteId ) ) {
 		return page.redirect( `/home/${ site.slug }` );
 	}
 
