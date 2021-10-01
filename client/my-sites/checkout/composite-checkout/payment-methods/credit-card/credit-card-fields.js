@@ -14,6 +14,7 @@ import {
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
+import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
 import ContactFields from './contact-fields';
 import CreditCardCvvField from './credit-card-cvv-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
@@ -27,6 +28,9 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 	const onEvent = useEvents();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const shouldAssignToAllPaymentMethods = useSelect( ( select ) =>
+		select( 'credit-card' ).shouldAssignToAllPaymentMethods()
+	);
 	const getField = ( key ) => fields[ key ] || {};
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key ) => {
@@ -36,9 +40,13 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 		}
 		return managedValue.errors ?? [];
 	};
-	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
-		'credit-card'
-	);
+	const {
+		setFieldValue,
+		changeBrand,
+		setCardDataError,
+		setCardDataComplete,
+		setAssignToAllPaymentMethods,
+	} = useDispatch( 'credit-card' );
 
 	// We need the countryCode for the country specific payment fields which have
 	// no country selector but require country data during validation and submit
@@ -97,6 +105,8 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 	};
 
 	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
+
+	const shouldShowAssignAllCheckbox = ! shouldUseEbanx;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -161,6 +171,13 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 							getErrorMessagesForField={ getErrorMessagesForField }
 							shouldUseEbanx={ shouldUseEbanx }
 							shouldShowTaxFields={ shouldShowTaxFields }
+						/>
+					) }
+
+					{ shouldShowAssignAllCheckbox && (
+						<AssignToAllPaymentMethods
+							isChecked={ shouldAssignToAllPaymentMethods }
+							onChange={ setAssignToAllPaymentMethods }
 						/>
 					) }
 				</div>
