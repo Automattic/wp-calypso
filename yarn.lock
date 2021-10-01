@@ -16,7 +16,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/accessible-focus@^1.0.0, @automattic/accessible-focus@workspace:packages/accessible-focus":
+"@automattic/accessible-focus@^1.0.0-alpha.0, @automattic/accessible-focus@workspace:packages/accessible-focus":
   version: 0.0.0-use.local
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
   dependencies:
@@ -44,7 +44,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/browser-data-collector@^2.0.0, @automattic/browser-data-collector@workspace:packages/browser-data-collector":
+"@automattic/browser-data-collector@^3.0.0, @automattic/browser-data-collector@workspace:packages/browser-data-collector":
   version: 0.0.0-use.local
   resolution: "@automattic/browser-data-collector@workspace:packages/browser-data-collector"
   dependencies:
@@ -54,7 +54,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-analytics@^1.0.0, @automattic/calypso-analytics@workspace:packages/calypso-analytics":
+"@automattic/calypso-analytics@^1.0.0-alpha.1, @automattic/calypso-analytics@workspace:packages/calypso-analytics":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-analytics@workspace:packages/calypso-analytics"
   dependencies:
@@ -134,7 +134,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-config@^1.0.0, @automattic/calypso-config@workspace:packages/calypso-config":
+"@automattic/calypso-config@^1.0.0-alpha.0, @automattic/calypso-config@workspace:packages/calypso-config":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-config@workspace:packages/calypso-config"
   dependencies:
@@ -185,7 +185,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-products@workspace:packages/calypso-products"
   dependencies:
-    "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/calypso-url": ^1.0.0
     chai: ^4.3.4
     i18n-calypso: ^5.0.0
@@ -324,7 +324,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
   dependencies:
-    "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/onboarding": ^1.0.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.1
@@ -355,7 +355,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/domain-picker@workspace:packages/domain-picker"
   dependencies:
-    "@automattic/calypso-analytics": ^1.0.0
+    "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/data-stores": ^2.0.0
     "@automattic/i18n-utils": ^1.0.0
     "@automattic/onboarding": ^1.0.0
@@ -569,7 +569,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/launch@workspace:packages/launch"
   dependencies:
-    "@automattic/calypso-analytics": ^1.0.0
+    "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/data-stores": ^2.0.0
     "@automattic/domain-picker": ^1.0.0-alpha.0
     "@automattic/i18n-utils": ^1.0.0
@@ -1040,7 +1040,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/whats-new@workspace:packages/whats-new"
   dependencies:
-    "@automattic/calypso-analytics": ^1.0.0
+    "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/i18n-utils": ^1.0.0
     "@wordpress/components": ^17.0.0
     "@wordpress/react-i18n": ^3.0.1
@@ -1149,7 +1149,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/wpcom-editing-toolkit@workspace:apps/editing-toolkit"
   dependencies:
-    "@automattic/calypso-analytics": ^1.0.0
+    "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/calypso-build": ^9.0.0
     "@automattic/composite-checkout": ^1.0.0
     "@automattic/data-stores": ^2.0.0
@@ -11889,12 +11889,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "calypso@workspace:client"
   dependencies:
-    "@automattic/accessible-focus": ^1.0.0
-    "@automattic/browser-data-collector": ^2.0.0
-    "@automattic/calypso-analytics": ^1.0.0
+    "@automattic/accessible-focus": ^1.0.0-alpha.0
+    "@automattic/browser-data-collector": ^3.0.0
+    "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
-    "@automattic/calypso-config": ^1.0.0
+    "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/calypso-polyfills": ^2.0.0
     "@automattic/calypso-products": ^1.0.0
     "@automattic/calypso-stripe": ^1.0.0
