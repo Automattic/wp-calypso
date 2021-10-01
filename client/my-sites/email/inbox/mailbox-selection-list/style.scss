@@ -5,6 +5,10 @@ body.is-section-inbox {
 	background-color: var( --studio-white );
 }
 
+body.is-section-inbox .layout.is-section-inbox > .layout__content {
+	padding-top: 120px;
+}
+
 .mailbox-selection-list__loader-error-container {
 	align-items: center;
 	box-sizing: border-box;
@@ -98,17 +102,21 @@ body.is-section-inbox {
 }
 
 .mailbox-selection-list__container {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 	.mailbox-selection-list {
 		box-sizing: border-box;
-		width: 310px;
+		padding-left: 16px;
+		padding-right: 16px;
 
-		@include break-medium {
-			padding: 16px;
-			width: 343px;
+		@include break-mobile {
+			padding-left: 0;
+			padding-right: 0;
+			max-width: 80%;
 		}
 
 		@include break-large {
@@ -168,7 +176,6 @@ body.is-section-inbox {
 
 					@include break-medium {
 						line-height: 34px;
-						margin-bottom: 8px;
 					}
 				}
 
@@ -199,6 +206,7 @@ body.is-section-inbox {
 			display: flex;
 			margin-bottom: 1px;
 			padding: 12px;
+			height: 85px;
 
 			.gridicons-external {
 				width: 20px;
@@ -227,6 +235,7 @@ body.is-section-inbox {
 			align-self: center;
 			height: 36px;
 			margin-right: 16px;
+			min-width: 36px;
 			width: 36px;
 
 			.mailbox-selection-list__icon-circle {
