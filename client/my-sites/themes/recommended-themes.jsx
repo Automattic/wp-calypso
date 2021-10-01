@@ -37,13 +37,14 @@ class RecommendedThemes extends Component {
 }
 
 const ConnectedRecommendedThemes = connect(
-	( state ) => {
+	( state, props ) => {
+		const { isLoadingCoreFSESettings } = props;
 		const siteId = getSelectedSiteId( state );
 		const filter = getRecommendedThemesFilter( siteId );
 
 		return {
 			customizedThemesList: getRecommendedThemesSelector( state, filter ),
-			isLoading: areRecommendedThemesLoading( state, filter ),
+			isLoading: isLoadingCoreFSESettings || areRecommendedThemesLoading( state, filter ),
 			filter,
 		};
 	},

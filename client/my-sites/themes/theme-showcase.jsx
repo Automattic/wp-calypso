@@ -322,6 +322,7 @@ class ThemeShowcase extends Component {
 
 		const themeProps = {
 			filter: filter,
+			isLoadingCoreFSESettings: this.props.isLoadingCoreFSESettings,
 			vertical: this.props.vertical,
 			siteId: this.props.siteId,
 			upsellUrl: this.props.upsellUrl,
