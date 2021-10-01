@@ -14,10 +14,11 @@ export default class DesignLocatorPage extends AsyncBaseContainer {
 			throw new Error( 'No free designs were found on design selection page' );
 		}
 
-		const blankCanvasIndex = 0;
-		const firstNonBlankIndex = 1;
-		// If possible, we should skip first design, which is the blank canvas, and pick the first other one.
-		const selectedDesignIndex = freeOptions.length > 1 ? firstNonBlankIndex : blankCanvasIndex;
-		await freeOptions[ selectedDesignIndex ].click();
+		if ( freeOptions.length === 1 ) {
+			throw new Error( 'There should be more than one design found on the design selection page' );
+		}
+
+		const firstNonBlankDesign = freeOptions[ 1 ];
+		await firstNonBlankDesign.click();
 	}
 }
