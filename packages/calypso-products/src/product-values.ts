@@ -75,6 +75,7 @@ export { isSiteRedirect } from './is-site-redirect';
 export { isSpaceUpgrade } from './is-space-upgrade';
 export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
+export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isTheme } from './is-theme';
 export { isTitanMail } from './is-titan-mail';
 export { isUnlimitedSpace } from './is-unlimited-space';
