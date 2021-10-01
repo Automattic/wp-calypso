@@ -1,5 +1,4 @@
-import isCoreFSEEligible from 'calypso/state/selectors/is-core-fse-eligible';
-import 'calypso/state/gutenberg-fse-settings/init';
+import { isCoreFSEEligible } from 'calypso/state/gutenberg-fse-settings/selectors';
 
 /**
  * We currently support two types of theme filtering for recommended themes,
