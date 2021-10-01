@@ -27,10 +27,12 @@ type CardTransactionRequest = {
 type StripeCardTransactionRequest = {
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
+	paymentPartner: string;
 	name: string;
 	countryCode: string | undefined;
 	postalCode: string | undefined;
 	cardNumberElement: StripeCardNumberElement;
+	shouldAssignToAllPaymentMethods: boolean;
 };
 
 type EbanxCardTransactionRequest = {
