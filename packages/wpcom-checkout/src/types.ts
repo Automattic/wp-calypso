@@ -79,6 +79,7 @@ export interface TransactionRequest {
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
+	shouldAssignToAllPaymentMethods?: boolean;
 }
 
 export type WPCOMTransactionEndpoint = (
@@ -118,6 +119,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	pan?: string;
 	gstin?: string;
 	nik?: string;
+	shouldAssignToAllPaymentMethods?: boolean;
 };
 
 // The data model used in ContactDetailsFormFields and related components.
