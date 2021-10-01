@@ -276,8 +276,9 @@ class HelpContact extends Component {
 			blogHelpMessage = this.translateForForums( "I don't have a site with WordPress.com yet" );
 		}
 
+		let siteUrl = '';
 		if ( site || userDeclaredUrl ) {
-			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
+			siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
 			blogHelpMessage = this.translateForForums( 'Site: %s.', {
 				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
@@ -311,14 +312,23 @@ class HelpContact extends Component {
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
+		const requestData = {
+			subject,
+			message: forumMessage,
+			locale: currentUserLocale,
+			client: config( 'client_slug' ),
+		};
+
+		if ( site ) {
+			requestData.blog_id = site.ID;
+		}
+
+		if ( siteUrl ) {
+			requestData.blog_url = siteUrl;
+		}
 
 		wpcom.req
-			.post( '/help/forums/support/topics/new', {
-				subject,
-				message: forumMessage,
-				locale: currentUserLocale,
-				client: config( 'client_slug' ),
-			} )
+			.post( '/help/forums/support/topics/new', requestData )
 			.then( ( data ) => {
 				this.setState( {
 					isSubmitting: false,
