@@ -38,8 +38,6 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch properly when receiving a valid response', async () => {
-			expect.assertions( 3 );
-
 			const dispatchSpy = jest.fn( ( arg ) => arg );
 			const request = requestUserSuggestions( siteId )( dispatchSpy );
 
