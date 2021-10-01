@@ -73,6 +73,7 @@ const stepNameToModuleName = {
 	'plans-premium-monthly': 'plans',
 	design: 'design-picker',
 	'design-setup-site': 'design-picker',
+	'difm-design': 'difm-design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
 };

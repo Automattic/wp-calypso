@@ -237,7 +237,10 @@ module.exports = {
 		],
 
 		// Only use known tag names plus `jest-environment`.
-		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
+		'jsdoc/check-tag-names': [
+			'error',
+			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+		],
 
 		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
 		'jsdoc/require-param-description': 'off',

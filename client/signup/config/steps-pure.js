@@ -732,6 +732,10 @@ export function generateSteps( {
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 		},
+		'difm-design': {
+			stepName: 'difm-design',
+			providesDependencies: [ 'selectedDesign' ],
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'siteSlug' ],

@@ -430,10 +430,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'site-info-collection', 'domains' ],
+			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-06-20',
+			description: 'A flow DIFM leads',
+			lastModified: '2021-09-30',
 		},
 	];
 
