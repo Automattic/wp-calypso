@@ -28,21 +28,13 @@ const useAvailableStorageUpgradeProducts = (
 	// site has both Backup and Security for some strange reason)
 	const sameProductType = useMemo( () => {
 		const hasJetpackSecurity = purchasedStorageSlugs.some( isJetpackSecuritySlug );
-		const hasJetpackBackup = purchasedStorageSlugs.some( isJetpackBackupSlug );
-
 		if ( hasJetpackSecurity ) {
 			return ( { productSlug }: SelectorProduct ) => isJetpackSecuritySlug( productSlug );
 		}
 
-		if ( hasJetpackBackup ) {
-			return ( { productSlug }: SelectorProduct ) => isJetpackBackupSlug( productSlug );
-		}
-
-		// If the selected site doesn't have Backup _or_ Security,
-		// there's nothing we can upgrade.
-		// (In this case, we should probably redirect people
-		// away from storage upgrades.)
-		return () => false;
+		// If the selected site has Backup, or doesn't have Backup _or_ Security,
+		// default to showing only Backup products.
+		return ( { productSlug }: SelectorProduct ) => isJetpackBackupSlug( productSlug );
 	}, [ purchasedStorageSlugs ] );
 
 	// This function specifically targets products that haven't been purchased
