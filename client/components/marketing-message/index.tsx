@@ -62,7 +62,7 @@ const Text = styled.p< Pick< NudgeProps, 'path' > >`
 	margin: 0;
 `;
 
-export default function Nudge( { siteId, useMockData, ...props }: NudgeProps ) {
+export default function MarketingMessage( { siteId, useMockData, ...props }: NudgeProps ) {
 	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId, useMockData );
 	const hasNudge = ! isFetching && messages.length > 0;
 
@@ -88,7 +88,7 @@ export default function Nudge( { siteId, useMockData, ...props }: NudgeProps ) {
 	);
 }
 
-Nudge.defaultProps = {
+MarketingMessage.defaultProps = {
 	useMockData: false,
 	siteId: null,
 };

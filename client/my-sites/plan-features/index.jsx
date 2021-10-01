@@ -33,8 +33,8 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
+import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
-import Nudge from 'calypso/components/nudge';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
@@ -160,7 +160,7 @@ export class PlanFeatures extends Component {
 			this.renderUpgradeDisabledNotice() ||
 			this.renderDiscountNotice() ||
 			this.renderCreditNotice() ||
-			this.renderNudge()
+			this.renderMarketingMessage()
 		);
 	}
 
@@ -284,7 +284,7 @@ export class PlanFeatures extends Component {
 		);
 	}
 
-	renderNudge() {
+	renderMarketingMessage() {
 		const { siteId, hasPlaceholders, isInSignup } = this.props;
 
 		if ( hasPlaceholders || isInSignup ) {
@@ -296,7 +296,7 @@ export class PlanFeatures extends Component {
 			return null;
 		}
 
-		return ReactDOM.createPortal( <Nudge siteId={ siteId } />, bannerContainer );
+		return ReactDOM.createPortal( <MarketingMessage siteId={ siteId } />, bannerContainer );
 	}
 
 	renderMobileView() {
