@@ -21,7 +21,6 @@ export class ReaderSidebarFollowedSites extends Component {
 		super( props );
 		this.state = {
 			sitePage: 1,
-			sitesToShow: [],
 		};
 	}
 
@@ -35,18 +34,6 @@ export class ReaderSidebarFollowedSites extends Component {
 		isFollowingOpen: PropTypes.bool,
 		sitesPerPage: PropTypes.number,
 	};
-
-	componentDidUpdate( prevProps, prevState ) {
-		const { sitePage } = this.state;
-		const { sitesPerPage } = this.props;
-
-		if ( this.props.sites !== prevProps.sites || this.state.sitePage !== prevState.sitePage ) {
-			this.setState( {
-				sitePage: this.state.sitePage,
-				sitesToShow: Object.values( this.props.sites ).slice( 0, sitesPerPage * sitePage ),
-			} );
-		}
-	}
 
 	handleReaderSidebarFollowedSitesClicked = () => {
 		recordAction( 'clicked_reader_sidebar_followed_sites' );
@@ -95,8 +82,9 @@ export class ReaderSidebarFollowedSites extends Component {
 
 	render() {
 		const { path, translate, sites, sitesPerPage } = this.props;
-		const { sitesToShow, sitePage } = this.state;
+		const { sitePage } = this.state;
 		const allSitesLoaded = sitesPerPage * sitePage >= sites.length;
+		const sitesToShow = sites.slice( 0, sitesPerPage * sitePage );
 
 		if ( ! sitesToShow ) {
 			return null;
