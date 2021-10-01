@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';

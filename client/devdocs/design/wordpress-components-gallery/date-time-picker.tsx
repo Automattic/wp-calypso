@@ -1,5 +1,5 @@
 import { DateTimePicker } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const DateTimePickerExample = () => {
 	const [ dateTime, setDateTime ] = useState( '' );

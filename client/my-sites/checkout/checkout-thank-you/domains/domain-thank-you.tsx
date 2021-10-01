@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
 import domainThankYouContent from './thank-you-content';
 import { DomainThankYouProps, DomainThankYouType } from './types';

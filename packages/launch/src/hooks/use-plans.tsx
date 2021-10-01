@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useContext, useState, useEffect } from 'react';
 import LaunchContext from '../context';
 import { PLANS_STORE, SITE_STORE } from '../stores';
 import { isPlanProduct } from '../utils';
@@ -45,14 +45,14 @@ export function usePlans(
 }
 
 export function usePlanProductFromCart(): PlanProductForFlow | undefined {
-	const { siteId } = React.useContext( LaunchContext );
+	const { siteId } = useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ planProductFromCart, setPlanProductFromCart ] = React.useState<
+	const [ planProductFromCart, setPlanProductFromCart ] = useState<
 		PlanProductForFlow | undefined
 	>( undefined );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		( async function () {
 			const cart = await getCart( siteId );
 			const planProduct = ( cart.products as ResponseCartProduct[] )?.find(

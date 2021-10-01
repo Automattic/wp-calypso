@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
-import React, { FC, ReactElement, useCallback, useMemo } from 'react';
+import { FC, ReactElement, useCallback, useMemo } from 'react';
+import * as React from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';

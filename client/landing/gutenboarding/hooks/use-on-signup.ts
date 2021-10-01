@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useCallback, useEffect } from 'react';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
@@ -21,7 +21,7 @@ export default function useOnSignup(): void {
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 
-	const handleCreateSite = React.useCallback(
+	const handleCreateSite = useCallback(
 		( username: string, isPublicSite: number, bearerToken?: string ) => {
 			createSite( {
 				username,
@@ -36,7 +36,7 @@ export default function useOnSignup(): void {
 		[ createSite, locale, anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl ]
 	);
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite && ! isAnchorFmSignup ) {
 			handleCreateSite( newUser.username, visibility, newUser.bearerToken );
 		}

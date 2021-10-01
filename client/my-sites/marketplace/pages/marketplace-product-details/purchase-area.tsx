@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { findProductDefinition } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import { IProductCollection } from 'calypso/my-sites/marketplace/types';
 import type { ResponseCart } from '@automattic/shopping-cart';

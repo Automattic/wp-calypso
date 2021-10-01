@@ -1,6 +1,5 @@
 import { initializeTracksWithIdentity, PatternDefinition } from '@automattic/page-pattern-modal';
 import { dispatch } from '@wordpress/data';
-import React from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { PagePatternsPlugin } from './page-patterns-plugin';
 

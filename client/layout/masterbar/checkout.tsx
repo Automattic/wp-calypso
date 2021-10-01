@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';

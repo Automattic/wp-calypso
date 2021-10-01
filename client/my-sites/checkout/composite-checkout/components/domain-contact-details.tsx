@@ -1,6 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { Fragment } from 'react';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
 import {
@@ -57,7 +57,7 @@ export default function DomainContactDetails( {
 	const tlds = getAllTopLevelTlds( domainNames );
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<ManagedContactDetailsFormFields
 				needsOnlyGoogleAppsDetails={ needsOnlyGoogleAppsDetails }
 				needsAlternateEmailForGSuite={ needsAlternateEmailForGSuite }
@@ -114,7 +114,7 @@ export default function DomainContactDetails( {
 					isManaged={ true }
 				/>
 			) }
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

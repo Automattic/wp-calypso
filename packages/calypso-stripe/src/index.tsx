@@ -1,7 +1,8 @@
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import debugFactory from 'debug';
-import React, { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
+import { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
+import * as React from 'react';
 import type {
 	Stripe,
 	StripeError,

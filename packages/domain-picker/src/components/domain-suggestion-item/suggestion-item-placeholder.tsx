@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import classnames from 'classnames';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
 
 const DomainPickerSuggestionItemPlaceholder: FunctionComponent< {

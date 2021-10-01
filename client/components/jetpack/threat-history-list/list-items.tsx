@@ -1,6 +1,6 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
@@ -27,7 +27,7 @@ const ListItems = ( { items } ) => {
 	const siteName = useSelector( ( state ) => getSelectedSite( state )?.name );
 
 	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
-	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
+	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
 
 	const openDialog = useCallback(
 		( threat ) => {

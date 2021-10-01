@@ -3,7 +3,7 @@
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import { getAvailableDesigns, getDesignUrl, mShotOptions, isBlankCanvasDesign } from '../utils';
 import MShotsImage from './mshots-image';
 export { default as MShotsImage } from './mshots-image';

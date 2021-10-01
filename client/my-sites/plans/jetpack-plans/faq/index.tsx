@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';

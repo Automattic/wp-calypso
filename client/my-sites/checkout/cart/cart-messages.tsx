@@ -1,7 +1,7 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
+import * as React from 'react';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';

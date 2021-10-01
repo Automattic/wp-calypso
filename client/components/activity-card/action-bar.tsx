@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useRef, useState } from 'react';
+import { FunctionComponent, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 

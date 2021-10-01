@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import { Theme } from '../lib/theme';
 
 const RadioButtonWrapper = styled.div<

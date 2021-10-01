@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
 import MaterialIcon from 'calypso/components/material-icon';

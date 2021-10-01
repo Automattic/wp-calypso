@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
 interface Props {

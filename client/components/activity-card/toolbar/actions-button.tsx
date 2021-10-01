@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Button from 'calypso/components/forms/form-button';

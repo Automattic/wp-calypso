@@ -7,7 +7,7 @@ import {
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';

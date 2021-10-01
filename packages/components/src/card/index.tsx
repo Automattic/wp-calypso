@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import React from 'react';
-import Gridicon from '../gridicon';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
+import { createElement, forwardRef, memo } from 'react';
+import Gridicon from '../gridicon';
 
 import './style.scss';
 
@@ -56,7 +56,7 @@ const Card = < T extends TagName = 'div' >(
 			{ children }
 		</a>
 	) : (
-		React.createElement(
+		createElement(
 			tagName,
 			{ ...props, className: elementClass, ref: forwardedRef },
 			displayAsLink && (
@@ -67,7 +67,7 @@ const Card = < T extends TagName = 'div' >(
 	);
 };
 
-const ForwardedRefCard = React.forwardRef( Card );
+const ForwardedRefCard = forwardRef( Card );
 ForwardedRefCard.displayName = 'Card';
 
-export default React.memo( ForwardedRefCard );
+export default memo( ForwardedRefCard );

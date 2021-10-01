@@ -1,6 +1,6 @@
 import { ScreenReaderText } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import Badge from 'calypso/components/badge';
 import './style.scss';
 

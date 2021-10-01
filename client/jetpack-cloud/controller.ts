@@ -1,5 +1,5 @@
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -150,7 +150,7 @@ const siteSelectionWithFragment = async (
 const renderNoJetpackSites = ( context: PageJS.Context, siteSlug?: string ) => {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( NoJetpackSitesMessage, { siteSlug } );
+	context.primary = createElement( NoJetpackSitesMessage, { siteSlug } );
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	makeLayout( context, () => {} );

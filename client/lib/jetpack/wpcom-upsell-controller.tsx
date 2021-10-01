@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import React from 'react';
+import * as React from 'react';
 import BusinessATSwitch from 'calypso/components/jetpack/business-at-switch';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

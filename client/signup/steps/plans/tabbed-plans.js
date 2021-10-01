@@ -11,7 +11,7 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -217,7 +217,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 
 				{ planDetails &&
 					planDetails.map( ( item, index ) => (
-						<React.Fragment key={ `planDetails${ index }` }>
+						<Fragment key={ `planDetails${ index }` }>
 							<PlanHeader
 								key={ `planHeader${ index }` }
 								className={ `tabbed-plans__header-${ index + 1 }` }
@@ -287,11 +287,11 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 									`tabbed-plans__shared-features-${ index + 1 }`
 								) }
 							/>
-						</React.Fragment>
+						</Fragment>
 					) ) }
 
 				{ featureComparison.map( ( item, index, arr ) => (
-					<React.Fragment key={ `feature${ index }` }>
+					<Fragment key={ `feature${ index }` }>
 						<FeatureTitle
 							key={ `featureTitle${ index }` }
 							className={ `tabbed-plans__feature-title-${ index + 1 }` }
@@ -348,7 +348,7 @@ function TabbedPlans( { onUpgradeClick, planProperties } ) {
 								) }
 							</Feature>
 						) }
-					</React.Fragment>
+					</Fragment>
 				) ) }
 				<FreeBanner>
 					{ selectedTab === 'Professional' && (

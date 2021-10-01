@@ -1,5 +1,5 @@
 import { CheckboxControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const CheckboxControlExample = () => {
 	const [ isChecked, setChecked ] = useState( false );

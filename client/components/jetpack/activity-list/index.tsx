@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { PureComponent, ReactNode } from 'react';
 import FormattedBlock from 'calypso/components/notes-formatted-block';
 import LogItem, { Props as LogItemProps } from '../log-item';
 import { ActivityDescriptionPart, LogData } from './types';
@@ -7,7 +7,7 @@ interface Props {
 	logs?: LogData;
 }
 
-class ActivityList extends React.PureComponent< Props > {
+class ActivityList extends PureComponent< Props > {
 	render() {
 		if ( ! this.props.logs ) {
 			return [];

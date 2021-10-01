@@ -6,7 +6,7 @@ import {
 	getSubtotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import React from 'react';
+import * as React from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { NonProductLineItem } from './wp-line-item';

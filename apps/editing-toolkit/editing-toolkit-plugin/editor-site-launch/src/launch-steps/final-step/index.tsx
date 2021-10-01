@@ -19,7 +19,7 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
 

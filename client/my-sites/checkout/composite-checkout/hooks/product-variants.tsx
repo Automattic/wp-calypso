@@ -13,7 +13,7 @@ import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
 import { styled } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Fragment, useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
@@ -196,7 +196,7 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 	const currentPrice = variant.priceFinal || variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
-		<React.Fragment>
+		<Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
 			{ isDiscounted && (
 				<DoNotPayThis>
@@ -204,7 +204,7 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 				</DoNotPayThis>
 			) }
 			{ myFormatCurrency( currentPrice, variant.product.currency_code ) }
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

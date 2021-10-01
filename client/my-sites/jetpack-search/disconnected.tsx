@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';

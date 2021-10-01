@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { Widget } from '@typeform/embed-react';
 import page from 'page';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';

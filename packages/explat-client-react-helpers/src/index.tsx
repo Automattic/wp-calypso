@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
 interface ExperimentOptions {
