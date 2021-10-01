@@ -455,7 +455,8 @@
 }
 
 .activity-log-item {
-	a.button, button {
+	a.button,
+	button {
 		margin-right: 8px;
 	}
 }
@@ -494,4 +495,9 @@
 }
 .activity-log-item__description-actions {
 	flex-grow: 1;
+	flex-shrink: 0;
+
+	@include break-wide {
+		margin-left: 1rem;
+	}
 }
