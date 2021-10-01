@@ -25,12 +25,7 @@ module.exports = ( api, opts ) => ( {
 				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
-		[
-			require.resolve( '@babel/preset-react' ),
-			{
-				runtime: opts.runtime ? opts.runtime : 'classic',
-			},
-		],
+		[ require.resolve( '@babel/preset-react' ), { runtime: 'automatic' } ],
 		require.resolve( '@babel/preset-typescript' ),
 	],
 	plugins: [
