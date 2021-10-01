@@ -100,7 +100,13 @@ const webpackConfig = {
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
-					options: { useRequire: true, onlyIsomorphic: true },
+					options: {
+						useRequire: true,
+						onlyIsomorphic: true,
+						forceAll: ! isDevelopment,
+						activeSections: config( 'sections' ),
+						enableByDefault: config( 'enable_all_sections' ),
+					},
 				},
 			},
 			TranspileConfig.loader( {
