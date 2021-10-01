@@ -26,8 +26,8 @@ export default function CreditCardPayButton( {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const shouldAssignToAllPaymentMethods = useSelect( ( select ) =>
-		select( 'credit-card' ).shouldAssignToAllPaymentMethods()
+	const useForAllSubscriptions = useSelect( ( select ) =>
+		select( 'credit-card' ).useForAllSubscriptions()
 	);
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
@@ -54,7 +54,7 @@ export default function CreditCardPayButton( {
 							paymentPartner,
 							countryCode: fields?.countryCode?.value,
 							postalCode: fields?.postalCode?.value,
-							shouldAssignToAllPaymentMethods,
+							useForAllSubscriptions,
 						} );
 						return;
 					}
