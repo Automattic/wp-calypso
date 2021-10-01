@@ -83,25 +83,25 @@ class SharingButtons extends Component {
 		this.setState( { buttonsPendingSave: buttons } );
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// Save request has been performed
 		if (
-			( this.props.isSavingSettings || this.props.isSavingButtons ) &&
-			! ( nextProps.isSavingSettings || nextProps.isSavingButtons )
+			( prevProps.isSavingSettings || prevProps.isSavingButtons ) &&
+			! ( this.props.isSavingSettings || this.props.isSavingButtons )
 		) {
 			if (
-				nextProps.isSaveSettingsSuccessful &&
-				( nextProps.isSaveButtonsSuccessful || ! this.state.buttonsPendingSave )
+				this.props.isSaveSettingsSuccessful &&
+				( this.props.isSaveButtonsSuccessful || ! prevProps.buttonsPendingSave )
 			) {
-				nextProps.successNotice( nextProps.translate( 'Settings saved successfully!' ) );
-				nextProps.markSaved();
+				this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
+				this.props.markSaved();
 				this.setState( {
 					values: {},
 					buttonsPendingSave: null,
 				} );
 			} else {
-				nextProps.errorNotice(
-					nextProps.translate( 'There was a problem saving your changes. Please, try again.' )
+				this.props.errorNotice(
+					this.props.translate( 'There was a problem saving your changes. Please, try again.' )
 				);
 			}
 		}
