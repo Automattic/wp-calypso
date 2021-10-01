@@ -50,8 +50,8 @@ import * as T from 'calypso/types';
 import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
+import { sendSiteEditorBetaFeedback } from './send-site-editor-beta-feedback';
 import type { RequestCart } from '@automattic/shopping-cart';
-
 import './style.scss';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -120,7 +120,7 @@ enum EditorActions {
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
-	GetConfigData = 'getConfigData',
+	FeedbackGoo = 'feedback-goo',
 }
 
 type ComponentProps = Props &
@@ -490,10 +490,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			}
 		}
 
-		if ( EditorActions.GetConfigData === action ) {
-			ports[ 0 ].postMessage( {
-				configData: window.configData,
-			} );
+		if ( EditorActions.FeedbackGoo === action ) {
+			// console.log( payload );
+			sendSiteEditorBetaFeedback( payload );
+			ports[ 0 ].postMessage( 'close connection' );
 		}
 	};
 

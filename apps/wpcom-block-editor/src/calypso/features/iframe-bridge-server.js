@@ -9,7 +9,7 @@ import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
+import { comment, wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -19,6 +19,7 @@ import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+import FeedbackForm from './feedback-form';
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
  * not available in the post editor and causes WSOD in that case.  Instead, we can
@@ -1077,13 +1078,31 @@ async function preselectParentPage() {
 	}
 }
 
-function setupConfigData( calypsoPort ) {
-	const { port1, port2 } = new MessageChannel();
-	calypsoPort.postMessage( { action: 'getConfigData' }, [ port2 ] );
-	port1.onmessage = ( { data: { configData } } ) => {
-		window.configData = configData;
-		port1.close();
+function handleSiteEditorFeedbackPlugin( calypsoPort ) {
+	const sendFeedback = ( message ) => {
+		const { port1, port2 } = new MessageChannel();
+		calypsoPort.postMessage( { action: 'feedback-goo', payload: message }, [ port2 ] );
+		port1.onmessage = () => port1.close();
 	};
+	registerPlugin( 'a8c-fse-beta-feedback-plugin', {
+		render: () => {
+			const { PluginSidebar } = window?.wp?.editSite;
+
+			if ( ! PluginSidebar ) {
+				return;
+			}
+
+			return (
+				<PluginSidebar
+					name="a8c-fse-beta-feedback-plugin"
+					title="FSE Beta Feedback"
+					icon={ comment }
+				>
+					<FeedbackForm submitTicket={ sendFeedback } />
+				</PluginSidebar>
+			);
+		},
+	} );
 }
 
 function handleCheckoutModalOpened( calypsoPort, data ) {
@@ -1254,7 +1273,7 @@ function initPort( message ) {
 
 		handleInlineHelpButton( calypsoPort );
 
-		setupConfigData( calypsoPort );
+		handleSiteEditorFeedbackPlugin( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
