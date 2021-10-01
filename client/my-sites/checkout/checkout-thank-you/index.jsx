@@ -1,39 +1,3 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { themeActivated } from 'calypso/state/themes/actions';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import WordPressLogo from 'calypso/components/wordpress-logo';
-import { Card } from '@automattic/components';
-import ChargebackDetails from './chargeback-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
-import CheckoutThankYouHeader from './header';
-import DomainMappingDetails from './domain-mapping-details';
-import DomainRegistrationDetails from './domain-registration-details';
-import { fetchReceipt } from 'calypso/state/receipts/actions';
-import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { getReceiptById } from 'calypso/state/receipts/selectors';
-import {
-	getCurrentUser,
-	getCurrentUserDate,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
-import GoogleAppsDetails from './google-apps-details';
-import GuidedTransferDetails from './guided-transfer-details';
-import HappinessSupport from 'calypso/components/happiness-support';
-import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -58,44 +22,75 @@ import {
 	isWpComBusinessPlan,
 	shouldFetchSitePlans,
 	isMarketplaceProduct,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
-import { isExternal } from 'calypso/lib/url';
-import JetpackPlanDetails from './jetpack-plan-details';
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import AsyncLoad from 'calypso/components/async-load';
+import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
-import BloggerPlanDetails from './blogger-plan-details';
-import PersonalPlanDetails from './personal-plan-details';
-import PremiumPlanDetails from './premium-plan-details';
-import BusinessPlanDetails from './business-plan-details';
-import EcommercePlanDetails from './ecommerce-plan-details';
-import FailedPurchaseDetails from './failed-purchase-details';
-import TransferPending from './transfer-pending';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
-import RebrandCitiesThankYou from './rebrand-cities-thank-you';
-import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'calypso/components/notice';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
+import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import { isExternal } from 'calypso/lib/url';
+import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
-import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { getSiteHomeUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getActiveTheme } from 'calypso/state/themes/selectors';
-import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
-import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
-import AsyncLoad from 'calypso/components/async-load';
+import { fetchReceipt } from 'calypso/state/receipts/actions';
+import { getReceiptById } from 'calypso/state/receipts/selectors';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
+import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
+import { themeActivated } from 'calypso/state/themes/actions';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
+import BloggerPlanDetails from './blogger-plan-details';
+import BusinessPlanDetails from './business-plan-details';
+import ChargebackDetails from './chargeback-details';
+import DomainMappingDetails from './domain-mapping-details';
+import DomainRegistrationDetails from './domain-registration-details';
+import DomainThankYou from './domains/domain-thank-you';
+import EcommercePlanDetails from './ecommerce-plan-details';
+import FailedPurchaseDetails from './failed-purchase-details';
+import CheckoutThankYouFeaturesHeader from './features-header';
+import GoogleAppsDetails from './google-apps-details';
+import GuidedTransferDetails from './guided-transfer-details';
+import CheckoutThankYouHeader from './header';
+import JetpackPlanDetails from './jetpack-plan-details';
+import PersonalPlanDetails from './personal-plan-details';
+import PremiumPlanDetails from './premium-plan-details';
+import RebrandCitiesThankYou from './rebrand-cities-thank-you';
+import SiteRedirectDetails from './site-redirect-details';
+import TransferPending from './transfer-pending';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function getPurchases( props ) {
@@ -393,7 +388,10 @@ export class CheckoutThankYou extends React.Component {
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
 		let wasMarketplaceProduct = false;
+		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
+		let wasDomainMappingOrTransferProduct = false;
+		let wasTitanEmailOnlyProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
@@ -402,6 +400,13 @@ export class CheckoutThankYou extends React.Component {
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
+			wasDomainMappingOrTransferProduct =
+				purchases.length === 1 &&
+				purchases.some(
+					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
+				);
+			wasDIFMProduct = purchases.some( isDIFMProduct );
+			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -417,8 +422,15 @@ export class CheckoutThankYou extends React.Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
-		// Rebrand Cities thanks page
+		if ( wasDIFMProduct ) {
+			return (
+				<Main className="checkout-thank-you">
+					<DIFMLiteThankYou />
+				</Main>
+			);
+		}
 
+		// Rebrand Cities thanks page
 		if (
 			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
@@ -433,7 +445,9 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( wasMarketplaceProduct ) {
-			return <AsyncLoad require="calypso/my-sites/marketplace/marketplace-plugin-setup-status" />;
+			return (
+				<AsyncLoad require="calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status" />
+			);
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
@@ -443,6 +457,12 @@ export class CheckoutThankYou extends React.Component {
 
 			return (
 				<Main className="checkout-thank-you">
+					{ this.props.transferComplete && this.props.isEmailVerified && (
+						<WpAdminAutoLogin
+							site={ { URL: `https://${ this.props.site?.wpcom_url }` } }
+							delay={ 0 }
+						/>
+					) }
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
@@ -465,6 +485,27 @@ export class CheckoutThankYou extends React.Component {
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
+			);
+		} else if ( wasDomainMappingOrTransferProduct ) {
+			const [ purchaseType, predicate ] = purchases.some( isDomainMapping )
+				? [ 'MAPPING', isDomainMapping ]
+				: [ 'TRANSFER', isDomainTransfer ];
+			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
+			return (
+				<DomainThankYou
+					email={ this.props.user?.email }
+					type={ purchaseType }
+					domain={ domainName }
+					selectedSiteSlug={ this.props.selectedSiteSlug }
+				/>
+			);
+		} else if ( wasTitanEmailOnlyProduct ) {
+			return (
+				<TitanSetUpThankYou
+					domainName={ purchases[ 0 ].meta }
+					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
+					title={ translate( 'Congratulations on your purchase!' ) }
+				/>
 			);
 		}
 
@@ -674,6 +715,7 @@ export default connect(
 			selectedSiteSlug: getSiteSlug( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
+			site: getSite( state, siteId ),
 		};
 	},
 	{

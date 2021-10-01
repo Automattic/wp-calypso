@@ -30,6 +30,11 @@
 	display: none;
 }
 
+// Gallery block fix
+.wp-block-gallery .blocks-gallery-item .blocks-gallery-item__caption {
+    box-sizing: border-box;
+}
+
 // gizmodo fixes
 .reader-full-post.feed-10080096 {
 	.align--bleed {
@@ -80,6 +85,12 @@
 
 .reader-full-post .embed-vimeo {
 	margin-bottom: 0;
+}
+
+.reader-full-post .is-type-wp-embed {
+	iframe {
+		width: 100%;
+	}
 }
 
 // Social Icons Styles

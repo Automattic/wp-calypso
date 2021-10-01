@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { addQueryArgs } from 'calypso/lib/route';
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
-
-/**
- * Type dependencies
- */
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 type SiteId = number | null;
@@ -64,12 +54,15 @@ const buildHref = (
 	// Jetpack Connect flow uses `url` instead of `site` as the query parameter for a site URL
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
 
-	return isJetpackCloud() && ! isSiteinContext
-		? addQueryArgs(
-				{ url, ...restQueryArgs, plan: PLAN_JETPACK_FREE },
-				`https://wordpress.com${ JPC_PATH_BASE }`
-		  )
-		: wpAdminUrl || jetpackAdminUrlFromQuery || JPC_PATH_BASE;
+	if ( isJetpackCloud() && ! isSiteinContext ) {
+		return config.isEnabled( 'jetpack/siteless-checkout' )
+			? '/pricing/jetpack-free/welcome'
+			: addQueryArgs(
+					{ url, ...restQueryArgs, plan: PLAN_JETPACK_FREE },
+					`https://wordpress.com${ JPC_PATH_BASE }`
+			  );
+	}
+	return wpAdminUrl || jetpackAdminUrlFromQuery || JPC_PATH_BASE;
 };
 
 export default function useJetpackFreeButtonProps(

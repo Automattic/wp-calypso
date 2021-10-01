@@ -1,12 +1,3 @@
-/**
- * Internal dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -28,6 +19,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 } from '@automattic/calypso-products';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 
 describe( 'canUpgradeToPlan', () => {
 	const siteId = 1234567;
@@ -213,7 +205,7 @@ describe( 'canUpgradeToPlan', () => {
 			sites: {
 				items: {
 					[ s ]: {
-						jetpack: includes( [ 'jetpack', 'atomic' ], siteType ),
+						jetpack: [ 'jetpack', 'atomic' ].includes( siteType ),
 						options: {
 							is_automated_transfer: siteType === 'atomic',
 						},

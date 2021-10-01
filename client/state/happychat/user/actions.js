@@ -1,15 +1,11 @@
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
 	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
 } from 'calypso/state/action-types';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { setSupportLevel } from 'calypso/state/help/actions';
 import { logToLogstash } from 'calypso/state/logstash/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/happychat/init';
 
@@ -24,10 +20,8 @@ export const setPresalePrecancellationAvailability = ( availability ) => ( {
 } );
 
 export const requestHappychatEligibility = () => ( dispatch ) => {
-	const clientSlug = config( 'client_slug' );
-	wpcom
-		.undocumented()
-		.getOlarkConfiguration( clientSlug )
+	wpcom.req
+		.get( '/help/olark/mine' )
 		.then( ( configuration ) => {
 			dispatch( setHappyChatEligibility( configuration.isUserEligible ) );
 			dispatch( setPresalePrecancellationAvailability( configuration.availability ) );

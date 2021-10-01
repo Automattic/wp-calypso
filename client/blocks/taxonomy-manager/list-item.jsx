@@ -1,34 +1,25 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
+import { Dialog, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
-import { Dialog } from '@automattic/components';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import Tooltip from 'calypso/components/tooltip';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { deleteTerm } from 'calypso/state/terms/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
-import PodcastIndicator from 'calypso/components/podcast-indicator';
-import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class TaxonomyManagerListItem extends Component {
 	static propTypes = {
@@ -42,7 +33,6 @@ class TaxonomyManagerListItem extends Component {
 		translate: PropTypes.func,
 		siteUrl: PropTypes.string,
 		slug: PropTypes.string,
-		isPreviewable: PropTypes.bool,
 		recordGoogleEvent: PropTypes.func,
 		bumpStat: PropTypes.func,
 	};
@@ -226,7 +216,6 @@ export default connect(
 		const siteSettings = getSiteSettings( state, siteId );
 		const canSetAsDefault = taxonomy === 'category';
 		const isDefault = canSetAsDefault && get( siteSettings, [ 'default_category' ] ) === term.ID;
-		const isPreviewable = get( site, 'is_previewable' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
 		const isPodcastingCategory =
@@ -235,7 +224,6 @@ export default connect(
 		return {
 			canSetAsDefault,
 			isDefault,
-			isPreviewable,
 			siteId,
 			siteSlug,
 			siteUrl,

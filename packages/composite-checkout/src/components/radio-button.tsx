@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { useState } from 'react';
 import { Theme } from '../lib/theme';
-import styled from '../lib/styled';
 
 const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >

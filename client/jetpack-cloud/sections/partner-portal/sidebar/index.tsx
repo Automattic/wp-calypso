@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize, translate as TranslateType } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, translate as TranslateType } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
-
-/**
- * Style dependencies
- */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import 'calypso/components/jetpack/sidebar/style.scss';
 
 interface Props {
@@ -43,13 +33,12 @@ class PartnerPortalSidebar extends Component< Props > {
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarItem
-							materialIcon={
-								config.isEnabled( 'jetpack/partner-portal-payment' )
-									? 'attach_money'
-									: 'credit_card'
-							}
-							materialIconStyle={
-								config.isEnabled( 'jetpack/partner-portal-payment' ) ? 'filled' : 'outline'
+							customIcon={
+								<JetpackIcons
+									icon={
+										config.isEnabled( 'jetpack/partner-portal-payment' ) ? 'money' : 'credit-card'
+									}
+								/>
 							}
 							label={ translate( 'Billing', {
 								comment: 'Jetpack sidebar navigation item',
@@ -60,8 +49,7 @@ class PartnerPortalSidebar extends Component< Props > {
 						/>
 
 						<SidebarItem
-							materialIcon="vpn_key"
-							materialIconStyle="filled"
+							customIcon={ <JetpackIcons icon="licenses" /> }
 							label={ translate( 'Licenses', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
@@ -72,8 +60,7 @@ class PartnerPortalSidebar extends Component< Props > {
 
 						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
 							<SidebarItem
-								materialIcon="credit_card"
-								materialIconStyle="outline"
+								customIcon={ <JetpackIcons icon="credit-card" /> }
 								label={ translate( 'Payment Method', {
 									comment: 'Jeptack sidebar navigation item',
 								} ) }

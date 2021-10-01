@@ -1,30 +1,20 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { connect } from 'react-redux';
+import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
+import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
 
-/**
- * Style dependencies
- */
 import './domain-only.scss';
 
 const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, translate } ) => {
@@ -33,10 +23,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 		return (
 			<div>
 				<QuerySiteDomains siteId={ siteId } />
-				<EmptyContent
-					className="domain-only-site__placeholder"
-					illustration={ '/calypso/images/drake/drake-browser.svg' }
-				/>
+				<EmptyContent className="domain-only-site__placeholder" illustration={ Illustration } />
 			</div>
 		);
 	}
@@ -69,7 +56,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 				actionURL={ canCreateSite && createSiteUrl }
 				secondaryAction={ translate( 'Manage domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
-				illustration={ '/calypso/images/drake/drake-browser.svg' }
+				illustration={ Illustration }
 			>
 				<Button
 					className="empty-content__action button"

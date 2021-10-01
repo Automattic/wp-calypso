@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from './gridicons';
 import HotkeyContainer from './container-hotkey';
+import Gridicon from './gridicons';
 
 const ActionButton = ( { isActive, hotkey, icon, onToggle, text, title } ) => (
 	<HotkeyContainer shortcuts={ hotkey ? [ { hotkey, action: onToggle } ] : null }>

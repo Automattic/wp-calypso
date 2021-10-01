@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import tracksRecordEvent from './track-record-event';
 
 // Curiously, the numeric ids of the tabs increment every time you close and

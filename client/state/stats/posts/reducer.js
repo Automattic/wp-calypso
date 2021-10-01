@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { get, merge } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { items as itemSchemas } from './schema';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
 	POST_STATS_REQUEST_FAILURE,
 	POST_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { items as itemSchemas } from './schema';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

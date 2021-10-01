@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class StatsTabsTab extends React.Component {
 	static displayName = 'StatsTabsTab';

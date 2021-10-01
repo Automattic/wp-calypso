@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import './style.scss';
-import Site from 'calypso/blocks/site';
-import Gridicon from 'calypso/components/gridicon';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import Badge from 'calypso/components/badge';
 import { getUrlParts } from '@automattic/calypso-url';
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import Site from 'calypso/blocks/site';
+import Badge from 'calypso/components/badge';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';
+import './style.scss';
 
 class SitesBlock extends Component {
 	state = {};

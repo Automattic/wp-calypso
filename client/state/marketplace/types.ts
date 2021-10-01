@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import type { Action } from 'redux';
+import { IProductCollection, IProductGroupCollection } from 'calypso/my-sites/marketplace/types';
 
 export enum MARKETPLACE_ASYNC_PROCESS_STATUS {
 	/**
@@ -16,27 +13,14 @@ export enum MARKETPLACE_ASYNC_PROCESS_STATUS {
 }
 export interface IPurchaseFlowState {
 	primaryDomain: string | null;
-	pluginSlugToBeInstalled: string | null;
-	isPluginInstalledDuringPurchase: boolean;
+	productSlugInstalled: keyof IProductCollection | null;
+	productGroupSlug: keyof IProductGroupCollection | null;
 	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;
 	reasonForSiteTransferStatus: string | null;
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;
 	reasonForPluginInstallationStatus: string | null;
 	isPluginInstalledAlongWithTransfer: boolean | null;
 }
-
-export interface ISetPrimaryDomainCandidateAction extends Action {
-	domainName: string | undefined;
-}
-
-export interface ISetPluginToBeInstalledAction extends Action {
-	pluginSlugToBeInstalled: string | undefined;
-}
-
-export interface ISetPluginInstalledDuringPurchaseFlag extends Action {
-	isPluginInstalledDuringPurchase: boolean;
-}
-
 export interface IMarketplaceState {
 	purchaseFlow: IPurchaseFlowState;
 }

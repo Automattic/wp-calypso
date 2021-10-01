@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class PostSelectorSearch extends React.Component {

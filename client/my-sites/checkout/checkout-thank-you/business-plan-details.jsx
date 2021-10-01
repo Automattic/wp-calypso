@@ -1,34 +1,21 @@
-/**
- * External dependencies
- */
-
+import { isBusiness, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
+import jetpackBackupImage from 'calypso/assets/images/illustrations/jetpack-backup.svg';
+import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
+import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getProductsList, getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isBusiness, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getProductsList, getProductDisplayCost } from 'calypso/state/products-list/selectors';
-
-/**
- * Image dependencies
- */
-import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
-import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
-import jetpackBackupImage from 'calypso/assets/images/illustrations/jetpack-backup.svg';
-import themeImage from 'calypso/assets/images/illustrations/themes.svg';
-import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
-import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 
 function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
@@ -130,19 +117,6 @@ const BusinessPlanDetails = ( {
 					) }
 					buttonText={ i18n.translate( 'Upload a plugin now' ) }
 					href={ '/plugins/manage/' + selectedSite.slug }
-				/>
-			) }
-
-			{ ! selectedFeature && (
-				<PurchaseDetail
-					icon={ <img alt="" src={ themeImage } /> }
-					title={ i18n.translate( 'Try a New Theme' ) }
-					description={ i18n.translate(
-						"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. " +
-							'Give one a try!'
-					) }
-					buttonText={ i18n.translate( 'Browse premium themes' ) }
-					href={ '/themes/' + selectedSite.slug }
 				/>
 			) }
 

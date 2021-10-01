@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
+import { Dialog, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane';
 
 const SharingPreviewModal = ( props ) => {

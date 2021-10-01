@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 
 /**

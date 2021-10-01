@@ -1,19 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
+import { isEnabled } from '@automattic/calypso-config';
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import MShotsImage from './mshots-image';
-export { default as MShotsImage } from './mshots-image';
+import classnames from 'classnames';
+import React from 'react';
 import {
 	getAvailableDesigns,
 	getDesignImageUrl,
@@ -21,11 +12,10 @@ import {
 	mShotOptions,
 	isBlankCanvasDesign,
 } from '../utils';
+import MShotsImage from './mshots-image';
+export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -119,6 +109,7 @@ export interface DesignPickerProps {
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
+	className?: string;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -130,9 +121,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',
+	className,
 } ) => {
 	return (
-		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }` ) }>
+		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
 				{ designs.map( ( design ) => (
 					<DesignButton

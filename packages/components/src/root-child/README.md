@@ -8,8 +8,8 @@ positioning may impact the child's style.
 ## Usage
 
 ```jsx
-import React from 'react';
 import { RootChild } from '@automattic/components';
+import React from 'react';
 
 export default class extends React.Component {
 	render() {

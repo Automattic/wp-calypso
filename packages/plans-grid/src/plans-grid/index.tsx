@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
+import { Title } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
-import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import PlansTable from '../plans-table';
+import * as React from 'react';
+import { useSupportedPlans } from '../hooks';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
+import PlansIntervalToggle from '../plans-interval-toggle';
+import PlansTable from '../plans-table';
+import { PLANS_STORE } from '../stores';
 import type {
 	CTAVariation,
 	CustomTagLinesMap,
 	DisabledPlansMap,
 	PopularBadgeVariation,
 } from '../plans-table/types';
-import PlansIntervalToggle from '../plans-interval-toggle';
-import { useSupportedPlans } from '../hooks';
-import { PLANS_STORE } from '../stores';
+import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;

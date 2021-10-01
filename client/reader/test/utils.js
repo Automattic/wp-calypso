@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { showSelectedPost } from '../utils';
 
 jest.mock( 'page', () => ( {

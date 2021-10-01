@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getBackPath } from '../selectors';
 
 describe( 'selectors', () => {

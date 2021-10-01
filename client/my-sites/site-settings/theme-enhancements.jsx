@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLegend from 'calypso/components/forms/form-legend';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SupportInfo from 'calypso/components/support-info';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {

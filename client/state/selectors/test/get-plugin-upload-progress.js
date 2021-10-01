@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 
 const siteId = 77203074;

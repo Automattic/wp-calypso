@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
-import i18nCalypso, { useTranslate, TranslateResult } from 'i18n-calypso';
+import { Gridicon } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { useSelector } from 'react-redux';
+import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
+import i18nCalypso, { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );

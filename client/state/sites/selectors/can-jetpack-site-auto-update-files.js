@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import canJetpackSiteUpdateFiles from './can-jetpack-site-update-files';
 import getSiteOption from './get-site-option';
 import isJetpackSite from './is-jetpack-site';

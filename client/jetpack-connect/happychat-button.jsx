@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import HappychatButton from 'calypso/components/happychat/button';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
-import { isEnabled } from '@automattic/calypso-config';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';

@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
+import { useStripe } from '@automattic/calypso-stripe';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useStripe } from '@automattic/calypso-stripe';
-import { useTranslate } from 'i18n-calypso';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-
-/**
- * Internal Dependencies
- */
-import { getStoredCards } from 'calypso/state/stored-cards/selectors';
 import {
 	useCreateCreditCard,
 	useCreateExistingCards,
 	useCreatePayPal,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
-import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
+import { getStoredCards } from 'calypso/state/stored-cards/selectors';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 
 export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string
@@ -51,6 +44,8 @@ export default function useCreateAssignablePaymentMethods(
 
 	const storedCards = useSelector( getStoredCards );
 	const existingCardMethods = useCreateExistingCards( {
+		isStripeLoading,
+		stripeLoadingError,
 		storedCards,
 		activePayButtonText: String( translate( 'Use this card' ) ),
 	} );
@@ -58,7 +53,7 @@ export default function useCreateAssignablePaymentMethods(
 	const paymentMethods = useMemo(
 		() =>
 			[ ...existingCardMethods, stripeMethod, payPalMethod ]
-				.filter( doesValueExist )
+				.filter( isValueTruthy )
 				.filter( ( method ) => {
 					// If there's an error fetching allowed payment methods, just allow all of them.
 					if ( allowedPaymentMethodsError ) {

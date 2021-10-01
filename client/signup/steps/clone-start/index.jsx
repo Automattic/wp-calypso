@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { Card, Button } from '@automattic/components';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 class CloneStartStep extends Component {

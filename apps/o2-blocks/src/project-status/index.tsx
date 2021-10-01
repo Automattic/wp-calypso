@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
 import { BlockDeprecation, registerBlockType } from '@wordpress/blocks';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
 import edit from './editor';
-import save from './save';
 import icon from './icon';
-
+import save from './save';
 import type { BlockAttributesV1, BlockAttributes } from './types';
 
 const v1deprecation: BlockDeprecation< BlockAttributesV1 > = {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { extendAction } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
 import { HTTP_REQUEST } from 'calypso/state/action-types';
 import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 

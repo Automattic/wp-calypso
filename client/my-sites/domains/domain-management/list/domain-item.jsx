@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import page from 'page';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button, CompactCard } from '@automattic/components';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormRadio from 'calypso/components/forms/form-radio';
-import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
-import { withoutHttp } from 'calypso/lib/url';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
-import { handleRenewNowClick } from 'calypso/lib/purchases';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import InfoPopover from 'calypso/components/info-popover';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import Spinner from 'calypso/components/spinner';
 import {
 	canCurrentUserAddEmail,
 	isDomainInGracePeriod,
@@ -29,8 +19,13 @@ import {
 	getDomainTypeText,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import InfoPopover from 'calypso/components/info-popover';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { withoutHttp } from 'calypso/lib/url';
+import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
 import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
@@ -39,11 +34,8 @@ import {
 	domainManagementDns,
 	domainManagementSecurity,
 } from 'calypso/my-sites/domains/paths';
-import Spinner from 'calypso/components/spinner';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -58,17 +50,13 @@ class DomainItem extends PureComponent {
 		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
-		onSelect: PropTypes.func,
 		onToggle: PropTypes.func,
-		onUpgradeClick: PropTypes.func,
 		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
-		enableSelection: PropTypes.bool,
 		isChecked: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
-		isEnabled: PropTypes.bool,
 		actionResult: PropTypes.object,
 	};
 
@@ -81,26 +69,13 @@ class DomainItem extends PureComponent {
 		isBusy: false,
 		isChecked: false,
 		showDomainDetails: true,
-		isEnabled: false,
 	};
 
-	handleClick = ( e ) => {
-		const {
-			enableSelection,
-			onClick,
-			domainDetails,
-			showCheckbox,
-			domain,
-			isChecked,
-			onToggle,
-		} = this.props;
+	handleClick = () => {
+		const { onClick, domainDetails, showCheckbox, domain, isChecked, onToggle } = this.props;
 
-		if ( enableSelection ) {
-			this.onSelect( e );
-		} else {
-			onClick( domainDetails );
-			showCheckbox && onToggle( domain.domain, ! isChecked );
-		}
+		onClick( domainDetails );
+		showCheckbox && onToggle( domain.domain, ! isChecked );
 	};
 
 	stopPropagation = ( event ) => {
@@ -142,12 +117,6 @@ class DomainItem extends PureComponent {
 		}
 	};
 
-	onSelect = ( event ) => {
-		const { domainDetails, selectionIndex, onSelect } = this.props;
-		event.stopPropagation();
-		onSelect( selectionIndex, domainDetails );
-	};
-
 	canRenewDomain() {
 		const { domainDetails, purchase } = this.props;
 		return (
@@ -170,58 +139,32 @@ class DomainItem extends PureComponent {
 		);
 	}
 
-	upgradeToMakePrimary() {
-		const { translate } = this.props;
-
-		return (
-			<div className="domain-item__upsell">
-				<span>{ translate( 'Upgrade to a paid plan to make this your primary domain' ) }</span>
-				<Button primary onClick={ this.props.onUpgradeClick }>
-					{ translate( 'Upgrade' ) }
-				</Button>
-				<TrackComponentView eventName="calypso_domain_management_list_change_primary_upgrade_impression" />
-			</div>
-		);
-	}
-
-	renderCheckmark( present ) {
-		return present ? <Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" /> : null;
-	}
-
-	renderMinus() {
-		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
-	}
-
-	renderTransferLock() {
-		const { domainDetails } = this.props;
-		if ( domainDetails?.type === domainTypes.REGISTERED ) {
-			return this.renderCheckmark( domainDetails?.isLocked );
-		}
-
-		return this.renderMinus();
-	}
-
 	renderAutoRenew() {
-		const { domainDetails } = this.props;
-		switch ( domainDetails?.type ) {
-			case domainTypes.WPCOM:
-			case domainTypes.TRANSFER:
-				return this.renderMinus();
-			default:
-				return domainDetails?.bundledPlanSubscriptionId
-					? this.renderMinus()
-					: this.renderCheckmark( domainDetails?.isAutoRenewing );
-		}
-	}
+		const { translate, domainDetails } = this.props;
 
-	renderPrivacy() {
-		const { domainDetails } = this.props;
-		if ( domainDetails?.type === domainTypes.REGISTERED ) {
-			return this.renderCheckmark( domainDetails?.privateDomain );
+		if ( ! this.shouldShowAutoRenewStatus() ) {
+			return;
 		}
 
-		return this.renderMinus();
+		const autoRenewLabel = translate( 'Auto-renew: %(autoRenewValue)s', {
+			args: {
+				autoRenewValue: domainDetails?.isAutoRenewing ? 'on' : 'off',
+			},
+			comment: 'Auto-renew a domain registration. %(autoRenewValue)s can be "on" or "off"',
+		} );
+		return <span className="domain-item__meta-item">{ autoRenewLabel }</span>;
 	}
+
+	shouldShowAutoRenewStatus = () => {
+		const { domainDetails } = this.props;
+		if (
+			domainDetails?.type === domainTypes.WPCOM ||
+			domainDetails?.type === domainTypes.TRANSFER
+		) {
+			return false;
+		}
+		return ! domainDetails?.bundledPlanSubscriptionId;
+	};
 
 	renderOptionsButton() {
 		const { disabled, isBusy, site, domain, domainDetails, currentRoute, translate } = this.props;
@@ -235,7 +178,7 @@ class DomainItem extends PureComponent {
 				>
 					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem icon="domains" onClick={ this.makePrimary }>
-							{ translate( 'Make primary domain' ) }
+							{ translate( 'Make primary address' ) }
 						</PopoverMenuItem>
 					) }
 					{ this.canRenewDomain() && (
@@ -306,56 +249,62 @@ class DomainItem extends PureComponent {
 		const { translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
-			return this.renderMinus();
+			return;
 		}
 
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
 
-			return translate( '%(gSuiteMailboxCount)d mailbox', '%(gSuiteMailboxCount)d mailboxes', {
-				count: gSuiteMailboxCount,
-				args: {
-					gSuiteMailboxCount,
-				},
-				comment: 'The number of GSuite mailboxes active for the current domain',
-			} );
+			const text = translate(
+				'%(gSuiteMailboxCount)d mailbox',
+				'%(gSuiteMailboxCount)d mailboxes',
+				{
+					count: gSuiteMailboxCount,
+					args: {
+						gSuiteMailboxCount,
+					},
+					comment: 'The number of GSuite mailboxes active for the current domain',
+				}
+			);
+			return <span className="domain-item__meta-item">{ text }</span>;
 		}
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
 			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
 
-			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
+			const text = translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
 				args: {
 					titanMailboxCount,
 				},
 				count: titanMailboxCount,
 				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
 			} );
+			return <span className="domain-item__meta-item">{ text }</span>;
 		}
 
 		if ( hasEmailForwards( domainDetails ) ) {
 			const emailForwardsCount = getEmailForwardsCount( domainDetails );
 
-			return translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
+			const text = translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
 				count: emailForwardsCount,
 				args: {
 					emailForwardsCount,
 				},
 				comment: 'The number of email forwards active for the current domain',
 			} );
+			return <span className="domain-item__meta-item">{ text }</span>;
 		}
 
 		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
-			return this.renderMinus();
+			return;
 		}
 
 		return (
-			<Button compact onClick={ this.addEmailClick }>
-				{ translate( 'Add', {
-					context: 'Button label',
-					comment: '"Add" as in "Add an email"',
-				} ) }
-			</Button>
+			<span className="domain-item__meta-item">
+				<Button compact onClick={ this.addEmailClick } className="domain-item__email-button">
+					{ translate( 'Add email', { context: 'Button label' } ) }
+				</Button>
+			</span>
 		);
 	}
 
@@ -367,26 +316,10 @@ class DomainItem extends PureComponent {
 		}
 
 		if ( isLoadingDomainDetails || ! domainDetails ) {
-			return (
-				<>
-					<div className="list__domain-transfer-lock list__action_item_placeholder" />
-					<div className="list__domain-privacy list__action_item_placeholder" />
-					<div className="list__domain-auto-renew list__action_item_placeholder" />
-					<div className="list__domain-email list__action_item_placeholder" />
-					<div className="list__domain-options list__action_item_placeholder" />
-				</>
-			);
+			return <div className="list__domain-options list__action_item_placeholder" />;
 		}
 
-		return (
-			<>
-				<div className="list__domain-transfer-lock">{ this.renderTransferLock() }</div>
-				<div className="list__domain-privacy">{ this.renderPrivacy() }</div>
-				<div className="list__domain-auto-renew">{ this.renderAutoRenew() }</div>
-				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
-				{ this.renderOptionsButton() }
-			</>
-		);
+		return this.renderOptionsButton();
 	}
 
 	getSiteName( site ) {
@@ -397,11 +330,23 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
-		if ( ! this.props.showDomainDetails ) {
+		const { showDomainDetails, isLoadingDomainDetails, domainDetails } = this.props;
+
+		if ( ! showDomainDetails ) {
 			return;
 		}
 
-		return <div className="domain-item__meta">{ this.getSiteMeta() }</div>;
+		if ( isLoadingDomainDetails || ! domainDetails ) {
+			return <div className="domain-item__meta domain-item__meta-placeholder" />;
+		}
+
+		return (
+			<div className="domain-item__meta">
+				{ this.getSiteMeta() }
+				{ this.renderAutoRenew() }
+				{ this.renderEmail( domainDetails ) }
+			</div>
+		);
 	}
 
 	getSiteMeta() {
@@ -442,7 +387,7 @@ class DomainItem extends PureComponent {
 	}
 
 	renderOverlay() {
-		const { enableSelection, isBusy, shouldUpgradeToMakePrimary } = this.props;
+		const { isBusy } = this.props;
 		if ( isBusy ) {
 			return (
 				<div className="domain-item__overlay">
@@ -451,16 +396,6 @@ class DomainItem extends PureComponent {
 				</div>
 			);
 		}
-
-		if ( enableSelection && shouldUpgradeToMakePrimary ) {
-			return (
-				// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-				<div className="domain-item__overlay" onClick={ this.stopPropagation }>
-					{ this.upgradeToMakePrimary() }
-				</div>
-			);
-		}
-
 		return null;
 	}
 
@@ -477,6 +412,23 @@ class DomainItem extends PureComponent {
 		return <DomainNotice status={ statusClass } text={ message } />;
 	}
 
+	renderPrimaryBadge() {
+		return (
+			<Badge className="domain-item__primary-badge" type="info-green">
+				{ this.props.translate( 'Primary site address' ) }
+			</Badge>
+		);
+	}
+
+	hasMappingError( domain ) {
+		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
+		return (
+			domain.type === domainTypes.MAPPED &&
+			! domain.pointsToWpcom &&
+			moment.utc().isAfter( registrationDatePlus3Days )
+		);
+	}
+
 	render() {
 		const {
 			domain,
@@ -484,19 +436,17 @@ class DomainItem extends PureComponent {
 			disabled,
 			isBusy,
 			isChecked,
-			isEnabled,
 			isManagingAllSites,
 			showCheckbox,
-			enableSelection,
+			site,
 		} = this.props;
-		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
+		const { listStatusText, listStatusClass } = resolveDomainStatus(
+			domainDetails || domain,
+			null,
+			{ siteSlug: site?.slug, hasMappingError: this.hasMappingError( domain ) }
+		);
 
-		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
-			'domain-item__enable-selection': enableSelection,
-		} );
-		const domainTitleClass = classNames( 'domain-item__title', {
-			'domain-item__primary': ! isManagingAllSites && domainDetails?.isPrimary,
-		} );
+		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );
 
 		return (
 			<CompactCard className={ rowClasses } onClick={ this.handleClick }>
@@ -509,22 +459,16 @@ class DomainItem extends PureComponent {
 						disabled={ disabled || isBusy }
 					/>
 				) }
-				{ enableSelection && (
-					<FormRadio
-						className="domain-item__checkbox"
-						checked={ isEnabled }
-						onClick={ this.onSelect }
-					/>
-				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">
-						<div className={ domainTitleClass }>{ domain.domain }</div>
-						{ listStatusText && (
-							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
-						) }
+						<div className="domain-item__title">{ domain.domain }</div>
+						{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
+					{ listStatusText && (
+						<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
+					) }
 				</div>
 				{ this.renderActionItems() }
 				{ this.renderOverlay() }

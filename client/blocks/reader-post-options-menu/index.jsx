@@ -1,50 +1,40 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
 import page from 'page';
-import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { blockSite } from 'calypso/state/reader/site-blocks/actions';
-import * as PostUtils from 'calypso/state/posts/utils';
-import FollowButton from 'calypso/reader/follow-button';
-import * as DiscoverHelper from 'calypso/reader/discover/helper';
-import * as stats from 'calypso/reader/stats';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
-import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import * as DiscoverHelper from 'calypso/reader/discover/helper';
+import FollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
+import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import * as stats from 'calypso/reader/stats';
+import * as PostUtils from 'calypso/state/posts/utils';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { blockSite } from 'calypso/state/reader/site-blocks/actions';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

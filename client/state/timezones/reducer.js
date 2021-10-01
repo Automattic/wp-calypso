@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { TIMEZONES_RECEIVE } from 'calypso/state/action-types';
-
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { rawOffsetsSchema, labelsSchema, continentsSchema } from './schema';
 
 export const rawOffsets = withSchemaValidation( rawOffsetsSchema, ( state = {}, action ) => {

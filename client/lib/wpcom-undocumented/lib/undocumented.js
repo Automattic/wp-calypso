@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies.
- */
-import Site from './site';
-import Me from './me';
-import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import Me from './me';
+import Site from './site';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -135,7 +128,6 @@ Undocumented.prototype.updateMonitorSettings = function (
  *
  * @param {number} [siteId] The site ID
  * @param {Function} fn The callback function
- *
  */
 Undocumented.prototype.disconnectJetpack = function ( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/mine/delete query' );
@@ -307,7 +299,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
  *
  * @param {number|string} [siteId] The site ID
  * @param {Function} fn The callback function
- *
  * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) {
@@ -323,7 +314,6 @@ Undocumented.prototype.getSiteKeyrings = function getSiteKeyrings( siteId, fn ) 
  * 	- external_user_id {string} Optional. The external user id to link the site to
  * 	- service {string} service name for this keyring id
  * @param {Function} fn The callback function
- *
  * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, data, fn ) {
@@ -337,7 +327,6 @@ Undocumented.prototype.createSiteKeyring = function createSiteKeyring( siteId, d
  * @param {number} [keyringId] The keyring id to update,
  * @param {string} [externalUserId] The external user id to update on the site keyring
  * @param {Function} fn The callback function
- *
  * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
@@ -363,7 +352,6 @@ Undocumented.prototype.updateSiteKeyring = function updateSiteKeyring(
  * @param {number} keyringId The keyring id
  * @param {string|null} externalUserId Optional, the external user id
  * @param {Function} fn The callback function
- *
  * @returns {Promise} A promise that resolves when the request completes
  */
 Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
@@ -592,42 +580,6 @@ function mapKeysRecursively( object, fn ) {
 	}, {} );
 }
 
-Undocumented.prototype.validateTaxContactInformation = function ( contactInformation ) {
-	return new Promise( ( resolve, reject ) => {
-		let data = {
-			contactInformation,
-		};
-
-		debug( '/me/tax-contact-information/validate query' );
-		data = mapKeysRecursively( data, snakeCase );
-
-		this.wpcom.req.post(
-			{ path: '/me/tax-contact-information/validate' },
-			undefined,
-			data,
-			function ( error, successData ) {
-				if ( error ) {
-					reject( error );
-				}
-
-				// Reshape the error messages to a nested object
-				if ( successData.messages ) {
-					successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
-						set( obj, key, successData.messages[ key ] );
-						return obj;
-					}, {} );
-				}
-
-				const newData = mapKeysRecursively( successData, function ( key ) {
-					return key === '_headers' ? key : camelCase( key );
-				} );
-
-				resolve( newData );
-			}
-		);
-	} );
-};
-
 /**
  * Validates the specified domain contact information against a list of domain names.
  *
@@ -682,46 +634,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 			fn( null, newData );
 		}
 	);
-};
-
-/**
- * Validates the specified Google Apps contact information
- *
- * The contactInformation keys can be in camelCase or snake_case, and will be
- * converted to snake_case before being submitted. The returned data keys will
- * be converted to camelCase before being passed to the callback or the resolved
- * Promise.
- *
- * @param {object} contactInformation - user's contact information
- * @param {string[]} domainNames - domain names for which GSuite is being purchased
- * @param {(error: string, data: object) => void} [callback] The callback function.
- * @returns {Promise|undefined} If no callback, returns a Promise that resolves when the request completes
- */
-Undocumented.prototype.validateGoogleAppsContactInformation = function (
-	contactInformation,
-	domainNames,
-	callback
-) {
-	const { contact_information } = mapKeysRecursively( { contactInformation }, snakeCase );
-	debug( '/me/google-apps/validate', contact_information, domainNames );
-
-	const stripHeadersFromHttpResponse = ( httpResponse ) =>
-		Object.keys( httpResponse )
-			.filter( ( key ) => key !== '_headers' )
-			.reduce( ( newResponse, key ) => ( { ...newResponse, [ key ]: httpResponse[ key ] } ), {} );
-
-	const camelCaseKeys = ( httpResponse ) =>
-		mapKeysRecursively( stripHeadersFromHttpResponse( httpResponse ), ( key ) => camelCase( key ) );
-
-	const camelCaseCallback = ( error, httpResponse ) =>
-		callback( error, error ? null : camelCaseKeys( httpResponse ) );
-
-	const result = this.wpcom.req.post(
-		{ path: '/me/google-apps/validate', body: { contact_information, domain_names: domainNames } },
-		callback ? camelCaseCallback : null
-	);
-
-	return result.then?.( camelCaseKeys );
 };
 
 /**
@@ -889,48 +801,9 @@ Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
 };
 
 /**
- * Get cart.
- *
- * @param {string} cartKey The cart's key.
- * @param {Function} fn The callback function.
- */
-Undocumented.prototype.getCart = function ( cartKey, fn ) {
-	debug( 'GET: /me/shopping-cart/:cart-key' );
-
-	return this._sendRequest(
-		{
-			path: '/me/shopping-cart/' + cartKey,
-			method: 'GET',
-		},
-		fn
-	);
-};
-
-/**
- * Set cart.
- *
- * @param {string} cartKey The cart's key.
- * @param {object} data The POST data.
- * @param {Function} fn The callback function.
- */
-Undocumented.prototype.setCart = function ( cartKey, data, fn ) {
-	debug( 'POST: /me/shopping-cart/:cart-key', data );
-
-	return this._sendRequest(
-		{
-			path: '/me/shopping-cart/' + cartKey,
-			method: 'POST',
-			body: data,
-		},
-		fn
-	);
-};
-
-/**
  * Get a list of the user's stored cards
  *
  * @param {Function} [fn] The callback function.
- *
  * @returns {Promise} Returns a promise when the `callback` is not provided.
  */
 Undocumented.prototype.getStoredCards = function ( fn ) {
@@ -943,7 +816,6 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
  *
  * @param {object} query The query parameters
  * @param {Function} [fn] The callback function.
- *
  * @returns {Promise} Returns a promise when the `callback` is not provided.
  */
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
@@ -1055,6 +927,43 @@ Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
 			body: { sharing_buttons: buttons },
 			apiVersion: '1.1',
 		},
+		fn
+	);
+};
+
+/**
+ * Return a list of P2's connected services
+ *
+ * @param {number} hubId hub identifier
+ * @param {Function} fn The callback function
+ * @returns {Promise} A Promise to resolve when complete.
+ */
+Undocumented.prototype.p2KeyringConnections = function ( hubId, fn ) {
+	debug( 'get: /p2/connections/items' );
+
+	return this.wpcom.req.get(
+		{ path: '/p2/connections/items', apiNamespace: 'wpcom/v2' },
+		{ hub_id: hubId },
+		fn
+	);
+};
+
+/**
+ * Deletes a single keyring P2 connection
+ *
+ * @param {number} keyringConnectionId The keyring connection ID to remove
+ * @param {number} hubId The hub Id.
+ * @param {Function} fn Method to invoke when request is complete
+ */
+Undocumented.prototype.deleteP2KeyringConnection = function ( keyringConnectionId, hubId, fn ) {
+	debug( 'delete: /p2/connections/items/:keyring_connection_id' );
+	return this.wpcom.req.get(
+		{
+			path: '/p2/connections/items/' + keyringConnectionId,
+			apiNamespace: 'wpcom/v2',
+			method: 'DELETE',
+		},
+		{ hub_id: hubId },
 		fn
 	);
 };
@@ -1198,7 +1107,6 @@ Undocumented.prototype.createConnection = function (
  * @param {string}    message           Message for social media
  * @param {Array(int)} skippedConnections           Keyring connection ids to skip publicizing
  * @param {Function}      fn           Function to invoke when request is complete
- *
  * @returns {Promise} A promise representing the request
  */
 Undocumented.prototype.publicizePost = function (
@@ -1282,7 +1190,6 @@ Undocumented.prototype.updateCreditCard = function ( params, fn ) {
  *
  * @param {object} [data] The GET data
  * @param {Function} fn The callback function
- *
  * @returns {string} Url
  *
  * The data format is: {
@@ -1297,18 +1204,6 @@ Undocumented.prototype.paypalExpressUrl = function ( data, fn ) {
 	data = mapKeysRecursively( data, snakeCase );
 
 	return this.wpcom.req.post( '/me/paypal-express-url', data, fn );
-};
-
-/**
- * Update primary domain for blog
- *
- * @param {number} siteId The site ID
- * @param {string} domain The domain to set as primary
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.setPrimaryDomain = function ( siteId, domain, fn ) {
-	debug( '/sites/:site_id/domains/primary' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/domains/primary', {}, { domain: domain }, fn );
 };
 
 function addReaderContentWidth( params ) {
@@ -1405,7 +1300,6 @@ Undocumented.prototype.usersNew = function ( query, fn ) {
  *
  * @param {object} query - an object with the following values: service, access_token, id_token (optional), signup_flow_name
  * @param {Function} fn - callback
- *
  * @returns {Promise} A promise for the request
  */
 Undocumented.prototype.usersSocialNew = function ( query, fn ) {
@@ -1824,11 +1718,6 @@ Undocumented.prototype.changeTheme = function ( siteSlug, data, fn ) {
 	);
 };
 
-Undocumented.prototype.sitePurchases = function ( siteId, fn ) {
-	debug( '/site/:site_id/purchases' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/purchases' }, fn );
-};
-
 Undocumented.prototype.resetPasswordForMailbox = function ( domainName, mailbox, fn ) {
 	debug( '/domains/:domainName/google-apps/:mailbox/get-new-password' );
 	return this.wpcom.req.post(
@@ -1909,30 +1798,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-/**
- * GET help links
- *
- * @param {string} searchQuery User input for help search
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHelpLinks = function ( searchQuery, fn ) {
-	debug( 'help-search/ searchQuery' );
-	return this.wpcom.req.get( '/help/search', { query: searchQuery, include_post_id: 1 }, fn );
-};
-
-Undocumented.prototype.getQandA = function ( query, site, fn ) {
-	debug( 'help-contact-qanda/ searchQuery {query}' );
-
-	return this.wpcom.req.get(
-		'/help/qanda',
-		{
-			query,
-			site,
-		},
-		fn
-	);
-};
-
 // TODO: remove this once the auto-renewal toggle has been fully rolled out.
 Undocumented.prototype.cancelPurchase = function ( purchaseId, fn ) {
 	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
@@ -1967,101 +1832,12 @@ Undocumented.prototype.enableAutoRenew = function ( purchaseId, fn ) {
 	);
 };
 
-Undocumented.prototype.cancelAndRefundPurchase = function ( purchaseId, data, fn ) {
-	debug( 'upgrades/{purchaseId}/cancel' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/cancel`,
-			body: data,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
 	debug( '/upgrades/{planId}/cancel-plan-trial' );
 
 	return this.wpcom.req.post(
 		{
 			path: `/upgrades/${ planId }/cancel-plan-trial`,
-		},
-		fn
-	);
-};
-
-/**
- * Get the Directly configuration for the current user
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.getDirectlyConfiguration = function ( fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/help/directly/mine',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.submitKayakoTicket = function (
-	subject,
-	message,
-	locale,
-	client,
-	isChatOverflow,
-	fn
-) {
-	debug( 'submitKayakoTicket' );
-
-	return this.wpcom.req.post(
-		{
-			path: '/help/tickets/kayako/new',
-			body: { subject, message, locale, client, is_chat_overflow: isChatOverflow },
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getKayakoConfiguration = function ( fn ) {
-	return this.wpcom.req.get(
-		{
-			path: '/help/tickets/kayako/mine',
-		},
-		fn
-	);
-};
-
-/**
- * Get the olark configuration for the current user
- *
- * @param {object} client - current user
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getOlarkConfiguration = function ( client, fn ) {
-	return this.wpcom.req.get(
-		{
-			apiVersion: '1.1',
-			path: '/help/olark/mine',
-			body: { client },
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.submitSupportForumsTopic = function (
-	subject,
-	message,
-	locale,
-	client,
-	fn
-) {
-	return this.wpcom.req.post(
-		{
-			path: '/help/forums/support/topics/new',
-			body: { subject, message, locale, client },
 		},
 		fn
 	);
@@ -2132,22 +1908,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Exports the user's Reader subscriptions as an OPML XML file.
- * A JSON object is returned with the XML given as a String
- * in the `opml` field.
- *
- * @param  {Function} 	fn      The callback function
- * @returns {Promise}  	promise
- */
-Undocumented.prototype.exportReaderSubscriptions = function ( fn ) {
-	debug( '/read/following/mine/export' );
-	const query = {
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/following/mine/export', query, fn );
-};
-
-/**
  * Imports given XML file into the user's Reader feed.
  * XML file is expected to be in OPML format.
  *
@@ -2168,19 +1928,6 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 		apiVersion: '1.2',
 	};
 	return this.wpcom.req.post( params, query, null, fn );
-};
-
-/**
- * Exports a Reader list as an OPML XML file.
- * A JSON object is returned with the XML given as a String
- * in the `opml` field.
- *
- * @param 	{number}	listId	The list ID
- * @param  	{Function} 	fn      The callback function
- * @returns {Promise}  	promise
- */
-Undocumented.prototype.exportReaderList = function ( listId, fn ) {
-	return this.wpcom.req.get( `/read/lists/${ listId }/export`, { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**
@@ -2237,7 +1984,6 @@ Undocumented.prototype.wordAdsApprove = function ( siteId ) {
  * @param {string} [plugin] -- .org plugin slug
  * @param {globalThis.File} [theme] -- theme zip to upload
  * @param {Function} [onProgress] -- called with upload progress status
- *
  * @returns {Promise} promise for handling result
  */
 Undocumented.prototype.initiateTransfer = function ( siteId, plugin, theme, onProgress ) {
@@ -2269,7 +2015,6 @@ Undocumented.prototype.initiateTransfer = function ( siteId, plugin, theme, onPr
  *
  * @param {object} query - Media query, supports 'path', 'search', 'max', 'page_handle', and 'source'
  * @param {Function} fn - The callback function
- *
  * @returns {Promise} promise for handling result
  */
 Undocumented.prototype.externalMediaList = function ( query, fn ) {
@@ -2283,7 +2028,6 @@ Undocumented.prototype.externalMediaList = function ( query, fn ) {
  *
  * @param {number} siteId -- the ID of the site being transferred
  * @param {number} transferId -- ID of the specific transfer
- *
  * @returns {Promise} promise for handling result
  */
 Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
@@ -2291,66 +2035,6 @@ Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
 	return this.wpcom.req.get( {
 		path: `/sites/${ siteId }/automated-transfers/status/${ transferId }`,
 	} );
-};
-
-/**
- * Submit a response to the NPS Survey.
- *
- * @param {string}     surveyName     The name of the NPS survey being submitted
- * @param {number}        score          The value for the survey response
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.submitNPSSurvey = function ( surveyName, score, fn ) {
-	return this.wpcom.req.post(
-		{ path: `/nps/${ surveyName }` },
-		{ apiVersion: '1.2' },
-		{ score },
-		fn
-	);
-};
-
-/**
- * Dismiss the NPS Survey.
- *
- * @param {string}     surveyName     The name of the NPS survey being submitted
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.dismissNPSSurvey = function ( surveyName, fn ) {
-	return this.wpcom.req.post(
-		{ path: `/nps/${ surveyName }` },
-		{ apiVersion: '1.2' },
-		{ dismissed: true },
-		fn
-	);
-};
-
-/**
- * Check the eligibility status for the NPS Survey.
- *
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.checkNPSSurveyEligibility = function ( fn ) {
-	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
-};
-
-/**
- * Send the optional feedback for the NPS Survey.
- *
- * @param {string}   surveyName   The name of the NPS survey being submitted
- * @param {string}   feedback     The content
- * @param {Function} fn           The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.sendNPSSurveyFeedback = function ( surveyName, feedback, fn ) {
-	return this.wpcom.req.post(
-		{ path: `/nps/${ surveyName }` },
-		{ apiVersion: '1.2' },
-		{ feedback },
-		fn
-	);
 };
 
 /**

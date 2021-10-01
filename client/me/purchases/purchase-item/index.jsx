@@ -1,16 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
+import { CompactCard, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import i18nCalypso, { localize } from 'i18n-calypso';
 import page from 'page';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import SiteIcon from 'calypso/blocks/site-icon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
 	getDisplayName,
 	isExpired,
@@ -27,19 +26,9 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
-import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
-import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/style.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
@@ -55,7 +44,16 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		const {
+			purchase,
+			translate,
+			locale,
+			moment,
+			name,
+			isJetpack,
+			isJetpackTemporarySite,
+			isDisconnectedSite,
+		} = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -67,6 +65,12 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isDisconnectedSite ) {
+			if ( isJetpackTemporarySite ) {
+				return (
+					<span className="purchase-item__is-error">{ translate( 'Awaiting site URL' ) }</span>
+				);
+			}
+
 			if ( isJetpack ) {
 				return (
 					<span className="purchase-item__is-error">
@@ -258,9 +262,20 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
-		const productType = purchaseType( purchase );
+		const {
+			purchase,
+			site,
+			translate,
+			slug,
+			showSite,
+			isDisconnectedSite,
+			isJetpackTemporarySite,
+		} = this.props;
+		if ( isJetpackTemporarySite ) {
+			return null;
+		}
 
+		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
 			if ( productType ) {
 				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
@@ -448,6 +463,7 @@ PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
 	isJetpack: PropTypes.bool,
+	isJetpackTemporarySite: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,

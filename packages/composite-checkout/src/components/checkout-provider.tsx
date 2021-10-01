@@ -1,30 +1,34 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ThemeProvider } from 'emotion-theming';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
+import { ThemeProvider } from '@emotion/react';
 import { DataRegistry } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
-import CheckoutErrorBoundary from './checkout-error-boundary';
+import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
 import { defaultRegistry, RegistryProvider } from '../lib/registry';
-import { useFormStatusManager } from '../lib/form-status';
-import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../lib/theme';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
 	validateArg,
 	validateLineItems,
 	validatePaymentMethods,
 	validateTotal,
 } from '../lib/validation';
+import {
+	LineItem,
+	CheckoutProviderProps,
+	FormStatus,
+	TransactionStatus,
+	PaymentMethod,
+} from '../types';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 import TransactionStatusHandler from './transaction-status-handler';
-import { LineItem, CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
+import type {
+	PaymentEventCallback,
+	PaymentErrorCallback,
+	PaymentProcessorResponseData,
+} from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -39,9 +43,8 @@ export function CheckoutProvider( {
 	total = emptyTotal,
 	items = [],
 	onPaymentComplete,
-	showErrorMessage,
-	showInfoMessage,
-	showSuccessMessage,
+	onPaymentRedirect,
+	onPaymentError,
 	redirectToUrl,
 	theme,
 	paymentMethods,
@@ -56,10 +59,6 @@ export function CheckoutProvider( {
 	const propsToValidate = {
 		total,
 		items,
-		onPaymentComplete,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
 		redirectToUrl,
 		theme,
 		paymentMethods,
@@ -98,15 +97,18 @@ export function CheckoutProvider( {
 		Boolean( isValidating )
 	);
 	const transactionStatusManager = useTransactionStatusManager();
-	const { transactionLastResponse } = transactionStatusManager;
-	const didCallOnPaymentComplete = useRef( false );
-	useEffect( () => {
-		if ( formStatus === FormStatus.COMPLETE && ! didCallOnPaymentComplete.current ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
-			didCallOnPaymentComplete.current = true;
-			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
-		}
-	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+	const { transactionLastResponse, transactionStatus, transactionError } = transactionStatusManager;
+
+	useCallEventCallbacks( {
+		onPaymentComplete,
+		onPaymentRedirect,
+		onPaymentError,
+		formStatus,
+		transactionError,
+		transactionStatus,
+		paymentMethodId,
+		transactionLastResponse,
+	} );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef< DataRegistry | undefined >( registry );
@@ -117,9 +119,6 @@ export function CheckoutProvider( {
 			allPaymentMethods: paymentMethods,
 			paymentMethodId,
 			setPaymentMethodId,
-			showErrorMessage,
-			showInfoMessage,
-			showSuccessMessage,
 			onEvent: onEvent || noop,
 			formStatus,
 			setFormStatus,
@@ -132,9 +131,6 @@ export function CheckoutProvider( {
 			paymentMethodId,
 			paymentMethods,
 			setFormStatus,
-			showErrorMessage,
-			showInfoMessage,
-			showSuccessMessage,
 			transactionStatusManager,
 			paymentProcessors,
 		]
@@ -171,16 +167,7 @@ function CheckoutProviderPropValidator( {
 }: {
 	propsToValidate: CheckoutProviderProps;
 } ) {
-	const {
-		total,
-		items,
-		onPaymentComplete,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		paymentMethods,
-		paymentProcessors,
-	} = propsToValidate;
+	const { total, items, paymentMethods, paymentProcessors } = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
@@ -191,20 +178,53 @@ function CheckoutProviderPropValidator( {
 		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
-		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
-		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
-		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
-		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
-	}, [
-		items,
-		onPaymentComplete,
-		paymentMethods,
-		paymentProcessors,
-		propsToValidate,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		total,
-	] );
+	}, [ items, paymentMethods, paymentProcessors, propsToValidate, total ] );
 	return null;
+}
+
+function useCallEventCallbacks( {
+	onPaymentComplete,
+	onPaymentRedirect,
+	onPaymentError,
+	formStatus,
+	transactionError,
+	transactionStatus,
+	paymentMethodId,
+	transactionLastResponse,
+}: {
+	onPaymentComplete?: PaymentEventCallback;
+	onPaymentRedirect?: PaymentEventCallback;
+	onPaymentError?: PaymentErrorCallback;
+	formStatus: FormStatus;
+	transactionError: string | null;
+	transactionStatus: TransactionStatus;
+	paymentMethodId: string | null;
+	transactionLastResponse: PaymentProcessorResponseData;
+} ): void {
+	useEffect( () => {
+		if ( onPaymentComplete && formStatus === FormStatus.COMPLETE ) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
+			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
+		}
+	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+
+	useEffect( () => {
+		if ( onPaymentRedirect && transactionStatus === TransactionStatus.REDIRECTING ) {
+			debug( "transaction status is redirecting so I'm calling onPaymentRedirect" );
+			onPaymentRedirect( { paymentMethodId, transactionLastResponse } );
+		}
+	}, [
+		transactionStatus,
+		onPaymentRedirect,
+		onPaymentError,
+		paymentMethodId,
+		transactionLastResponse,
+	] );
+
+	useEffect( () => {
+		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
+			debug( "transaction status is error so I'm calling onPaymentError" );
+			onPaymentError( { paymentMethodId, transactionError } );
+		}
+	}, [ transactionStatus, onPaymentRedirect, onPaymentError, paymentMethodId, transactionError ] );
 }

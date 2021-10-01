@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
@@ -25,6 +14,10 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 	DOMAIN_CONTACT_INFO_REDACT,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const saveDomainPrivacySettings = ( verb ) => ( action ) =>
 	http(

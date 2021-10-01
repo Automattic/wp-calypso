@@ -6,20 +6,10 @@
  * @see https:
  */
 
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { loadScript } from '@automattic/load-script';
 import wpcom from 'calypso/lib/wp';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
@@ -120,20 +110,17 @@ export function initialize() {
 		return directlyPromise;
 	}
 
-	directlyPromise = wpcom
-		.undocumented()
-		.getDirectlyConfiguration()
-		.then( ( { isAvailable } ) => {
-			if ( ! isAvailable ) {
-				return Promise.reject(
-					new Error( 'Directly Real-Time Messaging is not available at this time.' )
-				);
-			}
+	directlyPromise = wpcom.req.get( '/help/directly/mine' ).then( ( { isAvailable } ) => {
+		if ( ! isAvailable ) {
+			return Promise.reject(
+				new Error( 'Directly Real-Time Messaging is not available at this time.' )
+			);
+		}
 
-			configureGlobals();
-			insertDOM();
-			return loadDirectlyScript();
-		} );
+		configureGlobals();
+		insertDOM();
+		return loadDirectlyScript();
+	} );
 
 	return directlyPromise;
 }

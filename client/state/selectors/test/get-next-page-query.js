@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 describe( 'getNextPageQuery', () => {

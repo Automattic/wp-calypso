@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { filter, find, get, includes, some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { filter, find, get, some } from 'lodash';
 
 import 'calypso/state/plugins/init';
 
@@ -81,14 +74,14 @@ export const isInstalling = function ( state, siteId, forPlugin = false ) {
 
 	// If any plugin is not done/waiting/error'd, it's in an installing state.
 	return some( pluginList, ( item ) => {
-		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
+		return ! [ 'done', 'wait' ].includes( item.status ) && item.error === null;
 	} );
 };
 
 export const getActivePlugin = function ( state, siteId, forPlugin = false ) {
 	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	const plugin = find( pluginList, ( item ) => {
-		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
+		return ! [ 'done', 'wait' ].includes( item.status ) && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {
 		return false;

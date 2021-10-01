@@ -1,17 +1,12 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef, useState } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useRef, useState } from 'react';
 import type {
 	RequestCartProduct,
 	ApplyCouponToCart,
 	AddProductsToCart,
+	ReplaceProductsInCart,
 } from '@automattic/shopping-cart';
 
-/**
- * Internal dependencies
- */
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 
 export type isPendingAddingProductsFromUrl = boolean;
@@ -19,20 +14,31 @@ export type isPendingAddingProductsFromUrl = boolean;
 export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
+	isJetpackSitelessCheckout,
 	productsForCart,
 	areCartProductsPreparing,
 	couponCodeFromUrl,
 	applyCoupon,
 	addProductsToCart,
+	replaceProductsInCart,
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
+	isJetpackSitelessCheckout: boolean;
 	productsForCart: RequestCartProduct[];
 	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ApplyCouponToCart;
 	addProductsToCart: AddProductsToCart;
+	replaceProductsInCart: ReplaceProductsInCart;
 } ): isPendingAddingProductsFromUrl {
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
 
@@ -50,7 +56,7 @@ export default function useAddProductsFromUrl( {
 			! isCartPendingUpdate
 		) {
 			debug( 'no products or coupons to add; skipping initial cart requests' );
-			setIsLoading( false );
+			isMounted.current && setIsLoading( false );
 			return;
 		}
 	}, [
@@ -75,7 +81,19 @@ export default function useAddProductsFromUrl( {
 		debug( 'adding initial products to cart', productsForCart );
 		const cartPromises = [];
 		if ( productsForCart.length > 0 ) {
-			cartPromises.push( addProductsToCart( productsForCart ) );
+			// The siteless checkout backend cannot handle multiple product checkout yet,
+			// so therefore we only want one product in the cart (The most recently selected).
+			if ( isJetpackSitelessCheckout ) {
+				debug(
+					'siteless checkout: replacing the cart with the most recently selected product',
+					productsForCart[ productsForCart.length - 1 ]
+				);
+				cartPromises.push(
+					replaceProductsInCart( [ productsForCart[ productsForCart.length - 1 ] ] )
+				);
+			} else {
+				cartPromises.push( addProductsToCart( productsForCart ) );
+			}
 		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
@@ -83,7 +101,7 @@ export default function useAddProductsFromUrl( {
 		}
 		Promise.all( cartPromises ).then( () => {
 			debug( 'initial cart requests have completed' );
-			setIsLoading( false );
+			isMounted.current && setIsLoading( false );
 		} );
 		hasRequestedInitialProducts.current = true;
 	}, [
@@ -94,6 +112,8 @@ export default function useAddProductsFromUrl( {
 		applyCoupon,
 		productsForCart,
 		addProductsToCart,
+		isJetpackSitelessCheckout,
+		replaceProductsInCart,
 	] );
 
 	debug( 'useAddProductsFromUrl isLoading', isLoading );

@@ -1,45 +1,30 @@
-/**
- * External dependencies
- */
-
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
-import page from 'page';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Main from 'calypso/components/main';
+import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import HelpContactForm from 'calypso/me/help/help-contact-form';
-import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
-import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
-import HeaderCake from 'calypso/components/header-cake';
-import wpcomLib from 'calypso/lib/wp';
-import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
-import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
-import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
-import {
-	isTicketSupportConfigurationReady,
-	getTicketSupportRequestError,
-} from 'calypso/state/help/ticket/selectors';
-import HappychatConnection from 'calypso/components/happychat/connection-connected';
-import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
+import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import { withoutHttp } from 'calypso/lib/url';
-import HelpUnverifiedWarning from '../help-unverified-warning';
-import {
-	sendMessage as sendHappychatMessage,
-	sendUserInfo,
-} from 'calypso/state/happychat/connection/actions';
-import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
+import wpcom from 'calypso/lib/wp';
+import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
+import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
+import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
+import HelpContactForm from 'calypso/me/help/help-contact-form';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUser,
 	getCurrentUserLocale,
@@ -47,22 +32,24 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import {
+	sendMessage as sendHappychatMessage,
+	sendUserInfo,
+} from 'calypso/state/happychat/connection/actions';
+import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
+import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
+import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
+import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
 } from 'calypso/state/help/directly/actions';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import getSupportLevel from 'calypso/state/selectors/get-support-level';
-import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
-import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
-import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
-import getActiveSupportTickets from 'calypso/state/selectors/get-active-support-tickets';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryLanguageNames from 'calypso/components/data/query-language-names';
+import {
+	isTicketSupportConfigurationReady,
+	getTicketSupportRequestError,
+} from 'calypso/state/help/ticket/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getActiveSupportTickets from 'calypso/state/selectors/get-active-support-tickets';
 import getInlineHelpSupportVariation, {
 	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
@@ -71,12 +58,14 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getPlanTermLabel } from '@automattic/calypso-products';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
+import getSupportLevel from 'calypso/state/selectors/get-support-level';
+import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
+import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
+import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import HelpUnverifiedWarning from '../help-unverified-warning';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:help-contact' );
@@ -85,7 +74,6 @@ const debug = debugFactory( 'calypso:help-contact' );
  * Module variables
  */
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
-const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
 class HelpContact extends React.Component {
@@ -211,21 +199,15 @@ class HelpContact extends React.Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'kayako' );
 
-		wpcom.submitKayakoTicket(
-			subject,
-			kayakoMessage,
-			currentUserLocale,
-			this.props.clientSlug,
-			supportVariation === SUPPORT_CHAT_OVERFLOW,
-			( error ) => {
-				if ( error ) {
-					// TODO: bump a stat here
-					this.props.errorNotice( error.message );
-
-					this.setState( { isSubmitting: false } );
-					return;
-				}
-
+		wpcom.req
+			.post( '/help/tickets/kayako/new', {
+				subject,
+				message: kayakoMessage,
+				locale: currentUserLocale,
+				client: this.props.clientSlug,
+				is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
+			} )
+			.then( () => {
 				this.setState( {
 					isSubmitting: false,
 					confirmation: {
@@ -250,16 +232,32 @@ class HelpContact extends React.Component {
 						active_ticket_count: this.props.activeSupportTickets.length,
 					} );
 				}
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// TODO: bump a stat here
+				this.props.errorNotice( error.message );
+
+				this.setState( { isSubmitting: false } );
+			} );
 
 		this.clearSavedContactForm();
+	};
+
+	translateForForums = ( message, args ) => {
+		const { currentUserLocale, translate } = this.props;
+
+		if ( config( 'forum_locales' ).includes( currentUserLocale ) ) {
+			return translate( message, args );
+		}
+
+		return args ? message.replace( '%s', args.args[ 0 ] ) : message;
 	};
 
 	submitSupportForumsTopic = ( contactForm ) => {
 		const {
 			helpSiteIsJetpack,
 			helpSiteIsNotWpCom,
+			helpSiteIsWpCom,
 			site,
 			subject,
 			message,
@@ -272,55 +270,58 @@ class HelpContact extends React.Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
 
-		let blogHelpMessage = translate( "I don't have a site linked to this WordPress.com account" );
+		let blogHelpMessage = this.translateForForums(
+			"I don't have a site linked to this WordPress.com account"
+		);
 
 		if ( userDeclaresNoSite ) {
-			blogHelpMessage = translate( "I don't have a site with WordPress.com yet" );
+			blogHelpMessage = this.translateForForums( "I don't have a site with WordPress.com yet" );
 		}
 
 		if ( site || userDeclaredUrl ) {
-			const siteUrl = userDeclaredUrl
-				? withoutHttp( userDeclaredUrl.trim() )
-				: withoutHttp( site.URL );
+			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = translate( 'The site I need help with is %(siteUrl)s.', {
-				args: {
-					siteUrl: userRequestsHidingUrl
-						? translate( '[visible only to staff]' ) + ' help@' + siteUrl
-						: siteUrl,
-				},
+			blogHelpMessage = this.translateForForums( 'Site: %s.', {
+				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
 			} );
+
+			if ( helpSiteIsWpCom ) {
+				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Yes' );
+			}
 
 			if ( helpSiteIsNotWpCom ) {
 				const jetpackMessage = helpSiteIsJetpack
-					? translate( 'It is not hosted by WordPress.com, but it is connected with Jetpack.' )
-					: translate( 'It is not hosted by WordPress.com or connected with Jetpack.' );
+					? this.translateForForums( 'Yes' )
+					: this.translateForForums( 'Unknown' );
 
-				blogHelpMessage += ' ' + jetpackMessage;
-			}
-
-			if ( userDeclaredUrl ) {
 				blogHelpMessage +=
-					' ' + translate( 'This site is not linked to my WordPress.com account.' );
+					'\n' +
+					this.translateForForums( 'WP.com: Unknown \nJetpack: %s', {
+						args: [ jetpackMessage ],
+					} );
 			}
+
+			const correctAccountMessage = userDeclaredUrl
+				? this.translateForForums( 'Unknown' )
+				: this.translateForForums( 'Yes' );
+
+			blogHelpMessage +=
+				'\n' +
+				this.translateForForums( 'Correct account: %s', {
+					args: [ correctAccountMessage ],
+				} );
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
 
-		wpcom.submitSupportForumsTopic(
-			subject,
-			forumMessage,
-			currentUserLocale,
-			this.props.clientSlug,
-			( error, data ) => {
-				if ( error ) {
-					// TODO: bump a stat here
-					this.props.errorNotice( error.message );
-
-					this.setState( { isSubmitting: false } );
-					return;
-				}
-
+		wpcom.req
+			.post( '/help/forums/support/topics/new', {
+				subject,
+				message: forumMessage,
+				locale: currentUserLocale,
+				client: this.props.clientSlug,
+			} )
+			.then( ( data ) => {
 				this.setState( {
 					isSubmitting: false,
 					confirmation: {
@@ -344,8 +345,13 @@ class HelpContact extends React.Component {
 						active_ticket_count: this.props.activeSupportTickets.length,
 					} );
 				}
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// TODO: bump a stat here
+				this.props.errorNotice( error.message );
+
+				this.setState( { isSubmitting: false } );
+			} );
 
 		this.clearSavedContactForm();
 	};

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { useState, useEffect, useCallback } from 'react';
 import { useEvents } from '@automattic/composite-checkout';
+import { useState, useEffect, useCallback } from 'react';
 
 export type CouponFieldStateProps = {
 	couponFieldValue: string;

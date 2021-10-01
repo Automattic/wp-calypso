@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
 import productsValues from '@automattic/calypso-products';
+import { expect } from 'chai';
 import { isRefundable, getSubscriptionEndDate } from 'calypso/lib/purchases';
+import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancellation-effect';
 
 jest.mock( '@automattic/calypso-products', () => ( {} ) );
 jest.mock( 'calypso/lib/purchases', () => ( {

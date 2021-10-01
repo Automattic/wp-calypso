@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { hasGutenbergBlocks } from './has-gutenberg-blocks';
 
 export function removep( html ) {

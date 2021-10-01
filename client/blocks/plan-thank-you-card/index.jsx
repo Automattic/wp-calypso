@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
+import { getPlan, getPlanClass } from '@automattic/calypso-products';
+import { ProductIcon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { ProductIcon } from '@automattic/components';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySites from 'calypso/components/data/query-sites';
+import ThankYouCard from 'calypso/components/thank-you-card';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import QuerySites from 'calypso/components/data/query-sites';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { getPlan, getPlanClass } from '@automattic/calypso-products';
-import ThankYouCard from 'calypso/components/thank-you-card';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PlanThankYouCard extends Component {
@@ -140,7 +130,7 @@ PlanThankYouCard.propTypes = {
 	/**
 	 * Description can be either a string or object to allow either a bare
 	 * string or a description that contains HTML and other components.
-	 **/
+	 */
 	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 	heading: PropTypes.string,
 	plan: PropTypes.object,

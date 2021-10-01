@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import wpcom from 'wpcom';
 import proxyRequest from 'wpcom-proxy-request';
 

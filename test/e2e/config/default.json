@@ -3,6 +3,7 @@
 	"explicitWaitMS": 20000,
 	"emailWaitMS": 60000,
 	"mochaTimeoutMS": 160000,
+	"jestTimeoutMS": 160000,
 	"mochaDevDocsTimeoutMS": 1000000,
 	"startBrowserTimeoutMS": 60000,
 	"startAppTimeoutMS": 240000,
@@ -23,24 +24,6 @@
 		"log": "."
 	},
 	"viewportName": "desktop",
-	"viewportSize": {
-		"mobile": {
-			"width": 400,
-			"height": 1000
-		},
-		"tablet": {
-			"width": 1024,
-			"height": 1000
-		},
-		"desktop": {
-			"width": 1440,
-			"height": 1000
-		},
-		"laptop": {
-			"width": 1440,
-			"height": 790
-		}
-	},
 	"locale": "en",
 	"sauceConfigurations": {
 		"osx-chrome": {

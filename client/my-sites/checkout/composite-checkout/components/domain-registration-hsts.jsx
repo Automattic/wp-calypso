@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { isEmpty, merge, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import React from 'react';
+import { connect } from 'react-redux';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
+import { getTld, isHstsRequired } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { getTld, isHstsRequired } from 'calypso/lib/domains';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

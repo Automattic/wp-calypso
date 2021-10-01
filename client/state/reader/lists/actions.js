@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	READER_LIST_CREATE,
 	READER_LIST_DELETE,

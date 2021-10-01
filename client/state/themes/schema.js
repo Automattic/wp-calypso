@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withItemsSchema } from 'calypso/lib/query-manager/schema';
 
 const themesSchema = {

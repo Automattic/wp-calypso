@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import SidebarComponent from 'calypso/me/sidebar';
+import page from 'page';
+import React from 'react';
 import AppsComponent from 'calypso/me/get-apps';
+import SidebarComponent from 'calypso/me/sidebar';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
 export function sidebar( context, next ) {
 	context.secondary = React.createElement( SidebarComponent, {

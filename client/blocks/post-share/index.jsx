@@ -1,36 +1,34 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
+import { Button, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, includes, map, concat } from 'lodash';
+import { current as currentPage } from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { get, includes, map, concat } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { isEnabled } from '@automattic/calypso-config';
-import Gridicon from 'calypso/components/gridicon';
-import { current as currentPage } from 'page';
-
-/**
- * Internal dependencies
- */
+import CalendarButton from 'calypso/blocks/calendar-button';
+import ButtonGroup from 'calypso/components/button-group';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { Button } from '@automattic/components';
-import ButtonGroup from 'calypso/components/button-group';
-import NoticeAction from 'calypso/components/notice/notice-action';
+import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import PublicizeMessage from 'calypso/components/publicize-message';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { sectionify } from 'calypso/lib/route';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getPostSharePublishedActions from 'calypso/state/selectors/get-post-share-published-actions';
 import getPostShareScheduledActions from 'calypso/state/selectors/get-post-share-scheduled-actions';
 import getScheduledPublicizeShareActionTime from 'calypso/state/selectors/get-scheduled-publicize-share-action-time';
 import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
 import isSchedulingPublicizeShareAction from 'calypso/state/selectors/is-scheduling-publicize-share-action';
 import isSchedulingPublicizeShareActionError from 'calypso/state/selectors/is-scheduling-publicize-share-action-error';
-import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-
 import {
 	fetchConnections as requestConnections,
 	sharePost,
@@ -44,27 +42,17 @@ import {
 	sharePostFailure,
 	sharePostSuccessMessage,
 } from 'calypso/state/sharing/publicize/selectors';
-import PublicizeMessage from 'calypso/components/publicize-message';
-import Notice from 'calypso/components/notice';
 import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
 } from 'calypso/state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
-import { UpgradeToPremiumNudge } from './nudges';
-import SharingPreviewModal from './sharing-preview-modal';
+import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import ConnectionsList from './connections-list';
 import NoConnectionsNotice from './no-connections-notice';
+import { UpgradeToPremiumNudge } from './nudges';
 import ActionsList from './publicize-actions-list';
-import CalendarButton from 'calypso/blocks/calendar-button';
-import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { sectionify } from 'calypso/lib/route';
+import SharingPreviewModal from './sharing-preview-modal';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/;

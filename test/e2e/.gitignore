@@ -13,3 +13,6 @@
 
 # typescript output
 dist/
+
+# Playwright results
+results/

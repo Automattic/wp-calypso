@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import ClosureNotice from '../shared/closure-notice';
-import FormattedHeader from 'calypso/components/formatted-header';
-import ExternalLink from 'calypso/components/external-link';
 import { localize } from 'i18n-calypso';
+import React, { Component, Fragment } from 'react';
+import ExternalLink from 'calypso/components/external-link';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { CONCIERGE_SUPPORT } from 'calypso/lib/url/support';
+import ClosureNotice from '../shared/closure-notice';
 
 class PrimaryHeader extends Component {
 	render() {

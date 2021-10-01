@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';

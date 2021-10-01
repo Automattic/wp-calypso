@@ -1,27 +1,19 @@
-/**
- * External dependencies
- */
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
+import { pick } from 'lodash';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { hasSiteAnalyticsFeature } from '../utils';
-import wrapSettingsForm from '../wrap-settings-form';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wrapSettingsForm from '../wrap-settings-form';
 import GoogleAnalyticsJetpackForm from './form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from './form-google-analytics-simple';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const validateGoogleAnalyticsCode = ( code ) =>
@@ -38,6 +30,8 @@ export const GoogleAnalyticsForm = ( props ) => {
 		eventTracker,
 		uniqueEventTracker,
 		path,
+		isAtomic,
+		isGoogleAnalyticsEligible,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -88,8 +82,9 @@ export const GoogleAnalyticsForm = ( props ) => {
 		placeholderText,
 		recordSupportLinkClick,
 		setDisplayForm,
+		isAtomic,
 	};
-	if ( props.siteIsJetpack ) {
+	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -98,7 +93,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site );
+	const isGoogleAnalyticsEligible = hasActiveSiteFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -114,6 +109,8 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
+		isAtomic: isAtomicSite( state, siteId ),
+		isGoogleAnalyticsEligible,
 	};
 };
 
@@ -123,9 +120,6 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-const getFormSettings = partialRight( pick, [ 'wga' ] );
+const getFormSettings = ( settings ) => pick( settings, [ 'wga' ] );
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( GoogleAnalyticsForm );
+export default connectComponent( wrapSettingsForm( getFormSettings )( GoogleAnalyticsForm ) );

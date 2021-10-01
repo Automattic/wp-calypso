@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DomainTip from '../index';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import DomainTip from '../index';
 
 const DomainTipExample = ( { siteId } ) => (
 	<DomainTip siteId={ siteId } event="domain_app_example" />

@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import classnames from 'classnames';
-import moment from 'moment';
-
-/**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
 import { RichText, InspectorControls } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
 import {
@@ -19,6 +9,9 @@ import {
 	TextControl,
 	PanelBody,
 } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
+import moment from 'moment';
 
 import './editor.scss';
 const name = 'a8c/task';

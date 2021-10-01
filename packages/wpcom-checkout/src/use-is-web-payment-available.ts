@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect, useState } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useState } from 'react';
 import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-is-web-pay-available' );

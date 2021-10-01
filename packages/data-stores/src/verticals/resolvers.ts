@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { apiFetch } from '@wordpress/data-controls';
-
-/**
- * Internal dependencies
- */
 import { receiveVerticals } from './actions';
 import type { Vertical } from './types';
 

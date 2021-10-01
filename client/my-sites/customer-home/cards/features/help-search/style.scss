@@ -201,7 +201,7 @@ $min_results_height: 180px;
 	.inline-help__results-placeholder {
 		min-height: $min_results_height;
 		margin: #{$search_results_top_spacing + 1} 0 0 #{-$search_results_top_spacing};
-		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
+		padding: #{$search_results_top_spacing * 0.5 - 1px} 0 0 0;
 	}
 
 	.inline-help__results-placeholder-item {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { getPlanTermLabel, isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
 import { find, map, partition, reduce, some } from 'lodash';
 import React, { Fragment } from 'react';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { getPlanTermLabel, isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
 
 export const groupDomainProducts = ( originalItems, translate ) => {
 	const transactionItems = Object.keys( originalItems ).map( ( key ) => {

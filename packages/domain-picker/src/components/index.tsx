@@ -1,19 +1,25 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
-import { times } from 'lodash';
-import { Button, TextControl, Notice } from '@wordpress/components';
-import { Icon, search } from '@wordpress/icons';
+
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import { Button, TextControl, Notice } from '@wordpress/components';
+import { Icon, search } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import type { DomainSuggestions } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
+import { times } from 'lodash';
+import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
+import {
+	DOMAIN_SUGGESTIONS_TO_SHOW,
+	DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,
+	domainIsAvailableStatus,
+} from '../constants';
+import {
+	useDomainSuggestions,
+	useDomainAvailabilities,
+	usePersistentSelectedDomain,
+} from '../hooks';
+import { getDomainSuggestionsVendor } from '../utils';
+import DomainCategories from './domain-categories';
+import { DomainNameExplanationImage } from './domain-name-explanation';
 import {
 	DomainSuggestionItem,
 	DomainSuggestionItemUseYourDomain,
@@ -21,23 +27,8 @@ import {
 	SUGGESTION_ITEM_TYPE_RADIO,
 	SUGGESTION_ITEM_TYPE,
 } from './domain-suggestion-item';
-import DomainCategories from './domain-categories';
-import { DomainNameExplanationImage } from './domain-name-explanation';
-import {
-	useDomainSuggestions,
-	useDomainAvailabilities,
-	usePersistentSelectedDomain,
-} from '../hooks';
-import { getDomainSuggestionsVendor } from '../utils';
-import {
-	DOMAIN_SUGGESTIONS_TO_SHOW,
-	DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED,
-	domainIsAvailableStatus,
-} from '../constants';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;

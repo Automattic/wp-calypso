@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 // Using page() for cross origin navigations would throw a `History.pushState` exception

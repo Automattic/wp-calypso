@@ -1,34 +1,20 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { Button, Card } from '@automattic/components';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useTranslate } from 'i18n-calypso';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import cloudErrorIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-error.svg';
-
-/**
- * Type dependencies
- */
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Activity } from 'calypso/state/activity-log/types';
+
+import './style.scss';
 
 type Props = { backup: Activity; isFeatured: boolean };
 

@@ -41,6 +41,7 @@ The following items did not change:
   - `site-editor/`: Gutenberg site-editor integration code for WordPress.com.
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
   - `wpcom-block-editor-nux/`: WordPress.com-specific NUX dialogue.
+  - `tags-education/`: Additional tags education for Gutenberg
 
 ## Shared WordPress scripts
 

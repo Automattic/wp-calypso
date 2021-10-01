@@ -1,53 +1,35 @@
-/**
- * External dependencies
- */
-import { useDispatch, useSelector } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
-import MarketingToolsFeature from './feature';
-import MarketingToolsHeader from './header';
+import { useDispatch, useSelector } from 'react-redux';
+import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
+import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
+import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
+import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
+import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
+import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	marketingConnections,
 	marketingBusinessTools,
 	marketingUltimateTrafficGuide,
 } from 'calypso/my-sites/marketing/paths';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-
-/**
- * Images
- */
-import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
-import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
-import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
-import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
-import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
-import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
-import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
-
-/**
- * Types
- */
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
+import MarketingToolsFeature from './feature';
+import MarketingToolsHeader from './header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const MarketingTools: FunctionComponent = () => {
@@ -134,7 +116,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
-						href="https://wp.me/logo-maker"
+						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
 						target="_blank"
 					>
 						{ translate( 'Create a logo' ) }
@@ -241,7 +223,7 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Get help with content for your blog or website' ) }
 					description={ translate(
-						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO.'
+						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO. Get 35% off your first month today.'
 					) }
 					imagePath={ verblioLogo }
 				>

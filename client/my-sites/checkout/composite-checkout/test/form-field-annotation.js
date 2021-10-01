@@ -3,22 +3,14 @@
  */
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
-/**
- * External dependencies
- */
-import React from 'react';
+import { matchers } from '@emotion/jest';
+import { ThemeProvider } from '@emotion/react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { matchers } from 'jest-emotion';
-import { ThemeProvider } from 'emotion-theming';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import FormFieldAnnotation from '../components/form-field-annotation';
 
-// Add the custom matchers provided by 'jest-emotion'
+// Add the custom matchers provided by '@emotion/jest'
 expect.extend( matchers );
 
 const theme = {

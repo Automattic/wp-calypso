@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { useSelect } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 

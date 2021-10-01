@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import { useSelector } from 'react-redux';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 
 export interface HomeLayoutQueryParams {

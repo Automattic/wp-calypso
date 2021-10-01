@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import Tooltip from 'calypso/components/tooltip';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PodcastIndicator extends React.Component {

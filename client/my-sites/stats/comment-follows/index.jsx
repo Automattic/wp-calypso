@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Followers from '../stats-comment-followers-page';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Followers from '../stats-comment-followers-page';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {

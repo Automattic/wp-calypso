@@ -1,14 +1,15 @@
-/**
- * Internal dependencies
- */
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import {
 	makeLayout,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
-	selectSiteIfLoggedIn,
 } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import {
+	navigation,
+	selectSiteIfLoggedIn,
+	siteSelection,
+	sites,
+} from 'calypso/my-sites/controller';
 import { loggedOut } from './controller';
 import { loggedIn, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';

@@ -1,70 +1,56 @@
-/**
- * External dependencies
- */
+import { getUrlParts } from '@automattic/calypso-url';
+import { Site } from '@automattic/data-stores';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-
-// Libraries
-import wpcom from 'calypso/lib/wp';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from '@automattic/calypso-url';
-
-// State actions and selectors
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import wpcom from 'calypso/lib/wp';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import flows from 'calypso/signup/config/flows';
+import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getSelectedImportEngine,
+	getNuxUrlInputValue,
+} from 'calypso/state/importer-nux/temp-selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
-import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalId,
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	getSelectedImportEngine,
-	getNuxUrlInputValue,
-} from 'calypso/state/importer-nux/temp-selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { Site } from '@automattic/data-stores';
+
 const Visibility = Site.Visibility;
-
-// Current directory dependencies
-import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-
-import { createCart, addToCart } from 'calypso/lib/signup/cart';
-
-// Others
-import flows from 'calypso/signup/config/flows';
-import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
-
-/**
- * Constants
- */
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
-		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore.getState() )
+		? prepareItemForAddingToCart(
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState ),
+				reduxState
+		  )
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -77,21 +63,25 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ].filter( Boolean );
-		createCart( cartKey, domainChoiceCart, ( error ) => callback( error, providedDependencies ) );
+		cartManagerClient
+			.forCartKey( cartKey )
+			.actions.replaceProductsInCart( domainChoiceCart )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => callback( error, providedDependencies ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 		};
-		const products = [
-			dependencies.domainItem,
-			dependencies.privacyItem,
-			dependencies.cartItem,
-		].filter( Boolean );
+		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
+			.filter( Boolean )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
-		createCart( siteId, products, ( error ) => {
-			callback( error, providedDependencies );
-		} );
+		cartManagerClient
+			.forCartKey( siteId )
+			.actions.replaceProductsInCart( products )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => callback( error, providedDependencies ) );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -324,24 +314,32 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	} );
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
-	if ( isEmpty( themeSlugWithRepo ) ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, selectedDesign } ) {
+	let theme = '';
+
+	if ( themeSlugWithRepo ) {
+		theme = themeSlugWithRepo.split( '/' )[ 1 ];
+	} else if ( selectedDesign ) {
+		theme = selectedDesign.theme;
+	}
+
+	if ( ! theme ) {
 		defer( callback );
 
 		return;
 	}
 
-	wpcom
-		.undocumented()
-		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function ( errors ) {
-			callback( isEmpty( errors ) ? undefined : [ errors ] );
-		} );
+	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
+	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
+	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
+	const { emailItem, siteSlug } = dependencies;
 	const { cartItem } = stepProvidedItems;
-	if ( isEmpty( cartItem ) ) {
+	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
@@ -349,7 +347,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -382,14 +380,17 @@ function processItemCart(
 ) {
 	const addToCartAndProceed = () => {
 		debug( 'adding cart items', newCartItems );
-		const newCartItemsToAdd = newCartItems.map( ( item ) =>
-			addPrivacyProtectionIfSupported( item, reduxStore.getState() )
-		);
+		const reduxState = reduxStore.getState();
+		const newCartItemsToAdd = newCartItems
+			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
 		if ( newCartItemsToAdd.length ) {
-			addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
-				callback( cartError, providedDependencies );
-			} );
+			cartManagerClient
+				.forCartKey( siteSlug )
+				.actions.addProductsToCart( newCartItemsToAdd )
+				.then( () => callback( undefined, providedDependencies ) )
+				.catch( ( error ) => callback( error, providedDependencies ) );
 		} else {
 			callback( undefined, providedDependencies );
 		}
@@ -410,6 +411,17 @@ function processItemCart(
 	} else {
 		addToCartAndProceed();
 	}
+}
+
+function prepareItemForAddingToCart( item, state ) {
+	const productsList = getProductsList( state );
+	return {
+		...fillInSingleCartItemAttributes( item, productsList ),
+		extra: {
+			...item.extra,
+			context: 'signup',
+		},
+	};
 }
 
 function addPrivacyProtectionIfSupported( item, state ) {
@@ -718,6 +730,41 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
 		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
+}
+
+export function maybeExcludeEmailsStep( {
+	domainItem,
+	resetSignupStep,
+	siteUrl,
+	stepName,
+	submitSignupStep,
+} ) {
+	const isEmailStepExcluded = flows.excludedSteps.includes( stepName );
+
+	/* If we have a domain, make sure the step isn't excluded */
+	if ( domainItem ) {
+		if ( ! isEmailStepExcluded ) {
+			return;
+		}
+
+		resetSignupStep( stepName );
+		flows.resetExcludedStep( stepName );
+
+		return;
+	}
+
+	/* We don't have a domain, so exclude the step if it hasn't been excluded yet */
+	if ( isEmailStepExcluded ) {
+		return;
+	}
+
+	const emailItem = undefined;
+
+	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { emailItem } );
+
+	recordExcludeStepEvent( stepName, siteUrl );
+
+	flows.excludeStep( stepName );
 }
 
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {

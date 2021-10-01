@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 
 describe( 'getBillingTransactionsByType()', () => {

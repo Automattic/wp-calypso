@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import moment from 'moment-timezone';
-
-/**
- * Internal dependencies
- */
-import AvailableTimeCard from './available-time-card';
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
+import AvailableTimeCard from './available-time-card';
 
 const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};

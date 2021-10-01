@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import React from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
-import Gridicon from 'calypso/components/gridicon';
 
 const ActionBox = ( {
 	href,

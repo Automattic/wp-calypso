@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import fullCreditsProcessor from '../lib/full-credits-processor';
 import wp from 'calypso/lib/wp';
+import fullCreditsProcessor from '../lib/full-credits-processor';
 
 jest.mock( 'calypso/lib/wp' );
 

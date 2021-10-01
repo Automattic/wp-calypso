@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import LoggedOutShowcase from '../logged-out';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
 import { THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import LoggedOutShowcase from '../logged-out';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
@@ -45,7 +38,7 @@ describe( 'logged-out', () => {
 				author_uri: 'http://www.organicthemes.com',
 				demo_uri: 'https://naturaldemo.wordpress.com/',
 				screenshot:
-					'https://i2.wp.com/theme.wordpress.com/wp-content/themes/premium/natural/screenshot.png',
+					'https://i0.wp.com/theme.wordpress.com/wp-content/themes/premium/natural/screenshot.png',
 				price: '$69',
 			},
 			{
@@ -67,7 +60,7 @@ describe( 'logged-out', () => {
 				author_uri: 'http://theme.wordpress.com/themes/by/anariel-design/',
 				demo_uri: 'https://penademo.wordpress.com/',
 				screenshot:
-					'https://i2.wp.com/theme.wordpress.com/wp-content/themes/premium/pena/screenshot.png',
+					'https://i0.wp.com/theme.wordpress.com/wp-content/themes/premium/pena/screenshot.png',
 				price: '$89',
 			},
 			{

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { cloneDeep, map, reduce } from 'lodash';
 
 /**

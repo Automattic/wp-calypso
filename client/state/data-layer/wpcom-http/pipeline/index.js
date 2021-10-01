@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { compact, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
 import { retryOnFailure } from './retry-on-failure';
 

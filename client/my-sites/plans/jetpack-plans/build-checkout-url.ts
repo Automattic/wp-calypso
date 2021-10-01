@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import {
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+} from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
 import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -46,7 +43,11 @@ export default function buildCheckoutURL(
 			? 'http://calypso.localhost:3000'
 			: 'https://wordpress.com';
 
-	if ( ! siteSlug && config.isEnabled( 'jetpack/siteless-checkout' ) ) {
+	if (
+		! siteSlug &&
+		config.isEnabled( 'jetpack/siteless-checkout' ) &&
+		! [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( productsString )
+	) {
 		return addQueryArgs( urlQueryArgs, host + `/checkout/jetpack/${ productsString }` );
 	}
 
@@ -70,7 +71,7 @@ export default function buildCheckoutURL(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
-	return isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
+	return isJetpackCloud()
 		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }

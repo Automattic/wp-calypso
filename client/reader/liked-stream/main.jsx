@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
-import DocumentHead from 'calypso/components/data/document-head';
 
 const title = translate( 'My Likes' );
 const documentTitle = translate( '%s ‹ Reader', {

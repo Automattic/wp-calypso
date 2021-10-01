@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
 import SupportInfo from 'calypso/components/support-info';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Markdown = ( { fields, handleToggle, isRequestingSettings, isSavingSettings } ) => {
 	const translate = useTranslate();

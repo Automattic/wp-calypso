@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 
 class TxtRecord extends React.Component {
 	static propTypes = {

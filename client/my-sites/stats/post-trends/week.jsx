@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Day from './day';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import Day from './day';
 
 class PostTrendsWeek extends Component {
 	static propTypes = {

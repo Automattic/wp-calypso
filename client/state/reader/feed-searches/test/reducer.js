@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { receiveFeedSearch } from '../actions';
 import { items } from '../reducer';
 

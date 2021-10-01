@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { registerStore } from '@automattic/composite-checkout';
 
 export interface StoreStateValue {

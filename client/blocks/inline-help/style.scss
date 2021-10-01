@@ -50,6 +50,7 @@
 		top: 0;
 		height: 42px;
 		width: 42px;
+		padding: 0;
 
 		> use:first-child,
 		> g:first-child {
@@ -260,9 +261,6 @@
 	}
 
 	.sites-dropdown {
-		.site-selector .search {
-			top: 51px;
-		}
 		.site-selector__sites {
 			max-height: 20vh;
 		}

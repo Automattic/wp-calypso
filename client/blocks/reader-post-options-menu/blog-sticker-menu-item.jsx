@@ -1,15 +1,8 @@
-/**
- * External Dependencies
- */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
 class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {

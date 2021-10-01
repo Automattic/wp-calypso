@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { isUrlLikelyAnImage } from 'calypso/lib/post-normalizer/utils/is-url-likely-an-image';
 
 /**

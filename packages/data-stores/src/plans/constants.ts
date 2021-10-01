@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 export const STORE_KEY = 'automattic/onboard/plans';
 
 export const FREE_PLAN_PRODUCT_ID = 1;

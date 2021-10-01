@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -14,9 +10,9 @@ import {
 } from '@automattic/calypso-products';
 import * as steps from './steps';
 
-const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
-const PREMIUM_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } );
-const PERSONAL_PREMIUM_PLANS = []
+export const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+export const PREMIUM_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } );
+export const PERSONAL_PREMIUM_PLANS = []
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) )
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) );
 
@@ -32,6 +28,10 @@ export default function stepsForProductAndSurvey(
 	precancellationChatAvailable,
 	downgradePossible
 ) {
+	if ( survey?.fullscreen && isPlan( product ) ) {
+		return [ steps.FEEDBACK_STEP ];
+	}
+
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) ) {
 			return [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];

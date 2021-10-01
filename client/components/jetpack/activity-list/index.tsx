@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React, { ReactNode } from 'react';
-
-/**
- * Internal dependencies
- */
-import { ActivityDescriptionPart, LogData } from './types';
-import LogItem, { Props as LogItemProps } from '../log-item';
 import FormattedBlock from 'calypso/components/notes-formatted-block';
+import LogItem, { Props as LogItemProps } from '../log-item';
+import { ActivityDescriptionPart, LogData } from './types';
 
 interface Props {
 	logs?: LogData;

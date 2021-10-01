@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
 import Ribbon from '.';
 
 export default { title: 'Ribbon' };

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 export interface VatDetails {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_SUCCESS,

@@ -22,13 +22,13 @@ describe( 'safeImageUrl()', () => {
 
 		test( 'should make a non-wpcom http url safe', () => {
 			expect( safeImageUrl( 'http://example.com/foo' ) ).toEqual(
-				'https://i1.wp.com/example.com/foo'
+				'https://i0.wp.com/example.com/foo'
 			);
 		} );
 
 		test( 'should make a non-wpcom https url safe', () => {
 			expect( safeImageUrl( 'https://example.com/foo' ) ).toEqual(
-				'https://i1.wp.com/example.com/foo?ssl=1'
+				'https://i0.wp.com/example.com/foo?ssl=1'
 			);
 		} );
 
@@ -53,18 +53,20 @@ describe( 'safeImageUrl()', () => {
 		} );
 
 		test( 'should make a non-wpcom protocol relative url safe', () => {
-			expect( safeImageUrl( '//example.com/foo' ) ).toEqual( 'https://i1.wp.com/example.com/foo' );
+			expect( safeImageUrl( '//example.com/foo' ) ).toBe(
+				'https://i0.wp.com/example.com/foo?ssl=1'
+			);
 		} );
 
 		test( 'should make a non-wpcom http protocol url with params safe', () => {
-			expect( safeImageUrl( 'http://example.com/foo?w=100' ) ).toEqual(
-				'https://i1.wp.com/example.com/foo'
+			expect( safeImageUrl( 'http://example.com/foo?w=100' ) ).toBe(
+				'https://i0.wp.com/example.com/foo'
 			);
 		} );
 
 		test( 'should make a non-wpcom protocol relative url with params safe', () => {
-			expect( safeImageUrl( '//example.com/foo?w=100' ) ).toEqual(
-				'https://i1.wp.com/example.com/foo?ssl=1'
+			expect( safeImageUrl( '//example.com/foo?w=100' ) ).toBe(
+				'https://i0.wp.com/example.com/foo?ssl=1'
 			);
 		} );
 
@@ -155,7 +157,7 @@ describe( 'safeImageUrl()', () => {
 		test( 'should make a blob url for other origin safe', () => {
 			const originalUrl = 'blob:http://example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			const expectedUrl =
-				'https://i1.wp.com/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
+				'https://i0.wp.com/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			expect( safeImageUrl( originalUrl ) ).toEqual( expectedUrl );
 		} );
 
@@ -170,7 +172,7 @@ describe( 'safeImageUrl()', () => {
 		test( 'should make a blob url safe', () => {
 			const originalUrl = 'blob:http://example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			const expectedUrl =
-				'https://i1.wp.com/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
+				'https://i0.wp.com/http//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71';
 			expect( safeImageUrl( originalUrl ) ).toEqual( expectedUrl );
 		} );
 

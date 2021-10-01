@@ -1,20 +1,11 @@
-/**
- * External dependencies
- *
- */
-
-import React, { FunctionComponent, useCallback } from 'react';
 import { MomentInput, Moment } from 'moment';
+import React, { FunctionComponent, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSiteId } from 'calypso/state/sites/selectors';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
+import { getSiteId } from 'calypso/state/sites/selectors';
 
 export type contextTypeLoaded = ( input: MomentInput ) => Moment;
 export type contextType = contextTypeLoaded | null;

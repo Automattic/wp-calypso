@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
-
-/**
- * Internal dependencies
- */
-import { getLocalizedLanguageNames } from '../resolvers';
 import { setLocalizedLanguageNames } from '../actions';
 import { LANGUAGE_NAMES_URL } from '../constants';
+import { getLocalizedLanguageNames } from '../resolvers';
 
 describe( 'i18n resolvers', () => {
 	describe( 'getLocalizedLanguageNames', () => {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import HeaderButton from 'calypso/components/header-button';
 
 const HeaderButtonExample = () => {

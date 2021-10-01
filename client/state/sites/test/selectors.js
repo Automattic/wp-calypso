@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSite,
 	getSiteCollisions,
@@ -52,9 +48,6 @@ import {
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from '@automattic/calypso-config';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
@@ -130,14 +123,11 @@ describe( 'selectors', () => {
 				domain: 'example.com',
 				slug: 'example.com',
 				hasConflict: false,
-				is_customizable: false,
-				is_previewable: true,
 				jetpack: true,
 				canAutoupdateFiles: true,
 				canUpdateFiles: true,
 				isMainNetworkSite: false,
 				isSecondaryNetworkSite: false,
-				isSiteUpgradeable: false,
 				options: {
 					jetpack_version: '8.0',
 					unmapped_url: 'https://example.wordpress.com',
@@ -200,8 +190,6 @@ describe( 'selectors', () => {
 				slug: 'example.wordpress.com',
 				hasConflict: true,
 				jetpack: false,
-				is_customizable: false,
-				is_previewable: true,
 				options: {
 					unmapped_url: 'https://example.wordpress.com',
 				},
@@ -1550,7 +1538,7 @@ describe( 'selectors', () => {
 			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
-		test( 'should convert site name, tagline and date for archives title type', () => {
+		test( 'should convert site name, tagline, date, and archive title for archives title type', () => {
 			const seoTitle = getSeoTitle(
 				{
 					sites: {
@@ -1578,6 +1566,13 @@ describe( 'selectors', () => {
 											{
 												value: 'date',
 											},
+											{
+												type: 'string',
+												value: ' | ',
+											},
+											{
+												value: 'archiveTitle',
+											},
 										],
 									},
 								},
@@ -1592,11 +1587,14 @@ describe( 'selectors', () => {
 						name: 'Site Title',
 						description: 'Site Tagline',
 					},
-					date: 'January 2000',
+					date: 'Example Archive Title/Date',
+					archiveTitle: 'Example Archive Title/Date',
 				}
 			);
 
-			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
+			chaiExpect( seoTitle ).to.eql(
+				'Site Title | Site Tagline > Example Archive Title/Date | Example Archive Title/Date'
+			);
 		} );
 
 		test( 'should default to empty string for archives title type if no other title is set', () => {
@@ -3167,6 +3165,55 @@ describe( 'selectors', () => {
 			);
 		} );
 
+		test( 'should prepend guide parameter for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: false,
+							},
+						},
+					},
+				},
+				77203199,
+				'identity',
+				null,
+				'test-guide'
+			);
+
+			chaiExpect( customizerUrl ).to.equal( '/customize/identity/example.com?guide=test-guide' );
+		} );
+
+		test( 'should prepend guide parameter for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'identity',
+				null,
+				'test-guide'
+			);
+
+			chaiExpect( customizerUrl ).to.equal(
+				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline&guide=test-guide'
+			);
+		} );
+
 		describe( 'browser', () => {
 			beforeAll( () => {
 				global.window = {
@@ -3256,7 +3303,6 @@ describe( 'selectors', () => {
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
 			chaiExpect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
 			chaiExpect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
-			chaiExpect( noNewAttributes.isSiteUpgradeable ).to.equal( undefined );
 		} );
 
 		test( 'should return exists for attributes if a site is Jetpack', () => {
@@ -3283,7 +3329,6 @@ describe( 'selectors', () => {
 			chaiExpect( noNewAttributes.canUpdateFiles ).to.have.property;
 			chaiExpect( noNewAttributes.isMainNetworkSite ).to.have.property;
 			chaiExpect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
-			chaiExpect( noNewAttributes.isSiteUpgradeable ).to.have.property;
 		} );
 	} );
 	describe( 'getSiteComputedAttributes()', () => {
@@ -3316,8 +3361,6 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: false,
-				is_customizable: false,
 				hasConflict: false,
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
@@ -3356,8 +3399,6 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: true,
-				is_customizable: false,
 				hasConflict: true,
 				domain: 'unmapped-url.wordpress.com',
 				slug: 'unmapped-url.wordpress.com',

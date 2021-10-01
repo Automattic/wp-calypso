@@ -3,7 +3,7 @@
 	min-height: 222px;
 
 	.domain-registration-suggestion__title,
-	.domain-registration-suggestion__progress-bar,
+	.domain-registration-suggestion__badges,
 	.domain-registration-suggestion__match-reasons,
 	.domain-suggestion__action {
 		animation: loading-fade 1.6s ease-in-out infinite;
@@ -23,7 +23,7 @@
 	.domain-product-price {
 		height: 18px;
 	}
-	.domain-registration-suggestion__progress-bar {
+	.domain-registration-suggestion__badges {
 		height: 22px;
 	}
 	.domain-registration-suggestion__match-reasons {

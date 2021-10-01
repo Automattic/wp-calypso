@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AppleIcon from 'calypso/components/social-icons/apple';
-import { CompactCard } from '@automattic/components';
-import config from '@automattic/calypso-config';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getRequestError } from 'calypso/state/login/selectors';
-import GoogleIcon from 'calypso/components/social-icons/google';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import Notice from 'calypso/components/notice';
+import AppleIcon from 'calypso/components/social-icons/apple';
+import GoogleIcon from 'calypso/components/social-icons/google';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { getRequestError } from 'calypso/state/login/selectors';
 import SocialLoginService from './service';
-import FormattedHeader from 'calypso/components/formatted-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SocialLogin extends Component {

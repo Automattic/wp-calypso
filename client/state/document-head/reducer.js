@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-import { uniqWith, isEqual } from 'lodash';
 import { withStorageKey } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { uniqWith, isEqual } from 'lodash';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
@@ -16,6 +8,7 @@ import {
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
 
 /**

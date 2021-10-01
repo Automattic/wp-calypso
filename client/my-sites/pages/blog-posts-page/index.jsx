@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-
+import { Card, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import {
 	getSiteFrontPageType,
 	getSitePostsPage,
 	getSiteFrontPage,
 } from 'calypso/state/sites/selectors';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

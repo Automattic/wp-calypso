@@ -1,31 +1,23 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import titlecase from 'to-title-case';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
+import TeamList from 'calypso/my-sites/people/team-list';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
-import TeamList from 'calypso/my-sites/people/team-list';
-import EmptyContent from 'calypso/components/empty-content';
-import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import titlecase from 'to-title-case';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -56,7 +48,14 @@ class People extends React.Component {
 			case 'email-followers':
 				return translate( 'People who have subscribed to your site using their email address.' );
 			default:
-				return translate( 'Invite contributors to your site and manage their access settings.' );
+				return translate(
+					'Invite contributors to your site and manage their access settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="team" showIcon={ false } />,
+						},
+					}
+				);
 		}
 	}
 
@@ -102,7 +101,7 @@ class People extends React.Component {
 					headerText={ translate( 'People' ) }
 					subHeaderText={ this.renderSubheaderText() }
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
 				<div>
 					{

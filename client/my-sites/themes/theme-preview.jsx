@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import QueryTheme from 'calypso/components/data/query-theme';
-import { connectOptions } from './theme-options';
+import WebPreview from 'calypso/components/web-preview';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { hideThemePreview } from 'calypso/state/themes/actions';
 import {
 	getThemeDemoUrl,
 	getThemePreviewThemeOptions,
@@ -23,9 +17,7 @@ import {
 	isActivatingTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { hideThemePreview } from 'calypso/state/themes/actions';
-import WebPreview from 'calypso/components/web-preview';
+import { connectOptions } from './theme-options';
 
 class ThemePreview extends React.Component {
 	static displayName = 'ThemePreview';
@@ -102,7 +94,7 @@ class ThemePreview extends React.Component {
 	};
 
 	render() {
-		const { themeId } = this.props;
+		const { themeId, siteId, demoUrl, children } = this.props;
 		const { showActionIndicator } = this.state;
 		if ( ! themeId ) {
 			return null;
@@ -110,9 +102,9 @@ class ThemePreview extends React.Component {
 
 		return (
 			<div>
-				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-				{ this.props.children }
-				{ this.props.demoUrl && (
+				{ <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
+				{ children }
+				{ demoUrl && (
 					<WebPreview
 						showPreview={ true }
 						showExternal={ false }
@@ -147,6 +139,7 @@ export default connect(
 		const themeOptions = getThemePreviewThemeOptions( state );
 		return {
 			themeId,
+			siteId,
 			isJetpack,
 			themeOptions,
 			isInstalling: isInstallingTheme( state, themeId, siteId ),

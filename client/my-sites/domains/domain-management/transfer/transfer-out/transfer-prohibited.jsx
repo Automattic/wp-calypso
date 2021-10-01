@@ -1,14 +1,6 @@
-/**
- *  External Dependencies
- *
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 
 const TransferProhibited = ( { translate } ) => (

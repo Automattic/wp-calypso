@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
 import React from 'react';
-import { keyframes } from '@emotion/core';
-
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
-
-export default function Spinner( { className }: { className?: string } ) {
-	return <SpinnerWrapper className={ className } />;
-}
 
 const rotate = keyframes`
 	100% {
@@ -55,3 +44,7 @@ const SpinnerWrapper = styled.div`
 		}
 	}
 `;
+
+export default function Spinner( { className }: { className?: string } ): JSX.Element {
+	return <SpinnerWrapper className={ className } />;
+}

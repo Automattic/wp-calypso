@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
@@ -32,9 +29,8 @@ export const ticketSupportConfigurationRequest = () => ( dispatch ) => {
 
 	dispatch( requestAction );
 
-	return wpcom
-		.undocumented()
-		.getKayakoConfiguration()
+	return wpcom.req
+		.get( '/help/tickets/kayako/mine' )
 		.then( ( configuration ) => {
 			dispatch( ticketSupportConfigurationRequestSuccess( configuration ) );
 		} )

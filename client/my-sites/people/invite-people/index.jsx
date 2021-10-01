@@ -1,63 +1,52 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import page from 'page';
-import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
+import { Card, Button } from '@automattic/components';
 import debugModule from 'debug';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ContractorSelect from 'calypso/my-sites/people/contractor-select';
-import RoleSelect from 'calypso/my-sites/people/role-select';
-import TokenField from 'calypso/components/token-field';
+import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
+import FeatureExample from 'calypso/components/feature-example';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
-import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
-import { Card, Button } from '@automattic/components';
-import Main from 'calypso/components/main';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCake from 'calypso/components/header-cake';
-import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import EmptyContent from 'calypso/components/empty-content';
-import { userCan } from 'calypso/lib/site/utils';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import FeatureExample from 'calypso/components/feature-example';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import TokenField from 'calypso/components/token-field';
+import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
+import accept from 'calypso/lib/accept';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
+import { userCan } from 'calypso/lib/site/utils';
+import wpcom from 'calypso/lib/wp';
+import ContractorSelect from 'calypso/my-sites/people/contractor-select';
+import RoleSelect from 'calypso/my-sites/people/role-select';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
+import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import QuerySiteInvites from 'calypso/components/data/query-site-invites';
-import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
-import FormSelect from 'calypso/components/forms/form-select';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import SectionHeader from 'calypso/components/section-header';
-import accept from 'calypso/lib/accept';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -153,18 +142,18 @@ class InvitePeople extends React.Component {
 		} );
 
 		const filteredErrors = pickBy( errors, ( error, key ) => {
-			return includes( filteredTokens, key );
+			return filteredTokens.includes( key );
 		} );
 
 		const filteredSuccess = filter( success, ( successfulValidation ) => {
-			return includes( filteredTokens, successfulValidation );
+			return filteredTokens.includes( successfulValidation );
 		} );
 
 		this.setState( {
 			usernamesOrEmails: filteredTokens,
 			errors: filteredErrors,
 			success: filteredSuccess,
-			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
+			errorToDisplay: filteredTokens.includes( errorToDisplay ) && errorToDisplay,
 		} );
 		this.validateInvitation( this.props.siteId, filteredTokens, role );
 
@@ -336,7 +325,7 @@ class InvitePeople extends React.Component {
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
 
-		if ( includes( [ 'administrator', 'editor', 'author', 'contributor' ], role ) ) {
+		if ( [ 'administrator', 'editor', 'author', 'contributor' ].includes( role ) ) {
 			page( `/people/new/${ this.props.site.slug }/sent` );
 		}
 	};
@@ -727,7 +716,11 @@ class InvitePeople extends React.Component {
 
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite People' ) }
+					{ translate( 'Invite People to %(sitename)s', {
+						args: {
+							sitename: site.name,
+						},
+					} ) }
 				</HeaderCake>
 				{ this.renderInviteForm() }
 				{ isWPForTeamsSite && (

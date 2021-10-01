@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	defer,
 	difference,
@@ -8,7 +5,6 @@ import {
 	find,
 	flatMap,
 	forEach,
-	get,
 	includes,
 	isEmpty,
 	keys,
@@ -18,30 +14,26 @@ import {
 } from 'lodash';
 import page from 'page';
 import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
-import wpcom from 'calypso/lib/wp';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { ProgressState } from 'calypso/state/signup/progress/schema';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import {
 	resetSignup,
 	updateDependencies,
 	removeSiteSlugDependency,
 } from 'calypso/state/signup/actions';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	completeSignupStep,
 	invalidateStep,
 	processStep,
 } from 'calypso/state/signup/progress/actions';
-import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
+import { ProgressState } from 'calypso/state/signup/progress/schema';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -167,8 +159,7 @@ export default class SignupFlowController {
 			return;
 		}
 
-		// If we are entering from one flow to another, e.g. 'new-launch' to 'onboarding',
-		// we should remove the siteSlug stored by previous flow if the following conditions are met:
+		// If we are entering from one flow to another, we should remove the siteSlug stored by previous flow if the following conditions are met:
 		// - the previous flow does not contain a step that provides the siteSlug dependency
 		// - the current flow contains a step that provides the siteSlug dependency
 		const previousFlowName = getPreviousFlowName( this._reduxStore.getState() );
@@ -313,12 +304,8 @@ export default class SignupFlowController {
 	}
 
 	_canProcessStep( step: Step ) {
-		const { providesToken } = steps[ step.stepName ];
-		const dependencies = get( steps, [ step.stepName, 'dependencies' ], [] );
-		const dependenciesFound = pick(
-			getSignupDependencyStore( this._reduxStore.getState() ),
-			dependencies
-		);
+		const { dependencies = [], providesToken } = steps[ step.stepName ];
+		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
 		const currentSteps = this._flow.steps;
 		const signupProgress = filter(
@@ -327,11 +314,8 @@ export default class SignupFlowController {
 		);
 		const allStepsSubmitted =
 			reject( signupProgress, { status: 'in-progress' } ).length === currentSteps.length;
-		const allowUnauthenticated = get(
-			getSignupDependencyStore( this._reduxStore.getState() ),
-			'allowUnauthenticated',
-			false
-		);
+		const allowUnauthenticated =
+			getSignupDependencyStore( this._reduxStore.getState() )?.allowUnauthenticated ?? false;
 
 		return (
 			dependenciesSatisfied &&
@@ -347,10 +331,10 @@ export default class SignupFlowController {
 
 		this._processingSteps.add( step.stepName );
 
-		const dependencies = get( steps, [ step.stepName, 'dependencies' ], [] );
-		const dependenciesFound = pick(
-			getSignupDependencyStore( this._reduxStore.getState() ),
-			dependencies
+		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
+		const optionalDependenciesFound = this._findDependencies(
+			step.stepName,
+			'optionalDependencies'
 		);
 
 		// deferred because a step can be processed as soon as it is submitted
@@ -377,10 +361,20 @@ export default class SignupFlowController {
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
 			},
-			dependenciesFound,
+			{ ...dependenciesFound, ...optionalDependenciesFound },
 			step,
 			this._reduxStore
 		);
+	}
+
+	_findDependencies( stepName: string, dependencyKey = 'dependencies' ): Record< string, unknown > {
+		const dependencyStore = getSignupDependencyStore( this._reduxStore.getState() );
+		const stepConfig = steps[ stepName ];
+		if ( ! stepConfig || ! stepConfig[ dependencyKey ] ) {
+			return {};
+		}
+
+		return pick( dependencyStore, stepConfig[ dependencyKey ] );
 	}
 
 	_destination( dependencies: Dependencies ): string {

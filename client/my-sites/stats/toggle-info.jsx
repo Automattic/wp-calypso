@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import React, { Component } from 'react';
 
 const toggleInfo = ( WrappedComponent ) =>

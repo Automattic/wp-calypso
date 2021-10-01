@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 
 describe( 'getRemovableConnections()', () => {

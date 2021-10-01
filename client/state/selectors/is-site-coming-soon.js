@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 

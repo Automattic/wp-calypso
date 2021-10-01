@@ -1,11 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import {
+	DIRECTLY_ASK_QUESTION,
+	DIRECTLY_INITIALIZATION_START,
+	DIRECTLY_INITIALIZATION_SUCCESS,
+	DIRECTLY_INITIALIZATION_ERROR,
+} from 'calypso/state/action-types';
 import {
 	STATUS_UNINITIALIZED,
 	STATUS_INITIALIZING,
@@ -13,12 +12,6 @@ import {
 	STATUS_ERROR,
 } from '../constants';
 import reducer, { questionAsked, status } from '../reducer';
-import {
-	DIRECTLY_ASK_QUESTION,
-	DIRECTLY_INITIALIZATION_START,
-	DIRECTLY_INITIALIZATION_SUCCESS,
-	DIRECTLY_INITIALIZATION_ERROR,
-} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

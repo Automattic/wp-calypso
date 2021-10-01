@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import React from 'react';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
-/**
- * Internal dependencies
- */
 import '../types-patch';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface FeatureListItemContentWrapperProps {

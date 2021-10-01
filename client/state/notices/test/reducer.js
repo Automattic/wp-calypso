@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items } from '../reducer';
 import { NOTICE_CREATE, NOTICE_REMOVE, ROUTE_SET } from 'calypso/state/action-types';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'items()', () => {

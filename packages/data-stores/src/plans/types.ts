@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { plansProductSlugs, plansSlugs } from './constants';
 
 export type StorePlanSlug = typeof plansProductSlugs[ number ];

@@ -1,0 +1,98 @@
+.toolbar__see-content-icon {
+	margin-left: 0.3rem;
+}
+
+.activity-card__toolbar,
+.activity-card__toolbar--reverse {
+	align-items: center;
+	border-top: 1px solid var( --color-neutral-5 );
+	display: flex;
+	justify-content: space-between;
+	padding-top: 0.7rem;
+	// balance top and bottom against the 8px overall card padding
+	padding-bottom: calc( 0.7rem - 8px );
+	position: relative;
+	top: 0.5rem;
+
+	a,
+	button.button.is-borderless.is-compact {
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+		display: flex;
+		align-items: center;
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-body;
+		}
+
+		// gridicons within buttons have very specific rules for font sizes, disable them to let flex take care of it
+		.gridicon {
+			display: block;
+			margin-top: 0;
+			top: 0;
+		}
+	}
+}
+
+.activity-card__toolbar--reverse {
+	flex-direction: row-reverse;
+}
+
+.toolbar__button.button.is-borderless.is-primary:focus,
+.toolbar__see-content-link.button.is-borderless.is-primary:focus {
+	box-shadow: none;
+}
+
+.toolbar__button-icon {
+	margin-left: 0.3rem;
+}
+
+.toolbar__download-button--multisite.button {
+	margin: 0.8rem;
+	margin-right: 0;
+	margin-bottom: 0.5rem;
+	display: flex;
+	justify-content: left;
+}
+
+.toolbar__download-button.is-borderless {
+	margin: 0.8rem;
+	border-radius: 0;
+	border-top: 1px solid #e4e4e6;
+	margin-bottom: 0.5rem;
+	padding-top: 0.8rem;
+	display: flex;
+	justify-content: left;
+	font-size: 0.875rem;
+}
+
+.toolbar__download-button-icon {
+	margin-right: 0.6rem;
+}
+
+.toolbar__restore-button {
+	margin: 0.8rem;
+	margin-bottom: 0;
+}
+
+.toolbar__credentials-warning {
+	display: flex;
+	justify-content: left;
+	align-items: middle;
+	max-width: 16rem;
+	margin: 1rem;
+	text-align: left;
+}
+
+.toolbar__credentials-warning img {
+	width: 1.1rem;
+	height: 1.1rem;
+	margin-right: 0.5rem;
+}
+.toolbar__credentials-warning-text {
+	line-height: 0.9rem;
+}
+
+.toolbar__credentials-warning-text a.external-link {
+	color: var( --color-text );
+	text-decoration: underline;
+}

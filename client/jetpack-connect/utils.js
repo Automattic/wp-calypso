@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import { includes, isEmpty } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import config, { isCalypsoLive } from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -162,7 +156,7 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 
 	if ( type === 'remote_auth' ) {
 		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
-		externalRedirect( urlRedirect );
+		navigate( urlRedirect );
 	}
 
 	if ( type === 'install_instructions' ) {

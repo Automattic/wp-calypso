@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getSiteFrontPage from 'calypso/state/sites/selectors/get-site-front-page';
 

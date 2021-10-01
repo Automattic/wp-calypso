@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { REWIND_ACTIVITY_SHARE_REQUEST } from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { REWIND_ACTIVITY_SHARE_REQUEST } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const requestShare = ( action ) =>
 	http(
@@ -24,15 +17,21 @@ const requestShare = ( action ) =>
 		action
 	);
 
-const successfulShare = ( siteId ) =>
+const successfulShare = ( { siteId, rewindId } ) =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_activity_event_share_success', { siteId } ),
+		recordTracksEvent( 'calypso_activity_event_share_success', {
+			site_id: siteId,
+			rewind_id: rewindId,
+		} ),
 		successNotice( translate( "We've shared the event!" ) )
 	);
 
-const failedShare = ( siteId ) =>
+const failedShare = ( { siteId, rewindId } ) =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_activity_event_share_failed', { siteId } ),
+		recordTracksEvent( 'calypso_activity_event_share_failed', {
+			site_id: siteId,
+			rewind_id: rewindId,
+		} ),
 		errorNotice( translate( 'The event failed to send, please try again.' ) )
 	);
 

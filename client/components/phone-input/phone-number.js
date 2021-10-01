@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
+import { find, flatten, includes, map, startsWith } from 'lodash';
 import { countries, dialCodeMap } from 'calypso/components/phone-input/data';
-
-/**
- * Internal Dependencies
- */
 
 const debug = debugFactory( 'phone-input:metadata' );
 
@@ -163,10 +156,21 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  */
 export function processNumber( inputNumber, numberRegion ) {
 	let prefix = numberRegion.nationalPrefix || '';
-	let nationalNumber = stripNonDigits( inputNumber ).replace(
-		new RegExp( '^(0*' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
-		''
-	);
+
+	let nationalNumber = stripNonDigits( inputNumber );
+	// If the number starts with a '+', then it most likely starts with an international dialing code
+	// that should be removed. Otherwise, the prefix is probably part of the national number.
+	// NANPA countries (with dial code or country dial code '1') also should have the '1' removed here.
+	if (
+		inputNumber[ 0 ] === '+' ||
+		numberRegion.dialCode === '1' ||
+		numberRegion.countryDialCode === '1'
+	) {
+		nationalNumber = nationalNumber.replace(
+			new RegExp( '^(0*' + numberRegion.dialCode + ')?(' + numberRegion.nationalPrefix + ')?' ),
+			''
+		);
+	}
 
 	if ( numberRegion.nationalPrefix === '0' ) {
 		nationalNumber = nationalNumber.replace( /^0+/, '' );
@@ -223,7 +227,7 @@ export function formatNumber( inputNumber, country ) {
 	const { nationalNumber, prefix } = processNumber( inputNumber, country );
 
 	const patterns =
-		( includes( [ '+', '1' ], inputNumber[ 0 ] ) && country.internationalPatterns ) ||
+		( [ '+', '1' ].includes( inputNumber[ 0 ] ) && country.internationalPatterns ) ||
 		country.patterns ||
 		[];
 	const pattern = findPattern( nationalNumber, patterns );

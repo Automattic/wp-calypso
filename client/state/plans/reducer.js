@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	PLANS_RECEIVE,

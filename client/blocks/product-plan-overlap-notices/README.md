@@ -7,9 +7,9 @@ Those notices will appear when there is a feature overlap between the current pl
 ## Usage
 
 ```jsx
+import { JETPACK_PRODUCTS_LIST, JETPACK_PLANS } from '@automattic/calypso-products';
 import React from 'react';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices';
-import { JETPACK_PRODUCTS_LIST, JETPACK_PLANS } from '@automattic/calypso-products';
 
 export default class extends React.Component {
 	render() {

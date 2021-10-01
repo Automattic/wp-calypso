@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ManageSite from './manage-site';
 import { SECTION_MANAGE_SITE } from 'calypso/my-sites/customer-home/cards/constants';
+import ManageSite from './manage-site';
 
 const cardComponents = {
 	[ SECTION_MANAGE_SITE ]: ManageSite,

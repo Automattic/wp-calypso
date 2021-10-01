@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
 import i18n from 'i18n-calypso';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
+import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const fetchFilters = ( action ) =>
 	http(
@@ -28,7 +20,8 @@ const fetchFilters = ( action ) =>
 	);
 
 const storeFilters = ( action, data ) => {
-	const filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
+	let filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
+	filters = action.isCoreFse ? filters : omit( filters, 'feature.block-templates' );
 	return { type: THEME_FILTERS_ADD, filters };
 };
 
@@ -46,10 +39,12 @@ registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 			const state = store.getState();
 			const selectedSiteId = getSelectedSiteId( state );
 			const isFse = isSiteEligibleForFullSiteEditing( state, selectedSiteId );
+			const isCoreFse = isSiteUsingCoreSiteEditor( state, selectedSiteId );
 
 			return themeFiltersHandlers( store, {
 				...action,
 				isFse,
+				isCoreFse,
 			} );
 		},
 	],

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 class HoverIntent extends Component {
 	constructor() {

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import styled from '@emotion/styled';
 import { Field } from '@automattic/wpcom-checkout';
+import styled from '@emotion/styled';
 
 export const GridRow = styled.div`
 	display: -ms-grid;

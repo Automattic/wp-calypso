@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
 import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
@@ -11,7 +8,7 @@ export const getCurrentLaunchFlowUrl = (): string =>
 	window?.calypsoifyGutenberg?.currentCalypsoUrl ?? window.location.href;
 
 export const redirectParentWindow = ( url: string ): void => {
-	window.top.location.href = url;
+	( window.top as Window ).location.href = url;
 };
 
 export const redirectToWpcomPath = ( url: string ): void => {

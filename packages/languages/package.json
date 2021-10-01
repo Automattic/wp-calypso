@@ -23,6 +23,9 @@
 		"test": "yarn jest"
 	},
 	"dependencies": {
-		"tslib": "^2.2.0"
+		"tslib": "^2.3.0"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.2"
 	}
 }

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import type { ReaderTeam, ReaderAction } from './actions';
+import type { Reducer } from 'redux';
 
 const teams: Reducer< ReaderTeam[] | null, ReaderAction > = ( state = null, action ) => {
 	if ( action.type === 'FETCH_READER_TEAMS_SUCCESS' ) {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { THEME_FILTERS_REQUEST } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/data-layer/wpcom/theme-filters';

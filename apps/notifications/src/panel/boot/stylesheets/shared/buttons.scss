@@ -4,7 +4,7 @@
 
 .wpnc__main {
 	// resets button styles
-	wpnc__button {
+	.wpnc__button {
 		background: transparent;
 		border: none;
 		outline: 0;
@@ -22,11 +22,12 @@
 		border-width: 1px 1px 2px;
 		color: var( --color-neutral-70 );
 		cursor: pointer;
-		display: inline-block;
-		margin: 0;
+		display: block;
+		margin: 0 24px;
 		outline: 0;
 		overflow: hidden;
 		font-weight: 500;
+		text-align: center;
 		text-overflow: ellipsis;
 		text-decoration: none;
 		vertical-align: top;
@@ -39,6 +40,7 @@
 		appearance: none;
 
 		&:hover {
+			border-color: var( --color-neutral-10 );
 			border-color: var( --color-neutral-20 );
 			color: var( --color-neutral-70 );
 		}
@@ -92,21 +94,26 @@
 
 	// Primary buttons
 	.wpnc__button.is-primary {
-		background: var( --color-primary );
-		border-color: var( --color-primary );
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
 		color: var( --color-text-inverted );
 
-		&:hover,
-		&:focus {
-			border-color: var( --color-primary-dark );
+		&:active:not( :disabled ),
+		&:hover:not( :disabled ),
+		&:focus:not( :disabled ) {
+			background-color: var( --color-accent-60 );
+			border-color: var( --color-accent-60 );
 			color: var( --color-text-inverted );
 		}
+
 		&[disabled],
-		&:disabled {
-			background: var( --color-primary-5 );
-			border-color: var( --color-primary-20 );
-			color: var( --color-text-inverted );
+		&:disabled,
+		&.disabled {
+			color: var( --color-neutral-20 );
+			background-color: var( --color-surface );
+			border-color: var( --color-neutral-5 );
 		}
+
 		&.is-compact {
 			color: var( --color-text-inverted );
 		}

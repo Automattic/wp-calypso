@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import EmptyContent from 'calypso/components/empty-content';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
 import ModerateComment from 'calypso/components/data/moderate-comment';
-import Comment from 'calypso/my-sites/comments/comment';
-import CommentPermalink from 'calypso/my-sites/comment/comment-permalink';
-import CommentDeleteWarning from 'calypso/my-sites/comment/comment-delete-warning';
-import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import CommentDeleteWarning from 'calypso/my-sites/comment/comment-delete-warning';
+import CommentPermalink from 'calypso/my-sites/comment/comment-permalink';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
 import { getSiteComment } from 'calypso/state/comments/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class CommentView extends Component {
@@ -103,7 +93,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postId = get( comment, 'post.ID' );
 
 	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
-	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
+	const hasPermalink = [ 'approved', 'unapproved' ].includes( get( comment, 'status' ) );
 
 	return {
 		siteId,

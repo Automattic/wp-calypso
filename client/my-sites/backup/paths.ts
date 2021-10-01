@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { addQueryArgs } from 'calypso/lib/url';
 
 export const backupMainPath = ( siteName?: string | null, query = {} ) =>

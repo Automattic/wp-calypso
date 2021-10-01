@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function FormattedHeader( {
@@ -52,8 +41,8 @@ FormattedHeader.propTypes = {
 	id: PropTypes.string,
 	className: PropTypes.string,
 	brandFont: PropTypes.bool,
-	headerText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
-	subHeaderText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+	headerText: PropTypes.node.isRequired,
+	subHeaderText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),

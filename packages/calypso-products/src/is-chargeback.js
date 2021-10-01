@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_CHARGEBACK } from './constants';
 import { formatProduct } from './format-product';
 

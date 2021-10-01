@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import QueryManager, { DELETE_PATCH_KEY } from '../';
 
 describe( 'QueryManager', () => {
@@ -476,6 +473,39 @@ describe( 'QueryManager', () => {
 					} ) )
 			);
 			expect( sortingManager.getItems( {} ) ).toEqual( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
+		} );
+	} );
+
+	describe( 'dontShareQueryResultsWhenQueriesAreDifferent', () => {
+		test( 'Query results should be independent', () => {
+			manager = manager.receive(
+				{ ID: 1 },
+				{ query: { a: true }, dontShareQueryResultsWhenQueriesAreDifferent: true, mergeQuery: true }
+			);
+			manager = manager.receive(
+				{ ID: 2 },
+				{ query: { b: true }, dontShareQueryResultsWhenQueriesAreDifferent: true, mergeQuery: true }
+			);
+			expect( manager.getItems( { a: true } ) ).toEqual( [ { ID: 1 } ] );
+			expect( manager.getItems( { b: true } ) ).toEqual( [ { ID: 2 } ] );
+		} );
+		test( 'Query results can still be shared for the same query', () => {
+			manager = manager.receive(
+				{ ID: 1 },
+				{ query: { a: true }, dontShareQueryResultsWhenQueriesAreDifferent: true, mergeQuery: true }
+			);
+			manager = manager.receive(
+				{ ID: 2 },
+				{ query: { a: true }, dontShareQueryResultsWhenQueriesAreDifferent: true, mergeQuery: true }
+			);
+			expect( manager.getItems( { a: true } ) ).toEqual( [ { ID: 1 }, { ID: 2 } ] );
+		} );
+		test( 'Can still retrieve items without a query', () => {
+			manager = manager.receive(
+				{ ID: 1 },
+				{ dontShareQueryResultsWhenQueriesAreDifferent: true }
+			);
+			expect( manager.getItems() ).toEqual( [ { ID: 1 } ] );
 		} );
 	} );
 

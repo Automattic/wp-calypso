@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { normalizeSettings } from '../utils';
 
 describe( 'utils', () => {

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
 import React, { useEffect, useReducer, useState, useContext, createContext } from 'react';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
-import debugFactory from 'debug';
 
 const debug = debugFactory( 'composite-checkout:lib-stripe' );
 const StripeContext = createContext();

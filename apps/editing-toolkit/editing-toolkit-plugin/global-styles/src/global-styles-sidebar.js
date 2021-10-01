@@ -1,17 +1,13 @@
-/**
- * External dependencies
- */
-import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
+import { dispatch } from '@wordpress/data';
+import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
+import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
+import { typography } from '@wordpress/icons';
+import { getQueryArg } from '@wordpress/url';
+import { FONT_BASE, FONT_HEADINGS } from './constants';
 import FontPairingsPanel from './font-pairings-panel';
 import FontSelectionPanel from './font-selection-panel';
-import { GlobalStylesIcon } from './icon';
-import { FONT_BASE, FONT_HEADINGS } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
 
@@ -51,6 +47,13 @@ const PanelActionButtons = ( {
 	</div>
 );
 
+function maybeOpenSidebar() {
+	const openSidebar = getQueryArg( window.location.href, 'openSidebar' );
+	if ( 'global-styles' === openSidebar ) {
+		dispatch( 'core/edit-post' ).openGeneralSidebar( 'jetpack-global-styles/global-styles' );
+	}
+}
+
 export default ( {
 	fontHeadings,
 	fontHeadingsDefault,
@@ -64,6 +67,9 @@ export default ( {
 	hasLocalChanges,
 	resetLocalChanges,
 } ) => {
+	useEffect( () => {
+		maybeOpenSidebar();
+	}, [] );
 	const publish = () =>
 		publishOptions( {
 			[ FONT_BASE ]: fontBase,
@@ -71,11 +77,11 @@ export default ( {
 		} );
 	return (
 		<>
-			<PluginSidebarMoreMenuItem icon={ <GlobalStylesIcon /> } target="global-styles">
+			<PluginSidebarMoreMenuItem icon={ typography } target="global-styles">
 				{ __( 'Global Styles', 'full-site-editing' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
-				icon={ <GlobalStylesIcon /> }
+				icon={ typography }
 				name={ 'global-styles' }
 				title={ __( 'Global Styles', 'full-site-editing' ) }
 				className="global-styles-sidebar"

@@ -1,11 +1,15 @@
-/**
- * External dependencies
- */
 import nock from 'nock';
-
-/**
- * Internal dependencies
- */
+import {
+	EXPORT_ADVANCED_SETTINGS_FETCH,
+	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
+	EXPORT_ADVANCED_SETTINGS_RECEIVE,
+	EXPORT_COMPLETE,
+	EXPORT_FAILURE,
+	EXPORT_POST_TYPE_FIELD_SET,
+	EXPORT_START_REQUEST,
+	EXPORT_STARTED,
+	EXPORT_STATUS_FETCH,
+} from 'calypso/state/action-types';
 import {
 	advancedSettingsFetch,
 	advancedSettingsReceive,
@@ -19,17 +23,6 @@ import {
 	SAMPLE_EXPORT_COMPLETE_RESPONSE,
 	SAMPLE_EXPORT_FAILED_RESPONSE,
 } from './data';
-import {
-	EXPORT_ADVANCED_SETTINGS_FETCH,
-	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
-	EXPORT_ADVANCED_SETTINGS_RECEIVE,
-	EXPORT_COMPLETE,
-	EXPORT_FAILURE,
-	EXPORT_POST_TYPE_FIELD_SET,
-	EXPORT_START_REQUEST,
-	EXPORT_STARTED,
-	EXPORT_STATUS_FETCH,
-} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	const spy = jest.fn();

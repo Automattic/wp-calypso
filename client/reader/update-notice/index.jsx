@@ -1,25 +1,14 @@
-/**
- * External Dependencies
- */
+import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { filter, get, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { filter, get, flatMap } from 'lodash';
-import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
-import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
 import { getCommentById } from 'calypso/state/comments/selectors';
+import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
 import { getStream } from 'calypso/state/reader/streams/selectors';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

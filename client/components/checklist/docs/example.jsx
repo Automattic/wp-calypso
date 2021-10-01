@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import accept from 'calypso/lib/accept';
 import { Button } from '@automattic/components';
+import React, { PureComponent } from 'react';
+import accept from 'calypso/lib/accept';
 import { Checklist, Task } from '../';
 
 export default class ChecklistExample extends PureComponent {

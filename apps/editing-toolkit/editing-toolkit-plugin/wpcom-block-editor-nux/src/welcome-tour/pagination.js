@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { times } from 'lodash';
-
-/**
- * WordPress dependencies
- */
+import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { SVG, Circle } from '@wordpress/primitives';
-import { Button } from '@wordpress/components';
+import { times } from 'lodash';
 
 /*
  * Copied from the Guide Component: https://github.com/WordPress/gutenberg/blob/4bbfbc13603d28fcc45368c529954164bf8581de/packages/components/src/guide/page-control.js#L3

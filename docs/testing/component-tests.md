@@ -21,9 +21,9 @@ This obviously varies between components, but a few easy things to start out wit
 Like its child components?
 
 ```javascript
+import AnExpectedChildComponent from 'an-expected-child-component';
 import { shallow } from 'enzyme';
 import MyComponent from 'my-component';
-import AnExpectedChildComponent from 'an-expected-child-component';
 
 test( 'should have AnExpectedChildComponent as a child of MyComponent', () => {
 	const wrapper = shallow( <MyComponent /> );
@@ -107,9 +107,9 @@ class ThemesList extends React.Component {
 So we test it like this:
 
 ```javascript
+import { shallow } from 'enzyme';
 import EmptyContent from 'calypso/components/empty-content';
 import Theme from 'calypso/components/theme';
-import { shallow } from 'enzyme';
 import { ThemesList } from '../';
 
 const defaultProps = deepFreeze( {

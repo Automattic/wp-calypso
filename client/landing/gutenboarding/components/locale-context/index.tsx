@@ -1,26 +1,20 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { defaultI18n, LocaleData } from '@wordpress/i18n';
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
+import { LocaleProvider } from '@automattic/i18n-utils';
 import { subscribe, select } from '@wordpress/data';
+import { defaultI18n, LocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
+import * as React from 'react';
+import { getLanguageSlugs } from '../../../../lib/i18n-utils';
 import {
 	getLanguageFile,
 	getLanguageManifestFile,
 	getTranslationChunkFile,
 } from '../../../../lib/i18n-utils/switch-locale';
-import { getLanguageSlugs } from '../../../../lib/i18n-utils';
-import { getUrlParts } from '@automattic/calypso-url';
-import config from '@automattic/calypso-config';
-import type { User } from '@automattic/data-stores';
-import { LocaleProvider } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { USER_STORE } from '../../stores/user';
 import { recordOnboardingError } from '../../lib/analytics';
+import { USER_STORE } from '../../stores/user';
+import type { ErrorParameters } from '../../lib/analytics/types';
+import type { User } from '@automattic/data-stores';
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: boolean =
@@ -73,7 +67,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 				setLocale( localeData );
 			}
 		} catch ( error ) {
-			recordOnboardingError( error );
+			recordOnboardingError( error as ErrorParameters );
 			setLocale( undefined );
 		}
 	};

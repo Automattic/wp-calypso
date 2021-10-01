@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default } from './components';
 export type { Props } from './components';
 

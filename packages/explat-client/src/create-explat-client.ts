@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import type { ExperimentAssignment, Config } from './types';
-import * as ExperimentAssignments from './internal/experiment-assignments';
-import * as Request from './internal/requests';
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
 } from './internal/experiment-assignment-store';
+import * as ExperimentAssignments from './internal/experiment-assignments';
+import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import * as Request from './internal/requests';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
-import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import type { ExperimentAssignment, Config } from './types';
 
 /**
  * The number of milliseconds before we abandon fetching an experiment
@@ -118,11 +115,18 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 						experimentName
 					] = createWrappedExperimentAssignmentFetchAndStore( experimentName );
 				}
+
+				// Temporarilly running an A/B experiment on the timeout, see https://github.com/Automattic/wp-calypso/pull/54507
+				let experimentFetchTimeout = EXPERIMENT_FETCH_TIMEOUT;
+				if ( Math.random() > 0.5 ) {
+					experimentFetchTimeout = 5000;
+				}
+
 				// We time out the request here and not above so the fetch-and-store continues and can be
 				// returned by future uses of loadExperimentAssignment.
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
 					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ](),
-					EXPERIMENT_FETCH_TIMEOUT
+					experimentFetchTimeout
 				);
 				if ( ! fetchedExperimentAssignment ) {
 					throw new Error( `Could not fetch ExperimentAssignment` );
@@ -131,7 +135,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return fetchedExperimentAssignment;
 			} catch ( initialError ) {
 				safeLogError( {
-					message: initialError.message,
+					message: ( initialError as Error ).message,
 					experimentName,
 					source: 'loadExperimentAssignment-initialError',
 				} );
@@ -153,7 +157,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return fallbackExperimentAssignment;
 			} catch ( fallbackError ) {
 				safeLogError( {
-					message: fallbackError.message,
+					message: ( fallbackError as Error ).message,
 					experimentName,
 					source: 'loadExperimentAssignment-fallbackError',
 				} );
@@ -193,7 +197,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				return storedExperimentAssignment;
 			} catch ( error ) {
 				safeLogError( {
-					message: error.message,
+					message: ( error as Error ).message,
 					experimentName,
 					source: 'dangerouslyGetExperimentAssignment-error',
 				} );

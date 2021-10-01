@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Site, DomainSuggestions, Plans, Launch } from '@automattic/data-stores';
 
 // TODO: Check Site store registration discrepancies between:

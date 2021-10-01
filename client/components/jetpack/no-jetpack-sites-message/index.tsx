@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const NoJetpackSitesMessage = ( { siteSlug }: { siteSlug: string | undefined } ) => {

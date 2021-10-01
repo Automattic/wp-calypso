@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { flowRight, partialRight, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import Main from 'calypso/components/main';
 import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SeoSettingsMain from 'calypso/my-sites/site-settings/seo-settings/main';
-import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
-import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
-import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import CloudflareAnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-cloudflare-analytics';
+import AnalyticsSettings from 'calypso/my-sites/site-settings/analytics/form-google-analytics';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
 import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
-import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
+import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
+import SeoSettingsMain from 'calypso/my-sites/site-settings/seo-settings/main';
+import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
+import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SiteSettingsTraffic = ( {
@@ -117,21 +106,20 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = partialRight( pick, [
-	'stats',
-	'admin_bar',
-	'hide_smile',
-	'count_roles',
-	'roles',
-	'jetpack_relatedposts_allowed',
-	'jetpack_relatedposts_enabled',
-	'jetpack_relatedposts_show_headline',
-	'jetpack_relatedposts_show_thumbnails',
-	'blog_public',
-] );
+const getFormSettings = ( settings ) =>
+	pick( settings, [
+		'stats',
+		'admin_bar',
+		'hide_smile',
+		'count_roles',
+		'roles',
+		'jetpack_relatedposts_allowed',
+		'jetpack_relatedposts_enabled',
+		'jetpack_relatedposts_show_headline',
+		'jetpack_relatedposts_show_thumbnails',
+		'blog_public',
+	] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsTraffic );
+export default connectComponent(
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsTraffic ) )
+);

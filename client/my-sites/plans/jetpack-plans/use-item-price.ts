@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
-import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
-import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
-import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
-import {
-	getSiteAvailableProductCost,
-	isRequestingSiteProducts,
-} from 'calypso/state/sites/products/selectors';
 import {
 	TERM_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Type dependencies
- */
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
+import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
+import {
+	getSiteAvailableProductCost,
+	isRequestingSiteProducts,
+} from 'calypso/state/sites/products/selectors';
 import type { SelectorProduct } from './types';
+import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 
 interface ItemPrices {
 	isFetching: boolean | null;

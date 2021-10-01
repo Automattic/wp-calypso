@@ -1,21 +1,4 @@
-/**
- * External dependencies
- */
 import nock from 'nock';
-
-/**
- * Internal dependencies
- */
-import {
-	fetchSitePlugins,
-	activatePlugin,
-	deactivatePlugin,
-	updatePlugin,
-	enableAutoupdatePlugin,
-	disableAutoupdatePlugin,
-	installPlugin,
-	removePlugin,
-} from '../actions';
 import {
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
@@ -25,7 +8,6 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	DISABLE_AUTOUPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -53,6 +35,17 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import {
+	fetchSitePlugins,
+	activatePlugin,
+	deactivatePlugin,
+	updatePlugin,
+	enableAutoupdatePlugin,
+	disableAutoupdatePlugin,
+	installPlugin,
+	removePlugin,
+} from '../actions';
+import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 
 describe( 'actions', () => {
 	const spy = jest.fn();

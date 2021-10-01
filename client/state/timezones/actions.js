@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/timezones';

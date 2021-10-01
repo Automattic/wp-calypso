@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { requestVerticals, storeVerticals, showVerticalsRequestError } from '../';
-import { setVerticals } from 'calypso/state/signup/verticals/actions';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { setVerticals } from 'calypso/state/signup/verticals/actions';
+import { requestVerticals, storeVerticals, showVerticalsRequestError } from '../';
 
 describe( 'data-layer/wpcom/signup/verticals', () => {
 	test( 'requestVerticals()', () => {

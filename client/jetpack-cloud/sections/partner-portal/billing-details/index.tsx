@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { Card, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React, { ReactElement } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-
-/**
- * Style dependencies
- */
+import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
 import './style.scss';
 
 export default function BillingDetails(): ReactElement {

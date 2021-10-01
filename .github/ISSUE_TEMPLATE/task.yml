@@ -1,0 +1,27 @@
+name: Task
+description: Create a task
+title: "Task:"
+labels: ["[Type] Task"]
+body:
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Details of the task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Checklist for the task.
+      value: |
+        - [ ]
+        - [ ]
+
+  - type: input
+    id: related
+    attributes:
+      label: Related
+      description: Related GitHub issues.

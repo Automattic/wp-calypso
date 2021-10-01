@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
+import { Button, Card, Ribbon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
-import { Button, Card, Ribbon } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

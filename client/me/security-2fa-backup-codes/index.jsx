@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Security2faBackupCodes extends React.Component {

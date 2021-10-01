@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FormattedHeader from 'calypso/components/formatted-header';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { navigate } from 'calypso/lib/navigate';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { confirmJetpackInstallStatus } from 'calypso/state/jetpack-connect/actions';
+import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
+import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
 import HelpButton from './help-button';
 import JetpackInstallStep from './install-step';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import { addCalypsoEnvQueryArg } from './utils';
-import { confirmJetpackInstallStatus } from 'calypso/state/jetpack-connect/actions';
-import { externalRedirect } from 'calypso/lib/route';
-import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
 
 class InstallInstructions extends Component {
 	static propTypes = {
@@ -53,7 +44,7 @@ class InstallInstructions extends Component {
 			type: 'install_jetpack',
 		} );
 
-		externalRedirect( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_INSTALL ) );
+		navigate( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_INSTALL ) );
 	};
 
 	activateJetpack = () => {
@@ -64,16 +55,8 @@ class InstallInstructions extends Component {
 			type: 'activate_jetpack',
 		} );
 
-		externalRedirect( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_ACTIVATE ) );
+		navigate( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_ACTIVATE ) );
 	};
-
-	renderLocaleSuggestions() {
-		if ( this.props.isLoggedIn || ! this.props.locale ) {
-			return;
-		}
-
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
-	}
 
 	render() {
 		const { remoteSiteUrl } = this.props;
@@ -81,7 +64,6 @@ class InstallInstructions extends Component {
 
 		return (
 			<MainWrapper isWide>
-				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<FormattedHeader
 						headerText={ instructionsData.headerTitle }
@@ -136,4 +118,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight( connectComponent, localize )( InstallInstructions );
+export default connectComponent( localize( InstallInstructions ) );

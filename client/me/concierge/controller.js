@@ -1,32 +1,23 @@
-/**
- * External dependencies
- */
+import i18n from 'i18n-calypso';
+import page from 'page';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ConciergeMain from './main';
-import ConciergeCancel from './cancel';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import BookCalendarStep from './book/calendar-step';
 import BookConfirmationStep from './book/confirmation-step';
 import BookInfoStep from './book/info-step';
 import BookSkeleton from './book/skeleton';
+import ConciergeCancel from './cancel';
+import ConciergeMain from './main';
 import RescheduleCalendarStep from './reschedule/calendar-step';
 import RescheduleConfirmationStep from './reschedule/confirmation-step';
 import RescheduleSkeleton from './reschedule/skeleton';
-import i18n from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const book = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
-			analyticsPath="/me/concierge/:site/book"
+			analyticsPath="/me/quickstart/:site/book"
 			analyticsTitle="Concierge > Book"
 			skeleton={ BookSkeleton }
 			siteSlug={ context.params.siteSlug }
@@ -40,7 +31,7 @@ const book = ( context, next ) => {
 const cancel = ( context, next ) => {
 	context.primary = (
 		<ConciergeCancel
-			analyticsPath="/me/concierge/:site/:appointment/cancel"
+			analyticsPath="/me/quickstart/:site/:appointment/cancel"
 			analyticsTitle="Concierge > Cancel"
 			appointmentId={ context.params.appointmentId }
 			siteSlug={ context.params.siteSlug }
@@ -52,7 +43,7 @@ const cancel = ( context, next ) => {
 const reschedule = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
-			analyticsPath="/me/concierge/:site/:appointment/reschedule"
+			analyticsPath="/me/quickstart/:site/:appointment/reschedule"
 			analyticsTitle="Concierge > Reschedule"
 			appointmentId={ context.params.appointmentId }
 			skeleton={ RescheduleSkeleton }
@@ -74,9 +65,16 @@ const siteSelector = ( context, next ) => {
 	next();
 };
 
+const redirectToQuickStart = ( context, next ) => {
+	const newPath = context.path.replace( '/me/concierge', '/me/quickstart' );
+	page.redirect( newPath );
+	next();
+};
+
 export default {
 	book,
 	cancel,
 	reschedule,
 	siteSelector,
+	redirectToQuickStart,
 };

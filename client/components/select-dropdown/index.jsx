@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, get } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import DropdownItem from './item';
-import DropdownSeparator from './separator';
-import DropdownLabel from './label';
 import Count from 'calypso/components/count';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import DropdownItem from './item';
+import DropdownLabel from './label';
+import DropdownSeparator from './separator';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

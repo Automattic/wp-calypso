@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import QueryKey from '../key';
 import { PAGINATION_QUERY_KEYS } from './constants';
 

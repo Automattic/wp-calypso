@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionLayout } ) => {

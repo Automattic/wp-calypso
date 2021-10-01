@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { find, matches } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-
+import { find, matches } from 'lodash';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,

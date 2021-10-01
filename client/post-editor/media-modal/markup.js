@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import ReactDomServer from 'react-dom/server';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { parse, stringify } from 'calypso/lib/shortcode';
-import * as MediaUtils from 'calypso/lib/media/utils';
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 import { deserialize } from 'calypso/lib/media-serialization';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import { parse, stringify } from 'calypso/lib/shortcode';
 
 /**
  * Module variables

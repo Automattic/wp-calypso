@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
 import React, { forwardRef } from 'react';
 import type {
 	Ref,
@@ -8,12 +6,8 @@ import type {
 	AnchorHTMLAttributes,
 	ButtonHTMLAttributes,
 } from 'react';
-import classnames from 'classnames';
 import type { NonUndefined } from 'utility-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 interface OwnProps {
 	className?: string;

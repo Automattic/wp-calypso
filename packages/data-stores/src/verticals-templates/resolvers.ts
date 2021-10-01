@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { apiFetch } from '@wordpress/data-controls';
-
-/**
- * Internal dependencies
- */
 import { receiveTemplates } from './actions';
 import type { getTemplates as getTemplatesSelector } from './selectors';
 import type { Template } from './types';

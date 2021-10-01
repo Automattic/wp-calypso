@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
+import { useLocale } from '@automattic/i18n-utils';
+import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
+import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLocale } from '@automattic/i18n-utils';
-import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
-import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { FLOW_ID } from '../../constants';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
-
-import { FLOW_ID } from '../../constants';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { __, hasTranslation } = useI18n();

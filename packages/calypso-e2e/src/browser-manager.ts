@@ -3,34 +3,25 @@
  * @author Edwin Takahashi
  */
 
-/**
- * External dependencies
- */
-import { chromium } from 'playwright';
 import config from 'config';
-import * as fs from 'fs/promises';
-import type { Browser, BrowserContext, Page } from 'playwright';
-
-/**
- * Internal dependencies
- */
-import { getVideoDir, getDateString, getAssetDir } from './media-helper';
-import { getViewportSize } from './browser-helper';
-
-/**
- * Type dependencies
- */
-import { viewportSize } from './types';
+import { chromium } from 'playwright';
+import { getLaunchConfiguration } from './browser-helper';
+import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
+
+export interface LaunchOptions {
+	logger: Logger[ 'log' ];
+}
 
 /**
  * Familiar entrypoint to initialize the browser from a test writer's perspective.
  *
+ * @param launchOptions Options to pass to `browser.newContext()`.
  * @returns {Promise<Page>} New Page instance.
  */
-export async function start(): Promise< Page > {
-	return await launchPage();
+export async function start( launchOptions: LaunchOptions ): Promise< Page > {
+	return await launchPage( launchOptions );
 }
 
 /**
@@ -40,10 +31,11 @@ export async function start(): Promise< Page > {
  * of a Page.
  * Page represents a tab in a browser where the actual test are run.
  *
+ * @param launchOptions Options to pass to `browser.newContext()`.
  * @returns {Promise<Page>} New Page instance.
  */
-export async function launchPage(): Promise< Page > {
-	const browserContext = await launchBrowserContext();
+export async function launchPage( launchOptions: LaunchOptions ): Promise< Page > {
+	const browserContext = await launchBrowserContext( launchOptions );
 	return await browserContext.newPage();
 }
 
@@ -55,31 +47,17 @@ export async function launchPage(): Promise< Page > {
  * BrowserContexts are cheap to create and incur low overhead costs while allowing
  * for parallelization of test suites.
  *
+ * @param options Options to pass to `browser.newContext()`.
+ * @param {Logger} options.logger Logger sink for Playwright logging.
  * @returns {Promise<BrowserContext>} New BrowserContext instance.
  */
-export async function launchBrowserContext(): Promise< BrowserContext > {
+export async function launchBrowserContext( { logger }: LaunchOptions ): Promise< BrowserContext > {
 	// If no existing instance of a Browser, then launch a new instance.
 	if ( ! browser ) {
 		browser = await launchBrowser();
 	}
 
-	// By default, record video for each browser context.
-	const videoDir = getVideoDir();
-	const dimension: viewportSize = getViewportSize();
-	const timestamp = getDateString();
-	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ await browser.version() } Safari/537.36`;
-
-	// Generate a new BrowserContext.
-	return await browser.newContext( {
-		viewport: null, // Do not override window size set in the browser launch parameters.
-		recordVideo: { dir: videoDir, size: { width: dimension.width, height: dimension.height } },
-		userAgent: userAgent,
-		logger: {
-			isEnabled: ( name ) => name === 'api',
-			log: ( name, severity, message ) =>
-				writeLog( { name: name, severity: severity, message: message }, timestamp ),
-		},
-	} );
+	return await browser.newContext( getLaunchConfiguration( browser.version(), { logger } ) );
 }
 
 /**
@@ -94,32 +72,10 @@ export async function launchBrowserContext(): Promise< BrowserContext > {
 export async function launchBrowser(): Promise< Browser > {
 	const isHeadless = process.env.HEADLESS === 'true' || config.has( 'headless' );
 
-	const dimension: viewportSize = getViewportSize();
-
 	return await chromium.launch( {
 		headless: isHeadless,
-		args: [ '--window-position=0,0', `--window-size=${ dimension.width },${ dimension.height }` ],
+		args: [ '--window-position=0,0' ],
 	} );
-}
-
-/**
- * Function that writes to a log file.
- *
- * @param {Object} param0 Object assembled by caller containing details to be written to logfile.
- * @param {string} param0.name Debug level.
- * @param {string} param0.severity Log severity.
- * @param {string} param0.message Action taken by Playwright library.
- * @param {string} timestamp Timestamp when the logging handler was created.
- * @returns {Promise<void>} No return value.
- */
-async function writeLog(
-	{ name, severity, message }: { name: string; severity: string | Error; message: string | Error },
-	timestamp: string
-): Promise< void > {
-	await fs.appendFile(
-		`${ getAssetDir() }/playwright-${ timestamp }.log`,
-		`${ process.pid } ${ name } ${ severity } ${ message }\n`
-	);
 }
 
 /**
@@ -140,11 +96,23 @@ export async function close(): Promise< void > {
 }
 
 /**
- * Given a page, this will clear the cookies for the context to which the page belongs.
+ * Given a page, this will clear all cookies, local storage and reset permissions for the
+ * Browser Context to which the page belongs.
  *
  * @param {Page} page Object representing a page launched by Playwright.
  * @returns {Promise<void>} No return value.
  */
-export async function clearCookies( page: Page ): Promise< void > {
-	await page.context().clearCookies();
+export async function clearAuthenticationState( page: Page ): Promise< void > {
+	// Save references to the BrowserContext and the current URL the page is on.
+	const browserContext = page.context();
+	const currentURL = page.url();
+
+	// Navigate to the WordPress.com base URL.
+	await page.goto( 'https://r-login.wordpress.com/' );
+	// Clear local storage.
+	await page.evaluate( 'localStorage.clear();' );
+	// Lastly, clear the cookies using built-in method.
+	await browserContext.clearCookies();
+	// Previous steps navigated page away from target page. Return page to the original URL.
+	await page.goto( currentURL );
 }

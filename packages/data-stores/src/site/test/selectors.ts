@@ -6,15 +6,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { dispatch, select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-
-/**
- * Internal dependencies
- */
 import { register } from '..';
 
 jest.mock( 'wpcom-proxy-request', () => ( {

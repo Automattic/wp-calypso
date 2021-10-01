@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 
 export const launchSite = ( siteId ) => ( {
 	type: SITE_LAUNCH,
@@ -35,13 +32,5 @@ export const launchSiteOrRedirectToLaunchSignupFlow = ( siteId ) => ( dispatch, 
 	const siteSlug = getSiteSlug( getState(), siteId );
 
 	// TODO: consider using the `page` library instead of calling using `location.href` here
-
-	const isGutenboarding = [ 'gutenboarding', 'gutenboarding-site-editor' ].includes(
-		getSiteOption( getState(), siteId, 'site_creation_flow' )
-	);
-	if ( isGutenboarding ) {
-		window.location.href = `/start/new-launch?siteSlug=${ siteSlug }&source=home`;
-	} else {
-		window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
-	}
+	window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
 };

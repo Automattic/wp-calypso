@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { decodeEntities } from 'calypso/lib/formatting';
 

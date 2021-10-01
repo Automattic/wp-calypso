@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
-import { Dialog } from '@automattic/components';
-import FormLabel from 'calypso/components/forms/form-label';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 const noop = () => {};

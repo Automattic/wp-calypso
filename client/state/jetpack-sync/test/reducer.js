@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { without } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import reducer, { syncStatus, fullSyncRequest } from '../reducer';
-import { getExpectedResponseKeys } from '../utils';
 import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
@@ -17,6 +8,8 @@ import {
 	JETPACK_SYNC_START_SUCCESS,
 	JETPACK_SYNC_START_ERROR,
 } from 'calypso/state/action-types';
+import reducer, { syncStatus, fullSyncRequest } from '../reducer';
+import { getExpectedResponseKeys } from '../utils';
 
 const successfulSyncStatusRequest = {
 	type: JETPACK_SYNC_STATUS_SUCCESS,

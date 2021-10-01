@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { map, chunk } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ComponentPlayground from 'calypso/devdocs/design/component-playground';
-import LazyRender from 'react-lazily-render';
-import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
-import { camelCaseToSlug, getComponentName } from 'calypso/devdocs/docs-example/util';
+import React from 'react';
+import { InView } from 'react-intersection-observer';
 import ReadmeViewer from 'calypso/components/readme-viewer';
+import ComponentPlayground from 'calypso/devdocs/design/component-playground';
 import Placeholder from 'calypso/devdocs/devdocs-async-load/placeholder';
+import { camelCaseToSlug, getComponentName } from 'calypso/devdocs/docs-example/util';
+import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 const shouldShowInstance = ( example, filter, component ) => {
@@ -135,11 +127,13 @@ const Collection = ( {
 			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), ( exampleGroup ) => {
 				const groupKey = map( exampleGroup, ( example ) => example.key ).join( '_' );
 				return (
-					<LazyRender key={ groupKey }>
-						{ ( shouldRender ) =>
-							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
-						}
-					</LazyRender>
+					<InView key={ groupKey } triggerOnce>
+						{ ( { inView, ref } ) => (
+							<div ref={ ref }>
+								{ inView ? exampleGroup : <Placeholder count={ examplesToMount } /> }
+							</div>
+						) }
+					</InView>
 				);
 			} ) }
 		</div>

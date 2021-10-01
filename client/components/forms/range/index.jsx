@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { omit } from 'lodash';
 import classnames from 'classnames';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import FormRange from 'calypso/components/forms/form-range';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.Component {
 	static displayName = 'Range';
 
 	static propTypes = {
-		minContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
-		maxContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
+		minContent: PropTypes.node,
+		maxContent: PropTypes.node,
 		min: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		max: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),

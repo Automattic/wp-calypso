@@ -1,10 +1,6 @@
 /**
  */
 
-/**
- * Internal dependencies
- */
-
 import { getSiteTypePropertyValue } from '../site-type';
 
 describe( 'getSiteTypePropertyValue()', () => {

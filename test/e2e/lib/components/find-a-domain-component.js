@@ -8,7 +8,9 @@ const searchInputLocator = By.className( 'search-component__input' );
 export default class FindADomainComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.register-domain-step' ) );
-		this.declineGoogleAppsLinkLocator = By.className( 'gsuite-upsell-card__skip-button' );
+		this.emailUpsellLocator = By.className(
+			'email-providers-comparison__titan-mailbox-action-skip'
+		);
 	}
 
 	async waitForResults() {
@@ -64,13 +66,16 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	}
 
 	async selectUseOwnDomain() {
-		const useOwnDomain = By.css( '.domain-suggestion.card.domain-transfer-suggestion' );
+		const useOwnDomain = By.css( '.already-own-a-domain > span > a' );
+		await driverHelper.scrollIntoView( this.driver, useOwnDomain );
 		return await driverHelper.clickWhenClickable( this.driver, useOwnDomain, this.explicitWaitMS );
 	}
 
 	async skipSuggestion() {
-		// currently used in 'launch-site' and 'new-launch' signup flows
-		const skipSuggestion = By.css( '.domain-skip-suggestion > .button.domain-suggestion__action' );
+		// currently used in 'launch-site' signup flow
+		const skipSuggestion = By.css(
+			'.domain-skip-suggestion > div > .button.domain-suggestion__action'
+		);
 		await driverHelper.scrollIntoView( this.driver, skipSuggestion );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
@@ -79,20 +84,17 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async declineGoogleApps() {
+	async declineEmailUpsell() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			this.declineGoogleAppsLinkLocator,
+			this.emailUpsellLocator,
 			this.explicitWaitMS
 		);
 		try {
-			await driverHelper.waitUntilElementNotLocated(
-				this.driver,
-				this.declineGoogleAppsLinkLocator
-			);
+			await driverHelper.waitUntilElementNotLocated( this.driver, this.emailUpsellLocator );
 		} catch ( err ) {
 			//Sometimes the first click doesn't work. Clicking again
-			await driverHelper.clickWhenClickable( this.driver, this.declineGoogleAppsLinkLocator );
+			await driverHelper.clickWhenClickable( this.driver, this.emailUpsellLocator );
 		}
 	}
 

@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
+import { CompactCard, Gridicon } from '@automattic/components';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function MembershipSiteHeader( {

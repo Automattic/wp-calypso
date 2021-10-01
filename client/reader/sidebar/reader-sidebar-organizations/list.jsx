@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderSidebarOrganizationsListItem from './list-item';
-import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
-import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
-import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
-import SidebarItem from 'calypso/layout/sidebar/item';
-import Count from 'calypso/components/count';
-
-/**
- * Styles
- */
-import '../style.scss';
-import SVGIcon from 'calypso/components/svg-icon';
 import AutomatticLogo from 'calypso/assets/images/icons/a8c-logo.svg';
 import P2Logo from 'calypso/assets/images/icons/p2-logo.svg';
+import Count from 'calypso/components/count';
+import SVGIcon from 'calypso/components/svg-icon';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
+import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
+import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
+import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import ReaderSidebarOrganizationsListItem from './list-item';
+import '../style.scss';
 
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {

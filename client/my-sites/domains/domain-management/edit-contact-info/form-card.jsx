@@ -1,37 +1,30 @@
-/**
- * External dependencies
- */
+import { Card, Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import page from 'page';
-import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Dialog } from '@automattic/components';
+import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import wp from 'calypso/lib/wp';
+import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import TransferLockOptOutForm from 'calypso/my-sites/domains/domain-management/components/transfer-lock-opt-out-form';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementEdit,
 } from 'calypso/my-sites/domains/paths';
-import wp from 'calypso/lib/wp';
-import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
-import { registrar as registrarNames } from 'calypso/lib/domains/constants';
-import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
-import TransferLockOptOutForm from 'calypso/my-sites/domains/domain-management/components/transfer-lock-opt-out-form';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import {
 	isUpdatingWhois,
 	getWhoisData,
 	getWhoisSaveError,
 	getWhoisSaveSuccess,
 } from 'calypso/state/domains/management/selectors';
-import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import getPreviousPath from '../../../../state/selectors/get-previous-path';
 
 const wpcom = wp.undocumented();

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { DateTimePicker } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const DateTimePickerExample = () => {
 	const [ dateTime, setDateTime ] = useState( '' );

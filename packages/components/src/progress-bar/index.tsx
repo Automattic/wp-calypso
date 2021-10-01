@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import ScreenReaderText from '../screen-reader-text';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {

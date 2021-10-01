@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { requesting, error, data } from '../reducer';
 import {
 	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_RECEIVE,
@@ -9,6 +5,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { requesting, error, data } from '../reducer';
 
 describe( 'individualTransactions reducer', () => {
 	const transactionId = 345;

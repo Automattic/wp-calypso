@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
-import { SITE_STORE } from '../stores';
+import * as React from 'react';
 import LaunchContext from '../context';
+import { SITE_STORE } from '../stores';
 
 export function useSiteDomains() {
 	const { siteId } = React.useContext( LaunchContext );

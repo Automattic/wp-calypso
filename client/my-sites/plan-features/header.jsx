@@ -1,14 +1,3 @@
-/**
- * External dependencies
- */
-import { isMobile } from '@automattic/viewport';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { get } from 'lodash';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import formatCurrency from '@automattic/format-currency';
-import { ProductIcon } from '@automattic/components';
 import {
 	getPlans,
 	getYearlyPlanByMonthly,
@@ -19,23 +8,28 @@ import {
 	TYPE_FREE,
 	GROUP_WPCOM,
 	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 } from '@automattic/calypso-products';
-
-/**
- * Internal Dependencies
- **/
+import { ProductIcon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { isMobile } from '@automattic/viewport';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PLANS_LIST = getPlans();
 
@@ -248,8 +242,20 @@ export class PlanFeaturesHeader extends Component {
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
-		if ( ( isInSignup || isLoggedInMonthlyPricing ) && ! isMonthlyPlan ) {
+		if (
+			( isInSignup || isLoggedInMonthlyPricing ) &&
+			! isMonthlyPlan &&
+			planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } )
+		) {
 			return translate( 'billed annually' );
+		}
+
+		if (
+			( isInSignup || isLoggedInMonthlyPricing ) &&
+			! isMonthlyPlan &&
+			planMatches( planType, { group: GROUP_WPCOM, term: TERM_BIENNIALLY } )
+		) {
+			return translate( 'billed every two years' );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {

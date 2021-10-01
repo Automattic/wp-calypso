@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { createContext } from 'react';
 import {
 	FormStatus,
@@ -14,9 +11,6 @@ interface CheckoutContext {
 	allPaymentMethods: PaymentMethod[];
 	paymentMethodId: string | null;
 	setPaymentMethodId: ( id: string ) => void;
-	showErrorMessage: ( message: string ) => void;
-	showInfoMessage: ( message: string ) => void;
-	showSuccessMessage: ( message: string ) => void;
 	onEvent: ( action: ReactStandardAction ) => void;
 	formStatus: FormStatus;
 	setFormStatus: ( newStatus: FormStatus ) => void;
@@ -28,9 +22,6 @@ const defaultCheckoutContext: CheckoutContext = {
 	allPaymentMethods: [],
 	paymentMethodId: null,
 	setPaymentMethodId: noop,
-	showErrorMessage: noop,
-	showInfoMessage: noop,
-	showSuccessMessage: noop,
 	onEvent: noop,
 	formStatus: FormStatus.LOADING,
 	setFormStatus: noop,

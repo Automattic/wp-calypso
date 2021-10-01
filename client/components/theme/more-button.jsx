@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { map } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 
 /**
  * Check if a URL is located outside of Calypso.

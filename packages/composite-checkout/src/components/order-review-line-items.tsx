@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import joinClasses from '../lib/join-classes';
 import type { LineItem } from '../types';
-import styled from '../lib/styled';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
@@ -51,18 +44,6 @@ interface LineItemProps {
 	isSummaryVisible?: boolean;
 	item: LineItem;
 }
-
-OrderReviewLineItemUnstyled.propTypes = {
-	className: PropTypes.string,
-	total: PropTypes.bool,
-	isSummaryVisible: PropTypes.bool,
-	item: PropTypes.shape( {
-		label: PropTypes.string,
-		amount: PropTypes.shape( {
-			displayValue: PropTypes.string,
-		} ),
-	} ),
-};
 
 const OrderReviewLineItem = styled( OrderReviewLineItemUnstyled )< LineItemProps >`
 	display: flex;

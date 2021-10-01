@@ -1,49 +1,41 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DomainStatus from '../card/domain-status';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import { isRecentlyRegistered, isExpiringSoon } from 'calypso/lib/domains/utils';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import {
 	DOMAIN_EXPIRATION,
 	DOMAIN_EXPIRATION_REDEMPTION,
 	DOMAIN_RECENTLY_REGISTERED,
 } from 'calypso/lib/url/support';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
-import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
-import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
+import DomainStatus from '../card/domain-status';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { RenewOptionsRow } from './renew-options-row';
-import { WrapDomainStatusButtons } from './helpers';
-import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
-import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
-import { resolveDomainStatus } from 'calypso/lib/domains';
-import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import DomainOnlyNotice from '../domain-only-notice';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import { recordPaymentSettingsClick } from '../payment-settings-analytics';
+import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
 class RegisteredDomainType extends React.Component {
 	renderExpired() {
@@ -346,13 +338,9 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<RenewOptionsRow
-						purchase={ purchase }
-						domain={ domain }
-						isLoadingPurchase={ isLoadingPurchase }
-						moment={ this.props.moment }
-						selectedSite={ selectedSite }
-					/>
+					<DomainExpiryOrRenewal { ...this.props } />
+					{ this.renderDefaultRenewButton() }
+					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
 				<DomainManagementNavigationEnhanced
 					domain={ domain }

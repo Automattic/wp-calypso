@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { camelCase } from 'lodash';
 
 function createPurchaseObject( purchase ) {

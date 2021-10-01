@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	READER_TAG_IMAGES_REQUEST,

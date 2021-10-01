@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/themes/init';

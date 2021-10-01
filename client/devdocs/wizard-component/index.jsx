@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import Wizard from 'calypso/components/wizard/docs/example';
 import ReadmeViewer from 'calypso/components/readme-viewer';
+import Wizard from 'calypso/components/wizard/docs/example';
 
 class WizardComponent extends Component {
 	backToComponents = () => page( '/devdocs/design/' );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
 	BEST_VALUE_PLANS,

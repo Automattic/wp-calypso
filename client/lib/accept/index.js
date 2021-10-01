@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import ReactDom from 'react-dom';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import ReactDom from 'react-dom';
 import AcceptDialog from './dialog';
 
 export default function ( message, callback, confirmButtonText, cancelButtonText, options ) {

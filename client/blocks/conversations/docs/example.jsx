@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { map, compact } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { commentsTree } from 'calypso/blocks/conversations/docs/fixtures';
 import { ConversationCommentList } from 'calypso/blocks/conversations/list';
 import { posts } from 'calypso/blocks/reader-post-card/docs/fixtures';
-import { commentsTree } from 'calypso/blocks/conversations/docs/fixtures';
 
 const noop = () => {};
 

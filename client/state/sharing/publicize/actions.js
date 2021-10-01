@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
@@ -28,6 +20,7 @@ import {
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/sharing/init';
 
@@ -117,10 +110,8 @@ export function fetchConnection( siteId, connectionId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.getConnection( connectionId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/publicize-connections/${ connectionId }` )
 			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_RECEIVE,

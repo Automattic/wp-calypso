@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
-import { isDomainRegistration } from './is-domain-registration';
 import { isDomainMapping } from './is-domain-mapping';
+import { isDomainRegistration } from './is-domain-registration';
 
 export function getDomainProductRanking( product ) {
 	product = formatProduct( product );

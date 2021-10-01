@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getTerm } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
 	let podcastNoticeText;

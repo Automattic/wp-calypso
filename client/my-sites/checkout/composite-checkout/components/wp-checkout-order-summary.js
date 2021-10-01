@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import styled from '@emotion/styled';
-import { keyframes } from '@emotion/core';
+import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import Gridicon from 'calypso/components/gridicon';
-import getPlanFeatures from '../lib/get-plan-features';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getPlanFeatures from '../lib/get-plan-features';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
@@ -195,10 +188,10 @@ function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 	const translate = useTranslate();
 
 	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
-		return <span>{ translate( 'Unlimited email support' ) }</span>;
+		return <span>{ translate( 'Unlimited customer support via email' ) }</span>;
 	}
 
-	return <span>{ translate( 'Email support' ) }</span>;
+	return <span>{ translate( 'Customer support via email' ) }</span>;
 }
 
 function CheckoutSummaryFeaturesListDomainItem( { domain, hasMonthlyPlan, nextDomainIsFree } ) {

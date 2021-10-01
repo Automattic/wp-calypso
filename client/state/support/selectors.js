@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SESSION_ACTIVE, SESSION_EXPIRED } from './constants';
 
 import 'calypso/state/support/init';

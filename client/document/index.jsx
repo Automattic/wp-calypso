@@ -1,16 +1,7 @@
-/**
- * External dependencies
- *
- */
-import React from 'react';
-import classNames from 'classnames';
 import path from 'path';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Head from 'calypso/components/head';
+import classNames from 'classnames';
+import React from 'react';
 import EnvironmentBadge, {
 	Branch,
 	AuthHelper,
@@ -18,10 +9,12 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 } from 'calypso/components/environment-badge';
-import { chunkCssLinks } from './utils';
+import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
+import { chunkCssLinks } from './utils/chunk';
 
 class Document extends React.Component {
 	render() {
@@ -56,7 +49,6 @@ class Document extends React.Component {
 			isSupportSession,
 			isWCComConnect,
 			isWooDna,
-			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
 			target,
@@ -169,33 +161,6 @@ class Document extends React.Component {
 							__html: inlineScript,
 						} }
 					/>
-
-					{
-						// Use <script nomodule> to redirect browsers with no ES module
-						// support to the fallback build. ES module support is a convenient
-						// test to determine that a browser is modern enough to handle
-						// the evergreen bundle.
-						addEvergreenCheck && (
-							<script
-								nonce={ inlineScriptNonce }
-								noModule
-								dangerouslySetInnerHTML={ {
-									__html: `
-							(function() {
-								var url = window.location.href;
-
-								if ( url.indexOf( 'forceFallback=1' ) === -1 ) {
-									url += ( url.indexOf( '?' ) !== -1 ? '&' : '?' );
-									url += 'forceFallback=1';
-									window.location.href = url;
-								}
-							})();
-							`,
-								} }
-							/>
-						)
-					}
-
 					{ i18nLocaleScript && ! useTranslationChunks && <script src={ i18nLocaleScript } /> }
 					{ /*
 					 * inline manifest in production, but reference by url for development.
@@ -212,6 +177,16 @@ class Document extends React.Component {
 								} }
 							/>
 						) ) }
+
+					{ isBilmurEnabled() && (
+						<script
+							defer
+							id="bilmur"
+							src={ getBilmurUrl() }
+							data-provider="wordpress.com"
+							data-service="calypso"
+						/>
+					) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 

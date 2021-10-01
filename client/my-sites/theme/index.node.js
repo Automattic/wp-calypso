@@ -1,9 +1,11 @@
-/**
- * Internal dependencies
- */
-import { makeLayout, ssrSetupLocale, setHrefLangLinks } from 'calypso/controller';
-import { details, fetchThemeDetailsData, notFoundError } from './controller';
+import {
+	makeLayout,
+	ssrSetupLocale,
+	setHrefLangLinks,
+	setLocalizedCanonicalUrl,
+} from 'calypso/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { details, fetchThemeDetailsData, notFoundError } from './controller';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
@@ -15,6 +17,7 @@ export default function ( router ) {
 		fetchThemeDetailsData,
 		details,
 		setHrefLangLinks,
+		setLocalizedCanonicalUrl,
 		makeLayout,
 
 		// Error handlers

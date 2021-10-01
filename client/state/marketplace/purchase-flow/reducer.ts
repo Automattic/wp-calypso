@@ -1,32 +1,18 @@
-/**
- * External dependencies
- */
-import type { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
 import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
-	MARKETPLACE_QUEUE_PLUGIN_INSTALL,
-	MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
 	MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
+	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 } from 'calypso/state/action-types';
-import {
-	MARKETPLACE_ASYNC_PROCESS_STATUS,
-	IPurchaseFlowState,
-	ISetPluginInstalledDuringPurchaseFlag,
-	ISetPluginToBeInstalledAction,
-	ISetPrimaryDomainCandidateAction,
-} from '../types';
 import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-types';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS, IPurchaseFlowState } from '../types';
+import type { AnyAction } from 'redux';
 
 export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
-	pluginSlugToBeInstalled: null,
-	isPluginInstalledDuringPurchase: false,
+	productSlugInstalled: null,
+	productGroupSlug: null,
 	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	reasonForSiteTransferStatus: null,
@@ -40,26 +26,18 @@ export default function purchaseFlow(
 ): IPurchaseFlowState {
 	switch ( action.type ) {
 		case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
-			action = action as ISetPrimaryDomainCandidateAction;
 			return {
 				...state,
 				primaryDomain: action.domainName,
 			};
-		case MARKETPLACE_QUEUE_PLUGIN_INSTALL:
-			action = action as ISetPluginToBeInstalledAction;
+		case MARKETPLACE_QUEUE_PRODUCT_INSTALL:
 			return {
 				...state,
 				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
-			};
-		case MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE:
-			action = action as ISetPluginInstalledDuringPurchaseFlag;
-			return {
-				...state,
-				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				isPluginInstalledDuringPurchase: action.isPluginInstalledDuringPurchase,
+				productSlugInstalled: action.productSlug,
+				productGroupSlug: action.productGroupSlug,
+				primaryDomain: action.primaryDomain,
 			};
 		case THEME_TRANSFER_INITIATE_REQUEST:
 			return {

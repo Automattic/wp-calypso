@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { DEFAULT_POST_QUERY } from 'calypso/state/posts/constants';
 
 /**

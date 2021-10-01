@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { ModalViews } from '../constants';
 import { getMediaModalView } from '../selectors';
 

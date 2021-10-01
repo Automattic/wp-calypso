@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { States } from '../constants.js';
 import { isExporting, isDateRangeValid } from '../selectors';
 

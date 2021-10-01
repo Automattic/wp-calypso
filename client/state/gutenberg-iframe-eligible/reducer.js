@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { GUTENBERG_IFRAME_ELIGIBLE_SET } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';

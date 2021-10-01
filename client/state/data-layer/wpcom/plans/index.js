@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
+import { PLANS_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { PLANS_REQUEST } from 'calypso/state/action-types';
 import {
 	plansReceiveAction,
 	plansRequestFailureAction,

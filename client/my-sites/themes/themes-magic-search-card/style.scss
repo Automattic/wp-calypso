@@ -9,20 +9,26 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
+	border: 1px solid var( --color-border-subtle );
+	border-bottom: 0;
 	transition: all 0.15s ease-in-out;
 
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
+		justify-content: center;
+		padding-top: 10px;
+	}
+
 	&.has-highlight {
-		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
-		position: relative;
-		z-index: z-index( 'root', '.themes-magic-search-card.has-highlight' );
+		box-shadow: none;
 	}
 
 	.search {
+		position: relative;
 		flex: 0 1 auto;
-		margin: 0;
-		height: 58px;
+		height: 36px;
+		border: solid 1px var( --color-neutral-10 );
+		margin: 10px;
 
 		&.has-focus,
 		&.has-focus:hover {
@@ -39,7 +45,8 @@
 	}
 
 	.themes-magic-search-card__icon {
-		margin-left: 8px;
+		margin-left: 4px;
+		margin-right: 4px;
 		display: flex;
 		color: var( --color-primary );
 		cursor: pointer;
@@ -59,7 +66,7 @@
 	.segmented-control {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding: 11px 14px;
+		padding: 11px 10px 11px 5px;
 
 		.segmented-control__item,
 		.segmented-control__link,
@@ -67,8 +74,21 @@
 			min-width: inherit;
 		}
 
-		&.showcase-revamp {
-			padding: 11px 10px;
+		// Default padding is 8px 12px,
+		// Add one to Y for alignment in theme showcase search
+		.segmented-control__link {
+			padding: 9px 12px;
+		}
+
+		.segmented-control__item.is-selected {
+			background: var( --color-neutral-100 );
+
+			a {
+				color: var( --color-text-inverted );
+				&:hover {
+					color: var( --color-neutral-70 );
+				}
+			}
 		}
 	}
 
@@ -76,6 +96,18 @@
 		flex: 0 1 auto;
 		padding: 8px 14px;
 	}
+}
+
+/*
+ * Align SVGs and nearby text
+ */
+.themes-magic-search-card__welcome-taxonomy-icon-container,
+.themes-magic-search-card__welcome-taxonomy-text-container {
+	vertical-align: middle;
+	display: inline-block;
+}
+.themes-magic-search-card__welcome-taxonomy-text-container {
+	padding-bottom: 2px;
 }
 
 /*
@@ -157,19 +189,19 @@
 }
 
 .themes-magic-search-card__welcome-header {
-	background-color: var( --color-neutral-0 );
-	border-bottom: 1px solid var( --color-neutral-5 );
-	border-top: 0;
-	padding: 4px 8px;
+	border: 0;
+	padding: 6px 12px 0;
 	font-size: $font-body-small;
 
 	text-transform: uppercase;
-	color: var( --color-neutral-70 );
+	color: var( --color-text-subtle );
+	text-align: left;
 }
 
 .themes-magic-search-card__welcome-taxonomies {
 	display: flex;
 	flex-wrap: wrap;
+	padding: 6px 12px 12px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-wrap: nowrap;
@@ -177,12 +209,16 @@
 }
 
 .themes-magic-search-card__welcome-taxonomy {
-	display: flex;
-	flex-direction: column;
+	border: 1px solid var( --color-border-subtle );
+	border-left: 0;
+	&:first-child {
+		border-left: 1px solid var( --color-border-subtle );
+	}
+
 	text-align: center;
 	flex: 1 0 auto;
 	overflow: hidden;
-	padding: 10px 6px;
+	padding: 12px;
 	margin: 0;
 	font-size: $font-body-small;
 	line-height: 16px;
@@ -196,7 +232,7 @@
 
 	.gridicon {
 		fill: var( --color-neutral-70 );
-		margin: 0 auto;
+		margin-right: 10px;
 		transition: fill 200ms ease-in;
 	}
 
@@ -219,9 +255,14 @@
 	pointer-events: none;
 }
 
-.button.is-link.themes-magic-search-card__advanced-toggle {
+.button.themes-magic-search-card__advanced-toggle {
+	display: flex;
 	font-size: 0.75rem;
-	margin-top: 3px;
-	margin-right: 10px;
 	white-space: nowrap;
+	border: 0;
+
+	.gridicon {
+		top: 0;
+		margin: 0 5px 0 0;
+	}
 }

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
+import * as React from 'react';
 
 export interface LaunchContextProps {
 	siteId: number;
@@ -31,7 +28,6 @@ const LaunchContext = React.createContext< LaunchContextProps >( {
 	openCheckout: ( siteSlug, isEcommerce ) => {
 		defaultRedirectTo(
 			addQueryArgs( `/checkout/${ siteSlug }`, {
-				preLaunch: 1,
 				// Redirect to My Home after checkout only if the selected plan is not eCommerce
 				...( ! isEcommerce && { redirect_to: `/home/${ siteSlug }` } ),
 			} )

@@ -1,21 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import InfiniteList from 'calypso/components/infinite-list';
-import NoResults from 'calypso/my-sites/no-results';
-import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import ListEnd from 'calypso/components/list-end';
+import NoResults from 'calypso/my-sites/no-results';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Team extends React.Component {

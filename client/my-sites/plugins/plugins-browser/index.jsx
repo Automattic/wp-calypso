@@ -1,43 +1,4 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { flow, get } from 'lodash';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import DocumentHead from 'calypso/components/data/document-head';
-import Search from '@automattic/search';
-import SectionNav from 'calypso/components/section-nav';
-import MainComponent from 'calypso/components/main';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import InfiniteScroll from 'calypso/components/infinite-scroll';
-import NoResults from 'calypso/my-sites/no-results';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
-import urlSearch from 'calypso/lib/url-search';
-import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
-import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
-import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
-import { Button } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -47,20 +8,50 @@ import {
 	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import Search from '@automattic/search';
+import { localize } from 'i18n-calypso';
+import { flow, get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { isEnabled } from '@automattic/calypso-config';
+import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import MainComponent from 'calypso/components/main';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import urlSearch from 'calypso/lib/url-search';
+import NoResults from 'calypso/my-sites/no-results';
+import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { fetchPluginsCategoryNextPage } from 'calypso/state/plugins/wporg/actions';
 import {
 	getPluginsListByCategory,
 	getPluginsListBySearchTerm,
 	isFetchingPluginsList,
 } from 'calypso/state/plugins/wporg/selectors';
-import { fetchPluginsCategoryNextPage } from 'calypso/state/plugins/wporg/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
+import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -499,7 +490,14 @@ export class PluginsBrowser extends Component {
 							headerText={ this.props.translate( 'Plugins' ) }
 							align="left"
 							subHeaderText={ this.props.translate(
-								'Add new functionality and integrations to your site with plugins.'
+								'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="plugins" showIcon={ false } />
+										),
+									},
+								}
 							) }
 						/>
 						<div className="plugins-browser__main-buttons">

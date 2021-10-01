@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { useContext } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import CheckoutContext from '../checkout-context';
+import { useContext } from 'react';
 import { PaymentMethod } from '../../types';
+import CheckoutContext from '../checkout-context';
 
 const debug = debugFactory( 'composite-checkout:payment-methods' );
 

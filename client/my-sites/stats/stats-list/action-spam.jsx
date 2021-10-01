@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:stats:action-spam' );
 

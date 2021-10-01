@@ -1,19 +1,4 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import {
-	features,
-	plans,
-	redirectToCheckout,
-	redirectToPlans,
-	redirectToPlansIfNotJetpack,
-} from './controller';
-import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	navigation,
@@ -23,6 +8,14 @@ import {
 	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+} from './controller';
+import { currentPlan } from './current-plan/controller';
 
 const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );

@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import styled from '@emotion/styled';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	FormStatus,
 	TransactionStatus,
@@ -13,12 +6,12 @@ import {
 	useFormStatus,
 	Button,
 } from '@automattic/composite-checkout';
-import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React from 'react';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:paypal' );
 

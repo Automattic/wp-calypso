@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import { parsePatch } from 'diff/lib/patch/parse';
+import React, { Fragment } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const decompose = ( path ) => {

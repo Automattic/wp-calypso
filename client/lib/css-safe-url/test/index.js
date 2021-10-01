@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import cssSafeUrl from '../';
 
 describe( 'css-safe-url', () => {

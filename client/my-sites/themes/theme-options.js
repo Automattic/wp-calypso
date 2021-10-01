@@ -1,16 +1,13 @@
-/**
- * External dependencies
- */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -31,11 +28,6 @@ import {
 	isThemePremium,
 } from 'calypso/state/themes/selectors';
 
-import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-
 const identity = ( theme ) => theme;
 
 function getAllThemeOptions( { translate } ) {
@@ -52,7 +44,7 @@ function getAllThemeOptions( { translate } ) {
 				getUrl: getThemePurchaseUrl,
 				hideForTheme: ( state, themeId, siteId ) =>
 					isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
-					! getCurrentUser( state ) || // Not logged in
+					! isUserLoggedIn( state ) || // Not logged in
 					! isThemePremium( state, themeId ) || // Not a premium theme
 					isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 					isThemeActive( state, themeId, siteId ), // Already active
@@ -75,7 +67,7 @@ function getAllThemeOptions( { translate } ) {
 					getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
 				hideForTheme: ( state, themeId, siteId ) =>
 					! isJetpackSite( state, siteId ) ||
-					! getCurrentUser( state ) ||
+					! isUserLoggedIn( state ) ||
 					! isThemePremium( state, themeId ) ||
 					isThemeActive( state, themeId, siteId ) ||
 					isPremiumThemeAvailable( state, themeId, siteId ),
@@ -90,7 +82,7 @@ function getAllThemeOptions( { translate } ) {
 		} ),
 		action: activateAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! getCurrentUser( state ) ||
+			! isUserLoggedIn( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
@@ -127,7 +119,7 @@ function getAllThemeOptions( { translate } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! getCurrentUser( state ) ||
+			! isUserLoggedIn( state ) ||
 			( siteId &&
 				( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 					( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
@@ -153,7 +145,7 @@ function getAllThemeOptions( { translate } ) {
 		label: signupLabel,
 		extendedLabel: signupLabel,
 		getUrl: getThemeSignupUrl,
-		hideForTheme: ( state ) => getCurrentUser( state ),
+		hideForTheme: ( state ) => isUserLoggedIn( state ),
 	};
 
 	const separator = {
@@ -199,7 +191,7 @@ function getAllThemeOptions( { translate } ) {
 const connectOptionsHoc = connect(
 	( state, props ) => {
 		const { siteId, origin = siteId, locale } = props;
-		const isLoggedOut = ! getCurrentUser( state );
+		const isLoggedOut = ! isUserLoggedIn( state );
 		let mapGetUrl = identity;
 		let mapHideForTheme = identity;
 

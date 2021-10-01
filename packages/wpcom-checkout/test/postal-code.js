@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { tryToGuessPostalCodeFormat } from '../src';
 
 describe( 'Postal Code Utils', () => {

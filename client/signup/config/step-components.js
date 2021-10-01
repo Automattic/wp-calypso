@@ -11,6 +11,7 @@ const stepNameToModuleName = {
 	'creds-complete': 'creds-complete',
 	'creds-permission': 'creds-permission',
 	domains: 'domains',
+	emails: 'emails',
 	'domains-store': 'domains',
 	'domain-only': 'domains',
 	'domains-theme-preselected': 'domains',
@@ -70,6 +71,7 @@ const stepNameToModuleName = {
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
 	design: 'design-picker',
+	'design-setup-site': 'design-picker',
 };
 
 export function getStepModuleName( stepName ) {

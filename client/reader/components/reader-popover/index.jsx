@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Popover } from '@automattic/components';
 import classnames from 'classnames';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Popover from 'calypso/components/popover';
-
-/**
- * Style dependencies
- */
+import React from 'react';
 import './style.scss';
 
 const ReaderPopover = ( props ) => {

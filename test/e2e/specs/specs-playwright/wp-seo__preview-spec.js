@@ -1,21 +1,36 @@
-import { DataHelper, LoginFlow, SidebarComponent, MarketingPage } from '@automattic/calypso-e2e';
+/**
+ * @group calypso-pr
+ */
+
+import {
+	DataHelper,
+	LoginFlow,
+	SidebarComponent,
+	MarketingPage,
+	setupHooks,
+} from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	let marketingPage;
+	let page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( this.page, 'wooCommerceUser' );
+		const loginFlow = new LoginFlow( page, 'wooCommerceUser' );
 		await loginFlow.logIn();
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( this.page );
-		await sidebarComponent.gotoMenu( { item: 'Tools', subitem: 'Marketing' } );
+		const sidebarComponent = new SidebarComponent( page );
+		await sidebarComponent.navigate( 'Tools', 'Marketing' );
 	} );
 
 	it( 'Click on Traffic tab', async function () {
-		marketingPage = await MarketingPage.Expect( this.page );
-		await marketingPage.clickTabItem( 'Traffic' );
+		marketingPage = new MarketingPage( page );
+		await marketingPage.clickTab( 'Traffic' );
 	} );
 
 	it( 'Enter SEO meta description', async function () {

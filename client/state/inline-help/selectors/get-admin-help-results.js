@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import { adminSections, filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

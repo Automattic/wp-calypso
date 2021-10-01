@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { isEmpty, partial } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SupportInfo from 'calypso/components/support-info';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { updateSiteMonitorSettings } from 'calypso/state/sites/monitor/actions';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
@@ -27,6 +18,8 @@ import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpac
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isRequestingSiteMonitorSettings from 'calypso/state/selectors/is-requesting-site-monitor-settings';
 import isUpdatingSiteMonitorSettings from 'calypso/state/selectors/is-updating-site-monitor-settings';
+import { updateSiteMonitorSettings } from 'calypso/state/sites/monitor/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
@@ -150,8 +143,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 					<div className="site-settings__child-settings">
 						{ this.settingsMonitorEmailCheckbox() }
-						{ config.isEnabled( 'settings/security/monitor/wp-note' ) &&
-							this.settingsMonitorWpNoteCheckbox() }
+						{ this.settingsMonitorWpNoteCheckbox() }
 					</div>
 				</Card>
 			</div>
@@ -176,7 +168,7 @@ export default connect(
 		};
 	},
 	{
-		trackEvent: partial( recordGoogleEvent, 'Site Settings' ),
+		trackEvent: ( event ) => recordGoogleEvent( 'Site Settings', event ),
 		updateSiteMonitorSettings,
 	}
 )( localize( SiteSettingsFormJetpackMonitor ) );

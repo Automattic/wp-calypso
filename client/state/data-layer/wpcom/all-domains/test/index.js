@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getAllDomains, getAllDomainsError, getAllDomainsSuccess } from '../';
 import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_SUCCESS,
 	ALL_DOMAINS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getAllDomains, getAllDomainsError, getAllDomainsSuccess } from '../';
 
 const isErrorNotice = ( action ) => {
 	return action && action.notice && 'is-error' === action.notice.status;

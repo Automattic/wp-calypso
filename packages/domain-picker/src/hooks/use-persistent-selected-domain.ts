@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import * as React from 'react';
 import type { DomainSuggestions } from '@automattic/data-stores';
 

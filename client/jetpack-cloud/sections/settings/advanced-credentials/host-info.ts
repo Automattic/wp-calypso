@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { translate, TranslateResult } from 'i18n-calypso';
 
 export interface LinkAndInfo {

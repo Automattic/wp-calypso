@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
-import { useEffect } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import type { CacheStatus, ShoppingCartManagerOptions, ResponseCart } from './types';
+import { useEffect, useContext } from 'react';
+import { cartKeysThatDoNotAllowFetch } from './cart-keys';
+import ShoppingCartOptionsContext from './shopping-cart-options-context';
+import useManagerClient from './use-manager-client';
 
 const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
 
@@ -19,35 +14,42 @@ function convertMsToSecs( ms: number ): number {
 	return Math.floor( ms / 1000 );
 }
 
-export default function useRefetchOnFocus(
-	options: ShoppingCartManagerOptions,
-	cacheStatus: CacheStatus,
-	lastCart: ResponseCart,
-	refetch: () => void
-): void {
+function isFocused(): boolean {
+	return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
+}
+
+function isOffline(): boolean {
+	try {
+		return ! window.navigator.onLine;
+	} catch ( err ) {
+		debug( 'failed to check onLine status; ignoring check', err );
+		return false;
+	}
+}
+
+export default function useRefetchOnFocus( cartKey: string | undefined ): void {
+	const managerClient = useManagerClient( 'useRefetchOnFocus' );
+
+	const manager = managerClient.forCartKey( cartKey );
+	const { refetchOnWindowFocus } = useContext( ShoppingCartOptionsContext );
+
 	useEffect( () => {
-		if ( ! options.refetchOnWindowFocus ) {
+		if ( ! refetchOnWindowFocus ) {
+			debug( 'refetchOnWindowFocus false; not listening' );
 			return;
 		}
-		// Refresh only if the cart is not pending any other operations
-		if ( cacheStatus !== 'valid' && cacheStatus !== 'error' ) {
+		if ( ! cartKey ) {
+			debug( 'cartKey falsy; not listening' );
 			return;
 		}
-
-		function isFocused(): boolean {
-			return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
-		}
-
-		function isOffline(): boolean {
-			try {
-				return ! window.navigator.onLine;
-			} catch {
-				return true;
-			}
+		if ( cartKeysThatDoNotAllowFetch.includes( cartKey ) ) {
+			debug( 'cartKey not fetchable; not listening' );
+			return;
 		}
 
 		function wasLastFetchRecent(): boolean {
 			const nowInSeconds = convertMsToSecs( Date.now() );
+			const { responseCart: lastCart } = manager.getState();
 			const lastRefreshTime = lastCart.cart_generated_at_timestamp;
 			const secondsSinceLastFetch = nowInSeconds - lastRefreshTime;
 			debug( 'last fetch was', secondsSinceLastFetch, 'seconds ago' );
@@ -69,17 +71,19 @@ export default function useRefetchOnFocus(
 			}
 
 			debug( 'window was refocused; refetching' );
-			refetch();
+			manager.actions.reloadFromServer();
 		}
 
+		debug( 'adding focus listeners' );
 		window.addEventListener( 'visibilitychange', handleFocusChange );
 		window.addEventListener( 'focus', handleFocusChange );
 		window.addEventListener( 'online', handleFocusChange );
 
 		return () => {
+			debug( 'removing focus listeners' );
 			window.removeEventListener( 'visibilitychange', handleFocusChange );
 			window.removeEventListener( 'focus', handleFocusChange );
 			window.removeEventListener( 'online', handleFocusChange );
 		};
-	}, [ options.refetchOnWindowFocus, lastCart.cart_generated_at_timestamp, refetch, cacheStatus ] );
+	}, [ cartKey, refetchOnWindowFocus, manager ] );
 }

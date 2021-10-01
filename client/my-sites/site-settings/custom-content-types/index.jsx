@@ -1,43 +1,40 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import InlineSupportLink from 'calypso/components/inline-support-link';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CustomContentTypes extends Component {
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		const {
 			activatingCustomContentTypesModule,
 			customContentTypesModuleActive,
 			fields,
+			isSavingSettings,
 			siteId,
 			siteIsJetpack,
 		} = this.props;
+
+		// Refresh menu after settings are saved in case CPTs have been registered or unregistered.
+		if ( ! isSavingSettings && prevProps.isSavingSettings ) {
+			this.props.requestAdminMenu( siteId );
+		}
 
 		if ( ! siteIsJetpack ) {
 			return;
@@ -245,5 +242,6 @@ export default connect(
 	},
 	{
 		activateModule,
+		requestAdminMenu,
 	}
 )( localize( CustomContentTypes ) );

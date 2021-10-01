@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import AuthorSelector from '../';
-import { Card } from '@automattic/components';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import AuthorSelector from '../';
 
 function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	return (

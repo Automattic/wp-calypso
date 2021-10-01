@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
-import { useDispatch } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

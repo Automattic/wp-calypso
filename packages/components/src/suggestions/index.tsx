@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { find, groupBy, isEqual, partition, property } from 'lodash';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { find, groupBy, isEqual, partition, property } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import Item from './item';
 
 /**

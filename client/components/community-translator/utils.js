@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { postRequest } from 'calypso/lib/i18n-utils/glotpress';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 } from 'calypso/lib/i18n-utils/constants';
+import { postRequest } from 'calypso/lib/i18n-utils/glotpress';
 
 /**
  * Prepares and triggers a request to get GP string

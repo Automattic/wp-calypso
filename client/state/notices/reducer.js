@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { omit, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { omit, reduce } from 'lodash';
 import { NOTICE_CREATE, NOTICE_REMOVE, ROUTE_SET } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 

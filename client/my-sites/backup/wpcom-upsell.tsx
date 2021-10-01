@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isFreePlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React, { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import Gridicon from 'calypso/components/gridicon';
-import { getSitePlan } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSitePlan } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
-import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';

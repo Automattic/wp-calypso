@@ -1,5 +1,5 @@
 ARG use_cache=false
-ARG node_version=14.17.3
+ARG node_version=16.7.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
@@ -11,9 +11,9 @@ FROM node:${node_version}-buster as builder-cache-false
 # for yarn, terser, css-loader and babel.
 FROM ${base_image} as builder-cache-true
 
-ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
+ENV READONLY_CACHE=true
 
 ###################
 FROM builder-cache-${use_cache} as builder
@@ -57,7 +57,7 @@ RUN bash /tmp/env-config.sh
 # dependencies which end up bloating the image.
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable --check-cache
 
 # Build the final layer
 #
@@ -83,4 +83,4 @@ COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "build/server.js"]
+CMD ["node", "--unhandled-rejections=warn", "build/server.js"]

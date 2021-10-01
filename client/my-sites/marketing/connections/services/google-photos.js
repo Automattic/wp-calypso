@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 
 export class GooglePhotos extends SharingService {
 	static propTypes = {

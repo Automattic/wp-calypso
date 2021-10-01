@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { useCallback, useMemo, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Suggestions from '..';
 

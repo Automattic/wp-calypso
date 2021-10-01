@@ -1,7 +1,10 @@
-/**
- * Internal dependencies
- */
-import { makeLayout, ssrSetupLocale, setHrefLangLinks } from 'calypso/controller';
+import {
+	makeLayout,
+	ssrSetupLocale,
+	setHrefLangLinks,
+	setLocalizedCanonicalUrl,
+} from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -11,7 +14,6 @@ import {
 	redirectToThemeDetails,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 export default function ( router ) {
 	// Redirect interim showcase route to permanent one
@@ -29,12 +31,13 @@ export default function ( router ) {
 	];
 	router(
 		showcaseRoutes,
-		setHrefLangLinks,
 		ssrSetupLocale,
 		fetchThemeFilters,
 		validateVertical,
 		validateFilters,
 		fetchThemeData,
+		setHrefLangLinks,
+		setLocalizedCanonicalUrl,
 		loggedOut,
 		makeLayout
 	);

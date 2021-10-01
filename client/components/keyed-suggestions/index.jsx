@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 import {
 	has,
 	pick,
@@ -16,17 +13,10 @@ import {
 	partition,
 	includes,
 } from 'lodash';
-import classNames from 'classnames';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import { cosineSimilarity } from 'calypso/lib/trigram';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SEARCH_THRESHOLD = 0.45;
@@ -390,9 +380,9 @@ class KeyedSuggestions extends React.Component {
 			rendered.push(
 				suggestions[ key ].map( ( value, i ) => {
 					const taxonomyName = terms[ key ][ value ].name;
-					const hasHighlight = noOfSuggestions + i === this.state.suggestionPosition;
+					const isSelected = noOfSuggestions + i === this.state.suggestionPosition;
 					const className = classNames( 'keyed-suggestions__value', {
-						'has-highlight': hasHighlight,
+						'is-selected': isSelected,
 					} );
 					return (
 						/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */

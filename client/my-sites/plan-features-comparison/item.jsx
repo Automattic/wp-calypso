@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import React from 'react';
 
 export function PlanFeaturesItem( props ) {
 	const itemInfoClasses = classNames( 'plan-features-comparison__item-info-container', {

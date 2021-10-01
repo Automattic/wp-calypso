@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 /**

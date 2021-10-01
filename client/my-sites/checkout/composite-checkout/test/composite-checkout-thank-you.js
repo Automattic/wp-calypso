@@ -4,17 +4,15 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
 	redirectCheckoutToWpAdmin,
+	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
@@ -262,7 +260,7 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product', () => {
+	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is omitted', () => {
 		isJetpackCloud.mockImplementation( () => true );
 		redirectCheckoutToWpAdmin.mockImplementation( () => true );
 		const adminUrl = 'https://my.site/wp-admin/';
@@ -276,6 +274,24 @@ describe( 'getThankYouPageUrl', () => {
 			adminUrl,
 		} );
 		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/recommendations` );
+	} );
+
+	it( 'redirects to the sites wp-admin with adminPageRedirect if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is supplied', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		redirectCheckoutToWpAdmin.mockImplementation( () => true );
+		const adminUrl = 'https://my.site/wp-admin/';
+		const adminPageRedirect = 'admin.php?page=jetpack-backup';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+			adminUrl,
+			adminPageRedirect,
+		} );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack-backup` );
 	} );
 
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
@@ -948,20 +964,158 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
 	} );
 
-	it( 'redirects to the jetpack "siteless" checkout thank you when jetpack checkout arg is set, but siteSlug is undefined.', () => {
-		const cart = {
-			products: [
-				{
-					product_slug: 'jetpack_backup_daily',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: undefined,
-			cart,
-			isJetpackCheckout: true,
+	describe( 'Plan Upgrade Upsell Nudge', () => {
+		it( 'offers discounted business plan upgrade when premium plan is purchased.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle',
+						bill_period: 365,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
 		} );
-		expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+
+		it( 'offers discounted biennial business plan upgrade when biennial premium plan is purchased.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle-2y',
+						bill_period: 730,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-2-years/1234abcd' );
+		} );
+
+		it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle_monthly',
+						bill_period: 31,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-monthly/1234abcd' );
+		} );
+
+		it( 'Does not offers discounted annual business plan upgrade when annual premium plan and DIFM light is purchased together.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle',
+						bill_period: 365,
+					},
+					{
+						product_slug: WPCOM_DIFM_LITE,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+	} );
+
+	describe( 'Jetpack Siteless Checkout Thank You', () => {
+		it( 'redirects when jetpack checkout arg is set, but siteSlug is undefined.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+			} );
+			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+		} );
+
+		it( 'redirects with receiptId query param when a valid receipt ID is provided', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 80023,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023'
+			);
+		} );
+
+		it( 'redirects without receiptId query param when an invalid receipt ID is provided', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 'invalid receipt ID',
+			} );
+			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+		} );
+
+		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 80023,
+				jetpackTemporarySiteId: 123456789,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+			);
+		} );
 	} );
 } );

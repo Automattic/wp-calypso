@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { dispatch, select } from '@wordpress/data';
 import waitForExpect from 'wait-for-expect';
 import wpcomRequest from 'wpcom-proxy-request';
-
-/**
- * Internal dependencies
- */
-import { dispatch, select } from '@wordpress/data';
-import { register } from '../index';
 import { STORE_KEY } from '../constants';
+import { register } from '../index';
 import readerReducer from '../reducer';
 
 jest.mock( 'wpcom-proxy-request', () => ( {

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
 import React, { Fragment } from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import meta from './meta';
+import { SiteTitleButton } from 'calypso/layout/guided-tours/button-labels';
 import {
 	ButtonRow,
 	Continue,
@@ -18,7 +10,7 @@ import {
 	Step,
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
-import { SiteTitleButton } from 'calypso/layout/guided-tours/button-labels';
+import meta from './meta';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const ChecklistSiteTitleTour = makeTour(

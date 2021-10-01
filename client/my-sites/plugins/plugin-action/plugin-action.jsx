@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import classNames from 'classnames';
+import React from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginAction extends React.Component {

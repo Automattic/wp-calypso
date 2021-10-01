@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
-
-/**
- * WordPress dependencies.
- */
 import { SelectControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
 import NoSupport from './no-support';
 
 export default ( {

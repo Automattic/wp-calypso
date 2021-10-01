@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { createReadStream } from './util/fs';
 
 const debug = debugFactory( 'wpcom:media' );

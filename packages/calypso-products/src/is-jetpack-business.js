@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
-import { isJetpackPlan } from './is-jetpack-plan';
 import { isBusiness } from './is-business';
+import { isJetpackPlan } from './is-jetpack-plan';
 
 export function isJetpackBusiness( product ) {
 	product = formatProduct( product );

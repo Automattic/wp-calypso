@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { addStoredCard, deleteStoredCard, fetchStoredCards } from '../actions';
 import wp from 'calypso/lib/wp';
 import {
 	STORED_CARDS_ADD_COMPLETED,
@@ -20,6 +12,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { addStoredCard, deleteStoredCard, fetchStoredCards } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

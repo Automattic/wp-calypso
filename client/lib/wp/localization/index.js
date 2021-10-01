@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { parse, stringify } from 'qs';
 import i18n from 'i18n-calypso';
+import { parse, stringify } from 'qs';
 
 /**
  * Given a WPCOM parameter set, modifies the query such that a non-default

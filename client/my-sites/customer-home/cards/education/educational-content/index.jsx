@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import Gridicon from 'calypso/components/gridicon';
 import MaterialIcon from 'calypso/components/material-icon';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function trackNavigation( url, cardName ) {

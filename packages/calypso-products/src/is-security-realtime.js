@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isSecurityRealTimePlan } from './main';
 import { formatProduct } from './format-product';
+import { isSecurityRealTimePlan } from './main';
 
 export function isSecurityRealTime( product ) {
 	product = formatProduct( product );

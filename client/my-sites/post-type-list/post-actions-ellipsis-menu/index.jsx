@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { Children, cloneElement } from 'react';
-
-/**
- * Internal dependencies
- */
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
-import PostActionsEllipsisMenuEdit from './edit';
-import PostActionsEllipsisMenuStats from './stats';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuComments from './comments';
+import PostActionsEllipsisMenuCopyLink from './copy-link';
+import PostActionsEllipsisMenuDuplicate from './duplicate';
+import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuPublish from './publish';
+import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
+import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
-import PostActionsEllipsisMenuRestore from './restore';
-import PostActionsEllipsisMenuDuplicate from './duplicate';
-import PostActionsEllipsisMenuCopyLink from './copy-link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {

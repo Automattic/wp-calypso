@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get, includes, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Button, Card, ScreenReaderText } from '@automattic/components';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import { localize } from 'i18n-calypso';
+import { get, includes, isEmpty } from 'lodash';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Notice from 'calypso/components/notice';
+import { getFileImporters } from 'calypso/lib/importer/importer-config';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
+import wpcom from 'calypso/lib/wp';
+import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	setImportOriginSiteDetails,
 	setNuxUrlInputValue,
 } from 'calypso/state/importer-nux/actions';
-import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
 import { getNuxUrlInputValue } from 'calypso/state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'calypso/lib/importer/url-validation';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import Notice from 'calypso/components/notice';
-import wpcom from 'calypso/lib/wp';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
-import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
-import { getFileImporters } from 'calypso/lib/importer/importer-config';
-import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
-
-/**
- * Style dependencies
- */
+import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
 import './style.scss';
 
 class ImportURLOnboardingStepComponent extends Component {

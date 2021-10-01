@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
 import 'calypso/state/themes/init';

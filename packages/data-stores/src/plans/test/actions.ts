@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as Actions from '../actions';
 import * as MockData from '../mock';
 import { buildPlanFeaturesDict } from '../test-utils';

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { debounce } from 'lodash';
-import { registerTranslateHook } from 'i18n-calypso';
 import cookie from 'cookie';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { registerTranslateHook } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import { recordOriginals, encodeOriginalKey } from './glotpress';
 
 const debug = debugFactory( 'calypso:translation-scanner' );

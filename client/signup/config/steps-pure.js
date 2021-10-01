@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import {
 	PLAN_PERSONAL,
@@ -22,6 +14,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
+import i18n from 'i18n-calypso';
 
 const noop = () => {};
 
@@ -145,8 +138,9 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'redirect',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -190,6 +184,7 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -303,7 +298,14 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-
+		emails: {
+			stepName: 'emails',
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			props: {
+				isDomainOnly: false,
+			},
+		},
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
@@ -638,7 +640,6 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'isPreLaunch' ],
 			props: {
 				nonInteractive: true,
 			},
@@ -707,6 +708,17 @@ export function generateSteps( {
 
 		design: {
 			stepName: 'design-picker',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+		},
+
+		'design-setup-site': {
+			stepName: 'design-setup-site',
+			props: {
+				largeThumbnails: true,
+			},
+			apiRequestFunction: setThemeOnSite,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],

@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
 import { TERMS_LIST } from './constants';
 import { PRODUCTS_LIST } from './products-list';
-
-/**
- * Type dependencies
- */
 import type { ProductSlug } from './types';
 
 /**

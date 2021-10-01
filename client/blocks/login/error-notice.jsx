@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import Notice from 'calypso/components/notice';
 import {
 	getRequestError,
 	getTwoFactorAuthRequestError,
 	getCreateSocialAccountError,
 	getRequestSocialAccountError,
 } from 'calypso/state/login/selectors';
-import Notice from 'calypso/components/notice';
 
 class ErrorNotice extends Component {
 	static propTypes = {

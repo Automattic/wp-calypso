@@ -1,12 +1,10 @@
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/url';
 import { addLocaleToPath } from 'calypso/lib/i18n-utils';
+import { addQueryArgs } from 'calypso/lib/url';
 
 export function login( {
 	isJetpack = undefined,
 	isGutenboarding = undefined,
+	isWhiteLogin = undefined,
 	locale = undefined,
 	redirectTo = undefined,
 	twoFactorAuthType = undefined,
@@ -19,6 +17,7 @@ export function login( {
 	useMagicLink = undefined,
 	from = undefined,
 	allowSiteConnection = undefined,
+	signupUrl = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -26,7 +25,7 @@ export function login( {
 		url += '/' + socialService + '/callback';
 	} else if ( twoFactorAuthType && isJetpack ) {
 		url += '/jetpack/' + twoFactorAuthType;
-	} else if ( twoFactorAuthType && isGutenboarding ) {
+	} else if ( twoFactorAuthType && ( isGutenboarding || isWhiteLogin ) ) {
 		url += '/new/' + twoFactorAuthType;
 	} else if ( twoFactorAuthType ) {
 		url += '/' + twoFactorAuthType;
@@ -34,7 +33,7 @@ export function login( {
 		url += '/social-connect';
 	} else if ( isJetpack ) {
 		url += '/jetpack';
-	} else if ( isGutenboarding ) {
+	} else if ( isGutenboarding || isWhiteLogin ) {
 		url += '/new';
 	} else if ( useMagicLink ) {
 		url += '/link';
@@ -49,7 +48,9 @@ export function login( {
 	}
 
 	if ( redirectTo ) {
-		url = addQueryArgs( { redirect_to: redirectTo }, url );
+		url = redirectTo.includes( 'jetpack-sso' )
+			? redirectTo
+			: addQueryArgs( { redirect_to: redirectTo }, url );
 	}
 
 	if ( emailAddress ) {
@@ -66,6 +67,10 @@ export function login( {
 
 	if ( from ) {
 		url = addQueryArgs( { from }, url );
+	}
+
+	if ( signupUrl ) {
+		url = addQueryArgs( { signup_url: signupUrl }, url );
 	}
 
 	if ( allowSiteConnection ) {

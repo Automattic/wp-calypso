@@ -13,9 +13,6 @@
  * @module state/data-layer/wpcom-http/pipeline/retry-on-failure/delays
  */
 
-/**
- * External dependencies
- */
 import { random } from 'lodash';
 
 /**

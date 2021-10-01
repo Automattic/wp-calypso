@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 const { ipcMain: ipc } = require( 'electron' );
 
 module.exports = {

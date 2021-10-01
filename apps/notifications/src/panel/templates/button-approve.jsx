@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { setApproveStatus } from '../state/notes/thunks';
-import ActionButton from './action-button';
+import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
-import { RestClientContext } from '../Notifications';
+import { setApproveStatus } from '../state/notes/thunks';
+import ActionButton from './action-button';
 
 const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
 	const restClient = useContext( RestClientContext );

@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import * as controller from './controller';
-import { siteSelection } from 'calypso/my-sites/controller';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { siteSelection } from 'calypso/my-sites/controller';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import * as controller from './controller';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function () {
@@ -37,8 +27,9 @@ export default function () {
 	].join( '|' );
 
 	page(
-		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
+		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?/${ locale }`,
 		controller.redirectToSiteLessCheckout,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.loginBeforeJetpackSearch,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
@@ -95,16 +86,6 @@ export default function () {
 		siteSelection,
 		controller.offerResetRedirects,
 		controller.offerResetContext
-	);
-
-	page(
-		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
-		controller.redirectWithoutLocaleIfLoggedIn,
-		controller.persistMobileAppFlow,
-		controller.setMasterbar,
-		controller.connect,
-		makeLayout,
-		clientRender
 	);
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );

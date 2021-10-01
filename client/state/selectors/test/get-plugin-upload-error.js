@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 
 const siteId = 77203074;

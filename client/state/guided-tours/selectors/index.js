@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import { difference, find, findLast, flatMap, get, includes, map, startsWith, pick } from 'lodash';
+import { createSelector } from '@automattic/state-utils';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { difference, find, findLast, flatMap, get, includes, map, startsWith, pick } from 'lodash';
+import GuidedToursConfig from 'calypso/layout/guided-tours/config';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
-import { getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
+import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'calypso/state/ui/action-log/selectors';
-import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
-import GuidedToursConfig from 'calypso/layout/guided-tours/config';
-import { createSelector } from '@automattic/state-utils';
+import { getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
 import findOngoingTour from './find-ongoing-tour';
 import getToursHistory from './get-tours-history';
 

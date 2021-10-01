@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	HELP_CONTACT_FORM_SITE_SELECT,
@@ -8,8 +5,8 @@ import {
 	SUPPORT_HISTORY_SET,
 	SUPPORT_LEVEL_SET,
 } from 'calypso/state/action-types';
-import courses from './courses/reducer';
 import { combineReducers } from 'calypso/state/utils';
+import courses from './courses/reducer';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 

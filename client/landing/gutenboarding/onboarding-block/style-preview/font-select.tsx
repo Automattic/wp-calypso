@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { Button } from '@wordpress/components';
-import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
-import isShallowEqual from '@wordpress/is-shallow-equal';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import { getFontTitle, FontPair } from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { Button } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { Icon, chevronDown } from '@wordpress/icons';
+import isShallowEqual from '@wordpress/is-shallow-equal';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 import { useFontPairings } from '../../fonts';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();

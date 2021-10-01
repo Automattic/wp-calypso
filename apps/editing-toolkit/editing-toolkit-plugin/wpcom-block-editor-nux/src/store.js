@@ -1,10 +1,8 @@
-/**
- * External dependencies
- */
-import 'a8c-fse-common-data-stores';
 import apiFetch from '@wordpress/api-fetch';
-import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
 import { combineReducers, registerStore } from '@wordpress/data';
+import { apiFetch as apiFetchControls, controls } from '@wordpress/data-controls';
+
+import 'a8c-fse-common-data-stores';
 
 export const DEFAULT_VARIANT = 'tour';
 export const BLANK_CANVAS_VARIANT = 'blank-canvas-tour';
@@ -110,7 +108,9 @@ const selectors = {
 	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
 	getTourRating: ( state ) => state.tourRating,
-	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
+	// the 'modal' variant previously used for mobile has been removed but its slug may still be persisted in local storage
+	getWelcomeGuideVariant: ( state ) =>
+		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
 };
 
 export function register() {

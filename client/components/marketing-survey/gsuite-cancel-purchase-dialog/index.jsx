@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import * as steps from './steps';
-import { Dialog } from '@automattic/components';
+import { connect } from 'react-redux';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getName } from 'calypso/lib/purchases';
+import wpcom from 'calypso/lib/wp';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { removePurchase } from 'calypso/state/purchases/actions';
-import wpcom from 'calypso/lib/wp';
+import * as steps from './steps';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class GSuiteCancelPurchaseDialog extends Component {
@@ -247,8 +237,8 @@ GSuiteCancelPurchaseDialog.propTypes = {
 export default connect(
 	( state, { purchase } ) => {
 		return {
-			productName: getName( purchase ),
 			domain: purchase.meta,
+			productName: getName( purchase ),
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 		};

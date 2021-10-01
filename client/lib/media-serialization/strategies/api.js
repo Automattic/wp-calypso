@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import { MediaTypes } from '../constants';
 

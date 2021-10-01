@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { DomainSuggestions } from '@automattic/data-stores';
 import { mockDomainSuggestion } from '@automattic/domain-picker';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
+import { useDispatch, useSelect } from '@wordpress/data';
+import * as React from 'react';
 import LaunchContext from '../context';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import { isDomainProduct } from '../utils';
-import type { DomainProduct } from '../utils';
 import { useSiteDomains } from './use-site-domains';
+import type { DomainProduct } from '../utils';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function useDomainProductFromCart(): DomainProduct | undefined {
 	const { siteId } = React.useContext( LaunchContext );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;

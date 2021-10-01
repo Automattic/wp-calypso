@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_BIENNIAL_PERIOD } from './constants';
 import { formatProduct } from './format-product';
 

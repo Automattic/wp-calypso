@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/me/devices';

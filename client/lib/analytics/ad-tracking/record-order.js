@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import {
 	costToUSD,
@@ -14,6 +12,7 @@ import {
 	isBingEnabled,
 	isQuantcastEnabled,
 	isWpcomGoogleAdsGtagEnabled,
+	isJetpackGoogleAdsGtagEnabled,
 	isFloodlightEnabled,
 	isTwitterEnabled,
 	isPinterestEnabled,
@@ -33,10 +32,9 @@ import {
 	GA_PRODUCT_BRAND_WPCOM,
 	GA_PRODUCT_BRAND_JETPACK,
 } from './constants';
-import { loadTrackingScripts } from './load-tracking-scripts';
-import { recordParamsInFloodlightGtag } from './floodlight';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
-import { getCurrentUser } from '@automattic/calypso-analytics';
+import { recordParamsInFloodlightGtag } from './floodlight';
+import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
 import './setup';
@@ -76,7 +74,7 @@ export async function recordOrder( cart, orderId ) {
 	const wpcomJetpackCartInfo = splitWpcomJetpackCartInfo( cart );
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
-	recordOrderInGoogleAds( cart, orderId );
+	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
@@ -426,9 +424,10 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
  *
  * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInGoogleAds( cart, orderId ) {
+function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
@@ -448,6 +447,21 @@ function recordOrderInGoogleAds( cart, orderId ) {
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
+		window.gtag( ...params );
+	}
+
+	if ( isJetpackGoogleAdsGtagEnabled && wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.jetpackGoogleAdsGtagPurchase,
+				value: wpcomJetpackCartInfo.jetpackCost,
+				currency: cart.currency,
+				transaction_id: orderId,
+			},
+		];
+		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
 		window.gtag( ...params );
 	}
 }

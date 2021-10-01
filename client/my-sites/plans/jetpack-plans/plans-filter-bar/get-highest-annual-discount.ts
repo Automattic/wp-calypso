@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { AppState } from 'calypso/types';
-import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+import { AppState } from 'calypso/types';
 import { getMonthlySlugFromYearly } from '../convert-slug-terms';
 
 const getAnnualDiscount = ( state: AppState, annualProductSlug: string ) => {

@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
 import {
 	JETPACK_CONNECTION_STATUS_RECEIVE,
 	JETPACK_CONNECTION_STATUS_REQUEST,
@@ -13,7 +11,6 @@ import {
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 
 import 'calypso/state/data-layer/wpcom/jetpack/connection/owner';

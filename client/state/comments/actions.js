@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	COMMENT_COUNTS_REQUEST,
@@ -19,9 +16,9 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 } from 'calypso/state/action-types';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
-import { getSiteComment } from 'calypso/state/comments/selectors';
 
 import 'calypso/state/data-layer/wpcom/comments';
 import 'calypso/state/data-layer/wpcom/sites/comment-counts';

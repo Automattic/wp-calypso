@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ActivityLogBanner from './index';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import HappychatButton from 'calypso/components/happychat/button';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
 } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import ActivityLogBanner from './index';
 
-/**
- * Style dependencies
- */
 import './success-banner.scss';
 
 /**

@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const HeaderButton = React.forwardRef( ( props, ref ) => {

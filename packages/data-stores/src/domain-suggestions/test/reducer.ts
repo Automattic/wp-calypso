@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
-
+import { DataStatus } from '../constants';
 import { domainSuggestions } from '../reducer';
 import type { DomainSuggestionState, DomainSuggestion } from '../types';
-import { DataStatus } from '../constants';
 
 describe( 'domainSuggestions', () => {
 	const initialTimeStamp = Date.now();

@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { get, includes, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import scrollTo from 'calypso/lib/scroll-to';
 import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
 import {
@@ -27,8 +19,8 @@ import {
 	likeComment,
 	unlikeComment,
 } from 'calypso/state/comments/actions';
-import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteComment } from 'calypso/state/comments/selectors';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],

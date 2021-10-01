@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,

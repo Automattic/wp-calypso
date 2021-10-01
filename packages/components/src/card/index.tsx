@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
+import React from 'react';
+import Gridicon from '../gridicon';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export type TagName< P = any > = ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any

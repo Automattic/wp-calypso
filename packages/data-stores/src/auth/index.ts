@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import { registerStore } from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY } from './constants';
-import reducer, { State } from './reducer';
+import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import { createActions, ActionsConfig } from './actions';
+import { STORE_KEY } from './constants';
 import { controls } from './controls';
+import reducer, { State } from './reducer';
 import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 
 export * from './types';
 export type { State };

@@ -2,21 +2,15 @@
 import './public-path';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
+
+import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { Guide, GuidePage } from '@wordpress/components';
-import { registerPlugin } from '@wordpress/plugins';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
-import WpcomNux from './welcome-modal/wpcom-nux';
+import { registerPlugin } from '@wordpress/plugins';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
+import WpcomNux from './welcome-modal/wpcom-nux';
+import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: function WpcomBlockEditorNux() {
@@ -66,6 +60,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			);
 		}
 
+		// This case is redundant now and it will be cleaned up in a follow-up PR
 		if ( variant === 'modal' && Guide && GuidePage ) {
 			return <WpcomNux />;
 		}

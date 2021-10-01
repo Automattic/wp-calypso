@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { findKey } from 'lodash';
 import format from 'react-element-to-jsx-string';
-
-/**
- * Internal dependencies
- */
 import * as scope from './playground-scope';
 
 // Figure out a React element's display name, with the help of the `playground-scope` map.

@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PurchaseDetail from 'calypso/components/purchase-detail';
-import { newPost } from 'calypso/lib/paths';
 import {
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
-
-/**
- * Image dependencies
- */
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import videoImage from 'calypso/assets/images/illustrations/video-hosting.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { newPost } from 'calypso/lib/paths';
 
 function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {

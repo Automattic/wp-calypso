@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { reduce } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { domForHtml } from './utils';
 
 export default function createDomTransformRunner( transforms ) {

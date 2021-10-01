@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
+	FEATURE_ACTIVITY_LOG,
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_CUSTOM_DOMAIN,
@@ -33,10 +27,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_SECURITY,
-	PLAN_JETPACK_SECURITY_MONTHLY,
-	PLAN_JETPACK_SECURITY_PRO,
-	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_BLOGGER,
@@ -83,6 +77,7 @@ import {
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
 	planHasFeature,
+	planHasAtLeastOneFeature,
 	planHasSuperiorFeature,
 } from '../src/index';
 
@@ -688,8 +683,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_DAILY,
 			PLAN_JETPACK_SECURITY_REALTIME,
 			PLAN_JETPACK_COMPLETE,
-			PLAN_JETPACK_SECURITY,
-			PLAN_JETPACK_SECURITY_PRO,
+			PLAN_JETPACK_SECURITY_T1_YEARLY,
+			PLAN_JETPACK_SECURITY_T2_YEARLY,
 			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).to.deep.equal( [
@@ -703,8 +698,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 			PLAN_JETPACK_COMPLETE_MONTHLY,
-			PLAN_JETPACK_SECURITY_MONTHLY,
-			PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_P2_PLUS,
 		] );
 	} );
@@ -776,10 +771,10 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 			PLAN_JETPACK_COMPLETE,
 			PLAN_JETPACK_COMPLETE_MONTHLY,
-			PLAN_JETPACK_SECURITY,
-			PLAN_JETPACK_SECURITY_MONTHLY,
-			PLAN_JETPACK_SECURITY_PRO,
-			PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+			PLAN_JETPACK_SECURITY_T1_YEARLY,
+			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+			PLAN_JETPACK_SECURITY_T2_YEARLY,
+			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		] );
 	} );
 	test( 'all matching plans keys - by group and type', () => {
@@ -939,6 +934,26 @@ describe( 'planHasFeature', () => {
 
 	test( 'should return false when a plan does not have a feature', () => {
 		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).to.be.false;
+	} );
+} );
+
+describe( 'planHasAtLeastOneFeature', () => {
+	test( 'should return true when a plan has one of the provided features', () => {
+		expect(
+			planHasAtLeastOneFeature( PLAN_JETPACK_COMPLETE, [
+				FEATURE_JETPACK_BACKUP_REALTIME, // Jetpack Complete has realtime backup
+				FEATURE_ACTIVITY_LOG, // Activity log is not listed in Jetpack Complete features
+			] )
+		).to.be.true;
+	} );
+
+	test( 'should return false when a plan has none of the provided features', () => {
+		expect(
+			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_DAILY, [
+				FEATURE_JETPACK_BACKUP_REALTIME,
+				FEATURE_VIDEO_UPLOADS,
+			] )
+		).to.be.false;
 	} );
 } );
 

@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import SectionHeader from 'calypso/components/section-header';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'calypso/components/section-header';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsSiteOverview extends Component {

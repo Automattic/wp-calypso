@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { filter, find, findIndex, matches, pick, reject, some, startsWith, without } from 'lodash';
 import update from 'immutability-helper';
-
-/**
- * Internal dependencies
- */
+import { filter, find, findIndex, matches, pick, reject, some, startsWith, without } from 'lodash';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,

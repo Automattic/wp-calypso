@@ -1,9 +1,9 @@
-/**
- * Internal dependencies
- */
 export * from './navbar-component';
 export * from './comments-component';
 export * from './sidebar-component';
 export * from './support-component';
-export * from './support-article-component';
 export * from './preview-component';
+export * from './notifications-component';
+export * from './site-select-component';
+export * from './cookie-banner-component';
+export * from './editor-settings-sidebar-component';

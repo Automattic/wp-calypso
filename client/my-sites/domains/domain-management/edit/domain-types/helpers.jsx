@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { isExpiring, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import React from 'react';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { isExpiring, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 
 function WrapDomainStatusButtons( props ) {
 	const wrapperClassNames = classNames( 'domain-types__wrap-me', props.className );

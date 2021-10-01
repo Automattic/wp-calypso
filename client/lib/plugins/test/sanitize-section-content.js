@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { sanitizeSectionContent as clean } from '../sanitize-section-content';
 
 /**

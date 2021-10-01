@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import { filter, includes, mapValues } from 'lodash';
+import { filter, mapValues } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -25,7 +22,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
-			return includes( [ 'tcp', 'udp', 'tls' ], value );
+			return [ 'tcp', 'udp', 'tls' ].includes( value );
 		case 'weight':
 		case 'aux':
 		case 'port': {
@@ -117,11 +114,11 @@ function isRootDomain( name, domainName ) {
 		'@.' + domainName,
 		'@.' + domainName + '.',
 	];
-	return ! name || includes( rootDomainVariations, name );
+	return ! name || rootDomainVariations.includes( name );
 }
 
 function canBeRootDomain( type ) {
-	return includes( [ 'A', 'MX', 'SRV', 'TXT' ], type );
+	return [ 'A', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {

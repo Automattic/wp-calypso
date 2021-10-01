@@ -1,39 +1,28 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
-import Gridicon from 'calypso/components/gridicon';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
-import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class GoogleMyBusinessStats extends Component {

@@ -3,28 +3,18 @@
  *
  * Renders a top level menu item with children.
  * This item can be expanded and collapsed by clicking.
- **/
-
-/**
- * External dependencies
  */
+
+import { isWithinBreakpoint } from '@automattic/viewport';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-import page from 'page';
-import { isWithinBreakpoint } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-
-import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
-import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
-import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
-import { isExternal } from 'calypso/lib/url';
-import { externalRedirect } from 'calypso/lib/route/path';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { navigate } from 'calypso/lib/navigate';
+import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
+import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
+import MySitesSidebarUnifiedItem from './item';
 import { itemLinkMatches } from './utils';
 
 export const MySitesSidebarUnifiedMenu = ( {
@@ -54,20 +44,14 @@ export const MySitesSidebarUnifiedMenu = ( {
 		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
 	const onClick = () => {
+		// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
 		if ( isWithinBreakpoint( '>782px' ) ) {
 			if ( link ) {
 				if ( ! continueInCalypso( link ) ) {
 					return;
 				}
 
-				if ( isExternal( link ) ) {
-					// If the URL is external, page() will fail to replace state between different domains.
-					externalRedirect( link );
-					return;
-				}
-
-				// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
-				page( link );
+				navigate( link );
 			}
 		}
 

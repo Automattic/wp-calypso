@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { noop } from 'calypso/layout/guided-tours/utils';
 
 export default {

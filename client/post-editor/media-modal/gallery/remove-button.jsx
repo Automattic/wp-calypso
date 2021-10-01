@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
+import { ScreenReaderText, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { reject } from 'lodash';
+import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { reject } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { ScreenReaderText } from '@automattic/components';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { selectMediaItems } from 'calypso/state/media/actions';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

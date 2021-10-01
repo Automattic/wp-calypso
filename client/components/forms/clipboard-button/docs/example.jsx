@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ClipboardButton from '../';
 
 export default class extends React.PureComponent {

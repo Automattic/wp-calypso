@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { URL as URLString, SiteSlug, SiteId } from 'calypso/types';
-
-/**
- * Internal Dependencies
- */
 import { trailingslashit, untrailingslashit } from './index';
 
 /**
@@ -171,8 +164,4 @@ export function mapPostStatus( status: string ): string {
 		default:
 			return 'publish,private';
 	}
-}
-
-export function externalRedirect( url: URLString ) {
-	window.location.href = url;
 }

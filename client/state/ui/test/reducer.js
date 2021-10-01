@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
 import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'calypso/state/action-types';
+import { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {

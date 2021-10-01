@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-const calypsoMenu = require( './calypso-menu' );
 const platform = require( '../../lib/platform' );
+const calypsoMenu = require( './calypso-menu' );
 
 module.exports = function ( appWindow ) {
 	const menu = calypsoMenu( appWindow ).concat(

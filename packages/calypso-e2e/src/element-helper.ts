@@ -1,11 +1,11 @@
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
 import { Page } from 'playwright';
+import { getTargetDeviceName } from './browser-helper';
+
+const selectors = {
+	// clickNavTab
+	navTab: ( tab: string ) => `.section-nav-tab:has-text("${ tab }")`,
+	mobileNavTabsToggle: 'button.section-nav__mobile-header',
+};
 
 /**
  * Waits for the element specified by the selector to become enabled.
@@ -25,7 +25,6 @@ import { Page } from 'playwright';
  * @param {string} selector Selector of the target element.
  * @param {{[key: string]: number}} options Object parameter.
  * @param {number} options.timeout Timeout to override the default value.
- *
  */
 export async function waitForElementEnabled(
 	page: Page,
@@ -37,4 +36,42 @@ export async function waitForElementEnabled(
 		elementHandle.waitForElementState( 'enabled', options ),
 		page.waitForFunction( ( element: any ) => element.ariaDisabled !== 'true', elementHandle ),
 	] );
+}
+
+/**
+ * Locates and clicks on a specified tab on the NavTab.
+ *
+ * NavTabs are used throughout calypso to contain multiple related but separate pages within the same
+ * overall page. For instance, on the Media gallery page a NavTab is used to filter the gallery to
+ * show a specific category of gallery items.
+ *
+ * @param {Page} page Underlying page on which interactions take place.
+ * @param {string} name Name of the tab to be clicked.
+ */
+export async function clickNavTab( page: Page, name: string ): Promise< void > {
+	const targetDevice = getTargetDeviceName();
+
+	// Mobile view - navtabs become a dropdown.
+	if ( targetDevice === 'mobile' ) {
+		await page.click( selectors.mobileNavTabsToggle );
+	}
+
+	// Get the current active tab, then check against the intended target.
+	// If active tab and intended tab are same, short circuit the operation.
+	// If target device is mobile, close the NavTab dropdown.
+	const currentTab = await page
+		.waitForSelector( 'a[aria-current="true"]' )
+		.then( ( element ) => element.innerText() );
+
+	if ( currentTab === name ) {
+		if ( targetDevice === 'mobile' ) {
+			await page.click( selectors.mobileNavTabsToggle );
+		}
+		return;
+	}
+
+	// Click on the intended NavTab and wait for navigation to finish.
+	// This implicitly checks whether the intended tab is now active.
+	const elementHandle = await page.waitForSelector( selectors.navTab( name ) );
+	await Promise.all( [ page.waitForNavigation(), elementHandle.click() ] );
 }

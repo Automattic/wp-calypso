@@ -10,7 +10,7 @@ It is designed in a way that in its simplest form is very easy to invoke, with v
 
 ## Usage
 
-Add add `@automattic/calypso-build` to your project's `devDependencies` by running
+Add `@automattic/calypso-build` to your project's `devDependencies` by running
 
 ```
 yarn add --dev @automattic/calypso-build
@@ -73,8 +73,8 @@ The impact of this option is twofold:
 If you find that the command line options provided by the `calypso-build` tool do not cut it for your project (e.g. if you need to run other Webpack loaders or plugins), you can use your own `webpack.config.js` file to extend the one provided by `@automattic/calypso-build`. The latter exports a [function](https://webpack.js.org/configuration/configuration-types#exporting-a-function) that can be called from your config file, allowing you to extend the resulting object:
 
 ```js
-const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 
 function getWebpackConfig( env, argv ) {
 	const webpackConfig = getBaseWebpackConfig( env, argv );

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
-import type { Template } from './types';
 import type { Action } from './actions';
+import type { Template } from './types';
+import type { Reducer } from 'redux';
 
 const templates: Reducer< Record< string, Template[] | undefined >, Action > = (
 	state = {},

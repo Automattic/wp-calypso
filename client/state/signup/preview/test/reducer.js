@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { SIGNUP_SITE_PREVIEW_SHOW, SIGNUP_SITE_PREVIEW_HIDE } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'state/signup/preview/reducer', () => {
 	test( 'should default to initialState', () => {

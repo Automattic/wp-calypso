@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
+import { saveAs } from 'browser-filesaver';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { saveAs } from 'browser-filesaver';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import wpcom from 'calypso/lib/wp';
-import { errorNotice } from 'calypso/state/notices/actions';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
 } from 'calypso/blocks/reader-export-button/constants';
+import wp from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ReaderExportButton extends React.Component {
@@ -43,37 +32,64 @@ class ReaderExportButton extends React.Component {
 
 	state = { disabled: false };
 
-	onClick = () => {
-		// Don't kick off a new export request if there's one in progress
-		if ( this.props.disabled || this.state.disabled ) {
-			return;
-		}
+	isMounted = false;
 
-		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
-			wpcom.undocumented().exportReaderList( this.props.listId, this.onApiResponse );
-		} else {
-			wpcom.undocumented().exportReaderSubscriptions( this.onApiResponse );
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	onClick = async () => {
+		// Don't kick off a new export request if there's one in progress
+		if ( ! this.isMounted || this.props.disabled || this.state.disabled ) {
+			return;
 		}
 
 		this.setState( {
 			disabled: true,
 		} );
+
+		let data;
+
+		try {
+			if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
+				data = await wp.req.get( `/read/lists/${ this.props.listId }/export`, {
+					apiNamespace: 'wpcom/v2',
+				} );
+			} else {
+				data = await wp.req.get( `/read/following/mine/export`, { apiVersion: '1.2' } );
+			}
+		} catch ( error ) {
+			this.showErrorNotice();
+			return;
+		}
+
+		this.onApiResponse( data );
 	};
 
-	onApiResponse = ( err, data ) => {
-		this.setState( {
-			disabled: false,
-		} );
-
-		if ( ! err && ! data.success ) {
-			this.props.errorNotice(
-				this.props.translate( 'Sorry, there was a problem creating your export file.' )
-			);
+	onApiResponse = ( data ) => {
+		if ( ! data?.success ) {
+			this.showErrorNotice();
 			return;
 		}
 
 		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } ); // eslint-disable-line no-undef
 		saveAs( blob, this.props.filename );
+
+		if ( this.isMounted ) {
+			this.setState( {
+				disabled: false,
+			} );
+		}
+	};
+
+	showErrorNotice = () => {
+		this.props.errorNotice(
+			this.props.translate( 'Sorry, there was a problem creating your export file.' )
+		);
 	};
 
 	render() {

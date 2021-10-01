@@ -5,9 +5,8 @@ This component is used to display a list with the a parametrizable number of plu
 ## How to use
 
 ```js
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
+import React from 'react';
 import PluginsList from 'calypso/my-sites/plugins/plugins-browser-list';
 
 const MyPluginsList = ( { pluginsData, translate } ) => (

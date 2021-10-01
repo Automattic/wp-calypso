@@ -1,8 +1,5 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import React from 'react';
 
 const RouteContext = React.createContext( {
 	// TODO: a `null` value would be a better fit here, but existing code might access

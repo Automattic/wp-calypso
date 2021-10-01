@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
-import { useDispatch, useSelector } from 'react-redux';
+import { Gridicon } from '@automattic/components';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
-import type { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
-import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-layer/http-data';
-import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
 import type { SiteId } from 'calypso/types';
-
-/**
- * Style dependencies
- */
+import type { AnyAction } from 'redux';
 import './style.scss';
 
 function getRequestHostingProviderGuessId( siteId: SiteId ) {

@@ -1,11 +1,5 @@
-/**
- * External Dependencies
- */
 import { find } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/reader/init';
 
 const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;

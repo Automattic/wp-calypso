@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { registerStore } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { controls } from '../wpcom-request-controls';
+import { createActions } from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import { createActions } from './actions';
 import { createResolvers } from './resolvers';
 import * as selectors from './selectors';
-import { controls } from '../wpcom-request-controls';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import type { WpcomClientCredentials } from '../shared-types';
 

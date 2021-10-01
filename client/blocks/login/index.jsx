@@ -1,20 +1,29 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { capitalize, get } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { capitalize, get } from 'lodash';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import config from '@automattic/calypso-config';
+import VisitSite from 'calypso/blocks/visit-site';
+import AsyncLoad from 'calypso/components/async-load';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
+import Notice from 'calypso/components/notice';
+import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
 	getAuthAccountType,
 	getRedirectToOriginal,
@@ -26,33 +35,14 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
+import { isPasswordlessAccount } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
-import { rebootAfterLogin } from 'calypso/state/login/actions';
-import { isPasswordlessAccount } from 'calypso/state/login/utils';
-import {
-	isCrowdsignalOAuth2Client,
-	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
-import { login } from 'calypso/lib/paths';
-import Notice from 'calypso/components/notice';
-import AsyncLoad from 'calypso/components/async-load';
-import VisitSite from 'calypso/blocks/visit-site';
-import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-import { isWebAuthnSupported } from 'calypso/lib/webauthn';
-import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
-import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Login extends Component {
@@ -79,6 +69,7 @@ class Login extends Component {
 		userEmail: PropTypes.string,
 		onSocialConnectStart: PropTypes.func,
 		onTwoFactorRequested: PropTypes.func,
+		signupUrl: PropTypes.string,
 	};
 
 	state = {
@@ -435,6 +426,7 @@ class Login extends Component {
 			locale,
 			userEmail,
 			handleUsernameChange,
+			signupUrl,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -479,6 +471,7 @@ class Login extends Component {
 				locale={ locale }
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
+				signupUrl={ signupUrl }
 			/>
 		);
 	}

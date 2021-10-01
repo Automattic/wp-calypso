@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_SAVE,

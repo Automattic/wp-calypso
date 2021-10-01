@@ -59,6 +59,24 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
+				# Merge the trunk branch first. This way, our builds and tests
+				# include the latest merged version of the plugin being built.
+				# Otherwise, we can get into a situation where the current plugin
+				# build appears "different", but that's just because it's older.
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
+					# git operations will fail if no user is set.
+					git config --local user.email "tcbuildagent@example.com"
+					git config --local user.name "TeamCity Build Agent"
+					# Note that `trunk` is already up-to-date from the `teamcity.git.fetchAllHeads`
+					# parameter in the project settings.
+					if ! git merge trunk ; then
+						echo "##teamcity[buildProblem description='There is a merge conflict with trunk. Rebase on trunk to resolve this problem.' identity='merge_conflict']]"
+						exit
+					fi
+					# See if the trunk commit shows up:
+					git --no-pager log --oneline -n 5
+				fi
+
 				# Update composer
 				composer install
 
@@ -100,6 +118,10 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Process Artifact"
 			scriptContent = """
+				# Prepare pr commenter script.
+				export GH_TOKEN="%matticbot_oauth_token%"
+				chmod +x ./bin/add-pr-comment.sh
+
 				cd $workingDir
 				cp README.md $archiveDir
 
@@ -124,17 +146,13 @@ open class PluginBaseBuild : Template({
 
 					# On normal PRs, post a message about WordPress.com deployments.
 					if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
-						cd %teamcity.build.checkoutDir%
-						export GH_TOKEN="%matticbot_oauth_token%"
-						chmod +x ./bin/add-pr-comment.sh
-						./bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
+						%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
 						**This PR modifies the release build for $pluginSlug**
 
 						To test your changes on WordPress.com, run \`install-plugin.sh $pluginSlug %teamcity.build.branch%\` on your sandbox.
 						
 						To deploy your changes after merging, see the documentation: %docs_link%
 						EOF
-						cd $workingDir
 					fi
 
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.
@@ -146,6 +164,9 @@ open class PluginBaseBuild : Template({
 						ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
 						echo -e "Slack ping status: ${'$'}ping_response\n"
 					fi
+				else
+					# If the current build is the same as trunk, remove any related comments posted to the PR.
+					%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" "delete" <<< "" || true
 				fi
 
 				# 4. Create metadata file with info for the download script.

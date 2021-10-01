@@ -1,33 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
-import { decodeEntities } from '@wordpress/html-entities';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Button as OriginalButton,
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { chevronLeft } from '@wordpress/icons';
-import { __ } from '@wordpress/i18n';
+import { compose } from '@wordpress/compose';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
-import { get, isEmpty, partition } from 'lodash';
+import { decodeEntities } from '@wordpress/html-entities';
+import { __ } from '@wordpress/i18n';
+import { chevronLeft } from '@wordpress/icons';
+import { ESCAPE } from '@wordpress/keycodes';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
-import { ESCAPE } from '@wordpress/keycodes';
-import { compose } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import { get, isEmpty, partition } from 'lodash';
+import React from 'react';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
+import { Post } from '../../types';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import SiteIcon from '../site-icon';
-import { Post } from '../../types';
+
 import './style.scss';
 
 const Button = forwardRef(
@@ -304,7 +298,7 @@ function useNavItems(): NavItemRecord {
 			getCurrentPostType,
 			getEditedPostAttribute,
 		} = select( 'core/editor' );
-		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+		const statuses = select( 'core' ).getEntityRecords( 'root', 'status', { context: 'edit' } );
 
 		if ( ! statuses ) {
 			return { current: [], drafts: [], recent: [] };

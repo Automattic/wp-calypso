@@ -4,27 +4,20 @@
  * This triggers a remote-login redirect flow that sets authentication cookies on the
  * mapped domain enabling the nav bar and other features.
  */
-/**
- * External Dependencies
- */
-import { Store } from 'redux';
 
-/**
- * Internal Dependencies
- */
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isEnabled } from '@automattic/calypso-config';
+import { Store } from 'redux';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
-// Used as placeholder / default domain to detect when we're looking at a relative url,
-// Note: also prevents exceptions from being raised
-const INVALID_URL = `https://__domain__.invalid`;
+// Used as default domain to detect when we're looking at a relative or invalid url
+const INVALID_URL = 'https://__domain__.invalid';
 
 type Host = string;
 
 let reduxStore: Store;
 
-export function logmeinUrl( url: string ): string {
+export function logmeinUrl( url: string, redirectTo = '' ): string {
 	// Disable feature if not enabled
 	if ( ! isEnabled( 'logmein' ) ) {
 		return url;
@@ -53,17 +46,15 @@ export function logmeinUrl( url: string ): string {
 	// using INVALID_URL here to prevent the possibility of exceptions, if site.URL ever contains an invalid url
 	// the filtering will fail
 	const isValid = sites.some( ( site ) => {
-		return isValidLogmeinSite( site ) && new URL( site.URL, INVALID_URL ).host === newurl.host;
+		return new URL( site.URL, INVALID_URL ).host === newurl.host && isValidLogmeinSite( site );
 	} );
 	if ( ! isValid ) {
 		return url;
 	}
 
-	// logmein doesn't work with http.
-	newurl.protocol = 'https:';
-
 	// Set the param
 	newurl.searchParams.set( 'logmein', 'direct' );
+	redirectTo && newurl.searchParams.set( 'redirect_to', redirectTo );
 
 	return newurl.toString();
 }

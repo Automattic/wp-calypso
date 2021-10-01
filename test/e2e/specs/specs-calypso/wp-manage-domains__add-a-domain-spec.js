@@ -45,7 +45,6 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	it( 'Add a domain', async function () {
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.clickAddDomain();
-		await domainsPage.clickPopoverItem( 'to this site' );
 	} );
 
 	it( 'Search for a blog name', async function () {
@@ -58,7 +57,7 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	it( 'Select .com search result and decline Google Apps offer', async function () {
 		const findADomainComponent = await FindADomainComponent.Expect( this.driver );
 		await findADomainComponent.selectDomainAddress( rootDomain );
-		await findADomainComponent.declineGoogleApps();
+		await findADomainComponent.declineEmailUpsell();
 	} );
 
 	it( 'Go to checkout page and enter registrar details', async function () {

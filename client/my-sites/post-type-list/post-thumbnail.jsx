@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import safeImageUrl from 'calypso/lib/safe-image-url';
-import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
 
 const noop = () => {};

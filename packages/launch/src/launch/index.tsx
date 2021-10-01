@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classNames from 'classnames';
-import { __ } from '@wordpress/i18n';
-import { Modal } from '@wordpress/components';
-import { Icon, wordpress } from '@wordpress/icons';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { LocaleProvider } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
+import { Modal } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { Icon, wordpress } from '@wordpress/icons';
+import classNames from 'classnames';
+import * as React from 'react';
+import { FOCUSED_LAUNCH_FLOW_ID } from '../constants';
+import LaunchContext, { LaunchContextProps } from '../context';
 import FocusedLaunch from '../focused-launch';
 import Success from '../focused-launch/success';
-import LaunchContext, { LaunchContextProps } from '../context';
 import { LAUNCH_STORE, SITE_STORE } from '../stores';
-import { FOCUSED_LAUNCH_FLOW_ID } from '../constants';
 import './styles.scss';
 
 interface FocusedLaunchModalProps extends Omit< LaunchContextProps, 'flow' > {

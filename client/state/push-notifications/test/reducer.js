@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import reducer from '../reducer';
 
 const wpcomSubscription = {
 	ID: '42',

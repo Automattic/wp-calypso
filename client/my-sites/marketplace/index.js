@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import config from '@automattic/calypso-config';
+import page from 'page';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import {
 	renderDomainsPage,
-	renderMarketplacePlugin,
+	renderMarketplaceProduct,
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsSetupStatusPage,
 	redirectToHome,
 } from './controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	if ( config.isEnabled( 'marketplace-test' ) ) {
@@ -40,10 +33,18 @@ export default function () {
 			clientRender
 		);
 		page(
-			'/marketplace/product/details/:plugin/:site?',
+			'/marketplace/product/details/:productGroupSlug/:site?',
 			navigation,
 			siteSelection,
-			renderMarketplacePlugin,
+			renderMarketplaceProduct,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/marketplace/product/details/:productGroupSlug/:productSlug/:site?',
+			navigation,
+			siteSelection,
+			renderMarketplaceProduct,
 			makeLayout,
 			clientRender
 		);

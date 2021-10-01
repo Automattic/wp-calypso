@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
 import { isJetpackPlanSlug } from './is-jetpack-plan-slug';
 

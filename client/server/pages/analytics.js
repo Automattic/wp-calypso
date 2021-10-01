@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { throttle } from 'lodash';
 import analytics from '../lib/analytics';
 
 // Compute the number of milliseconds between each call to recordTiming

@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import siteGetMethods from './runtime/site.get';
 import Category from './site.category';
 import Comment from './site.comment';
+import SiteCreditVouchers from './site.credit-vouchers';
+import SiteDomain from './site.domain';
 import Follow from './site.follow';
 import Media from './site.media';
-import Post from './site.post';
-import Tag from './site.tag';
-import SitePostType from './site.post-type';
-import SiteDomain from './site.domain';
 import SitePlugin from './site.plugin';
+import Post from './site.post';
+import SitePostType from './site.post-type';
 import SiteSettings from './site.settings';
+import Tag from './site.tag';
 import SiteTaxonomy from './site.taxonomy';
-import SiteCreditVouchers from './site.credit-vouchers';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
-import siteGetMethods from './runtime/site.get';
 import runtimeBuilder from './util/runtime-builder';
 
 /**
@@ -37,7 +30,7 @@ class Site {
 	 * Create a Site instance
 	 *
 	 * @param {string} id - site id
-	 * @param {WPCOM} wpcom - wpcom instance
+	 * @param wpcom - wpcom instance
 	 * @returns {null} null
 	 */
 	constructor( id, wpcom ) {
@@ -255,7 +248,7 @@ class Site {
 	/**
 	 * Get number of posts in the post type groups by post status
 	 *
-	 * *Example:*
+	 * Example:*
 	 *   // Get number post of pages
 	 *    wpcom
 	 *    .site( 'my-blog.wordpress.com' )
@@ -394,7 +387,7 @@ class Site {
 	/**
 	 * Return a `SiteWordAds` instance.
 	 *
-	 * *Example:*
+	 * Example:*
 	 *    // Create a SiteWordAds instance
 	 *
 	 *    const wordAds = wpcom
@@ -405,6 +398,36 @@ class Site {
 	 */
 	wordAds() {
 		return new SiteWordAds( this._id, this.wpcom );
+	}
+
+	/**
+	 * Add a domain mapping to a site.
+	 *
+	 * @param {string} domain - donain to map
+	 * @param {object} extraData - extra data passed to the endpoint
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	addDomainMapping( domain, extraData, query, fn ) {
+		return this.wpcom.req.post(
+			`${ this.path }/add-domain-mapping`,
+			query,
+			{ domain, ...extraData },
+			fn
+		);
+	}
+
+	/**
+	 * Add a VIP domain mapping
+	 *
+	 * @param {string} domain - donain to map
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	addVipDomainMapping( domain, query, fn ) {
+		return this.wpcom.req.post( `${ this.path }/vip-domain-mapping`, query, { domain }, fn );
 	}
 }
 

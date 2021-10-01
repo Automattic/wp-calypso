@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
 
 class PagePlaceholder extends React.Component {

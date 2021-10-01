@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { keyframes } from '@emotion/core';
-import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/composite-checkout';
 import { Field, styled } from '@automattic/wpcom-checkout';
-import type { CouponStatus } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import { keyframes } from '@emotion/react';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import joinClasses from './join-classes';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
+import type { CouponStatus } from '@automattic/shopping-cart';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 

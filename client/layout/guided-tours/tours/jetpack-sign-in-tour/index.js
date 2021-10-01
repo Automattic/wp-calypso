@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import React, { Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import meta from './meta';
 import {
 	ButtonRow,
 	Continue,
@@ -17,6 +9,7 @@ import {
 	Step,
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
+import meta from './meta';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackSignInTour = makeTour(

@@ -1,15 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import page from 'page';
-import { externalRedirect } from 'calypso/lib/route';
 
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { navigate } from 'calypso/lib/navigate';
+import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 import {
 	addCalypsoEnvQueryArg,
 	cleanUrl,
@@ -17,8 +12,6 @@ import {
 	parseAuthorizationQuery,
 	redirect,
 } from '../utils';
-
-import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 
 jest.mock( '@automattic/calypso-config', () => ( input ) => {
 	const lookupTable = {
@@ -147,8 +140,8 @@ describe( 'parseAuthorizationQuery', () => {
 	} );
 } );
 
-jest.mock( 'calypso/lib/route/path', () => ( {
-	externalRedirect: jest.fn(),
+jest.mock( 'calypso/lib/navigate', () => ( {
+	navigate: jest.fn(),
 } ) );
 
 jest.mock( 'page', () => ( {
@@ -157,7 +150,7 @@ jest.mock( 'page', () => ( {
 
 describe( 'redirect', () => {
 	beforeEach( () => {
-		externalRedirect.mockReset();
+		navigate.mockReset();
 		page.redirect.mockReset();
 	} );
 	test( 'should fire redirect', () => {
@@ -183,7 +176,7 @@ describe( 'redirect', () => {
 
 	test( 'external redirect should be called once during remote authorization', () => {
 		redirect( 'remote_auth', 'example.com' );
-		expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
+		expect( navigate ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should redirect once', () => {

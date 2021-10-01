@@ -131,9 +131,32 @@ function is_theme_supported() {
 		// get_theme_slug will always return false.
 		return false;
 	}
+	$slug = get_theme_slug();
 	// Use un-normalized theme slug because get_theme requires the full string.
-	$theme = wp_get_theme( get_theme_slug() );
-	return ! $theme->errors() && in_array( 'full-site-editing', $theme->tags, true );
+	$theme      = wp_get_theme( $slug );
+	$theme_slug = normalize_theme_slug( $slug );
+	return ! $theme->errors() && in_array( $theme_slug, get_supported_themes(), true );
+}
+
+/**
+ * Hardcoded list of themes we support.
+ * Once upon a time, we relied on the `full-site-editing` tag in themes,
+ * but that conflicted with Core FSE and this project has been deprecated
+ * in favour of Core.
+ *
+ * @return array List of supported themes.
+ */
+function get_supported_themes() {
+	return array(
+		'alves',
+		'exford',
+		'hever',
+		'maywood',
+		'morden',
+		'shawburn',
+		'stow',
+		'varia',
+	);
 }
 
 /**

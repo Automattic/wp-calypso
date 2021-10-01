@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
 import { ProcessPayment } from '@automattic/composite-checkout';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import PaymentRequestButton from '../payment-request-button';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React, { useCallback } from 'react';
 import { PaymentMethodLogos } from '../payment-method-logos';
+import PaymentRequestButton from '../payment-request-button';
 import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 

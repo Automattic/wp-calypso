@@ -23,16 +23,9 @@
  *   from `my-sites/controller`.
  */
 
-/**
- * External dependencies
- */
-const _ = require( 'lodash' );
 const fs = require( 'fs' );
 const repl = require( 'repl' );
-
-/**
- * Internal dependencies
- */
+const _ = require( 'lodash' );
 const config = require( './config' );
 
 export default function transformer( file, api ) {

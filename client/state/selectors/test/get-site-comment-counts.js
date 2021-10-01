@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
 
 describe( 'getSiteCommentCounts()', () => {

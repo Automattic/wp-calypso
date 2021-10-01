@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { useLocale, englishLocales } from '@automattic/i18n-utils';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { useContext, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { __ } from '@wordpress/i18n';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { SITE_STORE, LAUNCH_STORE } from '../stores';
 import LaunchContext from '../context';
+import { SITE_STORE, LAUNCH_STORE } from '../stores';
 
 export function useTitle() {
 	const { siteId } = useContext( LaunchContext );

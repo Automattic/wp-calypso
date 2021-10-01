@@ -1,6 +1,6 @@
+const path = require( 'path' );
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
-const path = require( 'path' );
 
 module.exports = {
 	root: true,
@@ -63,28 +63,6 @@ module.exports = {
 				'no-console': 'off',
 				'no-process-exit': 'off',
 				'valid-jsdoc': 'off',
-			},
-		},
-		{
-			plugins: [ 'mocha' ],
-			files: [ 'test/e2e/**/*', 'packages/magellan-mocha-plugin/test_support/**/*' ],
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'mocha/no-exclusive-tests': 'error',
-				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
-				'mocha/no-global-tests': 'error',
-				'mocha/no-async-describe': 'error',
-				'mocha/no-top-level-hooks': 'error',
-				'mocha/max-top-level-suites': [ 'error', { limit: 1 } ],
-				'no-console': 'off',
-				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
-				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
-					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
-					{}
-				),
-			},
-			globals: {
-				step: false,
 			},
 		},
 		merge(
@@ -189,33 +167,11 @@ module.exports = {
 				'no-unused-vars': 'off',
 				'react/jsx-no-undef': 'off',
 				'react/react-in-jsx-scope': 'off',
-				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
-			},
-		},
-		{
-			files: [
-				'packages/accessible-focus/**/*',
-				'test/e2e/**/*',
-				'client/sections-helper.js',
-				'client/sections-filter.js',
-			],
-			rules: {
-				'wpcalypso/import-docblock': 'off',
-				'import/order': [
-					'error',
-					{
-						'newlines-between': 'never',
-						alphabetize: {
-							order: 'asc',
-						},
-						groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
-					},
-				],
 			},
 		},
 	],
@@ -303,7 +259,7 @@ module.exports = {
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Prevent importing Redux's combineReducers.
 					{
@@ -404,6 +360,16 @@ module.exports = {
 		'import/namespace': 'error',
 		'import/default': 'error',
 		'import/no-duplicates': 'error',
+		'import/order': [
+			'error',
+			{
+				'newlines-between': 'never',
+				alphabetize: {
+					order: 'asc',
+				},
+				groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
+			},
+		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',

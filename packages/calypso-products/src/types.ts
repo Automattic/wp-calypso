@@ -1,12 +1,4 @@
-/**
- * Internal dependencies
- */
 import * as features from './constants/features';
-
-/**
- * Type dependencies
- */
-import type { TranslateResult } from 'i18n-calypso';
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -20,6 +12,7 @@ import type {
 	TYPES_LIST,
 	PERIOD_LIST,
 } from './constants';
+import type { TranslateResult } from 'i18n-calypso';
 
 const featureValues = Object.values( features );
 

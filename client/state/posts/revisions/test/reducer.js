@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { diffs, selection, ui } from '../reducer';
 import {
 	POST_EDIT,
 	POST_REVISIONS_DIALOG_CLOSE,
@@ -16,6 +8,7 @@ import {
 	POST_REVISIONS_SELECT,
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
+import reducer, { diffs, selection, ui } from '../reducer';
 
 const TEST_SITE_ID = 138211384;
 const TEST_POST_ID = 165;

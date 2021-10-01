@@ -6,8 +6,8 @@
  */
 
 const assert = require( 'assert' );
-const getTextContentFromNode = require( '../../../lib/util/get-text-content-from-node.js' );
 const parser = require( '@babel/eslint-parser' );
+const getTextContentFromNode = require( '../../../lib/util/get-text-content-from-node.js' );
 
 function parseCode( code ) {
 	const programNode = parser.parse( code, {

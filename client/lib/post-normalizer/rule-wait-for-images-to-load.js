@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { filter, find, forEach, map, take } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { deduceImageWidthAndHeight, thumbIsLikelyImage } from './utils';
 import debugFactory from 'debug';
+import { filter, find, forEach, map, take } from 'lodash';
+import { deduceImageWidthAndHeight, thumbIsLikelyImage } from './utils';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
 

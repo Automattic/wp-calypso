@@ -1,33 +1,25 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import Debug from 'debug';
-import page from 'page';
-import { get, some } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { recordPageView } from 'calypso/lib/analytics/page-view';
 import config from '@automattic/calypso-config';
-import SearchPurchase from './search';
-import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
-import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { login } from 'calypso/lib/paths';
-import {
-	persistMobileRedirect,
-	retrieveMobileRedirect,
-	storePlan,
-} from '../../jetpack-connect/persistence-utils';
-
 import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from '@automattic/calypso-products';
+import Debug from 'debug';
+import { get, some } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { login } from 'calypso/lib/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
+import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';
+import {
+	persistMobileRedirect,
+	retrieveMobileRedirect,
+	storePlan,
+} from '../../jetpack-connect/persistence-utils';
+import SearchPurchase from './search';
 
 /**
  * Module variables
@@ -102,7 +94,6 @@ export function purchase( context, next ) {
 		<SearchPurchase
 			ctaFrom={ query.cta_from /* origin tracking params */ }
 			ctaId={ query.cta_id /* origin tracking params */ }
-			locale={ params.locale }
 			path={ path }
 			type={ type }
 			url={ query.url }

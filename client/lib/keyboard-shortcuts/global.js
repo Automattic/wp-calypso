@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { getStatsDefaultSitePage } from 'calypso/lib/route';
+import page from 'page';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
-import { getSectionGroup } from 'calypso/state/ui/selectors';
+import { getStatsDefaultSitePage } from 'calypso/lib/route';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSectionGroup, getSelectedSite } from 'calypso/state/ui/selectors';
 
 let singleton;
 
@@ -27,7 +20,6 @@ function GlobalShortcuts() {
 		return new GlobalShortcuts();
 	}
 
-	this.selectedSite = null;
 	this.bindShortcuts();
 }
 
@@ -45,8 +37,8 @@ GlobalShortcuts.prototype.bindShortcuts = function () {
 	}
 };
 
-GlobalShortcuts.prototype.setSelectedSite = function ( site ) {
-	this.selectedSite = site;
+GlobalShortcuts.prototype.getSelectedSite = function () {
+	return getSelectedSite( reduxGetState() );
 };
 
 GlobalShortcuts.prototype.openHelp = function () {
@@ -73,7 +65,7 @@ GlobalShortcuts.prototype.goToMyLikes = function () {
 };
 
 GlobalShortcuts.prototype.goToStats = function () {
-	const site = this.selectedSite;
+	const site = this.getSelectedSite();
 
 	if ( site && site.capabilities && ! site.capabilities.view_stats ) {
 		return null;
@@ -85,7 +77,7 @@ GlobalShortcuts.prototype.goToStats = function () {
 };
 
 GlobalShortcuts.prototype.goToBlogPosts = function () {
-	const site = this.selectedSite;
+	const site = this.getSelectedSite();
 
 	if ( site && site.capabilities && ! site.capabilities.edit_posts ) {
 		return null;
@@ -97,7 +89,7 @@ GlobalShortcuts.prototype.goToBlogPosts = function () {
 };
 
 GlobalShortcuts.prototype.goToPages = function () {
-	const site = this.selectedSite;
+	const site = this.getSelectedSite();
 
 	if ( site && site.capabilities && ! site.capabilities.edit_pages ) {
 		return null;

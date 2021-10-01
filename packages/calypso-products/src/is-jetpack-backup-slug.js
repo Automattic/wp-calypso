@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { JETPACK_BACKUP_PRODUCTS } from './constants';
 
 export function isJetpackBackupSlug( productSlug ) {

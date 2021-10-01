@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 /**
  * Returns true if site is Jetpack and has WooCommerce plugin set to active. Otherwise false

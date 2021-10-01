@@ -2,10 +2,6 @@
  * @module comment-replies-cache/index
  */
 
-/**
- * Module dependencies.
- */
-
 const debug = require( 'debug' )( 'notifications:note' );
 
 function getItem( key ) {

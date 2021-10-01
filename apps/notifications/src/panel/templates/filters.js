@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { store } from '../state';
-
 import getNoteIsRead from '../state/selectors/get-is-note-read';
 
 export const Filters = {

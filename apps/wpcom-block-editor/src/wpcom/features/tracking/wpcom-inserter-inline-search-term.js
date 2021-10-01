@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
-import { debounce, get } from 'lodash';
-
-/**
- * WordPress dependencies
- */
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { debounce, get } from 'lodash';
 import tracksRecordEvent from './track-record-event';
 
 /**

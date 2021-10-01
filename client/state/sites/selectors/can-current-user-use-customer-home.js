@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSite from './get-site';
 

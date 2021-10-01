@@ -1,33 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import {
 	getProductFromSlug,
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import {
-	getSitePlan,
-	getSiteProducts,
-	isJetpackMinimumVersion,
-} from 'calypso/state/sites/selectors';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import Notice from 'calypso/components/notice';
 import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
 } from 'calypso/state/sites/products/conflicts';
-import Notice from 'calypso/components/notice';
-import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
+import {
+	getSitePlan,
+	getSiteProducts,
+	isJetpackMinimumVersion,
+	getSiteOption,
+} from 'calypso/state/sites/selectors';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
+import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
 
 import './style.scss';
 
@@ -72,9 +66,19 @@ const PrePurchaseNotices = () => {
 	);
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
-	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) =>
-		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
-	);
+	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) => {
+		const activeConnectedPlugins = getSiteOption(
+			state,
+			siteId,
+			'jetpack_connection_active_plugins'
+		);
+		const backupPluginActive =
+			Array.isArray( activeConnectedPlugins ) &&
+			activeConnectedPlugins.includes( 'jetpack-backup' );
+		return (
+			backupPluginActive || isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
+		);
+	} );
 
 	// All these notices (and the selectors that drive them)
 	// require a site ID to work. We should *conceptually* always

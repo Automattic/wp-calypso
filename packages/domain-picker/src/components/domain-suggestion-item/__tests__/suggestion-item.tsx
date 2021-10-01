@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
+import * as React from 'react';
+import { MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } from '../__mocks__';
+import SuggestionItem from '../suggestion-item';
 import type { RenderResult } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import '../../../__mocks__/matchMedia.mock';
-
-import SuggestionItem from '../suggestion-item';
-import { MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } from '../__mocks__';
 
 const renderComponent = ( props = {} ): RenderResult =>
 	render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } { ...props } /> );

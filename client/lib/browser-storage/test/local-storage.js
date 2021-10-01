@@ -4,9 +4,6 @@
 
 // No IndexedDB support, so the library will default to localStorage.
 
-/**
- * Internal dependencies
- */
 import {
 	supportsIDB,
 	clearStorage,

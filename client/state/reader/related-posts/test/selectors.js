@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { shouldFetchRelated, relatedPostsForPost } from '../selectors';
 
 describe( 'selectors', () => {

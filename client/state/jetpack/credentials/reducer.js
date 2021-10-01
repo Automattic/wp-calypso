@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_CREDENTIALS_GET,
 	JETPACK_CREDENTIALS_GET_SUCCESS,

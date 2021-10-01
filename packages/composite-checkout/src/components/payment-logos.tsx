@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
-export function VisaLogo( { className }: { className?: string } ) {
+export function VisaLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
@@ -32,7 +29,7 @@ VisaLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function MastercardLogo( { className }: { className?: string } ) {
+export function MastercardLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
@@ -61,7 +58,7 @@ MastercardLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function AmexLogo( { className }: { className?: string } ) {
+export function AmexLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
@@ -85,7 +82,7 @@ AmexLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function JcbLogo( { className }: { className?: string } ) {
+export function JcbLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
@@ -121,7 +118,7 @@ JcbLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function DinersLogo( { className }: { className?: string } ) {
+export function DinersLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
@@ -157,7 +154,7 @@ DinersLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function UnionpayLogo( { className }: { className?: string } ) {
+export function UnionpayLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
@@ -189,7 +186,7 @@ UnionpayLogo.propTypes = {
 	className: PropTypes.string,
 };
 
-export function DiscoverLogo( { className }: { className?: string } ) {
+export function DiscoverLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }

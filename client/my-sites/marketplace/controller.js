@@ -1,32 +1,35 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import { getSiteFragment } from 'calypso/lib/route';
-import MarketplacePluginDetails from 'calypso/my-sites/marketplace/marketplace-plugin-details';
-import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/marketplace-domain-upsell';
-import MarketplacePluginSetup from 'calypso/my-sites/marketplace/marketplace-plugin-setup-status';
-import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/marketplace-stand-alone-thank-you';
-import MarketplaceTest from 'calypso/my-sites/marketplace/marketplace-test';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketplace-domain-upsell';
+import MarketplacePluginSetup from 'calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status';
+import MarketplacePluginDetails from 'calypso/my-sites/marketplace/pages/marketplace-product-details';
+import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/pages/marketplace-stand-alone-thank-you';
+import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
 
-export function renderMarketplacePlugin( context, next ) {
-	const siteUrl = getSiteFragment( context.path );
+export function renderMarketplaceProduct( context, next ) {
+	const siteFragment = getSiteFragment( context.path );
+	const { productSlug: productSlugParam, productGroupSlug: productGroupSlugParam } = context.params;
+	let productSlug = productSlugParam ? decodeURIComponent( productSlugParam ) : null;
+	const productGroupSlug = productGroupSlugParam
+		? decodeURIComponent( productGroupSlugParam )
+		: null;
 
-	const pluginSlug = decodeURIComponent( context.params.plugin );
-
+	if ( ! productGroupSlug && ! productSlug ) {
+		marketplaceDebugger( 'The productSlug and productGroupSlug were note set' );
+		return navigate( `/home/${ siteFragment }` );
+	} else if ( ! productSlug ) {
+		productSlug = getDefaultProductInProductGroup( productGroupSlug );
+		return navigate(
+			`/marketplace/product/details/${ productGroupSlug }/${ productSlug }/${ siteFragment }`
+		);
+	}
 	context.primary = (
-		<MarketplacePluginDetails
-			path={ context.path }
-			marketplacePluginSlug={ pluginSlug }
-			siteUrl={ siteUrl }
-		/>
+		<MarketplacePluginDetails productGroupSlug={ productGroupSlug } productSlug={ productSlug } />
 	);
-
 	next();
 }
 

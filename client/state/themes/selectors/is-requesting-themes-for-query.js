@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSerializedThemesQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';

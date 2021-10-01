@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
 import { useLayoutEffect, useState } from 'react';
-import type { FunctionComponent, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
+import type { FunctionComponent, ReactNode } from 'react';
 
 const RootChild: FunctionComponent< { children: ReactNode } > = ( { children } ) => {
 	// we can render the children only after the container DOM element has been created and added

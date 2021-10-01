@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { getLocaleSlug } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import EducationalContent from '../educational-content';
-import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-wp-courses.svg';
+import { EDUCATION_WPCOURSES } from 'calypso/my-sites/customer-home/cards/constants';
+import EducationalContent from '../educational-content';
 
 const WpCourses = () => {
-	const isEnglish = config( 'english_locales' ).includes( getLocaleSlug() );
+	const { localeSlug } = useTranslate();
+	const isEnglish = config( 'english_locales' ).includes( localeSlug );
 
 	if ( ! isEnglish ) {
 		return null;

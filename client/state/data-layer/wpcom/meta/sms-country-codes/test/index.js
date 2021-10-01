@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { fetchCountriesSms, updateCountriesSms, showCountriesSmsLoadingError } from '../';
 import { COUNTRIES_SMS_UPDATED, NOTICE_CREATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { fetchCountriesSms, updateCountriesSms, showCountriesSmsLoadingError } from '../';
 
 describe( 'wpcom-api', () => {
 	describe( 'meta sms-country-codes', () => {

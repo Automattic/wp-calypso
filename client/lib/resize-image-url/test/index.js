@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 
 describe( 'resizeImageUrl()', () => {
@@ -129,7 +126,7 @@ describe( 'resizeImageUrl()', () => {
 				const original = 'https://blacktacho.com/wp-content/uploads/2018/10/Divo07.jpg';
 				const resized = resizeImageUrl( original, 450 );
 				expect( resized ).to.equal(
-					'https://i2.wp.com/blacktacho.com/wp-content/uploads/2018/10/Divo07.jpg?ssl=1&w=450'
+					'https://i0.wp.com/blacktacho.com/wp-content/uploads/2018/10/Divo07.jpg?ssl=1&w=450'
 				);
 			} );
 		} );

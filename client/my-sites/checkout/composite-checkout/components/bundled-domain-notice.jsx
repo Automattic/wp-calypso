@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import React from 'react';
 import {
 	hasDomainRegistration,
 	hasPlan,
@@ -15,9 +9,8 @@ import {
 	isNextDomainFree,
 	hasP2PlusPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
-import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 import { translationExists } from 'calypso/lib/i18n-utils';
+import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

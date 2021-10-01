@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import BooleanPreference from './boolean-preference';
 import NumberPreference from './number-preference';
 import StringPreference from './string-preference';
-import BooleanPreference from './boolean-preference';
 
 interface Props {
 	name: string;

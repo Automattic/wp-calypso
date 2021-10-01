@@ -1,9 +1,5 @@
 // This code combines the Mocha spec and xunit outputs with a dynamically allocated directory for xunit output
 
-/**
- * Module dependencies.
- */
-
 const mocha = require( 'mocha' );
 const Spec = mocha.reporters.Spec;
 const XUnit = mocha.reporters.XUnit;

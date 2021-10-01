@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import { useDispatch, useSelector } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useState } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { defaultRewindConfig, RewindConfig } from './types';
+import { useDispatch, useSelector } from 'react-redux';
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
-import CheckYourEmail from './rewind-flow-notice/check-your-email';
-import Error from './error';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequest from 'calypso/state/selectors/get-request';
+import Error from './error';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import { defaultRewindConfig, RewindConfig } from './types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -38,6 +31,7 @@ interface BackupProgress {
 	progress?: number;
 	rewindId: string;
 	url?: string;
+	bytesFormatted: string;
 }
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
@@ -58,6 +52,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	const downloadId = backupProgress?.downloadId;
 	const downloadUrl = backupProgress?.url;
+	const downloadSize = backupProgress?.bytesFormatted;
 	const downloadProgress =
 		backupProgress && backupProgress.progress !== undefined && ! isNaN( backupProgress.progress )
 			? backupProgress.progress
@@ -209,7 +204,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				onClick={ trackFileDownload }
 			>
-				{ translate( 'Download file' ) }
+				{ translate( 'Download file' ) } ({ downloadSize })
 			</Button>
 			<CheckYourEmail
 				message={ translate(

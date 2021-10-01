@@ -1,12 +1,10 @@
-/**
- * External dependencies
- */
 import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	RequestCartProduct,
 	ResponseCartTaxData,
 	DomainContactDetails,
 } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 
 export type WPCOMTransactionEndpointCart = {
 	blog_id: string;
@@ -142,20 +140,20 @@ export type PossiblyCompleteDomainContactDetails = {
 };
 
 export type DomainContactDetailsErrors = {
-	firstName?: string;
-	lastName?: string;
-	organization?: string;
-	email?: string;
-	alternateEmail?: string;
-	phone?: string;
-	address1?: string;
-	address2?: string;
-	city?: string;
-	state?: string;
-	postalCode?: string;
-	countryCode?: string;
-	fax?: string;
-	vatId?: string;
+	firstName?: string | TranslateResult;
+	lastName?: string | TranslateResult;
+	organization?: string | TranslateResult;
+	email?: string | TranslateResult;
+	alternateEmail?: string | TranslateResult;
+	phone?: string | TranslateResult;
+	address1?: string | TranslateResult;
+	address2?: string | TranslateResult;
+	city?: string | TranslateResult;
+	state?: string | TranslateResult;
+	postalCode?: string | TranslateResult;
+	countryCode?: string | TranslateResult;
+	fax?: string | TranslateResult;
+	vatId?: string | TranslateResult;
 	extra?: DomainContactDetailsErrorsExtra;
 };
 
@@ -166,22 +164,22 @@ type DomainContactDetailsErrorsExtra = {
 };
 
 export type CaDomainContactExtraDetailsErrors = {
-	lang?: string;
-	legalType?: string;
-	ciraAgreementAccepted?: string;
+	lang?: string | TranslateResult;
+	legalType?: string | TranslateResult;
+	ciraAgreementAccepted?: string | TranslateResult;
 };
 
 export type UkDomainContactExtraDetailsErrors = {
-	registrantType?: { errorCode: string; errorMessage: string }[];
-	registrationNumber?: { errorCode: string; errorMessage: string }[];
-	tradingName?: { errorCode: string; errorMessage: string }[];
+	registrantType?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	registrationNumber?: { errorCode: string; errorMessage: string | TranslateResult }[];
+	tradingName?: { errorCode: string; errorMessage: string | TranslateResult }[];
 };
 
 export type FrDomainContactExtraDetailsErrors = {
-	registrantType?: string[];
-	registrantVatId?: string[];
-	trademarkNumber?: string[];
-	sirenSiret?: string[];
+	registrantType?: string[] | TranslateResult[];
+	registrantVatId?: string[] | TranslateResult[];
+	trademarkNumber?: string[] | TranslateResult[];
+	sirenSiret?: string[] | TranslateResult[];
 };
 
 export type PayPalExpressEndpoint = (
@@ -295,7 +293,9 @@ export type ManagedContactDetailsTldExtraFieldsShape< T > = {
  */
 export type ManagedContactDetails = ManagedContactDetailsShape< ManagedValue >;
 
-export type ManagedContactDetailsErrors = ManagedContactDetailsShape< undefined | string[] >;
+export type ManagedContactDetailsErrors = ManagedContactDetailsShape<
+	undefined | string[] | TranslateResult[]
+>;
 
 /*
  * Intermediate type used to represent update payloads
@@ -318,7 +318,7 @@ export type ManagedContactDetailsRequiredMask = ManagedContactDetailsShape< bool
 export interface ManagedValue {
 	value: string;
 	isTouched: boolean; // Has value been edited by the user?
-	errors: string[]; // Has value passed validation?
+	errors: string[] | TranslateResult[]; // Has value passed validation?
 	isRequired: boolean; // Is this field required?
 }
 
@@ -363,6 +363,7 @@ export type ManagedContactDetailsUpdaters = {
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
 	) => ManagedContactDetails;
+	clearErrorMessages: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	populateCountryCodeFromGeoIP: (
 		arg0: ManagedContactDetails,
 		arg1: string
@@ -380,7 +381,7 @@ export type ManagedContactDetailsUpdaters = {
  */
 export type SignupValidationResponse = {
 	success: boolean;
-	messages: {
+	messages?: {
 		first_name?: string[];
 		last_name?: string[];
 		email?: Record< string, string >;
@@ -394,34 +395,36 @@ export type SignupValidationResponse = {
  *
  * @see WPCOM_JSON_API_Domains_Validate_Contact_Information_Endpoint
  */
+export type ContactValidationRequestContactInformation = {
+	first_name?: string;
+	last_name?: string;
+	organization?: string;
+	email?: string;
+	alternate_email?: string;
+	phone?: string;
+	phone_number_country?: string;
+	address_1?: string;
+	address_2?: string;
+	city?: string;
+	state?: string;
+	postal_code?: string;
+	country_code?: string;
+	fax?: string;
+	vat_id?: string;
+	extra?: DomainContactValidationRequestExtraFields;
+};
+
 export type DomainContactValidationRequest = {
-	contact_information: {
-		firstName?: string;
-		lastName?: string;
-		organization?: string;
-		email?: string;
-		alternateEmail?: string;
-		phone?: string;
-		phoneNumberCountry?: string;
-		address1?: string;
-		address2?: string;
-		city?: string;
-		state?: string;
-		postalCode?: string;
-		countryCode?: string;
-		fax?: string;
-		vatId?: string;
-		extra?: DomainContactValidationRequestExtraFields;
-	};
+	contact_information: ContactValidationRequestContactInformation;
 };
 
 export type GSuiteContactValidationRequest = {
 	contact_information: {
-		firstName: string;
-		lastName: string;
-		alternateEmail: string;
-		postalCode: string;
-		countryCode: string;
+		first_name: string;
+		last_name: string;
+		alternate_email: string;
+		postal_code: string;
+		country_code: string;
 	};
 };
 
@@ -447,40 +450,49 @@ export type DomainContactValidationRequestExtraFields = {
 /**
  * Response format of the domain contact validation endpoint.
  */
-export type DomainContactValidationResponse = {
-	success: boolean;
-	messages: {
-		firstName?: string[];
-		lastName?: string[];
-		organization?: string[];
-		email?: string[];
-		alternateEmail?: string[];
-		phone?: string[];
-		phoneNumberCountry?: string[];
-		address1?: string[];
-		address2?: string[];
-		city?: string[];
-		state?: string[];
-		postalCode?: string[];
-		countryCode?: string[];
-		fax?: string[];
-		vatId?: string[];
-		extra?: {
-			ca?: {
-				lang?: string[];
-				legalType?: string[];
-				ciraAgreementAccepted?: string[];
-			};
-			uk?: {
-				registrantType?: string[];
-				registrationNumber?: string[];
-				tradingName?: string[];
-			};
-			fr?: {
-				registrantType?: string[];
-				trademarkNumber?: string[];
-				sirenSiret?: string[];
-			};
+export type ContactValidationResponseMessages = {
+	first_name?: string[];
+	last_name?: string[];
+	organization?: string[];
+	email?: string[];
+	alternate_email?: string[];
+	phone?: string[];
+	phone_number_country?: string[];
+	address_1?: string[];
+	address_2?: string[];
+	city?: string[];
+	state?: string[];
+	postal_code?: string[];
+	country_code?: string[];
+	fax?: string[];
+	vat_id?: string[];
+	extra?: {
+		ca?: {
+			lang?: string[];
+			legal_type?: string[];
+			cira_agreement_accepted?: string[];
+		};
+		uk?: {
+			registrant_type?: string[];
+			registration_number?: string[];
+			trading_name?: string[];
+		};
+		fr?: {
+			registrant_type?: string[];
+			trademark_number?: string[];
+			siren_siret?: string[];
 		};
 	};
+};
+
+export type RawContactValidationResponseMessages = Record< string, string[] >;
+
+export type DomainContactValidationResponse = {
+	success: boolean;
+	messages?: ContactValidationResponseMessages;
+};
+
+export type RawDomainContactValidationResponse = {
+	success: boolean;
+	messages?: RawContactValidationResponseMessages;
 };

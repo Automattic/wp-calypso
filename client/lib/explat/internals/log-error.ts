@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import { getLogger } from 'calypso/server/lib/logger';
 import { isDevelopmentMode } from './misc';
 
@@ -42,14 +40,16 @@ export const logError = ( error: Record< string, string > & { message: string } 
 			// eslint-disable-next-line no-console
 			console.error( '[ExPlat] ', error.message, error );
 		} else {
-			const body = new window.FormData();
-			body.append( 'error', JSON.stringify( logStashError ) );
-			window
-				.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
-					method: 'POST',
-					body,
-				} )
-				.catch( onError );
+			wpcom.req.post(
+				{
+					path: '/js-error',
+					apiNamespace: 'rest/v1.1',
+					body: {
+						error: JSON.stringify( logStashError ),
+					},
+				},
+				( err: unknown ) => err && onError( err )
+			);
 		}
 	} catch ( e ) {
 		onError( e );

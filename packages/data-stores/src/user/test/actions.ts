@@ -6,9 +6,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { createActions } from '../actions';
 
 const client_id = 'magic_client_id';

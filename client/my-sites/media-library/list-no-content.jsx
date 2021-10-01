@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import UploadButton from './upload-button';
-import { userCan } from 'calypso/lib/site/utils';
-
-/**
- * Image dependencies
- */
 import mediaImage from 'calypso/assets/images/illustrations/media.svg';
+import EmptyContent from 'calypso/components/empty-content';
+import { userCan } from 'calypso/lib/site/utils';
+import UploadButton from './upload-button';
 
 class MediaLibraryListNoContent extends Component {
 	static propTypes = {

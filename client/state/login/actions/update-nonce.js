@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE } from 'calypso/state/action-types';
 
 import 'calypso/state/login/init';

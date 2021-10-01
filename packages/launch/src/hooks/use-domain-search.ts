@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { useSelect, useDispatch } from '@wordpress/data';
 import { isGoodDefaultDomainQuery, DOMAIN_QUERY_MINIMUM_LENGTH } from '@automattic/domain-picker';
-
-/**
- * Internal dependencies
- */
+import { useSelect, useDispatch } from '@wordpress/data';
 import { LAUNCH_STORE } from '../stores';
-import { useSite, useTitle } from './';
 import { useSiteDomains } from './use-site-domains';
+import { useSite, useTitle } from './';
 
 export function useDomainSearch(): {
 	domainSearch: string;

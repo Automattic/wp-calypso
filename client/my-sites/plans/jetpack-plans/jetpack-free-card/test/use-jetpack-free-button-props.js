@@ -1,6 +1,3 @@
-/**
- * Mock dependencies
- */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn(),
@@ -18,15 +15,17 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSite: jest.fn(),
 } ) );
 
-/**
- * External dependencies
- */
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = jest.fn();
+	mock.isEnabled = jest.fn();
+
+	return mock;
+} );
+const configMock = ( values ) => ( key ) => values[ key ];
+
+import config from '@automattic/calypso-config';
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react-hooks';
-
-/**
- * Internal dependencides
- */
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -45,6 +44,7 @@ describe( 'useJetpackFreeButtonProps', () => {
 		isJetpackCloud.mockRestore();
 		getSelectedSite.mockRestore();
 		useTrackCallback.mockRestore();
+		config.isEnabled.mockImplementation( configMock( { 'jetpack/siteless-checkout': false } ) );
 	} );
 
 	it( 'should link to the connect path in WordPress.com, for Jetpack Cloud with no site in context', () => {
@@ -59,6 +59,19 @@ describe( 'useJetpackFreeButtonProps', () => {
 		expect( result.current.href ).toEqual(
 			`https://wordpress.com${ JPC_PATH_BASE }?${ queryParamKey }=${ queryParamValue }&plan=${ PLAN_JETPACK_FREE }`
 		);
+	} );
+
+	it( 'should link to the Jetpack-Free Welcome UI page, for Jetpack Cloud with no site in context when "jetpack/siteless-checkout" feature flag is enabled', () => {
+		const queryParamKey = 'a';
+		const queryParamValue = 1;
+
+		config.isEnabled.mockImplementation( configMock( { 'jetpack/siteless-checkout': true } ) );
+		isJetpackCloud.mockReturnValue( true );
+		const { result } = renderHook( () =>
+			useJetpackFreeButtonProps( undefined, { [ queryParamKey ]: queryParamValue } )
+		);
+
+		expect( result.current.href ).toEqual( `/pricing/jetpack-free/welcome` );
 	} );
 
 	it( 'should link to the Jetpack section in the site admin, when site in state', () => {

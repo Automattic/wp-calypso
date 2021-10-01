@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { compact, get, isEqual, sortBy } from 'lodash';
 import debugFactory from 'debug';
+import { compact, get, isEqual, sortBy } from 'lodash';
 const debug = debugFactory( 'calypso:data-layer:remove-duplicate-gets' );
 
 /**

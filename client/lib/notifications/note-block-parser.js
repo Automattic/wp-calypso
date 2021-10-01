@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { compact, find } from 'lodash';
 
 /**

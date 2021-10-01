@@ -1,73 +1,46 @@
+/**
+ * @group gutenberg
+ */
+
+import assert from 'assert';
 import {
 	DataHelper,
 	LoginFlow,
-	MyHomePage,
-	PublishedPostsListPage,
 	CommentsComponent,
 	GutenbergEditorPage,
 	NewPostFlow,
-	PublishedPostPage,
+	setupHooks,
 } from '@automattic/calypso-e2e';
 
-/**
- * Constants
- */
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
-	describe( 'Comment and like on an existing post', function () {
-		let commentsComponent;
-		const comment = DataHelper.randomPhrase();
+	let page;
+	let publishedURL;
 
-		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
-			await loginFlow.logIn();
-		} );
-
-		it( 'Visit site', async function () {
-			const myHomePage = await MyHomePage.Expect( this.page );
-			await myHomePage.visitSite();
-		} );
-
-		it( 'Click on first post', async function () {
-			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page );
-			await publishedPostsListPage.visitPost( 1 );
-			await PublishedPostPage.Expect( this.page );
-		} );
-
-		it( 'Post a comment', async function () {
-			commentsComponent = await CommentsComponent.Expect( this.page );
-			await commentsComponent.postComment( comment );
-		} );
-
-		it( 'Like the comment', async function () {
-			await commentsComponent.like( comment );
-		} );
-
-		it( 'Unlike the comment', async function () {
-			await commentsComponent.unlike( comment );
-		} );
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	describe( 'Comment and like on a new post', function () {
 		let commentsComponent;
 		let gutenbergEditorPage;
-		const comment = DataHelper.randomPhrase();
+		const comment = DataHelper.getRandomPhrase();
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
 			await loginFlow.logIn();
 		} );
 
 		it( 'Start new post', async function () {
-			const newPostFlow = new NewPostFlow( this.page );
+			const newPostFlow = new NewPostFlow( page );
 			await newPostFlow.newPostFromNavbar();
 		} );
 
 		it( 'Enter post title', async function () {
-			gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
-			const title = DataHelper.randomPhrase();
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			const title = DataHelper.getRandomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );
 
@@ -76,12 +49,12 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Publish and visit post', async function () {
-			await gutenbergEditorPage.publish( { visit: true } );
-			await PublishedPostPage.Expect( this.page );
+			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			assert.strictEqual( publishedURL, await page.url() );
 		} );
 
 		it( 'Post a comment', async function () {
-			commentsComponent = await CommentsComponent.Expect( this.page );
+			commentsComponent = new CommentsComponent( page );
 			await commentsComponent.postComment( comment );
 		} );
 

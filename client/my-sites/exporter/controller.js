@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
 import SectionExport from 'calypso/my-sites/exporter/section-export';
 

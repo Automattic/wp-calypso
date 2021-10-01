@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useState } from 'react';
-import classnames from 'classnames';
 import { Popover, Button } from '@wordpress/components';
 import { info } from '@wordpress/icons';
+import classnames from 'classnames';
+import React, { FunctionComponent, useState } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

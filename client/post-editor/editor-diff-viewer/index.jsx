@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { debounce, filter, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
-import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
+import { debounce, filter, get, has, last, map, throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import TextDiff from 'calypso/components/text-diff';
 import scrollTo from 'calypso/lib/scroll-to';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
+import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 import './style.scss';
 
 const getCenterOffset = ( node ) =>

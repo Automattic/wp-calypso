@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
 import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import itemSchema from './schema';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_RECEIVE,
@@ -15,6 +6,8 @@ import {
 	POST_LIKE,
 	POST_UNLIKE,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import itemSchema from './schema';
 
 /**
  * Returns the updated items state after an action has been dispatched. The

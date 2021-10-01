@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MARKETPLACE_PRODUCTS } from './constants';
 
 export function isMarketplaceProduct( product: { productSlug: string } ): boolean {

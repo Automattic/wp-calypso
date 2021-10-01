@@ -4,26 +4,19 @@
 
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const path = require( 'path' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const webpack = require( 'webpack' );
-
-/**
- * Internal dependencies
- */
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const nodeExternals = require( 'webpack-node-externals' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
+const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
+const ExternalModulesWriter = require( './server/bundler/external-modules' );
 const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
-const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
-const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
-const nodeExternals = require( 'webpack-node-externals' );
-const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
-const ExternalModulesWriter = require( './server/bundler/external-modules' );
-const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 
 /**
  * Internal variables
@@ -136,7 +129,6 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'calypso:src', 'module', 'main' ],
-		modules: [ path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
 			'@automattic/calypso-config': 'calypso/server/config',
 		},

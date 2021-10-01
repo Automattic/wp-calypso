@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
-import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const BackupsUpsellIcon: FunctionComponent = () => (

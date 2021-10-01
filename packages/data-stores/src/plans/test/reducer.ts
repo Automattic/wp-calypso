@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { setPlans, setFeaturesByType, setFeatures, setPlanProducts } from '../actions';
 import * as MockData from '../mock';
+import reducer from '../reducer';
 import { buildPlanFeaturesDict } from '../test-utils';
 
 const MOCK_LOCALE = 'test-locale';

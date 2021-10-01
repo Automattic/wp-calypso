@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import getSelectedSiteId from './get-selected-site-id';
 

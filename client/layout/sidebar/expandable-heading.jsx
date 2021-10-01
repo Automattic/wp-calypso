@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
-import SidebarHeading from 'calypso/layout/sidebar/heading';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import SidebarHeading from 'calypso/layout/sidebar/heading';
 import { decodeEntities } from 'calypso/lib/formatting';
 
 const noop = () => {};

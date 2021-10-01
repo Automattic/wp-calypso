@@ -1,19 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
+import { useLocale } from '@automattic/i18n-utils';
+import { Title, SubTitle } from '@automattic/onboarding';
+import PlansGrid from '@automattic/plans-grid';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import PlansGrid from '@automattic/plans-grid';
-import { Title, SubTitle } from '@automattic/onboarding';
+import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
 import { LAUNCH_STORE } from '../../stores';
 import GoBackButton from '../go-back-button';
 

@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import { loadScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 import React, { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
-import { loadScript } from '@automattic/load-script';
 // We are several versions old for react-stripe-elements, and probably should
 // actually upgrade to the new Stripe.js anyway. Trying to use the actual types
 // for this package causes all sorts of errors because, I think, they assume
@@ -252,7 +249,7 @@ export async function createStripeSetupIntent(
 		} );
 	} catch ( error ) {
 		// Some errors are thrown by handleCardSetup and not returned as an error
-		throw new StripeSetupIntentError( error );
+		throw new StripeSetupIntentError( error as Error );
 	}
 	debug( 'setup intent creation complete', stripeResponse );
 	if ( stripeResponse?.error || ! stripeResponse?.setupIntent ) {

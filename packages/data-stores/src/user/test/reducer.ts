@@ -6,11 +6,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { currentUser, newUserData, newUserError, isFetchingNewUser } from '../reducer';
 import { createActions } from '../actions';
+import { currentUser, newUserData, newUserError, isFetchingNewUser } from '../reducer';
 
 const {
 	receiveCurrentUser,

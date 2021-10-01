@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { useAutoscroll } from './autoscroll';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { connect } from 'react-redux';
 import Emojify from 'calypso/components/emojify';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useScrollbleed } from './scrollbleed';
-import { addSchemeIfMissing, setUrlScheme } from './url';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { sendEvent } from 'calypso/state/happychat/connection/actions';
+import { useAutoscroll } from './autoscroll';
+import { useScrollbleed } from './scrollbleed';
+import { addSchemeIfMissing, setUrlScheme } from './url';
 
-/**
- * Style dependencies
- */
 import './timeline.scss';
 
-import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
 const MessageParagraph = ( { message, isEdited, twemojiUrl } ) => (

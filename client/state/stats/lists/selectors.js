@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { get, map, flatten } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import treeSelect from '@automattic/tree-select';
-import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
+import { get, map, flatten } from 'lodash';
 import { getSite } from 'calypso/state/sites/selectors';
+import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
 
 import 'calypso/state/stats/init';
 

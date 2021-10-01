@@ -1,10 +1,9 @@
-/**
- * External dependencies
- */
 export {
 	Button,
 	Card,
 	CompactCard,
+	Gridicon,
+	Popover,
 	ProgressBar,
 	Ribbon,
 	ScreenReaderText,
@@ -70,7 +69,6 @@ export { default as FormTextInputWithAffixes } from 'calypso/components/forms/fo
 export { default as Gauge } from 'calypso/components/gauge';
 export { default as GlobalNotices } from 'calypso/components/global-notices';
 export { default as Gravatar } from 'calypso/components/gravatar';
-export { default as Gridicon } from 'calypso/components/gridicon';
 export { default as HeaderCake } from 'calypso/components/header-cake';
 export { default as HeaderButton } from 'calypso/components/header-button';
 export { default as ImagePreloader } from 'calypso/components/image-preloader';
@@ -89,7 +87,6 @@ export { default as Notices } from 'calypso/components/notice';
 export { default as Pagination } from 'calypso/components/pagination';
 export { default as PaymentLogo } from 'calypso/components/payment-logo';
 export { default as PieChart } from 'calypso/components/pie-chart';
-export { default as Popovers } from 'calypso/components/popover';
 export { default as Ranges } from 'calypso/components/forms/range';
 export { default as Rating } from 'calypso/components/rating';
 export { default as Search } from 'calypso/components/search';

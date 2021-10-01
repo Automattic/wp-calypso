@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
 import * as Plans from '../plans';
 import type { FeatureId, Feature } from './types';
-/**
- * Internal dependencies
- */
+
 const {
 	TIMELESS_PLAN_PERSONAL,
 	TIMELESS_PLAN_PREMIUM,

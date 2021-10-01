@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { fetchingItems, fetchingLists, items, lists, listsPagination } from '../reducer';
 import {
 	PLUGINS_WPORG_LIST_RECEIVE,
 	PLUGINS_WPORG_LIST_REQUEST,
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
+import { fetchingItems, fetchingLists, items, lists, listsPagination } from '../reducer';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {

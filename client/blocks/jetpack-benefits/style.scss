@@ -1,0 +1,127 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/calypso-color-schemes';
+
+
+.jetpack-benefits__section-header {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.jetpack-benefits__general-benefit-list {
+	padding: 0;
+	margin: 0;
+	padding-left: 1rem;
+	font-size: 1rem;
+	line-height: 2;
+}
+
+.card.jetpack-benefits__card {
+	background-color: var( --studio-white );
+	width: 800px;
+	max-width: 100%;
+}
+
+.jetpack-benefits__card-content {
+	display: block;
+	font-size: 0.875rem;
+
+	@include break-medium {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+.jetpack-benefits__card-headline {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	flex-shrink: 0;
+
+	@include break-medium {
+		font-size: 1.5rem;
+		margin-bottom: 0;
+		margin-right: 1.5rem;
+	}
+
+	&--placeholder {
+		@include placeholder();
+	}
+}
+
+.jetpack-benefits__stat-block {
+	display: flex;
+	align-items: baseline;
+	flex-grow: 1;
+
+	@include break-medium {
+		flex-direction: row-reverse;
+	}
+
+	&--placeholder {
+		@include placeholder();
+	}
+}
+
+.jetpack-benefits__card-description {
+	flex-grow: 1;
+
+	@include break-medium {
+		text-align: right;
+	}
+}
+
+.jetpack-benefits__card-stat {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-right: 0.5rem;
+
+	@include break-medium {
+		font-size: 1.5rem;
+		margin-right: 0;
+		margin-left: 1rem;
+	}
+}
+
+
+// Benefit Cards for Standalone Jetpack Products
+.jetpack-benefits__standalone-summary {
+	margin-bottom: 1rem;
+
+	@include break-medium {
+		margin-bottom: 0;
+	}
+}
+
+.jetpack-benefits__standalone-stats {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	@include break-mobile {
+		display: flex;
+		align-items: start;
+		margin: 0 -1rem;
+
+		li {
+			margin: 0 1rem;
+		}
+	}
+}
+
+// variant for standalone product cards
+.jetpack-benefits__card--standalone {
+	.jetpack-benefits__card-headline {
+		margin-bottom: 1rem;
+		margin-right: 0;
+
+		@include break-medium {
+			margin-bottom: 1.5rem;
+		}
+	}
+	.jetpack-benefits__card-stat {
+		margin: 0;
+	}
+}
+

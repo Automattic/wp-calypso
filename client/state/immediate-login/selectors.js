@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 import 'calypso/state/immediate-login/init';

@@ -1,70 +1,28 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import debugModule from 'debug';
-import page from 'page';
-import { connect } from 'react-redux';
-import { flowRight, get, includes, startsWith } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AuthFormHeader from './auth-form-header';
-import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import config from '@automattic/calypso-config';
-import Disclaimer from './disclaimer';
+import { Button, Card, Gridicon } from '@automattic/components';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { flowRight, get, includes, startsWith } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gravatar from 'calypso/components/gravatar';
-import Gridicon from 'calypso/components/gridicon';
-import HelpButton from './help-button';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import JetpackConnectHappychatButton from './happychat-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import MainWrapper from './main-wrapper';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import Spinner from 'calypso/components/spinner';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
-import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import {
-	isFetchingSitePurchases,
-	siteHasJetpackProductPurchase,
-} from 'calypso/state/purchases/selectors';
-import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
-import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
-import {
-	ALREADY_CONNECTED,
-	ALREADY_CONNECTED_BY_OTHER_USER,
-	DEFAULT_AUTHORIZE_ERROR,
-	RETRY_AUTH,
-	RETRYING_AUTH,
-	SECRET_EXPIRED,
-	SITE_BLOCKED,
-	USER_IS_ALREADY_CONNECTED_TO_SITE,
-	XMLRPC_ERROR,
-} from './connection-notice-types';
-import {
-	clearPlan,
-	isCalypsoStartedConnection,
-	isSsoApproved,
-	retrieveMobileRedirect,
-	retrievePlan,
-} from './persistence-utils';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
@@ -78,8 +36,42 @@ import {
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
 } from 'calypso/state/jetpack-connect/selectors';
+import {
+	isFetchingSitePurchases,
+	siteHasJetpackProductPurchase,
+} from 'calypso/state/purchases/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import AuthFormHeader from './auth-form-header';
+import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	DEFAULT_AUTHORIZE_ERROR,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	SITE_BLOCKED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	XMLRPC_ERROR,
+} from './connection-notice-types';
+import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import Disclaimer from './disclaimer';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import JetpackConnectHappychatButton from './happychat-button';
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import MainWrapper from './main-wrapper';
+import {
+	clearPlan,
+	isCalypsoStartedConnection,
+	isSsoApproved,
+	retrieveMobileRedirect,
+	retrievePlan,
+} from './persistence-utils';
+import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 
 /**
@@ -207,7 +199,7 @@ export class JetpackAuthorize extends Component {
 		if ( ! this.redirecting ) {
 			this.redirecting = true;
 			debug( `Redirecting to ${ url }` );
-			externalRedirect( url );
+			navigate( url );
 		}
 	}
 
@@ -255,14 +247,7 @@ export class JetpackAuthorize extends Component {
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
 		} else {
-			const { target, isExternal } = this.getRedirectionTarget();
-
-			if ( isExternal ) {
-				externalRedirect( target );
-				return;
-			}
-
-			page.redirect( target );
+			navigate( this.getRedirectionTarget() );
 		}
 
 		this.setState( { isRedirecting: true } );
@@ -280,7 +265,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
+			[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ].includes( from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -342,14 +327,11 @@ export class JetpackAuthorize extends Component {
 	isWooRedirect = ( props = this.props ) => {
 		const { from } = props.authQuery;
 		return (
-			includes(
-				[
-					'woocommerce-services-auto-authorize',
-					'woocommerce-setup-wizard',
-					'woocommerce-onboarding',
-				],
-				from
-			) || this.getWooDnaConfig( props ).isWooDnaFlow()
+			[
+				'woocommerce-services-auto-authorize',
+				'woocommerce-setup-wizard',
+				'woocommerce-onboarding',
+			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
 
@@ -364,19 +346,8 @@ export class JetpackAuthorize extends Component {
 
 	shouldRedirectJetpackStart( props = this.props ) {
 		const { partnerSlug, partnerID } = props;
-		const pressableRedirectFlag = config.isEnabled(
-			'jetpack/connect-redirect-pressable-credential-approval'
-		);
 
-		// If the redirect flag is set, then we conditionally redirect the Pressable client to
-		// a credential approval screen. Otherwise, we need to redirect all other partners back
-		// to wp-admin.
-		if ( pressableRedirectFlag ) {
-			return partnerID && 'pressable' !== partnerSlug;
-		}
-
-		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
-		return !! partnerID;
+		return partnerID && 'pressable' !== partnerSlug;
 	}
 
 	handleSignIn = () => {
@@ -691,11 +662,8 @@ export class JetpackAuthorize extends Component {
 		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		if (
-			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			'pressable' === partnerSlug
-		) {
-			return { target: `/start/pressable-nux?blogid=${ clientId }`, isExternal: false };
+		if ( 'pressable' === partnerSlug ) {
+			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
@@ -706,25 +674,19 @@ export class JetpackAuthorize extends Component {
 			// Once we decide we want to redirect the user to the checkout page and that there is a
 			// valid plan, we can safely remove it from the session storage
 			clearPlan();
-			return {
-				target: `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`,
-				isExternal: false,
-			};
+			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
 		// If the site has a Jetpack paid product, send the user back to wp-admin rather than
 		// to the Plans page.
 		if ( siteHasJetpackPaidProduct ) {
-			return { target: redirectAfterAuth, isExternal: true };
+			return redirectAfterAuth;
 		}
 
-		return {
-			target: addQueryArgs(
-				{ redirect: redirectAfterAuth },
-				`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
-			),
-			isExternal: false,
-		};
+		return addQueryArgs(
+			{ redirect: redirectAfterAuth },
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+		);
 	}
 
 	renderFooterLinks() {

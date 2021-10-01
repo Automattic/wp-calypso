@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import stepConfig from './steps';
-import { isEcommercePlan } from '@automattic/calypso-products';
-import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -22,14 +15,6 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && {
-				preLaunch: 1,
-			} ),
-			...( dependencies.isPreLaunch &&
-				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
-					redirect_to: `/home/${ dependencies.siteSlug }`,
-				} ),
-			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
@@ -62,6 +47,8 @@ function getRedirectDestination( dependencies ) {
 			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
 		) {
 			return dependencies.oauth2_redirect;
+		} else if ( dependencies.redirect ) {
+			return dependencies.redirect;
 		}
 	} catch {
 		return '/';
@@ -70,12 +57,16 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( dependencies ) {
-	if ( 'no-site' === dependencies.siteSlug ) {
+function getSignupDestination( { siteSlug } ) {
+	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
 
-	return `/home/${ dependencies.siteSlug }`;
+	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
+		return addQueryArgs( { siteSlug }, '/start/setup-site' );
+	}
+
+	return `/home/${ siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {

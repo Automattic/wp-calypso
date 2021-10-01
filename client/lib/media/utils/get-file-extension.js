@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import path from 'path';
-import { isUri } from 'valid-url';
-
-/**
- * Internal dependencies
- */
 import { getUrlParts } from '@automattic/calypso-url';
+import { isUri } from 'valid-url';
 
 /**
  * Given a media string, File, or object, returns the file extension.

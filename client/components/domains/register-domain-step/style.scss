@@ -1,18 +1,103 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.register-domain-step:not( .register-domain-step__signup ) {
+	display: block;
+	position: relative;
+	margin: 0 auto 10px;
+	padding: 16px;
+	box-sizing: border-box;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	@include break-mobile {
+		padding: 24px;
+	}
+
+	.search-filters__dropdown-filters {
+		height: 50px;
+		@include break-mobile {
+			min-width: 120px;
+		}
+	}
+
+	.button.domain-suggestion__action {
+		min-width: 120px;
+		padding: 0;
+	}
+
+	.card {
+		background: none;
+		box-shadow: none;
+		border-bottom: 1px solid var( --color-border-subtle );
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.domain-search-results__domain-available-notice,
+	.search-component {
+		border-bottom: none;
+	}
+
+	.register-domain-step__next-page {
+		border-bottom: none;
+		padding-bottom: 0;
+		.register-domain-step__next-page-button {
+			padding-bottom: 0;
+			padding-top: 0;
+			@include break-mobile {
+				padding-top: 8px;
+			}
+		}
+	}
+
+	.domain-search-results__domain-available-notice {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.search-component {
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 4px; /* stylelint-disable-line */
+	}
+
+	.search-component.is-open {
+		border: 1px solid #a7aaad;
+		border-radius: 4px; /* stylelint-disable-line */
+		height: 48px;
+	}
+
+	.search-component.is-open.has-focus {
+		border-color: #646970;
+		background: var( --color-surface );
+		box-shadow: none;
+
+		.search-component__input {
+			background: var( --color-surface );
+		}
+	}
+
+	.card.register-domain-step__search-card {
+		background-color: var( --color-surface );
+	}
+}
+
 .register-domain-step__search {
 	padding-bottom: 12px;
 
 	&.register-domain-step__search-domain-step:not( .is-sticky ) {
 		padding-bottom: 24px;
 
+		.is-white-signup & {
+			padding-bottom: 16px;
+		}
+
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
 
 			.is-white-signup & {
 				padding-top: 0;
-				padding-bottom: 20px;
+				padding-bottom: 16px;
 			}
 		}
 	}
@@ -21,6 +106,7 @@
 		padding: 0;
 		display: flex;
 		align-items: center;
+		border-bottom: none;
 	}
 
 	.search {
@@ -108,6 +194,7 @@
 }
 
 .register-domain-step__next-page {
+	color: var( --color-link );
 	display: flex;
 	justify-content: center;
 }
@@ -118,7 +205,44 @@
 	}
 }
 
+button.register-domain-step__next-page-button {
+	font-size: 0.875rem;
+	font-weight: 500; /* stylelint-disable-line */
+}
+
+body.is-section-domains {
+	.register-domain-step {
+		button.register-domain-step__next-page-button {
+			color: var( --color-link );
+			border: none;
+			box-shadow: none;
+		}
+	}
+}
+
+body.is-section-signup:not( .is-white-signup ) {
+	.register-domain-step__search-card {
+		background: none;
+		box-shadow: none;
+	}
+}
+
 body.is-section-signup.is-white-signup {
+	.domain-search-results__domain-availability .card {
+		box-shadow: none;
+		padding: 0;
+		margin-bottom: 24px;
+		margin-left: 20px;
+
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+	.domain-search-results__domain-availability svg,
+	.register-domain-step__notice svg {
+		margin: 0;
+		padding: 0;
+	}
 	.register-domain-step__next-page {
 		background: none;
 		box-shadow: none;
@@ -127,8 +251,6 @@ body.is-section-signup.is-white-signup {
 			padding: 0.57em 1.17em;
 			border-radius: 4px; /* stylelint-disable-line */
 
-			font-size: 0.875rem;
-			font-weight: 500; /* stylelint-disable-line */
 			letter-spacing: 0.32px;
 			line-height: 1.25rem;
 
@@ -138,5 +260,26 @@ body.is-section-signup.is-white-signup {
 				padding: 0.65em 2.8em;
 			}
 		}
+	}
+}
+
+.already-own-a-domain {
+	font-size: $font-body-small;
+	color: var( --color-text-subtle );
+	display: flex;
+	align-items: center;
+	margin-top: 26px;
+	svg {
+		align-self: flex-start;
+		width: 16px;
+		height: 16px;
+		fill: var( --color-text-subtle );
+		margin: 3px 8px 0;
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+	.button-plain {
+		color: var( --color-link );
 	}
 }

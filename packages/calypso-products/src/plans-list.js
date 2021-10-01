@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import i18n, { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
+import i18n, { translate } from 'i18n-calypso';
+import React from 'react';
 import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_13GB_STORAGE,
@@ -104,7 +97,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -121,7 +113,6 @@ import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
@@ -158,10 +149,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_SECURITY,
-	PLAN_JETPACK_SECURITY_MONTHLY,
-	PLAN_JETPACK_SECURITY_PRO,
-	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
@@ -184,8 +175,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
-	TYPE_SECURITY,
-	TYPE_SECURITY_PRO,
+	TYPE_SECURITY_T1,
+	TYPE_SECURITY_T2,
 } from './constants';
 
 function compact( elements ) {
@@ -238,12 +229,12 @@ const getPlanBloggerDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
+			'{{strong}}Best for bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.'
+			'Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.'
 		),
 	// }}}
 	getPlanCompareFeatures: () => [
@@ -291,13 +282,13 @@ const getPlanPersonalDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
 				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Unlock unlimited, expert email support.',
+				'Unlock unlimited, expert customer support via email.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Unlock unlimited, expert email support.'
+				'Unlock unlimited, expert customer support via email.'
 		),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
@@ -375,7 +366,6 @@ const getPlanEcommerceDetails = () => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -399,7 +389,6 @@ const getPlanEcommerceDetails = () => ( {
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
@@ -428,7 +417,6 @@ const getPlanEcommerceDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_EARN_AD,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_INSTALL_PLUGINS,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -481,7 +469,6 @@ const getPlanPremiumDetails = () => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -504,14 +491,9 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
-	getBlogSignupFeatures: () => [
-		FEATURE_MONETISE,
-		FEATURE_PREMIUM_THEMES,
-		FEATURE_ALL_PERSONAL_FEATURES,
-	],
+	getBlogSignupFeatures: () => [ FEATURE_MONETISE, FEATURE_ALL_PERSONAL_FEATURES ],
 	getPortfolioSignupFeatures: () => [
 		FEATURE_ADVANCED_CUSTOMIZATION,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	getSignupCompareAvailableFeatures: () => [
@@ -522,7 +504,6 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_EARN_AD,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -542,13 +523,13 @@ const getPlanBusinessDetails = () => ( {
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
-				' business website with custom plugins and themes, unlimited premium and business theme templates,' +
+				' business website with custom plugins and themes,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Power your business website with custom plugins and themes, unlimited premium and business theme templates,' +
+			'Power your business website with custom plugins and themes,' +
 				' 200 GB storage, and the ability to remove WordPress.com branding.'
 		),
 	getTagline: () =>
@@ -564,7 +545,6 @@ const getPlanBusinessDetails = () => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -583,7 +563,6 @@ const getPlanBusinessDetails = () => ( {
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
 		FEATURE_ADVANCED_DESIGN,
@@ -613,7 +592,6 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 		FEATURE_EARN_AD,
-		FEATURE_PREMIUM_THEMES,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_INSTALL_PLUGINS,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -736,8 +714,7 @@ const getJetpackBusinessDetails = () => ( {
 		].includes( plan ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
-				'and unlimited premium themes.',
+			'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites.',
 			plansDescriptionHeadingComponent
 		),
 	getTagline: () => i18n.translate( 'You have the full suite of security and performance tools.' ),
@@ -764,7 +741,6 @@ const getJetpackBusinessDetails = () => ( {
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_JETPACK_BACKUP_REALTIME,
 			FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 			FEATURE_JETPACK_SCAN_DAILY,
@@ -773,7 +749,6 @@ const getJetpackBusinessDetails = () => ( {
 			FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 			FEATURE_SEO_PREVIEW_TOOLS,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 		] ),
 	getInferiorHiddenFeatures: () => [
@@ -857,7 +832,86 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
+const getPlanJetpackSecurityT1Details = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_SECURITY_T1,
+	getTitle: () => translate( 'Security' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
+const getPlanJetpackSecurityT2Details = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_SECURITY_T2,
+	getTitle: () => translate( 'Security Pro' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
@@ -907,7 +961,6 @@ const getPlanJetpackCompleteDetails = () => ( {
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_UNLIMITED_PREMIUM_THEMES,
 		FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
@@ -1375,28 +1428,36 @@ export const PLANS_LIST = {
 		getProductId: () => 2015,
 	},
 
-	[ PLAN_JETPACK_SECURITY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY,
+	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
+		...getPlanJetpackSecurityT1Details(),
 		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
+		getPathSlug: () => 'security',
+		getProductId: () => 2016,
 	},
 
-	[ PLAN_JETPACK_SECURITY_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY,
+	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
+		...getPlanJetpackSecurityT1Details(),
 		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		getPathSlug: () => 'security-monthly',
+		getProductId: () => 2017,
 	},
 
-	[ PLAN_JETPACK_SECURITY_PRO ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_PRO,
+	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
+		...getPlanJetpackSecurityT2Details(),
 		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
+		getPathSlug: () => 'security-pro',
+		getProductId: () => 2019,
 	},
 
-	[ PLAN_JETPACK_SECURITY_PRO_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_PRO,
+	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
+		...getPlanJetpackSecurityT2Details(),
 		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
+		getPathSlug: () => 'security-pro-monthly',
+		getProductId: () => 2020,
 	},
 
 	[ PLAN_P2_PLUS ]: {

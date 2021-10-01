@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,

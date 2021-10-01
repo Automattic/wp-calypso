@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { sample } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-images';
-import { getTagImages } from 'calypso/state/reader/tags/images/selectors';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { decodeEntities } from 'calypso/lib/formatting';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { getTagImages } from 'calypso/state/reader/tags/images/selectors';
 
 const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;

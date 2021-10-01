@@ -1,0 +1,150 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.blank-canvas {
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-height: 100vh;
+	background: #fdfdfd;
+	overflow: hidden;
+
+	// Hide masterbar behind.
+	z-index: z-index( 'root', '.masterbar' );
+
+	.formatted-header {
+		margin-top: 0;
+		margin-bottom: 3rem;
+		text-align: left;
+
+		@include break-small {
+			text-align: center;
+		}
+
+		.formatted-header__title {
+			color: var( --studio-gray-100 );
+			font-size: 2.25rem;
+			padding: 0;
+			margin-top: 0;
+			margin-bottom: 1rem;
+		}
+
+		.formatted-header__subtitle {
+			color: var( --studio-gray-60 );
+			font-size: 1rem;
+			padding: 0;
+			margin-bottom: 0;
+		}
+	}
+
+	.components-base-control .components-base-control__field {
+		.components-input-control__label,
+		.components-base-control__label,
+		.components-select-control__input,
+		.components-textarea-control__input,
+		.components-text-control__input {
+			font-size: 0.875rem;
+		}
+
+		.components-select-control__input,
+		.components-text-control__input,
+		.components-textarea-control__input {
+			background-color: var( --studio-white );
+			padding: 0.75rem 1rem;
+			box-sizing: border-box;
+		}
+
+		.components-select-control__input,
+		.components-text-control__input {
+			height: 2.5rem;
+		}
+	}
+
+	.components-button.is-primary:disabled {
+		background-color: var( --color-accent );
+		border-color: var( --color-accent );
+		color: var( --color-text-inverted );
+		opacity: 0.5;
+	}
+}
+
+.blank-canvas__header {
+	height: 4rem;
+	display: flex;
+	align-items: center;
+	padding: 0 1.5rem;
+	margin-bottom: 2.5rem;
+	box-shadow: 0 1px 0 rgba( 0, 0, 0, 0.05 );
+
+	@include break-small {
+		box-shadow: none;
+	}
+
+	.wordpress-logo {
+		width: 1.5rem;
+		height: 1.5rem;
+		fill: var( --color-text );
+		margin: 0 1.5rem 0 0;
+	}
+}
+
+.blank-canvas__content {
+	padding: 0 1.5rem 4rem;
+
+	@include break-small {
+		padding-bottom: 0;
+	}
+}
+
+.blank-canvas__footer {
+	position: fixed;
+	bottom: 0;
+	box-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.05 );
+	padding: 0.75rem 1rem;
+	background: #fdfdfd;
+	width: 100%;
+	box-sizing: border-box;
+
+	@include break-small {
+		box-shadow: none;
+		position: relative;
+		bottom: auto;
+	}
+}
+
+.blank-canvas__back {
+	color: var( --color-text );
+	font-size: 0;
+	padding: 0;
+
+	&.has-icon.has-text svg {
+		margin-right: 0.25rem;
+	}
+
+	@include break-small {
+		font-size: inherit;
+	}
+}
+
+.blank-canvas__header-title {
+	position: absolute;
+	right: 1rem;
+	font-size: 0.875rem;
+	color: var( --studio-gray-30 );
+	z-index: -1;
+
+	@include break-small {
+		right: 0;
+		left: 0;
+		text-align: center;
+	}
+}
+
+.has-blank-canvas .layout {
+	max-height: 100vh;
+	overflow: hidden;
+}

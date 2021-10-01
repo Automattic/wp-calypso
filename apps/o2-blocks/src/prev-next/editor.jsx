@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
-import { Fragment } from '@wordpress/element';
-import { registerBlockType } from '@wordpress/blocks';
 import { URLInput } from '@wordpress/block-editor';
+import { registerBlockType } from '@wordpress/blocks';
+import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
-/**
- * Internal dependencies
- */
 import './editor.scss';
 
 const blockAttributes = {

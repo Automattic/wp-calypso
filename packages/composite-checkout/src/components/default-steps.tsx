@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CheckoutOrderSummaryStep, {
 	CheckoutOrderSummaryStepTitle,
 	CheckoutOrderSummary,
 } from './checkout-order-summary';
-import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
 import CheckoutPaymentMethods, { CheckoutPaymentMethodsTitle } from './checkout-payment-methods';
+import CheckoutReviewOrder, { CheckoutReviewOrderTitle } from './checkout-review-order';
 import type { CheckoutStepProps, OrderSummaryData } from '../types';
 
 export function getDefaultOrderSummary(): OrderSummaryData {

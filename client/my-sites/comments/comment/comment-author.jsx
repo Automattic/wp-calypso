@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
-import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
-import Tooltip from 'calypso/components/tooltip';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Tooltip from 'calypso/components/tooltip';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { urlToDomainAndPath } from 'calypso/lib/url';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
+import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

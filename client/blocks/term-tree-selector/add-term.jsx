@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-
+import { Button, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
 import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import { getTerms } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './add-term.scss';
 
 const noop = () => {};

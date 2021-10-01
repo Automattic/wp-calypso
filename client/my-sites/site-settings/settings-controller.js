@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import { recordPageView } from 'calypso/lib/analytics/page-view';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import titlecase from 'to-title-case';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { sectionify } from 'calypso/lib/route';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function siteSettings( context, next ) {
 	let analyticsPageTitle = 'Site Settings';

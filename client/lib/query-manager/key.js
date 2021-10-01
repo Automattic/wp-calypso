@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { sortBy, omitBy } from 'lodash';
 
 /**

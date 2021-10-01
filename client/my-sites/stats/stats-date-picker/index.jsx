@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getSiteStatsQueryDate,
@@ -18,9 +11,6 @@ import {
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsDatePicker extends Component {

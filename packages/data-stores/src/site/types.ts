@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { FeatureId } from '../wpcom-features';
 
 export interface NewSiteBlogDetails {
@@ -135,6 +132,7 @@ export interface Domain {
 	a_records_required_for_mapping?: string[];
 	primary_domain: boolean;
 	blog_id: number;
+	connection_mode?: string;
 	subscription_id?: any;
 	current_user_can_manage: boolean;
 	can_set_as_primary: boolean;

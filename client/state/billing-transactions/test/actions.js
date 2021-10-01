@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -19,6 +11,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 
 describe( 'actions', () => {
 	let spy;

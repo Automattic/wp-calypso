@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import Suggestions from '..';
 import Item from '../item';
 

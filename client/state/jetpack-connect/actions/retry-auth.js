@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import debugFactory from 'debug';
 import { REMOTE_PATH_AUTH } from 'calypso/jetpack-connect/constants';
+import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { JETPACK_CONNECT_RETRY_AUTH } from 'calypso/state/jetpack-connect/action-types';
 
 import 'calypso/state/jetpack-connect/init';
@@ -36,7 +30,7 @@ export function retryAuth( url, attemptNumber, fromParam, redirectAfterAuth ) {
 			} )
 		);
 		debug( 'retryAuth', url );
-		externalRedirect(
+		navigate(
 			addQueryArgs(
 				{
 					jetpack_connect_url: url + REMOTE_PATH_AUTH,

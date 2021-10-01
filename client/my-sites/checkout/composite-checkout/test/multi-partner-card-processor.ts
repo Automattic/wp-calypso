@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
-import wp from 'calypso/lib/wp';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import wp from 'calypso/lib/wp';
+import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 
 jest.mock( 'calypso/lib/wp' );
 jest.mock( 'calypso/lib/store-transactions', () => ( {

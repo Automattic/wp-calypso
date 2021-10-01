@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/my-sites/init';
 
 export const isSidebarSectionOpen = ( state, section ) =>

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import treeSelect from '../src';
 
 describe( 'index', () => {

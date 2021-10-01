@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { ScrollToTop } from '@automattic/onboarding';
+import { useDispatch, useSelect } from '@wordpress/data';
 import * as React from 'react';
 import { MemoryRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { ScrollToTop } from '@automattic/onboarding';
-
-/**
- * Internal dependencies
- */
-import { Route as FocusedLaunchRoute } from './route';
-import Summary from './summary';
+import { useSite, useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks';
+import { LAUNCH_STORE } from '../stores';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
+import { Route as FocusedLaunchRoute } from './route';
 import Success from './success';
-import { LAUNCH_STORE } from '../stores';
-import { useSite, useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks';
+import Summary from './summary';
 
 import './style.scss';
 

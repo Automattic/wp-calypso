@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import CustomizeComponent from 'calypso/my-sites/customize/main';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
 export function customize( context, next ) {
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.

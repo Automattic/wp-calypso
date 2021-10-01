@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
+import { isWpComMonthlyPlan, isWpComFreePlan } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isWpComMonthlyPlan, isWpComFreePlan } from '@automattic/calypso-products';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 /**
  * Return true if the site is eligible for a monthly plan on WPCOM.
  *
@@ -20,6 +17,9 @@ export default createSelector(
 		}
 
 		const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
+		if ( typeof currentPlanSlug === 'undefined' ) {
+			return true;
+		}
 
 		return (
 			( isAtomicSite( state, siteId ) && currentPlanSlug === 'jetpack_free' ) ||

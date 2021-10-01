@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
 import ScreenReaderText from '.';
 
 export default { title: 'ScreenReaderText' };

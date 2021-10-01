@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
-/**
- * Internal dependencies
- */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 
 export default function useLastLocation(): { goLastLocation: () => void } {

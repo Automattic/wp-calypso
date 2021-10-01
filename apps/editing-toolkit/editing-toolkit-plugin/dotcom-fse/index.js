@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import './blocks/navigation-menu';
 import './blocks/post-content';
 import './blocks/site-credit';

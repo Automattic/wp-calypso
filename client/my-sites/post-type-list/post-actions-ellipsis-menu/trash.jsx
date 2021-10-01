@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
-import { trashPost, deletePost } from 'calypso/state/posts/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { getPost } from 'calypso/state/posts/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { trashPost, deletePost } from 'calypso/state/posts/actions';
+import { getPost } from 'calypso/state/posts/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { bumpStatGenerator } from './utils';
 
 class PostActionsEllipsisMenuTrash extends Component {
 	static propTypes = {

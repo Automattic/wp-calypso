@@ -1,35 +1,24 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
 import { addQueryArgs } from '@wordpress/url';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { useTranslate } from 'i18n-calypso';
+import React, { ReactElement, FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import SecurityIcon from 'calypso/components/jetpack/security-icon';
-
-/**
- * Asset dependencies
- */
-import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
-import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const ScanMultisiteBody: FunctionComponent = () => {

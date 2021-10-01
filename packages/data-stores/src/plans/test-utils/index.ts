@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { PlanFeature } from '../types';
 
 export const buildPlanFeaturesDict = (

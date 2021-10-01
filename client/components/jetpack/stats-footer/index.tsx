@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import React, { ReactElement } from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
 
 import './style.scss';
 

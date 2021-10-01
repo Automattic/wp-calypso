@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { describe, expect, test } from '@jest/globals';
-
-/**
- * Internal dependencies
- */
 import {
+	getRandomInteger,
 	getAccountCredential,
 	getCalypsoURL,
 	getAccountSiteURL,
@@ -15,6 +9,19 @@ import {
 } from '../src/data-helper';
 
 describe( 'DataHelper Tests', function () {
+	describe( `Test: getRandomInteger`, function () {
+		test.each`
+			min    | max      | expected
+			${ 0 } | ${ 0 }   | ${ [ 0 ] }
+			${ 0 } | ${ 1 }   | ${ [ 0, 1 ] }
+			${ 0 } | ${ 200 } | ${ [ ...Array( 200 ).keys() ] }
+		`( 'Generated integer is within $min and $max ranges', function ( { min, max, expected } ) {
+			const generated = getRandomInteger( min, max );
+			expect( generated ).toBeGreaterThanOrEqual( min );
+			expect( expected.includes( generated ) );
+		} );
+	} );
+
 	describe( `Test: getCalypsoURL`, function () {
 		test.each`
 			route           | queryStrings                               | expected
@@ -100,7 +107,7 @@ describe( 'DataHelper Tests', function () {
 		`(
 			'Returns $expected if toTitleCase is called with $words',
 			function ( { suite, viewport, expected } ) {
-				process.env.VIEWPORT_NAME = viewport;
+				process.env.TARGET_DEVICE = viewport;
 				expect( createSuiteTitle( suite ) ).toStrictEqual( expected );
 			}
 		);

@@ -1,43 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
-import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
-import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import {
-	isFetching as isWporgPluginFetching,
-	isFetched as isWporgPluginFetched,
-	getPlugin as getWporgPlugin,
-} from 'calypso/state/plugins/wporg/selectors';
-import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import PluginNotices from 'calypso/my-sites/plugins/notices';
-import MainComponent from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import EmptyContent from 'calypso/components/empty-content';
+import HeaderCake from 'calypso/components/header-cake';
+import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
+import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import DocumentHead from 'calypso/components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
-import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
-import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -46,8 +27,20 @@ import {
 	isPluginActionInProgress,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import {
+	isFetching as isWporgPluginFetching,
+	isFetched as isWporgPluginFetched,
+	getPlugin as getWporgPlugin,
+} from 'calypso/state/plugins/wporg/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NoPermissionsError from './no-permissions-error';
 
 function goBack() {
 	window.history.back();

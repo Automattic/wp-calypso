@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import mockedFlows from './fixtures/flows';
 import flows from 'calypso/signup/config/flows';
+import mockedFlows from './fixtures/flows';
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {

@@ -1,11 +1,9 @@
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	IMPORTER_NUX_SITE_DETAILS_SET,
 	IMPORTER_NUX_URL_INPUT_SET,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const urlInputValue = ( state = '', action ) => {
 	switch ( action.type ) {
@@ -36,7 +34,10 @@ export const siteDetails = ( state = null, action ) => {
 	return state;
 };
 
-export default combineReducers( {
-	siteDetails,
-	urlInputValue,
-} );
+export default withStorageKey(
+	'importerNux',
+	combineReducers( {
+		siteDetails,
+		urlInputValue,
+	} )
+);

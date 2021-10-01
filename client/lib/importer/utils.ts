@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import url from 'url';
 import { trim } from 'lodash';
 

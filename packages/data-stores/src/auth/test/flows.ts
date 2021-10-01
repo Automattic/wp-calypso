@@ -6,19 +6,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { dispatch, select } from '@wordpress/data';
+import nock from 'nock';
 import { parse } from 'qs';
+import waitForExpect from 'wait-for-expect';
 import wpcomRequest from 'wpcom-proxy-request';
 import 'jest-fetch-mock';
-import nock from 'nock';
-import waitForExpect from 'wait-for-expect';
-
-/**
- * Internal dependencies
- */
 import { register } from '..';
 
 jest.mock( '../constants', () => ( {

@@ -1,14 +1,10 @@
-/**
- * Internal dependencies
- */
-
-import { combineReducers } from 'calypso/state/utils';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 const createRequestingReducer = ( requesting ) => ( state, { siteId } ) => ( {
 	...state,

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isPremium } from './is-premium';

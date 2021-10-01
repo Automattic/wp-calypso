@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { PlanSlug } from '../plans';
 
 export type FeatureId =

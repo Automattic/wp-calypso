@@ -1,29 +1,27 @@
-/**
- * External dependencies
- */
-import express from 'express';
+import { execSync } from 'child_process';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { stringify } from 'qs';
-import crypto from 'crypto';
-import { execSync } from 'child_process';
+import config from '@automattic/calypso-config';
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import express from 'express';
 import { get, includes, pick, snakeCase } from 'lodash';
-import bodyParser from 'body-parser';
+import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import sanitize from 'calypso/server/sanitize';
-import { pathToRegExp } from 'calypso/utils';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
+import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import {
 	serverRender,
 	renderJsx,
@@ -31,26 +29,21 @@ import {
 	attachHead,
 	attachI18n,
 } from 'calypso/server/render';
+import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
-import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import { createReduxStore } from 'calypso/state';
-import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
-import { setStore } from 'calypso/state/redux-store';
-import initialReducer from 'calypso/state/reducer';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { login } from 'calypso/lib/paths';
-import { logSectionResponse } from './analytics';
-import analytics from 'calypso/server/lib/analytics';
-import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
-import middlewareBuildTarget from '../middleware/build-target.js';
+import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
+import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
+import { logSectionResponse } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -120,8 +113,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang = request.context.lang;
 	}
 
-	const target = request.getTarget();
-
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
 		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
@@ -138,7 +129,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
-		isRTL: config( 'rtl' ),
+		isRTL: false,
 		requestFrom: request.query.from,
 		isWCComConnect,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
@@ -151,8 +142,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
-		target: target || 'fallback',
+		target: 'evergreen',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
@@ -215,13 +205,11 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	const targetFromRequest = req.getTarget();
-	const target = targetFromRequest === null ? 'fallback' : targetFromRequest;
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join(
 		rootPath,
 		'public',
-		target,
+		'evergreen',
 		'languages',
 		'lang-revisions.json'
 	);
@@ -556,11 +544,11 @@ export default function pages() {
 
 	app.use( logSectionResponse );
 	app.use( cookieParser() );
-	app.use( middlewareBuildTarget() );
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+	app.use( middlewareUnsupportedBrowser() );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
@@ -619,17 +607,21 @@ export default function pages() {
 		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
 				const queryFor = req.query?.for;
+				const ref = req.query?.ref;
 
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
-				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
-					res.redirect( 'https://wordpress.com/pricing' );
+				} else {
+					const pricingPageUrl = ref
+						? `https://wordpress.com/pricing/?ref=${ ref }`
+						: 'https://wordpress.com/pricing';
+					res.redirect( pricingPageUrl );
 				}
+			} else {
+				next();
 			}
-
-			next();
 		} );
 	}
 
@@ -747,14 +739,28 @@ export default function pages() {
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
-		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
-		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
-		const isWpcom = wpcomRe.test( primaryBlogUrl );
+	function validateRedirect( req, url ) {
+		if ( ! url ) {
+			return false;
+		}
 
-		req.context.dashboardUrl = isWpcom
-			? primaryBlogUrl + '/wp-admin'
-			: 'https://dashboard.wordpress.com/wp-admin/';
+		try {
+			const serverOrigin = req.protocol + '://' + req.host;
+			return new URL( url, serverOrigin ).origin === serverOrigin;
+		} catch {
+			// if parsing the URL fails, it is not valid
+			return false;
+		}
+	}
+
+	app.get( '/browsehappy', ( req, res ) => {
+		// We only want to allow a redirect to Calypso routes, so we check that
+		// the `from` query param has the same origin.
+		const { from } = req.query;
+		const redirectLocation = from && validateRedirect( req, from ) ? from : '/';
+
+		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
+		req.context.from = redirectLocation;
 
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );

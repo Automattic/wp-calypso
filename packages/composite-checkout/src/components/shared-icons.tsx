@@ -1,15 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
+const CheckIconSvg = styled.svg`
+	fill: #fff;
+`;
 
-export function CheckIcon( { className, id }: { className?: string; id: string } ) {
+export function CheckIcon( { className, id }: { className?: string; id: string } ): JSX.Element {
 	return (
 		<CheckIconSvg
 			width="20"
@@ -42,11 +39,7 @@ CheckIcon.propTypes = {
 	id: PropTypes.string,
 };
 
-const CheckIconSvg = styled.svg`
-	fill: #fff;
-`;
-
-export function ErrorIcon( { className }: { className?: string } ) {
+export function ErrorIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +57,7 @@ export function ErrorIcon( { className }: { className?: string } ) {
 	);
 }
 
-export function InfoIcon( { className }: { className?: string } ) {
+export function InfoIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

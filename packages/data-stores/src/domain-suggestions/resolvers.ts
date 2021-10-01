@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
+import { stringify } from 'qs';
 import validator from 'validator';
-
-/**
- * Internal dependencies
- */
+import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import {
 	receiveCategories,
 	receiveDomainSuggestionsSuccess,
@@ -15,7 +9,6 @@ import {
 	fetchDomainSuggestions,
 	receiveDomainAvailability,
 } from './actions';
-import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import { getFormattedPrice } from './utils';
 import type { DomainSuggestion, DomainSuggestionQuery } from './types';
 
@@ -111,7 +104,7 @@ export function* __internalGetDomainSuggestions( queryObject: DomainSuggestionQu
 	} catch ( e ) {
 		// e.g. no connection, or JSON parsing error
 		return receiveDomainSuggestionsError(
-			e.message || ( translate( 'Error while fetching server response' ) as string )
+			( e as Error ).message || ( translate( 'Error while fetching server response' ) as string )
 		);
 	}
 }

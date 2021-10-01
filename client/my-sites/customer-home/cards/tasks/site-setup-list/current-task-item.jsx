@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
+import React from 'react';
 import Badge from 'calypso/components/badge';
-import Gridicon from 'calypso/components/gridicon';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (

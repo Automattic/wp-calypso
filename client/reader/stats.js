@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { partial, pick } from 'lodash';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -154,15 +147,13 @@ export function recordTracksRailcar( action, eventName, railcar, overrides = {} 
 	);
 }
 
-export const recordTracksRailcarRender = partial(
-	recordTracksRailcar,
-	'calypso_traintracks_render'
-);
+export function recordTracksRailcarRender( eventName, railcar, overrides ) {
+	return recordTracksRailcar( 'calypso_traintracks_render', eventName, railcar, overrides );
+}
 
-export const recordTracksRailcarInteract = partial(
-	recordTracksRailcar,
-	'calypso_traintracks_interact'
-);
+export function recordTracksRailcarInteract( eventName, railcar, overrides ) {
+	return recordTracksRailcar( 'calypso_traintracks_interact', eventName, railcar, overrides );
+}
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
 	recordTrack( eventName, { ...getTracksPropertiesForPost( post ), ...additionalProps }, options );

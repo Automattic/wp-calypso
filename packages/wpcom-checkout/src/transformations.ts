@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';

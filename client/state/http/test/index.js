@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-const fetch = require( 'jest-fetch-mock' );
 import { extendAction } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
-import { httpHandler } from '../';
 import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
+import { httpHandler } from '../';
+const fetch = require( 'jest-fetch-mock' );
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };

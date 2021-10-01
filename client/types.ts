@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
