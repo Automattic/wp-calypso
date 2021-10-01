@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -16,11 +17,37 @@ import ReaderSidebarFollowingItem from './item';
 import '../style.scss';
 
 export class ReaderSidebarFollowedSites extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			sitePage: 1,
+			sitesPerPage: 50,
+			sitesToShow: [],
+		};
+	}
+
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
 		isFollowingOpen: PropTypes.bool,
 	};
+
+	componentDidMount() {
+		const { sitePage, sitesPerPage } = this.state;
+		this.setState( {
+			sitesToShow: Object.values( this.props.sites ).slice( 0, sitesPerPage * sitePage ),
+		} );
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		const { sitePage, sitesPerPage } = this.state;
+
+		if ( this.props.sites !== prevProps.sites || this.state.sitePage !== prevState.sitePage ) {
+			this.setState( {
+				sitesToShow: Object.values( this.props.sites ).slice( 0, sitesPerPage * sitePage ),
+			} );
+		}
+	}
 
 	handleReaderSidebarFollowedSitesClicked = () => {
 		recordAction( 'clicked_reader_sidebar_followed_sites' );
@@ -45,20 +72,27 @@ export class ReaderSidebarFollowedSites extends Component {
 		);
 	}
 
-	renderSites() {
-		const { sites, path } = this.props;
+	loadMoreSites = () => {
+		this.setState( {
+			sitePage: this.state.sitePage + 1,
+		} );
+	};
+
+	renderSites = ( sites ) => {
+		const { path } = this.props;
 		return map(
 			sites,
 			( site ) => site && <ReaderSidebarFollowingItem key={ site.ID } path={ path } site={ site } />
 		);
-	}
+	};
 
 	render() {
-		const { path, sites, translate } = this.props;
+		const { path, translate, sites } = this.props;
 
-		if ( ! sites ) {
+		if ( ! this.state.sitesToShow ) {
 			return null;
 		}
+
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isFollowingOpen }
@@ -76,7 +110,8 @@ export class ReaderSidebarFollowedSites extends Component {
 				}
 			>
 				{ this.renderAll() }
-				{ this.renderSites() }
+				{ this.renderSites( this.state.sitesToShow ) }
+				<Button onClick={ this.loadMoreSites }>{ translate( 'Load more' ) }</Button>
 			</ExpandableSidebarMenu>
 		);
 	}
