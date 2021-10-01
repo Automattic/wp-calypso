@@ -26,14 +26,15 @@ function allowPath( path ) {
 	const possiblePathLocales = [ 'en', ...config( 'magnificent_non_en_locales' ) ];
 	for ( const locale of possiblePathLocales ) {
 		// Strip leading locale (e.g. 'es/')
-		if ( parsedPath.startsWith( locale ) ) {
-			parsedPath = parsedPath.replace( new RegExp( `^${ locale }/?` ), '' );
+		if ( parsedPath.startsWith( locale + '/' ) ) {
+			parsedPath = parsedPath.replace( new RegExp( `^${ locale }/` ), '' );
 			break;
 		}
 	}
 	// At this point, '/es/themes' is just 'themes', ready to match our allowed paths.
 	const allowedPaths = [ 'browsehappy', 'log-in', 'start', 'new', 'themes', 'theme', 'domains' ];
-	return allowedPaths.some( ( p ) => parsedPath.startsWith( p ) );
+	// For example, match either exactly "themes" or "themes/*"
+	return allowedPaths.some( ( p ) => parsedPath === p || parsedPath.startsWith( p + '/' ) );
 }
 
 export default () => ( req, res, next ) => {
