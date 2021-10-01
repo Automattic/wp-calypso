@@ -202,7 +202,9 @@ const MailboxSelectionList = () => {
 		return <MailboxLoaderError refetchMailboxes={ refetch } siteId={ selectedSiteId } />;
 	}
 
-	const mailboxes = data?.mailboxes ?? [];
+	const mailboxes = ( data?.mailboxes ?? [] ).filter(
+		( mailbox ) => ! isEmailForwardAccount( mailbox )
+	);
 
 	return (
 		<div className="mailbox-selection-list__container">

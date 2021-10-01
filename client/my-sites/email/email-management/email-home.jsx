@@ -57,7 +57,6 @@ class EmailManagementHome extends Component {
 			emailListInactiveHeader,
 			hasSiteDomainsLoaded,
 			hasSitesLoaded,
-			showActiveDomainList = true,
 			selectedDomainName,
 			selectedSite,
 			selectedSiteId,
@@ -126,14 +125,13 @@ class EmailManagementHome extends Component {
 
 		return this.renderContentWithHeader(
 			<>
-				{ showActiveDomainList && (
-					<EmailListActive
-						currentRoute={ currentRoute }
-						domains={ domainsWithEmail }
-						selectedSiteId={ selectedSiteId }
-						selectedSiteSlug={ selectedSite.slug }
-					/>
-				) }
+				<EmailListActive
+					currentRoute={ currentRoute }
+					domains={ domainsWithEmail }
+					selectedSiteId={ selectedSiteId }
+					selectedSiteSlug={ selectedSite.slug }
+				/>
+
 				<EmailListInactive
 					currentRoute={ currentRoute }
 					domains={ domainsWithNoEmail }
