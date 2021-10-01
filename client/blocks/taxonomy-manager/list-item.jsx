@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -22,6 +22,10 @@ import { deleteTerm } from 'calypso/state/terms/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class TaxonomyManagerListItem extends Component {
+	constructor( props ) {
+		super( props );
+		this.countRef = createRef();
+	}
 	static propTypes = {
 		canSetAsDefault: PropTypes.bool,
 		deleteTerm: PropTypes.func,
@@ -157,18 +161,14 @@ class TaxonomyManagerListItem extends Component {
 				{ typeof term.post_count !== 'undefined' && (
 					<div className="taxonomy-manager__count">
 						<Count
-							ref="count"
+							ref={ this.countRef }
 							count={ term.post_count }
 							onMouseEnter={ this.showTooltip }
 							onMouseLeave={ this.hideTooltip }
 						/>
 					</div>
 				) }
-				<Tooltip
-					context={ this.refs && this.refs.count }
-					isVisible={ this.state.showTooltip }
-					position="left"
-				>
+				<Tooltip context={ this.countRef } isVisible={ this.state.showTooltip } position="left">
 					{ this.tooltipText() }
 				</Tooltip>
 				<EllipsisMenu position="bottom left">

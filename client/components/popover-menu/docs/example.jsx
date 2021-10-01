@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import { PureComponent } from 'react';
+import { PureComponent, createRef } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -16,6 +16,8 @@ class PopoverExample extends PureComponent {
 		this.closePopover = this.closePopover.bind( this );
 		this.showPopoverMenu = this.showPopoverMenu.bind( this );
 		this.closePopoverMenu = this.closePopoverMenu.bind( this );
+		this.popoverButtonRef = createRef();
+		this.popoverMenuButtonRef = createRef();
 
 		this.state = {
 			popoverPosition: 'bottom left',
@@ -50,7 +52,11 @@ class PopoverExample extends PureComponent {
 	renderPopover() {
 		return (
 			<div>
-				<button className="button" ref="popoverButton" onClick={ this.swapPopoverVisibility }>
+				<button
+					className="button"
+					ref={ this.popoverButtonRef }
+					onClick={ this.swapPopoverVisibility }
+				>
 					Show Popover
 				</button>
 
@@ -59,7 +65,7 @@ class PopoverExample extends PureComponent {
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.popoverButtonRef }
 					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
 				>
 					<div style={ { padding: '10px' } }>Simple Popover Instance</div>
@@ -71,7 +77,11 @@ class PopoverExample extends PureComponent {
 	renderMenuPopover() {
 		return (
 			<div>
-				<button className="button" ref="popoverMenuButton" onClick={ this.showPopoverMenu }>
+				<button
+					className="button"
+					ref={ this.popoverMenuButtonRef }
+					onClick={ this.showPopoverMenu }
+				>
 					Show Popover Menu
 				</button>
 
@@ -82,7 +92,7 @@ class PopoverExample extends PureComponent {
 					isVisible={ this.state.showPopoverMenu }
 					onClose={ this.closePopoverMenu }
 					position={ this.state.popoverPosition !== 'custom' ? this.state.popoverPosition : null }
-					context={ this.refs && this.refs.popoverMenuButton }
+					context={ this.popoverMenuButtonRef }
 					customPosition={ this.state.popoverPosition === 'custom' ? customPosition : null }
 				>
 					<PopoverMenuItem action="A">Item A</PopoverMenuItem>

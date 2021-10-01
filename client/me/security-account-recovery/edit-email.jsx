@@ -1,8 +1,7 @@
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { Component, createRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -10,6 +9,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Buttons from './buttons';
 
 class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
+	constructor( props ) {
+		super( props );
+		this.emailInput = createRef();
+	}
 	static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
 
 	static propTypes = {
@@ -63,7 +66,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 						isError={ this.state.isInvalid }
 						onKeyUp={ this.onKeyUp }
 						name="email"
-						ref="email"
+						ref={ this.emailInput }
 						value={ this.state.email }
 						onChange={ this.handleChange }
 					/>
@@ -85,7 +88,7 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 	}
 
 	focusInput = () => {
-		ReactDom.findDOMNode( this.refs.email ).focus();
+		this.emailInput.current.focus();
 	};
 
 	isSavable = () => {

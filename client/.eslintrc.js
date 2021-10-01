@@ -23,6 +23,7 @@ module.exports = {
 			rules: {
 				// We use a log of console.log() in examples.
 				'no-console': 'off',
+				'react/react-in-jsx-scope': 'off',
 			},
 		},
 	],
