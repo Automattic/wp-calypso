@@ -16,7 +16,9 @@ import {
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -57,11 +59,11 @@ const MailboxItemIcon = ( { mailbox } ) => {
 
 const getProvider = ( mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return 'titan';
+		return TITAN_PROVIDER_NAME;
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
-		return 'google';
+		return GOOGLE_PROVIDER_NAME;
 	}
 
 	if ( isEmailForwardAccount( mailbox ) ) {
@@ -71,7 +73,7 @@ const getProvider = ( mailbox ) => {
 	return null;
 };
 
-const tracksEvent = ( { mailbox, app, context } ) => {
+const trackAppLaunchEvent = ( { mailbox, app, context } ) => {
 	const provider = getProvider( mailbox );
 	recordEmailAppLaunchEvent( {
 		app,
@@ -92,7 +94,7 @@ const MailboxItem = ( { mailbox } ) => {
 	return (
 		<Card
 			onClick={ () =>
-				tracksEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
+				trackAppLaunchEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
 			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox ) }
