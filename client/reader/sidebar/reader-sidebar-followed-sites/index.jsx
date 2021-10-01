@@ -109,7 +109,13 @@ export class ReaderSidebarFollowedSites extends Component {
 				{ this.renderAll() }
 				{ this.renderSites( sitesToShow ) }
 				{ ! allSitesLoaded && (
-					<Button onClick={ this.loadMoreSites }>{ translate( 'Load more' ) }</Button>
+					<Button
+						plain
+						className="sidebar-streams__following-load-more"
+						onClick={ this.loadMoreSites }
+					>
+						{ translate( 'Load more sites' ) }
+					</Button>
 				) }
 			</ExpandableSidebarMenu>
 		);
