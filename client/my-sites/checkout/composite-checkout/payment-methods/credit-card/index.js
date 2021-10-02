@@ -18,7 +18,10 @@ import CreditCardPayButton from './credit-card-pay-button';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
-export function createCreditCardPaymentMethodStore( { initialUseForAllSubscriptions } ) {
+export function createCreditCardPaymentMethodStore( {
+	initialUseForAllSubscriptions,
+	allowUseForAllSubscriptions,
+} ) {
 	debug( 'creating a new credit card payment method store' );
 	const actions = {
 		changeBrand( payload ) {
@@ -139,13 +142,23 @@ export function createCreditCardPaymentMethodStore( { initialUseForAllSubscripti
 		}
 	}
 
-	function allSubscriptionsReducer( state = false, action ) {
+	function allSubscriptionsReducer( state, action ) {
 		switch ( action?.type ) {
 			case 'USE_FOR_ALL_SUBSCRIPTIONS_SET':
 				return action.payload;
 			default:
 				return state;
 		}
+	}
+
+	function getInitialUseForAllSubscriptionsValue() {
+		if ( ! allowUseForAllSubscriptions ) {
+			return false;
+		}
+		if ( initialUseForAllSubscriptions !== undefined ) {
+			return initialUseForAllSubscriptions;
+		}
+		return false;
 	}
 
 	const store = registerStore( 'credit-card', {
@@ -155,10 +168,7 @@ export function createCreditCardPaymentMethodStore( { initialUseForAllSubscripti
 				cardDataErrors: cardDataErrorsReducer(),
 				cardDataComplete: cardDataCompleteReducer(),
 				brand: brandReducer(),
-				useForAllSubscriptions:
-					initialUseForAllSubscriptions !== undefined
-						? initialUseForAllSubscriptions
-						: allSubscriptionsReducer(),
+				useForAllSubscriptions: getInitialUseForAllSubscriptionsValue(),
 			},
 			action
 		) {
