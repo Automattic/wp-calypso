@@ -49,7 +49,10 @@ function ChangePaymentMethod( props ) {
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( props.payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
-	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
+	const paymentMethods = useCreateAssignablePaymentMethods(
+		currentPaymentMethodId,
+		props.purchase.productSlug
+	);
 
 	if ( isDataLoading ) {
 		return (

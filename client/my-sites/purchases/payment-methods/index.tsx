@@ -107,6 +107,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),
+		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
 	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [

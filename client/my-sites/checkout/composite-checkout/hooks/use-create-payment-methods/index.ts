@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isJetpackProduct } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	createApplePayMethod,
@@ -60,6 +61,7 @@ export function useCreateCreditCard( {
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
 	initialUseForAllSubscriptions,
+	allowUseForAllSubscriptions,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -69,11 +71,16 @@ export function useCreateCreditCard( {
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
 	initialUseForAllSubscriptions?: boolean;
+	allowUseForAllSubscriptions?: boolean;
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo(
-		() => createCreditCardPaymentMethodStore( { initialUseForAllSubscriptions } ),
-		[ initialUseForAllSubscriptions ]
+		() =>
+			createCreditCardPaymentMethodStore( {
+				initialUseForAllSubscriptions,
+				allowUseForAllSubscriptions,
+			} ),
+		[ initialUseForAllSubscriptions, allowUseForAllSubscriptions ]
 	);
 	const stripeMethod = useMemo(
 		() =>
@@ -431,17 +438,17 @@ export default function useCreatePaymentMethods( {
 		siteSlug,
 	} );
 
-	const shouldUseEbanx = Boolean(
-		responseCart?.allowed_payment_methods?.includes(
-			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
-		)
+	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
+		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
+	const allowUseForAllSubscriptions = ! responseCart.products.some( isJetpackProduct );
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 		shouldUseEbanx,
+		allowUseForAllSubscriptions,
 	} );
 
 	const fullCreditsPaymentMethod = useCreateFullCredits();
