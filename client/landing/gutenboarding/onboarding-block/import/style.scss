@@ -110,11 +110,12 @@
 			margin-right: 30px;
 
 			> div {
+				display: none;
 				margin: 0 auto;
 				background: var( --studio-gray-0 );
-				font-size: 8px; /* stylelint-disable-line */
 
 				@include break-small {
+					display: block;
 					width: 350px;
 					padding: 2px;
 					border-radius: 8px; /* stylelint-disable-line */
