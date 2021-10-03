@@ -104,6 +104,29 @@
 			}
 		}
 
+		.import__preview-url-field {
+			flex-grow: 1;
+			text-align: center;
+			margin-right: 30px;
+
+			> div {
+				margin: 0 auto;
+				background: var( --studio-gray-0 );
+				font-size: 8px; /* stylelint-disable-line */
+
+				@include break-small {
+					width: 350px;
+					padding: 2px;
+					border-radius: 8px; /* stylelint-disable-line */
+					font-size: $font-body-extra-small;
+				}
+
+				span {
+					color: var( --studio-gray );
+				}
+			}
+		}
+
 		.import__screenshot {
 			margin-top: 15px;
 
@@ -113,4 +136,10 @@
 		}
 	}
 
+}
+
+.import__details-modal {
+	.import__details-modal-content {
+		width: 716px;
+	}
 }

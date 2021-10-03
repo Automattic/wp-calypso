@@ -3,6 +3,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import ImportPreview from './preview';
 import './style.scss';
 
 const ImportSite: React.FunctionComponent = () => {
@@ -11,10 +12,8 @@ const ImportSite: React.FunctionComponent = () => {
 	// Temp mock
 	const data = {
 		website: 'https://openweb.com/',
-		platform: 'Platform',
+		platform: 'Wix',
 	};
-
-	const mShotUrl = `https://s0.wp.com/mshots/v1/${ data.website }`;
 
 	return (
 		<div className="gutenboarding-page import">
@@ -43,22 +42,7 @@ const ImportSite: React.FunctionComponent = () => {
 				</div>
 			</div>
 			<div className="import__content">
-				<div className={ `import__preview` }>
-					<div className="import__preview-wrapper">
-						{
-							<div role="presentation" className="import__preview-bar">
-								<div role="presentation" className="import__preview-bar-dot" />
-								<div role="presentation" className="import__preview-bar-dot" />
-								<div role="presentation" className="import__preview-bar-dot" />
-							</div>
-						}
-						<img
-							className={ 'import__screenshot' }
-							src={ mShotUrl }
-							alt="Website screenshot preview"
-						/>
-					</div>
-				</div>
+				<ImportPreview website={ data.website } />
 			</div>
 		</div>
 	);
