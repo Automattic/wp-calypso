@@ -9,7 +9,6 @@ import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import isSiteUsingCoreSiteEditorSelector from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -89,10 +88,7 @@ class CurrentTheme extends Component {
 								</div>
 								<p>
 									{ translate( 'This is the active theme on your site.' ) }{ ' ' }
-									<InlineSupportLink
-										supportPostId={ 184023 }
-										supportLink={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									>
+									<InlineSupportLink supportContext="themes-switch">
 										{ translate( 'Learn more.' ) }
 									</InlineSupportLink>
 								</p>

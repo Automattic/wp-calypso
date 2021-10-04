@@ -39,6 +39,10 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
 	},
+	'themes-switch': {
+		link: 'https://wordpress.com/support/changing-themes/',
+		post_id: 184023,
+	},
 	'themes-upload': {
 		link: 'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/',
 		post_id: 134784,
