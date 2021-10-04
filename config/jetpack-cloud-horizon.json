@@ -32,7 +32,6 @@
 		"checkout/google-pay": true,
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
-		"jetpack/backups-date-picker": true,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,

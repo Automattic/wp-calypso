@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -10,14 +9,16 @@ import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 import DateButton from './date-button';
+import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 
 import './style.scss';
 
 const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
 const NEXT_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
+const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_calendar' );
 
 const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
 	if ( key === ' ' ) {
@@ -42,6 +43,12 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		firstKnownBackupAttempt.backupAttempt?.activityTs,
 		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
 	);
+	// Get the oldest visible backup date.
+	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
+	// If the number of visible days is falsy, then use the oldest date as the first visible backup date.
+	const firstVisibleBackupDate = visibleDays
+		? today.subtract( visibleDays, 'days' )
+		: oldestDateAvailable;
 
 	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable );
 
@@ -105,6 +112,18 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		onDateChange( nextDate );
 	}, [ canGoToNextDate, dispatch, onDateChange, nextDate ] );
 
+	const goToCalendarDate = useCallback(
+		( selectedDate ) => {
+			if ( ! canGoToDate( selectedDate ) ) {
+				return false;
+			}
+
+			dispatch( CALENDAR_DATE_CLICK );
+			onDateChange( selectedDate );
+		},
+		[ dispatch, onDateChange ]
+	);
+
 	return (
 		<div className="backup-date-picker">
 			<div className="backup-date-picker__select-date-container">
@@ -164,9 +183,9 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 			</div>
 
 			<DateButton
-				onDateSelected={ onDateChange }
+				onDateSelected={ goToCalendarDate }
 				selectedDate={ selectedDate }
-				firstBackupDate={ oldestDateAvailable }
+				firstBackupDate={ firstVisibleBackupDate }
 			/>
 		</div>
 	);

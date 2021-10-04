@@ -2,10 +2,16 @@ import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import DatePicker from 'calypso/components/date-picker';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+
+const DATE_PICKER_OPEN = recordTracksEvent( 'calypso_jetpack_backup_date_picker_open' );
 
 const DateButton: React.FC< Props > = ( { selectedDate, onDateSelected, firstBackupDate } ) => {
+	const dispatch = useDispatch();
+
 	const [ pickerVisible, setPickerVisible ] = useState( false );
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
@@ -50,7 +56,15 @@ const DateButton: React.FC< Props > = ( { selectedDate, onDateSelected, firstBac
 		}
 	};
 
+	/**
+	 * Toggle the picker open or closed.
+	 * Will fire an event when the picker is opened.
+	 */
 	const handlePickerToggle = () => {
+		if ( ! pickerVisible ) {
+			dispatch( DATE_PICKER_OPEN );
+		}
+
 		setPickerVisible( ! pickerVisible );
 	};
 

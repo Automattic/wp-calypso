@@ -214,9 +214,37 @@
 		box-shadow: 0 0 5px 1px #dcdcde;
 	}
 
+	// Overriding this rule specifically for backups output. ( the :not selectors add extra specificity )
+	// This is not totally ideal, but a bit better than stringing random selectors together to override specificity.
+	.DayPicker-Day.DayPicker-Day--is-selected:not( .DayPicker-Day--today ):not( .DayPicker-Day--events ) .date-picker__day,
+	// When today is the active day.
+	.DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
 	.DayPicker-Day--is-selected .date-picker__day {
-		color: var( --studio-jetpack-green-50 );
+		background-color: var( --studio-jetpack-green-50 );
 	}
+
+	// Show a small dot on the days that should have a backup available.
+	.DayPicker-Day:not( .DayPicker-Day--disabled ) .date-picker__day {
+		position: relative;
+
+		&::after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 1px;
+			left: calc( 50% - 2px );
+			width: 4px;
+			height: 4px;
+			border-radius: 2px;
+			background-color: var( --studio-gray-10 );
+		}
+	}
+
+	// Change the color of the backup dot on the active day.
+	.DayPicker-Day:not( .DayPicker-Day--disabled ).DayPicker-Day--is-selected .date-picker__day::after {
+		background-color: white;
+	}
+
 
 	@include breakpoint-deprecated('>660px') {
 		position: absolute;
