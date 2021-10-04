@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { createElement, ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import * as React from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import starIcon from './assets/star.svg';
@@ -17,7 +17,6 @@ import './style.scss';
 
 type OwnProps = {
 	item: SelectorProduct;
-	headingLevel?: number;
 	description?: ReactNode;
 	originalPrice: number;
 	discountedPrice?: number;
@@ -43,7 +42,6 @@ type OwnProps = {
 
 const JetpackProductCard: React.FC< OwnProps > = ( {
 	item,
-	headingLevel,
 	description,
 	originalPrice,
 	discountedPrice,
@@ -67,10 +65,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	scrollCardIntoView,
 } ) => {
 	const translate = useTranslate();
-	const parsedHeadingLevel = Number.isFinite( headingLevel )
-		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
-		: 2;
-	const parsedSubheadingLevel = Math.min( parsedHeadingLevel + 1, 6 );
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -100,17 +94,10 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				{ createElement(
-					`h${ parsedHeadingLevel }`,
-					{ className: 'jetpack-product-card__product-name' },
-					<>{ item.displayName }</>
+				<h3 className="jetpack-product-card__product-name">{ item.displayName }</h3>
+				{ item.subheader && (
+					<h4 className="jetpack-product-card__product-subheader">{ item.subheader }</h4>
 				) }
-				{ item.subheader &&
-					createElement(
-						`h${ parsedSubheadingLevel }`,
-						{ className: 'jetpack-product-card__product-subheader' },
-						<>{ item.subheader }</>
-					) }
 
 				<DisplayPrice
 					isDeprecated={ isDeprecated }
