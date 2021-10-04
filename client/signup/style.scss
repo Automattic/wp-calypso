@@ -149,41 +149,10 @@ body.is-section-signup .layout.gravatar {
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		button:not( .is-compact ):not( .is-primary ) {
+		.layout:not( .is-horizontal-layout ) button:not( .is-compact ):not( .is-primary ) {
 			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
-		}
-	}
-}
-
-// The container wrapped around every
-// step in signup
-body.is-section-signup .layout:not( .dops ) .step-wrapper {
-	max-width: 960px;
-	margin: 0 auto;
-
-	// Some steps (like plans) need a larger
-	// width column.
-	&.is-wide-layout {
-		max-width: 1040px;
-	}
-
-	// pressable-nux has no title or subtitle so
-	// needs to not hide the (W) logo
-	.is-pressable-nux & {
-		margin-top: 30px;
-	}
-
-	// On small screens remove the margin from the
-	// bottom of the cards.
-	@include breakpoint-deprecated( '<660px' ) {
-		.card {
-			margin-bottom: 0;
-		}
-
-		&.has-navigation {
-			padding-bottom: 60px;
 		}
 	}
 }
@@ -213,12 +182,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			color: var( --color-text-inverted );
 		}
 	}
-}
-
-// Skip button
-.step-wrapper__buttons {
-	text-align: center;
-	margin-bottom: 20px;
 }
 
 .is-section-signup .layout__content,
@@ -415,11 +378,13 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.step-wrapper__header {
-		margin: 24px 20px;
+	.step-wrapper:not( .is-horizontal-layout ) {
+		.step-wrapper__header {
+			margin: 24px 20px;
 
-		@include break-large {
-			margin: 48px 0 40px;
+			@include break-large {
+				margin: 48px 0 40px;
+			}
 		}
 	}
 
@@ -437,10 +402,10 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.25rem; /* stylelint-disable-line */
+			font-size: 2.15rem; /* stylelint-disable-line */
 
 			@include break-xlarge {
-				font-size: 2.6rem; /* stylelint-disable-line */
+				font-size: 2.75rem; /* stylelint-disable-line */
 			}
 		}
 

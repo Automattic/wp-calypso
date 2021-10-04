@@ -62,6 +62,10 @@ function getSignupDestination( { domainItem, siteId, siteSlug } ) {
 		return '/home';
 	}
 
+	if ( isEnabled( 'signup/hero-flow' ) ) {
+		return addQueryArgs( { siteSlug }, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
+	}
+
 	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
 		let queryParam = { siteSlug };
 		if ( domainItem ) {
@@ -94,6 +98,13 @@ function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
 
+function getDestinationFromIntent( dependencies ) {
+	if ( dependencies.intent === 'write' ) {
+		return `/post/${ dependencies.siteSlug }`;
+	}
+	return getChecklistThemeDestination( dependencies );
+}
+
 function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
 	return addQueryArgs(
 		{
@@ -114,6 +125,7 @@ const flows = generateFlows( {
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getImportDestination,
+	getDestinationFromIntent,
 } );
 
 function removeUserStepFromFlow( flow ) {

@@ -714,6 +714,13 @@ export function generateSteps( {
 			optionalDependencies: [ 'selectedDesign' ],
 		},
 
+		intent: {
+			stepName: 'intent',
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'intent', 'selectedDesign' ],
+			optionalDependencies: [ 'selectedDesign' ],
+		},
+
 		'design-setup-site': {
 			stepName: 'design-setup-site',
 			props: {
@@ -730,6 +737,10 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
+		},
+		'intent-screen': {
+			stepName: 'intent-screen',
+			dependencies: [ 'siteSlug' ],
 		},
 	};
 }
