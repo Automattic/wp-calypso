@@ -1,5 +1,4 @@
 import { Path, SVG, Rect } from '@wordpress/components';
-import React from 'react';
 
 export const computer = (
 	<SVG width="55" height="55" viewBox="0 0 55 55">
