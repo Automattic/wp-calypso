@@ -36,10 +36,12 @@ const InboxManagement = ( { domains } ) => {
 		);
 	}
 
+	const nonStagingDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
+
 	// Find out if the site has at least one mailbox in the site
 	const hasAnyMailboxes = domains.some(
 		( domain ) =>
-			( ! domain.isWPCOMDomain &&
+			( nonStagingDomains &&
 				// it may be worth also checking for has(EmailProduct)WithUs( domain ) for each branch below
 				getGSuiteMailboxCount( domain ) > 0 ) ||
 			getConfiguredTitanMailboxCount( domain ) > 0
@@ -52,29 +54,17 @@ const InboxManagement = ( { domains } ) => {
 
 	const domainsWithEmailServices = domains.filter(
 		( domain ) =>
-			! domain.isWPCOMDomain && ( hasPaidEmailWithUs( domain ) || hasEmailForwards( domain ) )
+			nonStagingDomains && ( hasPaidEmailWithUs( domain ) || hasEmailForwards( domain ) )
 	);
 
 	const showActiveDomainList = domainsWithEmailServices.length > 0;
 
-	if ( showActiveDomainList ) {
-		return (
-			<CalypsoShoppingCartProvider>
-				<EmailManagementHome
-					emailListInactiveHeader={ getMainHeader() }
-					sectionHeaderLabel={ translate( 'Domains' ) }
-					showActiveDomainList={ false }
-				></EmailManagementHome>
-			</CalypsoShoppingCartProvider>
-		);
-	}
-
-	// Delegate to <EmailManagementHome/> in case we need to upsell a domain/mailbox
 	return (
 		<CalypsoShoppingCartProvider>
 			<EmailManagementHome
 				emailListInactiveHeader={ getMainHeader() }
 				sectionHeaderLabel={ translate( 'Domains' ) }
+				showActiveDomainList={ ! showActiveDomainList }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
