@@ -3,11 +3,11 @@ import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/com
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
 import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
 import MasterbarItem from './item';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 import './masterbar-cart-style.scss';
 
@@ -60,6 +60,16 @@ function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): J
 	);
 }
 
+function MasterbarCartTotal( { responseCart }: { responseCart: ResponseCart } ) {
+	const translate = useTranslate();
+	return (
+		<div className="masterbar-cart__total">
+			<span>{ translate( 'Total' ) }</span>
+			<span>{ responseCart.total_cost_display }</span>
+		</div>
+	);
+}
+
 function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
 	const {
 		responseCart,
@@ -93,7 +103,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 					responseCart={ responseCart }
 					isPwpoUser={ isPwpoUser }
 				/>
-				<CheckoutSummaryTotal />
+				<MasterbarCartTotal responseCart={ responseCart } />
 				<div className="masterbar-cart__content-footer">
 					<Button
 						className="masterbar-cart__checkout"
