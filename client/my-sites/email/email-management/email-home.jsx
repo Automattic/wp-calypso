@@ -134,6 +134,7 @@ class EmailManagementHome extends Component {
 						selectedSiteSlug={ selectedSite.slug }
 					/>
 				) }
+
 				<EmailListInactive
 					currentRoute={ currentRoute }
 					domains={ domainsWithNoEmail }
