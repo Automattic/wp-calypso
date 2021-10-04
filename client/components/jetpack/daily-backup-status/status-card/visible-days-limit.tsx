@@ -79,7 +79,9 @@ const VisibleDaysLimit: React.FC< OwnProps > = ( { selectedDate } ) => {
 				</p>
 				<Button
 					className="status-card__button"
-					href={ isJetpackCloud() ? `/pricing/${ siteSlug }` : `/plans/${ siteSlug }` }
+					href={
+						isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }`
+					}
 					onClick={ recordUpsellButtonClick }
 				>
 					{ translate( 'Upgrade storage' ) }
