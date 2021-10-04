@@ -14,7 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Language' ), function () 
 		page = args.page;
 	} );
 
-	it( 'Log in', async function () {
+	it( 'Navigate to /new', async function () {
 		await page.goto( DataHelper.getCalypsoURL( 'new' ) );
 		gutenboardingFlow = new GutenboardingFlow( page );
 	} );
