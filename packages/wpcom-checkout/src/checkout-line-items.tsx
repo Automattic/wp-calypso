@@ -498,7 +498,7 @@ function LineItemSublabelAndPrice( {
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 	// This is the price for one item for products with a quantity (eg. seats in a license).
-	const itemPrice = product.item_original_cost_display;
+	const itemPrice = product.item_original_cost_for_quantity_one_display;
 
 	if ( isPlan( product ) ) {
 		if ( isP2Plus( product ) ) {
