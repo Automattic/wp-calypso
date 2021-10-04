@@ -3,11 +3,14 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import ImportPlatformDetails from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
 
 const ImportSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+
+	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
 	// Temp mock
 	const data = {
@@ -36,7 +39,9 @@ const ImportSite: React.FunctionComponent = () => {
 					<div className="import__buttons-group">
 						<NextButton>{ __( 'Import your content' ) }</NextButton>
 						<div>
-							<BackButton>{ __( 'What can be imported?' ) }</BackButton>
+							<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+								{ __( 'What can be imported?' ) }
+							</BackButton>
 						</div>
 					</div>
 				</div>
@@ -44,6 +49,13 @@ const ImportSite: React.FunctionComponent = () => {
 			<div className="import__content">
 				<ImportPreview website={ data.website } />
 			</div>
+
+			{ isModalDetailsOpen && (
+				<ImportPlatformDetails
+					platform={ data.platform }
+					onClose={ setIsModalDetailsOpen.bind( this, false ) }
+				/>
+			) }
 		</div>
 	);
 };
