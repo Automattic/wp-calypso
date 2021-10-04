@@ -1081,12 +1081,10 @@ async function preselectParentPage() {
 function handleSiteEditorFeedbackPlugin( calypsoPort ) {
 	registerPlugin( 'a8c-fse-beta-feedback-plugin', {
 		render: () => {
-			const { PluginSidebar } = window?.wp?.editSite;
-
+			const PluginSidebar = window?.wp?.editSite?.PluginSidebar;
 			if ( ! PluginSidebar ) {
 				return;
 			}
-
 			return (
 				<PluginSidebar
 					name="a8c-fse-beta-feedback-plugin"
