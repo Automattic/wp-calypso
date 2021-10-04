@@ -1,4 +1,4 @@
-import { Button, ProductIcon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
@@ -17,7 +17,6 @@ import './style.scss';
 
 type OwnProps = {
 	item: SelectorProduct;
-	iconSlug?: string;
 	headingLevel?: number;
 	description?: ReactNode;
 	originalPrice: number;
@@ -44,7 +43,6 @@ type OwnProps = {
 
 const JetpackProductCard: React.FC< OwnProps > = ( {
 	item,
-	iconSlug,
 	headingLevel,
 	description,
 	originalPrice,
@@ -91,7 +89,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				'is-deprecated': isDeprecated,
 				'is-aligned': isAligned,
 				'is-featured': isFeatured,
-				'without-icon': ! iconSlug,
 			} ) }
 			data-e2e-product-slug={ item.productSlug }
 		>
@@ -103,7 +100,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				{ iconSlug && <ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } /> }
 				{ createElement(
 					`h${ parsedHeadingLevel }`,
 					{ className: 'jetpack-product-card__product-name' },
