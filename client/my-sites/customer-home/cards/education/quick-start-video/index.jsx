@@ -32,10 +32,7 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 							<div className="quick-start-video__content-link educational-content__link">
 								<MaterialIcon icon="play_circle_outline" />
 								<InlineSupportLink
-									supportPostId={ 158974 }
-									supportLink={ localizeUrl(
-										'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
-									) }
+									supportContext="getting-started-video"
 									showIcon={ false }
 									showText={ true }
 									tracksEvent="calypso_customer_home_education"
@@ -56,10 +53,7 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 					{ isDesktop() && (
 						<div className="quick-start-video__content-illustration educational-content__illustration">
 							<InlineSupportLink
-								supportPostId={ 158974 }
-								supportLink={ localizeUrl(
-									'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com'
-								) }
+								supportContext="getting-started-video"
 								showIcon={ false }
 								showText={ true }
 								tracksEvent="calypso_customer_home_education"
