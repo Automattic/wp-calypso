@@ -24,6 +24,31 @@ export const getContextLinks = () => ( {
 			'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
 		post_id: 158974,
 	},
+	'importers-blogger': {
+		link: 'https://wordpress.com/support/import/coming-from-blogger/',
+		post_id: 66764,
+	},
+	'importers-medium': {
+		link: 'https://wordpress.com/support/import/import-from-medium/',
+		post_id: 93180,
+	},
+	'importers-squarespace': {
+		link: 'https://wordpress.com/support/import/import-from-squarespace/',
+		post_id: 87696,
+	},
+	// @TODO: This isn't a real page and the post_id is Squarespace
+	'importers-substack': {
+		link: 'https://wordpress.com/support/import/import-from-substack/',
+		post_id: 87696,
+	},
+	'importers-wix': {
+		link: 'https://wordpress.com/support/import/import-from-wix/',
+		post_id: 147777,
+	},
+	'importers-wordpress': {
+		link: 'https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/',
+		post_id: 102755,
+	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
