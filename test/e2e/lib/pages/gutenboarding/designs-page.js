@@ -10,12 +10,10 @@ export default class DesignLocatorPage extends AsyncBaseContainer {
 
 	async selectFreeDesign() {
 		const freeOptions = await this.driver.findElements( this.freeOptionLocator );
-		if ( freeOptions.length === 0 ) {
-			throw new Error( 'No free designs were found on design selection page' );
-		}
-
-		if ( freeOptions.length === 1 ) {
-			throw new Error( 'There should be more than one design found on the design selection page' );
+		if ( freeOptions.length <= 1 ) {
+			throw new Error(
+				'There should be more than one free design found on the design selection page'
+			);
 		}
 
 		const firstNonBlankDesign = freeOptions[ 1 ];
