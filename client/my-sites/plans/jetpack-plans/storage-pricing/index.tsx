@@ -14,6 +14,7 @@ import './style.scss';
 
 interface Props {
 	defaultDuration: Duration;
+	nav: ReactNode;
 	header: ReactNode;
 	footer: ReactNode;
 	urlQueryArgs: QueryArgs;
@@ -22,6 +23,7 @@ interface Props {
 
 export const StoragePricing: React.FC< Props > = ( {
 	defaultDuration = TERM_ANNUALLY,
+	nav,
 	header,
 	footer,
 	urlQueryArgs,
@@ -32,6 +34,7 @@ export const StoragePricing: React.FC< Props > = ( {
 
 	return (
 		<Main className="storage-pricing__main">
+			{ nav }
 			{ header }
 			<PlansFilterBar showDiscountMessage duration={ duration } onDurationChange={ setDuration } />
 			<StorageTierUpgrade
