@@ -2,7 +2,7 @@ import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkou
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React, { MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import { GooglePayMark } from './google-pay-mark';
 import type { PaymentRequest } from '@stripe/stripe-js';
 

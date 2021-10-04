@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import { getSiteFragment } from 'calypso/lib/route';
 import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';

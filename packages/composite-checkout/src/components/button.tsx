@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import * as React from 'react';
 import joinClasses from '../lib/join-classes';
 import { Theme } from '../lib/theme';
 

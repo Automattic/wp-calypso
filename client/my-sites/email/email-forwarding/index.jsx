@@ -2,7 +2,7 @@ import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import Main from 'calypso/components/main';

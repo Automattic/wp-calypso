@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

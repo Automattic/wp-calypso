@@ -1,6 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {

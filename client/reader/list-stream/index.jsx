@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
@@ -18,7 +18,7 @@ import ListStreamHeader from './header';
 import ListMissing from './missing';
 import './style.scss';
 
-class ListStream extends React.Component {
+class ListStream extends Component {
 	constructor( props ) {
 		super( props );
 		this.title = props.translate( 'Loading list' );

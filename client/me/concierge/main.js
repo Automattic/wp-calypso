@@ -10,7 +10,7 @@
  */
 
 import { isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';

@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import React from 'react';
 import DesktopDownloadCard from './desktop-download-card.jsx';
 import GetAppsIllustration from './illustration.jsx';
 import MobileDownloadCard from './mobile-download-card.jsx';

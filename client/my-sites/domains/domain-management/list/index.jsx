@@ -5,7 +5,7 @@ import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products'
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -55,7 +55,7 @@ import 'calypso/my-sites/domains/style.scss';
 
 const noop = () => {};
 
-export class List extends React.Component {
+export class List extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object.isRequired,
 		domains: PropTypes.array.isRequired,

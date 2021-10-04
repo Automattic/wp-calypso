@@ -1,7 +1,7 @@
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -9,7 +9,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Buttons from './buttons';
 
-class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
+class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryEmailEdit';
 
 	static propTypes = {

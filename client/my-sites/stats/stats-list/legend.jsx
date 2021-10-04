@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'StatsListLegend';
 
 	static propTypes = {

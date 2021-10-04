@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import sinon from 'sinon';
 import SelectDropdownItem from '../item';
 

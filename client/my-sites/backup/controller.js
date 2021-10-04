@@ -1,6 +1,5 @@
 import { isJetpackBackupSlug, JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
 import Debug from 'debug';
-import React from 'react';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';

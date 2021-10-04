@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryProfileLinks from 'calypso/components/data/query-profile-links';
 import Notice from 'calypso/components/notice';
@@ -19,7 +19,7 @@ import getProfileLinksErrorType from 'calypso/state/selectors/get-profile-links-
 
 import './style.scss';
 
-class ProfileLinks extends React.Component {
+class ProfileLinks extends Component {
 	state = {
 		showingForm: null,
 		showPopoverMenu: false,

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 export class FilterResetNotice extends Component {
 	static propTypes = {

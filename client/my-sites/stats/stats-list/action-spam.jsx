@@ -2,13 +2,13 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:stats:action-spam' );
 
-class StatsActionSpam extends React.Component {
+class StatsActionSpam extends Component {
 	static displayName = 'StatsActionSpam';
 
 	state = {

@@ -225,6 +225,9 @@ const webpackConfig = {
 				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
+					forceAll: ! isDevelopment,
+					activeSections: config( 'sections' ),
+					enableByDefault: config( 'enable_all_sections' ),
 				},
 			},
 			{

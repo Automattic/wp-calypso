@@ -1,4 +1,3 @@
-import React from 'react';
 import SignupForm from 'calypso/blocks/signup-form';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';

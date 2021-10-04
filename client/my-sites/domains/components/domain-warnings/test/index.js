@@ -3,7 +3,6 @@
  */
 
 import moment from 'moment';
-import React from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import { type as domainTypes } from 'calypso/lib/domains/constants';

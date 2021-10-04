@@ -1,5 +1,5 @@
 import page from 'page';
-import React, { PropsWithChildren, ReactElement, useContext, useCallback } from 'react';
+import { PropsWithChildren, ReactElement, useContext, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';

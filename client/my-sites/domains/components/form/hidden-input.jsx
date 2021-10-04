@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
 import { isEmpty } from 'lodash';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import Input from './input';
 
 export class HiddenInput extends PureComponent {

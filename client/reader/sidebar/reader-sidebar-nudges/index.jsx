@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';

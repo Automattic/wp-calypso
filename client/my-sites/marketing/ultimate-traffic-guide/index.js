@@ -2,7 +2,6 @@ import { isTrafficGuide, WPCOM_TRAFFIC_GUIDE } from '@automattic/calypso-product
 import { Button, CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

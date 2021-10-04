@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
 
 import './privacy-enabled-card.scss';

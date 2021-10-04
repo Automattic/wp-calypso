@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import { get, includes, map, concat } from 'lodash';
 import { current as currentPage } from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import CalendarButton from 'calypso/blocks/calendar-button';
 import ButtonGroup from 'calypso/components/button-group';

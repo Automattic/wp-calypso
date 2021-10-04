@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import './style.scss';
 
 const FlowProgressIndicator = ( { flowLength, positionInFlow, translate, flowName } ) => {

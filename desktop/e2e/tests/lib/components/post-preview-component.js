@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const { By, until } = require( 'selenium-webdriver' );
 const ViewPostPage = require( '../../lib/pages/view-post-page.js' );
 const AsyncBaseContainer = require( '../async-base-container' );

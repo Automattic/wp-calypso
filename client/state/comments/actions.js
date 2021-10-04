@@ -82,6 +82,8 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
  * @param {object} options options object.
  * @param {number} options.siteId site identifier
  * @param {number} options.postId post identifier
+ * @param {string} options.direction
+ * @param {boolean} options.isPoll
  * @param {string} options.status status filter. Defaults to approved posts
  * @returns {Function} action that requests comments for a given post
  */
@@ -116,7 +118,6 @@ export function requestPostComments( {
  * listed in the API docs:
  *
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
- *
  * @param {object} query API call parameters
  * @param {string} query.listType Type of list to return (required as 'site')
  * @param {number} query.siteId Site identifier
@@ -343,7 +344,6 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
  * @param {Array<number>} options.commentIds list of commentIds to expand.
  * @param {number} options.postId postId for the comments to expand.
  * @param {string} options.displayType which displayType to set the comment to.
- *
  * @returns {object} reader expand comments action
  */
 export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {

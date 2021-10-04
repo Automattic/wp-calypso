@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 
-class NotificationSettingsNavigation extends React.Component {
+class NotificationSettingsNavigation extends Component {
 	static displayName = 'NotificationSettingsNavigation';
 
 	render() {

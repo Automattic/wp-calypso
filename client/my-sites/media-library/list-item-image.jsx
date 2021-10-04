@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'calypso/lib/media/constants';
 import { url as mediaUrl } from 'calypso/lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 import MediaImage from './media-image';
 
-export default class MediaLibraryListItemImage extends React.Component {
+export default class MediaLibraryListItemImage extends Component {
 	static propTypes = {
 		media: PropTypes.object,
 		scale: PropTypes.number,

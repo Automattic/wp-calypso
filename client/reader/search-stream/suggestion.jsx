@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordTracksRailcarInteract } from 'calypso/reader/stats';

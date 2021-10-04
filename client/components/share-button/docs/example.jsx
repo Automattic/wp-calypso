@@ -1,5 +1,5 @@
 import { keys } from 'lodash';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ShareButton from '../';
 import services from '../services';
 

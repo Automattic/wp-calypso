@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment, FunctionComponent } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
 import billcomLogo from 'calypso/assets/images/illustrations/billcom-logo.svg';

@@ -114,6 +114,10 @@ export const updatePlaceholderComment = (
  * dispatches a error notice if creating a new comment request failed
  *
  * @param {object}   action   redux action
+ * @param {number} action.siteId
+ * @param {number} action.postId
+ * @param {number} action.parentCommentId
+ * @param {number} action.placeholderId
  * @param {object} rawError plain error object
  * @returns {Function} thunk
  */

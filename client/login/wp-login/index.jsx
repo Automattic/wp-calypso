@@ -3,7 +3,7 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoginBlock from 'calypso/blocks/login';
 import AutomatticLogo from 'calypso/components/automattic-logo';
@@ -30,7 +30,7 @@ import PrivateSite from './private-site';
 
 import './style.scss';
 
-export class Login extends React.Component {
+export class Login extends Component {
 	static propTypes = {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,

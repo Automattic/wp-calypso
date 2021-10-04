@@ -1,7 +1,7 @@
 import { Card, Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -14,7 +14,7 @@ import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 
-class MediaLibraryHeader extends React.Component {
+class MediaLibraryHeader extends Component {
 	static displayName = 'MediaLibraryHeader';
 
 	static propTypes = {

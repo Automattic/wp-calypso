@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';

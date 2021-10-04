@@ -4,7 +4,6 @@
 
 import { assert } from 'chai';
 import { mount, shallow } from 'enzyme';
-import React from 'react';
 import { BulkSelect } from '../index';
 
 const noop = () => {};

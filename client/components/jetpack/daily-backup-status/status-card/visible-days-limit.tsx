@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { MomentInput } from 'moment';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

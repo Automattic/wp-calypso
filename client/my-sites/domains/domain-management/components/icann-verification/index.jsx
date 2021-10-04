@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryWhois from 'calypso/components/data/query-whois';
 import { resendIcannVerification } from 'calypso/lib/domains';
@@ -10,7 +10,7 @@ import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths'
 import { errorNotice } from 'calypso/state/notices/actions';
 import getRegistrantWhois from 'calypso/state/selectors/get-registrant-whois';
 
-class IcannVerificationCard extends React.Component {
+class IcannVerificationCard extends Component {
 	static propTypes = {
 		contactDetails: PropTypes.object,
 		explanationContext: PropTypes.string,

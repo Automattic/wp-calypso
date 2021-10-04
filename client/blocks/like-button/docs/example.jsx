@@ -1,8 +1,8 @@
 import { CompactCard as Card } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import LikeButton from 'calypso/blocks/like-button/button';
 
-class SimpleLikeButtonContainer extends React.PureComponent {
+class SimpleLikeButtonContainer extends PureComponent {
 	state = {
 		liked: !! this.props.liked,
 		count: this.props.likeCount || 0,
@@ -27,7 +27,7 @@ class SimpleLikeButtonContainer extends React.PureComponent {
 	};
 }
 
-class LikeButtons extends React.PureComponent {
+class LikeButtons extends PureComponent {
 	static displayName = 'LikeButton';
 
 	render() {

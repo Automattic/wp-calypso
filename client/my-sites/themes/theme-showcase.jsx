@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import Badge from 'calypso/components/badge';
@@ -61,11 +61,11 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-class ThemeShowcase extends React.Component {
+class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
-		this.scrollRef = React.createRef();
-		this.bookmarkRef = React.createRef();
+		this.scrollRef = createRef();
+		this.bookmarkRef = createRef();
 		this.tabFilters = {
 			RECOMMENDED: {
 				key: 'recommended',

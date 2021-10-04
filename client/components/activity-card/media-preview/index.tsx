@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import SimplePreview from 'calypso/components/activity-card/activity-media';
 import StreamsPreview from './streams';
 import type { Activity } from '../types';

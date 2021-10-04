@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { addQueryArgs } from 'calypso/lib/url';

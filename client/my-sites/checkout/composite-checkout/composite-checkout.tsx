@@ -15,9 +15,10 @@ import { ThemeProvider } from '@emotion/react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -571,7 +572,7 @@ export default function CompositeCheckout( {
 			}
 		};
 		return (
-			<React.Fragment>
+			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
 				<ThemeProvider theme={ theme }>
 					<MainContentWrapper>
@@ -585,14 +586,15 @@ export default function CompositeCheckout( {
 						</CheckoutStepAreaWrapper>
 					</MainContentWrapper>
 				</ThemeProvider>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	return (
-		<React.Fragment>
+		<Fragment>
+			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
 			<QueryPlans />
@@ -632,7 +634,7 @@ export default function CompositeCheckout( {
 					infoMessage={ infoMessage }
 				/>
 			</CheckoutProvider>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

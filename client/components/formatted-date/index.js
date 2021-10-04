@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import toCurrentLocale from './to-current-locale';
 

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CloseOnEscape from 'calypso/components/close-on-escape';
@@ -32,7 +32,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class ImageEditor extends React.Component {
+class ImageEditor extends Component {
 	static propTypes = {
 		// Component props
 		media: PropTypes.object,
@@ -69,7 +69,7 @@ class ImageEditor extends React.Component {
 		noticeStatus: 'is-info',
 	};
 
-	editCanvasRef = React.createRef();
+	editCanvasRef = createRef();
 
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		const { media: currentMedia } = this.props;

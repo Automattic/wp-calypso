@@ -4,7 +4,6 @@
 
 import deepFreeze from 'deep-freeze';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { JetpackAuthorize } from '../authorize';
 
 const noop = () => {};

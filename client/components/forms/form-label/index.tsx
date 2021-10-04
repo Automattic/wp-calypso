@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, LabelHTMLAttributes } from 'react';
+import { Children, FunctionComponent, LabelHTMLAttributes } from 'react';
 
 import './style.scss';
 
@@ -20,7 +20,7 @@ const FormLabel: FunctionComponent< Props & LabelProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const hasChildren: boolean = React.Children.count( children ) > 0;
+	const hasChildren: boolean = Children.count( children ) > 0;
 
 	return (
 		<label { ...labelProps } className={ classnames( className, 'form-label' ) }>

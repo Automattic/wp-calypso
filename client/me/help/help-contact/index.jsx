@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
@@ -18,7 +18,6 @@ import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
-import { withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
@@ -77,7 +76,7 @@ const debug = debugFactory( 'calypso:help-contact' );
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 let savedContactForm = null;
 
-class HelpContact extends React.Component {
+class HelpContact extends Component {
 	static propTypes = {
 		compact: PropTypes.bool,
 	};
@@ -276,13 +275,11 @@ class HelpContact extends React.Component {
 			blogHelpMessage = this.translateForForums( "I don't have a site with WordPress.com yet" );
 		}
 
+		let siteUrl = '';
 		if ( site || userDeclaredUrl ) {
-			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
+			siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = this.translateForForums( 'Site: %s.', {
-				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
-			} );
-
+			blogHelpMessage = '';
 			if ( helpSiteIsWpCom ) {
 				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Yes' );
 			}
@@ -311,14 +308,24 @@ class HelpContact extends React.Component {
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
+		const requestData = {
+			subject,
+			message: forumMessage,
+			locale: currentUserLocale,
+			client: config( 'client_slug' ),
+			hide_blog_info: userRequestsHidingUrl,
+		};
+
+		if ( site ) {
+			requestData.blog_id = site.ID;
+		}
+
+		if ( siteUrl ) {
+			requestData.blog_url = siteUrl;
+		}
 
 		wpcom.req
-			.post( '/help/forums/support/topics/new', {
-				subject,
-				message: forumMessage,
-				locale: currentUserLocale,
-				client: config( 'client_slug' ),
-			} )
+			.post( '/help/forums/support/topics/new', requestData )
 			.then( ( data ) => {
 				this.setState( {
 					isSubmitting: false,

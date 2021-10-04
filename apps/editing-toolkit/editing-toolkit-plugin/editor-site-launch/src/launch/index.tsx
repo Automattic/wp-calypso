@@ -1,5 +1,5 @@
 import { useSelect, useDispatch } from '@wordpress/data';
-import React from 'react';
+import * as React from 'react';
 import DomainStep from '../launch-steps/domain-step';
 import FinalStep from '../launch-steps/final-step';
 import NameStep from '../launch-steps/name-step';

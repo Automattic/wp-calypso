@@ -2,7 +2,7 @@ import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { changeMediaSource } from 'calypso/state/media/actions';
@@ -12,7 +12,7 @@ import MediaLibraryScale from './scale';
 
 const DEBOUNCE_TIME = 250;
 
-class MediaLibraryExternalHeader extends React.Component {
+class MediaLibraryExternalHeader extends Component {
 	static propTypes = {
 		onMediaScaleChange: PropTypes.func,
 		site: PropTypes.object.isRequired,

@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';

@@ -33,7 +33,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { shallow } from 'enzyme';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import BackupDatePicker from '..';
 import { useCanGoToDate } from '../hooks';

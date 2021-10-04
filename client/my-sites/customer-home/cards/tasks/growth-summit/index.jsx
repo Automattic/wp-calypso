@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import growthSummitIllustration from 'calypso/assets/images/customer-home/illustration--growth-summit.png';
 import { TASK_GROWTH_SUMMIT } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';

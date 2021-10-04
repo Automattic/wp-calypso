@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
@@ -16,7 +16,7 @@ import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 import './style.scss';
 const strong = <strong />;
 
-class PendingGSuiteTosNotice extends React.PureComponent {
+class PendingGSuiteTosNotice extends PureComponent {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,

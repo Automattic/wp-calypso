@@ -9,7 +9,7 @@ import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -29,7 +29,7 @@ import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getAllCartItems } from '../../../lib/cart-values/cart-items';
 
-class CartFreeUserPlanUpsell extends React.Component {
+class CartFreeUserPlanUpsell extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool.isRequired,

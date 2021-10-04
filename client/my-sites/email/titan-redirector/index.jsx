@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import EmptyContent from 'calypso/components/empty-content';

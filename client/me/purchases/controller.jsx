@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Fragment } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -27,10 +27,10 @@ import VatInfoPage from './vat-info';
 
 const PurchasesWrapper = ( { title = null, children } ) => {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<DocumentHead title={ title } />
 			{ children }
-		</React.Fragment>
+		</Fragment>
 	);
 };
 const noop = () => {};

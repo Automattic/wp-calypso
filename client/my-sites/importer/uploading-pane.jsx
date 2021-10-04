@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -24,7 +24,7 @@ import './uploading-pane.scss';
 
 const noop = () => {};
 
-class UploadingPane extends React.PureComponent {
+class UploadingPane extends PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
 
 	static propTypes = {
@@ -48,7 +48,7 @@ class UploadingPane extends React.PureComponent {
 
 	static defaultProps = { description: null, optionalUrl: null };
 
-	fileSelectorRef = React.createRef();
+	fileSelectorRef = createRef();
 
 	constructor( props ) {
 		super( props );

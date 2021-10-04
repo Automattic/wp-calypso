@@ -32,7 +32,8 @@ export const requestActivePromotions = ( action ) =>
  * Dispatches returned WordPress.com active promotions data
  *
  * @param {object} action Redux action
- * @param {Array} active_promotions raw data from active promotions API
+ * @param {object} obj
+ * @param {Array} obj.active_promotions raw data from active promotions API
  * @returns {Array<object>} Redux actions
  */
 export const receiveActivePromotions = ( action, { active_promotions } ) => [

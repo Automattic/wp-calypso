@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { connect } from 'react-redux';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -20,11 +20,14 @@ const DomainStepAuthCode = ( {
 	progressStepList,
 	selectedSite,
 	buttonMessage,
+	customHeading,
 }: DomainStepAuthCodeProps ) => {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
 	const [ connectInProgress, setConnectInProgress ] = useState( false );
 	const [ authCodeError, setAuthCodeError ] = useState< ( string | undefined ) | null >( null );
+
+	const heading = customHeading ?? stepsHeadingOwnershipVerification;
 
 	const getVerificationData = () => {
 		return {
@@ -101,7 +104,7 @@ const DomainStepAuthCode = ( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeadingOwnershipVerification }
+			heading={ heading }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }
 			stepContent={ stepContent }

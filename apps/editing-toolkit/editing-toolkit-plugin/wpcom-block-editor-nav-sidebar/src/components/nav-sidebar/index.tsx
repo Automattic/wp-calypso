@@ -15,7 +15,7 @@ import { ESCAPE } from '@wordpress/keycodes';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import { Post } from '../../types';
 import CreatePage from '../create-page';

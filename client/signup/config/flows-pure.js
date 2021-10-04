@@ -11,6 +11,7 @@ export function generateFlows( {
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
+	getDestinationFromIntent = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -414,13 +415,25 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: [ 'design-setup-site' ],
-			destination: getChecklistThemeDestination,
+			steps: isEnabled( 'signup/hero-flow' )
+				? [ 'intent', 'design-setup-site' ]
+				: [ 'design-setup-site' ],
+			destination: isEnabled( 'signup/hero-flow' )
+				? getDestinationFromIntent
+				: getChecklistThemeDestination,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-09-02',
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteId' ],
 			pageTitle: translate( 'Setup your site' ),
+		},
+		{
+			name: 'do-it-for-me',
+			steps: [ 'user', 'site-info-collection', 'domains' ],
+			destination: getSignupDestination,
+			description: 'The current best performing flow in AB tests',
+			lastModified: '2019-06-20',
 		},
 	];
 

@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { startImport } from 'calypso/state/imports/actions';
@@ -31,7 +31,7 @@ const uploadingStates = [
 	appStates.UPLOADING,
 ];
 
-class SiteImporter extends React.PureComponent {
+class SiteImporter extends PureComponent {
 	static propTypes = {
 		importerData: PropTypes.shape( {
 			title: PropTypes.string.isRequired,

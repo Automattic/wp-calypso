@@ -1,6 +1,5 @@
 import { Button, Card } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
-import React from 'react';
 import Badge from 'calypso/components/badge';
 import CardHeading from 'calypso/components/card-heading';
 import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';

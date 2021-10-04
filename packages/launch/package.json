@@ -31,7 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/calypso-analytics": "^1.0.0",
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/data-stores": "^2.0.0",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/i18n-utils": "^1.0.0",
@@ -50,7 +50,7 @@
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
-		"@testing-library/react": "^12.0.0",
+		"@testing-library/react": "^12.1.1",
 		"@wordpress/base-styles": "^4.0.0",
 		"copyfiles": "^2.3.0",
 		"react": "^17.0.2",

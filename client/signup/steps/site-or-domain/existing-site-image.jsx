@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ExistingSite = () => (
 	<svg
 		width="173px"

@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import SeoPreviewPane from 'calypso/components/seo-preview-pane';

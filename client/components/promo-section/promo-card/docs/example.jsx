@@ -1,5 +1,4 @@
 import { FEATURE_MEMBERSHIPS } from '@automattic/calypso-products';
-import React from 'react';
 import referralImage from 'calypso/assets/images/earn/referral.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';

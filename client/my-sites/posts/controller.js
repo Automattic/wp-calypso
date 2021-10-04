@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import Posts from 'calypso/my-sites/posts/main';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
@@ -44,7 +44,7 @@ export default {
 			return;
 		}
 
-		context.primary = React.createElement( Posts, {
+		context.primary = createElement( Posts, {
 			context,
 			author,
 			statusSlug: context.params.status,

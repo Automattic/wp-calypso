@@ -105,15 +105,6 @@ export const requestMarkAllAsSeen = ( { identifier, feedIds, feedUrls } ) => ( {
 
 /**
  * Receive mark all as seen for successful requests
- *
- * @param {object} payload method
- * @param payload.section given Reader section
- * @param payload.globalIds list of Calypso Reader specific global ids
- * @param payload.feedIds
- * @param payload.feedUrls
- * @param payload.feedIds
- * @param payload.feedUrls
- * @returns {{section: string, globalIds: *, type: string}} redux action
  */
 export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
 	type: READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,

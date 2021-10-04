@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { stub } from 'sinon';
 import { UpgradeATStep } from '../upgrade-at-step';
 

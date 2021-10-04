@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardPrice from 'calypso/components/promo-section/promo-card/price';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
@@ -47,6 +47,7 @@ function EmailProviderCard( {
 		<PromoCard
 			className={ classnames( 'email-providers-comparison__provider-card', {
 				'is-expanded': detailsExpanded,
+				'is-forwarding': providerKey === 'forwarding',
 			} ) }
 			image={ logo }
 			title={ title }

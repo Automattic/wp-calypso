@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const ReaderFeedHeaderSiteBadge = ( { site } ) => {
 	/* eslint-disable wpcalypso/jsx-gridicon-size */

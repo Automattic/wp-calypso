@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
 import './style.scss';

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, useEffect } from 'react';
+import { createElement, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
@@ -61,7 +61,7 @@ const LearnGrow = () => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
+					createElement( cardComponents[ card ], {
 						key: index,
 					} )
 			) }

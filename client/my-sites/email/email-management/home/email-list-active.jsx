@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
@@ -42,7 +42,7 @@ EmailListActiveWarning.propTypes = {
 	selectedSiteId: PropTypes.number.isRequired,
 };
 
-class EmailListActive extends React.Component {
+class EmailListActive extends Component {
 	render() {
 		const { currentRoute, domains, selectedSiteSlug, translate, selectedSiteId } = this.props;
 

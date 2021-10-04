@@ -1,6 +1,5 @@
 import { Dialog, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane';
 
 const SharingPreviewModal = ( props ) => {

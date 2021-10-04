@@ -2,7 +2,7 @@ import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isReskinnedFlow } from '../utils';
@@ -13,6 +13,7 @@ class StepWrapper extends Component {
 		shouldHideNavButtons: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		hideFormattedHeader: PropTypes.bool,
+		headerImageUrl: PropTypes.string,
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
 		hideNext: PropTypes.bool,
@@ -27,6 +28,7 @@ class StepWrapper extends Component {
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
 		headerButton: PropTypes.node,
+		isHorizontalLayout: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -162,10 +164,13 @@ class StepWrapper extends Component {
 			isWideLayout,
 			skipButtonAlign,
 			align,
+			headerImageUrl,
+			isHorizontalLayout,
 		} = this.props;
 
 		const hasNavigation = ! hideBack || ( ! hideSkip && skipButtonAlign === 'top' ) || ! hideNext;
 		const classes = classNames( 'step-wrapper', this.props.className, {
+			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,
@@ -195,6 +200,11 @@ class StepWrapper extends Component {
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
 							/>
+							{ headerImageUrl && (
+								<div className="step-wrapper__header-image">
+									<img src={ headerImageUrl } alt="" />
+								</div>
+							) }
 							{ headerButton && (
 								<div className="step-wrapper__header-button">{ headerButton }</div>
 							) }

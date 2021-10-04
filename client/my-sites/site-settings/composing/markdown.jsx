@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import SupportInfo from 'calypso/components/support-info';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';

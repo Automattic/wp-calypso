@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { stub } from 'sinon';
 import { BusinessATStep } from '../business-at-step';
 

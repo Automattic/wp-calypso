@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import * as React from 'react';
 import DesignPicker from '../components';
 import { getAvailableDesigns } from '../utils';
 import type { DesignPickerProps } from '../components';
@@ -8,10 +7,6 @@ import type { Design } from '../types';
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn().mockImplementation( ( feature: string ) => {
 		switch ( feature ) {
-			case 'gutenboarding/landscape-preview':
-				return false;
-			case 'gutenboarding/mshot-preview':
-				return false;
 			case 'gutenboarding/alpha-templates':
 				return true;
 			default:

@@ -24,6 +24,10 @@ describe( 'filePathValidator', () => {
 		expect( filePathValidator( '/abc/def/xyz/' ) ).toBeNull();
 	} );
 
+	test( 'should validate a path with a url like element', () => {
+		expect( filePathValidator( '/abc/def.com/xyz/' ) ).toBeNull();
+	} );
+
 	// NOTE: We've seen support tickets with exactly this issue
 	test.each( [ [ '//' ], [ '/abc//def' ], [ '/abc//' ], [ '///' ], [ '/a///b/c' ] ] )(
 		'should reject a path with two or more adjacent slashes',
@@ -34,18 +38,4 @@ describe( 'filePathValidator', () => {
 			);
 		}
 	);
-
-	test( 'should reject a path with a non-valid character', () => {
-		expect( filePathValidator( '/abc*' ) ).toHaveProperty(
-			'message',
-			'Path contains invalid character "*".'
-		);
-	} );
-
-	test( 'should reject a path with multiple non-valid characters', () => {
-		expect( filePathValidator( '/abc*/efg&' ) ).toHaveProperty(
-			'message',
-			'Path contains invalid characters "*&".'
-		);
-	} );
 } );

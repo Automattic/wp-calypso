@@ -1,4 +1,3 @@
-import React from 'react';
 import Wizard from '../index';
 
 const First = () => <div style={ { textAlign: 'center' } }>This is the first step.</div>;

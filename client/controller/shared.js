@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import React from 'react';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
@@ -62,8 +61,8 @@ export function setLocaleMiddleware( context, next ) {
 /**
  * Composes multiple handlers into one.
  *
- * @param { ...( context, next ) => void } handlers - A list of route handlers to compose
- * @returns  { ( context, next ) => void } - A new route handler that executes the handlers in succession
+ * @param { ...( context, Function ) => void } handlers - A list of route handlers to compose
+ * @returns  { ( context, Function ) => void } - A new route handler that executes the handlers in succession
  */
 export function composeHandlers( ...handlers ) {
 	return ( context, next ) => {

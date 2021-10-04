@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './divider.scss';
 
 export default function Divider( { children } ) {

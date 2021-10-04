@@ -2,7 +2,7 @@ import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
@@ -29,7 +29,7 @@ import InvitesListEnd from './invites-list-end';
 
 import './style.scss';
 
-class PeopleInvites extends React.PureComponent {
+class PeopleInvites extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 	};
@@ -145,7 +145,7 @@ class PeopleInvites extends React.PureComponent {
 		);
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ hasPendingInvites && (
 					<div className="people-invites__pending">
 						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
@@ -176,7 +176,7 @@ class PeopleInvites extends React.PureComponent {
 						found={ totalInvitesFound }
 					/>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -193,7 +193,7 @@ class PeopleInvites extends React.PureComponent {
 		];
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
 					{ translate( 'Clear all accepted' ) }
 				</Button>
@@ -201,7 +201,7 @@ class PeopleInvites extends React.PureComponent {
 					<h1>{ translate( 'Clear All Accepted' ) }</h1>
 					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
 				</Dialog>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

@@ -1,6 +1,6 @@
 import IsolatedBlockEditor from '@automattic/isolated-block-editor';
 import { addFilter } from '@wordpress/hooks';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import connectUserMentions from 'calypso/blocks/user-mentions/connect';
 import getAddAutocompleters from './autocompleters';
 

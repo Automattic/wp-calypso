@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import TermSelectorAddTerm from './add-term';
 import TermTreeSelectorTerms from './terms';
 
-export default class TermTreeSelector extends React.Component {
+export default class TermTreeSelector extends Component {
 	static propTypes = {
 		multiple: PropTypes.bool,
 		className: PropTypes.string,

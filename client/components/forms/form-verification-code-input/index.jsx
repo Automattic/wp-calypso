@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import constants from 'calypso/me/constants';
 
 import './style.scss';
 
-export default class FormVerificationCodeInput extends React.Component {
+export default class FormVerificationCodeInput extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		isError: PropTypes.bool,

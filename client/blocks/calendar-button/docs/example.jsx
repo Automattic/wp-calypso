@@ -1,4 +1,3 @@
-import React from 'react';
 import CalendarButton from 'calypso/blocks/calendar-button';
 
 const CalendarButtonExample = () => {

@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -21,6 +21,7 @@ import {
 	isContactValidationResponseValid,
 	getTaxValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
+import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import {
 	retrieveSignupDestination,
@@ -67,8 +68,9 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
+export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
-export class UpsellNudge extends React.Component {
+export class UpsellNudge extends Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
 		upsellType: PropTypes.string,
@@ -297,6 +299,9 @@ export class UpsellNudge extends React.Component {
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
+
+			case PROFESSIONAL_EMAIL_UPSELL:
+				return <ProfessionalEmailUpsell />;
 		}
 	}
 
@@ -347,7 +352,6 @@ export class UpsellNudge extends React.Component {
 			this.props.shoppingCartManager.updateLocation( {
 				countryCode,
 				postalCode,
-				subdivisionCode: null,
 			} );
 			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
 			return;

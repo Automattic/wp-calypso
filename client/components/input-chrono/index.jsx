@@ -1,7 +1,7 @@
 import chrono from 'chrono-node';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 import './style.scss';
@@ -11,7 +11,7 @@ import './style.scss';
  */
 const supportedLanguages = [ 'en', 'jp' ];
 
-class InputChrono extends React.Component {
+class InputChrono extends Component {
 	static displayName = 'InputChrono';
 
 	static propTypes = {

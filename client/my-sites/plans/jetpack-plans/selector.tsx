@@ -1,7 +1,9 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -163,6 +165,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 	return (
 		<>
+			<QueryJetpackSaleCoupon />
 			{ nav }
 
 			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>

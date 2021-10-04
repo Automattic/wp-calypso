@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import welcomeImage from 'calypso/assets/images/reader/reader-welcome-illustration.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -7,7 +7,7 @@ import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class FollowingEmptyContent extends React.Component {
+class FollowingEmptyContent extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}

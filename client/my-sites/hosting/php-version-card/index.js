@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';

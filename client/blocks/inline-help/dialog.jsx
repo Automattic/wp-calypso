@@ -1,7 +1,6 @@
 import { Button, Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 
 import './dialog.scss';

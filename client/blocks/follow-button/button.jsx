@@ -1,13 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createElement, Component } from 'react';
 
 import './style.scss';
 
 const noop = () => {};
 
-class FollowButton extends React.Component {
+class FollowButton extends Component {
 	static propTypes = {
 		following: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
@@ -64,7 +64,7 @@ class FollowButton extends React.Component {
 			</span>
 		);
 
-		return React.createElement(
+		return createElement(
 			this.props.tagName,
 			{
 				onClick: this.toggleFollow,

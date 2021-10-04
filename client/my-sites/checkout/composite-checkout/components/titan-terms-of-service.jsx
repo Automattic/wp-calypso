@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
 import { getTitanProductName } from 'calypso/lib/titan';
 

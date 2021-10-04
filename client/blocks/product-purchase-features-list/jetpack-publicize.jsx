@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import marketingImage from 'calypso/assets/images/illustrations/marketing.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 

@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -17,7 +17,7 @@ import {
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
-class TransferInDomainType extends React.Component {
+class TransferInDomainType extends Component {
 	startTransfer = () => {
 		const { domain, selectedSite } = this.props;
 		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );

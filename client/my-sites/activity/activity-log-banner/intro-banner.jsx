@@ -7,7 +7,7 @@ import {
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import activityImage from 'calypso/assets/images/illustrations/site-activity.svg';
 import DismissibleCard from 'calypso/blocks/dismissible-card';

@@ -1,11 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { CompactCard, Gridicon } from '@automattic/components';
-import React from 'react';
+import { PureComponent } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'HelpResult';
 
 	onClick = ( event ) => {

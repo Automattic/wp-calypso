@@ -5,7 +5,7 @@ import { cloneDeep, get, startsWith } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -27,7 +27,7 @@ const debug = debugFactory( 'calypso:my-sites:customize' );
 // Used to allow timing-out the iframe loading process
 let loadingTimer;
 
-class Customize extends React.Component {
+class Customize extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {

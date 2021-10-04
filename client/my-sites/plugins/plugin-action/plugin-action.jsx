@@ -1,11 +1,11 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import React from 'react';
+import { Children, Component } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
 
-class PluginAction extends React.Component {
+class PluginAction extends Component {
 	handleAction = ( event ) => {
 		if ( ! this.props.disabledInfo ) {
 			this.props.action();
@@ -80,7 +80,7 @@ class PluginAction extends React.Component {
 	}
 
 	renderInner() {
-		if ( 0 < React.Children.count( this.props.children ) ) {
+		if ( 0 < Children.count( this.props.children ) ) {
 			return this.renderChildren();
 		}
 

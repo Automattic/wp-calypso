@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
-import * as React from 'react';
+import { useContext, useState } from 'react';
 import LaunchContext from '../context';
 import { useSiteDomains, useHasEcommercePlan } from '../hooks';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
@@ -13,7 +13,7 @@ type LaunchCart = {
 };
 
 export function useCart(): LaunchCart {
-	const { siteId, flow, openCheckout, isInIframe } = React.useContext( LaunchContext );
+	const { siteId, flow, openCheckout, isInIframe } = useContext( LaunchContext );
 
 	const locale = useLocale();
 
@@ -40,7 +40,7 @@ export function useCart(): LaunchCart {
 
 	const onSuccess = () => launchSite( siteId );
 
-	const [ isCartUpdating, setIsCartUpdating ] = React.useState( false );
+	const [ isCartUpdating, setIsCartUpdating ] = useState( false );
 
 	const hasEcommercePlan = useHasEcommercePlan();
 

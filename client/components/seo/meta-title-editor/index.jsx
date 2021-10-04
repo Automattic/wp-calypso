@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import TitleFormatEditor from 'calypso/components/title-format-editor';
 
 import './style.scss';

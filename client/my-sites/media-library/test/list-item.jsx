@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import ListItem from 'calypso/my-sites/media-library/list-item';
 import fixtures from './fixtures';
 

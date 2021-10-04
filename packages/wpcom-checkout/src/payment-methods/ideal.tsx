@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
+import { Fragment } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -317,12 +317,12 @@ function isFormValid( store: IdealStore ) {
 function IdealLabel() {
 	const { __ } = useI18n();
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>{ __( 'iDEAL' ) }</span>
 			<PaymentMethodLogos className="ideal__logo payment-logos">
 				<IdealLogo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

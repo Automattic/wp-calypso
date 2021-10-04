@@ -9,7 +9,6 @@ import {
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {

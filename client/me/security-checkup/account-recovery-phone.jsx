@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import {
@@ -11,7 +11,7 @@ import {
 import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupAccountRecoveryPhone extends React.Component {
+class SecurityCheckupAccountRecoveryPhone extends Component {
 	static propTypes = {
 		accountRecoveryPhone: PropTypes.object,
 		accountRecoveryPhoneActionInProgress: PropTypes.bool,
@@ -29,10 +29,10 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 
 		if ( accountRecoveryPhoneActionInProgress ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<QueryAccountRecoverySettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 

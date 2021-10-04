@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const { forEach } = require( 'lodash' );
 const webdriver = require( 'selenium-webdriver' );
 

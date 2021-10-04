@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice from './bundled-domain-notice';
@@ -12,7 +12,7 @@ import TitanTermsOfService from './titan-terms-of-service';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class CheckoutTerms extends React.Component {
+class CheckoutTerms extends Component {
 	render() {
 		const { cart } = this.props;
 		return (

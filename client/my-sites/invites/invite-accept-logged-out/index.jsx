@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
 import SignupForm from 'calypso/blocks/signup-form';
@@ -23,7 +23,7 @@ import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 const debug = debugModule( 'calypso:invite-accept:logged-out' );
 const noop = () => {};
 
-class InviteAcceptLoggedOut extends React.Component {
+class InviteAcceptLoggedOut extends Component {
 	state = { bearerToken: false, userData: false, submitting: false };
 
 	submitButtonText = () => {

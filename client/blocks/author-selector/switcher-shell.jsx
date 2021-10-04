@@ -2,7 +2,7 @@ import { Gridicon, Popover } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, createRef } from 'react';
+import { Component, createRef } from 'react';
 import ReactDom from 'react-dom';
 import AsyncLoad from 'calypso/components/async-load';
 import InfiniteList from 'calypso/components/infinite-list';

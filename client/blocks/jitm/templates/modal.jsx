@@ -1,6 +1,6 @@
 import { Button, Guide } from '@wordpress/components';
 import { take } from 'lodash-es/array';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './modal-style.scss';
 import Visual from './plans-visual.svg';
 

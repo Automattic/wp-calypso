@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { EMAIL_FORWARDING_REMOVE_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';

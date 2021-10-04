@@ -2,14 +2,7 @@ import { Button, Dialog } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-import React, {
-	FunctionComponent,
-	Fragment,
-	useState,
-	useEffect,
-	useCallback,
-	useMemo,
-} from 'react';
+import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

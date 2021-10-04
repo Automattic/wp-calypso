@@ -3,7 +3,7 @@ import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, isEqual, find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import InlineHelpCompactResults from 'calypso/blocks/inline-help/inline-help-compact-results';
 import FormButton from 'calypso/components/forms/form-button';
@@ -69,7 +69,7 @@ const trackSupportWithoutSibylSuggestions = ( query ) =>
 		recordTracksEventAction( 'calypso_sibyl_support_without_suggestions_showing', { query } )
 	);
 
-export class HelpContactForm extends React.PureComponent {
+export class HelpContactForm extends PureComponent {
 	static propTypes = {
 		additionalSupportOption: PropTypes.object,
 		formDescription: PropTypes.node,
