@@ -69,7 +69,19 @@ module.exports = {
 	node: false,
 	plugins: [
 		new webpack.DefinePlugin( {
+			'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
+			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
+			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
+			'process.env.COMPONENT_SYSTEM_PHASE': JSON.stringify( 0 ),
+			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
+				!! process.env.FORCE_REDUCED_MOTION || false
+			),
+			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
+		} ),
+		// Node polyfills
+		new webpack.ProvidePlugin( {
+			process: 'process/browser.js',
 		} ),
 		...SassConfig.plugins( {
 			filename: 'build.min.css',
