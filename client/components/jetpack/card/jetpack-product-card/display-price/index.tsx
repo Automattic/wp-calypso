@@ -8,6 +8,8 @@ import type { TranslateResult } from 'i18n-calypso';
 import type { Moment } from 'moment';
 import type { ReactNode } from 'react';
 
+import './style.scss';
+
 type OwnProps = {
 	belowPriceText?: TranslateResult;
 	billingTerm: Duration;
