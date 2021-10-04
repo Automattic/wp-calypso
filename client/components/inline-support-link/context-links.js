@@ -35,6 +35,10 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
 	},
+	'site-verification': {
+		link: 'https://wordpress.com/support/site-verification-services/',
+		post_id: 5022,
+	},
 	themes: {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
@@ -94,5 +98,9 @@ export const getContextLinks = () => ( {
 	payment_methods: {
 		link: 'https://wordpress.com/support/payment/',
 		post_id: 76237,
+	},
+	'webmaster-tools': {
+		link: 'https://wordpress.com/support/webmaster-tools/',
+		post_id: 5022,
 	},
 } );
