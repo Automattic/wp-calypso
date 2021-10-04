@@ -39,12 +39,9 @@ const InboxManagement = ( { domains } ) => {
 	const nonStagingDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 	// Find out if the site has at least one mailbox in the site
-	const hasAnyMailboxes = domains.some(
+	const hasAnyMailboxes = nonStagingDomains.some(
 		( domain ) =>
-			( nonStagingDomains &&
-				// it may be worth also checking for has(EmailProduct)WithUs( domain ) for each branch below
-				getGSuiteMailboxCount( domain ) > 0 ) ||
-			getConfiguredTitanMailboxCount( domain ) > 0
+			getGSuiteMailboxCount( domain ) > 0 || getConfiguredTitanMailboxCount( domain ) > 0
 	);
 
 	// Load the Inbox UI if at least one mailbox occurs
@@ -52,19 +49,18 @@ const InboxManagement = ( { domains } ) => {
 		return <MailboxSelectionList />;
 	}
 
-	const domainsWithEmailServices = domains.filter(
-		( domain ) =>
-			nonStagingDomains && ( hasPaidEmailWithUs( domain ) || hasEmailForwards( domain ) )
+	const domainsWithEmailServices = nonStagingDomains.filter(
+		( domain ) => hasPaidEmailWithUs( domain ) || hasEmailForwards( domain )
 	);
 
-	const showActiveDomainList = domainsWithEmailServices.length > 0;
+	const showActiveDomainList = domainsWithEmailServices.length <= 0;
 
 	return (
 		<CalypsoShoppingCartProvider>
 			<EmailManagementHome
 				emailListInactiveHeader={ getMainHeader() }
 				sectionHeaderLabel={ translate( 'Domains' ) }
-				showActiveDomainList={ ! showActiveDomainList }
+				showActiveDomainList={ showActiveDomainList }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
