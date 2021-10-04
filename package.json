@@ -272,7 +272,7 @@
 		"reakit-utils": "^0.15.1",
 		"recursive-copy": "^2.0.10",
 		"redux": "^4.0.5",
-		"regenerator-runtime": "^0.13.4",
+		"regenerator-runtime": "^0.13.9",
 		"replace": "^1.1.5",
 		"request": "^2.88.2",
 		"sass": "^1.37.5",

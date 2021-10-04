@@ -206,7 +206,7 @@
 		"redux-dynamic-middlewares": "^2.0.0",
 		"redux-thunk": "^2.3.0",
 		"refx": "^3.1.1",
-		"regenerator-runtime": "^0.13.4",
+		"regenerator-runtime": "^0.13.9",
 		"resize-observer-polyfill": "^1.5.1",
 		"rtlcss": "^3.1.2",
 		"semver": "^7.3.2",
