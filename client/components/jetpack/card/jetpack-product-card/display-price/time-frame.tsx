@@ -1,17 +1,16 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import * as React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
 
-interface Props {
+interface TimeFrameProps {
 	expiryDate?: Moment;
 	billingTerm: Duration;
 }
 
-const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTerm } ) => {
+const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const productExpiryDate =
@@ -41,4 +40,4 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 	);
 };
 
-export default JetpackProductCardTimeFrame;
+export default TimeFrame;
