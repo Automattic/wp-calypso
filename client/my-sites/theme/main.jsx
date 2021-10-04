@@ -510,13 +510,7 @@ class ThemeSheet extends Component {
 								{
 									components: {
 										InlineSupportLink: (
-											<InlineSupportLink
-												showIcon={ false }
-												supportPostId={ 174865 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
-												) }
-											/>
+											<InlineSupportLink supportContext="themes-unsupported" showIcon={ false } />
 										),
 									},
 								}
