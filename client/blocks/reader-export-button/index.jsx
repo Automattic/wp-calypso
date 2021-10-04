@@ -3,7 +3,7 @@ import { saveAs } from 'browser-filesaver';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
@@ -14,7 +14,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
 
-class ReaderExportButton extends React.Component {
+class ReaderExportButton extends Component {
 	static propTypes = {
 		borderless: PropTypes.bool,
 		disabled: PropTypes.bool,

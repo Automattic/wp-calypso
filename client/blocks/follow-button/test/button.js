@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { render } from 'enzyme';
-import React from 'react';
 import FollowButton from '../button';
 
 describe( 'FollowButton', () => {

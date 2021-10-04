@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
 import './style.scss';
 
-export default class Badge extends React.Component {
+export default class Badge extends Component {
 	static propTypes = {
 		type: PropTypes.oneOf( [
 			'warning',

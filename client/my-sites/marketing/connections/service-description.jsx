@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
@@ -137,12 +137,12 @@ class SharingServiceDescription extends Component {
 			},
 			slack: function () {
 				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Connected this P2 to your Slack Workspace.', {
+					return this.props.translate( 'Workspace connected to Slack.', {
 						comment: 'Get slack notifications on new P2 posts.',
 					} );
 				}
 
-				return this.props.translate( 'Connect your Slack Workspace to this P2.', {
+				return this.props.translate( 'Connect this workspace to your Slack.', {
 					comment: 'Get slack notifications on new P2 posts.',
 				} );
 			},

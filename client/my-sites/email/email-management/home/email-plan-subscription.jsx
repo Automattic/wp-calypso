@@ -1,12 +1,12 @@
 import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 
-class EmailPlanSubscription extends React.Component {
+class EmailPlanSubscription extends Component {
 	hasSubscriptionExpired() {
 		const { isLoadingPurchase, purchase } = this.props;
 

@@ -1,6 +1,6 @@
 import { Popover } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Children, cloneElement, Component } from 'react';
 
 import './style.scss';
 
@@ -29,7 +29,7 @@ class PopoverMenu extends Component {
 		popoverComponent: Popover,
 	};
 
-	menu = React.createRef();
+	menu = createRef();
 
 	delayedFocus = null;
 
@@ -80,7 +80,7 @@ class PopoverMenu extends Component {
 					onKeyDown={ this._onKeyDown }
 					tabIndex="-1"
 				>
-					{ React.Children.map( this.props.children, this._setPropsOnChild, this ) }
+					{ Children.map( this.props.children, this._setPropsOnChild, this ) }
 				</div>
 			</PopoverComponent>
 		);
@@ -93,7 +93,7 @@ class PopoverMenu extends Component {
 
 		const { action, onClick } = child.props;
 
-		return React.cloneElement( child, {
+		return cloneElement( child, {
 			action: null,
 			onClick: ( event ) => {
 				onClick && onClick( event );

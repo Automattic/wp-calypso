@@ -1,6 +1,6 @@
 import { Frame, Page } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
-import type { PaymentDetails } from '../../data-helper';
+import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
 import type { TargetDevice } from '../../types';
 
 const selectors = {
@@ -21,6 +21,19 @@ const selectors = {
 	removeCouponButton: ( coupon: string ) =>
 		`button[aria-label="Remove Coupon: ${ coupon } from cart"]`,
 	saveOrderButton: 'button[aria-label="Save your order"]',
+
+	// Registrar information
+	firstNameInput: `input[aria-describedby="validation-field-first-name"]`,
+	lastNameInput: `input[aria-describedby="validation-field-last-name"]`,
+	phoneInput: `input[name="phone"]`,
+	phoneSelect: 'select.phone-input__country-select',
+	countrySelect: 'select[aria-describedby="validation-field-country-code"]',
+	addressInput: 'input[aria-describedby="validation-field-address-1"]',
+	cityInput: 'input[aria-describedby="validation-field-city"]',
+	stateSelect: 'select[aria-describedby="validation-field-state"]',
+	postalCodeInput: 'input[aria-describedby="validation-field-postal-code"]',
+	submitRegistrarInformationButton:
+		'button[aria-label="Continue with the entered contact details"]',
 
 	// Tax information
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
@@ -141,18 +154,47 @@ export class CartCheckoutPage {
 	 * and a full stop for decimals. Notably, Continental Europe uses the reverse notation
 	 * and this method will produce an unexpected result.
 	 *
-	 * @returns {number} Total value of items in cart.
+	 * If optional parameter `rawString` is specified, the string as obtained is returned.
+	 *
+	 * @param param0 Object parameter.
+	 * @param {boolean} param0.rawString If true, the raw string is returned.
+	 * @returns {Promise<number|string>} Total value of items in cart.
 	 */
-	async getCheckoutTotalAmount(): Promise< number > {
+	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
+		number | string
+	> {
 		const elementHandle = await this.page.waitForSelector(
 			selectors.totalAmount( getTargetDeviceName() )
 		);
 		const stringAmount = await elementHandle.innerText();
+		if ( rawString ) {
+			// Returns the raw string.
+			return stringAmount;
+		}
+
 		const parsedAmount = stringAmount.replace( /,/g, '' ).match( /\d+\.?\d*/g );
 		if ( ! parsedAmount?.length ) {
 			throw new Error( 'Unable to locate or parse cart amount.' );
 		}
 		return parseFloat( parsedAmount.pop() as string );
+	}
+
+	/**
+	 * Enter domain registrar information.
+	 *
+	 * @param {RegistrarDetails} registrarDetails Domain registrar details.
+	 */
+	async enterDomainRegistrarDetails( registrarDetails: RegistrarDetails ): Promise< void > {
+		await this.page.fill( selectors.firstNameInput, registrarDetails.firstName );
+		await this.page.fill( selectors.lastNameInput, registrarDetails.lastName );
+		await this.page.selectOption( selectors.phoneSelect, registrarDetails.countryCode );
+		await this.page.fill( selectors.phoneInput, registrarDetails.phone );
+		await this.page.selectOption( selectors.countrySelect, registrarDetails.countryCode );
+		await this.page.fill( selectors.addressInput, registrarDetails.address );
+		await this.page.fill( selectors.cityInput, registrarDetails.city );
+		await this.page.selectOption( selectors.stateSelect, registrarDetails.stateCode );
+		await this.page.fill( selectors.postalCodeInput, registrarDetails.postalCode );
+		await this.page.click( selectors.submitRegistrarInformationButton );
 	}
 
 	/**

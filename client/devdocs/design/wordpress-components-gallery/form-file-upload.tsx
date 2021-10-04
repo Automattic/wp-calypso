@@ -1,5 +1,4 @@
 import { FormFileUpload } from '@wordpress/components';
-import React from 'react';
 
 const FormFileUploadExample = () => (
 	<FormFileUpload

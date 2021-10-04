@@ -1,4 +1,4 @@
-import React from 'react';
+import { createRef, Component, forwardRef } from 'react';
 import { resemblesUrl } from 'calypso/lib/url';
 
 /**
@@ -12,7 +12,7 @@ import { resemblesUrl } from 'calypso/lib/url';
  * @returns {object} Enhanced component
  */
 export default ( WrappedComponent ) => {
-	class WithPasteToLink extends React.Component {
+	class WithPasteToLink extends Component {
 		static displayName = `withPasteToLink( ${
 			WrappedComponent.displayName || WrappedComponent.name
 		} )`;
@@ -23,7 +23,7 @@ export default ( WrappedComponent ) => {
 
 			this.textareaRef = this.props.forwardedRef;
 			if ( ! this.textareaRef ) {
-				this.textareaRef = React.createRef();
+				this.textareaRef = createRef();
 			}
 		}
 
@@ -81,7 +81,7 @@ export default ( WrappedComponent ) => {
 		}
 	}
 
-	return React.forwardRef( ( props, ref ) => {
+	return forwardRef( ( props, ref ) => {
 		return <WithPasteToLink { ...props } forwardedRef={ ref } />;
 	} );
 };

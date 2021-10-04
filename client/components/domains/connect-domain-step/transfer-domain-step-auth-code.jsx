@@ -1,6 +1,6 @@
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { transferDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

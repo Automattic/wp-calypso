@@ -25,7 +25,7 @@ import {
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
@@ -126,7 +126,7 @@ function getQueryObject( props ) {
 	};
 }
 
-class RegisterDomainStep extends React.Component {
+class RegisterDomainStep extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
@@ -660,12 +660,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return (
-				<>
-					{ this.renderExampleSuggestions() }
-					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
-				</>
-			);
+			return this.renderExampleSuggestions();
 		}
 
 		return this.renderInitialSuggestions( false );

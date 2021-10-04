@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -56,7 +57,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 						<div>
 							<b>{ translate( 'End of Summer Sale!' ) }</b>
 							&nbsp;
-							{ translate( 'Get %(discount)d%% off your first year of Jetpack', {
+							{ translate( 'Get %(discount)d%% off your first year of Jetpack.', {
 								args: { discount: coupon.discount },
 							} ) }
 						</div>

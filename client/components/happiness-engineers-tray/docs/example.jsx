@@ -1,4 +1,3 @@
-import React from 'react';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
 function HappinessEngineersTrayExample() {

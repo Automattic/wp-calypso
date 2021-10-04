@@ -28,7 +28,7 @@ import { localize } from 'i18n-calypso';
 import { compact, get, findIndex, last, map, reduce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';

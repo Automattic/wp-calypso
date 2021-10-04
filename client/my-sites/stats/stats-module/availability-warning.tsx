@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import type { Moment } from 'moment';
 
 interface Props {

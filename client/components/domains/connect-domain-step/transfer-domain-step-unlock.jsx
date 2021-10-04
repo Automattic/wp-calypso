@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import ConnectDomainStepWrapper from 'calypso/components/domains/connect-domain-step/connect-domain-step-wrapper';
 import {

@@ -1,7 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
@@ -14,7 +14,7 @@ import { acceptInvite } from 'calypso/state/invites/actions';
 
 import './style.scss';
 
-class InviteAcceptLoggedIn extends React.Component {
+class InviteAcceptLoggedIn extends Component {
 	state = { submitting: false };
 
 	accept = () => {

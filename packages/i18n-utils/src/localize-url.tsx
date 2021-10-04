@@ -1,5 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useLocale } from './locale-context';
 import {
 	localesWithBlog,

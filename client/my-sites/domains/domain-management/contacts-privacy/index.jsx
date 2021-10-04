@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -22,7 +22,7 @@ import ContactsPrivacyCard from './card';
 
 import './style.scss';
 
-class ContactsPrivacy extends React.PureComponent {
+class ContactsPrivacy extends PureComponent {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

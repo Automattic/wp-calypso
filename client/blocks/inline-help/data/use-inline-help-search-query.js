@@ -1,5 +1,4 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';

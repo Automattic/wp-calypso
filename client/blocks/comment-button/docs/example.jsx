@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import CommentButton from 'calypso/blocks/comment-button';
 
-export default class CommentButtonExample extends React.Component {
+export default class CommentButtonExample extends Component {
 	static displayName = 'CommentButtonExample';
 
 	render() {

@@ -1,6 +1,5 @@
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';

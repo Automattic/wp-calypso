@@ -4,7 +4,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
@@ -72,7 +72,7 @@ import './style.scss';
 
 const identityMap = ( item ) => item;
 
-class EmailProvidersComparison extends React.Component {
+class EmailProvidersComparison extends Component {
 	static propTypes = {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,

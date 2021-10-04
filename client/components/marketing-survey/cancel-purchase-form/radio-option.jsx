@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -66,7 +66,7 @@ export const radioSelectOption = (
 	);
 
 	return (
-		<React.Fragment key={ `fragment${ key }` }>
+		<Fragment key={ `fragment${ key }` }>
 			<FormLabel key={ key }>
 				<FormRadio
 					name={ groupName }
@@ -77,6 +77,6 @@ export const radioSelectOption = (
 				/>
 			</FormLabel>
 			{ key === radioValue && selectInput }
-		</React.Fragment>
+		</Fragment>
 	);
 };

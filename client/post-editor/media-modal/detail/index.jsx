@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
@@ -13,7 +13,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class EditorMediaModalDetailBase extends React.Component {
+class EditorMediaModalDetailBase extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,

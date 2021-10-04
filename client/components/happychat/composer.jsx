@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, throttle } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { withScrollbleed } from './scrollbleed';
 
@@ -20,7 +20,7 @@ const sendThrottledTyping = throttle(
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-class Composer extends React.Component {
+class Composer extends Component {
 	static propTypes = {
 		disabled: PropTypes.bool,
 		message: PropTypes.string,

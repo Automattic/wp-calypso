@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
@@ -43,7 +43,7 @@ import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 
 import './style.scss';
 
-class GSuiteAddUsers extends React.Component {
+class GSuiteAddUsers extends Component {
 	state = {
 		users: [],
 	};

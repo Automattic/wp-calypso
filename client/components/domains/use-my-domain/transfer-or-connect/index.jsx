@@ -3,7 +3,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
@@ -15,11 +15,7 @@ import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	getOptionInfo,
-	connectDomainAction,
-	defaultTransferDomainAction as defaultTransferHandler,
-} from '../utilities';
+import { getOptionInfo, connectDomainAction } from '../utilities';
 import OptionContent from './option-content';
 
 import './style.scss';
@@ -30,6 +26,7 @@ function DomainTransferOrConnect( {
 	currencyCode,
 	defaultConnectHandler,
 	domain,
+	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
 	onTransfer,
@@ -53,9 +50,7 @@ function DomainTransferOrConnect( {
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
-
-		const transferHandler = onTransfer ?? defaultTransferHandler;
-		transferHandler( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
+		onTransfer( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
 	};
 
 	const content = getOptionInfo( {
@@ -63,6 +58,7 @@ function DomainTransferOrConnect( {
 		cart,
 		currencyCode,
 		domain,
+		domainInboundTransferStatusInfo,
 		isSignupStep,
 		onConnect: handleConnect,
 		onTransfer: handleTransfer,

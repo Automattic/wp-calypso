@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
@@ -21,7 +21,7 @@ import {
 
 import './style.scss';
 
-class PluginSiteNetwork extends React.Component {
+class PluginSiteNetwork extends Component {
 	static displayName = 'PluginSiteNetwork';
 
 	static propTypes = {

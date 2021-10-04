@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -9,7 +9,7 @@ import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupTwoFactorBackupCodes extends React.Component {
+class SecurityCheckupTwoFactorBackupCodes extends Component {
 	static propTypes = {
 		areBackupCodesPrinted: PropTypes.bool,
 		areUserSettingsLoaded: PropTypes.bool,
@@ -27,10 +27,10 @@ class SecurityCheckupTwoFactorBackupCodes extends React.Component {
 
 		if ( ! areUserSettingsLoaded ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<QueryUserSettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
@@ -58,7 +58,7 @@ class SecurityCheckupTwoFactorBackupCodes extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<QueryUserSettings />
 				<SecurityCheckupNavigationItem
 					path={ '/me/security/two-step' }
@@ -66,7 +66,7 @@ class SecurityCheckupTwoFactorBackupCodes extends React.Component {
 					text={ translate( 'Two-Step Backup Codes' ) }
 					description={ description }
 				/>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

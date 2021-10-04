@@ -2,7 +2,7 @@ import { getPlan, PLAN_PERSONAL, FEATURE_NO_ADS } from '@automattic/calypso-prod
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';

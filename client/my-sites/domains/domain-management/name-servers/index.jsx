@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -35,7 +35,7 @@ import WpcomNameserversToggle from './wpcom-nameservers-toggle';
 
 import './style.scss';
 
-class NameServers extends React.Component {
+class NameServers extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
@@ -139,7 +139,7 @@ class NameServers extends React.Component {
 		const domain = getSelectedDomain( this.props );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<DomainWarnings
 					domain={ domain }
 					position="domain-name-servers"
@@ -159,7 +159,7 @@ class NameServers extends React.Component {
 						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
 					) }
 				</VerticalNav>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

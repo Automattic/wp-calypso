@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackConnected from 'calypso/assets/images/jetpack/connected.svg';
 import EmptyContent from 'calypso/components/empty-content';

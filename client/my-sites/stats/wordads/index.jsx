@@ -3,7 +3,7 @@ import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';

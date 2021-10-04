@@ -8,7 +8,7 @@ import {
 	isSecurityRealTimePlan,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 
 /*
  * Show a list of Jetpack benefits that do not depend on site data

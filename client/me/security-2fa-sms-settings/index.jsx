@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
@@ -19,7 +19,7 @@ import { saveTwoStepSMSSettings } from 'calypso/state/user-settings/thunks';
 import './style.scss';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 
-class Security2faSMSSettings extends React.Component {
+class Security2faSMSSettings extends Component {
 	static propTypes = {
 		countriesList: PropTypes.array.isRequired,
 		onCancel: PropTypes.func.isRequired,

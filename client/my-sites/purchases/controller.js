@@ -1,5 +1,4 @@
 import page from 'page';
-import React from 'react';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	Purchases,

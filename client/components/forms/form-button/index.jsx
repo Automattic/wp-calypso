@@ -2,11 +2,11 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
-import React, { Children } from 'react';
+import { Component, Children } from 'react';
 
 import './style.scss';
 
-class FormButton extends React.Component {
+class FormButton extends Component {
 	static defaultProps = {
 		isSubmitting: false,
 		isPrimary: true,

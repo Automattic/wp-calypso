@@ -1,5 +1,5 @@
 import { concat, filter, flow, map, sortBy } from 'lodash';
-import React from 'react';
+import { PureComponent } from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(
@@ -13,7 +13,7 @@ const genVendors = flow(
 
 const VENDORS = genVendors( POSSIBLE_TYPES );
 
-class PaymentLogoExamples extends React.PureComponent {
+class PaymentLogoExamples extends PureComponent {
 	static displayName = 'PaymentLogo';
 
 	render() {

@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSiteFragment } from 'calypso/lib/route';
 import {
@@ -19,7 +19,7 @@ import { withEnhancers } from 'calypso/state/utils';
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
 const noop = () => {};
 
-export class PageViewTracker extends React.Component {
+export class PageViewTracker extends Component {
 	static displayName = 'PageViewTracker';
 
 	static propTypes = {

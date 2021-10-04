@@ -3,7 +3,7 @@ import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';

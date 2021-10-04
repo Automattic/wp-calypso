@@ -3,18 +3,18 @@
  */
 
 import { mount } from 'enzyme';
-import React from 'react';
+import { createRef, Component, createElement } from 'react';
 import ReactDom from 'react-dom';
 import RootChild from '..';
 
 /**
  * Module variables
  */
-class Greeting extends React.Component {
+class Greeting extends Component {
 	static defaultProps = { toWhom: 'World' };
 
-	parentChildRef = React.createRef();
-	rootChildRef = React.createRef();
+	parentChildRef = createRef();
+	rootChildRef = createRef();
 
 	render() {
 		return (
@@ -43,14 +43,14 @@ describe( 'RootChild', () => {
 
 	describe( 'rendering', () => {
 		test( 'should render any children as descendants of body', () => {
-			const tree = ReactDom.render( React.createElement( Greeting ), container );
+			const tree = ReactDom.render( createElement( Greeting ), container );
 
 			expect( tree.parentChildRef.current.parentNode.className ).toBe( 'parent' );
 			expect( tree.rootChildRef.current.parentNode.parentNode ).toBe( document.body );
 		} );
 
 		test( 'should update the children if parent is re-rendered', () => {
-			const tree = mount( React.createElement( Greeting ), { attachTo: container } );
+			const tree = mount( createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
 			expect( tree.instance().rootChildRef.current.innerHTML ).toBe( 'Hello Universe!' );
@@ -60,7 +60,7 @@ describe( 'RootChild', () => {
 
 	describe( 'unmounting', () => {
 		test( 'should destroy the root child when the component is unmounted', () => {
-			ReactDom.render( React.createElement( Greeting ), container );
+			ReactDom.render( createElement( Greeting ), container );
 			ReactDom.unmountComponentAtNode( container );
 
 			expect( Array.from( document.body.querySelectorAll( '*' ) ) ).toEqual( [ container ] );

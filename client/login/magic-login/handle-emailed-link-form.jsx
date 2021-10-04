@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -35,7 +35,7 @@ import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
-class HandleEmailedLinkForm extends React.Component {
+class HandleEmailedLinkForm extends Component {
 	static propTypes = {
 		// Passed props
 		clientId: PropTypes.string,

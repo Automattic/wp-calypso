@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
@@ -35,7 +35,7 @@ import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './notifications';
 
-class MasterbarLoggedIn extends React.Component {
+class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
 	};

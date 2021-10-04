@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import Button from '..';
 import Gridicon from '../../gridicon'; // eslint-disable-line no-restricted-imports
 

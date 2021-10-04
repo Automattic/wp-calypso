@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import BooleanPreference from './boolean-preference';
 import NumberPreference from './number-preference';
 import StringPreference from './string-preference';

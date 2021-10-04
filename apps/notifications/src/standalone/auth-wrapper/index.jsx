@@ -1,4 +1,3 @@
-import React from 'react';
 import { useClient } from './client';
 import createIframeProxyClient from './client/iframe-proxy';
 import createOauthClient from './client/oauth';

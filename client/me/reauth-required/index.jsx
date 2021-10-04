@@ -3,7 +3,7 @@ import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -24,7 +24,7 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
 
 // autofocus is used for tracking purposes, not an a11y issue
 /* eslint-disable jsx-a11y/no-autofocus, jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
-class ReauthRequired extends React.Component {
+class ReauthRequired extends Component {
 	state = {
 		remember2fa: false, // Should the 2fa be remembered for 30 days?
 		code: '', // User's generated 2fa code

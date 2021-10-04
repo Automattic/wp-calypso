@@ -1,7 +1,7 @@
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class TimelineEvent extends PureComponent {

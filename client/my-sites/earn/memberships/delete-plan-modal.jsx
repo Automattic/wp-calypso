@@ -1,6 +1,5 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { requestDeleteProduct } from 'calypso/state/memberships/product-list/actions';

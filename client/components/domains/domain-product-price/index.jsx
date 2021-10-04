@@ -1,14 +1,14 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-class DomainProductPrice extends React.Component {
+class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
 		price: PropTypes.string,

@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
@@ -9,7 +9,7 @@ import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
 import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 
-class SiteBlocked extends React.Component {
+class SiteBlocked extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 	};

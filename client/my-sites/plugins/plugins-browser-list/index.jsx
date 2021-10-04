@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 

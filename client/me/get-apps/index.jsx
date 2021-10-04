@@ -1,4 +1,3 @@
-import React from 'react';
 import GetAppsBlock from 'calypso/blocks/get-apps';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

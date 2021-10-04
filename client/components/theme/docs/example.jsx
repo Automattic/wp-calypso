@@ -1,4 +1,3 @@
-import React from 'react';
 import Theme from 'calypso/components/theme';
 
 const ThemeExample = () => {

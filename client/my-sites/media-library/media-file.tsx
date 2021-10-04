@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';

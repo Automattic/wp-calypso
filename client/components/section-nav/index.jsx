@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Children, cloneElement, Component } from 'react';
 import Search from 'calypso/components/search';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -87,7 +87,7 @@ class SectionNav extends Component {
 
 	getChildren() {
 		this.hasPinnedSearch = false;
-		return React.Children.map( this.props.children, ( child ) => {
+		return Children.map( this.props.children, ( child ) => {
 			const extraProps = {
 				hasSiblingControls: this.hasSiblingControls,
 				closeSectionNavMobilePanel: this.closeMobilePanel,
@@ -119,7 +119,7 @@ class SectionNav extends Component {
 				extraProps.onSearch = this.generateOnSearch( child.props.onSearch );
 			}
 
-			return React.cloneElement( child, extraProps );
+			return cloneElement( child, extraProps );
 		} );
 	}
 
@@ -155,7 +155,7 @@ class SectionNav extends Component {
 
 		const ignoreSiblings = [ Search, CommentNavigationTab ];
 
-		React.Children.forEach( children, ( child, index ) => {
+		Children.forEach( children, ( child, index ) => {
 			// Checking for at least 2 controls groups that are not null or ignored siblings
 			if ( index && child && ! includes( ignoreSiblings, child.type ) ) {
 				this.hasSiblingControls = true;

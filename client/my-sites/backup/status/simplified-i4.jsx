@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import BackupCard from 'calypso/components/jetpack/backup-card';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';

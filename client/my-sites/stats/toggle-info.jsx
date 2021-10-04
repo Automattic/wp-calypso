@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 const toggleInfo = ( WrappedComponent ) =>
 	class ToggleComponent extends Component {

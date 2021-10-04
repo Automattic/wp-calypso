@@ -20,7 +20,7 @@ import {
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component, useEffect } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';

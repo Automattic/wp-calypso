@@ -1,10 +1,9 @@
 import { translate } from 'i18n-calypso';
 import { ValidationError, validator } from './types';
 
-const filePathRegExp = /^\/$|^(\/[\w-]+)+\/?$/;
-const filePathBackSlashRegExp = /^\\$|^(\\[\w-]+)+\\?$/;
-const filePathMultiSlashRegExp = /^\/+$|^(\/+[\w-]+)+\/*$/;
-const validFilePathChars = /[\w\-/]/g;
+const filePathRegExp = /^\/$|^(\/[^/]+)+\/?$/;
+const filePathBackSlashRegExp = /^\\$|^(\\[^/]+)+\\?$/;
+const filePathMultiSlashRegExp = /^\/+$|^(\/+[^/]+)+\/*$/;
 
 const validateFilePath: validator< string > = (
 	pathToValidate: string
@@ -15,23 +14,6 @@ const validateFilePath: validator< string > = (
 	if ( filePathBackSlashRegExp.test( pathToValidate ) ) {
 		return {
 			message: translate( 'Use forward slashes, "/", in path.' ).toString(),
-		};
-	}
-	const invalidCharacters = pathToValidate
-		.replace( validFilePathChars, '' )
-		.split( '' )
-		.filter( ( character, index, array ) => array.indexOf( character ) === index )
-		.join( '' );
-	if ( invalidCharacters.length > 0 ) {
-		return {
-			message: translate(
-				'Path contains invalid character "%s".',
-				'Path contains invalid characters "%s".',
-				{
-					args: [ invalidCharacters ],
-					count: invalidCharacters.length,
-				}
-			).toString(),
 		};
 	}
 

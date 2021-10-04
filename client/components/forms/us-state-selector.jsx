@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
 
 const USStateSelector = ( props ) => {

@@ -1,11 +1,11 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
 import './style.scss';
 
-class ThemeDownloadCard extends React.PureComponent {
+class ThemeDownloadCard extends PureComponent {
 	static propTypes = {
 		href: PropTypes.string,
 	};

@@ -1,5 +1,5 @@
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import ReadmeViewer from 'calypso/components/readme-viewer';

@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import React, { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { level1ObjectMap } from 'calypso/my-sites/marketplace/pages/marketplace-test';

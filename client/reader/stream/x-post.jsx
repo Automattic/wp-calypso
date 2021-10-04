@@ -5,13 +5,12 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { get, forEach, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import Emojify from 'calypso/components/emojify';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
@@ -204,11 +203,11 @@ class CrossPost extends PureComponent {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<Emojify>{ xpostTitle }</Emojify>
+								{ xpostTitle }
 							</a>
 						</h1>
 					) }
-					{ post.author && <Emojify>{ this.getDescription( post.author.first_name ) }</Emojify> }
+					{ post.author && this.getDescription( post.author.first_name ) }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }

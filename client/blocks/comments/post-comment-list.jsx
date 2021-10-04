@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
@@ -47,7 +47,7 @@ import './post-comment-list.scss';
  *
  */
 
-class PostCommentList extends React.Component {
+class PostCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,

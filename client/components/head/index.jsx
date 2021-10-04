@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
-import React from 'react';
 import Favicons from './favicons';
 
 const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonce } ) => {

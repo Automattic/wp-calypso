@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -131,7 +131,7 @@ function getAnalyticsPath( path, params ) {
 }
 
 function notFoundError( context, next ) {
-	context.primary = React.createElement( EmptyContent, {
+	context.primary = createElement( EmptyContent, {
 		className: 'content-404',
 		illustration: '/calypso/images/illustrations/illustration-404.svg',
 		title: translate( 'Uh oh. Page not found.' ),
@@ -166,7 +166,7 @@ export default async function () {
 		siteSelection,
 		redirectIfWooCommerceNotInstalled,
 		( context, next ) => {
-			const component = React.createElement( Dashboard, {
+			const component = createElement( Dashboard, {
 				params: context.params,
 			} );
 			const appProps = {
@@ -174,9 +174,9 @@ export default async function () {
 				analyticsTitle: 'Store > Dashboard',
 			};
 
-			context.primary = React.createElement( App, appProps, component );
+			context.primary = createElement( App, appProps, component );
 
-			context.secondary = React.createElement( StoreSidebar, { path: context.path } );
+			context.secondary = createElement( StoreSidebar, { path: context.path } );
 
 			next();
 		},

@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -19,7 +19,7 @@ import {
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
 import EmailForwardingLimit from './email-forwarding-limit';
 
-class EmailForwardingAddNew extends React.Component {
+class EmailForwardingAddNew extends Component {
 	static propTypes = {
 		trackCancelClick: PropTypes.func.isRequired,
 		trackDestinationFieldFocus: PropTypes.func.isRequired,

@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { shallow } from 'enzyme';
-import React from 'react';
 import DocsExample, { DocsExampleToggle } from '../index';
 
 const noop = () => {};

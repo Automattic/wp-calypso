@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React, { createElement } from 'react';
+import { createElement } from 'react';
 import DoItForMeLandingPage from 'calypso/my-sites/marketing/do-it-for-me/landing';
 import SiteInformationCollection from 'calypso/my-sites/marketing/do-it-for-me/site-info-collection';
 import { errorNotice } from 'calypso/state/notices/actions';

@@ -12,7 +12,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';

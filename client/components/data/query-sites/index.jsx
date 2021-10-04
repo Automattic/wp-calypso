@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

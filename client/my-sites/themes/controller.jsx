@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import React from 'react';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
 import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';

@@ -1,4 +1,3 @@
-import React from 'react';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';

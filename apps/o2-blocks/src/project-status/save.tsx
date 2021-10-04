@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import type { BlockAttributes } from './types';
 import type { BlockSaveProps } from '@wordpress/blocks';
 

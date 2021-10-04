@@ -1,7 +1,6 @@
 import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
 import { CardNumberElement } from '@stripe/react-stripe-js';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 

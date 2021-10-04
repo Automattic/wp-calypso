@@ -1,5 +1,4 @@
 import { flowRight } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

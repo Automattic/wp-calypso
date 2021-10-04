@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useEffect, useRef } from 'react';
+import { createElement, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -24,6 +24,7 @@ import {
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
+	TASK_DIFM_LITE_IN_PROGRESS,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -31,6 +32,7 @@ import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
+import DIFMLiteInProgress from 'calypso/my-sites/customer-home/cards/tasks/difm-lite-in-progress';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
@@ -50,7 +52,9 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
+	[ TASK_CLOUDFLARE ]: Cloudflare,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
+	[ TASK_DIFM_LITE_IN_PROGRESS ]: DIFMLiteInProgress,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
 	[ TASK_FIND_DOMAIN ]: FindDomain,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
@@ -64,7 +68,6 @@ const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE ]: SiteSetupListEcommerce,
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
-	[ TASK_CLOUDFLARE ]: Cloudflare,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
@@ -101,7 +104,7 @@ const Primary = ( { cards, trackCard } ) => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
-					React.createElement( cardComponents[ card ], {
+					createElement( cardComponents[ card ], {
 						key: index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 						card,

@@ -9,10 +9,10 @@ import {
 	FlexItem,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState } from 'react';
+import type { ReactNode, ComponentType } from 'react';
+import { useCallback, useState } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
 import type { Language, LanguageGroup } from './Language';
-import type { ReactNode, ComponentType } from 'react';
 
 import './style.scss';
 
@@ -139,7 +139,7 @@ function LanguagePicker< TLanguage extends Language >( {
 
 	const selectControlOptions = languageGroups.map( ( lg ) => ( { key: lg.id, name: lg.name() } ) );
 
-	const handleSearchClose = React.useCallback( () => {
+	const handleSearchClose = useCallback( () => {
 		setFilter( findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, filter ) );
 	}, [ selectedLanguage, languageGroups, filter ] );
 

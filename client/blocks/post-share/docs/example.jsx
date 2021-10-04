@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { get } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PostShare from 'calypso/blocks/post-share';
 import QueryPosts from 'calypso/components/data/query-posts';

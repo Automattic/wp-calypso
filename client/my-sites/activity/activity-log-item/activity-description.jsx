@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormattedBlock from 'calypso/components/notes-formatted-block';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 

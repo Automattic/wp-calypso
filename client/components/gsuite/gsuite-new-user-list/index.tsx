@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { Fragment, FunctionComponent, ReactNode } from 'react';
+import { Fragment, FunctionComponent, ReactNode } from 'react';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,

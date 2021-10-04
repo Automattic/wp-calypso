@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
@@ -8,7 +8,7 @@ import {
 const LONGREADS_SITE_ID = 70135762;
 const LONGREADS_POST_ID = 65877;
 
-class RelatedPostCardExample extends React.Component {
+class RelatedPostCardExample extends Component {
 	static displayName = 'RelatedPostCard';
 
 	render() {

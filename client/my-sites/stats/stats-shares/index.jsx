@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';

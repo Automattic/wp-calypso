@@ -1,6 +1,8 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
+export const getMailboxesCacheKey = ( siteId ) => [ 'emails/mailboxes', siteId ];
+
 /**
  * Get the associated mailboxes for a given site
  *
@@ -10,7 +12,7 @@ import wpcom from 'calypso/lib/wp';
  */
 export const useGetMailboxes = ( siteId, queryOptions = {} ) => {
 	return useQuery(
-		[ 'emails/mailboxes', siteId ],
+		getMailboxesCacheKey( siteId ),
 		() =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/emails/mailboxes`,

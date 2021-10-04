@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import GoogleIcon from 'calypso/components/social-icons/google';

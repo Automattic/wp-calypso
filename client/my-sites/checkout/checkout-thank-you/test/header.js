@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import { CheckoutThankYouHeader } from '../header';
 
 jest.unmock( '@automattic/calypso-products' );

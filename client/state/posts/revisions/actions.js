@@ -36,9 +36,6 @@ export const requestPostRevisions = ( siteId, postId, postType = 'posts', compar
 
 /**
  * Action creator function: POST_REVISIONS_RECEIVE
- *
- * @param {object} response diffs, postId, revisions, siteId,
- * @returns {object} action object
  */
 export const receivePostRevisions = ( { diffs, postId, revisions, siteId } ) => ( {
 	type: POST_REVISIONS_RECEIVE,

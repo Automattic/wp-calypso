@@ -1,6 +1,5 @@
 import { defer } from 'lodash';
 import page from 'page';
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
 

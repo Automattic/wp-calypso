@@ -1,6 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import JetpackSyncPanel from 'calypso/my-sites/site-settings/jetpack-sync-panel';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';

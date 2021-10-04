@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 

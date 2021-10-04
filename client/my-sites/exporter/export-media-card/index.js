@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryMediaExport from 'calypso/components/data/query-media-export';
 import QueryMediaStorage from 'calypso/components/data/query-media-storage';

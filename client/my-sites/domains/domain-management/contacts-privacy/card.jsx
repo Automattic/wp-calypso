@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
 import {
@@ -14,7 +14,7 @@ import {
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 import ContactDisplay from './contact-display';
 
-class ContactsPrivacyCard extends React.Component {
+class ContactsPrivacyCard extends Component {
 	static propTypes = {
 		privateDomain: PropTypes.bool.isRequired,
 		privacyAvailable: PropTypes.bool.isRequired,
@@ -60,7 +60,7 @@ class ContactsPrivacyCard extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="contacts-privacy__settings">
 					<ToggleControl
 						checked={ privateDomain }
@@ -70,7 +70,7 @@ class ContactsPrivacyCard extends React.Component {
 					/>
 				</div>
 				{ privacyProtectionNote }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -101,7 +101,7 @@ class ContactsPrivacyCard extends React.Component {
 		) : null;
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="contacts-privacy__settings">
 					<ToggleControl
 						checked={ contactInfoDisclosed }
@@ -111,7 +111,7 @@ class ContactsPrivacyCard extends React.Component {
 					/>
 				</div>
 				{ contactVerificationNotice }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

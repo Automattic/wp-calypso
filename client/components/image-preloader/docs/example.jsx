@@ -1,4 +1,3 @@
-import React from 'react';
 import ImagePreloader from 'calypso/components/image-preloader';
 
 const ImagePreloaderExample = () => (

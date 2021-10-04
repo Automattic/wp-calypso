@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ReaderRecommendedSites from '../';
 
 const sites = {

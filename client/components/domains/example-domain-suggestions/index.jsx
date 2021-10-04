@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -9,7 +9,7 @@ import ExampleDomainBrowser from '../example-domain-browser';
 
 import './style.scss';
 
-class DomainSuggestionsExample extends React.Component {
+class DomainSuggestionsExample extends Component {
 	static propTypes = {
 		offerUnavailableOption: PropTypes.bool,
 		siteDesignType: PropTypes.string,

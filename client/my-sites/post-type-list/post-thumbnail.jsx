@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import safeImageUrl from 'calypso/lib/safe-image-url';

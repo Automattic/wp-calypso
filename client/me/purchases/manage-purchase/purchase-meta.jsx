@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import UserItem from 'calypso/components/user';

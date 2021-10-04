@@ -1,11 +1,11 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
 const noop = () => {};
 
-class FollowingManageSortControls extends React.Component {
+class FollowingManageSortControls extends Component {
 	static propTypes = {
 		onSortChange: PropTypes.func,
 		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),

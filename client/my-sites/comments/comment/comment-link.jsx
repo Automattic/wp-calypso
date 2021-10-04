@@ -1,6 +1,6 @@
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 export default class CommentLink extends PureComponent {
 	static propTypes = {

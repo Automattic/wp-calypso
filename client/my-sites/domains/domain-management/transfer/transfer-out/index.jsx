@@ -3,7 +3,7 @@ import { omit } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { createElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
 import Main from 'calypso/components/main';
@@ -23,7 +23,7 @@ import Unlocked from './unlocked.jsx';
 
 import './style.scss';
 
-class Transfer extends React.Component {
+class Transfer extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -57,7 +57,7 @@ class Transfer extends React.Component {
 			section = Unlocked;
 		}
 
-		return React.createElement( section, omit( this.props, [ 'children' ] ) );
+		return createElement( section, omit( this.props, [ 'children' ] ) );
 	}
 
 	render() {

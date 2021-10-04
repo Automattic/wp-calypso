@@ -5,7 +5,7 @@ import { get, defer } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import React from 'react';
+import { createRef, createElement, Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'calypso/reader/stats';
@@ -32,7 +32,7 @@ function getPingbackAttributes( post ) {
 	};
 }
 
-export class DailyPostButton extends React.Component {
+export class DailyPostButton extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -41,7 +41,7 @@ export class DailyPostButton extends React.Component {
 
 		this._closeTimerId = null;
 		this._isMounted = false;
-		this.dailyPostButtonRef = React.createRef();
+		this.dailyPostButtonRef = createRef();
 	}
 
 	static propTypes = {
@@ -149,7 +149,7 @@ export class DailyPostButton extends React.Component {
 			return null;
 		}
 
-		return React.createElement(
+		return createElement(
 			this.props.tagName,
 			{
 				className: 'daily-post-button',

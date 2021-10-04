@@ -1,7 +1,6 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import EmptyContent from 'calypso/components/empty-content';

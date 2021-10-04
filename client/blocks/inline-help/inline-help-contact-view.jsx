@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import InlineHelpForumView from 'calypso/blocks/inline-help/inline-help-forum-view';
 import PlaceholderLines from 'calypso/blocks/inline-help/placeholder-lines';

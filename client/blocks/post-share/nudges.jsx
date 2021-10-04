@@ -1,6 +1,5 @@
 import { findFirstSimilarPlanKey, TYPE_PREMIUM, TERM_ANNUALLY } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import React from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';

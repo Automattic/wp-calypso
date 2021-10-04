@@ -42,6 +42,10 @@ const selectors = {
 			'Select'
 		) }`,
 
+	// Create account
+	email: 'input[type="email"]',
+	password: 'input[type="password"]',
+
 	// Post-signup design selection (for Free plans only)
 	skipForNowButton: 'button:text("Skip for now")',
 
@@ -201,10 +205,7 @@ export class GutenboardingFlow {
 	async selectPlan( name: Plans ): Promise< void > {
 		// First, expand the accordion.
 		await this.page.click( ':text-is("Show all plans")' );
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.selectPlanButton( name ) ),
-		] );
+		await this.page.click( selectors.selectPlanButton( name ) );
 	}
 
 	/**
@@ -216,6 +217,18 @@ export class GutenboardingFlow {
 		// The plan item with the `has-badge` attribute is the one that is recommended based on features.
 		const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.has-badge` );
 		await elementHandle.waitForSelector( `div:text-is("${ name }")` );
+	}
+
+	/**
+	 * Creates an account (if Gutenboarding was initiated while logged out).
+	 *
+	 * @param {string} email Email address.
+	 * @param {string} password Password of user.
+	 */
+	async signup( email: string, password: string ): Promise< void > {
+		await this.page.fill( selectors.email, email );
+		await this.page.fill( selectors.password, password );
+		await this.page.click( selectors.button( 'Create account' ) );
 	}
 
 	/**

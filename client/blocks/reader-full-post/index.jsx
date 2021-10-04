@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 import CommentButton from 'calypso/blocks/comment-button';
@@ -25,7 +25,6 @@ import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import EmbedContainer from 'calypso/components/embed-container';
-import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
@@ -85,7 +84,7 @@ import ReaderFullPostUnavailable from './unavailable';
 
 import './style.scss';
 
-export class FullPostView extends React.Component {
+export class FullPostView extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		onClose: PropTypes.func.isRequired,
@@ -96,8 +95,8 @@ export class FullPostView extends React.Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
-	commentsWrapper = React.createRef();
-	postContentWrapper = React.createRef();
+	commentsWrapper = createRef();
+	postContentWrapper = createRef();
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
@@ -490,102 +489,100 @@ export class FullPostView extends React.Component {
 								this.renderMarkAsSenButton() }
 						</div>
 					</div>
-					<Emojify>
-						<article className="reader-full-post__story">
-							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
+					<article className="reader-full-post__story">
+						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
-							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<FeaturedImage src={ post.featured_image } alt={ featuredImageAlt } />
-							) }
-							{ isLoading && <ReaderFullPostContentPlaceholder /> }
-							{ post.use_excerpt ? (
-								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
-							) : (
-								<EmbedContainer>
-									<AutoDirection>
-										<div
-											ref={ this.postContentWrapper }
-											className="reader-full-post__story-content"
-											dangerouslySetInnerHTML={ { __html: post.content } }
-										/>
-									</AutoDirection>
-								</EmbedContainer>
-							) }
-
-							{ post.use_excerpt && ! isDiscoverPost( post ) && (
-								<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-							) }
-							{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
-							{ isDailyPostChallengeOrPrompt( post ) && (
-								<DailyPostButton post={ post } site={ site } />
-							) }
-
-							<ReaderPostActions
-								post={ post }
-								site={ site }
-								onCommentClick={ this.handleCommentClick }
-								fullPost={ true }
-							/>
-
-							{ ! isLoading && <PerformanceTrackerStop /> }
-
-							{ showRelatedPosts && (
-								<RelatedPostsFromSameSite
-									siteId={ +post.site_ID }
-									postId={ +post.ID }
-									title={ translate( 'More in {{ siteLink /}}', {
-										components: {
-											siteLink: (
-												<a
-													href={ getStreamUrlFromPost( post ) }
-													/* eslint-disable wpcalypso/jsx-classname-namespace */
-													className="reader-related-card__link"
-													/* eslint-enable wpcalypso/jsx-classname-namespace */
-												>
-													{ siteName }
-												</a>
-											),
-										},
-									} ) }
-									/* eslint-disable wpcalypso/jsx-classname-namespace */
-									className="is-same-site"
-									/* eslint-enable wpcalypso/jsx-classname-namespace */
-									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
-								/>
-							) }
-
-							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
-								{ shouldShowComments( post ) && (
-									<Comments
-										showNestingReplyArrow={ true }
-										post={ post }
-										initialSize={ startingCommentId ? commentCount : 10 }
-										pageSize={ 25 }
-										startingCommentId={ startingCommentId }
-										commentCount={ commentCount }
-										maxDepth={ 1 }
-										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton={ true }
-										followSource={ READER_FULL_POST }
-										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-										shouldHighlightNew={ true }
+						{ post.featured_image && ! isFeaturedImageInContent( post ) && (
+							<FeaturedImage src={ post.featured_image } alt={ featuredImageAlt } />
+						) }
+						{ isLoading && <ReaderFullPostContentPlaceholder /> }
+						{ post.use_excerpt ? (
+							<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+						) : (
+							<EmbedContainer>
+								<AutoDirection>
+									<div
+										ref={ this.postContentWrapper }
+										className="reader-full-post__story-content"
+										dangerouslySetInnerHTML={ { __html: post.content } }
 									/>
-								) }
-							</div>
+								</AutoDirection>
+							</EmbedContainer>
+						) }
 
-							{ showRelatedPosts && (
-								<RelatedPostsFromOtherSites
-									siteId={ +post.site_ID }
-									postId={ +post.ID }
-									title={ relatedPostsFromOtherSitesTitle }
-									/* eslint-disable wpcalypso/jsx-classname-namespace */
-									className="is-other-site"
-									/* eslint-enable wpcalypso/jsx-classname-namespace */
-									onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
+						{ post.use_excerpt && ! isDiscoverPost( post ) && (
+							<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+						) }
+						{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
+						{ isDailyPostChallengeOrPrompt( post ) && (
+							<DailyPostButton post={ post } site={ site } />
+						) }
+
+						<ReaderPostActions
+							post={ post }
+							site={ site }
+							onCommentClick={ this.handleCommentClick }
+							fullPost={ true }
+						/>
+
+						{ ! isLoading && <PerformanceTrackerStop /> }
+
+						{ showRelatedPosts && (
+							<RelatedPostsFromSameSite
+								siteId={ +post.site_ID }
+								postId={ +post.ID }
+								title={ translate( 'More in {{ siteLink /}}', {
+									components: {
+										siteLink: (
+											<a
+												href={ getStreamUrlFromPost( post ) }
+												/* eslint-disable wpcalypso/jsx-classname-namespace */
+												className="reader-related-card__link"
+												/* eslint-enable wpcalypso/jsx-classname-namespace */
+											>
+												{ siteName }
+											</a>
+										),
+									},
+								} ) }
+								/* eslint-disable wpcalypso/jsx-classname-namespace */
+								className="is-same-site"
+								/* eslint-enable wpcalypso/jsx-classname-namespace */
+								onPostClick={ this.handleRelatedPostFromSameSiteClicked }
+							/>
+						) }
+
+						<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
+							{ shouldShowComments( post ) && (
+								<Comments
+									showNestingReplyArrow={ true }
+									post={ post }
+									initialSize={ startingCommentId ? commentCount : 10 }
+									pageSize={ 25 }
+									startingCommentId={ startingCommentId }
+									commentCount={ commentCount }
+									maxDepth={ 1 }
+									commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+									showConversationFollowButton={ true }
+									followSource={ READER_FULL_POST }
+									shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+									shouldHighlightNew={ true }
 								/>
 							) }
-						</article>
-					</Emojify>
+						</div>
+
+						{ showRelatedPosts && (
+							<RelatedPostsFromOtherSites
+								siteId={ +post.site_ID }
+								postId={ +post.ID }
+								title={ relatedPostsFromOtherSitesTitle }
+								/* eslint-disable wpcalypso/jsx-classname-namespace */
+								className="is-other-site"
+								/* eslint-enable wpcalypso/jsx-classname-namespace */
+								onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
+							/>
+						) }
+					</article>
 				</div>
 			</ReaderMain>
 		);

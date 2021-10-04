@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import Table from '../../../components/table';

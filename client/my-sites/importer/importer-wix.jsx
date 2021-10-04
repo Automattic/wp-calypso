@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import SiteImporter from './site-importer';
 
-class ImporterWix extends React.PureComponent {
+class ImporterWix extends PureComponent {
 	static displayName = 'ImporterWix';
 
 	static propTypes = {

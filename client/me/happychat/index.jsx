@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { sidebar } from 'calypso/me/controller';

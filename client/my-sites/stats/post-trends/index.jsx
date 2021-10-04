@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { throttle, values } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -17,7 +17,7 @@ import Month from './month';
 
 import './style.scss';
 
-class PostTrends extends React.Component {
+class PostTrends extends Component {
 	static displayName = 'PostTrends';
 
 	static propTypes = {
@@ -30,8 +30,8 @@ class PostTrends extends React.Component {
 		canScrollRight: false,
 	};
 
-	wrapperRef = React.createRef();
-	yearRef = React.createRef();
+	wrapperRef = createRef();
+	yearRef = createRef();
 
 	componentDidMount() {
 		const node = this.wrapperRef.current;

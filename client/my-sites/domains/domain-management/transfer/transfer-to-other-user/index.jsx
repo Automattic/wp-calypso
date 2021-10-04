@@ -3,7 +3,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect, useSelector } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -29,7 +29,7 @@ const wpcom = wp.undocumented();
 
 const getWpcomUserId = ( user ) => user.linked_user_ID ?? user.ID;
 
-class TransferOtherUser extends React.Component {
+class TransferOtherUser extends Component {
 	static propTypes = {
 		currentUserId: PropTypes.number.isRequired,
 		domains: PropTypes.array.isRequired,

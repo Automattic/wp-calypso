@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import SimulatedProgressBar from 'calypso/my-sites/marketplace/components/simulated-progressbar';
 

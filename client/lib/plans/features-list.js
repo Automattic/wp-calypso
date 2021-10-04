@@ -133,7 +133,6 @@ import {
 	PREMIUM_DESIGN_FOR_STORES,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';

@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import React from 'react';
 import Head from 'calypso/components/head';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { chunkCssLinks } from './utils';

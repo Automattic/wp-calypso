@@ -1,13 +1,13 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
 import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';
 
-class PostBlocked extends React.Component {
+class PostBlocked extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 	};

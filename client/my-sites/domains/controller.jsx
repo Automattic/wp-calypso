@@ -1,7 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { get, includes, map } from 'lodash';
 import page from 'page';
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';

@@ -1,4 +1,3 @@
-import React from 'react';
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
 import SecurityKeyForm from './security-key-form';
 import VerificationCodeForm from './verification-code-form';

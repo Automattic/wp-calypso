@@ -10,7 +10,7 @@ import { Card } from '@automattic/components';
 import filesize from 'filesize';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

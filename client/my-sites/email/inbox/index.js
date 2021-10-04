@@ -1,11 +1,13 @@
 import { localize, translate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import { getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { getConfiguredTitanMailboxCount } from 'calypso/lib/titan';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
-import { hasEmailSubscription } from 'calypso/my-sites/email/email-management/home/utils';
 import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -34,26 +36,34 @@ const InboxManagement = ( { domains } ) => {
 		);
 	}
 
-	const domainsWithSubscriptions = domains.filter(
-		( domain ) => ! domain.isWPCOMDomain && hasEmailSubscription( domain )
+	const nonStagingDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
+
+	// Find out if the site has at least one mailbox in the site
+	const hasAnyMailboxes = nonStagingDomains.some(
+		( domain ) =>
+			getGSuiteMailboxCount( domain ) > 0 || getConfiguredTitanMailboxCount( domain ) > 0
 	);
 
-	//EmailManagementHome logic will handle the case where there is only one domain to show directly the email comparison
-	//and also if there is no domain so, it will show a CTA to buy domain
-	if ( domainsWithSubscriptions.length === 0 ) {
-		return (
-			<CalypsoShoppingCartProvider>
-				<EmailManagementHome
-					emailListInactiveHeader={ getMainHeader() }
-					sectionHeaderLabel={ translate( 'Domains' ) }
-					showActiveDomainList={ false }
-				/>
-			</CalypsoShoppingCartProvider>
-		);
+	// Load the Inbox UI if at least one mailbox occurs
+	if ( hasAnyMailboxes ) {
+		return <MailboxSelectionList />;
 	}
 
-	//If we are at this point it means that we've at least have one subscription to show in mailbox selector
-	return <MailboxSelectionList />;
+	const domainsWithEmailServices = nonStagingDomains.filter(
+		( domain ) => hasPaidEmailWithUs( domain ) || hasEmailForwards( domain )
+	);
+
+	const showActiveDomainList = domainsWithEmailServices.length <= 0;
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<EmailManagementHome
+				emailListInactiveHeader={ getMainHeader() }
+				sectionHeaderLabel={ translate( 'Domains' ) }
+				showActiveDomainList={ showActiveDomainList }
+			/>
+		</CalypsoShoppingCartProvider>
+	);
 };
 
 export default connect( ( state ) => {

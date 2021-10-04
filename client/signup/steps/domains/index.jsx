@@ -2,7 +2,7 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
@@ -59,7 +59,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
 
-class DomainsStep extends React.Component {
+class DomainsStep extends Component {
 	static propTypes = {
 		forceDesignType: PropTypes.string,
 		domainsWithPlansOnly: PropTypes.bool,

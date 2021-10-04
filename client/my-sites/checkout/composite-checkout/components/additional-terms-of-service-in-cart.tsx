@@ -4,7 +4,6 @@ import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart
 import debugFactory from 'debug';
 import i18nCalypso, { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

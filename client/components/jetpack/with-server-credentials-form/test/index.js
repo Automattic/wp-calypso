@@ -3,7 +3,6 @@
  */
 
 import { render, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import withServerCredentialsForm from 'calypso/components/jetpack/with-server-credentials-form';

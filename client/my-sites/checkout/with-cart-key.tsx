@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import useCartKey from './use-cart-key';
 
 export default function withCartKey< P >( Component: React.ComponentType< P > ) {

@@ -3,7 +3,7 @@ import { CompactCard, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
@@ -28,7 +28,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
 
-class Security extends React.Component {
+class Security extends Component {
 	header() {
 		return (
 			<Header onClick={ this.back } selectedDomainName={ this.props.selectedDomainName }>
@@ -84,7 +84,7 @@ class Security extends React.Component {
 
 		if ( sslStatuses.SSL_PENDING === sslStatus ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<p>
 						{ translate(
 							'Due to some changes to your domain, we need to generate a new SSL certificate to activate your HTTPS encryption. This process should only take a couple hours at most. If you’re running into delays please let us know so we can help you out.'
@@ -93,13 +93,13 @@ class Security extends React.Component {
 					<Button onClick={ this.props.showInlineHelpPopover }>
 						{ translate( 'Contact support' ) }
 					</Button>
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
 		if ( sslStatuses.SSL_DISABLED === sslStatus ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<p>
 						{ translate(
 							'We have disabled HTTPS encryption because your domain has expired and is no longer active. Renew your domain to reactivate it and turn on HTTPS encryption.'
@@ -115,12 +115,12 @@ class Security extends React.Component {
 						reactivate={ ! domain.isRenewable && domain.isRedeemable }
 						tracksProps={ { source: 'security-status', domain_status: 'expired' } }
 					/>
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<p>
 					{ translate(
 						'Strong encryption is critical to ensure the privacy and security of your site. This is what you get with HTTPS encryption on WordPress.com:'
@@ -138,7 +138,7 @@ class Security extends React.Component {
 						<li key={ index }>{ feature }</li>
 					) ) }
 				</ul>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -152,7 +152,7 @@ class Security extends React.Component {
 		const { domain, translate } = this.props;
 		const { sslStatus } = domain;
 		return (
-			<React.Fragment>
+			<Fragment>
 				<CompactCard className="security__header">
 					<span>{ translate( 'HTTPS encryption' ) }</span>
 					{ this.getSSLStatusIcon( domain ) }
@@ -170,7 +170,7 @@ class Security extends React.Component {
 						</VerticalNavItem>
 					</VerticalNav>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

@@ -47,7 +47,6 @@ const debug = debugModule( 'calypso:redux:reader-follows' );
  * @property {number} date_subscribed The date subscribed. Seconds since epoch.
  * @property {boolean} is_owner Is the current user the owner of this site
  * @property {object} delivery_methods
- *
  */
 
 /**
@@ -124,12 +123,6 @@ export function recordUnfollow( url ) {
 	};
 }
 
-/**
- * Returns an action object to signal that followed sites have been received.
- *
- * @param  {Array}  follows Follows received
- * @returns {object} 		Action object
- */
 export function receiveFollows( { follows, totalCount } ) {
 	return {
 		type: READER_FOLLOWS_RECEIVE,

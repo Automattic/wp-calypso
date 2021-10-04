@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
-import React from 'react';
 
 describe( 'AppPromo', () => {
 	const appPromoDetails = {

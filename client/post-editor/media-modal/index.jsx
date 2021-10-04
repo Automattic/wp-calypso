@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { flow, get, isEmpty, some, values } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';

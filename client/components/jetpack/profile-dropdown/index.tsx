@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';

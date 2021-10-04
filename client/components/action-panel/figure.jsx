@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 	const figureClasses = classNames( {

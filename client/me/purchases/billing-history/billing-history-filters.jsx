@@ -2,7 +2,7 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { find, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -12,7 +12,7 @@ import getBillingTransactionAppFilterValues from 'calypso/state/selectors/get-bi
 import getBillingTransactionDateFilterValues from 'calypso/state/selectors/get-billing-transaction-date-filter-values';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 
-class BillingHistoryFilters extends React.Component {
+class BillingHistoryFilters extends Component {
 	state = {
 		activePopover: '',
 	};

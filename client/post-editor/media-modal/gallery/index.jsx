@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { omitBy, some, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
@@ -17,7 +17,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class EditorMediaModalGallery extends React.Component {
+class EditorMediaModalGallery extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,

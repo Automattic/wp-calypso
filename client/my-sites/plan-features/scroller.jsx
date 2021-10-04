@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { range, round } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 const MIN_CELL_WIDTH = 240; // px
 const SIDE_PANE_RATIO = 0.12; // 12% of full width

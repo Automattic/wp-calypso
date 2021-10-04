@@ -21,7 +21,7 @@ import {
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -122,7 +122,7 @@ function showProgressIndicator( flowName ) {
 	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
 
-class Signup extends React.Component {
+class Signup extends Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,

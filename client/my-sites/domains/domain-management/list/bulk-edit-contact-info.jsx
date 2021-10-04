@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import DomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/components/domain-contact-details';
@@ -19,7 +19,7 @@ const wpcom = wp.undocumented();
 
 import './list-all.scss';
 
-class BulkEditContactInfo extends React.Component {
+class BulkEditContactInfo extends Component {
 	static propTypes = {
 		handleSaveContactInfo: PropTypes.func.isRequired,
 		isDisabled: PropTypes.bool,

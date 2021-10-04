@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import checkEmail from 'calypso/assets/images/illustrations/check-email.svg';
 import HappinessSupport from 'calypso/components/happiness-support';
 

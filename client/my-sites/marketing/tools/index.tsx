@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
-import React, { Fragment, FunctionComponent } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';

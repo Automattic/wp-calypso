@@ -1,13 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
 /**
  * Globals
  */
 const noop = () => {};
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'PostScheduleHeaderControls';
 
 	static propTypes = {

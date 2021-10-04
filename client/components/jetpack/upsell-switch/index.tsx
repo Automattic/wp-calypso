@@ -1,6 +1,7 @@
 import { getPlan } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import React, { ReactElement, useState, ReactNode, useEffect, ComponentType, useMemo } from 'react';
+import { ReactElement, useState, ReactNode, useEffect, ComponentType, useMemo } from 'react';
+import * as React from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import Main from 'calypso/components/main';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -79,8 +80,8 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 			const sitePlanDetails = getPlan( sitePlan.product_slug );
 			productsList = [
 				...productsList,
-				...sitePlanDetails.getHiddenFeatures(),
-				...( sitePlanDetails.getInferiorHiddenFeatures?.() ?? [] ),
+				...sitePlanDetails.getIncludedFeatures(),
+				...( sitePlanDetails.getInferiorFeatures?.() ?? [] ),
 			];
 		}
 		return !! productsList.find( productSlugTest );

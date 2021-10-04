@@ -1,7 +1,6 @@
 import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
 	return (

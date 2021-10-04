@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Children, cloneElement, Component } from 'react';
 import ReactDom from 'react-dom';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
@@ -39,8 +39,8 @@ class ActionButtons extends Component {
 	};
 
 	render() {
-		const buttons = React.Children.map( this.props.children, function ( child, index ) {
-			return child && React.cloneElement( child, { ref: 'button-' + index } );
+		const buttons = Children.map( this.props.children, function ( child, index ) {
+			return child && cloneElement( child, { ref: 'button-' + index } );
 		} );
 
 		const buttonsClassName = classNames( {
@@ -60,7 +60,7 @@ class ActionButtons extends Component {
 	getButtonWidths = () => {
 		let totalWidth = 0;
 
-		React.Children.forEach( this.props.children, ( child, index ) => {
+		Children.forEach( this.props.children, ( child, index ) => {
 			if ( ! child ) {
 				return;
 			}
@@ -80,14 +80,14 @@ class ActionButtons extends Component {
 	};
 
 	getDropdown = () => {
-		const isSingleButton = React.Children.count( this.props.children ) === 1;
+		const isSingleButton = Children.count( this.props.children ) === 1;
 		const primaryLabel = this.props.primaryLabel;
 
 		if ( ! primaryLabel || isSingleButton ) {
 			return this.props.children;
 		}
 
-		const buttons = React.Children.toArray( this.props.children );
+		const buttons = Children.toArray( this.props.children );
 		const primary = buttons.pop();
 		const dropdownOptions = buttons.map( function ( child, index ) {
 			if ( ! child ) {

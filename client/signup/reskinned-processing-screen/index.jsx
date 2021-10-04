@@ -1,7 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -27,7 +27,7 @@ const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
 			];
 	}
 
-	return React.useRef( steps.filter( Boolean ) );
+	return useRef( steps.filter( Boolean ) );
 };
 
 // This component is cloned from the CreateSite component of Gutenboarding flow
@@ -38,7 +38,7 @@ export default function ReskinnedProcessingScreen( props ) {
 	const steps = useSteps( props );
 	const totalSteps = steps.current.length;
 
-	const [ currentStep, setCurrentStep ] = React.useState( 0 );
+	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	/**
 	 * Completion progress: 0 <= progress <= 1
@@ -53,8 +53,8 @@ export default function ReskinnedProcessingScreen( props ) {
 	);
 
 	// Force animated progress bar to start at 0
-	const [ hasStarted, setHasStarted ] = React.useState( false );
-	React.useEffect( () => {
+	const [ hasStarted, setHasStarted ] = useState( false );
+	useEffect( () => {
 		const id = setTimeout( () => setHasStarted( true ), 750 );
 		return () => clearTimeout( id );
 	}, [] );

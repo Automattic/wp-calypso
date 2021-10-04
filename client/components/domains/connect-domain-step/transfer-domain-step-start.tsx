@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -14,7 +13,6 @@ export default function TransferDomainStepStart( {
 	pageSlug,
 	onNextStep,
 	progressStepList,
-	isFetchingDomainLockStatus,
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => null;
@@ -50,7 +48,7 @@ export default function TransferDomainStepStart( {
 					}
 				) }
 			</p>
-			<Button primary onClick={ onNextStep } busy={ isFetchingDomainLockStatus }>
+			<Button primary onClick={ onNextStep }>
 				{ __( 'Start setup' ) }
 			</Button>
 		</div>

@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import quickStartVideoImage from 'calypso/assets/images/customer-home/quick-start-video-ss.png';
 import InlineSupportLink from 'calypso/components/inline-support-link';
