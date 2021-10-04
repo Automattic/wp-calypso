@@ -1,3 +1,14 @@
+.masterbar-cart-standalone {
+	--studio-white: #fff;
+	--studio-blue-50: #0675c4;
+	--studio-pink-50: #c9356e;
+	--studio-gray-50: #646970;
+	--color-primary: var( --studio-blue-50 );
+	--color-accent: var( --studio-pink-50 );
+	--color-text-inverted: var( --studio-white );
+	--color-neutral-50: var( --studio-gray-50 );
+}
+
 .masterbar-cart {
 	display: flex;
 }

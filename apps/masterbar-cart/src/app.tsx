@@ -26,11 +26,15 @@ function App( { siteId, wpcom }: { siteId: string; wpcom: any } ) {
 		[ wpcomGetCart, wpcomSetCart ]
 	);
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<MasterbarCart selectedSiteSlug={ siteId } />
+			<div className="masterbar-cart-standalone">
+				<MasterbarCart selectedSiteSlug={ siteId } />
+			</div>
 		</ShoppingCartProvider>
 	);
+	/* eslint-enable */
 }
 
 const AppWithAuth = authWrapper( App );
