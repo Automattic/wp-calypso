@@ -124,8 +124,8 @@ describe(
 		describe( 'Delete user account', function () {
 			let newPage: Page;
 
-			it( 'Launch new context to ensure correct host', async function () {
-				newPage = await BrowserManager.newPage( { newContext: true } );
+			it( 'Clear authentication state', async function () {
+				await BrowserManager.clearAuthenticationState( page );
 			} );
 
 			it( 'Login', async function () {

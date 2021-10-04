@@ -27,29 +27,30 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
-		let testPage;
-
 		it( `Log in as ${ commentingUser }`, async function () {
-			testPage = await BrowserManager.newPage( { newContext: true } );
-			const loginFlow = new LoginFlow( testPage, commentingUser );
+			const loginFlow = new LoginFlow( page, commentingUser );
 			await loginFlow.logIn();
-			await testPage.waitForURL( '**/read' );
+			await page.waitForURL( '**/read' );
 		} );
 
 		it( 'View site', async function () {
 			// TODO make a utility to obtain a blog URL without string substitution.
 			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
-			await testPage.goto( siteURL );
+			await page.goto( siteURL );
 		} );
 
 		it( 'View first post', async function () {
-			publishedPostsListPage = new PublishedPostsListPage( testPage );
+			publishedPostsListPage = new PublishedPostsListPage( page );
 			publishedPostsListPage.visitPost( 1 );
 		} );
 
 		it( 'Comment on the post', async function () {
-			const commentsComponent = new CommentsComponent( testPage );
+			const commentsComponent = new CommentsComponent( page );
 			await commentsComponent.postComment( comment );
+		} );
+
+		it( 'Clear authentication state', async function () {
+			await BrowserManager.clearAuthenticationState( page );
 		} );
 	} );
 
