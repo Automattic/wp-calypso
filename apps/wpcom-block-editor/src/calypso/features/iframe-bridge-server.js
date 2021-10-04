@@ -1083,7 +1083,7 @@ function handleSiteEditorFeedbackPlugin( calypsoPort ) {
 		render: () => {
 			const PluginSidebar = window?.wp?.editSite?.PluginSidebar;
 			if ( ! PluginSidebar ) {
-				return;
+				return null;
 			}
 			return (
 				<PluginSidebar
