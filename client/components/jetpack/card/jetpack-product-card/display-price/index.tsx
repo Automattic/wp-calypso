@@ -74,7 +74,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 };
 
 const Wrapper: React.FC< OwnProps > = ( props ) => (
-	<div className="jetpack-product-card__price">
+	<div className="display-price">
 		<DisplayPrice { ...props } />
 	</div>
 );

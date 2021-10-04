@@ -26,7 +26,7 @@ const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) =>
 
 	return productExpiryDate ? (
 		<time
-			className="jetpack-product-card__expiration-date"
+			className="display-price__expiration-date"
 			dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
 		>
 			{ translate( 'expires %(date)s', {
@@ -36,7 +36,7 @@ const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) =>
 			} ) }
 		</time>
 	) : (
-		<span className="jetpack-product-card__billing-time-frame">{ billingTermText }</span>
+		<span className="display-price__billing-time-frame">{ billingTermText }</span>
 	);
 };
 

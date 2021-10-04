@@ -8,7 +8,7 @@ const Deprecated: React.FC< OwnProps > = ( { productName } ) => {
 	const translate = useTranslate();
 
 	return (
-		<p className="jetpack-product-card__price-deprecated">
+		<p className="display-price__deprecated">
 			{ translate( 'The %(productName)s plan is no longer available', {
 				args: {
 					productName,

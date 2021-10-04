@@ -9,13 +9,11 @@ const Free: React.FC< OwnProps > = ( { belowPriceText } ) => {
 
 	return (
 		<div>
-			<span className="jetpack-product-card__price-free">{ translate( 'Free' ) }</span>
+			<span className="display-price__price-free">{ translate( 'Free' ) }</span>
 			{ belowPriceText && (
-				<span className="jetpack-product-card__billing-time-frame">{ belowPriceText }</span>
+				<span className="display-price__billing-time-frame">{ belowPriceText }</span>
 			) }
-			<span className="jetpack-product-card__get-started">
-				{ translate( 'Get started for free' ) }
-			</span>
+			<span className="display-price__get-started">{ translate( 'Get started for free' ) }</span>
 		</div>
 	);
 };

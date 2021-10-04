@@ -62,15 +62,15 @@ const Paid: React.FC< OwnProps > = ( {
 	if ( loading ) {
 		return (
 			<>
-				<div className="jetpack-product-card__price-placeholder" />
-				<div className="jetpack-product-card__time-frame-placeholder" />
+				<div className="display-price__price-placeholder" />
+				<div className="display-price__time-frame-placeholder" />
 			</>
 		);
 	}
 
 	return (
 		<>
-			{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
+			{ displayFrom && <span className="display-price__from">from</span> }
 			{ /*
 			 * Price should be displayed from left-to-right, even in right-to-left
 			 * languages. `PlanPrice` seems to keep the ltr direction no matter
@@ -80,7 +80,7 @@ const Paid: React.FC< OwnProps > = ( {
 			<span dir="ltr">
 				<PlanPrice
 					original
-					className="jetpack-product-card__original-price"
+					className="display-price__original-price"
 					rawPrice={
 						( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
 					}
@@ -95,14 +95,12 @@ const Paid: React.FC< OwnProps > = ( {
 				/>
 			</span>
 			{ tooltipText && (
-				<InfoPopover position="top" className="jetpack-product-card__price-tooltip">
+				<InfoPopover position="top" className="display-price__price-tooltip">
 					{ tooltipText }
 				</InfoPopover>
 			) }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-			{ ! hideSavingLabel && (
-				<span className="jetpack-product-card__you-save">{ discountElt }</span>
-			) }
+			{ ! hideSavingLabel && <span className="display-price__you-save">{ discountElt }</span> }
 		</>
 	);
 };
