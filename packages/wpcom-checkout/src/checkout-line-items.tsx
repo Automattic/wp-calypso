@@ -11,7 +11,6 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
-	getPriceTierForUnits,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -20,30 +19,19 @@ import {
 	useEvents,
 	Button,
 } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import {
-	isWpComProductRenewal,
-	getSublabel,
-	getLabel,
-	getIntroductoryOfferIntervalDisplay,
-} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	getProductDisplayCost,
-	getProductPriceTierList,
-} from 'calypso/state/products-list/selectors';
-import { useGetProductVariants } from '../hooks/product-variants';
-import { ItemVariationPicker } from './item-variation-picker';
-import joinClasses from './join-classes';
-import type { OnChangeItemVariant } from './item-variation-picker';
+import { getSublabel, getLabel } from './checkout-labels';
+import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
+import { isWpComProductRenewal } from './is-wpcom-product-renewal';
+import { joinClasses } from './join-classes';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
-import type { RemoveProductFromCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type {
+	ResponseCart,
+	RemoveProductFromCart,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
@@ -165,6 +153,7 @@ function WPNonProductLineItem( {
 	hasDeleteButton,
 	removeProductFromCart,
 	createUserAndSiteBeforeTransaction,
+	isPwpoUser,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
@@ -172,6 +161,7 @@ function WPNonProductLineItem( {
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
+	isPwpoUser?: boolean;
 } ): JSX.Element {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -181,10 +171,6 @@ function WPNonProductLineItem( {
 	const isDisabled = formStatus !== FormStatus.READY;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const translate = useTranslate();
-	const isPwpoUser = useSelector(
-		( state ) =>
-			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-	);
 	const modalCopy = returnModalCopy(
 		lineItem.type,
 		translate,
@@ -460,14 +446,10 @@ function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ): JSX
 
 function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
 	const translate = useTranslate();
-	const priceTierList = useSelector( ( state ) =>
-		getProductPriceTierList( state, product.product_slug )
-	);
 
 	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tier = getPriceTierForUnits( priceTierList, product.current_quantity );
-		const tierMaximum = tier?.maximum_units;
-		const tierMinimum = tier?.minimum_units;
+		const tierMaximum = product.price_tier_maximum_units;
+		const tierMinimum = product.price_tier_minimum_units;
 		if ( tierMaximum ) {
 			return (
 				<LineItemMeta>
@@ -475,7 +457,7 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 				</LineItemMeta>
 			);
 		}
-		if ( tier && ! tierMaximum ) {
+		if ( tierMinimum ) {
 			return (
 				<LineItemMeta>
 					{ translate( 'More than %(tierMinimum) records', { args: { tierMinimum } } ) }
@@ -516,14 +498,14 @@ function LineItemSublabelAndPrice( {
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 	// This is the price for one item for products with a quantity (eg. seats in a license).
-	const itemPrice = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
+	const itemPrice = product.item_original_cost_for_quantity_one_display;
 
 	if ( isPlan( product ) ) {
 		if ( isP2Plus( product ) ) {
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
-					itemPrice: itemPrice,
+					itemPrice,
 					members,
 				},
 				count: members,
@@ -689,40 +671,34 @@ function GSuiteDiscountCallout( {
 }
 
 function WPLineItem( {
+	children,
 	product,
-	allowVariants,
-	siteId,
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
-	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	responseCart,
+	isPwpoUser,
 }: {
+	children?: React.ReactNode;
 	product: ResponseCartProduct;
-	allowVariants?: boolean;
-	siteId?: number | undefined;
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	onChangePlanLength?: OnChangeItemVariant;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	responseCart: ResponseCart;
+	isPwpoUser?: boolean;
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const isPwpoUser = useSelector(
-		( state ) =>
-			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-	);
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
@@ -736,9 +712,6 @@ function WPLineItem( {
 	const isRenewal = isWpComProductRenewal( product );
 
 	const productSlug = product?.product_slug;
-
-	const shouldShowVariantSelector = allowVariants && product && ! isRenewal;
-	const variants = useGetProductVariants( siteId, productSlug );
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -837,15 +810,7 @@ function WPLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 			{ isGSuite && <GSuiteUsersList product={ product } /> }
 			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
-
-			{ shouldShowVariantSelector && onChangePlanLength && (
-				<ItemVariationPicker
-					variants={ variants }
-					selectedItem={ product }
-					onChangeItemVariant={ onChangePlanLength }
-					isDisabled={ isDisabled }
-				/>
-			) }
+			{ children }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
