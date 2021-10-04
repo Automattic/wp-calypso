@@ -23,6 +23,10 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
 	},
+	'paid-newsletters': {
+		link: 'https://wordpress.com/support/paid-newsletters/',
+		post_id: 168381,
+	},
 	portfolios: {
 		link: 'https://wordpress.com/support/portfolios/',
 		post_id: 84808,
