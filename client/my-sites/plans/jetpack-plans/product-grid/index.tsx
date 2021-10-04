@@ -14,6 +14,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { FootnotesList } from '../footnotes-list';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
@@ -252,14 +253,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</div>
 			</ProductGridSection>
 			<StoreFooter />
-			<ul className="product-grid__asterisk-list">
-				<li className="product-grid__asterisk-item">
-					{ translate( '* Monthly plans are 7-day money back guarantee.' ) }
-				</li>
-				<li className="product-grid__asterisk-item">
-					{ translate( '✢ Discount is for first term only, all renewals are at full price.' ) }
-				</li>
-			</ul>
+			<FootnotesList />
 		</>
 	);
 };
