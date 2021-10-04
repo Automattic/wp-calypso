@@ -118,7 +118,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				planHasFeature( item.productSlug, productSlug )
 			).length;
 		}
-		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].includes( item.productSlug );
+		return ! ( [
+			...JETPACK_BACKUP_PRODUCTS,
+			...JETPACK_SCAN_PRODUCTS,
+		] as ReadonlyArray< string > ).includes( item.productSlug );
 	}, [ item.productSlug ] );
 
 	const isDeprecated = Boolean( item.legacy );
