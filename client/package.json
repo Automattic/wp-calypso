@@ -155,7 +155,7 @@
 		"immutable": "^3.8.2",
 		"inherits": "^2.0.4",
 		"is-my-json-valid": "^2.20.5",
-		"jest": "^27.0.6",
+		"jest": "^27.2.4",
 		"jest-fetch-mock": "^3.0.3",
 		"jest-mock-process": "^1.4.1",
 		"jquery": "^1.12.3",
