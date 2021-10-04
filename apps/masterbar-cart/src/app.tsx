@@ -31,9 +31,9 @@ function App( { siteId, wpcom }: { siteId: string; wpcom: any } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
-			<div className="masterbar-cart-standalone">
+			<header id="masterbar" className="masterbar masterbar-cart-standalone">
 				<MasterbarCart selectedSiteSlug={ siteId } />
-			</div>
+			</header>
 		</ShoppingCartProvider>
 	);
 	/* eslint-enable */

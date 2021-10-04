@@ -1,4 +1,5 @@
 .masterbar-cart-standalone {
+	--masterbar-height: 32px;
 	--studio-white: #fff;
 	--studio-blue-50: #0675c4;
 	--studio-pink-50: #c9356e;
@@ -7,10 +8,16 @@
 	--color-accent: var( --studio-pink-50 );
 	--color-text-inverted: var( --studio-white );
 	--color-neutral-50: var( --studio-gray-50 );
+	--color-masterbar-item-hover-background: #fff;
 }
 
 .masterbar-cart {
 	display: flex;
+}
+
+.masterbar-cart button {
+	border-radius: 2px;
+	border: 1px solid var( --studio-gray-50 );
 }
 
 .masterbar-cart__count-wrapper {
