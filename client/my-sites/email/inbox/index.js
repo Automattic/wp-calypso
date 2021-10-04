@@ -2,6 +2,8 @@ import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getConfiguredTitanMailboxCount } from 'calypso/lib/titan';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -35,19 +37,36 @@ const InboxManagement = ( { domains } ) => {
 	}
 
 	// Find out if the site has at least one mailbox in the site
-	const hasOneOrMoreMailboxes = domains
-		.filter( ( domain ) => ! domain.isWPCOMDomain )
-		.reduce( ( accumulator, domain ) => {
-			const mailboxCountForDomain =
-				getGSuiteMailboxCount( domain ) + getConfiguredTitanMailboxCount( domain );
-			accumulator = mailboxCountForDomain > 0;
-
-			return accumulator;
-		}, 0 );
+	const hasAnyMailboxes = domains.some(
+		( domain ) =>
+			( ! domain.isWPCOMDomain &&
+				// it may be worth also checking for has(EmailProduct)WithUs( domain ) for each branch below
+				getGSuiteMailboxCount( domain ) > 0 ) ||
+			getConfiguredTitanMailboxCount( domain ) > 0
+	);
 
 	// Load the Inbox UI if at least one mailbox occurs
-	if ( hasOneOrMoreMailboxes ) {
+	if ( hasAnyMailboxes ) {
 		return <MailboxSelectionList />;
+	}
+
+	const domainsWithEmailServices = domains.filter(
+		( domain ) =>
+			! domain.isWPCOMDomain && ( hasPaidEmailWithUs( domain ) || hasEmailForwards( domain ) )
+	);
+
+	const showActiveDomainList = domainsWithEmailServices.length > 0;
+
+	if ( showActiveDomainList ) {
+		return (
+			<CalypsoShoppingCartProvider>
+				<EmailManagementHome
+					emailListInactiveHeader={ getMainHeader() }
+					sectionHeaderLabel={ translate( 'Domains' ) }
+					showActiveDomainList={ false }
+				></EmailManagementHome>
+			</CalypsoShoppingCartProvider>
+		);
 	}
 
 	// Delegate to <EmailManagementHome/> in case we need to upsell a domain/mailbox
