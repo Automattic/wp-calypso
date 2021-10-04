@@ -448,8 +448,8 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 	const translate = useTranslate();
 
 	if ( isJetpackSearch( product ) && product.current_quantity ) {
-		const tierMaximum = product.tier_maximum_units;
-		const tierMinimum = product.tier_minimum_units;
+		const tierMaximum = product.price_tier_maximum_units;
+		const tierMinimum = product.price_tier_minimum_units;
 		if ( tierMaximum ) {
 			return (
 				<LineItemMeta>
