@@ -30,7 +30,6 @@ import {
 	getPlan,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPrice from 'calypso/my-sites/plan-price/';

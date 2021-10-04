@@ -4,7 +4,7 @@ import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';

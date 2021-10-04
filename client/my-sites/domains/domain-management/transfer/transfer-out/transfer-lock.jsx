@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';

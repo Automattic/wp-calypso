@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ReaderFullPostContentPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

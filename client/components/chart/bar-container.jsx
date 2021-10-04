@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import Bar from './bar';
 import XAxis from './x-axis';
 
 const X_AXIS_LABEL_WIDTH = 42;
 
-export default class ChartBarContainer extends React.PureComponent {
+export default class ChartBarContainer extends PureComponent {
 	static propTypes = {
 		barClick: PropTypes.func,
 		data: PropTypes.array,

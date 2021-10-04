@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';

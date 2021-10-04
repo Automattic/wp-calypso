@@ -94,11 +94,9 @@ describe( 'BrowserHelper Tests', function () {
 			'Returns expected values in launch configuration for target device $name',
 			function ( { name, browser_version } ) {
 				process.env.TARGET_DEVICE = name;
-				const dummy_logger = ( name: string, message: string | Error ) =>
-					console.log( `${ name } ${ message }` );
 				const expected_e2e_test_string = 'wp-e2e-tests';
 
-				const config = getLaunchConfiguration( browser_version, { logger: dummy_logger } );
+				const config = getLaunchConfiguration( browser_version );
 				expect( config.userAgent ).toContain( expected_e2e_test_string );
 				expect( config.userAgent ).toContain( browser_version );
 			}

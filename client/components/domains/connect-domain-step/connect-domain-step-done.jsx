@@ -3,7 +3,6 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import domainConnectedIllustration from 'calypso/assets/images/illustrations/domain-connected.svg';
 import CardHeading from 'calypso/components/card-heading';

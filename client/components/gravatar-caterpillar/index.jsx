@@ -1,13 +1,13 @@
 import { map, size, filter, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import Gravatar from 'calypso/components/gravatar';
 
 import './style.scss';
 
 const noop = () => {};
 
-class GravatarCaterpillar extends React.Component {
+class GravatarCaterpillar extends Component {
 	static propTypes = {
 		onClick: PropTypes.func,
 	};

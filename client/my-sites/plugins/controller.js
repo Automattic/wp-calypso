@@ -1,6 +1,6 @@
 import { includes, some } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
@@ -30,7 +30,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	}
 
 	// Render single plugin component
-	context.primary = React.createElement( PluginComponent, {
+	context.primary = createElement( PluginComponent, {
 		path: context.path,
 		prevQuerystring: lastPluginsQuerystring,
 		prevPath,
@@ -54,7 +54,7 @@ function renderPluginList( context, basePath ) {
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
 
-	context.primary = React.createElement( PluginListComponent, {
+	context.primary = createElement( PluginListComponent, {
 		path: basePath,
 		context,
 		filter: context.params.pluginFilter,
@@ -84,7 +84,7 @@ function renderPluginsBrowser( context ) {
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
 
-	context.primary = React.createElement( PluginBrowser, {
+	context.primary = createElement( PluginBrowser, {
 		path: context.path,
 		category,
 		search: searchTerm,
@@ -96,14 +96,14 @@ function renderPluginWarnings( context ) {
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	context.primary = React.createElement( PluginEligibility, {
+	context.primary = createElement( PluginEligibility, {
 		siteSlug: site.slug,
 		pluginSlug,
 	} );
 }
 
 function renderProvisionPlugins( context ) {
-	context.primary = React.createElement( PlanSetup, {
+	context.primary = createElement( PlanSetup, {
 		forSpecificPlugin: context.query.only || false,
 	} );
 }

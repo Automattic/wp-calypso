@@ -190,6 +190,10 @@
 	border-left: 3px solid var( --color-warning-40 );
 }
 
+.domain-item__status-transfer-warning {
+	border-left: 3px solid var( --studio-orange-50 );
+}
+
 .domain-item__status-alert {
 	border-left: 3px solid var( --color-error );
 }

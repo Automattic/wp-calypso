@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { isSectionLoading } from 'calypso/state/ui/selectors';

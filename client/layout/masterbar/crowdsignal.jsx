@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './crowdsignal.scss';
 

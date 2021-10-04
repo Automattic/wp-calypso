@@ -3,13 +3,14 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import {
 	modeType,
 	stepsHeadingAdvanced,
 	stepsHeadingOwnershipVerification,
 	stepsHeadingSuggested,
+	stepsHeadingTransfer,
 	stepSlug,
 } from './constants';
 
@@ -29,6 +30,9 @@ export default function ConnectDomainStepLogin( {
 
 	useEffect( () => {
 		switch ( mode ) {
+			case modeType.TRANSFER:
+				setHeading( stepsHeadingTransfer );
+				return;
 			case modeType.SUGGESTED:
 				setHeading( stepsHeadingSuggested );
 				return;

@@ -1,6 +1,5 @@
-import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Composer from 'calypso/components/happychat/composer';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
@@ -49,7 +48,6 @@ export class HappychatPage extends Component {
 			onSendTyping,
 			onSetCurrentMessage,
 			timeline,
-			twemojiUrl,
 		} = this.props;
 
 		return (
@@ -60,7 +58,6 @@ export class HappychatPage extends Component {
 					isCurrentUser={ isCurrentUser }
 					isExternalUrl={ isExternalUrl }
 					timeline={ timeline }
-					twemojiUrl={ twemojiUrl }
 				/>
 				<Notices
 					chatStatus={ chatStatus }
@@ -96,7 +93,6 @@ HappychatPage.propTypes = {
 	setBlurred: PropTypes.func,
 	setFocused: PropTypes.func,
 	timeline: PropTypes.array,
-	twemojiUrl: PropTypes.string,
 };
 
 const isMessageFromCurrentUser = ( currentUser ) => ( { user_id, source } ) => {
@@ -115,7 +111,6 @@ const mapState = ( state ) => {
 		isServerReachable: isHappychatServerReachable( state ),
 		message: getCurrentMessage( state ),
 		timeline: getHappychatTimeline( state ),
-		twemojiUrl: config( 'twemoji_cdn_url' ),
 	};
 };
 

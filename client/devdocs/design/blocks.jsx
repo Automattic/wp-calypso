@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component, Fragment } from 'react';
 import AllSites from 'calypso/blocks/all-sites/docs/example';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
@@ -25,7 +25,6 @@ import Login from 'calypso/blocks/login/docs/example';
 import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
-import PostItem from 'calypso/blocks/post-item/docs/example';
 import PostLikes from 'calypso/blocks/post-likes/docs/example';
 import PostShare from 'calypso/blocks/post-share/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
@@ -67,7 +66,7 @@ import PlanCompareCard from 'calypso/my-sites/plan-compare-card/docs/example';
 import PlanPrice from 'calypso/my-sites/plan-price/docs/example';
 import PostSelector from 'calypso/my-sites/post-selector/docs/example';
 
-export default class AppComponents extends React.Component {
+export default class AppComponents extends Component {
 	static displayName = 'AppComponents';
 	state = { filter: '' };
 
@@ -90,14 +89,14 @@ export default class AppComponents extends React.Component {
 				<DocumentHead title="Blocks" />
 
 				{ this.props.component ? (
-					<React.Fragment>
+					<Fragment>
 						<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 							{ slugToCamelCase( this.props.component ) }
 						</HeaderCake>
 						{ isEnabled( 'devdocs/color-scheme-picker' ) && (
 							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 						) }
-					</React.Fragment>
+					</Fragment>
 				) : (
 					<div>
 						<ReadmeViewer readmeFilePath="/client/devdocs/blocks/README.md" />
@@ -142,7 +141,6 @@ export default class AppComponents extends React.Component {
 					<PlanCompareCard />
 					<DomainTip />
 					<RelatedPostCard />
-					<PostItem readmeFilePath="post-item" />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />

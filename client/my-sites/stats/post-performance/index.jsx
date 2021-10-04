@@ -3,11 +3,10 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
-import Emojify from 'calypso/components/emojify';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -109,7 +108,7 @@ class StatsPostPerformance extends Component {
 										},
 										components: {
 											href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-											postTitle: <Emojify tagName="span">{ postTitle }</Emojify>,
+											postTitle: <span>{ postTitle }</span>,
 										},
 										context:
 											'Stats: Sentence showing how much time has passed since the last post, and how the stats are',

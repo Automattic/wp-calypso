@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import ExternalLink from 'calypso/components/external-link';

@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );

@@ -1,4 +1,3 @@
-import React from 'react';
 import renderer from 'react-test-renderer';
 import { createReduxStore } from 'calypso/state';
 import EmailForwardingItem from '../email-forwarding-item';

@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import SectionMigrate from 'calypso/my-sites/migrate/section-migrate';
 import { getSiteId } from 'calypso/state/sites/selectors';
 

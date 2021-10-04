@@ -1,12 +1,12 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import ProgressItem from './progress-item';
 
 import './style.scss';
 
-class Security2faProgress extends React.Component {
+class Security2faProgress extends Component {
 	static displayName = 'Security2faProgress';
 
 	componentDidMount() {

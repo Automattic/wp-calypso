@@ -1,7 +1,8 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';

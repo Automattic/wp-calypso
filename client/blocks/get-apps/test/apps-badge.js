@@ -3,7 +3,6 @@
  */
 
 import { shallow } from 'enzyme';
-import React from 'react';
 import { AppsBadge } from '../apps-badge';
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( {

@@ -99,6 +99,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	monthlyProductSlug?: string;
 	displayName: TranslateResult;
 	shortName: TranslateResult;
+	subheader?: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
 	children?: ReactNode;

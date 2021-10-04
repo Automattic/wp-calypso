@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import TileGrid from 'calypso/components/tile-grid';
 import Tile from 'calypso/components/tile-grid/tile';
 

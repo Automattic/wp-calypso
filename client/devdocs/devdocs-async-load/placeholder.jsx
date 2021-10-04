@@ -1,10 +1,10 @@
 import { range } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Main from 'calypso/components/main';
 
-export default class DevdocsAsyncLoadPlaceholder extends React.PureComponent {
+export default class DevdocsAsyncLoadPlaceholder extends PureComponent {
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 	};

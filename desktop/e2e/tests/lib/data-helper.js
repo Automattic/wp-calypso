@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const phrase = require( 'asana-phrase' );
 const map = require( 'lodash' );
 

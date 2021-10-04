@@ -1,4 +1,3 @@
-import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 

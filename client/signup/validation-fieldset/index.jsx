@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { values } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import './style.scss';

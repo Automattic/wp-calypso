@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
+import { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';

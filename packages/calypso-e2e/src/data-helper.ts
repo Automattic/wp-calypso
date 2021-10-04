@@ -5,6 +5,30 @@ import { getTargetDeviceName } from './browser-helper';
 export type DateFormat = 'ISO';
 export { config };
 
+export interface PaymentDetails {
+	cardHolder: string;
+	cardNumber: string;
+	expiryMonth: string;
+	expiryYear: string;
+	cvv: string;
+	countryCode: string;
+	postalCode: string;
+}
+
+export interface RegistrarDetails {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone: string;
+	countryCode: string;
+	address: string;
+	city: string;
+	stateCode: string;
+	postalCode: string;
+}
+
+export type CreditCardIssuers = 'Visa';
+
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *
@@ -42,6 +66,10 @@ export function getDateString( format: DateFormat ): string | null {
 
 /**
  * Generates a new name for test blog with prefix `e2eflowtesting`.
+ *
+ * Examples:
+ * 	e2eflowtesting16900000102
+ * 	e2eflowtesting14928337999
  *
  * @returns {string} Generated blog name.
  */
@@ -139,6 +167,45 @@ export function getTestEmailAddress( {
 	const domain = 'mailosaur.io';
 	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
 	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+}
+
+/**
+ * Returns an object containing test credit card payment information.
+ *
+ * Simulated credit card information is supplied by Stripe. For more information, see https://stripe.com/docs/testing#cards.
+ *
+ * @returns {PaymentDetails} Object that implements the PaymentDetails interface.
+ */
+export function getTestPaymentDetails(): PaymentDetails {
+	// Only Visa is implemented for now.
+	return {
+		cardHolder: 'End to End Testing',
+		cardNumber: '4242 4242 4242 4242',
+		expiryMonth: '02',
+		expiryYear: '28',
+		cvv: '999',
+		countryCode: 'TR', // Set to Turkey to force Strip to process payments.
+		postalCode: '06123',
+	};
+}
+
+/**
+ * Returns an object containing test domain registrar details.
+ *
+ * @param {string} email Email address of the user.
+ */
+export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails {
+	return {
+		firstName: 'End to End',
+		lastName: 'Testing',
+		email: email,
+		phone: '0422 888 888',
+		countryCode: 'AU',
+		address: '888 Queen Street',
+		city: 'Brisbane',
+		stateCode: 'QLD',
+		postalCode: '4000',
+	};
 }
 
 /**

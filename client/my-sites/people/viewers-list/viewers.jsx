@@ -2,7 +2,7 @@
 
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -12,8 +12,8 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-class Viewers extends React.Component {
-	infiniteList = React.createRef();
+class Viewers extends Component {
+	infiniteList = createRef();
 
 	renderPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 

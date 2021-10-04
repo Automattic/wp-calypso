@@ -2,7 +2,7 @@ import { getPlanClass } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';

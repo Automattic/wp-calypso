@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, CardHeader, CardBody, Flex, FlexItem } from '@wordpress/components';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import AnglePickerControlExample from './angle-picker-control';
 import AnimateExample from './animate';

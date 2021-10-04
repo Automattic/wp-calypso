@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, DetailedHTMLProps, IframeHTMLAttributes } from 'react';
+import { forwardRef, useEffect, DetailedHTMLProps, IframeHTMLAttributes } from 'react';
 
 type IframeProps = DetailedHTMLProps<
 	IframeHTMLAttributes< HTMLIFrameElement >,

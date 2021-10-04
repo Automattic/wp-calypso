@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { range, random } from 'lodash';
 import moment from 'moment';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';

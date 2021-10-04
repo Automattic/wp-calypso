@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import { isGuidedTransferInProgress } from 'calypso/state/sites/guided-transfer/selectors';

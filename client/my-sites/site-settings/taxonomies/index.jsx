@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { connect } from 'react-redux';
 import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
 import DocumentHead from 'calypso/components/data/document-head';

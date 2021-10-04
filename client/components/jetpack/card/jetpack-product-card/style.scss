@@ -102,6 +102,29 @@
 	}
 }
 
+.jetpack-product-card__product-subheader {
+	margin: 6px 0 12px;
+
+	color: var( --studio-gray-100 );
+
+	font-family: 'Noto Sans SemiCondensed Bold', 'Noto Sans', $sans;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.2;
+
+	.without-icon & {
+		margin: 12px 0 20px;
+	}
+
+	em {
+		font-style: normal;
+	}
+
+	.is-disabled & {
+		opacity: 0.4;
+	}
+}
+
 .jetpack-product-card__description {
 	color: var( --studio-gray-60 );
 

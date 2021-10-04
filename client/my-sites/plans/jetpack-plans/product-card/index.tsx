@@ -8,7 +8,8 @@ import {
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -139,6 +140,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		<JetpackProductCard
 			productSlug={ item.productSlug }
 			productName={ item.displayName }
+			subheader={ item.subheader }
 			headingLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			currencyCode={ item.displayCurrency }

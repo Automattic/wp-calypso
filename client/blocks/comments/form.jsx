@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import AsyncLoad from 'calypso/components/async-load';
@@ -20,7 +20,7 @@ import './form.scss';
 
 const noop = () => {};
 
-class PostCommentForm extends React.Component {
+class PostCommentForm extends Component {
 	constructor( props ) {
 		super();
 

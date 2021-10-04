@@ -44,10 +44,6 @@ export const links = ( state = {}, action ) => {
 
 /**
  * Responsible for the help search results links
- *
- * @param {object} state  Current state
- * @param {object} action Action payload
- * @returns {object}        Updated state
  */
 export const supportHistory = ( state = [], { type, items } ) => {
 	switch ( type ) {
@@ -60,10 +56,6 @@ export const supportHistory = ( state = [], { type, items } ) => {
 
 /**
  * The level of support we're offering to this user (represents their highest paid plan).
- *
- * @param {object} state  Current state
- * @param {object} action Action payload
- * @returns {object}        Updated state
  */
 export const supportLevel = ( state = null, { type, level } ) => {
 	switch ( type ) {

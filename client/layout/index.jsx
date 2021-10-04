@@ -3,9 +3,8 @@ import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { useEffect, Component } from 'react';
 import { connect } from 'react-redux';
-import SitePreview from 'calypso/blocks/site-preview';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -55,7 +54,7 @@ function SidebarScrollSynchronizer( { enabled } ) {
 	const isNarrow = useBreakpoint( '<660px' );
 	const active = enabled && ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( active ) {
 			window.addEventListener( 'scroll', handleScroll );
 			window.addEventListener( 'resize', handleScroll );
@@ -86,7 +85,7 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 		}
 	};
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( layoutFocus !== 'sites' ) {
 			// The sidebar menu uses a flyout design that requires the overflowing content
 			// to be visible. However, `overflow` isn't an animatable CSS property, so we
@@ -222,11 +221,11 @@ class Layout extends Component {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
-			'has-no-sidebar': ! this.props.secondary || isWcMobileApp(),
+			'has-no-sidebar': this.props.sidebarIsHidden,
 			'is-inline-help-showing': this.shouldLoadInlineHelp(),
 			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
-			'has-chat': this.props.chatIsOpen,
-			'has-no-masterbar': this.props.masterbarIsHidden || isWcMobileApp(),
+			'has-docked-chat': this.props.chatIsOpen && this.props.chatIsDocked,
+			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
@@ -315,7 +314,6 @@ class Layout extends Component {
 								placeholder={ null }
 							/>
 					  ) }
-				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="calypso/components/happychat" />
 				) }
@@ -356,7 +354,7 @@ class Layout extends Component {
 }
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
+	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
@@ -368,6 +366,12 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const masterbarIsHidden =
+			! masterbarIsVisible( state ) ||
+			noMasterbarForSection ||
+			noMasterbarForRoute ||
+			isWpMobileApp() ||
+			isWcMobileApp();
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooCommerceFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -385,13 +389,12 @@ export default withCurrentRoute(
 			'plugins',
 			'comments',
 		].includes( sectionName );
+		const sidebarIsHidden = ! secondary || isWcMobileApp();
+		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		return {
-			masterbarIsHidden:
-				! masterbarIsVisible( state ) ||
-				noMasterbarForSection ||
-				noMasterbarForRoute ||
-				isWpMobileApp(),
+			masterbarIsHidden,
+			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
 			isJetpackWooCommerceFlow,
@@ -409,6 +412,7 @@ export default withCurrentRoute(
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			chatIsOpen: isHappychatOpen( state ),
+			chatIsDocked,
 			hasActiveHappyChat: hasActiveHappychatSession( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			siteId,

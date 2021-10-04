@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import PrimaryHeader from '../shared/primary-header';
 

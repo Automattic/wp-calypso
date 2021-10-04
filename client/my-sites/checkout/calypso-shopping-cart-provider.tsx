@@ -1,5 +1,6 @@
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { cartManagerClient } from './cart-manager-client';
 import useCartKey from './use-cart-key';

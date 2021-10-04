@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 const GooglePlusDeprication = ( { translate } ) => (
 	<Fragment>

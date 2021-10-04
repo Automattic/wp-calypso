@@ -1,5 +1,5 @@
 import { JETPACK_PRODUCTS_LIST, JETPACK_PLANS } from '@automattic/calypso-products';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import ProductPlanOverlapNotices from '../';
 

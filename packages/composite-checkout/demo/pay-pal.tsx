@@ -8,7 +8,7 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import { Fragment } from 'react';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
 const ButtonPayPalIcon = styled( PaypalLogo )`
@@ -27,9 +27,9 @@ export function createPayPalMethod(): PaymentMethod {
 
 function PaypalLabel(): JSX.Element {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>{ 'PayPal' }</span>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

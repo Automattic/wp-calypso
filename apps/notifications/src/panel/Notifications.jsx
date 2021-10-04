@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { createContext, PureComponent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from './comment-replies-cache';
 import RestClient from './rest-client';
@@ -24,7 +24,7 @@ repliesCache.cleanup();
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
 
-export const RestClientContext = React.createContext( client );
+export const RestClientContext = createContext( client );
 
 export class Notifications extends PureComponent {
 	static propTypes = {

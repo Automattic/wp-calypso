@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,7 +19,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-class TitanManagementIframe extends React.Component {
+class TitanManagementIframe extends Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		context: PropTypes.string,

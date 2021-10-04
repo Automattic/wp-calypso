@@ -7,7 +7,6 @@ const debug = debugFactory( 'calypso:ProductsList' );
 /**
  * Initialize a new list of products.
  *
- * @api public
  * @returns {ProductsList} Products List
  */
 function ProductsList() {
@@ -27,7 +26,6 @@ Emitter( ProductsList.prototype );
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
  *
  * @returns {Array} The array of products
- * @api public
  */
 ProductsList.prototype.get = function () {
 	let data;
@@ -57,8 +55,6 @@ ProductsList.prototype.get = function () {
 
 /**
  * Fetchs the list of products from the API.
- *
- * @api public
  */
 ProductsList.prototype.fetch = function () {
 	debug( 'getting ProductsList from api' );

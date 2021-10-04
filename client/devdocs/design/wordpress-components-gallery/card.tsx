@@ -8,7 +8,6 @@ import {
 	FlexBlock,
 	FlexItem,
 } from '@wordpress/components';
-import React from 'react';
 
 const CardExample = () => (
 	<Card isElevated>

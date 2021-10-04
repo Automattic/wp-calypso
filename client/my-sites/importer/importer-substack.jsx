@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import FileImporter from './file-importer';
 
-class ImporterSubstack extends React.PureComponent {
+class ImporterSubstack extends PureComponent {
 	static displayName = 'ImporterSubstack';
 
 	static propTypes = {

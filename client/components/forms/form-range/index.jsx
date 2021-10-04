@@ -1,13 +1,13 @@
 import classnames from 'classnames';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 
 import './style.scss';
 
 const noop = () => {};
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'FormRange';
 
 	static propTypes = {
@@ -18,7 +18,7 @@ export default class extends React.Component {
 		onChange: noop,
 	};
 
-	rangeRef = React.createRef();
+	rangeRef = createRef();
 
 	componentDidMount() {
 		if ( this.shouldNormalizeChange() ) {

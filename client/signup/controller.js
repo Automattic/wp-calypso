@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import debugModule from 'debug';
 import { isEmpty } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -111,16 +111,8 @@ export default {
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
-			// We still want to keep the original styling for the new user creation step
-			// so people know they are creating an account at WP.com.
-			if ( context.pathname.includes( 'user' ) ) {
-				removeP2SignupClassName();
-			} else {
-				addP2SignupClassName();
-			}
-
+			addP2SignupClassName();
 			removeWhiteBackground();
-
 			next();
 		} else {
 			next();
@@ -319,7 +311,7 @@ export default {
 		// ExPlat: Temporarily testing out the effects of prefetching experiments. Delete after 2021 week 31.
 		loadExperimentAssignment( 'explat_test_aa_weekly_calypso_2021_week_31' );
 
-		context.primary = React.createElement( SignupComponent, {
+		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
@@ -339,24 +331,31 @@ export default {
 		const { getState, dispatch } = signupStore;
 		const signupDependencies = getSignupDependencyStore( getState() );
 
-		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
-		if ( ! siteSlug ) {
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			query?.siteSlug ||
+			signupDependencies?.siteId ||
+			query?.siteId;
+		if ( ! siteIdOrSlug ) {
 			next();
 			return;
 		}
-		const siteId = getSiteId( getState(), siteSlug );
+		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
 		} else {
-			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) )
-				.catch( () => null )
+			// Fetch the site by siteIdOrSlug and then try to select again
+			dispatch( requestSite( siteIdOrSlug ) )
+				.catch( () => {
+					next();
+					return null;
+				} )
 				.then( () => {
-					let freshSiteId = getSiteId( getState(), siteSlug );
+					let freshSiteId = getSiteId( getState(), siteIdOrSlug );
 
 					if ( ! freshSiteId ) {
-						const wpcomStagingFragment = siteSlug.replace(
+						const wpcomStagingFragment = siteIdOrSlug.replace(
 							/\.wordpress\.com$/,
 							'.wpcomstaging.com'
 						);
@@ -365,10 +364,10 @@ export default {
 
 					if ( freshSiteId ) {
 						dispatch( setSelectedSiteId( freshSiteId ) );
-						next();
 					}
+
+					next();
 				} );
-			next();
 		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {

@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
@@ -14,8 +14,8 @@ interface Props {
 	action: 'fix' | 'ignore';
 	siteName: string;
 	showDialog: boolean;
-	onCloseDialog: Function;
-	onConfirmation: Function;
+	onCloseDialog: ( action?: string | React.MouseEvent ) => void;
+	onConfirmation: React.MouseEventHandler;
 }
 
 const ThreatDialog: React.FC< Props > = ( {

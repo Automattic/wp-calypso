@@ -3,7 +3,7 @@ import { withLocalizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
@@ -26,7 +26,7 @@ import DPA from './dpa';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
-class Privacy extends React.Component {
+class Privacy extends Component {
 	componentDidUpdate( oldProps ) {
 		if ( oldProps.hasUnsavedUserSettings && ! this.props.hasUnsavedUserSettings ) {
 			this.props.markSaved();

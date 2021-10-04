@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import CommentAuthor from 'calypso/my-sites/comments/comment/comment-author';

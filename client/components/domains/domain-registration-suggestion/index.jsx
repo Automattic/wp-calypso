@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import {
@@ -27,7 +27,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from '../premium-badge';
 
-class DomainRegistrationSuggestion extends React.Component {
+class DomainRegistrationSuggestion extends Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
 		isCartPendingUpdate: PropTypes.bool,

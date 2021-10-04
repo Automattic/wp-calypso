@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import siteActivity from 'calypso/assets/images/illustrations/site-activity.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';

@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 export default class Delta extends Component {
 	static propTypes = {

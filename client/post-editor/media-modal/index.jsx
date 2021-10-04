@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { flow, get, isEmpty, some, values } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
@@ -134,6 +134,7 @@ export class EditorMediaModal extends Component {
 			detailSelectedIndex: 0,
 			source: props.source ? props.source : '',
 			gallerySettings: props.initialGallerySettings,
+			updatedItems: [],
 		};
 	}
 
@@ -159,7 +160,8 @@ export class EditorMediaModal extends Component {
 	}
 
 	confirmSelection = () => {
-		const { view, selectedItems } = this.props;
+		const { view } = this.props;
+		const selectedItems = this.getSelectedItems();
 
 		if ( areMediaActionsDisabled( view, selectedItems, this.props.isParentReady ) ) {
 			return;
@@ -436,6 +438,32 @@ export class EditorMediaModal extends Component {
 		this.setState( { gallerySettings } );
 	};
 
+	updateItem = ( itemId, itemChanges ) => {
+		const { updatedItems } = this.state;
+
+		const index = updatedItems.findIndex( ( updatedItem ) => updatedItem.ID === itemId );
+
+		this.setState( {
+			updatedItems:
+				index === -1
+					? [ ...updatedItems, itemChanges ]
+					: updatedItems.map( ( updatedItem ) => {
+							return updatedItem.ID === itemId ? { ...updatedItem, ...itemChanges } : updatedItem;
+					  } ),
+		} );
+	};
+
+	getSelectedItems = () => {
+		const { selectedItems } = this.props;
+		const { updatedItems } = this.state;
+
+		// Apply updated changes over the selected items
+		return selectedItems.map( ( selectedItem ) => {
+			const index = updatedItems.findIndex( ( updatedItem ) => selectedItem.ID === updatedItem.ID );
+			return index > -1 ? { ...selectedItem, ...updatedItems[ index ] } : selectedItem;
+		} );
+	};
+
 	renderContent() {
 		let content;
 
@@ -448,6 +476,7 @@ export class EditorMediaModal extends Component {
 						selectedIndex={ this.getDetailSelectedIndex() }
 						onRestoreItem={ this.restoreOriginalMedia }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
+						onUpdateItem={ this.updateItem }
 					/>
 				);
 				break;

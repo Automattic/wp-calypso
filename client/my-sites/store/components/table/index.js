@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const Table = ( {
 	className,

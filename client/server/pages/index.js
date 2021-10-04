@@ -207,13 +207,7 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 
 function setUpLocalLanguageRevisions( req ) {
 	const rootPath = path.join( __dirname, '..', '..', '..' );
-	const langRevisionsPath = path.join(
-		rootPath,
-		'public',
-		'evergreen',
-		'languages',
-		'lang-revisions.json'
-	);
+	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {

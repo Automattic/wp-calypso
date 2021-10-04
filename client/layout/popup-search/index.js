@@ -3,7 +3,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { localize, useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import { withInlineHelpSearchResults } from 'calypso/blocks/inline-help/data/use-inline-help-search-query';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';

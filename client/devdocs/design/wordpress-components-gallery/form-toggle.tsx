@@ -1,5 +1,5 @@
 import { FormToggle } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 
 const FormToggleExample = () => {

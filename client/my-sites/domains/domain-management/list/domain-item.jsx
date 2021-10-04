@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -146,12 +146,9 @@ class DomainItem extends PureComponent {
 			return;
 		}
 
-		const autoRenewLabel = translate( 'Auto-renew: %(autoRenewValue)s', {
-			args: {
-				autoRenewValue: domainDetails?.isAutoRenewing ? 'on' : 'off',
-			},
-			comment: 'Auto-renew a domain registration. %(autoRenewValue)s can be "on" or "off"',
-		} );
+		const autoRenewLabel = domainDetails?.isAutoRenewing
+			? translate( 'Auto-renew (on)' )
+			: translate( 'Auto-renew (off)' );
 		return <span className="domain-item__meta-item">{ autoRenewLabel }</span>;
 	}
 
@@ -377,7 +374,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		return <React.Fragment>{ getDomainTypeText( domainDetails, translate ) }</React.Fragment>;
+		return <Fragment>{ getDomainTypeText( domainDetails, translate ) }</Fragment>;
 	}
 
 	busyMessage() {

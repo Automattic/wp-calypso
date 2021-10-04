@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import React from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 
 export default function PlanFeaturesItem( {

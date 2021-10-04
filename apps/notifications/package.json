@@ -19,7 +19,7 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"build": "yarn clean && BROWSERSLIST_ENV=wpcom calypso-build --config='./webpack.config.js'",
-		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host notifications.localhost --port 8888",
+		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host calypso.localhost --port 3000",
 		"start": "yarn run clean && yarn run build && yarn run dev-server",
 		"sync": "yarn run clean && yarn run build && sh ./bin/wpcom-watch-and-sync.sh"
 	},
@@ -48,7 +48,7 @@
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.0.6",
 		"postcss": "^8.2.6",
-		"webpack": "^5.53.0",
+		"webpack": "^5.54.0",
 		"webpack-dev-server": "^3.11.2"
 	}
 }

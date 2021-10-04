@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PLAN_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

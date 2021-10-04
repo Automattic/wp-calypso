@@ -1,4 +1,3 @@
-import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 

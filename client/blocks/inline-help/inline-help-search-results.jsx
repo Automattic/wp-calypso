@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';

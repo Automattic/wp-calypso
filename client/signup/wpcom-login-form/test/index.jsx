@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import WpcomLoginForm from '..';
 jest.mock( '@automattic/calypso-config', () => jest.fn().mockReturnValueOnce( 'wordpress.com' ) );
 

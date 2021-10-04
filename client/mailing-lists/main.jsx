@@ -1,13 +1,13 @@
 import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { addSubscriber, deleteSubscriber } from './utils';
 
-class MainComponent extends React.Component {
+class MainComponent extends Component {
 	static displayName = 'MainComponent';
 
 	state = {

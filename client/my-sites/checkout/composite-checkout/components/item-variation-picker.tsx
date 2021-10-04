@@ -3,7 +3,8 @@
 import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
+import * as React from 'react';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMProductSlug = string;

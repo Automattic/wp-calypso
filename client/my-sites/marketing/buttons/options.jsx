@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { filter, flowRight, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';

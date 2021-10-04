@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
@@ -45,7 +45,7 @@ class Media extends Component {
 		source: '',
 	};
 
-	containerRef = React.createRef();
+	containerRef = createRef();
 
 	componentDidMount() {
 		/* We need to rerender the inner `<MediaLibrary>` with the `containerWidth` that's

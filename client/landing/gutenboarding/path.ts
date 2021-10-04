@@ -14,6 +14,7 @@ const plansPaths = Plans.plansSlugs;
 // step fragment will return.
 export const Step = {
 	IntentGathering: undefined,
+	FseBetaOptIn: 'beta',
 	DesignSelection: 'design',
 	Style: 'style',
 	Features: 'features',

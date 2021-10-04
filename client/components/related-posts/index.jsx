@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import { times } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import RelatedPost from 'calypso/blocks/reader-related-card';
 import QueryReaderRelatedPosts from 'calypso/components/data/query-reader-related-posts';

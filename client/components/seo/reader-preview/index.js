@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 

@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as Blocks from '../blocks';
 

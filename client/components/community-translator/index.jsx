@@ -2,7 +2,7 @@ import languages from '@automattic/languages';
 import debugModule from 'debug';
 import i18n, { localize } from 'i18n-calypso';
 import { find, isEmpty } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';

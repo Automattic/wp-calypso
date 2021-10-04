@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
 interface Props {

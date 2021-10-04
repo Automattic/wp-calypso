@@ -1,51 +1,28 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestList } from 'calypso/state/reader/lists/actions';
 import { isRequestingList } from 'calypso/state/reader/lists/selectors';
 
-class QueryReaderList extends Component {
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.isRequestingList ) {
-			this.props.requestList( this.props.owner, this.props.slug );
-		}
+const request = ( owner, slug ) => ( dispatch, getState ) => {
+	if ( ! isRequestingList( getState(), owner, slug ) ) {
+		dispatch( requestList( owner, slug ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.isRequestingList ||
-			( this.props.owner === nextProps.owner && this.props.slug === nextProps.slug )
-		) {
-			return;
-		}
+function QueryReaderList( { owner, slug } ) {
+	const dispatch = useDispatch();
 
-		nextProps.requestList( nextProps.owner, nextProps.slug );
-	}
+	useEffect( () => {
+		dispatch( request( owner, slug ) );
+	}, [ dispatch, owner, slug ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryReaderList.propTypes = {
 	owner: PropTypes.string,
 	slug: PropTypes.string,
-	isRequestingList: PropTypes.bool,
-	requestList: PropTypes.func,
 };
 
-QueryReaderList.defaultProps = {
-	requestList: () => {},
-};
-
-export default connect(
-	( state, ownProps ) => {
-		const { owner, slug } = ownProps;
-		return {
-			isRequestingList: isRequestingList( state, owner, slug ),
-		};
-	},
-	{
-		requestList,
-	}
-)( QueryReaderList );
+export default QueryReaderList;

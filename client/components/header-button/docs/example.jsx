@@ -1,4 +1,3 @@
-import React from 'react';
 import HeaderButton from 'calypso/components/header-button';
 
 const HeaderButtonExample = () => {

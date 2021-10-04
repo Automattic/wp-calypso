@@ -1,5 +1,5 @@
 import '@automattic/calypso-polyfills';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import AuthWrapper from './auth-wrapper';
@@ -69,7 +69,7 @@ const render = () => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
 
 	ReactDOM.render(
-		React.createElement( AuthWrapper( Notifications ), {
+		createElement( AuthWrapper( Notifications ), {
 			customEnhancer,
 			customMiddleware,
 			isShowing,

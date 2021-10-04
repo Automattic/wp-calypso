@@ -15,7 +15,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React, { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
 import {
 	SummaryLine,
@@ -241,12 +241,12 @@ function isFormValid( store ) {
 
 function WeChatLabel() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>WeChat Pay</span>
 			<PaymentMethodLogos className="wechat__logo payment-logos">
 				<WeChatLogo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

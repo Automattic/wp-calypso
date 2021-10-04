@@ -1,5 +1,5 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';

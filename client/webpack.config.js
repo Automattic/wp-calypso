@@ -225,6 +225,9 @@ const webpackConfig = {
 				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
+					forceAll: ! isDevelopment,
+					activeSections: config( 'sections' ),
+					enableByDefault: config( 'enable_all_sections' ),
 				},
 			},
 			{
@@ -308,7 +311,7 @@ const webpackConfig = {
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
-				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
+				output: path.resolve( './public/chunks-map.json' ),
 			} ),
 		new RequireChunkCallbackPlugin(),
 		/*

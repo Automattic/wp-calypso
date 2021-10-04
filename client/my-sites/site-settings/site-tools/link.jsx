@@ -1,7 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const noop = () => {};
 

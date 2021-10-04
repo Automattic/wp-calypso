@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -35,7 +35,7 @@ import {
 
 import './style.scss';
 
-class EmailManagementHome extends React.Component {
+class EmailManagementHome extends Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
@@ -43,18 +43,25 @@ class EmailManagementHome extends React.Component {
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		context: PropTypes.string,
+		emailListInactiveHeader: PropTypes.element,
+		showActiveDomainList: PropTypes.bool,
+		sectionHeaderLabel: PropTypes.string,
 	};
 
 	render() {
 		const {
+			canManageSite,
+			currentRoute,
 			domains,
+			emailListInactiveHeader,
 			hasSiteDomainsLoaded,
 			hasSitesLoaded,
-			canManageSite,
-			selectedSite,
+			showActiveDomainList = true,
 			selectedDomainName,
-			currentRoute,
+			selectedSite,
 			selectedSiteId,
+			sectionHeaderLabel,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -119,16 +126,21 @@ class EmailManagementHome extends React.Component {
 
 		return this.renderContentWithHeader(
 			<>
-				<EmailListActive
-					domains={ domainsWithEmail }
-					selectedSiteSlug={ selectedSite.slug }
-					currentRoute={ currentRoute }
-					selectedSiteId={ selectedSiteId }
-				/>
+				{ showActiveDomainList && (
+					<EmailListActive
+						currentRoute={ currentRoute }
+						domains={ domainsWithEmail }
+						selectedSiteId={ selectedSiteId }
+						selectedSiteSlug={ selectedSite.slug }
+					/>
+				) }
+
 				<EmailListInactive
-					domains={ domainsWithNoEmail }
-					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
+					domains={ domainsWithNoEmail }
+					headerComponent={ emailListInactiveHeader }
+					sectionHeaderLabel={ sectionHeaderLabel }
+					selectedSiteSlug={ selectedSite.slug }
 				/>
 			</>
 		);

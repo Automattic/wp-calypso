@@ -1,7 +1,7 @@
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';

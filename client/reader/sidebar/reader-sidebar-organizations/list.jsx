@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AutomatticLogo from 'calypso/assets/images/icons/a8c-logo.svg';
 import P2Logo from 'calypso/assets/images/icons/p2-logo.svg';

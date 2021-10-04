@@ -1,5 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { useSubscription } from 'use-subscription';
 
 export default function rtlFactory( i18n ) {

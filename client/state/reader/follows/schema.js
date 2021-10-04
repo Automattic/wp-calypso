@@ -13,6 +13,7 @@ export const items = {
 				blog_ID: { type: [ 'integer', 'null' ] },
 				feed_ID: { type: [ 'integer', 'null' ] },
 				date_subscribed: { type: [ 'integer', 'null' ] },
+				last_updated: { type: [ 'integer', 'null' ] },
 				delivery_methods: { type: [ 'object', 'null' ] },
 				is_owner: { type: [ 'boolean', 'null' ] },
 				organization_id: { type: [ 'integer', 'null' ] },

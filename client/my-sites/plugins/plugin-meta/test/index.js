@@ -16,7 +16,6 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { PluginMeta } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );

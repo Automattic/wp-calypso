@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import { Component } from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -7,7 +7,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 
-export default class Input extends React.Component {
+export default class Input extends Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
 	inputRef = ( element ) => {

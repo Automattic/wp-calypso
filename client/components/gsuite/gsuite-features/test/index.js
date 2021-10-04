@@ -1,4 +1,3 @@
-import React from 'react';
 import renderer from 'react-test-renderer';
 import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
 import GSuiteFeatures from '../';

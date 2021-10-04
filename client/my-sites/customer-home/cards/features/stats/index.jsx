@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';

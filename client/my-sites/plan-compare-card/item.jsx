@@ -1,9 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 
-export default class PlanCompareCardItem extends React.Component {
+export default class PlanCompareCardItem extends Component {
 	static propTypes = {
 		highlight: PropTypes.bool,
 		unavailable: PropTypes.bool,

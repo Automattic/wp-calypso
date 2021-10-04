@@ -2,9 +2,8 @@ import { Button, Popover, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Emojify from 'calypso/components/emojify';
 import ExternalLink from 'calypso/components/external-link';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { urlToDomainAndPath } from 'calypso/lib/url';
@@ -143,12 +142,11 @@ export class CommentAuthorMoreInfo extends Component {
 					<div className="comment__author-more-info-element">
 						<Gridicon icon="link" />
 						<div>
-							{ !! authorUrl && (
-								<ExternalLink href={ authorUrl }>
-									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-								</ExternalLink>
+							{ authorUrl ? (
+								<ExternalLink href={ authorUrl }>{ urlToDomainAndPath( authorUrl ) }</ExternalLink>
+							) : (
+								<em>{ translate( 'No website' ) }</em>
 							) }
-							{ ! authorUrl && <em>{ translate( 'No website' ) }</em> }
 						</div>
 					</div>
 

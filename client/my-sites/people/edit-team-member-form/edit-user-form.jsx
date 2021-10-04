@@ -1,6 +1,6 @@
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -35,7 +35,7 @@ const fieldKeys = {
 	isExternalContributor: 'isExternalContributor',
 };
 
-class EditUserForm extends React.Component {
+class EditUserForm extends Component {
 	state = this.getStateObject( this.props );
 
 	componentDidUpdate() {

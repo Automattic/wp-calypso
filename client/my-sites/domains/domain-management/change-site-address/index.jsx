@@ -2,7 +2,7 @@ import { localize, translate } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import Main from 'calypso/components/main';
@@ -13,7 +13,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
 
-class ChangeSiteAddress extends React.Component {
+class ChangeSiteAddress extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

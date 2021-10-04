@@ -41,7 +41,7 @@
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
-		"@testing-library/react": "^12.0.0",
+		"@testing-library/react": "^12.1.1",
 		"jest": "^27.0.6",
 		"jest-canvas-mock": "^2.3.0",
 		"react": "^17.0.2",

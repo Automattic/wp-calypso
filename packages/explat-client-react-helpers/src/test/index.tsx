@@ -5,7 +5,6 @@
 import { validExperimentAssignment } from '@automattic/explat-client/src/internal/test-common';
 import { render, act as actReact, waitFor } from '@testing-library/react';
 import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
-import React from 'react';
 import createExPlatClientReactHelpers from '../index';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 

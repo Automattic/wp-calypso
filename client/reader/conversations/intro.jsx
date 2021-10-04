@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -13,7 +13,7 @@ import './intro.scss';
 const getPreferenceName = ( isInternal ) =>
 	isInternal ? 'has_used_reader_conversations_a8c' : 'has_used_reader_conversations';
 
-class ConversationsIntro extends React.Component {
+class ConversationsIntro extends Component {
 	static propTypes = {
 		isInternal: PropTypes.bool,
 	};

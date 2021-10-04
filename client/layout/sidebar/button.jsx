@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { isExternal } from 'calypso/lib/url';
 import { preload } from 'calypso/sections-helper';
 
-class SidebarButton extends React.Component {
+class SidebarButton extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		onClick: PropTypes.func,

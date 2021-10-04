@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import Debug from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -28,7 +28,7 @@ import './style.scss';
  */
 const debug = new Debug( 'calypso:invite-accept' );
 
-class InviteAccept extends React.Component {
+class InviteAccept extends Component {
 	state = {
 		invite: false,
 		error: false,
@@ -227,7 +227,7 @@ class InviteAccept extends React.Component {
 		const { user } = this.props;
 
 		const containerClasses = classNames( 'invite-accept', {
-			'is-p2': !! invite?.site?.is_wpforteams_site,
+			'is-p2-invite': !! invite?.site?.is_wpforteams_site,
 		} );
 
 		const formClasses = classNames( 'invite-accept__form', {

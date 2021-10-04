@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';

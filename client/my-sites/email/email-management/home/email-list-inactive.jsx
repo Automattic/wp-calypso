@@ -1,14 +1,21 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 
-class EmailListInactive extends React.Component {
+class EmailListInactive extends Component {
 	render() {
-		const { selectedSiteSlug, currentRoute, domains, translate } = this.props;
-
+		const {
+			currentRoute,
+			domains,
+			headerComponent,
+			sectionHeaderLabel,
+			selectedSiteSlug,
+			translate,
+		} = this.props;
 		if ( domains.length < 1 ) {
 			return null;
 		}
@@ -34,11 +41,21 @@ class EmailListInactive extends React.Component {
 
 		return (
 			<div className="email-list-inactive">
-				<SectionHeader label={ translate( 'Other domains' ) } />
+				{ headerComponent }
+				<SectionHeader label={ sectionHeaderLabel ?? translate( 'Other domains' ) } />
 				{ emailListItems }
 			</div>
 		);
 	}
 }
+
+EmailListInactive.propTypes = {
+	currentRoute: PropTypes.string,
+	domains: PropTypes.array,
+	headerComponent: PropTypes.element,
+	sectionHeaderLabel: PropTypes.string,
+	selectedSiteSlug: PropTypes.string,
+	translate: PropTypes.func.isRequired,
+};
 
 export default localize( EmailListInactive );

@@ -11,7 +11,6 @@ import {
 	CommentsComponent,
 	NavbarComponent,
 	NotificationsComponent,
-	CookieBannerComponent,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
@@ -27,54 +26,56 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 		page = args.page;
 	} );
 
-	it( `Log in as ${ commentingUser }`, async function () {
-		const loginFlow = new LoginFlow( page, commentingUser );
-		await loginFlow.logIn();
-		await page.waitForURL( '**/read' );
+	describe( `Leave a comment as ${ commentingUser }`, function () {
+		let testPage;
+
+		it( `Log in as ${ commentingUser }`, async function () {
+			testPage = await BrowserManager.newPage( { newContext: true } );
+			const loginFlow = new LoginFlow( testPage, commentingUser );
+			await loginFlow.logIn();
+			await testPage.waitForURL( '**/read' );
+		} );
+
+		it( 'View site', async function () {
+			// TODO make a utility to obtain a blog URL without string substitution.
+			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
+			await testPage.goto( siteURL );
+		} );
+
+		it( 'View first post', async function () {
+			publishedPostsListPage = new PublishedPostsListPage( testPage );
+			publishedPostsListPage.visitPost( 1 );
+		} );
+
+		it( 'Comment on the post', async function () {
+			const commentsComponent = new CommentsComponent( testPage );
+			await commentsComponent.postComment( comment );
+		} );
 	} );
 
-	it( 'View site', async function () {
-		const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
-		await page.goto( siteURL );
-	} );
+	describe( `Trash comment as ${ notificationsUser }`, function () {
+		it( `Log in as ${ notificationsUser }`, async function () {
+			const loginFlow = new LoginFlow( page, notificationsUser );
+			await loginFlow.logIn();
+		} );
 
-	it( 'View first post', async function () {
-		publishedPostsListPage = new PublishedPostsListPage( page );
-		publishedPostsListPage.visitPost( 1 );
-	} );
+		it( 'Open notification using keyboard shortcut', async function () {
+			const navbarComponent = new NavbarComponent( page );
+			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
+		} );
 
-	it( 'Comment on the post', async function () {
-		const commentsComponent = new CommentsComponent( page );
-		await commentsComponent.postComment( comment );
-	} );
+		it( `See notification for the comment left by ${ commentingUser }`, async function () {
+			notificationsComponent = new NotificationsComponent( page );
+			await notificationsComponent.clickNotification( comment );
+		} );
 
-	it( 'Clear cookies', async function () {
-		await BrowserManager.clearAuthenticationState( page );
-		const cookieBannerComponent = new CookieBannerComponent( page );
-		await cookieBannerComponent.acceptCookie();
-	} );
+		it( 'Delete comment from notification', async function () {
+			await notificationsComponent.clickNotificationAction( 'Trash' );
+		} );
 
-	it( `Log in as ${ notificationsUser }`, async function () {
-		const loginFlow = new LoginFlow( page, notificationsUser );
-		await loginFlow.logIn();
-	} );
-
-	it( 'Open notification using keyboard shortcut', async function () {
-		const navbarComponent = new NavbarComponent( page );
-		await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
-	} );
-
-	it( `See notification for the comment left by ${ commentingUser }`, async function () {
-		notificationsComponent = new NotificationsComponent( page );
-		await notificationsComponent.clickNotification( comment );
-	} );
-
-	it( 'Delete comment from notification', async function () {
-		await notificationsComponent.clickNotificationAction( 'Trash' );
-	} );
-
-	it( 'Confirm comment is trashed', async function () {
-		await notificationsComponent.waitForUndoMessage();
-		await notificationsComponent.waitForUndoMessageToDisappear();
+		it( 'Confirm comment is trashed', async function () {
+			await notificationsComponent.waitForUndoMessage();
+			await notificationsComponent.waitForUndoMessageToDisappear();
+		} );
 	} );
 } );

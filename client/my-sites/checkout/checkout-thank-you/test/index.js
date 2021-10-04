@@ -21,7 +21,6 @@ import {
 	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import { CheckoutThankYou } from '../index';

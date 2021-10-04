@@ -19,7 +19,6 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { VideoAudioPosts } from '../video-audio-posts';
 
 describe( 'VideoAudioPosts basic tests', () => {

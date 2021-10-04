@@ -1,4 +1,3 @@
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';

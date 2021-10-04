@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';

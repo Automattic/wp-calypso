@@ -3,7 +3,7 @@
 import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import FormButton from 'calypso/components/forms/form-button';
@@ -26,7 +26,7 @@ import withDeleteUser from './with-delete-user';
 
 import './style.scss';
 
-class DeleteUser extends React.Component {
+class DeleteUser extends Component {
 	static displayName = 'DeleteUser';
 
 	static propTypes = {

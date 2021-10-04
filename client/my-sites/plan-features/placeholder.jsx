@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function PlanFeaturesPlaceholder() {
 	return (
 		<div className="plan-features is-placeholder">

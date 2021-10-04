@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';

@@ -25,7 +25,14 @@ import {
 	TYPE_P2_PLUS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
-import { isJetpackBusiness, isBusiness, isEnterprise, isEcommerce, isVipPlan } from '.';
+import {
+	isJetpackBusiness,
+	isBusiness,
+	isEnterprise,
+	isEcommerce,
+	isVipPlan,
+	isMarketplaceProduct,
+} from '.';
 
 export function getPlans() {
 	return PLANS_LIST;
@@ -35,6 +42,10 @@ export function getPlansSlugs() {
 	return Object.keys( getPlans() );
 }
 
+/**
+ * @param   {string} planKey - A key that represents a plan.
+ * @returns {import("./types.ts").Plan} A Plan object that corresponds to the supplied key.
+ */
 export function getPlan( planKey ) {
 	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
 		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
@@ -124,7 +135,6 @@ export function planHasFeature( plan, feature ) {
  *
  * @param {object|string} plan	Plan object or plan name
  * @param {[string]} features	Array of feature names
- *
  * @returns {boolean}			Whether or not the specified plan has one of the features
  */
 export function planHasAtLeastOneFeature( plan, features ) {
@@ -150,7 +160,7 @@ export function getAllFeaturesForPlan( plan ) {
 		'getSignupFeatures',
 		'getBlogSignupFeatures',
 		'getPortfolioSignupFeatures',
-		'getHiddenFeatures',
+		'getIncludedFeatures',
 	].reduce(
 		( featuresArray, featureMethodName ) => [
 			...( planConstantObj?.[ featureMethodName ]?.() ?? [] ),
@@ -171,7 +181,7 @@ export function getAllFeaturesForPlan( plan ) {
  */
 export function planHasSuperiorFeature( plan, feature ) {
 	const planConstantObj = getPlan( plan );
-	const features = planConstantObj.getInferiorHiddenFeatures?.() ?? [];
+	const features = planConstantObj.getInferiorFeatures?.() ?? [];
 
 	return features.includes( feature );
 }
@@ -333,7 +343,6 @@ export function isP2PlusPlan( planSlug ) {
 
 /**
  * @see findSimilarPlansKeys
- *
  * @param {string|object} planKey Source plan to compare to
  * @param {object} diff Properties that should differ in matched plan. @see planMatches
  * @returns {string|undefined} Matched plan
@@ -594,3 +603,14 @@ export function planHasJetpackClassicSearch( plan ) {
 			isVipPlan( plan ) )
 	);
 }
+
+/**
+ * Determines if a product is supported by the Atomic sites infrastructure.
+ *
+ * @param {string} productSlug Slug of the product.
+ * @returns {boolean|boolean} Whether the Atomic infra supports the specified product.
+ */
+export const isAtomicSupportedProduct = ( productSlug ) =>
+	isWpComBusinessPlan( productSlug ) ||
+	isWpComEcommercePlan( productSlug ) ||
+	isMarketplaceProduct( { productSlug } );

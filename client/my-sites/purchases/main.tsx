@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
-import i18nCalypso, { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -62,22 +62,14 @@ export function Purchases(): JSX.Element {
 				brandFont
 				className="purchases__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={
-					i18nCalypso.hasTranslation(
-						'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
-					)
-						? translate(
-								'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="purchases" showIcon={ false } />
-										),
-									},
-								}
-						  )
-						: translate( 'View, manage, or cancel your plan and other purchases for this site.' )
-				}
+				subHeaderText={ translate(
+					'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+						},
+					}
+				) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />

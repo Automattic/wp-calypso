@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormSelect from 'calypso/components/forms/form-select';
 import { setPostTypeFieldValue } from 'calypso/state/exporter/actions';

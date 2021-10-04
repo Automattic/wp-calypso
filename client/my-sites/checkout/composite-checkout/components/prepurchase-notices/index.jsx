@@ -5,7 +5,6 @@ import {
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

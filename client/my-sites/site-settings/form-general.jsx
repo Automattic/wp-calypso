@@ -4,7 +4,7 @@ import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get, has } from 'lodash';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';

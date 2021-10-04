@@ -7,7 +7,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarItem from 'calypso/layout/sidebar/item';

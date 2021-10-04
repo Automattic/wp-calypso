@@ -29,6 +29,7 @@
 
 			&__illustration {
 				flex-grow: 0;
+				min-width: 150px;
 			}
 
 			&__header {
@@ -74,6 +75,7 @@
 				color: var( --color-text-subtle );
 
 				@include break-mobile {
+					max-width: 625px;
 					margin: 0 40px 16px;
 				}
 

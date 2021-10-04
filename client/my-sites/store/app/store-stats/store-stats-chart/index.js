@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { findIndex, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ElementChart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

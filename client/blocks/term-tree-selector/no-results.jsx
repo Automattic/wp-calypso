@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
-class TermTreeSelectorNoResults extends React.PureComponent {
+class TermTreeSelectorNoResults extends PureComponent {
 	static displayName = 'TermTreeSelectorNoResults';
 
 	static propTypes = {

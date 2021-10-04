@@ -1,4 +1,3 @@
-import React from 'react';
 import WpcomColophon from 'calypso/components/wpcom-colophon';
 
 export default function WpcomColophonExample() {

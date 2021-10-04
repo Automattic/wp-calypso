@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';

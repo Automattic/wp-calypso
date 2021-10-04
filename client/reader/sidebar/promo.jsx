@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
 import AsyncLoad from 'calypso/components/async-load';

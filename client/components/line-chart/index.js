@@ -5,7 +5,7 @@ import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
 import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
 import { concat, last, throttle } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import D3Base from 'calypso/components/d3-base';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';

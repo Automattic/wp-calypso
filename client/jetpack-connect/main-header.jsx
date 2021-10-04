@@ -9,7 +9,7 @@ import {
 import { localize } from 'i18n-calypso';
 import { concat } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 

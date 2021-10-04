@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import NoResults from 'calypso/my-sites/no-results';
 
-class MediaLibraryListNoResults extends React.Component {
+class MediaLibraryListNoResults extends Component {
 	static displayName = 'MediaLibraryListNoResults';
 
 	static propTypes = {

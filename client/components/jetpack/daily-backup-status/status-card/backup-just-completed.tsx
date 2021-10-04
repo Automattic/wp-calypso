@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';

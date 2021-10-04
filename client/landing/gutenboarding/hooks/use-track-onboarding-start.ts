@@ -1,5 +1,5 @@
 import { useSelect, useDispatch } from '@wordpress/data';
-import * as React from 'react';
+import { useEffect } from 'react';
 import { recordOnboardingStart } from '../lib/analytics';
 import { useOnboardingFlow } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
@@ -15,7 +15,7 @@ export default function useTrackOnboardingStart() {
 	const { startOnboarding } = useDispatch( ONBOARD_STORE );
 	const flow = useOnboardingFlow();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( ! hasOnboardingStarted && currentUser !== undefined ) {
 			const ref = new URLSearchParams( window.location.search ).get( 'ref' ) || '';
 			const siteCount = currentUser?.site_count ?? 0;

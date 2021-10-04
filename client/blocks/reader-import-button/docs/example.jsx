@@ -1,4 +1,3 @@
-import React from 'react';
 import ReaderImportButtonBlock from 'calypso/blocks/reader-import-button';
 
 const ReaderImportButton = () => (

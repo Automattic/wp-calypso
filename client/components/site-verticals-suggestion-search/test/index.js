@@ -1,5 +1,4 @@
 import { shallow } from 'enzyme';
-import React from 'react';
 import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
 import SuggestionSearch from 'calypso/components/suggestion-search';
 import { SiteVerticalsSuggestionSearch } from '../';

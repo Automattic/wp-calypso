@@ -7,7 +7,7 @@ import {
 } from '@automattic/react-virtualized';
 import { debounce, get, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { recordTracksRailcarRender } from 'calypso/reader/stats';
 import './style.scss';
 

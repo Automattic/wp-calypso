@@ -3,7 +3,6 @@
  */
 
 import { mount } from 'enzyme';
-import React from 'react';
 import { Provider } from 'react-redux';
 import * as record from 'calypso/state/analytics/actions/record';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';

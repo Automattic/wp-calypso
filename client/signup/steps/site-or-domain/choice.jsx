@@ -1,5 +1,5 @@
 import { Button, Card } from '@automattic/components';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 export default class SiteOrDomainChoice extends Component {
 	handleClickChoice = ( event ) => {

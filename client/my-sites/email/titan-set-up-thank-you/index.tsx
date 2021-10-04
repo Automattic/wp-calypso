@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import { getSelectedDomain } from 'calypso/lib/domains';

@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import SiteToolsLink from 'calypso/my-sites/site-settings/site-tools/link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

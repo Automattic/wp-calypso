@@ -11,7 +11,7 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { overSome } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';

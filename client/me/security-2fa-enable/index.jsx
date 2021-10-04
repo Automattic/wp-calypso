@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
-import React from 'react';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -17,7 +17,7 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:me:security:2fa-enable' );
 
-class Security2faEnable extends React.Component {
+class Security2faEnable extends Component {
 	static displayName = 'Security2faEnable';
 
 	static defaultProps = {

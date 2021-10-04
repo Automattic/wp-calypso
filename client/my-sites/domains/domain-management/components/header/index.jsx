@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -22,7 +22,7 @@ const DomainManagementHeader = ( props ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<React.Fragment>
+		<Fragment>
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
@@ -35,7 +35,7 @@ const DomainManagementHeader = ( props ) => {
 				</div>
 				<DocumentHead title={ children } />
 			</HeaderCake>
-		</React.Fragment>
+		</Fragment>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };

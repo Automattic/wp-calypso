@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

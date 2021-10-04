@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { getChangePaymentMethodPath } from 'calypso/me/purchases/utils';

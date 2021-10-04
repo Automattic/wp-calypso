@@ -5,7 +5,7 @@ import { ProgressBar, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { memoize } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';

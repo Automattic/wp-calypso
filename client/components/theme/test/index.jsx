@@ -5,7 +5,7 @@
 import { parse } from 'url';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
+import { createElement } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
@@ -36,7 +36,7 @@ describe( 'Theme', () => {
 		describe( 'with default display buttonContents', () => {
 			beforeEach( () => {
 				props.onScreenshotClick = sinon.spy();
-				const themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, props ) );
+				const themeElement = TestUtils.renderIntoDocument( createElement( Theme, props ) );
 				themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -97,7 +97,7 @@ describe( 'Theme', () => {
 		describe( 'with empty buttonContents', () => {
 			beforeEach( () => {
 				props.buttonContents = {};
-				const themeElement = TestUtils.renderIntoDocument( React.createElement( Theme, props ) );
+				const themeElement = TestUtils.renderIntoDocument( createElement( Theme, props ) );
 				themeNode = ReactDom.findDOMNode( themeElement );
 			} );
 
@@ -112,7 +112,7 @@ describe( 'Theme', () => {
 	describe( 'when isPlaceholder is set to true', () => {
 		beforeEach( () => {
 			const themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Theme, {
+				createElement( Theme, {
 					theme: { id: 'placeholder-1', name: 'Loading' },
 					isPlaceholder: true,
 					translate: ( string ) => string,
@@ -130,7 +130,7 @@ describe( 'Theme', () => {
 	describe( 'when the theme has a price', () => {
 		beforeEach( () => {
 			const themeElement = TestUtils.renderIntoDocument(
-				React.createElement( Theme, { ...props, price: '$50' } )
+				createElement( Theme, { ...props, price: '$50' } )
 			);
 			themeNode = ReactDom.findDOMNode( themeElement );
 		} );

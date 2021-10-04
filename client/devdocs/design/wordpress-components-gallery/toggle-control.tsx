@@ -1,5 +1,5 @@
 import { ToggleControl } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const ToggleControlExample = () => {
 	const [ hasFixedBackground, setHasFixedBackground ] = useState( true );

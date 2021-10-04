@@ -1,7 +1,6 @@
 import colorStudio from '@automattic/color-studio';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 /**
  * Module constants

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
@@ -29,6 +29,7 @@ import {
 	newUsers,
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -42,7 +43,7 @@ import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 
 import './style.scss';
 
-class GSuiteAddUsers extends React.Component {
+class GSuiteAddUsers extends Component {
 	state = {
 		users: [],
 	};
@@ -296,4 +297,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( localize( GSuiteAddUsers ) ) );
+)( withShoppingCart( withCartKey( localize( GSuiteAddUsers ) ) ) );

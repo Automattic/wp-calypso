@@ -6,7 +6,6 @@ import {
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

@@ -1,10 +1,10 @@
-import { mkdtemp, mkdir, rename, appendFile } from 'fs/promises';
+import { mkdir, rename } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
-import { getState } from 'expect';
-import { start, close } from './browser-manager';
+import { chromium, Page, Video } from 'playwright';
+import { getDefaultLoggerConfiguration, getArtifactDir } from './browser-helper';
+import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
 import { getDateString } from './data-helper';
-import type { Page, Video } from 'playwright';
 
 // These are defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
 declare const __CURRENT_TEST_FAILED__: boolean;
@@ -38,26 +38,23 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 	let tempDir: string;
 
 	beforeAll( async () => {
-		// Create dir for storing test files
-		const { testPath } = getState() as { testPath: string };
-		const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
-		const resultsPath = path.join( process.cwd(), 'results' );
-		await mkdir( resultsPath, { recursive: true } );
-		tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
-
+		tempDir = await getArtifactDir();
+		// Get default logging configuration, which will create a directory to store
+		// artifacts.
+		const loggingConfiguration = await getDefaultLoggerConfiguration();
 		// Start the browser
-		page = await start( {
-			logger: async ( name, severity, message ) => {
-				await appendFile(
-					path.join( tempDir, 'playwright.log' ),
-					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-				);
-			},
-		} );
+		await startBrowser( chromium );
+		// Launch context with logging.
+		const context = await newBrowserContext( loggingConfiguration );
+		// Launch a new page within the context.
+		page = await context.newPage();
 		callback( { page } );
 	} );
 
 	afterAll( async () => {
+		if ( ! browser ) {
+			throw new Error( 'No browser instance found.' );
+		}
 		const testName = __CURRENT_TEST_NAME__;
 
 		// Take screenshot for failed tests
@@ -92,6 +89,6 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			await ( page.video() as Video ).delete();
 		}
 
-		await close();
+		await closeBrowser();
 	} );
 };

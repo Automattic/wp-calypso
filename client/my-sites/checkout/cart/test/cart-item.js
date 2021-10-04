@@ -14,7 +14,6 @@ import {
 	getBillingMonthsForPlan,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { CartItem } from '../cart-item';
 
 jest.mock( '@automattic/calypso-config', () => {

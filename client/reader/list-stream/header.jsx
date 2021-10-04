@@ -2,7 +2,6 @@ import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import { isExternal } from 'calypso/lib/url';
 

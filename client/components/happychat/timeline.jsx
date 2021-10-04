@@ -3,9 +3,8 @@ import classnames from 'classnames';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Component, useCallback, useEffect, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
-import Emojify from 'calypso/components/emojify';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { sendEvent } from 'calypso/state/happychat/connection/actions';
@@ -17,14 +16,14 @@ import './timeline.scss';
 
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
-const MessageParagraph = ( { message, isEdited, twemojiUrl } ) => (
-	<p>
-		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
+const MessageParagraph = ( { message, isEdited, isOptimistic } ) => (
+	<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
+		{ message }
 		{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 	</p>
 );
 
-class MessageLink extends React.Component {
+class MessageLink extends Component {
 	handleClick = () => {
 		const { href, messageId, sendEventMessage, userId } = this.props;
 
@@ -75,7 +74,14 @@ const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId(
  * Given a message and array of links contained within that message, returns the message
  * with clickable links inside of it.
  */
-const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl } ) => {
+const MessageWithLinks = ( {
+	message,
+	messageId,
+	isEdited,
+	isOptimistic,
+	links,
+	isExternalUrl,
+} ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -123,7 +129,7 @@ const MessageWithLinks = ( { message, messageId, isEdited, links, isExternalUrl 
 	}
 
 	return (
-		<p>
+		<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
 			{ children.parts }
 			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 		</p>
@@ -145,7 +151,7 @@ const MessageText = ( props ) =>
  * Group messages based on user so when any user sends multiple messages they will be grouped
  * within the same message bubble until it reaches a message from a different user.
  */
-const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl }, index ) => {
+const renderGroupedMessages = ( { item, isCurrentUser, isExternalUrl }, index ) => {
 	const [ event, ...rest ] = item;
 	return (
 		<div
@@ -160,18 +166,18 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 					message={ event.message }
 					messageId={ event.id }
 					isEdited={ event.isEdited }
+					isOptimistic={ event.isOptimistic }
 					links={ event.links }
-					twemojiUrl={ twemojiUrl }
 					isExternalUrl={ isExternalUrl }
 				/>
-				{ rest.map( ( { message, id, isEdited, links } ) => (
+				{ rest.map( ( { message, id, isEdited, isOptimistic, links } ) => (
 					<MessageText
 						key={ id }
 						message={ message }
 						messageId={ event.id }
 						isEdited={ isEdited }
+						isOptimistic={ isOptimistic }
 						links={ links }
-						twemojiUrl={ twemojiUrl }
 						isExternalUrl={ isExternalUrl }
 					/>
 				) ) }
@@ -230,7 +236,7 @@ function getMessagesOlderThan( timestamp, messages ) {
 }
 
 function Timeline( props ) {
-	const { timeline, isCurrentUser, isExternalUrl = () => true, twemojiUrl } = props;
+	const { timeline, isCurrentUser, isExternalUrl = () => true } = props;
 	const autoscroll = useAutoscroll();
 	const scrollbleed = useScrollbleed();
 
@@ -283,7 +289,6 @@ function Timeline( props ) {
 						item,
 						isCurrentUser: isCurrentUser( firstItem ),
 						isExternalUrl,
-						twemojiUrl,
 					} );
 				} ) }
 			</div>
@@ -308,7 +313,6 @@ Timeline.propTypes = {
 	isCurrentUser: PropTypes.func,
 	isExternalUrl: PropTypes.func,
 	timeline: PropTypes.array,
-	twemojiUrl: PropTypes.string,
 };
 
 export default Timeline;

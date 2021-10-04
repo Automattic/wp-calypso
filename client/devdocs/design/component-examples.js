@@ -20,7 +20,6 @@ export { default as DateRange } from 'calypso/components/date-range/docs/example
 export { default as DiffViewerExample } from 'calypso/components/diff-viewer/docs/example';
 export { default as DropZones } from 'calypso/components/drop-zone/docs/example';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu/docs/example';
-export { default as EmojifyExample } from 'calypso/components/emojify/docs/example';
 export { default as EmptyContent } from 'calypso/components/empty-content/docs/example';
 export { default as ExternalLink } from 'calypso/components/external-link/docs/example';
 export { default as FAQ } from 'calypso/components/faq/docs/example';

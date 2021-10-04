@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import { mediaURLToProxyConfig, canvasToBlob } from 'calypso/lib/media/utils';
 import wpcom from 'calypso/lib/wp';
@@ -69,7 +69,7 @@ export class ImageEditorCanvas extends Component {
 	requestAnimationFrameId = null;
 	lastTimestamp = null;
 	isMounted = false;
-	canvasRef = React.createRef();
+	canvasRef = createRef();
 
 	onWindowResize = () => {
 		this.requestAnimationFrameId = window.requestAnimationFrame( this.updateCanvasPosition );

@@ -1,8 +1,8 @@
-import React from 'react';
+import { Component } from 'react';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import FeatureExample from '..';
 
-export default class FeatureExampleExample extends React.Component {
+export default class FeatureExampleExample extends Component {
 	static displayName = 'FeatureExampleExample';
 
 	getContent = () => {

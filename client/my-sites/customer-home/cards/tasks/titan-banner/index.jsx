@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import { TASK_UPSELL_TITAN } from 'calypso/my-sites/customer-home/cards/constants';

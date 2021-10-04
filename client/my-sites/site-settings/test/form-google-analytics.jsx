@@ -20,7 +20,6 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import React from 'react';
 import GoogleAnalyticsJetpackForm from '../analytics/form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from '../analytics/form-google-analytics-simple';
 

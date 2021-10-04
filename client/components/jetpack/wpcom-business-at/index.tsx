@@ -2,7 +2,7 @@ import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import React, { ReactElement, useState, useCallback, useEffect } from 'react';
+import { ReactElement, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {

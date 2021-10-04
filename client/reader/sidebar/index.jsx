@@ -3,7 +3,7 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
@@ -51,7 +51,7 @@ const A8CConversationsIcon = () => (
 	</svg>
 );
 
-export class ReaderSidebar extends React.Component {
+export class ReaderSidebar extends Component {
 	state = {};
 
 	componentDidMount() {
