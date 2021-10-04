@@ -15,7 +15,9 @@ export default function FseBetaFeedbackForm( { calypsoPort } ) {
 		setIsSubmitting( true );
 
 		const { port1, port2 } = new MessageChannel();
-		calypsoPort.postMessage( { action: 'feedback-goo', payload: message }, [ port2 ] );
+		calypsoPort.postMessage( { action: 'sendSiteEditorBetaFeedback', payload: message }, [
+			port2,
+		] );
 
 		port1.onmessage = ( { data } ) => {
 			setIsSubmitting( false );

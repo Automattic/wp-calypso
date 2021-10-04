@@ -21,6 +21,7 @@ import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { selectMediaItems } from 'calypso/state/media/actions';
@@ -120,7 +121,7 @@ enum EditorActions {
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
-	FeedbackGoo = 'feedback-goo',
+	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
 }
 
 type ComponentProps = Props &
@@ -490,8 +491,13 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			}
 		}
 
-		if ( EditorActions.FeedbackGoo === action ) {
-			sendSiteEditorBetaFeedback( payload, ports[ 0 ] );
+		if ( EditorActions.SendSiteEditorBetaFeedback === action ) {
+			sendSiteEditorBetaFeedback(
+				payload,
+				this.props.siteUrl,
+				this.props.currentUserLocale,
+				ports[ 0 ]
+			);
 		}
 	};
 
@@ -882,6 +888,7 @@ const mapStateToProps = (
 		closeUrl,
 		closeLabel,
 		currentRoute,
+		currentUserLocale: getCurrentUserLocale( state ),
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,

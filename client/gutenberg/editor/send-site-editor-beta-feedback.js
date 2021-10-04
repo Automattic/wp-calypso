@@ -2,27 +2,25 @@
  * External dependencies
  */
 import config from '@automattic/calypso-config';
-// import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-// import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-// import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-export const sendSiteEditorBetaFeedback = ( message, port ) => {
-	// TODO - hook up the selectors for site and locale data.
-	// const kayakoMessage = `Site: ${ selectedSite ? selectedSite.URL : 'N/A' }\n\n${ message }`;
-	const kayakoMessage = `Site: N/A\n\n${ message }`;
+export const sendSiteEditorBetaFeedback = ( message, siteUrl, userLocale, port ) => {
+	const kayakoMessage = `Site: ${ siteUrl ? siteUrl : 'N/A' }\n\n${ message }`;
 
+	// To test without sending.
+	// console.log( 'test message:' );
 	// console.log( kayakoMessage );
 	// port.postMessage( 'success' );
+	// return;
 
 	wpcom.req
 		.post( '/help/tickets/kayako/new', {
 			subject: '[Dotcom FSE Beta]',
 			message: kayakoMessage,
-			locale: 'N/A',
+			locale: userLocale,
 			client: config( 'client_slug' ),
 			is_chat_overflow: false,
 		} )
