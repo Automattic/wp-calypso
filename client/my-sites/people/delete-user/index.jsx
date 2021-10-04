@@ -24,6 +24,7 @@ import {
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import { httpData } from 'calypso/state/data-layer/http-data';
+import { getSite } from 'calypso/state/sites/selectors';
 import withDeleteUser from './with-delete-user';
 
 import './style.scss';
@@ -222,10 +223,10 @@ class DeleteUser extends Component {
 	};
 
 	renderSingleSite = () => {
-		const { translate, user, isJetpack } = this.props;
+		const { translate, isJetpack, isOwnSite } = this.props;
 
 		// A user should not be able to remove the site owner.
-		if ( ! isJetpack && user.ID ) {
+		if ( ! isJetpack && isOwnSite ) {
 			return (
 				<Card className="delete-user__single-site">
 					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
@@ -353,7 +354,10 @@ export default localize(
 			const userId = user && user.ID;
 			const linkedUserId = user && user.linked_user_ID;
 			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+			const site = getSite( state, siteId );
+
 			return {
+				isOwnSite: site?.capabilities?.own_site,
 				currentUser: getCurrentUser( state ),
 				contributorType: getContributorType(
 					externalContributors,
