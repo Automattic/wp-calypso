@@ -2,8 +2,6 @@
  * WARNING: No ES6 modules here. Not transpiled! *
  */
 
-/* eslint-disable import/no-nodejs-modules */
-
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );

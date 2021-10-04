@@ -107,7 +107,7 @@ class DatePickerExample extends Component {
 		this.setState( { selectedDay: date } );
 
 		if ( date ) {
-			console.log( date.toDate(), modifiers ); // eslint-disable-line no-console
+			console.log( date.toDate(), modifiers );
 		}
 	};
 

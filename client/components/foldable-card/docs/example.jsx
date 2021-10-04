@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import { Button } from '@automattic/components';
 import { PureComponent } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';

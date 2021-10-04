@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console, import/no-nodejs-modules */
-
 //
 // Checks whether the version value in the package.json is the same as the
 // given input.

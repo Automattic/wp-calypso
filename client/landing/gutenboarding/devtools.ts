@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 interface MagicWindow extends Window {
 	wp: undefined | Record< string, any >;
 }
