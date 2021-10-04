@@ -39,6 +39,10 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
 	},
+	'themes-upload': {
+		link: 'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/',
+		post_id: 134784,
+	},
 	publicize: {
 		link: 'https://wordpress.com/support/publicize/',
 		post_id: 4789,

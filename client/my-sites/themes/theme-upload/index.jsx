@@ -332,11 +332,7 @@ class Upload extends Component {
 						{
 							components: {
 								learnMoreLink: (
-									<InlineSupportLink
-										supportLink="https://wordpress.com/support/themes/uploading-setting-up-custom-themes/"
-										supportPostId={ 134784 }
-										showIcon={ false }
-									/>
+									<InlineSupportLink supportContext="themes-upload" showIcon={ false } />
 								),
 							},
 						}
