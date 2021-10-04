@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
+import classnames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
 import { build, write } from './icons';
@@ -9,9 +10,10 @@ import './intent-screen.scss';
 interface Intent {
 	title: string;
 	description: string;
-	icon: React.ReactElement;
+	icon: React.ReactElement | null;
 	intent: IntentFlag;
 	actionText: string;
+	href?: string;
 }
 
 interface Props {
@@ -35,6 +37,14 @@ const useIntents = ( { translate } ): Intent[] => {
 			intent: 'build',
 			actionText: translate( 'Start building' ),
 		},
+		{
+			title: '',
+			description: 'Let our experts create your dream site',
+			icon: null,
+			intent: 'do-it-for-me',
+			actionText: translate( 'Do it for me' ),
+			href: 'do-it-for-me',
+		},
 	];
 };
 
@@ -44,15 +54,26 @@ const IntentScreen: React.FC< Props > = ( { onSelect, translate } ) => {
 	return (
 		<div className="intent-screen">
 			<div className="intent-screen__cards">
-				{ intents.map( ( { title, description, icon, actionText, intent } ) => (
-					<div key={ intent } className="intent-screen__card">
-						<Icon className="intent-screen__card-icon" icon={ icon } size={ 24 } />
+				{ intents.map( ( { title, description, icon, actionText, intent, href } ) => (
+					<div
+						key={ intent }
+						className={ classnames( 'intent-screen__card', { 'has-link': href } ) }
+					>
+						{ icon && <Icon className="intent-screen__card-icon" icon={ icon } size={ 24 } /> }
 						<div className="intent-screen__card-info-wrapper">
 							<div className="intent-screen__card-info">
-								<h2 className="intent-screen__card-title">{ title }</h2>
+								{ title && <h2 className="intent-screen__card-title">{ title }</h2> }
 								<p className="intent-screen__card-description">{ description }</p>
 							</div>
-							<Button className="intent-screen__card-button" onClick={ () => onSelect( intent ) }>
+							<Button
+								className={ href ? 'intent-screen__card-link' : 'intent-screen__card-button' }
+								href={ href }
+								borderless={ !! href }
+								onClick={ ( event: React.MouseEvent ) => {
+									event.preventDefault();
+									onSelect( intent );
+								} }
+							>
 								{ actionText }
 							</Button>
 						</div>
