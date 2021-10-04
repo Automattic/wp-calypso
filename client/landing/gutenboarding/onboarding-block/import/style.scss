@@ -182,18 +182,20 @@
 	.import__details-list {
 		display: flex;
 		flex-wrap: wrap;
-		column-count: 2;
 		color: var( --studio-gray-70 );
 		font-size: $font-body-small;
 		margin: 1em 0;
 
-
 		li {
 			position: relative;
 			display: flex;
-			flex: 50%;
+			flex: 100%;
 			margin: 6px 0;
 			padding-left: 34px;
+
+			@include break-small {
+				flex: 50%;
+			}
 		}
 
 		span {
