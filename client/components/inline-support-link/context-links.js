@@ -55,6 +55,10 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/',
 		post_id: 174865,
 	},
+	podcasting: {
+		link: 'https://wordpress.com/support/audio/podcasting/',
+		post_id: 38147,
+	},
 	publicize: {
 		link: 'https://wordpress.com/support/publicize/',
 		post_id: 4789,
