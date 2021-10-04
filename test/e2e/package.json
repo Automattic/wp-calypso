@@ -80,7 +80,6 @@
 		"testarmada-magellan": "patch:testarmada-magellan@11.0.10#../../.patches/testarmada-magellan@11.0.10.diff",
 		"testarmada-magellan-local-executor": "^2.0.3",
 		"xml2json-command": "^0.0.3",
-		"xmpp.js": "^0.3.0",
-		"xunit-viewer": "^5.1.8"
+		"xmpp.js": "^0.3.0"
 	}
 }
