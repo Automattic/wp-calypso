@@ -1090,7 +1090,9 @@ function handleSiteEditorFeedbackPlugin( calypsoPort ) {
 			return (
 				<PluginSidebar
 					name="a8c-fse-beta-feedback-plugin"
-					title="FSE Beta Feedback"
+					title={ __( 'Site Editor Beta Feedback', 'full-site-editing' ) }
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					className="a8c-site-editor-feedback-plugin"
 					icon={ comment }
 				>
 					<FeedbackForm calypsoPort={ calypsoPort } />

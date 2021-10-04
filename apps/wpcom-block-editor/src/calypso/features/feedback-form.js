@@ -1,15 +1,19 @@
 /* global MessageChannel */
-import { TextareaControl, Button, PanelBody } from '@wordpress/components';
-import { useState } from '@wordpress/element';
-// import { useI18n } from '@wordpress/react-i18n';
+import { TextareaControl, Button, PanelBody, Notice } from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
 import { __, _x } from '@wordpress/i18n';
 
 export default function FseBetaFeedbackForm( { calypsoPort } ) {
-	// const { __, _x } = useI18n();
-
 	const [ confirmation, setConfirmation ] = useState( null );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
+
+	useEffect( () => {
+		// Reset confirmation if new message is input.
+		if ( confirmation && ! confirmation.isError && message.length ) {
+			setConfirmation( null );
+		}
+	}, [ confirmation, message ] );
 
 	const submitFeedback = () => {
 		setIsSubmitting( true );
@@ -23,14 +27,14 @@ export default function FseBetaFeedbackForm( { calypsoPort } ) {
 			setIsSubmitting( false );
 
 			if ( 'success' === data ) {
+				setMessage( '' );
 				setConfirmation( {
 					title: __( 'Got it!' ),
 					message: __(
-						"We've received your feedback. Thank you for helping us making WordPress.com awesome!"
+						"We've received your feedback. Thank you for helping us make WordPress.com awesome!"
 					),
 					isError: false,
 				} );
-				setMessage( '' );
 			} else if ( 'error' === data ) {
 				setConfirmation( {
 					title: __( 'Error!' ),
@@ -50,17 +54,14 @@ export default function FseBetaFeedbackForm( { calypsoPort } ) {
 			<PanelBody>
 				<TextareaControl
 					disabled={ isSubmitting }
-					id="message"
-					// name="message"
 					onChange={ setMessage }
 					placeholder={ __(
 						'How can we improve the site editing experience?',
 						'full-site-editing'
 					) }
 					value={ message }
-					label={ __( 'Leave feedback', 'full-site-editing' ) }
-					help="bla bla bla help..."
-					rows={ 10 }
+					label={ __( 'Leave feedback (optional)', 'full-site-editing' ) }
+					rows={ 12 }
 				/>
 				<Button
 					disabled={ isSubmitting || ! message }
@@ -74,10 +75,10 @@ export default function FseBetaFeedbackForm( { calypsoPort } ) {
 				</Button>
 			</PanelBody>
 			{ confirmation && (
-				<PanelBody>
+				<Notice status={ confirmation?.isError ? 'error' : 'success' } isDismissible={ false }>
 					<h1>{ confirmation.title }</h1>
 					<p>{ confirmation.message }</p>
-				</PanelBody>
+				</Notice>
 			) }
 		</>
 	);
