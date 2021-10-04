@@ -233,7 +233,7 @@
 		"webpack": "^5.54.0",
 		"webpack-bundle-analyzer": "^4.4.2",
 		"webpack-dev-middleware": "^5.1.0",
-		"webpack-hot-middleware": "^2.25.0",
+		"webpack-hot-middleware": "^2.25.1",
 		"webpack-node-externals": "^3.0.0",
 		"winston": "^3.3.3",
 		"wpcom": "^6.0.0",
