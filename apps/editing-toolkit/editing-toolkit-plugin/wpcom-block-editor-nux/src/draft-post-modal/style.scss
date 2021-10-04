@@ -1,0 +1,27 @@
+.wpcom-block-editor-draft-post-modal {
+	.components-modal__header {
+		border-bottom: 0;
+	}
+
+	.components-modal__content {
+		padding: 48px;
+		margin-top: 0;
+		text-align: center;
+
+		&::before {
+			margin-top: 0;
+		}
+	}
+
+	.wpcom-block-editor-draft-post-modal__title {
+		margin: 24px 0 0;
+	}
+
+	.wpcom-block-editor-draft-post-modal__description {
+		margin: 20px 0 0;
+	}
+
+	.wpcom-block-editor-draft-post-modal__buttons {
+		margin-top: 28px;
+	}
+}
