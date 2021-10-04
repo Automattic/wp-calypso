@@ -275,12 +275,14 @@ export interface ResponseCartProduct {
 	currency: string;
 	product_cost_integer: number;
 	product_cost_display: string;
-	item_original_cost_integer: number; // without discounts or volume
-	item_original_cost_display: string; // without discounts or volume
+	item_original_cost_integer: number; // without discounts or volume, with quantity
+	item_original_cost_display: string; // without discounts or volume, with quantity
 	item_subtotal_monthly_cost_display: string;
 	item_subtotal_monthly_cost_integer: number;
 	item_original_subtotal_integer: number; // without discounts, with volume
 	item_original_subtotal_display: string; // without discounts, with volume
+	item_original_cost_for_quantity_one_integer: number; // without discounts or volume, and quantity 1
+	item_original_cost_for_quantity_one_display: string; // without discounts or volume, and quantity 1
 	item_subtotal_integer: number;
 	item_subtotal_display: string;
 	price_tier_minimum_units?: number | null;
