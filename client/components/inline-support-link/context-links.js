@@ -39,6 +39,10 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
 	},
+	'google-analytics-measurement-id': {
+		link: 'https://wordpress.com/support/google-analytics/#get-your-measurement-id',
+		post_id: 98905,
+	},
 	themes: {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
