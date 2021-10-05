@@ -48,10 +48,10 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
+import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
-import { sendSiteEditorBetaFeedback } from './send-site-editor-beta-feedback';
 import type { RequestCart } from '@automattic/shopping-cart';
 import './style.scss';
 
