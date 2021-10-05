@@ -29,7 +29,7 @@ const useBranchSteps = ( stepName: string ): BranchSteps => {
 	// Only do following things when mounted
 	React.useEffect( () => {
 		restoreBranchSteps();
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return branchSteps;
 };

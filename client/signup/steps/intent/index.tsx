@@ -39,7 +39,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	// Only do following things when mounted
 	React.useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<StepWrapper
