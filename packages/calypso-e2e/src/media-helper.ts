@@ -2,7 +2,6 @@ import { constants } from 'fs';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
-import config from 'config';
 import { getTimestamp } from './data-helper';
 
 /**
@@ -14,44 +13,6 @@ export interface TestFile {
 	basename: string; // eg. image.jpg
 	filename: string; // eg. image
 	extension: string; // eg. .jpg
-}
-
-const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
-
-/**
- * Returns the base asset directory.
- *
- * If the environment variable TEMP_ASSET_PATH is set, this will return a path
- * to the directory. Otherwise, the parent directory of this current file.
- *
- * @returns {string} Absolute path to the directory.
- */
-export function getAssetDir(): string {
-	return path.resolve( process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ) );
-}
-
-/**
- * Returns the screenshot save directory.
- *
- * If the environment variable SCREENSHOTDIR is set, this will override all configuration
- * values. Otherwise, the default path contained in the configuration file is returned.
- *
- * @returns {string} Absolute path to the directory.
- */
-export function getScreenshotDir(): string {
-	return path.resolve( getAssetDir(), process.env.SCREENSHOTDIR || artifacts.screenshot );
-}
-
-/**
- * Returns the video save directory.
- *
- * If the environment variable VIDEODIR is set, this will override all configuration
- * values. Otherwise, the default path contained in the configuration file is returned.
- *
- * @returns {string} Absolute path to the directory.
- */
-export function getVideoDir(): string {
-	return path.resolve( getAssetDir(), process.env.VIDEODIR || artifacts.video );
 }
 
 /**

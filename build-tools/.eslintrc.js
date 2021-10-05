@@ -1,9 +1,5 @@
+const nodeConfig = require( '@automattic/calypso-build/eslint/node' );
+
 module.exports = {
-	env: {
-		node: true,
-	},
-	rules: {
-		'import/no-nodejs-modules': 'off',
-		'no-console': 'off',
-	},
+	...nodeConfig,
 };

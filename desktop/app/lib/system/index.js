@@ -1,5 +1,5 @@
-const { execSync } = require( 'child_process' ); // eslint-disable-line import/no-nodejs-modules
-const os = require( 'os' ); // eslint-disable-line import/no-nodejs-modules
+const { execSync } = require( 'child_process' );
+const os = require( 'os' );
 const config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:system' );
 const Platform = require( '../../lib/platform' );

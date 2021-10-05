@@ -16,16 +16,22 @@ import {
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
+/**
+ * Import styles
+ */
 import './style.scss';
 
 const getExternalUrl = ( mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return getTitanEmailUrl( getEmailAddress( mailbox ) );
+		return getTitanEmailUrl( getEmailAddress( mailbox ), true );
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
@@ -51,6 +57,31 @@ const MailboxItemIcon = ( { mailbox } ) => {
 	return null;
 };
 
+const getProvider = ( mailbox ) => {
+	if ( isTitanMailAccount( mailbox ) ) {
+		return TITAN_PROVIDER_NAME;
+	}
+
+	if ( isGoogleEmailAccount( mailbox ) ) {
+		return GOOGLE_PROVIDER_NAME;
+	}
+
+	if ( isEmailForwardAccount( mailbox ) ) {
+		return 'forward';
+	}
+
+	return null;
+};
+
+const trackAppLaunchEvent = ( { mailbox, app, context } ) => {
+	const provider = getProvider( mailbox );
+	recordEmailAppLaunchEvent( {
+		app,
+		context,
+		provider,
+	} );
+};
+
 MailboxItemIcon.propType = {
 	mailbox: PropTypes.object.isRequired,
 };
@@ -62,6 +93,9 @@ const MailboxItem = ( { mailbox } ) => {
 
 	return (
 		<Card
+			onClick={ () =>
+				trackAppLaunchEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
+			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox ) }
 			target="external"
@@ -78,6 +112,7 @@ const MailboxItem = ( { mailbox } ) => {
 
 MailboxItem.propType = {
 	mailbox: PropTypes.object.isRequired,
+	key: PropTypes.string,
 };
 
 const NewMailboxUpsell = () => {

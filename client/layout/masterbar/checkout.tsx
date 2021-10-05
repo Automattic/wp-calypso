@@ -69,7 +69,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			}
 		} catch ( error ) {
 			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
-			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
+			// eslint-disable-next-line no-console
+			console.error( 'Error getting query string in close button' );
 		}
 
 		window.location.href = closeUrl;

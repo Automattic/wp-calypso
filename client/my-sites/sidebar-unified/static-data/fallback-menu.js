@@ -29,6 +29,7 @@ const WOOCOMMERCE_ICON = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3
 
 export default function buildFallbackResponse( {
 	siteDomain = '',
+	shouldShowInbox = false,
 	shouldShowLinks = false,
 	shouldShowTestimonials = false,
 	shouldShowPortfolio = false,
@@ -65,6 +66,19 @@ export default function buildFallbackResponse( {
 			},
 			{
 				type: 'separator',
+			},
+		];
+	}
+
+	let inbox = [];
+	if ( shouldShowInbox ) {
+		inbox = [
+			{
+				icon: 'dashicons-email',
+				slug: 'Inbox',
+				title: translate( 'Inbox' ),
+				type: 'menu-item',
+				url: `/inbox/${ siteDomain }`,
 			},
 		];
 	}
@@ -121,6 +135,7 @@ export default function buildFallbackResponse( {
 				},
 			],
 		},
+		...inbox,
 		{
 			icon: 'dashicons-admin-post',
 			slug: 'edit-php',

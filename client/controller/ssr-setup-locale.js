@@ -1,6 +1,5 @@
-/* eslint-disable import/no-nodejs-modules */
+// eslint-disable-next-line import/no-nodejs-modules
 import { readFile } from 'fs/promises';
-/* eslint-enable import/no-nodejs-modules */
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import config from 'calypso/server/config';

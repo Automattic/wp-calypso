@@ -23,3 +23,5 @@ export { isWpComProductRenewal } from './is-wpcom-product-renewal';
 export { isValueTruthy } from './is-value-truthy';
 export * from './checkout-labels';
 export * from './get-introductory-offer-interval-display';
+export * from './join-classes';
+export * from './checkout-line-items';

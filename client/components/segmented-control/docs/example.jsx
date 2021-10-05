@@ -120,12 +120,10 @@ class SegmentedControlDemo extends PureComponent {
 		this.setState( {
 			childSelected: childSelected,
 		} );
-		// eslint-disable-next-line no-console
 		console.log( 'Segmented Control (selected):', childSelected );
 	};
 
 	selectSegment = ( option ) => {
-		// eslint-disable-next-line no-console
 		console.log( 'Segmented Control (selected):', option );
 	};
 }
