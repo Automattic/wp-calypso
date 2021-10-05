@@ -7,15 +7,23 @@ import EmptyContent from 'calypso/components/empty-content';
 import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
-const EmailNoDomain = ( { selectedSite, translate } ) => {
+const EmailNoDomain = ( { selectedSite, translate, context } ) => {
 	const hasAvailableDomainCredit = useSelector( ( state ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
+
+	const trackEvent =
+		context != null
+			? () => {
+					recordInboxUpsellEvent( { product: 'domain', context } );
+			  }
+			: () => {};
 
 	if ( isFreePlan( selectedSite.plan.product_slug ) ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Upgrade', { context: 'verb' } ) }
+				actionCallback={ trackEvent }
 				actionURL={ `/plans/${ selectedSite.slug }` }
 				illustration={ Illustration }
 				line={ translate(
@@ -30,7 +38,7 @@ const EmailNoDomain = ( { selectedSite, translate } ) => {
 		return (
 			<EmptyContent
 				action={ translate( 'Add a Domain' ) }
-				onClick={ recordInboxUpsellEvent( { product: 'domain', context: 'inbox' } ) }
+				actionCallback={ trackEvent }
 				actionURL={ `/domains/add/${ selectedSite.slug }` }
 				illustration={ Illustration }
 				line={ translate(
@@ -45,6 +53,7 @@ const EmailNoDomain = ( { selectedSite, translate } ) => {
 		<EmptyContent
 			action={ translate( 'Add a Domain' ) }
 			actionURL={ `/domains/add/${ selectedSite.slug }` }
+			actionCallback={ trackEvent }
 			illustration={ Illustration }
 			line={ translate(
 				'Set up or buy your domain, pick from one of our flexible email options, and start getting emails today.'
@@ -56,6 +65,7 @@ const EmailNoDomain = ( { selectedSite, translate } ) => {
 
 EmailNoDomain.propTypes = {
 	// Props passed to this component
+	context: PropTypes.string,
 	selectedSite: PropTypes.object.isRequired,
 
 	// Props injected via localize()
