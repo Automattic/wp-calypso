@@ -30,12 +30,12 @@ function getTitanUrl( email, app = TITAN_APPS.EMAIL, clearPreviousSessions = fal
 	return titanAppUrl.href;
 }
 
-export function getTitanCalendarlUrl( email, clearPreviousSessions = false ) {
-	return getTitanUrl( email, TITAN_APPS.CALENDAR, clearPreviousSessions );
+export function getTitanCalendarlUrl( email ) {
+	return getTitanUrl( email, TITAN_APPS.CALENDAR );
 }
 
-export function getTitanContactsUrl( email, clearPreviousSessions = false ) {
-	return getTitanUrl( email, TITAN_APPS.CONTACTS, clearPreviousSessions );
+export function getTitanContactsUrl( email ) {
+	return getTitanUrl( email, TITAN_APPS.CONTACTS );
 }
 
 export function getTitanEmailUrl( email, clearPreviousSessions = false ) {
