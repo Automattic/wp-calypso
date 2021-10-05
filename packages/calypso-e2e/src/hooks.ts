@@ -1,4 +1,4 @@
-import { mkdir, rename } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
 import { chromium, Page, Video } from 'playwright';
@@ -64,24 +64,26 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			await page.screenshot( { path: fileName } );
 		}
 		// Close the browser. This needs to be called before trying to access
-		// the video recording
+		// the video recording.
 		await page.close();
-		// Save video
+
 		if ( __CURRENT_TEST_FAILED__ ) {
-			const original = await ( page.video() as Video ).path();
 			const destination = path.join(
 				artifactPath,
 				'screenshots',
 				`${ getTestNameWithTime( testName ) }.webm`
 			);
 			try {
-				await rename( original, destination );
+				// Save the failing test case with a specific name.
+				await page.video()?.saveAs( destination );
 			} catch ( err ) {
-				console.error( 'Failed to rename video of failing test case.' );
+				console.error( `Failed to save video of failing test case.\nSee stack trace:` );
+				console.trace( err );
 			}
-		} else {
-			await ( page.video() as Video ).delete();
 		}
+
+		// In all cases, clean up the directory after itself.
+		await ( page.video() as Video ).delete();
 		await closeBrowser();
 	} );
 };
