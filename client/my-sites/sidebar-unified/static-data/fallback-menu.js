@@ -123,8 +123,8 @@ export default function buildFallbackResponse( {
 		},
 		{
 			icon: 'dashicons-email',
-			slug: 'v44 Inbox',
-			title: translate( 'V33 Inbox' ),
+			slug: 'Inbox',
+			title: translate( 'Inbox' ),
 			type: 'menu-item',
 			url: `/inbox/${ siteDomain }`,
 		},
