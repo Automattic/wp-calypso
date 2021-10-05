@@ -29,7 +29,7 @@ export const sendSiteEditorBetaFeedback = (
 	// To test without sending.
 	// console.log( 'test message:' );
 	// console.log( kayakoMessage );
-	// port.postMessage( 'success' );
+	// then(); // or handleError();
 	// return;
 
 	wpcom.req
