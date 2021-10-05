@@ -54,8 +54,8 @@ const TitanNewMailboxList = ( {
 	const onMailboxAdd = () => {
 		if ( context === 'inbox-management' ) {
 			recordInboxUpsellEvent( {
-				product: 'email',
 				context: context,
+				product: 'email',
 				provider: TITAN_PROVIDER_NAME,
 			} );
 		}

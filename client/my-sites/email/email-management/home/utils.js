@@ -187,10 +187,10 @@ export function recordEmailAppLaunchEvent( { app, context, provider } ) {
  *
  * @param {app, context, provider} - app/context/provider should be string and must be provided.
  */
-export function recordInboxUpsellEvent( { product, context, provider } ) {
+export function recordInboxUpsellEvent( { context, product, provider } ) {
 	recordTracksEvent( 'calypso_inbox_upsell', {
-		product,
 		context,
+		product,
 		provider,
 	} );
 }

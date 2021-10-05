@@ -153,14 +153,14 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSite, context } = this.props;
+		const { context, currentRoute, selectedDomainName, selectedSite } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
 
 		if ( context === 'inbox-management' ) {
 			recordInboxUpsellEvent( {
-				product: 'forward',
 				context: context,
+				product: 'forward',
 			} );
 		}
 
@@ -242,8 +242,8 @@ class EmailProvidersComparison extends Component {
 
 				if ( context === 'inbox-management' ) {
 					recordInboxUpsellEvent( {
-						product: 'email',
 						context: context,
+						product: 'email',
 						provider: TITAN_PROVIDER_NAME,
 					} );
 				}
@@ -307,8 +307,8 @@ class EmailProvidersComparison extends Component {
 
 				if ( context === 'inbox-management' ) {
 					recordInboxUpsellEvent( {
-						product: 'email',
 						context: context,
+						product: 'email',
 						provider: GOOGLE_PROVIDER_NAME,
 					} );
 				}
