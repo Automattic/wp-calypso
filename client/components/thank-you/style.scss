@@ -112,15 +112,14 @@
 	}
 
 	&__container-header {
-		width: auto;
-		background-color: var( --studio-blue-50 );
-		padding: 0 20px 35px;
-		box-sizing: border-box;
-		text-align: center;
-		height: auto;
-		flex-direction: column;
 		align-items: center;
-
+		background-color: var( --studio-blue-50 );
+		box-sizing: border-box;
+		flex-direction: column;
+		height: auto;
+		padding: 0 20px 35px;
+		text-align: center;
+		width: auto;
 
 		img {
 			max-width: 260px;
