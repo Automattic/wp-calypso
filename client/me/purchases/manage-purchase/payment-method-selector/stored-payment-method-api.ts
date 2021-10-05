@@ -41,15 +41,18 @@ export async function updateCreditCard( {
 	purchase,
 	token,
 	stripeConfiguration,
+	useForAllSubscriptions,
 }: {
 	purchase: Purchase;
 	token: string;
 	stripeConfiguration: StripeConfiguration;
+	useForAllSubscriptions: boolean;
 } ): Promise< StoredCardEndpointResponse > {
 	const { purchaseId, payment_partner, paygate_token } = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		purchase,
+		useForAllSubscriptions,
 	} );
 	const response = await wp.req.post( '/upgrades/' + purchaseId + '/update-credit-card', {
 		payment_partner: payment_partner,
