@@ -15,8 +15,15 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: [ './webpack.*.js', './**/docs/example.jsx', './server/**/*', '**/test/**/*' ],
+			files: [ './webpack.*.js', './server/**/*', '**/test/**/*' ],
 			...nodeConfig,
+		},
+		{
+			files: [ './**/docs/example.jsx' ],
+			rules: {
+				// We use a log of console.log() in examples.
+				'no-console': 'off',
+			},
 		},
 	],
 };
