@@ -6,6 +6,7 @@ import 'a8c-fse-common-data-stores';
 
 export const DEFAULT_VARIANT = 'tour';
 export const BLANK_CANVAS_VARIANT = 'blank-canvas-tour';
+export const DRAFT_POST_VARIANT = 'draft-post';
 
 const showWelcomeGuideReducer = ( state = undefined, action ) => {
 	switch ( action.type ) {

@@ -845,6 +845,9 @@ const mapStateToProps = (
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 		...anchorFmData,
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
+		show_draft_post_modal: window.sessionStorage.getItem(
+			'wpcom_signup_complete_show_draft_post_modal'
+		),
 	} );
 
 	// needed for loading the editor in SU sessions
