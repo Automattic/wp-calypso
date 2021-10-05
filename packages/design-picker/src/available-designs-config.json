@@ -371,34 +371,6 @@
 			"features": [ "anchorfm" ]
 		},
 		{
-			"title": "Vesta",
-			"slug": "vesta-blocks",
-			"template": "vesta-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Cabin",
-				"base": "Raleway"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
-			"title": "Easley",
-			"slug": "easley-blocks",
-			"template": "easley-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Space Mono",
-				"base": "Roboto"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
 			"title": "Mayland",
 			"slug": "mayland-blocks",
 			"template": "mayland-blocks",
