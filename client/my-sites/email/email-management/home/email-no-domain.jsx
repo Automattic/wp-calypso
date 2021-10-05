@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
+import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
 const EmailNoDomain = ( { selectedSite, translate } ) => {
@@ -29,6 +30,7 @@ const EmailNoDomain = ( { selectedSite, translate } ) => {
 		return (
 			<EmptyContent
 				action={ translate( 'Add a Domain' ) }
+				onClick={ recordInboxUpsellEvent( { product: 'domain', context: 'inbox' } ) }
 				actionURL={ `/domains/add/${ selectedSite.slug }` }
 				illustration={ Illustration }
 				line={ translate(

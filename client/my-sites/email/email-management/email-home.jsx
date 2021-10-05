@@ -38,12 +38,12 @@ import './style.scss';
 class EmailManagementHome extends Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
+		comparisonContext: PropTypes.string,
 		domains: PropTypes.array.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
-		context: PropTypes.string,
 		emailListInactiveHeader: PropTypes.element,
 		showActiveDomainList: PropTypes.bool,
 		sectionHeaderLabel: PropTypes.string,
@@ -52,6 +52,7 @@ class EmailManagementHome extends Component {
 	render() {
 		const {
 			canManageSite,
+			comparisonContext,
 			currentRoute,
 			domains,
 			emailListInactiveHeader,
@@ -62,7 +63,6 @@ class EmailManagementHome extends Component {
 			selectedSite,
 			selectedSiteId,
 			sectionHeaderLabel,
-			context,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -100,7 +100,9 @@ class EmailManagementHome extends Component {
 		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 		if ( nonWpcomDomains.length < 1 ) {
-			return this.renderContentWithHeader( <EmailNoDomain selectedSite={ selectedSite } /> );
+			return this.renderContentWithHeader(
+				<EmailNoDomain selectedSite={ selectedSite } context={ comparisonContext } />
+			);
 		}
 
 		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );

@@ -38,10 +38,13 @@ import {
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+} from 'calypso/lib/gsuite/constants';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { getTitanProductName } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -51,6 +54,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
@@ -77,7 +81,6 @@ class EmailProvidersComparison extends Component {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,
 		comparisonContext: PropTypes.string,
-		context: PropTypes.string,
 		headerTitle: PropTypes.string,
 		hideEmailForwardingCard: PropTypes.bool,
 		hideEmailHeader: PropTypes.bool,
@@ -149,9 +152,16 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSite } = this.props;
+		const { currentRoute, selectedDomainName, selectedSite, comparisonContext } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
+
+		if ( comparisonContext === 'inbox-management' ) {
+			recordInboxUpsellEvent( {
+				product: 'forward',
+				context: comparisonContext,
+			} );
+		}
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -202,6 +212,14 @@ class EmailProvidersComparison extends Component {
 
 		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
 			return;
+		}
+
+		if ( comparisonContext === 'inbox-management' ) {
+			recordInboxUpsellEvent( {
+				product: 'mailbox',
+				context: comparisonContext,
+				provider: TITAN_PROVIDER_NAME,
+			} );
 		}
 
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
@@ -260,6 +278,14 @@ class EmailProvidersComparison extends Component {
 
 		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
+		}
+
+		if ( comparisonContext === 'inbox-management' ) {
+			recordInboxUpsellEvent( {
+				product: 'mailbox',
+				context: comparisonContext,
+				provider: GOOGLE_PROVIDER_NAME,
+			} );
 		}
 
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
