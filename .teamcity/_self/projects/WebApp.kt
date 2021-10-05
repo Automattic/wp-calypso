@@ -707,6 +707,7 @@ object PreReleaseE2ETests : BuildType({
 	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
 	name = "Pre-Release E2E Tests"
 	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+	maxRunningBuilds = 1
 
 	artifactRules = """
 		reports => reports
