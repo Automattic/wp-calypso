@@ -165,6 +165,7 @@
 		"@types/react-redux": "^7.1.18",
 		"@types/react-router-dom": "^5.3.0",
 		"@types/react-transition-group": "^4.4.3",
+		"@types/store": "^2.0.2",
 		"@types/uuid": "^8.3.1",
 		"@types/validator": "^13.6.3",
 		"@types/webpack-env": "^1.16.2",
