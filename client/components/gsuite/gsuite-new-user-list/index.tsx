@@ -6,7 +6,7 @@ import {
 	newUser,
 	GSuiteNewUser as NewUser,
 	sanitizeEmail,
-	validateUsers,context
+	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
 import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import GSuiteNewUser from './new-user';
