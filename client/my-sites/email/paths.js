@@ -133,8 +133,8 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
  * @param {string} relativeTo - optional path prefix
  * @returns {string} the corresponding url
  */
-export function emailManagementPurchaseNewEmailAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo );
+export function emailManagementPurchaseNewEmailAccount( siteName, domainName, relativeTo = null, urlParameters = null ) {
+	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, urlParameters );
 }
 
 export function emailManagementEdit(

@@ -114,7 +114,10 @@ export default {
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
+				<EmailManagementHome
+					selectedDomainName={ pageContext.params.domain }
+					context={ pageContext.params.context }
+				/>
 			</CalypsoShoppingCartProvider>
 		);
 

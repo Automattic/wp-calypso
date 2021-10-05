@@ -9,6 +9,7 @@ import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/p
 class EmailListInactive extends Component {
 	render() {
 		const {
+			context,
 			currentRoute,
 			domains,
 			headerComponent,
@@ -29,7 +30,8 @@ class EmailListInactive extends Component {
 							href={ emailManagementPurchaseNewEmailAccount(
 								selectedSiteSlug,
 								domain.name,
-								currentRoute
+								currentRoute,
+								{ context: context }
 							) }
 						>
 							{ translate( 'Add Email' ) }

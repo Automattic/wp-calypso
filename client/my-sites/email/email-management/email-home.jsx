@@ -146,6 +146,7 @@ class EmailManagementHome extends Component {
 					headerComponent={ emailListInactiveHeader }
 					sectionHeaderLabel={ sectionHeaderLabel }
 					selectedSiteSlug={ selectedSite.slug }
+					context={ context }
 				/>
 			</>
 		);
