@@ -87,7 +87,7 @@ class EmailManagementHome extends Component {
 						backPath={ domainManagementList( selectedSite.slug, null ) }
 						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
-						context={ context }
+						context={ comparisonContext }
 					/>
 				);
 			}
