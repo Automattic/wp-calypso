@@ -77,6 +77,7 @@ class EmailProvidersComparison extends Component {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,
 		comparisonContext: PropTypes.string,
+		context: PropTypes.string,
 		headerTitle: PropTypes.string,
 		hideEmailForwardingCard: PropTypes.bool,
 		hideEmailHeader: PropTypes.bool,

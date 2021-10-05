@@ -62,6 +62,7 @@ class EmailManagementHome extends Component {
 			selectedSite,
 			selectedSiteId,
 			sectionHeaderLabel,
+			context,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -86,6 +87,7 @@ class EmailManagementHome extends Component {
 						backPath={ domainManagementList( selectedSite.slug, null ) }
 						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
+						context={ context }
 					/>
 				);
 			}
