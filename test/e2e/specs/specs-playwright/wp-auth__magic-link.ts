@@ -44,6 +44,6 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 
 	it( 'Log in using magic link', async function () {
 		const loginPage = new LoginPage( page );
-		await Promise.all( [ page.waitForNavigation(), loginPage.followMagicLink( magicLink ) ] );
+		await loginPage.followMagicLink( magicLink );
 	} );
 } );
