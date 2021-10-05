@@ -35,7 +35,6 @@ import {
 	isPremiumThemeAvailable,
 	getWpcomParentThemeId,
 	getRecommendedThemes,
-	getRecommendedThemesFilter,
 	areRecommendedThemesLoading,
 } from '../selectors';
 
@@ -2367,35 +2366,6 @@ describe( '#getRecommendedThemes', () => {
 	test( 'should return empty themes list for unfetched filter', () => {
 		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
 		expect( recommended ).to.be.empty;
-	} );
-} );
-
-describe( '#getRecommendedThemesFilter', () => {
-	const state = {
-		sites: {
-			items: {
-				[ 123 ]: {
-					jetpack: true,
-					options: { jetpack_version: '4.7' },
-				},
-				[ 321 ]: {
-					jetpack: true,
-					options: { jetpack_version: '4.7' },
-				},
-			},
-		},
-		gutenbergFSESettings: {
-			[ 123 ]: { isCoreFSEEligible: true },
-			[ 321 ]: { isCoreFSEEligible: false },
-		},
-	};
-
-	test( 'should return `auto-loading-homepage` for non-FSE site', () => {
-		expect( getRecommendedThemesFilter( state, 321 ) ).to.equal( 'auto-loading-homepage' );
-	} );
-
-	test( 'should return `block-templates` for FSE site', () => {
-		expect( getRecommendedThemesFilter( state, 123 ) ).to.equal( 'block-templates' );
 	} );
 } );
 
