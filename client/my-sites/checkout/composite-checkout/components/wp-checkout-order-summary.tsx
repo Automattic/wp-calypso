@@ -26,9 +26,10 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-export function CheckoutSummaryTotal() {
+function CheckoutSummaryTotal() {
 	const translate = useTranslate();
-	const { responseCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 	return (
 		<CheckoutSummaryTotalWrapper>
 			<span>{ translate( 'Total' ) }</span>
