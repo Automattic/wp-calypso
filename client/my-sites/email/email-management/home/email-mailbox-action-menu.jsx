@@ -41,6 +41,7 @@ import {
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -52,6 +53,26 @@ const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
 	} );
 
 	dispatch( removeEmailForward( mailbox.domain, mailbox.mailbox ) );
+};
+
+const getGoogleClickHandler = ( app ) => {
+	return () => {
+		recordEmailAppLaunchEvent( {
+			app,
+			context: 'email-management-menu',
+			provider: 'google',
+		} );
+	};
+};
+
+const getTitanClickHandler = ( app ) => {
+	return () => {
+		recordEmailAppLaunchEvent( {
+			app,
+			context: 'email-management-menu',
+			provider: 'titan',
+		} );
+	};
 };
 
 /**
@@ -74,6 +95,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
+			onClick: getTitanClickHandler( 'webmail' ),
 		},
 		{
 			href: getTitanCalendarlUrl( email ),
@@ -82,6 +104,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Calendar', {
 				comment: 'View the Calendar application for Titan',
 			} ),
+			onClick: getTitanClickHandler( 'calendar' ),
 		},
 		{
 			href: getTitanContactsUrl( email ),
@@ -90,6 +113,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Contacts', {
 				comment: 'View the Contacts application for Titan',
 			} ),
+			onClick: getTitanClickHandler( 'contacts' ),
 		},
 		{
 			isInternalLink: true,
@@ -130,6 +154,7 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 			image: gmailIcon,
 			imageAltText: translate( 'Gmail icon' ),
 			title: translate( 'View Gmail' ),
+			onClick: getGoogleClickHandler( 'webmail' ),
 		},
 		...( isEmailUserAdmin( mailbox )
 			? [
@@ -138,6 +163,7 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 						image: googleAdminIcon,
 						imageAltText: translate( 'Google Admin icon' ),
 						title: translate( 'View Admin' ),
+						onClick: getGoogleClickHandler( 'admin' ),
 					},
 			  ]
 			: [] ),
@@ -146,30 +172,35 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 			image: googleCalendarIcon,
 			imageAltText: translate( 'Google Calendar icon' ),
 			title: translate( 'View Calendar' ),
+			onClick: getGoogleClickHandler( 'calendar' ),
 		},
 		{
 			href: getGoogleDocsUrl( email ),
 			image: googleDocsIcon,
 			imageAltText: translate( 'Google Docs icon' ),
 			title: translate( 'View Docs' ),
+			onClick: getGoogleClickHandler( 'docs' ),
 		},
 		{
 			href: getGoogleDriveUrl( email ),
 			image: googleDriveIcon,
 			imageAltText: translate( 'Google Drive icon' ),
 			title: translate( 'View Drive' ),
+			onClick: getGoogleClickHandler( 'drive' ),
 		},
 		{
 			href: getGoogleSheetsUrl( email ),
 			image: googleSheetsIcon,
 			imageAltText: translate( 'Google Sheets icon' ),
 			title: translate( 'View Sheets' ),
+			onClick: getGoogleClickHandler( 'sheets' ),
 		},
 		{
 			href: getGoogleSlidesUrl( email ),
 			image: googleSlidesIcon,
 			imageAltText: translate( 'Google Slides icon' ),
 			title: translate( 'View Slides' ),
+			onClick: getGoogleClickHandler( 'slides' ),
 		},
 	];
 };
