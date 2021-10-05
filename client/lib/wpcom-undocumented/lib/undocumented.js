@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -1087,11 +1087,6 @@ Undocumented.prototype.updateConnection = function ( siteId, connectionId, data,
  */
 Undocumented.prototype.transactions = function ( data, fn ) {
 	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
-};
-
-Undocumented.prototype.updateCreditCard = function ( params, fn ) {
-	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
-	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
 /**
