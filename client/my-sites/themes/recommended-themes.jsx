@@ -1,54 +1,42 @@
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useLayoutEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useGutenbergFSESettingsQuery } from 'calypso/data/gutenberg/fse-settings-query';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
 	areRecommendedThemesLoading,
-	getRecommendedThemesFilter,
 } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ConnectedThemesSelection } from './themes-selection';
 
-class RecommendedThemes extends Component {
-	componentDidMount() {
-		if ( ! this.props.customizedThemesList.length ) {
-			this.fetchThemes();
+const RecommendedThemes = ( props ) => {
+	const dispatch = useDispatch();
+	const { siteId } = props;
+	const { isLoading: isLoadingGutenbergFSESettings, data } = useGutenbergFSESettingsQuery( siteId );
+
+	const isCoreFSEEligible = data?.is_core_fse_eligible ?? false;
+	const recommendedThemesFilter = isCoreFSEEligible ? 'block-templates' : 'auto-loading-homepage';
+
+	const customizedThemesList = useSelector( ( state ) =>
+		getRecommendedThemesSelector( state, recommendedThemesFilter )
+	);
+
+	const areThemesLoading = useSelector( ( state ) =>
+		areRecommendedThemesLoading( state, recommendedThemesFilter )
+	);
+
+	useLayoutEffect( () => {
+		if ( ! isLoadingGutenbergFSESettings ) {
+			dispatch( getRecommendedThemes( recommendedThemesFilter ) );
 		}
-	}
+	}, [ isLoadingGutenbergFSESettings, recommendedThemesFilter, dispatch ] );
 
-	componentDidUpdate( prevProps ) {
-		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, scrollToSearchInput, filter } = this.props;
-		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
-			scrollToSearchInput();
-		}
-		if ( prevProps.filter !== filter ) {
-			this.fetchThemes();
-		}
-	}
+	return (
+		<ConnectedThemesSelection
+			{ ...props }
+			isLoading={ isLoadingGutenbergFSESettings || areThemesLoading }
+			customizedThemesList={ customizedThemesList }
+		/>
+	);
+};
 
-	fetchThemes() {
-		this.props.getRecommendedThemes( this.props.filter );
-	}
-
-	render() {
-		return <ConnectedThemesSelection { ...this.props } />;
-	}
-}
-
-const ConnectedRecommendedThemes = connect(
-	( state, props ) => {
-		const { isLoadingCoreFSESettings } = props;
-		const siteId = getSelectedSiteId( state );
-		const filter = getRecommendedThemesFilter( siteId );
-
-		return {
-			customizedThemesList: getRecommendedThemesSelector( state, filter ),
-			isLoading: isLoadingCoreFSESettings || areRecommendedThemesLoading( state, filter ),
-			filter,
-		};
-	},
-	{ getRecommendedThemes }
-)( RecommendedThemes );
-
-export default ConnectedRecommendedThemes;
+export default RecommendedThemes;
