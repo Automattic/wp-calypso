@@ -67,7 +67,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				hasScreenOptions
 			/>
 			<div className="customer-home__view-site-button">
-				<Button href={ site.URL } onClick={ trackViewSiteAction }>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
 				</Button>
 			</div>
