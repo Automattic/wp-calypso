@@ -75,6 +75,7 @@ export default {
 				<EmailProvidersComparison
 					comparisonContext="email-purchase"
 					selectedDomainName={ pageContext.params.domain }
+					context={ pageContext.query.context }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -114,10 +115,7 @@ export default {
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailManagementHome
-					selectedDomainName={ pageContext.params.domain }
-					context={ pageContext.params.context }
-				/>
+				<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
 		);
 

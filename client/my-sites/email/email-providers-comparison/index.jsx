@@ -215,14 +215,6 @@ class EmailProvidersComparison extends Component {
 			return;
 		}
 
-		if ( context === 'inbox-management' ) {
-			recordInboxUpsellEvent( {
-				product: 'email',
-				context: context,
-				provider: TITAN_PROVIDER_NAME,
-			} );
-		}
-
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
@@ -247,6 +239,15 @@ class EmailProvidersComparison extends Component {
 					// Stay on the page to show the relevant error(s)
 					return;
 				}
+
+				if ( context === 'inbox-management' ) {
+					recordInboxUpsellEvent( {
+						product: 'email',
+						context: context,
+						provider: TITAN_PROVIDER_NAME,
+					} );
+				}
+
 				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
@@ -281,14 +282,6 @@ class EmailProvidersComparison extends Component {
 			return;
 		}
 
-		if ( context === 'inbox-management' ) {
-			recordInboxUpsellEvent( {
-				product: 'email',
-				context: context,
-				provider: GOOGLE_PROVIDER_NAME,
-			} );
-		}
-
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
 		const domains = domain ? [ domain ] : [];
 
@@ -310,6 +303,14 @@ class EmailProvidersComparison extends Component {
 				if ( errors && errors.length ) {
 					// Stay on the page to show the relevant error(s)
 					return;
+				}
+
+				if ( context === 'inbox-management' ) {
+					recordInboxUpsellEvent( {
+						product: 'email',
+						context: context,
+						provider: GOOGLE_PROVIDER_NAME,
+					} );
 				}
 
 				this.isMounted && page( '/checkout/' + selectedSite.slug );

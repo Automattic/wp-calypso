@@ -7,17 +7,15 @@ import EmptyContent from 'calypso/components/empty-content';
 import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
+const noop = () => {};
+
 const EmailNoDomain = ( { selectedSite, translate, context } ) => {
 	const hasAvailableDomainCredit = useSelector( ( state ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
 	const trackEvent =
-		context != null
-			? () => {
-					recordInboxUpsellEvent( { product: 'domain', context } );
-			  }
-			: () => {};
+		context != null ? () => recordInboxUpsellEvent( { product: 'domain', context } ) : noop;
 
 	if ( isFreePlan( selectedSite.plan.product_slug ) ) {
 		return (
