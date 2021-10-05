@@ -6,7 +6,7 @@ import ExternalLink from 'calypso/components/external-link';
 
 interface ExternalProps {
 	context: string | null;
-	warnings: import('state/automated-transfer/selectors').EligibilityWarning[];
+	warnings: import('calypso/state/automated-transfer/selectors').EligibilityWarning[];
 }
 
 type Props = ExternalProps & LocalizeProps;
