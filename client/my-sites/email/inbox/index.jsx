@@ -48,7 +48,6 @@ const MainHeader = () => {
 			>
 				<p>{ translate( 'Pick one of your domains below to add an email solution.' ) }</p>
 			</PromoCard>
-			<br id="fervent" />
 		</>
 	);
 };
