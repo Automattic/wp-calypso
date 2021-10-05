@@ -7,7 +7,23 @@ import config from '@automattic/calypso-config';
  */
 import wpcom from 'calypso/lib/wp';
 
-export const sendSiteEditorBetaFeedback = ( message, siteUrl, userLocale, port ) => {
+const noop = () => {};
+
+/**
+ *
+ * @param {string}	 message 	 The user's feedback message to send.
+ * @param {string} 	 siteUrl 	 The current site Url.
+ * @param {string} 	 userLocale  The user's locale.
+ * @param {Function} then		 Function to handle response of post request.
+ * @param {Function} handleError Function to handle error in post request.
+ */
+export const sendSiteEditorBetaFeedback = (
+	message,
+	siteUrl,
+	userLocale,
+	then = noop,
+	handleError = noop
+) => {
 	const kayakoMessage = `Site: ${ siteUrl ? siteUrl : 'N/A' }\n\n${ message }`;
 
 	// To test without sending.
@@ -24,10 +40,6 @@ export const sendSiteEditorBetaFeedback = ( message, siteUrl, userLocale, port )
 			client: config( 'client_slug' ),
 			is_chat_overflow: false,
 		} )
-		.then( () => {
-			port.postMessage( 'success' );
-		} )
-		.catch( ( error ) => {
-			port.postMessage( 'error' );
-		} );
+		.then( then )
+		.catch( handleError );
 };

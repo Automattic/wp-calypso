@@ -496,7 +496,8 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				payload,
 				this.props.siteUrl,
 				this.props.currentUserLocale,
-				ports[ 0 ]
+				() => ports[ 0 ].postMessage( 'success' ),
+				() => ports[ 0 ].postMessage( 'error' )
 			);
 		}
 	};
