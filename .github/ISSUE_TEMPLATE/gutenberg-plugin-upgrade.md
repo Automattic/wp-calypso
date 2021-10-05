@@ -1,3 +1,12 @@
+---
+name: Gutenberg Plugin Upgrade
+about: Installing and activating a new version of the Gutenberg Plugin
+title: 'Gutenberg: [v#.#.#] plugin upgrade'
+labels: gutenberg-upgrade, [Type] Task
+assignees: ''
+
+---
+
 <!--
 IMPORTANT: When updating this template, please make sure both copies are kept the same! This ensures our upgrade helper bot is in sync with our manual template.
 Github template: https://github.com/Automattic/wp-calypso/blob/trunk/.github/ISSUE_TEMPLATE/gutenberg-plugin-upgrade.md
@@ -9,7 +18,7 @@ Thanks for updating Gutenberg! Please be sure to update the title above with the
 - Release notes for the version(s) you're implementing should be linked directly to the WordPress/gutenberg repo tag
 (for example, linking the text 'v11.0.0-rc.1' to https://github.com/WordPress/gutenberg/releases/tag/v11.0.0-rc.1)
 -->
-Previous upgrade:
+Previous upgrade:  
 Release notes:
 
 <!--
