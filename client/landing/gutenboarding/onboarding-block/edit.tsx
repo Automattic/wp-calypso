@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useSelect, useDispatch } from '@wordpress/data';
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
@@ -127,6 +128,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
+	const canUseImportStep = React.useCallback( (): boolean => {
+		return config.isEnabled( 'gutenboarding/import' );
+	}, [] );
+
 	const getLatestStepPath = () => {
 		if ( hasSelectedDesign && ! isAnchorFmSignup ) {
 			return makePathWithState( Step.Plans );
@@ -205,7 +210,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route exact path={ makePath( Step.Import ) }>
-					<ImportSite />
+					{ canUseImportStep() ? <ImportSite /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.FseBetaOptIn ) }>
