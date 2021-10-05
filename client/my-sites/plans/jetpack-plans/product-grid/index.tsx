@@ -236,18 +236,18 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
-					{ showCrmFreeCard && (
-						<JetpackCrmFreeCard
-							fullWidth={ ! showFreeCard }
-							siteId={ siteId }
-							duration={ duration }
-						/>
-					) }
 					{ showFreeCard && (
 						<JetpackFreeCard
 							fullWidth={ ! showCrmFreeCard }
 							siteId={ siteId }
 							urlQueryArgs={ urlQueryArgs }
+						/>
+					) }
+					{ showCrmFreeCard && (
+						<JetpackCrmFreeCard
+							fullWidth={ ! showFreeCard }
+							siteId={ siteId }
+							duration={ duration }
 						/>
 					) }
 				</div>

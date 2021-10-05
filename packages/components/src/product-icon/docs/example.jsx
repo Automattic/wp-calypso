@@ -103,6 +103,9 @@ function ProductIconExample() {
 				<div style={ iconStyle }>
 					<ProductIcon slug="jetpack_search_v2" />
 				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_videopress" />
+				</div>
 			</div>
 		</Fragment>
 	);

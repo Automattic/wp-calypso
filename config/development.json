@@ -89,7 +89,7 @@
 		"jetpack/features-section/simple": true,
 		"jetpack/happychat": true,
 		"jetpack/magic-link-signup": true,
-		"jetpack/only-realtime-products": false,
+		"jetpack/only-realtime-products": true,
 		"jetpack/personal-plan": false,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/siteless-checkout": true,

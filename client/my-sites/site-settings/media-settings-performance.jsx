@@ -1,5 +1,7 @@
 import {
+	isJetpackVideoPress,
 	planHasFeature,
+	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
@@ -16,12 +18,13 @@ import QueryMediaStorage from 'calypso/components/data/query-media-storage';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MediaSettingsPerformance extends Component {
@@ -73,6 +76,7 @@ class MediaSettingsPerformance extends Component {
 
 	renderVideoStorageIndicator() {
 		const {
+			isVideoPressFreeTier,
 			mediaStorageLimit,
 			mediaStorageUsed,
 			siteId,
@@ -88,6 +92,7 @@ class MediaSettingsPerformance extends Component {
 
 		const renderedStorageInfo =
 			isStorageDataValid &&
+			! isVideoPressFreeTier &&
 			( isStorageUnlimited ? (
 				<FormSettingExplanation className="site-settings__videopress-storage-used">
 					{ translate( '%(size)s uploaded, unlimited storage available', {
@@ -116,19 +121,24 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	renderVideoUpgradeNudge() {
-		const { isVideoPressAvailable, siteSlug, translate } = this.props;
+		const { isVideoPressFreeTier, mediaStorageUsed, siteSlug, translate } = this.props;
 
+		const upsellMessage =
+			0 === mediaStorageUsed
+				? translate(
+						'1 free video available. Upgrade now to unlock more videos and 1TB of storage.'
+				  )
+				: translate(
+						'You have used your free video. Upgrade now to unlock more videos and 1TB of storage.'
+				  );
 		return (
-			! isVideoPressAvailable && (
+			isVideoPressFreeTier && (
 				<UpsellNudge
-					title={ translate( 'Get unlimited video hosting' ) }
-					description={ translate(
-						'Tired of ads in your videos? Get high-speed video right on your site'
-					) }
+					title={ upsellMessage }
 					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
+					feature={ FEATURE_JETPACK_VIDEOPRESS }
 					showIcon={ true }
-					href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ] }` }
+					href={ `/checkout/${ siteSlug }/${ FEATURE_JETPACK_VIDEOPRESS }` }
 				/>
 			)
 		);
@@ -149,11 +159,14 @@ class MediaSettingsPerformance extends Component {
 		);
 	}
 }
+const checkForJetpackVideoPressProduct = ( purchase ) =>
+	purchase.active && isJetpackVideoPress( purchase );
 
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 	const isVideoPressAvailable =
+		isJetpackSite( state, selectedSiteId ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
@@ -161,6 +174,14 @@ export default connect( ( state ) => {
 	return {
 		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 		isVideoPressAvailable,
+		isVideoPressFreeTier:
+			isJetpackSite( state, selectedSiteId ) &&
+			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
+			! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) &&
+			// These features are used in current plans that include VP
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) &&
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) &&
+			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ),
 		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
 		sitePlanSlug,

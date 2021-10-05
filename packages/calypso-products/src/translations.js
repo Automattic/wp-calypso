@@ -17,6 +17,8 @@ import {
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
@@ -70,6 +72,8 @@ export const getJetpackProductsShortNames = () => {
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
 	};
 };
 
@@ -101,6 +105,7 @@ export const getJetpackProductsDisplayNames = () => {
 			} ) }
 		</>
 	);
+	const videoPress = translate( 'VideoPress' );
 	const antiSpam = translate( 'Anti-spam' );
 
 	return {
@@ -120,6 +125,8 @@ export const getJetpackProductsDisplayNames = () => {
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRealtime,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRealtime,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -144,6 +151,7 @@ export const getJetpackProductsCallToAction = () => {
 	const backupT2 = translate( 'Get Backup' );
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
+	const videoPress = translate( 'Get VideoPress' );
 	const antiSpam = translate( 'Get Anti-spam' );
 
 	return {
@@ -159,6 +167,8 @@ export const getJetpackProductsCallToAction = () => {
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPress,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -172,6 +182,7 @@ export const getJetpackProductsTaglines = () => {
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
+	const videoPressTagLine = translate( 'High-quality, ad-free video for WordPress' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -221,6 +232,8 @@ export const getJetpackProductsTaglines = () => {
 		},
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: { default: antiSpamTagline },
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: { default: videoPressTagLine },
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
 	};
 };
 
@@ -250,6 +263,11 @@ export const getJetpackProductsDescriptions = () => {
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
+
+	const videoPressDescription = translate(
+		'High-quality, ad-free video built specifically for WordPress.'
+	);
+
 	const antiSpamDescription = translate(
 		'Save time and get better responses by automatically blocking spam from your comments and forms.'
 	);
@@ -269,6 +287,8 @@ export const getJetpackProductsDescriptions = () => {
 		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanDescription,
 		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 	};
