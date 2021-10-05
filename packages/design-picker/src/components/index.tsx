@@ -3,8 +3,16 @@
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import * as React from 'react';
-import { getAvailableDesigns, getDesignUrl, mShotOptions, isBlankCanvasDesign } from '../utils';
+import { useState } from 'react';
+import {
+	getAvailableDesigns,
+	getDesignUrl,
+	mShotOptions,
+	isBlankCanvasDesign,
+	gatherCategories,
+	filterDesignsByCategory,
+} from '../utils';
+import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import MShotsImage from './mshots-image';
 export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
@@ -102,6 +110,7 @@ export interface DesignPickerProps {
 	theme?: 'dark' | 'light';
 	className?: string;
 	highResThumbnails?: boolean;
+	showCategoryFilter?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -115,11 +124,27 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	theme = 'light',
 	className,
 	highResThumbnails = false,
+	showCategoryFilter = false,
 } ) => {
+	const categories = gatherCategories( designs );
+	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
+		categories[ 0 ]?.slug ?? null
+	);
+	const filteredDesigns = ! showCategoryFilter
+		? designs
+		: filterDesignsByCategory( designs, selectedCategory );
+
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
+			{ showCategoryFilter && categories.length && (
+				<DesignPickerCategoryFilter
+					categories={ categories }
+					selectedCategory={ selectedCategory }
+					onSelect={ setSelectedCategory }
+				/>
+			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
-				{ designs.map( ( design ) => (
+				{ filteredDesigns.map( ( design ) => (
 					<DesignButton
 						key={ design.slug }
 						design={ design }
