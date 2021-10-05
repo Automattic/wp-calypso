@@ -3,12 +3,14 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	buildNewTitanMailbox,
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
 
 import './style.scss';
@@ -17,6 +19,7 @@ const noop = () => {};
 
 const TitanNewMailboxList = ( {
 	children,
+	context,
 	domain,
 	mailboxes,
 	onMailboxesChange,
@@ -49,6 +52,13 @@ const TitanNewMailboxList = ( {
 	};
 
 	const onMailboxAdd = () => {
+		if ( context === 'inbox-management' ) {
+			recordInboxUpsellEvent( {
+				product: 'email',
+				context: context,
+				provider: TITAN_PROVIDER_NAME,
+			} );
+		}
 		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( domain, false ) ] );
 	};
 
@@ -119,6 +129,7 @@ const TitanNewMailboxList = ( {
 
 TitanNewMailboxList.propTypes = {
 	children: PropTypes.node,
+	context: PropTypes.string,
 	domain: PropTypes.string.isRequired,
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,

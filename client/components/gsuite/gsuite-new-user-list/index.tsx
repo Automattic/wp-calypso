@@ -1,12 +1,14 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, FunctionComponent, ReactNode } from 'react';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
 	sanitizeEmail,
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
+import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import GSuiteNewUser from './new-user';
 
 import './style.scss';
@@ -14,6 +16,7 @@ import './style.scss';
 interface Props {
 	autoFocus?: boolean;
 	children?: ReactNode;
+	context?: string;
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
@@ -24,6 +27,7 @@ interface Props {
 
 const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	children,
+	context,
 	domains,
 	extraValidation,
 	selectedDomainName,
@@ -57,6 +61,13 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	};
 
 	const onUserAdd = () => {
+		if ( context === 'inbox-management' ) {
+			recordInboxUpsellEvent( {
+				product: 'email',
+				context: context,
+				provider: GOOGLE_PROVIDER_NAME,
+			} );
+		}
 		onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
 	};
 

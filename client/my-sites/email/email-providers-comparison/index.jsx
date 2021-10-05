@@ -216,7 +216,7 @@ class EmailProvidersComparison extends Component {
 
 		if ( comparisonContext === 'inbox-management' ) {
 			recordInboxUpsellEvent( {
-				product: 'mailbox',
+				product: 'email',
 				context: comparisonContext,
 				provider: TITAN_PROVIDER_NAME,
 			} );
@@ -282,7 +282,7 @@ class EmailProvidersComparison extends Component {
 
 		if ( comparisonContext === 'inbox-management' ) {
 			recordInboxUpsellEvent( {
-				product: 'mailbox',
+				product: 'email',
 				context: comparisonContext,
 				provider: GOOGLE_PROVIDER_NAME,
 			} );
@@ -461,6 +461,7 @@ class EmailProvidersComparison extends Component {
 
 	renderTitanCard() {
 		const {
+			comparisonContext,
 			currencyCode,
 			domain,
 			hasCartDomain,
@@ -520,6 +521,7 @@ class EmailProvidersComparison extends Component {
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
+				context={ comparisonContext }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"
