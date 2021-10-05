@@ -12,14 +12,19 @@ const TITAN_APPS = {
  *
  * @param {string?} email - The email address of the Titan account. Used for autofill on Titan's login page.
  * @param {string?} app - Can be one of the `TITAN_APPS` - `email`, `calendar` or `contacts`
+ * @param {boolean?} clearPreviousSessions - Whether to clear previously logged in sessions.
  * @returns The URL with app and prefilled `email_account` as query parameter
  */
-function getTitanUrl( email, app = TITAN_APPS.EMAIL ) {
+function getTitanUrl( email, app = TITAN_APPS.EMAIL, clearPreviousSessions = false ) {
 	const titanBaseUrl = 'https://wp.titan.email';
 	const titanAppUrl = new URL( `${ titanBaseUrl }/${ app }` );
 
 	if ( email?.includes( '@' ) ) {
 		titanAppUrl.searchParams.append( 'email_account', email );
+	}
+
+	if ( clearPreviousSessions ) {
+		titanAppUrl.searchParams.append( 'clearSession', 'true' );
 	}
 
 	return titanAppUrl.href;
