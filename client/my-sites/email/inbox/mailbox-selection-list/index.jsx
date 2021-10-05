@@ -31,7 +31,7 @@ import './style.scss';
 
 const getExternalUrl = ( mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return getTitanEmailUrl( getEmailAddress( mailbox ) );
+		return getTitanEmailUrl( getEmailAddress( mailbox ), true );
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
