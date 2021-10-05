@@ -259,9 +259,10 @@ export class GutenboardingFlow {
 	 */
 	async switchLanguage( target: string ): Promise< void > {
 		await this.clickLanguagePicker();
-		// Clicking on a language button triggers a navigation to a URL containing
-		// the ISO 639-1 code eg. /new/ja.
 		await Promise.all( [
+			// Wait for the request response to complete.
+			// This request runs last when selecting a new language and is responsible for obtaining
+			// the translated strings.
 			this.page.waitForResponse(
 				( response ) =>
 					response.status() === 200 && response.url().includes( `details?locale=${ target }` )
