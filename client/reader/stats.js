@@ -98,7 +98,6 @@ function getLocation( path ) {
  *   recordTrack after changing windows and would result in a `ui_algo: single_post`
  *   regardless of the stream the post was opened. This now allows the article_opened
  *   Tracks event to correctly specify which stream the post was opened.
- *
  * @deprecated Use the recordReaderTracksEvent action instead.
  */
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
@@ -113,7 +112,8 @@ export function recordTrack( eventName, eventProperties, { pathnameOverride } = 
 			'post_id' in eventProperties &&
 			! ( 'is_jetpack' in eventProperties )
 		) {
-			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties ); //eslint-disable-line no-console
+			// eslint-disable-next-line no-console
+			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties );
 		}
 	}
 
@@ -165,7 +165,8 @@ export function recordTrackForPost( eventName, post = {}, additionalProps = {}, 
 			pick( additionalProps, [ 'ui_position', 'ui_algo' ] )
 		);
 	} else if ( process.env.NODE_ENV !== 'production' && post.railcar ) {
-		console.warn( 'Consider allowing reader track', eventName ); //eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.warn( 'Consider allowing reader track', eventName );
 	}
 }
 

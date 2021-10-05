@@ -2,8 +2,6 @@
  * WARNING: No ES6 modules here. Not transpiled! *
  */
 
-/* eslint-disable import/no-nodejs-modules */
-
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
@@ -55,7 +53,6 @@ const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
 
 function filterEntrypoints( entrypoints ) {
-	/* eslint-disable no-console */
 	if ( ! process.env.ENTRY_LIMIT ) {
 		return entrypoints;
 	}
@@ -86,7 +83,6 @@ function filterEntrypoints( entrypoints ) {
 	} );
 
 	return allowed;
-	/* eslint-enable no-console */
 }
 
 /**
