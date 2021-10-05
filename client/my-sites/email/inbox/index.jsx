@@ -12,6 +12,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -25,6 +26,19 @@ const NoAccessCard = () => {
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
 				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+			/>
+		</Main>
+	);
+};
+
+const NotSupportedOnP2Card = () => {
+	const translate = useTranslate();
+
+	return (
+		<Main>
+			<EmptyContent
+				title={ translate( 'Inbox is not supported on P2 sites' ) }
+				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 			/>
 		</Main>
 	);
@@ -68,6 +82,12 @@ const InboxManagement = () => {
 	);
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
 	const translate = useTranslate();
+
+	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
+
+	if ( isP2 ) {
+		return <NotSupportedOnP2Card />;
+	}
 
 	if ( ! canManageSite ) {
 		return <NoAccessCard />;
