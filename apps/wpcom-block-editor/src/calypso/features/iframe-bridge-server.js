@@ -1079,13 +1079,10 @@ async function preselectParentPage() {
 }
 
 function handleSiteEditorFeedbackPlugin( calypsoPort ) {
-	registerPlugin( 'a8c-fse-beta-feedback-plugin', {
-		render: () => {
-			const PluginSidebar = window?.wp?.editSite?.PluginSidebar;
-			if ( ! PluginSidebar ) {
-				return null;
-			}
-			return (
+	const PluginSidebar = editSitePackage?.PluginSidebar;
+	if ( PluginSidebar ) {
+		registerPlugin( 'a8c-fse-beta-feedback-plugin', {
+			render: () => (
 				<PluginSidebar
 					name="a8c-fse-beta-feedback-plugin"
 					title={ __( 'Site Editor Beta Feedback', 'full-site-editing' ) }
@@ -1095,9 +1092,9 @@ function handleSiteEditorFeedbackPlugin( calypsoPort ) {
 				>
 					<FeedbackForm calypsoPort={ calypsoPort } />
 				</PluginSidebar>
-			);
-		},
-	} );
+			),
+		} );
+	}
 }
 
 function handleCheckoutModalOpened( calypsoPort, data ) {
