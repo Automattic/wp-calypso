@@ -82,7 +82,7 @@ const JetpackComMasterbar: React.FC = () => {
 							{
 								label: translate( 'VideoPress' ),
 								description: translate( 'High-quality, ad-free video' ),
-								href: '/upgrade/video/',
+								href: '/videopress/',
 								icon: videoIcon,
 							},
 						],
