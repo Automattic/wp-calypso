@@ -68,7 +68,6 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		await page.close();
 
 		if ( __CURRENT_TEST_FAILED__ ) {
-			// const original = await ( page.video() as Video ).path();
 			const destination = path.join(
 				artifactPath,
 				'screenshots',
@@ -78,7 +77,8 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 				// Save the failing test case with a specific name.
 				await page.video()?.saveAs( destination );
 			} catch ( err ) {
-				console.error( `Failed to save video of failing test case.\nStack trace: ${ err }` );
+				console.error( `Failed to save video of failing test case.\nSee stack trace:` );
+				console.trace( err );
 			}
 		}
 
