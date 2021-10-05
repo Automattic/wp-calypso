@@ -122,6 +122,13 @@ export default function buildFallbackResponse( {
 			],
 		},
 		{
+			icon: 'dashicons-email',
+			slug: 'v44 Inbox',
+			title: translate( 'V33 Inbox' ),
+			type: 'menu-item',
+			url: `/inbox/${ siteDomain }`,
+		},
+		{
 			icon: 'dashicons-admin-post',
 			slug: 'edit-php',
 			title: translate( 'Posts' ),
