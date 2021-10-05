@@ -1,10 +1,7 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { reduxGetState, reduxDispatch } from 'calypso/lib/redux-bridge';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { listBlogStickers } from 'calypso/state/sites/blog-stickers/actions';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 
@@ -25,16 +22,7 @@ export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 			body: data,
 			apiNamespace: 'wpcom/v2',
 		},
-		( error, response ) => {
-			if ( ! error && config.isEnabled( 'atomic/automated-revert' ) ) {
-				// Some purchases cancellations set a blog sticker to lock the site from
-				// cancelling more purchases, so we update the list of stickers in case
-				// we need to handle that lock in the UI.
-				const purchase = getByPurchaseId( reduxGetState(), purchaseId );
-				reduxDispatch( listBlogStickers( purchase.siteId ) );
-			}
-			onComplete( error, response );
-		}
+		onComplete
 	);
 }
 
