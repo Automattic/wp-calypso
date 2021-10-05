@@ -38,7 +38,7 @@ import './style.scss';
 class EmailManagementHome extends Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
-		comparisonContext: PropTypes.string,
+		context: PropTypes.string,
 		domains: PropTypes.array.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -52,7 +52,7 @@ class EmailManagementHome extends Component {
 	render() {
 		const {
 			canManageSite,
-			comparisonContext,
+			context,
 			currentRoute,
 			domains,
 			emailListInactiveHeader,
@@ -87,7 +87,7 @@ class EmailManagementHome extends Component {
 						backPath={ domainManagementList( selectedSite.slug, null ) }
 						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
-						context={ comparisonContext }
+						context={ context }
 					/>
 				);
 			}
@@ -101,7 +101,7 @@ class EmailManagementHome extends Component {
 
 		if ( nonWpcomDomains.length < 1 ) {
 			return this.renderContentWithHeader(
-				<EmailNoDomain selectedSite={ selectedSite } context={ comparisonContext } />
+				<EmailNoDomain selectedSite={ selectedSite } context={ context } />
 			);
 		}
 
@@ -114,6 +114,7 @@ class EmailManagementHome extends Component {
 					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 					skipHeaderElement={ true }
+					context={ context }
 				/>
 			);
 		}
