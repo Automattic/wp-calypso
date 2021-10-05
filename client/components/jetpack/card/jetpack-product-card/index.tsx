@@ -1,18 +1,12 @@
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { Button, ProductIcon, Gridicon } from '@automattic/components';
+import { Button, ProductIcon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
-import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getJetpackSaleCouponDiscountRatio } from 'calypso/state/marketing/selectors';
 import starIcon from './assets/star.svg';
+import DisplayPrice from './display-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
-import JetpackProductCardTimeFrame from './time-frame';
 import type {
 	Duration,
 	ScrollCardIntoViewCallback,
@@ -55,159 +49,6 @@ type OwnProps = {
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
-
-const FRESHPACK_PERCENTAGE = 1 - 0.4; // 40% off
-
-const DisplayPrice = ( {
-	isDeprecated,
-	isOwned,
-	isIncludedInPlan,
-	isFree,
-	discountedPrice,
-	currencyCode,
-	originalPrice,
-	belowPriceText,
-	displayFrom,
-	expiryDate,
-	billingTerm,
-	tooltipText,
-	productName,
-	hideSavingLabel,
-} ) => {
-	const translate = useTranslate();
-	const jetpackSaleDiscountRatio = useSelector( getJetpackSaleCouponDiscountRatio );
-	const DISCOUNT_PERCENTAGE =
-		billingTerm === TERM_ANNUALLY && jetpackSaleDiscountRatio
-			? 1 - jetpackSaleDiscountRatio
-			: FRESHPACK_PERCENTAGE;
-
-	if ( isDeprecated ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<p className="jetpack-product-card__price-deprecated">
-					{ translate( 'The %(productName)s plan is no longer available', {
-						args: {
-							productName,
-						},
-						comment: 'productName is the name of Jetpack plan such as Personal',
-					} ) }
-				</p>
-			</div>
-		);
-	}
-
-	if ( isOwned ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<p className="jetpack-product-card__you-own-this">
-					<Gridicon
-						className="jetpack-product-card__you-own-this-icon"
-						icon="checkmark-circle"
-						size={ 48 }
-					/>
-					{ translate( 'You own this product' ) }
-				</p>
-			</div>
-		);
-	}
-
-	if ( isIncludedInPlan ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<p className="jetpack-product-card__you-own-this">
-					<Gridicon
-						className="jetpack-product-card__you-own-this-icon"
-						icon="checkmark-circle"
-						size={ 48 }
-					/>
-					{ translate( 'Part of your current plan' ) }
-				</p>
-			</div>
-		);
-	}
-
-	if ( isFree ) {
-		return (
-			<div className="jetpack-product-card__price">
-				<div>
-					<span className="jetpack-product-card__price-free">{ translate( 'Free' ) }</span>
-					{ belowPriceText && (
-						<span className="jetpack-product-card__billing-time-frame">{ belowPriceText }</span>
-					) }
-					<span className="jetpack-product-card__get-started">
-						{ translate( 'Get started for free' ) }
-					</span>
-				</div>
-			</div>
-		);
-	}
-
-	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
-	const couponDiscountedPrice = parseFloat(
-		( ( discountedPrice ?? originalPrice ) * DISCOUNT_PERCENTAGE ).toFixed( 2 )
-	);
-	const discountElt =
-		billingTerm === TERM_ANNUALLY
-			? translate( 'Save %(percent)d%% for the first year ✢', {
-					args: {
-						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
-					},
-					comment: '✢ clause describing the displayed price adjustment',
-			  } )
-			: translate( 'You Save %(percent)d%% ✢', {
-					args: {
-						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-					},
-					comment: '✢ clause describing the displayed price adjustment',
-			  } );
-
-	return (
-		<div className="jetpack-product-card__price">
-			{ currencyCode && originalPrice ? (
-				<>
-					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
-					{ /*
-					 * Price should be displayed from left-to-right, even in right-to-left
-					 * languages. `PlanPrice` seems to keep the ltr direction no matter
-					 * what when seen in the dev docs page, but somehow it doesn't in
-					 * the pricing page.
-					 */ }
-					<span dir="ltr">
-						<PlanPrice
-							original
-							className="jetpack-product-card__original-price"
-							rawPrice={
-								( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-							}
-							currencyCode={ currencyCode }
-						/>
-					</span>
-					<span dir="ltr">
-						<PlanPrice
-							discounted
-							rawPrice={ couponDiscountedPrice as number }
-							currencyCode={ currencyCode }
-						/>
-					</span>
-					{ tooltipText && (
-						<InfoPopover position="top" className="jetpack-product-card__price-tooltip">
-							{ tooltipText }
-						</InfoPopover>
-					) }
-					<JetpackProductCardTimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-					{ ! hideSavingLabel && (
-						<span className="jetpack-product-card__you-save">{ discountElt }</span>
-					) }
-				</>
-			) : (
-				<>
-					<div className="jetpack-product-card__price-placeholder" />
-					<div className="jetpack-product-card__time-frame-placeholder" />
-				</>
-			) }
-		</div>
-	);
-};
 
 const JetpackProductCard: React.FC< Props > = ( {
 	iconSlug,
