@@ -1,4 +1,4 @@
-import { mkdir, copyFile } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
 import { chromium, Page, Video } from 'playwright';
@@ -68,18 +68,17 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		await page.close();
 
 		if ( __CURRENT_TEST_FAILED__ ) {
-			const original = await ( page.video() as Video ).path();
+			// const original = await ( page.video() as Video ).path();
 			const destination = path.join(
 				artifactPath,
 				'screenshots',
 				`${ getTestNameWithTime( testName ) }.webm`
 			);
 			try {
-				// Copy the recording from `os.tmpdir` to the artifact directory,
-				// renaming it in the process.
-				await copyFile( original, destination );
+				// Save the failing test case with a specific name.
+				await page.video()?.saveAs( destination );
 			} catch ( err ) {
-				console.error( 'Failed to copy video of failing test case.' );
+				console.error( 'Failed to save video of failing test case.' );
 			}
 		}
 
