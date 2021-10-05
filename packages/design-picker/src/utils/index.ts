@@ -15,13 +15,13 @@ export function gatherCategories( designs: Design[] ): Category[] {
 
 export function filterDesignsByCategory(
 	designs: Design[],
-	selectedCategory: string | null
+	categorySlug: string | null
 ): Design[] {
-	if ( ! selectedCategory ) {
+	if ( ! categorySlug ) {
 		return designs;
 	}
 
 	return designs.filter( ( { categories } ) =>
-		categories.find( ( { slug } ) => slug === selectedCategory )
+		categories.find( ( { slug } ) => slug === categorySlug )
 	);
 }
