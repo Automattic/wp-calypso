@@ -63,33 +63,6 @@
 			margin-bottom: 0;
 		}
 	}
-}
-
-.thank-you__container {
-
-	margin-top: calc( -79px + var( --masterbar-height ) );
-
-	@include breakpoint-deprecated( '<960px' ) {
-		margin-top: calc( -71px + var( --masterbar-height ) );
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: -1px;
-	}
-}
-
-.thank-you {
-
-	&__header {
-		&-title {
-			line-height: 40px;
-		}
-
-		&-subtitle {
-			padding-top: 4px;
-			margin-bottom: 0;
-		}
-	}
 
 	&__body {
 		@include break-zoomed-in {
