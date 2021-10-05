@@ -13,6 +13,7 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import { isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -38,7 +39,7 @@ const ProfessionalEmailFeature = ( { children } ) => {
 
 const ProfessionalEmailUpsell = ( {
 	currencyCode,
-	domainName = 'example.com',
+	domain,
 	handleClickAccept,
 	handleClickDecline,
 	productCost,
@@ -46,6 +47,8 @@ const ProfessionalEmailUpsell = ( {
 } ) => {
 	const translate = useTranslate();
 	const productsList = useSelector( getProductsList );
+
+	const domainName = domain.name;
 
 	const [ mailboxData, setMailboxData ] = useState( buildNewTitanMailbox( domainName, false ) );
 	const [ showAllErrors, setShowAllErrors ] = useState( false );
@@ -71,7 +74,8 @@ const ProfessionalEmailUpsell = ( {
 		comment: '{{price/}} is the formatted price, e.g. $20',
 	} );
 
-	const isEligibleForFreeTrial = true;
+	const isEligibleForFreeTrial = isDomainEligibleForTitanFreeTrial( domain );
+
 	const discountBadge = isEligibleForFreeTrial ? (
 		<span>
 			<Badge type="success">{ translate( '3 months free' ) }</Badge>

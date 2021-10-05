@@ -11,11 +11,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import {
@@ -40,6 +42,7 @@ import {
 } from 'calypso/state/products-list/selectors';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	isRequestingSitePlans,
 	getPlansBySiteId,
@@ -81,8 +84,10 @@ export class UpsellNudge extends Component {
 
 		// Below are provided by HOCs
 		currencyCode: PropTypes.string,
+		domains: PropTypes.array,
 		isLoading: PropTypes.bool,
 		hasProductsList: PropTypes.bool,
+		hasSiteDomains: PropTypes.bool,
 		hasSitePlans: PropTypes.bool,
 		product: PropTypes.object,
 		productCost: PropTypes.number,
@@ -182,7 +187,14 @@ export class UpsellNudge extends Component {
 	};
 
 	render() {
-		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
+		const {
+			selectedSiteId,
+			isLoading,
+			hasProductsList,
+			hasSiteDomains,
+			hasSitePlans,
+			upsellType,
+		} = this.props;
 
 		return (
 			<Main className={ upsellType }>
@@ -190,6 +202,7 @@ export class UpsellNudge extends Component {
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
+				{ ! hasSiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
@@ -247,6 +260,7 @@ export class UpsellNudge extends Component {
 		const {
 			receiptId,
 			currencyCode,
+			domains,
 			productCost,
 			productDisplayCost,
 			planRawPrice,
@@ -307,6 +321,7 @@ export class UpsellNudge extends Component {
 				return (
 					<ProfessionalEmailUpsell
 						currencyCode={ currencyCode }
+						domain={ getEligibleTitanDomain( siteSlug, domains ) }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						productCost={ productCost }
@@ -332,6 +347,7 @@ export class UpsellNudge extends Component {
 			hideNudge: shouldHideUpsellNudges,
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
+
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
@@ -488,6 +504,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
+		const domains = getDomainsBySiteId( state, selectedSiteId );
 		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
 		const planSlug = getUpgradePlanSlugFromPath( state, selectedSiteId, props.upgradeItem );
 		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, {
@@ -517,11 +534,13 @@ export default connect(
 			isFetchingStoredCards: areStoredCardsLoading,
 			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
+			domains,
 			isLoading:
 				isFetchingCards ||
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
+			hasSiteDomains: domains.length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
 			product,
 			productCost: getProductCost( state, productSlug ),
