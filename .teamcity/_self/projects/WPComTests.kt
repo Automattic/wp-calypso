@@ -292,7 +292,6 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 					# Run the test
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
 				""".trimIndent()
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 			}
 			bashNodeScript {
 				name = "Collect results"
