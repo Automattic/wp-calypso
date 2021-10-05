@@ -223,10 +223,10 @@ class DeleteUser extends Component {
 	};
 
 	renderSingleSite = () => {
-		const { translate, isJetpack, isOwnSite } = this.props;
+		const { translate, isJetpack, siteOwner, user } = this.props;
 
 		// A user should not be able to remove the site owner.
-		if ( ! isJetpack && isOwnSite ) {
+		if ( ! isJetpack && user.ID === siteOwner ) {
 			return (
 				<Card className="delete-user__single-site">
 					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
@@ -357,7 +357,7 @@ export default localize(
 			const site = getSite( state, siteId );
 
 			return {
-				isOwnSite: site?.capabilities?.own_site,
+				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
 				contributorType: getContributorType(
 					externalContributors,
