@@ -14,7 +14,7 @@ const EmailNoDomain = ( { context, selectedSite, translate } ) => {
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
-	const isFreePlanProduct = isFreePlan( selectedSite.plan.product_slug );
+	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
 
 	const trackEvent =
 		context != null
