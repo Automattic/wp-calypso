@@ -301,8 +301,8 @@ export const getJetpackStorageAmountDisplays = () => ( {
 		{
 			comment:
 				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 20,
-			args: { numberOfGigabytes: 20 },
+			count: 10,
+			args: { numberOfGigabytes: 10 },
 		}
 	),
 	[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate(
@@ -311,8 +311,8 @@ export const getJetpackStorageAmountDisplays = () => ( {
 		{
 			comment:
 				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 20,
-			args: { numberOfGigabytes: 20 },
+			count: 10,
+			args: { numberOfGigabytes: 10 },
 		}
 	),
 	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate(
@@ -341,8 +341,8 @@ export const getJetpackStorageAmountDisplays = () => ( {
 		{
 			comment:
 				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 20,
-			args: { numberOfGigabytes: 20 },
+			count: 10,
+			args: { numberOfGigabytes: 10 },
 		}
 	),
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: translate(
@@ -351,8 +351,8 @@ export const getJetpackStorageAmountDisplays = () => ( {
 		{
 			comment:
 				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 20,
-			args: { numberOfGigabytes: 20 },
+			count: 10,
+			args: { numberOfGigabytes: 10 },
 		}
 	),
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: translate(
