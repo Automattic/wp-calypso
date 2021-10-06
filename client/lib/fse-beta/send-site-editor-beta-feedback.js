@@ -26,12 +26,6 @@ export const sendSiteEditorBetaFeedback = (
 ) => {
 	const kayakoMessage = `Site: ${ siteUrl ? siteUrl : 'N/A' }\n\n${ message }`;
 
-	// To test without sending.
-	// console.log( 'test message:' );
-	// console.log( kayakoMessage );
-	// then(); // or handleError();
-	// return;
-
 	wpcom.req
 		.post( '/help/tickets/kayako/new', {
 			subject: '[Dotcom FSE Beta]',
