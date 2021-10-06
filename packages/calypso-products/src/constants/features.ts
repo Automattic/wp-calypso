@@ -130,6 +130,7 @@ export const FEATURE_PRODUCT_SEARCH_V2 = 'product-search-v2';
 export const FEATURE_PLAN_SECURITY_DAILY = 'security-daily';
 export const FEATURE_VIDEO_HOSTING_V2 = 'video-hosting-v2';
 export const FEATURE_CRM_V2 = 'crm-v2';
+export const FEATURE_CRM_INTEGRATED_WITH_WORDPRESS = 'crm-integrated-with-wordpress';
 export const FEATURE_CRM_LEADS_AND_FUNNEL = 'crm-leads-and-funnel';
 export const FEATURE_CRM_PROPOSALS_AND_INVOICES = 'crm-proposals-and-invoices';
 export const FEATURE_CRM_TRACK_TRANSACTIONS = 'crm-track-transactions';
