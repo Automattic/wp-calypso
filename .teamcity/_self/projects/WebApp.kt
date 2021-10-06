@@ -599,7 +599,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export PLAYWRIGHT_BROWSERS_PATH=0
 
 					# Install deps
-					yarn workspaces focus wp-e2e-tests wp-e2e-tests
+					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
 					# Build packages
 					yarn workspace @automattic/calypso-e2e build
