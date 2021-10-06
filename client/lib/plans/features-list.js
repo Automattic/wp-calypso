@@ -134,8 +134,6 @@ import {
 	PREMIUM_DESIGN_FOR_STORES,
 	FEATURE_JETPACK_20GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
-	FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
-	FEATURE_JETPACK_CLOUD_BASED_BACKUPS,
 	FEATURE_JETPACK_COMMENT_FORM_PROTECTION,
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_30_DAYS,
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR,
@@ -143,7 +141,8 @@ import {
 	FEATURE_JETPACK_PRODUCT_BACKUP,
 	FEATURE_JETPACK_PRODUCT_SCAN,
 	FEATURE_JETPACK_PRODUCT_SECURITY,
-	FEATURE_JETPACK_REAL_TIME_BACKUPS,
+	FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
+	FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -1360,20 +1359,9 @@ export const FEATURES_LIST = {
 	},
 
 	/* START - Jetpack tiered product-specific features */
-	[ FEATURE_JETPACK_REAL_TIME_BACKUPS ]: {
-		getSlug: () => FEATURE_JETPACK_REAL_TIME_BACKUPS,
-		getTitle: () =>
-			i18n.translate( 'Real-time backups {{noHighlight}}(as you edit){{/noHighlight}}', {
-				components: {
-					/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-					noHighlight: <span className="not-highlighted" />,
-				},
-			} ),
-		isHighlighted: () => true,
-	},
-	[ FEATURE_JETPACK_CLOUD_BASED_BACKUPS ]: {
-		getSlug: () => FEATURE_JETPACK_CLOUD_BASED_BACKUPS,
-		getTitle: () => i18n.translate( 'Backups are cloud based' ),
+	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
+		getTitle: () => i18n.translate( 'Real-time cloud backups' ),
 	},
 	[ FEATURE_JETPACK_20GB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_20GB_BACKUP_STORAGE,
