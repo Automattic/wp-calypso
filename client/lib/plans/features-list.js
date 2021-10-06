@@ -1141,7 +1141,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_NO_CONTACT_LIMITS ]: {
 		getSlug: () => FEATURE_CRM_NO_CONTACT_LIMITS,
-		getTitle: () => i18n.translate( 'No contact limits' ),
+		getTitle: () => i18n.translate( 'Unlimited contacts' ),
 	},
 
 	[ FEATURE_COLLECT_PAYMENTS_V2 ]: {
