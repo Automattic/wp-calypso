@@ -1,8 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ReactNode, useEffect, useRef } from 'react';
-import * as React from 'react';
+import { createElement, ReactNode, useEffect, useRef } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import starIcon from './assets/star.svg';
 import DisplayPrice from './display-price';
@@ -17,6 +16,8 @@ import './style.scss';
 
 type OwnProps = {
 	item: SelectorProduct;
+	// Disallow h6, so it can be used for a sub-header if needed
+	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
 	originalPrice: number;
 	discountedPrice?: number;
@@ -40,8 +41,17 @@ type OwnProps = {
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 };
 
+type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type HeaderProps = {
+	className?: string;
+	level: HeaderLevel;
+};
+const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) =>
+	createElement( `h${ level }`, headerProps, children );
+
 const JetpackProductCard: React.FC< OwnProps > = ( {
 	item,
+	headerLevel,
 	description,
 	originalPrice,
 	discountedPrice,
@@ -94,9 +104,16 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				<h3 className="jetpack-product-card__product-name">{ item.displayName }</h3>
+				<Header level={ headerLevel } className="jetpack-product-card__product-name">
+					{ item.displayName }
+				</Header>
 				{ item.subheader && (
-					<h4 className="jetpack-product-card__product-subheader">{ item.subheader }</h4>
+					<Header
+						level={ ( headerLevel + 1 ) as HeaderLevel }
+						className="jetpack-product-card__product-subheader"
+					>
+						{ item.subheader }
+					</Header>
 				) }
 
 				<DisplayPrice

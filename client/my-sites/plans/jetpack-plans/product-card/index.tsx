@@ -142,6 +142,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	return (
 		<JetpackProductCard
 			item={ item }
+			headerLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
