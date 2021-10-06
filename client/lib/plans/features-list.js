@@ -1091,7 +1091,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Search up to 100k records' ),
+		getTitle: () => i18n.translate( 'Site Search up to 100k records' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1120,7 +1120,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_V2 ]: {
 		getSlug: () => FEATURE_CRM_V2,
-		getTitle: () => i18n.translate( 'CRM Entrepreneur bundle' ),
+		getTitle: () => i18n.translate( 'CRM Entrepreneur' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
