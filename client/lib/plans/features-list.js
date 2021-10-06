@@ -1131,7 +1131,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_PROPOSALS_AND_INVOICES ]: {
 		getSlug: () => FEATURE_CRM_PROPOSALS_AND_INVOICES,
-		getTitle: () => i18n.translate( 'Create proposals and invoices' ),
+		getTitle: () => i18n.translate( 'Manage billing and create invoices' ),
 	},
 
 	[ FEATURE_CRM_TRACK_TRANSACTIONS ]: {
