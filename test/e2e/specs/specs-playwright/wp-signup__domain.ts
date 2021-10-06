@@ -12,6 +12,7 @@ import {
 	CartCheckoutPage,
 	NavbarComponent,
 	IndividualPurchasePage,
+	LoginPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -83,24 +84,13 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Check out', async function () {
-			// This step is affected by an issue with page redirect of the post-checkout page.
-			// See: https://github.com/Automattic/wp-calypso/issues/56548
 			await Promise.all( [
 				page.waitForNavigation( {
-					url: '**/checkout/thank-you/no-site/**',
+					url: '**/checkout/thank-you/**',
 					waitUntil: 'networkidle',
-					// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
-					timeout: 90 * 1000,
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
-			// The redirect to the `thank-you` page occurs twice, so capture and wait for
-			// the second redirect to settle.
-			// See issue linked above for more details.
-			await page.waitForNavigation( {
-				url: '**/checkout/thank-you/no-site/**',
-				waitUntil: 'networkidle',
-			} );
 		} );
 	} );
 
@@ -130,6 +120,20 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 	} );
 
 	describe( 'Delete user account', function () {
+		it( 'Re-log in', async function () {
+			// This step is necessary due to an issue exposed in PR
+			// https://github.com/Automattic/wp-calypso/pull/56803.
+			// When closing a Domain-only account that has never logged out,
+			// the redirect to Account Closed page does not occur as expected.
+			// See issue: https://github.com/Automattic/wp-calypso/issues/56841
+			const loginPage = new LoginPage( page );
+			await loginPage.visit();
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/read', waitUntil: 'networkidle' } ),
+				loginPage.login( { username: username, password: signupPassword } ),
+			] );
+		} );
+
 		it( 'Close account', async function () {
 			const closeAccountFlow = new CloseAccountFlow( page );
 			await closeAccountFlow.closeAccount();
