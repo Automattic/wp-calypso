@@ -53,11 +53,7 @@ export default function useSteps(): Array< StepType > {
 	// - Site Editor flow (feature flag)
 	// - the user has selected a design without fonts
 	// - the user is enrolled in Beta FSE
-	if (
-		isEnabled( 'gutenboarding/site-editor' ) ||
-		hasSelectedDesignWithoutFonts ||
-		isEnrollingInFse
-	) {
+	if ( hasSelectedDesignWithoutFonts || isEnrollingInFse ) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 

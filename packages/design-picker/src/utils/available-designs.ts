@@ -47,7 +47,7 @@ interface AvailableDesignsOptions {
 }
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	useFseDesigns = false,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
