@@ -3,7 +3,33 @@
 @import '@automattic/typography/styles/fonts';
 
 .design-picker-category-filter {
-	flex: 1;
+	flex: 0 calc( 307px - 1rem );
+	padding-right: 1rem;
+
+	.design-picker-category-filter__menu-item {
+		padding-left: 0;
+		padding-right: 0;
+		color: #3c434a;
+		display: block;
+		width: auto;
+
+		&:hover:not( :disabled ),
+		&:active:not( :disabled ) {
+			box-shadow: none;
+			background: transparent;
+		}
+
+		&.is-pressed {
+			text-decoration: underline;
+			font-weight: 500; /* stylelint-disable-line scales/font-weights */
+			color: #1d2327;
+			background: transparent;
+		}
+
+		.components-menu-item__item {
+			min-width: auto;
+		}
+	}
 }
 
 .design-picker-category-filter__sidebar {

@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
@@ -204,6 +204,7 @@ export interface DesignPickerProps {
 	className?: string;
 	highResThumbnails?: boolean;
 	showCategoryFilter?: boolean;
+	categoriesHeading?: ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -219,6 +220,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	showCategoryFilter = false,
+	categoriesHeading,
 } ) => {
 	const categories = gatherCategories( designs );
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
@@ -246,6 +248,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					categories={ categories }
 					selectedCategory={ selectedCategory }
 					onSelect={ setSelectedCategory }
+					heading={ categoriesHeading }
 				/>
 			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
