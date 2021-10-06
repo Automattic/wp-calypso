@@ -22,22 +22,10 @@ export function useSaveSharingButtonsMutation( siteId ) {
 		( { buttons } ) =>
 			wpcom.req.post( `/sites/${ siteId }/sharing-buttons`, { sharing_buttons: buttons } ),
 		{
-			async onMutate( { buttons } ) {
-				// optimistic update
-				await queryClient.cancelQueries( [ 'sharing-buttons', siteId ] );
-				const previousButtons = queryClient.getQueryData( [ 'sharing-buttons', siteId ] );
-
+			onSuccess( data ) {
 				queryClient.setQueryData( [ 'sharing-buttons', siteId ], () => ( {
-					sharing_buttons: buttons,
+					sharing_buttons: data.updated,
 				} ) );
-
-				return { previousButtons };
-			},
-			onError( err, data, context ) {
-				queryClient.setQueryData( [ 'sharing-buttons', siteId ], context.previousButtons );
-			},
-			onSettled() {
-				queryClient.invalidateQueries( [ 'sharing-buttons', siteId ] );
 			},
 		}
 	);
