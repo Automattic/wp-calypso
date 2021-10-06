@@ -28,16 +28,24 @@ function resolveRootPath( relativeTo ) {
  * @param {string} domainName - domain name of the account to add users to
  * @param {string} productType - type of account
  * @param {string} relativeTo - optional path prefix
+ * @param {string} context - optional context
  * @returns {string} the corresponding url
  */
 export function emailManagementAddGSuiteUsers(
 	siteName,
 	domainName,
 	productType,
-	relativeTo = null
+	relativeTo = null,
+	context = null
 ) {
 	if ( domainName ) {
-		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo );
+		return emailManagementEdit(
+			siteName,
+			domainName,
+			productType + '/add-users',
+			relativeTo,
+			context ? { context } : null
+		);
 	}
 
 	return '/email/' + productType + '/add-users/' + siteName;
@@ -67,12 +75,34 @@ export function emailManagementManageTitanMailboxes(
 	);
 }
 
-export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
+export function emailManagementNewTitanAccount(
+	siteName,
+	domainName,
+	relativeTo = null,
+	context = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/new',
+		relativeTo,
+		context ? { context } : null
+	);
 }
 
-export function emailManagementTitanSetUpMailbox( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo );
+export function emailManagementTitanSetUpMailbox(
+	siteName,
+	domainName,
+	relativeTo = null,
+	context = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/set-up-mailbox',
+		relativeTo,
+		context ? { context } : null
+	);
 }
 
 export function emailManagementTitanSetUpThankYou(
@@ -105,13 +135,23 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
-export function emailManagement( siteName, domainName, relativeTo = null ) {
+export function emailManagement( siteName, domainName, relativeTo = null, context = null ) {
 	let path;
+	let urlParam;
 
+	if ( context != null ) {
+		urlParam = `?context=${ context }`;
+	}
 	if ( domainName ) {
-		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo );
+		path = emailManagementEdit(
+			siteName,
+			domainName,
+			'manage',
+			relativeTo,
+			context ? { context } : null
+		);
 	} else if ( siteName ) {
-		path = '/email/' + siteName;
+		path = '/email/' + siteName + urlParam;
 	} else {
 		path = '/email';
 	}

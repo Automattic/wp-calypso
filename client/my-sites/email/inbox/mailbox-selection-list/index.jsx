@@ -28,6 +28,7 @@ import ProgressLine from './progress-line';
  * Import styles
  */
 import './style.scss';
+import { emailManagement } from "calypso/my-sites/email/paths";
 
 const getExternalUrl = ( mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
@@ -121,7 +122,7 @@ const NewMailboxUpsell = () => {
 	const selectedSiteSlug = selectedSite?.slug;
 
 	const handleCreateNewMailboxClick = useCallback( () => {
-		page( `/email/${ selectedSiteSlug }` );
+		page( emailManagement( selectedSiteSlug, null, null, 'inbox' ) );
 	}, [ selectedSiteSlug ] );
 
 	return (

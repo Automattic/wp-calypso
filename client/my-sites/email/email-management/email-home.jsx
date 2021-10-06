@@ -93,7 +93,7 @@ class EmailManagementHome extends Component {
 			}
 
 			return this.renderContentWithHeader(
-				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } />
+				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } context={ context } />
 			);
 		}
 
@@ -137,6 +137,7 @@ class EmailManagementHome extends Component {
 						domains={ domainsWithEmail }
 						selectedSiteId={ selectedSiteId }
 						selectedSiteSlug={ selectedSite.slug }
+						context={ context }
 					/>
 				) }
 

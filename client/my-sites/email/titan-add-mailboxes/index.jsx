@@ -20,7 +20,7 @@ import {
 	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -30,7 +30,9 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
+import { INBOX_MANAGEMENT } from 'calypso/my-sites/email/inbox';
 import {
 	emailManagement,
 	emailManagementNewTitanAccount,
@@ -81,13 +83,15 @@ class TitanAddMailboxes extends Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
+			context,
 		} = this.props;
 
 		page(
 			emailManagement(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute
+				currentRoute,
+				context
 			)
 		);
 	};
@@ -115,7 +119,7 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleContinue = async () => {
-		const { selectedSite } = this.props;
+		const { context, selectedSite } = this.props;
 		const { mailboxes } = this.state;
 
 		const validatedMailboxes = validateMailboxes( mailboxes );
@@ -164,6 +168,15 @@ class TitanAddMailboxes extends Component {
 						// Stay on the page to show the relevant error
 						return;
 					}
+
+					if ( context === INBOX_MANAGEMENT ) {
+						recordInboxUpsellTracksEvent( {
+							context: context,
+							product: 'inbox',
+							provider: TITAN_PROVIDER_NAME,
+						} );
+					}
+
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}

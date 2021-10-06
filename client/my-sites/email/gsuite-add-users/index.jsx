@@ -22,7 +22,11 @@ import {
 	getGSuiteSupportedDomains,
 	getProductSlug,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_PRODUCT_TYPE,
+	GSUITE_PRODUCT_TYPE,
+} from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -31,6 +35,8 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { INBOX_MANAGEMENT } from 'calypso/my-sites/email/inbox';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
@@ -68,7 +74,7 @@ class GSuiteAddUsers extends Component {
 	}
 
 	handleContinue = () => {
-		const { domains, productType, selectedSite } = this.props;
+		const { context, domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
 
@@ -82,6 +88,14 @@ class GSuiteAddUsers extends Component {
 					)
 				)
 				.then( () => {
+					if ( context === INBOX_MANAGEMENT ) {
+						recordInboxUpsellTracksEvent( {
+							context: context,
+							product: 'inbox',
+							provider: GOOGLE_PROVIDER_NAME,
+						} );
+					}
+
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}

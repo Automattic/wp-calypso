@@ -100,7 +100,7 @@ const EmailPlan = ( props ) => {
 	};
 
 	function getAddMailboxProps() {
-		const { currentRoute, domain, selectedSite } = props;
+		const { context, currentRoute, domain, selectedSite } = props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
@@ -108,7 +108,8 @@ const EmailPlan = ( props ) => {
 					selectedSite.slug,
 					domain.name,
 					getProductType( getGSuiteProductSlug( domain ) ),
-					currentRoute
+					currentRoute,
+					context
 				),
 			};
 		}
@@ -116,7 +117,12 @@ const EmailPlan = ( props ) => {
 		if ( hasTitanMailWithUs( domain ) ) {
 			if ( getTitanSubscriptionId( domain ) ) {
 				return {
-					path: emailManagementNewTitanAccount( selectedSite.slug, domain.name, currentRoute ),
+					path: emailManagementNewTitanAccount(
+						selectedSite.slug,
+						domain.name,
+						currentRoute,
+						context
+					),
 				};
 			}
 
@@ -334,6 +340,7 @@ const EmailPlan = ( props ) => {
 };
 
 EmailPlan.propType = {
+	context: PropTypes.string,
 	domain: PropTypes.object.isRequired,
 	selectedSite: PropTypes.object.isRequired,
 
