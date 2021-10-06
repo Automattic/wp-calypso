@@ -152,7 +152,9 @@ class Signup extends Component {
 
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
+		const initialContext = this.props.initialContext || {};
+		const queryObject = initialContext.query || {};
+		const initialPath = initialContext.pathname;
 
 		let providedDependencies;
 
@@ -161,7 +163,7 @@ class Signup extends Component {
 		}
 
 		const searchParams = new URLSearchParams( window.location.search );
-		const isAddNewSiteFlow = searchParams.has( 'ref' );
+		const isAddNewSiteFlow = searchParams.has( 'ref' ) || initialPath === '/start';
 
 		if ( isAddNewSiteFlow ) {
 			clearSignupDestinationCookie();
