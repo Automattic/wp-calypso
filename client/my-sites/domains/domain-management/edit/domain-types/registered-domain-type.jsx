@@ -202,6 +202,10 @@ class RegisteredDomainType extends Component {
 	renderDefaultRenewButton() {
 		const { domain, purchase, isLoadingPurchase } = this.props;
 
+		if ( domain.isPendingRenewal ) {
+			return null;
+		}
+
 		if ( ! domain.currentUserCanManage ) {
 			return null;
 		}
