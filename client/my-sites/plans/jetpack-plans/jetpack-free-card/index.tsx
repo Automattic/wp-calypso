@@ -22,12 +22,9 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryA
 					translate( 'Activity Log' ),
 				],
 			} ) ?? [
-				translate( 'Site stats' ),
 				translate( 'Brute force attack protection' ),
+				translate( 'Site stats' ),
 				translate( 'Content Delivery Network' ),
-				translate( 'Automated social media posting' ),
-				translate( 'Downtime monitoring' ),
-				translate( 'Activity Log' ),
 			],
 		[ translate ]
 	);
@@ -38,7 +35,8 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryA
 				[ Iterations.ONLY_REALTIME_PRODUCTS ]: translate(
 					'Included for free with all products. Get started with Jetpack now at no cost.'
 				),
-			} ) ?? translate( 'Included for free with all products' ),
+			} ) ??
+			translate( 'Power up your WordPress site with essential security and performance features.' ),
 		[ translate ]
 	);
 
