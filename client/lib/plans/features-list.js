@@ -135,7 +135,7 @@ import {
 	FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
-	FEATURE_JETPACK_COMMENT_FORM_PROTECTION,
+	FEATURE_JETPACK_COMMENT_FORM_SPAM_PROTECTION,
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR,
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED,
 	FEATURE_JETPACK_PRODUCT_BACKUP,
@@ -1379,6 +1379,10 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
 		getTitle: () => i18n.translate( '30-day archive & activity log' ),
 	},
+	[ FEATURE_JETPACK_COMMENT_FORM_SPAM_PROTECTION ]: {
+		getSlug: () => FEATURE_JETPACK_COMMENT_FORM_SPAM_PROTECTION,
+		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
+	},
 	[ FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR ]: {
 		getSlug: () => FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR,
 		getTitle: () => i18n.translate( 'One-click restore from the last year' ),
@@ -1401,10 +1405,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_SECURITY,
 		getTitle: () => i18n.translate( 'All Security features' ),
 		isHighlighted: () => true,
-	},
-	[ FEATURE_JETPACK_COMMENT_FORM_PROTECTION ]: {
-		getSlug: () => FEATURE_JETPACK_COMMENT_FORM_PROTECTION,
-		getTitle: () => i18n.translate( 'Comment and form protection' ),
 	},
 	/* END - Jetpack tiered product-specific features */
 };
