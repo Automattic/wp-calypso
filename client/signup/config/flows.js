@@ -61,21 +61,21 @@ function getSignupDestination( { domainItem, siteId, siteSlug } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
+	let queryParam = { siteSlug };
+	if ( domainItem ) {
+		// If the user is purchasing a domain then the site's primary url might change from
+		// `siteSlug` to something else during the checkout process, which means the
+		// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
+		// case we use the ID because we know it won't change depending on whether the user
+		// successfully completes the checkout process or not.
+		queryParam = { siteId };
+	}
 
 	if ( isEnabled( 'signup/hero-flow' ) ) {
-		return addQueryArgs( { siteSlug }, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
+		return addQueryArgs( queryParam, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
 	}
 
 	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
-		let queryParam = { siteSlug };
-		if ( domainItem ) {
-			// If the user is purchasing a domain then the site's primary url might change from
-			// `siteSlug` to something else during the checkout process, which means the
-			// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
-			// case we use the ID because we know it won't change depending on whether the user
-			// successfully completes the checkout process or not.
-			queryParam = { siteId };
-		}
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
