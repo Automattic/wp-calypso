@@ -88,6 +88,7 @@ function DIFMDesignPickerStep( props ) {
 								id={ name }
 								name={ displayName }
 								image={ thumbnail }
+								templateUrl={ templateUrl }
 								onShowPreview={ () => setSitePreviewURL( templateUrl ) }
 								selectDesign={ () => pickDesign( name ) }
 							/>

@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { Button } from '@automattic/components';
+import { MShotsImage } from '@automattic/design-picker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -20,6 +21,7 @@ export default function DemoTile( {
 	id,
 	selectedDesign,
 	image,
+	templateUrl,
 	name,
 	onShowPreview,
 	selectDesign,
@@ -27,6 +29,7 @@ export default function DemoTile( {
 	id: string;
 	selectedDesign: string;
 	image: string;
+	templateUrl: string;
 	name: string;
 	onShowPreview: () => void;
 	selectDesign: () => void;
@@ -55,7 +58,7 @@ export default function DemoTile( {
 						opacity: 1;
 						animation: theme__thumbnail-label 200ms ease-in-out;
 					}
-					&:hover img {
+					&:hover .mshots-image__container {
 						filter: blur( 2px );
 						-webkit-filter: blur( 2px );
 						-moz-filter: blur( 2px );
@@ -112,6 +115,18 @@ export default function DemoTile( {
 						}
 					` }
 				>
+					<MShotsImage
+						url={ templateUrl + '?hide_banners=true' }
+						aria-labelledby={ 'template-image' }
+						alt={ 'Template Image' }
+						options={ {
+							vpw: 1024,
+							vph: 1024,
+							w: 660,
+							screen_height: 3600,
+						} }
+						scrollable={ true }
+					/>
 					<img src={ image } width="100%" alt="WordPress logo" />
 				</div>
 			</div>
