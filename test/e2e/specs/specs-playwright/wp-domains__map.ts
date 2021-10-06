@@ -33,14 +33,14 @@ describe( DataHelper.createSuiteTitle( 'Domains: Map/Connect a Domain' ), functi
 		await sidebarComponent.navigate( 'Upgrades', 'Domains' );
 	} );
 
-	it( 'Select to use a an already owned domain', async function () {
+	it( 'Select to use an already owned domain', async function () {
 		const domainsPage = new DomainsPage( page );
 		await domainsPage.useADomainIOwn();
 	} );
 
 	it( 'Search for and select an existing domain', async function () {
 		useADomainIOwnPage = new UseADomainIOwnPage( page );
-		await useADomainIOwnPage.searchForOwnedDomain( fakeOwnedDomain );
+		await useADomainIOwnPage.search( fakeOwnedDomain );
 	} );
 
 	it( 'See options to connect or transfer domain', async function () {

@@ -26,7 +26,7 @@ export class UseADomainIOwnPage {
 	 *
 	 * @param domainName The owned domain name to search for and select
 	 */
-	async searchForOwnedDomain( domainName: string ): Promise< void > {
+	async search( domainName: string ): Promise< void > {
 		await this.page.fill( selectors.ownedDomainInput, domainName );
 		await this.page.click( selectors.nextButton );
 	}
