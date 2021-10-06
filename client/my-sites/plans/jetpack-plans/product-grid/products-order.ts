@@ -10,7 +10,6 @@ import {
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_CRM_FREE_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -58,7 +57,6 @@ const PRODUCT_POSITION_IN_GRID: Record< string, number > = {
 	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 50 ),
 	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 60 ),
 	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 70 ),
-	...setProductsInPosition( JETPACK_CRM_FREE_PRODUCTS, 80 ),
 };
 
 export const getProductPosition = ( slug: JetpackPlanSlug | JetpackProductSlug ): number =>
