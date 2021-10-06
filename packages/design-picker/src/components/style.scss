@@ -4,6 +4,10 @@
 @import '@automattic/onboarding/styles/variables';
 
 .design-picker {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+
 	.design-picker__header {
 		@include onboarding-heading-padding;
 
@@ -14,6 +18,11 @@
 
 	.design-picker__heading {
 		flex-grow: 1;
+	}
+
+	.design-picker__grid,
+	.design-picker__grid-minimal {
+		flex: 5;
 	}
 
 	.design-picker__grid {

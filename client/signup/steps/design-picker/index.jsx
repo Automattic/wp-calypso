@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker from '@automattic/design-picker';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -76,11 +77,12 @@ class DesignPickerStep extends Component {
 			// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 			// component itself. The `/new` environment needs helpers for making authenticated requests to
 			// the theme API before we can do this.
-			// taxonomies.theme_subject probably maps to category
 			designs = this.props.themes
 				.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-				.map( ( { id, name } ) => ( {
-					categories: [],
+				.map( ( { id, name, taxonomies } ) => ( {
+					categories: taxonomies?.theme_subject ?? [
+						{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
+					],
 					features: [],
 					is_premium: false,
 					slug: id,
@@ -101,6 +103,7 @@ class DesignPickerStep extends Component {
 					'design-picker-step__is-large-thumbnails': this.props.largeThumbnails,
 				} ) }
 				highResThumbnails
+				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
 			/>
 		);
 	}

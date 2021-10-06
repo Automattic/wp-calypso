@@ -28,7 +28,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -38,7 +38,7 @@ jest.mock( '../available-designs-config', () => {
 		slug: 'mock-premium-design-slug',
 		template: 'mock-premium-design-template',
 		theme: 'mock-premium-design-theme',
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -52,7 +52,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: true,
 		features: [],
 	};
@@ -66,7 +66,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		is_fse: true,
 		features: [],
@@ -81,7 +81,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		is_alpha: true,
 		features: [],
@@ -92,7 +92,7 @@ jest.mock( '../available-designs-config', () => {
 		slug: 'mock-blank-canvas-design-slug',
 		template: 'mock-blank-canvas-design-template',
 		theme: 'mock-blank-canvas-design-theme',
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
