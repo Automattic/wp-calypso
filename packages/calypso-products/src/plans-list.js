@@ -915,9 +915,13 @@ const getPlanJetpackCompleteDetails = () => ( {
 	availableFor: ( plan ) =>
 		[ PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
-		translate(
-			'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
-		),
+		isEnabled( 'jetpack/only-realtime-products' )
+			? translate(
+					'Get the full power of Jetpack with all Security, Performance, Growth, and Design tools.'
+			  )
+			: translate(
+					'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
+			  ),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCardFeatures: () =>
 		isEnabled( 'jetpack/only-realtime-products' )
