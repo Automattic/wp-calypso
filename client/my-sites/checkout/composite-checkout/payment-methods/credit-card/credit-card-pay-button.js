@@ -43,7 +43,7 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
-						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
+						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN', payload: { useForAllSubscriptions } } );
 						onClick( 'card', {
 							stripe,
 							name: cardholderName?.value,
