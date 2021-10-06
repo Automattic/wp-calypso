@@ -1,17 +1,13 @@
 // eslint-disable-next-line
 
 import styled from '@emotion/styled';
-import { localize, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import WebPreview from 'calypso/components/web-preview';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import DemoTile from 'calypso/signup/steps/difm-design-picker/demo-tile';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
-import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import VerticalTemplateMapping from './vertical-template-mapping';
 
 import './style.scss';
@@ -37,7 +33,7 @@ const VerticalsGrid = styled.div`
 	}
 `;
 
-function DIFMDesignPickerStep( props ) {
+export default function DIFMDesignPickerStep( props ) {
 	const translate = useTranslate();
 	const [ sitePreviewURL, setSitePreviewURL ] = useState( null );
 	const [ selectedVertical, setSelectedVertical ] = useState( 'Local services' );
@@ -77,7 +73,9 @@ function DIFMDesignPickerStep( props ) {
 							showExternal={ false }
 							showSEO={ false }
 							onClose={ () => setSitePreviewURL( null ) }
-							previewUrl={ sitePreviewURL + '?demo=true&iframe=true&theme_preview=true&hide_banners=true' }
+							previewUrl={
+								sitePreviewURL + '?demo=true&iframe=true&theme_preview=true&hide_banners=true'
+							}
 							externalUrl={ sitePreviewURL }
 						></WebPreview>
 					) }
@@ -98,16 +96,9 @@ function DIFMDesignPickerStep( props ) {
 			}
 			align={ props.isReskinned ? 'left' : 'center' }
 			hideSkip
+			hideNext
+			hideBack
 			{ ...props }
 		/>
 	);
 }
-
-export default connect(
-	( state ) => {
-		return {
-			themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
-		};
-	},
-	{ fetchRecommendedThemes, submitSignupStep }
-)( localize( DIFMDesignPickerStep ) );

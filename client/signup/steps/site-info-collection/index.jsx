@@ -5,12 +5,9 @@ import { Widget } from '@typeform/embed-react';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelBody from 'calypso/components/action-panel/body';
 import CardHeading from 'calypso/components/card-heading';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Spinner from 'calypso/components/spinner';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 
@@ -54,52 +51,61 @@ function SiteInformationCollection( {
 	};
 
 	return (
-		<ActionPanel>
-			<ActionPanelBody>
-				<FormattedHeader
-					brandFont
-					headerText={ translate( 'Tell us more about your site' ) }
-					subHeaderText={ translate(
-						'We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like'
-					) }
-					align="left"
+		<>
+			{ isFormSubmitted ? (
+				<LoadingContainer>
+					<CardHeading tagName="h5" size={ 24 }>
+						{ translate( 'Redirecting to Checkout…' ) }
+					</CardHeading>
+					<Spinner />
+				</LoadingContainer>
+			) : (
+				<Widget
+					hidden={ {
+						username,
+						design: selectedDesign,
+					} }
+					id={ getTypeformId() }
+					style={ {
+						width: 'calc(100% - 2px)',
+						height: '50vh',
+						minHeight: '745px',
+						padding: '0',
+						marginTop: '50px',
+						border: '1px solid rgba( 220, 220, 222, 0.64 )',
+						borderRadius: '4px',
+					} }
+					onSubmit={ nextStep }
+					disableAutoFocus={ true }
 				/>
-				{ isFormSubmitted ? (
-					<LoadingContainer>
-						<CardHeading tagName="h5" size={ 24 }>
-							{ translate( 'Redirecting to Checkout…' ) }
-						</CardHeading>
-						<Spinner />
-					</LoadingContainer>
-				) : (
-					<Widget
-						hidden={ {
-							username,
-							design: selectedDesign,
-						} }
-						id={ getTypeformId() }
-						style={ {
-							width: 'calc(100% - 2px)',
-							height: '50vh',
-							minHeight: '745px',
-							padding: '0',
-							marginTop: '50px',
-							border: '1px solid rgba( 220, 220, 222, 0.64 )',
-							borderRadius: '4px',
-						} }
-						onSubmit={ nextStep }
-						disableAutoFocus={ true }
-					/>
-				) }
-			</ActionPanelBody>
-		</ActionPanel>
+			) }
+		</>
 	);
 }
 
-export default function WrappedSiteInformationCollection( props ) {
+export default function WrapperSiteInformationCollection( props ) {
+	const { flowName, stepName, positionInFlow } = props;
+	const translate = useTranslate();
+
+	const headerText = translate( 'Tell us more about your site' );
+	const subHeaderText = translate(
+		'We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like'
+	);
+
 	return (
-		<CalypsoShoppingCartProvider>
-			<SiteInformationCollection { ...props } />
-		</CalypsoShoppingCartProvider>
+		<StepWrapper
+			headerText={ headerText }
+			subHeaderText={ subHeaderText }
+			fallbackHeaderText={ headerText }
+			fallbackSubHeaderText={ subHeaderText }
+			flowName={ flowName }
+			stepName={ stepName }
+			positionInFlow={ positionInFlow }
+			stepContent={ <SiteInformationCollection { ...props } /> }
+			goToNextStep={ false }
+			hideFormattedHeader={ false }
+			hideBack={ false }
+			align={ 'left' }
+		/>
 	);
 }
