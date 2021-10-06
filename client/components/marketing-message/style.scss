@@ -1,0 +1,29 @@
+.is-section-signup.has-marketing-message {
+	--marketing-message-height: 50px;
+
+	@media screen and ( max-width: 1024px ) {
+		--marketing-message-height: 70px;
+	}
+
+	@media screen and ( max-width: 640px ) {
+		--marketing-message-height: 100px;
+	}
+
+	@media screen and ( max-width: 380px ) {
+		--marketing-message-height: 120px;
+	}
+
+	.signup-header {
+		top: var( --marketing-message-height );
+	}
+
+	@media screen and ( min-width: 600px ) {
+		.is-wide-layout .step-wrapper__navigation {
+			top: calc( var( --marketing-message-height ) + 2px );
+		}
+	}
+
+	.plans-step {
+		padding-top: var( --marketing-message-height );
+	}
+}
