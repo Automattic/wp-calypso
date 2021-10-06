@@ -137,12 +137,10 @@ import {
 	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
 	FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR,
-	FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED,
 	FEATURE_JETPACK_PRODUCT_BACKUP,
 	FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
 	FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 	FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
-	FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -1375,10 +1373,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR,
 		getTitle: () => i18n.translate( 'One-click restore from the last year' ),
 	},
-	[ FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED ]: {
-		getSlug: () => FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED,
-		getTitle: () => i18n.translate( 'One-click restores from any time' ),
-	},
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
 		getTitle: () => i18n.translate( 'All Backup features' ),
@@ -1400,10 +1394,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
 		isHighlighted: () => true,
-	},
-	[ FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE ]: {
-		getSlug: () => FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
-		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 	/* END - Jetpack tiered product-specific features */
 };
