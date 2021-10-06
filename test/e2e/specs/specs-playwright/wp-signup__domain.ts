@@ -26,6 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
 
 	let page: Page;
+	let selectedDomain: string;
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 
@@ -48,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Select a .live domain', async function () {
-			await domainSearchComponent.selectDomain( '.live' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live' );
 		} );
 
 		it( 'Select to buy just the domain', async function () {
@@ -86,11 +87,15 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		it( 'Check out', async function () {
 			await Promise.all( [
 				page.waitForNavigation( {
-					url: '**/checkout/thank-you/**',
-					waitUntil: 'networkidle',
+					url: `**/checkout/thank-you/${ selectedDomain }`,
+					timeout: 90 * 1000,
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
+
+			await page.waitForNavigation( {
+				url: `**/checkout/thank-you/${ selectedDomain }`,
+			} );
 		} );
 	} );
 
@@ -129,7 +134,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
 			await Promise.all( [
-				page.waitForNavigation( { url: '**/read', waitUntil: 'networkidle' } ),
+				page.waitForNavigation( { url: '**/read' } ),
 				loginPage.login( { username: username, password: signupPassword } ),
 			] );
 		} );
