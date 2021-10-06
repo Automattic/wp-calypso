@@ -75,6 +75,10 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				return __( 'Importing content from Squarespace' );
 			case 'Blogger':
 				return __( 'Importing content from Blogger' );
+			case 'Wordpress':
+				return __( 'Importing content from self-hosted WordPress to Wordpress.com' );
+			case 'Medium':
+				return __( 'Importing content from Medium' );
 			default:
 				return '';
 		}
@@ -93,6 +97,14 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			case 'Blogger':
 				return __(
 					"Our Blogger content importer is the quickest way to move your content. Simply export the contents from Blogger as a XML file, then click 'Import your content' and upload it to our importer."
+				);
+			case 'Wordpress':
+				return __(
+					"Our Self-Hosted WordPress content importer is the quickest way to move your content. After clicking 'Import your content', either enter your site's URL to move all your content, plugins, and custom themes to WordPress.com, or use the 'Import' feature to import just your site's content, including posts, pages, and media."
+				);
+			case 'Medium':
+				return __(
+					"Our Mediun content importer is the quickest way to move your content. Simply export the contents from Medium as a .ZIP file, then click 'Import your content' and upload it to our importer."
 				);
 			default:
 				return '';
