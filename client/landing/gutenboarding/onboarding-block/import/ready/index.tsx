@@ -7,6 +7,8 @@ import ImportPlatformDetails from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 interface Props {
 	website: string;
 	platform: string;
@@ -58,4 +60,33 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 	);
 };
 
-export default ReadyStep;
+const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
+	const { __ } = useI18n();
+
+	return (
+		<>
+			<div className="import__header">
+				<div className="import__heading">
+					<Title>{ __( 'Your content is ready for its new home' ) }</Title>
+					<SubTitle>
+						{ sprintf(
+							__(
+								'To move your existing %1$s hosted content to your newly created WordPress.com site, try our %1$s importer.'
+							),
+							platform
+						) }
+					</SubTitle>
+
+					<div className="import__buttons-group">
+						<NextButton>{ __( 'Import your content' ) }</NextButton>
+						<div>
+							<BackButton>{ __( 'View the import guide' ) }</BackButton>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+};
+
+export { ReadyStep, ReadyNoUrlStep };
