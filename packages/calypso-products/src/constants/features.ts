@@ -177,8 +177,8 @@ export const FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG = 'jetpack-30-day-archi
 export const FEATURE_JETPACK_COMMENT_FORM_SPAM_PROTECTION = 'jetpack-comment-form-spam-protection';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-one-click-restores-1-year';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED = 'jetpack-one-click-restores-unlimited';
+export const FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING = 'jetpack-real-time-malware-scanning';
 export const FEATURE_JETPACK_PRODUCT_BACKUP = 'jetpack-product-backup';
-export const FEATURE_JETPACK_PRODUCT_SCAN = 'jetpack-product-scan';
 export const FEATURE_JETPACK_PRODUCT_SECURITY = 'jetpack-product-security';
 
 // P2 project features

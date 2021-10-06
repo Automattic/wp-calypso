@@ -139,7 +139,7 @@ import {
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR,
 	FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED,
 	FEATURE_JETPACK_PRODUCT_BACKUP,
-	FEATURE_JETPACK_PRODUCT_SCAN,
+	FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 	FEATURE_JETPACK_PRODUCT_SECURITY,
 	FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
 	FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
@@ -1396,14 +1396,14 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Backup features' ),
 		isHighlighted: () => true,
 	},
-	[ FEATURE_JETPACK_PRODUCT_SCAN ]: {
-		getSlug: () => FEATURE_JETPACK_PRODUCT_SCAN,
-		getTitle: () => i18n.translate( 'Scan (real-time & automated)' ),
-		isHighlighted: () => true,
-	},
 	[ FEATURE_JETPACK_PRODUCT_SECURITY ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_SECURITY,
 		getTitle: () => i18n.translate( 'All Security features' ),
+		isHighlighted: () => true,
+	},
+	[ FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
+		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
 		isHighlighted: () => true,
 	},
 	/* END - Jetpack tiered product-specific features */
