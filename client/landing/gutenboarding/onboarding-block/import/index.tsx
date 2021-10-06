@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
-import { ReadyStep, ReadyNoUrlStep } from './ready';
+import { ReadyStep, ReadyNotStep, ReadyNoUrlStep } from './ready';
 import './style.scss';
 
 function useQuery() {
@@ -23,6 +23,9 @@ const ImportSite: React.FunctionComponent = () => {
 			) }
 			{ query.get( 'step' ) === 'ready-no-url' && (
 				<ReadyNoUrlStep platform={ data.platform } website={ data.website } />
+			) }
+			{ query.get( 'step' ) === 'ready-not' && (
+				<ReadyNotStep platform={ data.platform } website={ data.website } />
 			) }
 		</div>
 	);

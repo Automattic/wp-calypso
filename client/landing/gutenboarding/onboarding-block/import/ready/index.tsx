@@ -60,6 +60,32 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 	);
 };
 
+const ReadyNotStep: React.FunctionComponent< Props > = () => {
+	const { __ } = useI18n();
+
+	return (
+		<>
+			<div className="import__header">
+				<div className="import__heading">
+					<Title>{ __( "Your existing content can't be imported" ) }</Title>
+					<SubTitle>
+						{ __(
+							"Unfortunately, your content is on a platform that we don't yet support. Try Building a new WordPress site instead."
+						) }
+					</SubTitle>
+
+					<div className="import__buttons-group">
+						<NextButton>{ __( 'Start building' ) }</NextButton>
+						<div>
+							<BackButton>{ __( 'Back to the start' ) }</BackButton>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+};
+
 const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
 	const { __ } = useI18n();
 
@@ -89,4 +115,4 @@ const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
 	);
 };
 
-export { ReadyStep, ReadyNoUrlStep };
+export { ReadyStep, ReadyNotStep, ReadyNoUrlStep };
