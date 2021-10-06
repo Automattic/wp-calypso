@@ -52,10 +52,14 @@ export default function DIFMDesignPickerStep( props ) {
 		props.goToNextStep();
 	};
 
+	const headerText = translate( 'Choose a design' );
+	const subHeaderText = translate( 'Select the look and feel for your site' );
 	return (
 		<StepWrapper
-			headerText={ translate( 'Choose a design' ) }
-			subHeaderText={ translate( 'Select the look and feel for your site' ) }
+			headerText={ headerText }
+			subHeaderText={ subHeaderText }
+			fallbackHeaderText={ headerText }
+			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
 				<Container>
 					<FormFieldset>

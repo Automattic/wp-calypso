@@ -3,11 +3,12 @@ import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { Widget } from '@typeform/embed-react';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 
@@ -16,6 +17,14 @@ import './style.scss';
 function getTypeformId() {
 	return config( 'difm_typeform_id' );
 }
+const Container = styled.div`
+	@media ( max-width: 960px ) {
+		margin: 0 20px 80px 20px;
+	}
+	@media ( max-wdith: 425px ) {
+		margin-bottom: 180px;
+	}
+`;
 
 const LoadingContainer = styled.div`
 	align-items: center;
@@ -32,9 +41,15 @@ function SiteInformationCollection( {
 	goToNextStep,
 } ) {
 	const translate = useTranslate();
-	const { selectedDesign } = useSelector( getSignupDependencyStore );
+	const dispatch = useDispatch();
+
+	const { selectedDesign, username: signupUserName } = useSelector( getSignupDependencyStore );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
+
+	useEffect( () => {
+		dispatch( fetchCurrentUser() );
+	}, [ dispatch ] );
 
 	const nextStep = () => {
 		setIsFormSubmitted( true );
@@ -51,7 +66,7 @@ function SiteInformationCollection( {
 	};
 
 	return (
-		<>
+		<Container>
 			{ isFormSubmitted ? (
 				<LoadingContainer>
 					<CardHeading tagName="h5" size={ 24 }>
@@ -62,7 +77,7 @@ function SiteInformationCollection( {
 			) : (
 				<Widget
 					hidden={ {
-						username,
+						username: username ? username : signupUserName,
 						design: selectedDesign,
 					} }
 					id={ getTypeformId() }
@@ -79,7 +94,7 @@ function SiteInformationCollection( {
 					disableAutoFocus={ true }
 				/>
 			) }
-		</>
+		</Container>
 	);
 }
 
