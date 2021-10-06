@@ -851,7 +851,7 @@ const getPlanJetpackSecurityT1Details = () => ( {
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
-			'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
 		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
