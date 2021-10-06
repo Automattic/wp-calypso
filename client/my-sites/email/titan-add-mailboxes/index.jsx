@@ -153,6 +153,12 @@ class TitanAddMailboxes extends Component {
 		} );
 
 		if ( canContinue ) {
+			if ( context === INBOX_MANAGEMENT ) {
+				recordInboxUpsellTracksEvent( {
+					product: 'inbox',
+					provider: TITAN_PROVIDER_NAME,
+				} );
+			}
 			this.setState( { isAddingToCart: true } );
 
 			this.props.shoppingCartManager
@@ -167,14 +173,6 @@ class TitanAddMailboxes extends Component {
 					if ( errors && errors.length ) {
 						// Stay on the page to show the relevant error
 						return;
-					}
-
-					if ( context === INBOX_MANAGEMENT ) {
-						recordInboxUpsellTracksEvent( {
-							context: context,
-							product: 'inbox',
-							provider: TITAN_PROVIDER_NAME,
-						} );
 					}
 
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );

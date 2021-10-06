@@ -81,6 +81,12 @@ class GSuiteAddUsers extends Component {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
+			if ( context === INBOX_MANAGEMENT ) {
+				recordInboxUpsellTracksEvent( {
+					product: 'inbox',
+					provider: GOOGLE_PROVIDER_NAME,
+				} );
+			}
 			this.props.shoppingCartManager
 				.addProductsToCart(
 					getItemsForCart( domains, getProductSlug( productType ), users ).map( ( item ) =>
@@ -88,14 +94,6 @@ class GSuiteAddUsers extends Component {
 					)
 				)
 				.then( () => {
-					if ( context === INBOX_MANAGEMENT ) {
-						recordInboxUpsellTracksEvent( {
-							context: context,
-							product: 'inbox',
-							provider: GOOGLE_PROVIDER_NAME,
-						} );
-					}
-
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}

@@ -161,10 +161,7 @@ class EmailProvidersComparison extends Component {
 		} );
 
 		if ( comparisonContext === INBOX_MANAGEMENT ) {
-			recordInboxUpsellTracksEvent( {
-				context: comparisonContext,
-				product: 'forward',
-			} );
+			recordInboxUpsellTracksEvent( { product: 'forward' } );
 		}
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
@@ -245,7 +242,6 @@ class EmailProvidersComparison extends Component {
 
 				if ( comparisonContext === INBOX_MANAGEMENT ) {
 					recordInboxUpsellTracksEvent( {
-						context: comparisonContext,
 						product: 'email',
 						provider: TITAN_PROVIDER_NAME,
 					} );
@@ -310,7 +306,6 @@ class EmailProvidersComparison extends Component {
 
 				if ( comparisonContext === INBOX_MANAGEMENT ) {
 					recordInboxUpsellTracksEvent( {
-						context: comparisonContext,
 						product: 'email',
 						provider: GOOGLE_PROVIDER_NAME,
 					} );
