@@ -92,6 +92,12 @@
 	}
 }
 
+.step-wrapper.has-navigation .step-wrapper__content {
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-bottom: 60px;
+	}
+}
+
 .step-wrapper__header-image {
 	margin-top: 24px;
 	display: none;
