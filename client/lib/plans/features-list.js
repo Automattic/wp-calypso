@@ -36,6 +36,7 @@ import {
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
+	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
@@ -1118,6 +1119,11 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ FEATURE_CRM_INTEGRATED_WITH_WORDPRESS ]: {
+		getSlug: () => FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
+		getTitle: () => i18n.translate( 'CRM fully integrated with WordPress' ),
+	},
+
 	[ FEATURE_CRM_LEADS_AND_FUNNEL ]: {
 		getSlug: () => FEATURE_CRM_LEADS_AND_FUNNEL,
 		getTitle: () => i18n.translate( 'Easily view leads and sales funnel' ),
@@ -1125,7 +1131,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_PROPOSALS_AND_INVOICES ]: {
 		getSlug: () => FEATURE_CRM_PROPOSALS_AND_INVOICES,
-		getTitle: () => i18n.translate( 'Create proposals and invoices' ),
+		getTitle: () => i18n.translate( 'Manage billing and create invoices' ),
 	},
 
 	[ FEATURE_CRM_TRACK_TRANSACTIONS ]: {
@@ -1135,7 +1141,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_NO_CONTACT_LIMITS ]: {
 		getSlug: () => FEATURE_CRM_NO_CONTACT_LIMITS,
-		getTitle: () => i18n.translate( 'No contact limits' ),
+		getTitle: () => i18n.translate( 'Unlimited contacts' ),
 	},
 
 	[ FEATURE_COLLECT_PAYMENTS_V2 ]: {

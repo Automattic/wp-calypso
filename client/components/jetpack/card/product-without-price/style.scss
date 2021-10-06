@@ -82,6 +82,9 @@
 }
 
 .product-without-price__subheadline {
+	// 2 lines, accounting for line-height of 1.5
+	min-height: calc( 2rem * 1.5 );
+
 	color: var( --studio-gray-60 );
 	font-size: inherit;
 }
