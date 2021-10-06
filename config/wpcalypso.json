@@ -66,7 +66,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/happychat": true,
-		"jetpack/only-realtime-products": true,
+		"jetpack/only-realtime-products": false,
 		"jetpack/siteless-checkout": true,
 		"jetpack/user-licensing-m1": false,
 		"jetpack/userless-checkout": true,
