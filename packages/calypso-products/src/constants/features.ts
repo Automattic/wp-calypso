@@ -177,6 +177,7 @@ export const FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED = 'jetpack-one-click-r
 export const FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS = 'jetpack-real-time-cloud-backups';
 export const FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING = 'jetpack-real-time-malware-scanning';
 export const FEATURE_JETPACK_PRODUCT_BACKUP = 'jetpack-product-backup';
+export const FEATURE_JETPACK_PRODUCT_VIDEOPRESS = 'jetpack-product-videopress';
 export const FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES = 'jetpack-all-backup-security-features';
 export const FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE = 'jetpack-unlimited-backup-storage';
 
