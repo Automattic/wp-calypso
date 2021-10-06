@@ -36,7 +36,7 @@
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
-		"jetpack/only-realtime-products": true,
+		"jetpack/only-realtime-products": false,
 		"jetpack/pricing-page": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/server-credentials-advanced-flow": true,
