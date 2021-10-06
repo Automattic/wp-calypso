@@ -51,9 +51,18 @@ export async function assignNewCardProcessor(
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: ReturnType< typeof useDispatch >;
 	},
-	submitData: unknown
+	submitData: {
+		name?: string;
+		countryCode?: string;
+		postalCode?: string;
+		useForAllSubscriptions?: boolean;
+	}
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	recordFormSubmitEvent( {
+		reduxDispatch,
+		purchase,
+		useForAllSubscriptions: submitData.useForAllSubscriptions,
+	} );
 
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
@@ -201,15 +210,20 @@ export async function assignPayPalProcessor(
 function recordFormSubmitEvent( {
 	reduxDispatch,
 	purchase,
+	useForAllSubscriptions,
 }: {
 	reduxDispatch: ReturnType< typeof useDispatch >;
 	purchase?: Purchase | undefined;
+	useForAllSubscriptions?: boolean;
 } ) {
 	reduxDispatch(
 		purchase?.productSlug
 			? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
 					product_slug: purchase.productSlug,
+					use_for_all_subs: String( useForAllSubscriptions ),
 			  } )
-			: recordTracksEvent( 'calypso_add_credit_card_form_submit' )
+			: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
+					use_for_all_subs: String( useForAllSubscriptions ),
+			  } )
 	);
 }
