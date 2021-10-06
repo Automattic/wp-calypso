@@ -139,10 +139,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
 
 	const showFreeCard = useSelector( getShowFreeCard );
-	const showCrmFreeCard =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: true,
-		} ) ?? false;
 
 	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const scrollToComparison = () => {
@@ -236,20 +232,12 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
-					{ showFreeCard && (
-						<JetpackFreeCard
-							fullWidth={ ! showCrmFreeCard }
-							siteId={ siteId }
-							urlQueryArgs={ urlQueryArgs }
-						/>
-					) }
-					{ showCrmFreeCard && (
-						<JetpackCrmFreeCard
-							fullWidth={ ! showFreeCard }
-							siteId={ siteId }
-							duration={ duration }
-						/>
-					) }
+					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+					<JetpackCrmFreeCard
+						fullWidth={ ! showFreeCard }
+						siteId={ siteId }
+						duration={ duration }
+					/>
 				</div>
 			</ProductGridSection>
 			<StoreFooter />
