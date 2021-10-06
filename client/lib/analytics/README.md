@@ -4,7 +4,7 @@ This module includes functionality for interacting with analytics packages.
 
 Turn on debugging in the JavaScript developer console to view calls being made with the analytics module:
 
-1. Past the following into the developer console:
+1. Paste the following into the developer console:
 `localStorage.setItem('debug', 'calypso:analytics:*');`
 2. Refresh the browser window and notice the colour coded events in the developer console.
 
