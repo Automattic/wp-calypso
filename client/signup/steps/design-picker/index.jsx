@@ -190,13 +190,12 @@ class DesignPickerStep extends Component {
 
 	headerText() {
 		const { translate } = this.props;
-
-		return translate( 'Choose a design' );
+		return translate( 'Themes' );
 	}
+
 	subHeaderText() {
 		const { translate } = this.props;
-
-		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
+		return translate( 'Choose a starting theme. You can change it later.' );
 	}
 
 	render() {
@@ -204,6 +203,12 @@ class DesignPickerStep extends Component {
 		const { selectedDesign } = this.state;
 		const headerText = this.headerText();
 		const subHeaderText = this.subHeaderText();
+
+		// When we know the user has choosen to "Write" as their first action
+		// then we'll want to pass this label to `skipLabelText` prop.
+		// We're not there yet, but since we know we'll next this copy soon
+		// we'll commit it so that it gets queued up for translation.
+		this.props.translate( 'Skip and draft first post' );
 
 		if ( selectedDesign ) {
 			const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
