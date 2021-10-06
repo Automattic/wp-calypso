@@ -51,19 +51,8 @@ export async function assignNewCardProcessor(
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: ReturnType< typeof useDispatch >;
 	},
-	submitData: {
-		name?: string;
-		countryCode?: string;
-		postalCode?: string;
-		useForAllSubscriptions?: boolean;
-	}
+	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( {
-		reduxDispatch,
-		purchase,
-		useForAllSubscriptions: submitData.useForAllSubscriptions,
-	} );
-
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is missing name, country, or postal code' );
@@ -76,6 +65,12 @@ export async function assignNewCardProcessor(
 		}
 
 		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+
+		recordFormSubmitEvent( {
+			reduxDispatch,
+			purchase,
+			useForAllSubscriptions,
+		} );
 
 		const formFieldValues = {
 			country: countryCode,
