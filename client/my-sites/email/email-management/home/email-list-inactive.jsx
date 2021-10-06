@@ -31,7 +31,7 @@ class EmailListInactive extends Component {
 								selectedSiteSlug,
 								domain.name,
 								currentRoute,
-								{ context: context }
+								context
 							) }
 						>
 							{ translate( 'Add Email' ) }

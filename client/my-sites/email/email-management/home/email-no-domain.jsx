@@ -4,18 +4,18 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
-import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
 const noop = () => {};
 
-const EmailNoDomain = ( { selectedSite, translate, context } ) => {
+const EmailNoDomain = ( { context, selectedSite, translate} ) => {
 	const hasAvailableDomainCredit = useSelector( ( state ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
 	const trackEvent =
-		context != null ? () => recordInboxUpsellEvent( { product: 'domain', context } ) : noop;
+		context != null ? () => recordInboxUpsellTracksEvent( { product: 'domain', context } ) : noop;
 
 	if ( isFreePlan( selectedSite.plan.product_slug ) ) {
 		return (

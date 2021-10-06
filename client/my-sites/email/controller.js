@@ -73,9 +73,8 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersComparison
-					comparisonContext="email-purchase"
+					comparisonContext={ pageContext.query.context ?? 'email-purchase' }
 					selectedDomainName={ pageContext.params.domain }
-					context={ pageContext.query.context }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

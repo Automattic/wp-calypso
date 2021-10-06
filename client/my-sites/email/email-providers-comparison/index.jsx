@@ -54,12 +54,13 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { recordInboxUpsellEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
+import { INBOX_MANAGEMENT } from 'calypso/my-sites/email/inbox';
 import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -80,7 +81,6 @@ class EmailProvidersComparison extends Component {
 	static propTypes = {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,
-		context: PropTypes.string,
 		comparisonContext: PropTypes.string,
 		headerTitle: PropTypes.string,
 		hideEmailForwardingCard: PropTypes.bool,
@@ -153,13 +153,16 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { context, currentRoute, selectedDomainName, selectedSite } = this.props;
+		const { comparisonContext, currentRoute, selectedDomainName, selectedSite } = this.props;
 
-		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
+		recordTracksEvent( 'calypso_email_providers_add_click', {
+			provider: 'email-forwarding',
+			context: comparisonContext,
+		} );
 
-		if ( context === 'inbox-management' ) {
-			recordInboxUpsellEvent( {
-				context: context,
+		if ( comparisonContext === INBOX_MANAGEMENT ) {
+			recordInboxUpsellTracksEvent( {
+				context: comparisonContext,
 				product: 'forward',
 			} );
 		}
@@ -184,7 +187,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain, context } = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -240,9 +243,9 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( context === 'inbox-management' ) {
-					recordInboxUpsellEvent( {
-						context: context,
+				if ( comparisonContext === INBOX_MANAGEMENT ) {
+					recordInboxUpsellTracksEvent( {
+						context: comparisonContext,
 						product: 'email',
 						provider: TITAN_PROVIDER_NAME,
 					} );
@@ -264,7 +267,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, context } = this.props;
+		const { comparisonContext, domain, gSuiteProduct, hasCartDomain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -305,9 +308,9 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( context === 'inbox-management' ) {
-					recordInboxUpsellEvent( {
-						context: context,
+				if ( comparisonContext === INBOX_MANAGEMENT ) {
+					recordInboxUpsellTracksEvent( {
+						context: comparisonContext,
 						product: 'email',
 						provider: GOOGLE_PROVIDER_NAME,
 					} );
@@ -345,7 +348,7 @@ class EmailProvidersComparison extends Component {
 
 	renderGoogleCard() {
 		const {
-			context,
+			comparisonContext,
 			currencyCode,
 			domain,
 			gSuiteProduct,
@@ -420,7 +423,7 @@ class EmailProvidersComparison extends Component {
 						selectedDomainName={ selectedDomainName }
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
-						context={ context }
+						context={ comparisonContext }
 					>
 						<div className="email-providers-comparison__gsuite-user-list-actions-container">
 							<Button
@@ -465,7 +468,7 @@ class EmailProvidersComparison extends Component {
 
 	renderTitanCard() {
 		const {
-			context,
+			comparisonContext,
 			currencyCode,
 			domain,
 			hasCartDomain,
@@ -525,7 +528,7 @@ class EmailProvidersComparison extends Component {
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
-				context={ context }
+				context={ comparisonContext }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"

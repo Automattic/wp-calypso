@@ -131,15 +131,22 @@ export function emailManagementForwarding( siteName, domainName, relativeTo = nu
  * @param {string} siteName - slug of the current site
  * @param {string} domainName - domain name of the account to add users to
  * @param {string} relativeTo - optional path prefix
+ * @param {string} context - optional path prefix
  * @returns {string} the corresponding url
  */
 export function emailManagementPurchaseNewEmailAccount(
 	siteName,
 	domainName,
 	relativeTo = null,
-	urlParameters = null
+	context = null
 ) {
-	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, urlParameters );
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'purchase',
+		relativeTo,
+		context ? { context } : null
+	);
 }
 
 export function emailManagementEdit(
