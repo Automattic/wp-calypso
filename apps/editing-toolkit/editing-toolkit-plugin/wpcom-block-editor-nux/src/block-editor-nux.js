@@ -55,7 +55,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 		}
 
 		if ( variant === DEFAULT_VARIANT ) {
-			const showDraftPostModal = getQueryArg( window.location.href, 'show_draft_post_modal' ) || 1;
+			const showDraftPostModal = getQueryArg( window.location.href, 'showDraftPostModal' );
 			return (
 				<LocaleProvider localeSlug={ window.wpcomBlockEditorNuxLocale ?? i18nDefaultLocaleSlug }>
 					{ showDraftPostModal ? <DraftPostModal /> : <LaunchWpcomWelcomeTour /> }

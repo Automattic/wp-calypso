@@ -1,4 +1,4 @@
-import { Modal, Button, Flex, FlexItem } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { doAction } from '@wordpress/hooks';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
@@ -11,9 +11,9 @@ const DraftPostModal = () => {
 	const closeModal = () => setIsOpen( false );
 	const closeEditor = () => doAction( 'a8c.wpcom-block-editor.closeEditor' );
 
-	React.useEffect( () => {
-		window.sessionStorage.removeItem( 'wpcom_signup_complete_show_draft_post_modal' );
-	}, [] );
+	if ( ! isOpen ) {
+		return null;
+	}
 
 	return (
 		<Modal
@@ -21,9 +21,11 @@ const DraftPostModal = () => {
 			className="wpcom-block-editor-draft-post-modal"
 			onRequestClose={ closeModal }
 		>
-			<img src={ draftPostImage } alt={ __( 'Draft post', 'full-site-editing' ) } />
+			<div className="wpcom-block-editor-draft-post-modal__image-container">
+				<img src={ draftPostImage } alt={ __( 'Write post', 'full-site-editing' ) } />
+			</div>
 			<h1 className="wpcom-block-editor-draft-post-modal__title">
-				{ __( 'Draft your first post', 'full-site-editing' ) }
+				{ __( 'Write your first post', 'full-site-editing' ) }
 			</h1>
 			<p className="wpcom-block-editor-draft-post-modal__description">
 				{ __(
@@ -31,18 +33,14 @@ const DraftPostModal = () => {
 					'full-site-editing'
 				) }
 			</p>
-			<Flex className="wpcom-block-editor-draft-post-modal__buttons" justify="center" gap={ 4 }>
-				<FlexItem>
-					<Button variant="primary" onClick={ closeModal }>
-						{ __( 'Start writing', 'full-site-editing' ) }
-					</Button>
-				</FlexItem>
-				<FlexItem>
-					<Button variant="secondary" onClick={ closeEditor }>
-						{ __( "I'm not ready", 'full-site-editing' ) }
-					</Button>
-				</FlexItem>
-			</Flex>
+			<div className="wpcom-block-editor-draft-post-modal__buttons" justify="center">
+				<Button variant="primary" onClick={ closeModal }>
+					{ __( 'Start writing', 'full-site-editing' ) }
+				</Button>
+				<Button variant="secondary" onClick={ closeEditor }>
+					{ __( "I'm not ready", 'full-site-editing' ) }
+				</Button>
+			</div>
 		</Modal>
 	);
 };
