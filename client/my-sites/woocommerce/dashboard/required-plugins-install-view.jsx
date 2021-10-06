@@ -4,6 +4,8 @@ import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+// import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
+import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -509,22 +511,23 @@ class RequiredPluginsInstallView extends Component {
 
 	renderAtomicConfirmScreen = () => {
 		const { translate } = this.props;
+
+		const warnings = [
+			{
+				description: 'warning description',
+				name: 'warning name',
+				supportUrl: 'warning support url',
+			},
+		];
+
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__setup-confirm">
-					<SetupHeader
-						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-						imageWidth={ 160 }
-						title={ translate( 'Have something to sell?' ) }
-						subtitle={ translate(
-							'You can sell your products right on your site and ship them to customers in a snap!'
-						) }
-					>
-						<Button onClick={ this.startSetup } primary>
-							{ translate( 'Set up my store!' ) }
-						</Button>
-					</SetupHeader>
+					<WarningList warnings={ warnings } context="plugins" translate={ translate } />
+					<Button onClick={ this.startAT } primary>
+						{ translate( 'Continue' ) }
+					</Button>
 				</div>
 			</div>
 		);
