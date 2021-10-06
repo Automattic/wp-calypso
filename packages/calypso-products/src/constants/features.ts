@@ -170,7 +170,7 @@ export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS = 'jetpack-real-time-cloud-backups';
-export const FEATURE_JETPACK_20GB_BACKUP_STORAGE = 'jetpack-20gb-backup-storage';
+export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
 export const FEATURE_JETPACK_1TB_BACKUP_STORAGE = 'jetpack-1tb-backup-storage';
 export const FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE = 'jetpack-unlimited-backup-storage';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_30_DAYS = 'jetpack-one-click-restores-30-days';
