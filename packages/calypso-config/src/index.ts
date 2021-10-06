@@ -80,11 +80,10 @@ if (
 	const match =
 		document.location.search && document.location.search.match( /[?&]flags=([^&]+)(&|$)/ );
 	if ( match ) {
-		applyFlags( match[ 1 ], 'URL' );
+		applyFlags( decodeURIComponent( match[ 1 ] ), 'URL' );
 	}
 }
 const configApi = createConfig( configData );
-
 export default configApi;
 export const isEnabled = configApi.isEnabled;
 export const enabledFeatures = configApi.enabledFeatures;
