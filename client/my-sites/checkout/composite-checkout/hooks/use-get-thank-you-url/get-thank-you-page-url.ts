@@ -207,8 +207,9 @@ export default function getThankYouPageUrl( {
 
 	// Domain only flow
 	if ( cart?.create_new_blog ) {
-		const newBlogUrl = urlFromCookie || fallbackUrl;
-		const newBlogReceiptUrl = `${ newBlogUrl }/${ pendingOrReceiptId }`;
+		const newBlogReceiptUrl = urlFromCookie
+			? `${ urlFromCookie }/${ pendingOrReceiptId }`
+			: fallbackUrl;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
 		return newBlogReceiptUrl;
 	}
