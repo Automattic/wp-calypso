@@ -172,7 +172,6 @@ export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
 export const FEATURE_JETPACK_1TB_BACKUP_STORAGE = 'jetpack-1tb-backup-storage';
 export const FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG = 'jetpack-30-day-archive-activity-log';
-export const FEATURE_JETPACK_COMMENT_FORM_SPAM_PROTECTION = 'jetpack-comment-form-spam-protection';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-one-click-restores-1-year';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED = 'jetpack-one-click-restores-unlimited';
 export const FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS = 'jetpack-real-time-cloud-backups';
