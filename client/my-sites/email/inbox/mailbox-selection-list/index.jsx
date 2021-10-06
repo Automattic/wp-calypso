@@ -21,6 +21,7 @@ import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
@@ -28,7 +29,6 @@ import ProgressLine from './progress-line';
  * Import styles
  */
 import './style.scss';
-import { emailManagement } from "calypso/my-sites/email/paths";
 
 const getExternalUrl = ( mailbox ) => {
 	if ( isTitanMailAccount( mailbox ) ) {

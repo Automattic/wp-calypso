@@ -9,15 +9,19 @@ import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
 const noop = () => {};
 
-const EmailNoDomain = ( { context, selectedSite, translate} ) => {
+const EmailNoDomain = ( { context, selectedSite, translate } ) => {
 	const hasAvailableDomainCredit = useSelector( ( state ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
-	const trackEvent =
-		context != null ? () => recordInboxUpsellTracksEvent( { product: 'domain', context } ) : noop;
+	const isFreePlanProduct = isFreePlan( selectedSite.plan.product_slug );
 
-	if ( isFreePlan( selectedSite.plan.product_slug ) ) {
+	const trackEvent =
+		context != null
+			? () => recordInboxUpsellTracksEvent( { product: isFreePlanProduct ? 'plan' : 'domain', context } )
+			: noop;
+
+	if ( isFreePlanProduct ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Upgrade', { context: 'verb' } ) }
