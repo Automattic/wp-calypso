@@ -1,3 +1,8 @@
+import {
+	getJetpackStorageAmountDisplays,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { TIER_1_SLUGS, TIER_2_SLUGS } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -7,18 +12,21 @@ import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 const useGetTier1UpgradeProduct = () => {
 	const translate = useTranslate();
 
+	// Security and Backup share the same per-tier storage limits
+	const storageAmount = getJetpackStorageAmountDisplays()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ];
+
 	return useCallback(
 		( slug: string ): SelectorProduct =>
 			( {
 				...slugToSelectorProduct( slug ),
-				displayName: translate( '20GB' ),
+				displayName: storageAmount,
 				subheader: translate( 'of backup storage' ),
 				buttonLabel: translate( 'Upgrade storage' ),
 				// description: <the default description of the product being upgraded>,
 				features: {
 					items: [
 						{
-							text: translate( '20GB backup storage' ),
+							text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
 							isHighlighted: true,
 						},
 						{
@@ -38,27 +46,31 @@ const useGetTier1UpgradeProduct = () => {
 					],
 				},
 			} as SelectorProduct ),
-		[ translate ]
+		[ storageAmount, translate ]
 	);
 };
 
 const useGetTier2UpgradeProduct = () => {
 	const translate = useTranslate();
 
+	// Security and Backup share the same per-tier storage limits
+	const storageAmount = getJetpackStorageAmountDisplays()[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ];
+
 	return useCallback(
 		( slug: string ): SelectorProduct =>
 			( {
 				...slugToSelectorProduct( slug ),
-				displayName: translate( '1TB' ),
+				displayName: storageAmount,
 				subheader: translate( 'of backup storage' ),
 				buttonLabel: translate( 'Upgrade storage' ),
 				description: translate(
-					'Go back in time and recover all your information for up to a year, with 1TB storage space.'
+					'Go back in time and recover all your information for up to a year, with %(storageAmount)s storage space.',
+					{ args: { storageAmount } }
 				),
 				features: {
 					items: [
 						{
-							text: translate( '1TB backup storage' ),
+							text: translate( '%(storageAmount)s backup storage', { args: { storageAmount } } ),
 							isHighlighted: true,
 							isDifferentiator: true,
 						},
@@ -81,7 +93,7 @@ const useGetTier2UpgradeProduct = () => {
 					],
 				},
 			} as SelectorProduct ),
-		[ translate ]
+		[ storageAmount, translate ]
 	);
 };
 
