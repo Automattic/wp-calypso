@@ -465,14 +465,18 @@ class RequiredPluginsInstallView extends Component {
 
 	startSetup = () => {
 		// todo before starting the  confirm wpcomstaging url change with AT confirmation interstitial
-
-		const { hasPendingAT } = this.props;
+		const { hasPendingAT, isAtomic } = this.props;
 
 		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 			action: 'initial-setup',
 		} );
 
-		if ( ! hasPendingAT ) {
+		if ( ! isAtomic ) {
+			this.setState( {
+				engineState: 'AT_CONFIRM',
+			} );
+			this.setTimeoutTimer( transferStatusesToTimes[ transferStates.COMPLETE_AT ] );
+		} else if ( ! hasPendingAT ) {
 			this.setState( {
 				engineState: 'INITIALIZING',
 			} );
@@ -481,6 +485,29 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	renderConfirmScreen = () => {
+		const { translate } = this.props;
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<SetupNotices />
+				<div className="card dashboard__setup-confirm">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'Have something to sell?' ) }
+						subtitle={ translate(
+							'You can sell your products right on your site and ship them to customers in a snap!'
+						) }
+					>
+						<Button onClick={ this.startSetup } primary>
+							{ translate( 'Set up my store!' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	};
+
+	renderAtomicConfirmScreen = () => {
 		const { translate } = this.props;
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
@@ -596,11 +623,15 @@ class RequiredPluginsInstallView extends Component {
 	}
 
 	render() {
-		const { hasPendingAT, fixMode, translate } = this.props;
+		const { hasPendingAT, isAtomic, fixMode, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
+		}
+
+		if ( ! isAtomic && 'AT_CONFIRM' === engineState ) {
+			return this.renderAtomicConfirmScreen();
 		}
 
 		if ( 'DONEFAILURE' === engineState ) {
