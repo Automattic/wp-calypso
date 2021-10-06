@@ -3,6 +3,7 @@ import Free from './free';
 import IncludedInPlan from './included-in-plan';
 import Owned from './owned';
 import Paid from './paid';
+import Superseded from './superseded';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { Moment } from 'moment';
@@ -21,6 +22,7 @@ type OwnProps = {
 	isDeprecated?: boolean;
 	isFree?: boolean;
 	isIncludedInPlan?: boolean;
+	isSuperseded?: boolean;
 	isOwned?: boolean;
 	originalPrice: number;
 	productName: TranslateResult;
@@ -37,6 +39,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	isDeprecated,
 	isFree,
 	isIncludedInPlan,
+	isSuperseded,
 	isOwned,
 	hideSavingLabel,
 	originalPrice,
@@ -57,6 +60,10 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 
 	if ( isFree ) {
 		return <Free belowPriceText={ belowPriceText } />;
+	}
+
+	if ( isSuperseded ) {
+		return <Superseded />;
 	}
 
 	return (

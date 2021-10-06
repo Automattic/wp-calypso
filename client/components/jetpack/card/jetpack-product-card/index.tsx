@@ -29,6 +29,7 @@ type OwnProps = {
 	isFeatured?: boolean;
 	isOwned?: boolean;
 	isIncludedInPlan?: boolean;
+	isSuperseded?: boolean;
 	isDeprecated?: boolean;
 	isAligned?: boolean;
 	isDisabled?: boolean;
@@ -63,6 +64,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	isFeatured,
 	isOwned,
 	isIncludedInPlan,
+	isSuperseded,
 	isDeprecated,
 	isAligned,
 	isDisabled,
@@ -121,6 +123,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
 					isFree={ item.isFree }
+					isSuperseded={ isSuperseded }
 					discountedPrice={ discountedPrice }
 					currencyCode={ item.displayCurrency }
 					originalPrice={ originalPrice }

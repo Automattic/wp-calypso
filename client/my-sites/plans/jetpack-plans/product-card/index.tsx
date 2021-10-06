@@ -11,6 +11,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
@@ -33,6 +34,7 @@ import type {
 	SelectorProduct,
 	SiteProduct,
 } from '../types';
+import type { JetpackPurchasableItemSlug } from 'calypso/../packages/calypso-products';
 
 interface ProductCardProps {
 	item: SelectorProduct;
@@ -125,6 +127,18 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	}, [ item.productSlug ] );
 
 	const isDeprecated = Boolean( item.legacy );
+	const isIncludedInPlan = ! isOwned && isItemPlanFeature;
+	const isSuperseded = !! (
+		! isDeprecated &&
+		! isOwned &&
+		! isIncludedInPlan &&
+		sitePlan &&
+		item &&
+		isSupersedingJetpackItem(
+			sitePlan.product_slug as JetpackPurchasableItemSlug,
+			item.productSlug as JetpackPurchasableItemSlug
+		)
+	);
 
 	// Disable the product card if it's an incompatible multisite product or CRM monthly product
 	// (CRM is not offered with "Monthly" billing. Only Yearly.)
@@ -151,9 +165,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				isOwned,
 				isUpgradeableToYearly,
 				isDeprecated,
+				isSuperseded,
 				currentPlan: sitePlan,
 			} ) }
-			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
+			buttonPrimary={ ! ( isOwned || isItemPlanFeature || isSuperseded ) }
 			onButtonClick={ () => {
 				onClick( item, isUpgradeableToYearly, purchase );
 			} }
@@ -163,8 +178,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
-			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
+			isIncludedInPlan={ isIncludedInPlan }
 			isDeprecated={ isDeprecated }
+			isSuperseded={ isSuperseded }
 			isAligned={ isAligned }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
 			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
