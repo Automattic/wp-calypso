@@ -77,7 +77,7 @@ function DIFMDesignPickerStep( props ) {
 							showExternal={ false }
 							showSEO={ false }
 							onClose={ () => setSitePreviewURL( null ) }
-							previewUrl={ sitePreviewURL + '?demo=true&iframe=true&theme_preview=true' }
+							previewUrl={ sitePreviewURL + '?demo=true&iframe=true&theme_preview=true&hide_banners=true' }
 							externalUrl={ sitePreviewURL }
 						></WebPreview>
 					) }
