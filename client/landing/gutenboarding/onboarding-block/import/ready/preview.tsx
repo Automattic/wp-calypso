@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 interface Props {
 	website: string;
 }

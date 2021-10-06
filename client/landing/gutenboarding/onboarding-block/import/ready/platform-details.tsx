@@ -5,6 +5,8 @@ import { Icon, close, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 interface DetailsProps {
 	platform: string;
 	onClose: () => void;
