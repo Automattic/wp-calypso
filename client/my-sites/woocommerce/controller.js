@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
+import isEligibleForWooOnPlans from 'calypso/state/selectors/is-eligible-for-woo-on-plans';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getSelectedSiteWithFallback,
@@ -16,11 +17,13 @@ export function checkPrerequisites( context, next ) {
 	const siteId = site ? site.ID : null;
 
 	// Show the woo install page on all plans when woop flag is active
-	if ( ! isEnabled( 'woop' ) ) {
-		// Only allow AT sites to access.
-		if ( ! isAtomicSite( state, siteId ) ) {
+	if ( isEnabled( 'woop' ) ) {
+		if ( ! isEligibleForWooOnPlans( state, siteId ) ) {
 			return page.redirect( `/home/${ site.slug }` );
 		}
+	} else if ( ! isAtomicSite( state, siteId ) ) {
+		// Only allow AT sites to access.
+		return page.redirect( `/home/${ site.slug }` );
 	}
 
 	// WooCommerce plugin is already installed, redirect to Woo.
