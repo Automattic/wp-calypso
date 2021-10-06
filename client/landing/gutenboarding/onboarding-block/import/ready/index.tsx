@@ -26,11 +26,14 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 					<SubTitle>
 						{ createInterpolateElement(
 							sprintf(
+								/* translators: the website could be any domain (eg: "yourname.com") that is hosted by a platform (eg: Wix, Squarespace, Blogger, etc.) */
 								__(
-									'It looks like <strong>%1$s</strong> is hosted by %2$s. To move your existing content to your newly created WordPress.com site, try our Wix importer.'
+									'It looks like <strong>%(website)s</strong> is hosted by %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 								),
-								website,
-								platform
+								{
+									website,
+									platform,
+								}
 							),
 							{ strong: createElement( 'strong' ) }
 						) }
@@ -96,10 +99,13 @@ const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
 					<Title>{ __( 'Your content is ready for its new home' ) }</Title>
 					<SubTitle>
 						{ sprintf(
+							/* translators: platform name (eg: Wix, Squarespace, Blogger, etc.) */
 							__(
-								'To move your existing %1$s hosted content to your newly created WordPress.com site, try our %1$s importer.'
+								'To move your existing %(platform)s hosted content to your newly created WordPress.com site, try our %(platform)s importer.'
 							),
-							platform
+							{
+								platform,
+							}
 						) }
 					</SubTitle>
 
