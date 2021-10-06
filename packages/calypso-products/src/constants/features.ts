@@ -169,17 +169,17 @@ export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
 // Jetpack tiered product features
-export const FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS = 'jetpack-real-time-cloud-backups';
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
 export const FEATURE_JETPACK_1TB_BACKUP_STORAGE = 'jetpack-1tb-backup-storage';
-export const FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE = 'jetpack-unlimited-backup-storage';
 export const FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG = 'jetpack-30-day-archive-activity-log';
 export const FEATURE_JETPACK_COMMENT_FORM_SPAM_PROTECTION = 'jetpack-comment-form-spam-protection';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_1_YEAR = 'jetpack-one-click-restores-1-year';
 export const FEATURE_JETPACK_ONE_CLICK_RESTORES_UNLIMITED = 'jetpack-one-click-restores-unlimited';
+export const FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS = 'jetpack-real-time-cloud-backups';
 export const FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING = 'jetpack-real-time-malware-scanning';
 export const FEATURE_JETPACK_PRODUCT_BACKUP = 'jetpack-product-backup';
 export const FEATURE_JETPACK_PRODUCT_SECURITY = 'jetpack-product-security';
+export const FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE = 'jetpack-unlimited-backup-storage';
 
 // P2 project features
 export const FEATURE_P2_3GB_STORAGE = 'p2-3gb-storage';

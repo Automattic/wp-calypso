@@ -1359,10 +1359,6 @@ export const FEATURES_LIST = {
 	},
 
 	/* START - Jetpack tiered product-specific features */
-	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
-		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
-		getTitle: () => i18n.translate( 'Real-time cloud backups' ),
-	},
 	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 		getTitle: () => i18n.translate( '10GB of backup storage' ),
@@ -1370,10 +1366,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_JETPACK_1TB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 		getTitle: () => i18n.translate( '1TB of backup storage' ),
-	},
-	[ FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE ]: {
-		getSlug: () => FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
-		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 	[ FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG ]: {
 		getSlug: () => FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
@@ -1401,10 +1393,18 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Security features' ),
 		isHighlighted: () => true,
 	},
+	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
+		getTitle: () => i18n.translate( 'Real-time cloud backups' ),
+	},
 	[ FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING ]: {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
 		isHighlighted: () => true,
+	},
+	[ FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_UNLIMITED_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 	/* END - Jetpack tiered product-specific features */
 };
