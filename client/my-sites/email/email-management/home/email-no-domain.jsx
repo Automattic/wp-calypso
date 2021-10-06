@@ -18,7 +18,11 @@ const EmailNoDomain = ( { context, selectedSite, translate } ) => {
 
 	const trackEvent =
 		context != null
-			? () => recordInboxUpsellTracksEvent( { product: isFreePlanProduct ? 'plan' : 'domain', context } )
+			? () =>
+					recordInboxUpsellTracksEvent( {
+						product: isFreePlanProduct ? 'plan' : 'domain',
+						context,
+					} )
 			: noop;
 
 	if ( isFreePlanProduct ) {
