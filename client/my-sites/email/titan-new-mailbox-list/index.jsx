@@ -13,7 +13,6 @@ import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
 
 import './style.scss';
 
-
 const noop = () => {};
 
 const TitanNewMailboxList = ( {
