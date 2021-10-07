@@ -26,23 +26,28 @@ class PressThis extends Component {
 
 		return (
 			<div className="press-this">
-				<Card className="site-settings">
+				<Card className="press-this__card site-settings">
 					<p>
 						{ translate(
-							'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.'
+							'{{strong}}Press This{{/strong}} allows you to copy text, images, and video from any web page and add them to a new post on your site, along with an automatic citation.',
+							{ components: { strong: <strong /> } }
 						) }
 					</p>
 					<p>
-						{ translate(
-							'Use Press This to clip text, images and videos from any web page. ' +
-								'Then edit and add more straight from Press This before you save or publish it in a post on your site.'
-						) }
+						<strong>{ translate( 'How to use Press This' ) }</strong>
 					</p>
 					<p>
-						{ translate(
-							'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites ' +
-								'for a posting shortcut.'
-						) }
+						<ul>
+							<li>
+								{ translate(
+									'Drag and drop the "Press This" button below to your bookmarks bar, or right-click the button to copy the link, then add the link to your favorites.'
+								) }
+							</li>
+							<li>
+								{ translate( "Highlight the text or item you'd like to copy into a new post." ) }
+							</li>
+							<li>{ translate( 'Click on the "Press This" bookmarklet / favorite.' ) }</li>
+						</ul>
 					</p>
 					{ site && (
 						<p className="press-this__link-container">
