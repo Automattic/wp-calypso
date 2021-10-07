@@ -5,10 +5,13 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import filesize from 'filesize';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -162,6 +165,15 @@ class MediaSettingsPerformance extends Component {
 const checkForJetpackVideoPressProduct = ( purchase ) =>
 	purchase.active && isJetpackVideoPress( purchase );
 
+const checkForLegacySecurityDailyPlan = ( purchase ) =>
+	purchase.active &&
+	( PLAN_JETPACK_SECURITY_DAILY_MONTHLY === purchase.productSlug ||
+		PLAN_JETPACK_SECURITY_DAILY === purchase.productSlug ) &&
+	moment( purchase.subscribedDate ).isBefore( moment.utc( '2021-10-05' ) );
+
+const checkForActiveJetpackVideoPressPurchases = ( purchase ) =>
+	checkForJetpackVideoPressProduct( purchase ) || checkForLegacySecurityDailyPlan( purchase );
+
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
@@ -177,7 +189,9 @@ export default connect( ( state ) => {
 		isVideoPressFreeTier:
 			isJetpackSite( state, selectedSiteId ) &&
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
-			! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) &&
+			! getSitePurchases( state, selectedSiteId ).find(
+				checkForActiveJetpackVideoPressPurchases
+			) &&
 			// These features are used in current plans that include VP
 			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) &&
 			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) &&
