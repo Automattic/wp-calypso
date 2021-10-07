@@ -16,7 +16,8 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"build:wpcom-block-editor": "calypso-build --env WP",
+		"build:wpcom-block-editor-no-minify": "NODE_ENV=development calypso-build",
+		"build:wpcom-block-editor": "calypso-build",
 		"clean": "npx rimraf dist",
 		"dev": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/wpcom-block-editor",
 		"build": "NODE_ENV=production yarn dev"

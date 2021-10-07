@@ -28,7 +28,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @returns {object}                                webpack config
  */
 function getWebpackConfig(
-	env = {},
+	env = { WP: true },
 	{
 		entry = {
 			'default.editor': path.join( __dirname, 'src', 'default', 'editor' ),

@@ -1,6 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
-/* eslint-disable no-console */
-/* eslint-disable no-process-exit */
 import { exec } from 'child_process';
 import { EventEmitter } from 'events';
 import chokidar from 'chokidar';
@@ -34,6 +31,7 @@ const { argv } = yargs( hideBin( process.argv ) ).options( {
 		coerce: ( distPath ) => ( distPath ? `${ process.cwd() }/${ distPath }/` : undefined ),
 	},
 	verbose: { type: 'boolean', default: false, alias: 'v' },
+	watch: { type: 'boolean', default: false, alias: 'w' },
 } );
 const VERBOSE = argv.versbose;
 
@@ -49,14 +47,12 @@ try {
 	console.error( e.message );
 }
 
-async function runBuilder( { sync, localPath, remotePath } ) {
+async function runBuilder( args ) {
+	const { sync, localPath, remotePath, watch } = args;
 	const shouldWatch = process.env.NODE_ENV === 'development';
 
 	if ( VERBOSE ) {
-		console.log( `Watch mode: ${ shouldWatch ? 'yes' : 'no' }\nSync mode: ${
-			sync ? 'yes' : 'no'
-		}\nLocal path: ${ localPath }\nRemote path: ${ remotePath }
-		` );
+		console.log( JSON.stringify( args ) );
 	}
 
 	const runOpts = {
@@ -70,7 +66,7 @@ async function runBuilder( { sync, localPath, remotePath } ) {
 
 	console.log( 'Starting webpack...' );
 	return Promise.all( [
-		runAll( [ 'build:*' ], runOpts ).then( () => {
+		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
 			if ( ! shouldWatch && sync ) {
 				// In non-watch + sync mode, we sync only once after the build has finished.
