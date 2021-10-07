@@ -118,7 +118,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				planHasFeature( item.productSlug, productSlug )
 			).length;
 		}
-		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].includes( item.productSlug );
+		return ! ( [
+			...JETPACK_BACKUP_PRODUCTS,
+			...JETPACK_SCAN_PRODUCTS,
+		] as ReadonlyArray< string > ).includes( item.productSlug );
 	}, [ item.productSlug ] );
 
 	const isDeprecated = Boolean( item.legacy );
@@ -138,15 +141,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 
 	return (
 		<JetpackProductCard
-			productSlug={ item.productSlug }
-			productName={ item.displayName }
-			subheader={ item.subheader }
-			headingLevel={ 3 }
+			item={ item }
+			headerLevel={ 3 }
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
-			currencyCode={ item.displayCurrency }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
-			billingTerm={ item.displayTerm || item.term }
 			buttonLabel={ productButtonLabel( {
 				product: item,
 				isOwned,
@@ -165,12 +164,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }
 			isIncludedInPlan={ ! isOwned && isItemPlanFeature }
-			isFree={ item.isFree }
 			isDeprecated={ isDeprecated }
 			isAligned={ isAligned }
-			features={ item.features }
 			displayFrom={ ! siteId && priceTierList.length > 0 }
-			belowPriceText={ item.belowPriceText }
 			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
 			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
 			isDisabled={ isDisabled }

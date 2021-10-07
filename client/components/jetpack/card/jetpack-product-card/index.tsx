@@ -1,39 +1,32 @@
-import { Button, ProductIcon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
-import * as React from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import starIcon from './assets/star.svg';
 import DisplayPrice from './display-price';
-import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
+import JetpackProductCardFeatures from './features';
 import type {
-	Duration,
 	ScrollCardIntoViewCallback,
+	SelectorProduct,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
 
 import './style.scss';
 
 type OwnProps = {
-	iconSlug?: string;
-	productSlug: string;
-	productName: TranslateResult;
-	subheader?: TranslateResult;
-	headingLevel?: number;
+	item: SelectorProduct;
+	// Disallow h6, so it can be used for a sub-header if needed
+	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
-	currencyCode?: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
-	belowPriceText?: TranslateResult;
-	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
 	onButtonClick: React.MouseEventHandler;
 	buttonURL?: string;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
-	isFree?: boolean;
 	isOwned?: boolean;
 	isIncludedInPlan?: boolean;
 	isDeprecated?: boolean;
@@ -48,19 +41,20 @@ type OwnProps = {
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 };
 
-export type Props = OwnProps & Partial< FeaturesProps >;
+type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type HeaderProps = {
+	className?: string;
+	level: HeaderLevel;
+};
+const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) =>
+	createElement( `h${ level }`, headerProps, children );
 
-const JetpackProductCard: React.FC< Props > = ( {
-	iconSlug,
-	productSlug,
-	productName,
-	subheader,
-	headingLevel,
+const JetpackProductCard: React.FC< OwnProps > = ( {
+	item,
+	headerLevel,
 	description,
-	currencyCode,
 	originalPrice,
 	discountedPrice,
-	billingTerm,
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
@@ -69,32 +63,25 @@ const JetpackProductCard: React.FC< Props > = ( {
 	isFeatured,
 	isOwned,
 	isIncludedInPlan,
-	isFree,
 	isDeprecated,
 	isAligned,
-	features,
 	isDisabled,
 	disabledMessage,
 	displayFrom,
-	belowPriceText,
 	tooltipText,
 	featuredLabel,
 	hideSavingLabel,
 	aboveButtonText = null,
 	scrollCardIntoView,
-}: Props ) => {
+} ) => {
 	const translate = useTranslate();
-	const parsedHeadingLevel = Number.isFinite( headingLevel )
-		? Math.min( Math.max( Math.floor( headingLevel as number ), 1 ), 6 )
-		: 2;
-	const parsedSubheadingLevel = Math.min( parsedHeadingLevel + 1, 6 );
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
-			scrollCardIntoView && scrollCardIntoView( anchorRef.current, productSlug );
+			scrollCardIntoView && scrollCardIntoView( anchorRef.current, item.productSlug );
 		}
 	}, [ originalPrice ] );
 
@@ -106,9 +93,8 @@ const JetpackProductCard: React.FC< Props > = ( {
 				'is-deprecated': isDeprecated,
 				'is-aligned': isAligned,
 				'is-featured': isFeatured,
-				'without-icon': ! iconSlug,
 			} ) }
-			data-e2e-product-slug={ productSlug }
+			data-e2e-product-slug={ item.productSlug }
 		>
 			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
@@ -118,33 +104,32 @@ const JetpackProductCard: React.FC< Props > = ( {
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				{ iconSlug && <ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } /> }
-				{ createElement(
-					`h${ parsedHeadingLevel }`,
-					{ className: 'jetpack-product-card__product-name' },
-					<>{ productName }</>
+				<Header level={ headerLevel } className="jetpack-product-card__product-name">
+					{ item.displayName }
+				</Header>
+				{ item.subheader && (
+					<Header
+						level={ ( headerLevel + 1 ) as HeaderLevel }
+						className="jetpack-product-card__product-subheader"
+					>
+						{ item.subheader }
+					</Header>
 				) }
-				{ subheader &&
-					createElement(
-						`h${ parsedSubheadingLevel }`,
-						{ className: 'jetpack-product-card__product-subheader' },
-						<>{ subheader }</>
-					) }
 
 				<DisplayPrice
 					isDeprecated={ isDeprecated }
 					isOwned={ isOwned }
 					isIncludedInPlan={ isIncludedInPlan }
-					isFree={ isFree }
+					isFree={ item.isFree }
 					discountedPrice={ discountedPrice }
-					currencyCode={ currencyCode }
+					currencyCode={ item.displayCurrency }
 					originalPrice={ originalPrice }
 					displayFrom={ displayFrom }
-					belowPriceText={ belowPriceText }
+					belowPriceText={ item.belowPriceText }
 					expiryDate={ expiryDate }
-					billingTerm={ billingTerm }
+					billingTerm={ item.displayTerm || item.term }
 					tooltipText={ tooltipText }
-					productName={ productName }
+					productName={ item.displayName }
 					hideSavingLabel={ hideSavingLabel }
 				/>
 
@@ -179,8 +164,8 @@ const JetpackProductCard: React.FC< Props > = ( {
 					) ) }
 
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
-				{ features && features.items.length > 0 && (
-					<JetpackProductCardFeatures features={ features } />
+				{ item.features && item.features.items.length > 0 && (
+					<JetpackProductCardFeatures features={ item.features } />
 				) }
 			</div>
 		</div>

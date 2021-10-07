@@ -80,7 +80,7 @@
 }
 
 .jetpack-product-card__product-name {
-	margin: 6px 0 12px;
+	margin: 12px 0 20px;
 
 	color: var( --studio-gray-100 );
 
@@ -88,10 +88,6 @@
 	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1.2;
-
-	.without-icon & {
-		margin: 12px 0 20px;
-	}
 
 	em {
 		font-style: normal;
@@ -103,7 +99,7 @@
 }
 
 .jetpack-product-card__product-subheader {
-	margin: 6px 0 12px;
+	margin: 12px 0 20px;
 
 	color: var( --studio-gray-100 );
 
@@ -111,10 +107,6 @@
 	font-size: 1rem;
 	font-weight: 700;
 	line-height: 1.2;
-
-	.without-icon & {
-		margin: 12px 0 20px;
-	}
 
 	em {
 		font-style: normal;
