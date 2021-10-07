@@ -10,8 +10,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import DemoTile from 'calypso/signup/steps/difm-design-picker/demo-tile';
 import VerticalTemplateMapping from './vertical-template-mapping';
 
-import './style.scss';
-
 const Container = styled.div`
 	@media ( max-width: 960px ) {
 		margin: 0 20px;
