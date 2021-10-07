@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import { ReadyStep, ReadyNotStep, ReadyNoUrlStep } from './ready';
+import ScanningStep from './scanning';
 import './style.scss';
 
 function useQuery() {
@@ -27,6 +28,7 @@ const ImportSite: React.FunctionComponent = () => {
 			{ query.get( 'step' ) === 'ready-not' && (
 				<ReadyNotStep platform={ data.platform } website={ data.website } />
 			) }
+			{ query.get( 'step' ) === 'scanning' && <ScanningStep /> }
 		</div>
 	);
 };

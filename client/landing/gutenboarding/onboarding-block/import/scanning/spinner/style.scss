@@ -1,0 +1,106 @@
+.spinner__fancy {
+	width: 150px;
+	min-height: 210px;
+	margin: 20px auto;
+
+	& > div {
+		margin: auto;
+		transition: width 0.4s, height 0.4s;
+	}
+
+	/**
+	 * Modifiers
+	 */
+	.spinner__rotate-45 {
+		transform: rotate( 45deg );
+	}
+	.spinner__rotate-90 {
+		transform: rotate( 90deg );
+	}
+	.spinner__rotate-135 {
+		transform: rotate( 135deg );
+	}
+	.spinner__rotate-180 {
+		transform: rotate( 180deg );
+	}
+	.spinner__rotate-225 {
+		transform: rotate( 225deg );
+	}
+	.spinner__rotate-270 {
+		transform: rotate( 270deg );
+	}
+	.spinner__rotate-315 {
+		transform: rotate( 315deg );
+	}
+
+	/**
+	 * Shapes
+	 */
+	.spinner__shape-hide {
+		width: 0 !important;
+		height: 0 !important;
+	}
+	.spinner__shape-circle {
+		border-radius: 50%; /* stylelint-disable-line */
+		width: 40px;
+		height: 40px;
+	}
+	.spinner__shape-triangle {
+		width: 0;
+		height: 0;
+		border-left: 50px solid transparent;
+		border-right: 50px solid transparent;
+		border-bottom: 80px solid;
+		border-top: none;
+	}
+	.spinner__shape-rectangle {
+		width: 120px;
+		height: 70px;
+	}
+	.spinner__shape-semicircle {
+		width: 150px;
+		height: 80px;
+		border-top-left-radius: 110px; /* stylelint-disable-line */
+		border-top-right-radius: 110px; /* stylelint-disable-line */
+		border-bottom: 0;
+	}
+	.spinner__shape-semicircle-2 {
+		@extend .spinner__shape-semicircle;
+		transform: rotate( 180deg );
+	}
+	.spinner__shape-square {
+		width: 40px;
+		height: 40px;
+	}
+	.spinner__shape-rhombus {
+		width: 50px;
+		height: 50px;
+		position: relative;
+		top: 10px;
+		margin-bottom: 20px;
+		transform: rotate( 45deg );
+	}
+
+	/**
+	 * Colors
+	 */
+	.spinner__color-1 {
+		border-color: var( --studio-gray-5 );
+		background-color: var( --studio-gray-5 );
+	}
+	.spinner__color-2 {
+		background: var( --studio-gray-20 );
+		border-color: var( --studio-gray-20 );
+	}
+	.spinner__color-3 {
+		background: var( --studio-gray-50 );
+		border-color: var( --studio-gray-50 );
+	}
+}
+
+@keyframes spinnerHide {
+	to {
+		width: 0;
+		height: 0;
+	}
+}
