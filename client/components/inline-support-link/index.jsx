@@ -15,13 +15,13 @@ import {
 } from 'calypso/state/analytics/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import contextLinks from './context-links';
 
 import './style.scss';
 
 class InlineSupportLink extends Component {
 	state = {
 		shouldLazyLoadAlternates: false,
+		supportDataFromContext: undefined,
 	};
 
 	static propTypes = {
@@ -51,12 +51,23 @@ class InlineSupportLink extends Component {
 		this.setState( { shouldLazyLoadAlternates: true } );
 	};
 
+	componentDidMount() {
+		if ( this.props.supportContext && ! this.props.supportPostId && ! this.props.supportLink ) {
+			// Lazy load the supportPostId and supportLink by key if not provided.
+			import( './context-links' ).then( ( contextLinks ) => {
+				const supportDataFromContext = contextLinks[ this.props.supportContext ];
+				if ( ! supportDataFromContext ) {
+					return;
+				}
+				this.setState( { supportDataFromContext } );
+			} );
+		}
+	}
+
 	render() {
 		const {
 			className,
 			showText,
-			supportPostId,
-			supportLink,
 			showIcon,
 			iconSize,
 			translate,
@@ -65,6 +76,12 @@ class InlineSupportLink extends Component {
 			localeSlug,
 		} = this.props;
 		const { shouldLazyLoadAlternates } = this.state;
+
+		let { supportPostId, supportLink } = this.props;
+		if ( this.state.supportDataFromContext ) {
+			supportPostId = this.state.supportDataFromContext.post_id;
+			supportLink = this.state.supportDataFromContext.link;
+		}
 
 		if ( ! supportPostId && ! supportLink ) {
 			return null;
@@ -115,24 +132,9 @@ class InlineSupportLink extends Component {
 	}
 }
 
-const getLinkData = ( ownProps ) => {
-	const { supportContext } = ownProps;
-	const linkData = contextLinks[ supportContext ];
-	if ( ! linkData ) {
-		return {};
-	}
-	return {
-		supportPostId: linkData.post_id,
-		supportLink: linkData.link,
-	};
-};
-
-const mapStateToProps = ( state, ownProps ) => {
-	return {
-		localeSlug: getCurrentLocaleSlug( state ),
-		...getLinkData( ownProps ),
-	};
-};
+const mapStateToProps = ( state ) => ( {
+	localeSlug: getCurrentLocaleSlug( state ),
+} );
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
