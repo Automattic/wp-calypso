@@ -154,7 +154,13 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { comparisonContext, currentRoute, selectedDomainName, selectedSite, source } = this.props;
+		const {
+			comparisonContext,
+			currentRoute,
+			selectedDomainName,
+			selectedSite,
+			source,
+		} = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			provider: 'email-forwarding',
