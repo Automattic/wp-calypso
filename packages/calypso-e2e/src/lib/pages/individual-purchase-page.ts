@@ -8,6 +8,7 @@ const selectors = {
 	radioButton: ( value: string ) => `input[type="radio"][value=${ value }]`,
 	modalSubmit: 'button[data-e2e-button="submit"]',
 	button: ( text: string ) => `button:has-text("${ text }")`,
+	purchasePlaceholder: '.subscriptions__list .purchase-item__placeholder',
 
 	// Purchased item actions: plans
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
@@ -130,6 +131,13 @@ export class IndividualPurchasePage {
 		await this.completeSurvey();
 		await this.page.click( selectors.button( 'Cancel plan' ) );
 
+		// It takes a second for the plan cancellation to propagate on the backend after cancelling.
+		// If you go too fast, you won't be able to close an account, because it thinks there is still an active plan.
+		// Waiting for the notification banner is not accurate - it shows immediately regardless.
+		// Waiting for the disappearance of the placeholder for currently active upgrades, ultimately then showing the new true status of upgrades, is much more accurate.
+		await this.page.waitForSelector( selectors.purchasePlaceholder, { state: 'detached' } );
+
+		// Still dismiss the banner though, it hangs for a while and can eat clicks if not careful.
 		await this.page.click( selectors.dismissBanner );
 	}
 
