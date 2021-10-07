@@ -140,7 +140,7 @@ export function persistOnChange( reduxStore, currentUserId ) {
 // Retrieve the initial state for the application, combining it from server and
 // local persistence (server data gets priority).
 // This function only handles legacy Redux state for the monolithic root reducer
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 export function getInitialState( initialReducer, currentUserId ) {
 	const storedState = getInitialPersistedState( initialReducer, currentUserId );
 	const serverState = getInitialServerState( initialReducer );
@@ -160,7 +160,7 @@ function getInitialServerState( initialReducer ) {
 
 // Retrieve the initial persisted state from the cached local client data.
 // This function only handles legacy Redux state for the monolithic root reducer
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 function getInitialPersistedState( initialReducer, currentUserId ) {
 	if ( ! shouldPersist() ) {
 		return null;
@@ -205,7 +205,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 
 // Retrieve the initial state for a portion of state, from persisted data alone.
 // This function handles both legacy and modularized Redux state.
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 function getStateFromPersistence( reducer, subkey, currentUserId ) {
 	const reduxStateKey = getPersistenceKey( currentUserId, subkey );
 	const state = getPersistedStateItem( reduxStateKey );
@@ -215,7 +215,7 @@ function getStateFromPersistence( reducer, subkey, currentUserId ) {
 // Retrieve the initial state for a portion of state, choosing the freshest
 // between server and local persisted data.
 // This function handles both legacy and modularized Redux state.
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 export function getStateFromCache( reducer, subkey, currentUserId ) {
 	let serverState = null;
 
