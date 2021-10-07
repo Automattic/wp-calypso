@@ -1,3 +1,7 @@
 {
-	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+	"extends": "@automattic/calypso-typescript-config/js-package.json",
+	"files": [
+		"index.js",
+		"node.js",
+	]
 }
