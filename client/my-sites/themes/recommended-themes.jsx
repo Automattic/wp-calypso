@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGutenbergFSESettingsQuery } from 'calypso/data/gutenberg/fse-settings-query';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
@@ -24,7 +24,7 @@ const RecommendedThemes = ( props ) => {
 		areRecommendedThemesLoading( state, recommendedThemesFilter )
 	);
 
-	useLayoutEffect( () => {
+	useEffect( () => {
 		if ( ! isLoadingGutenbergFSESettings ) {
 			dispatch( getRecommendedThemes( recommendedThemesFilter ) );
 		}
