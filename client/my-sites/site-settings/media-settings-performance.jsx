@@ -82,7 +82,6 @@ class MediaSettingsPerformance extends Component {
 			isVideoPressFreeTier,
 			mediaStorageLimit,
 			mediaStorageUsed,
-			siteId,
 			sitePlanSlug,
 			siteSlug,
 			translate,
@@ -115,12 +114,7 @@ class MediaSettingsPerformance extends Component {
 				/>
 			) );
 
-		return (
-			<div className="site-settings__videopress-storage">
-				<QueryMediaStorage siteId={ siteId } />
-				{ renderedStorageInfo }
-			</div>
-		);
+		return <div className="site-settings__videopress-storage">{ renderedStorageInfo }</div>;
 	}
 
 	renderVideoUpgradeNudge() {
@@ -148,7 +142,7 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	render() {
-		const { isVideoPressAvailable, sitePlanSlug } = this.props;
+		const { isVideoPressAvailable, siteId, sitePlanSlug } = this.props;
 
 		if ( ! sitePlanSlug ) {
 			return null;
@@ -156,6 +150,7 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
+				<QueryMediaStorage siteId={ siteId } />
 				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
