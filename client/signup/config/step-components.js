@@ -71,7 +71,6 @@ const stepNameToModuleName = {
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
-	design: 'design-picker',
 	'design-setup-site': 'design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',

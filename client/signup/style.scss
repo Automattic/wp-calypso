@@ -767,7 +767,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.signup__step.is-design,
 	.signup__step.is-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated( '<660px' ) {
