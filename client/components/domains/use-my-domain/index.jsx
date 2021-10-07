@@ -168,10 +168,7 @@ function UseMyDomain( {
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
 				setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
-				setDomainTransferData(
-					inboundTransferStatusInfo.isDomainUnlocked,
-					inboundTransferStatusInfo.transferEligibleDate
-				);
+				setDomainTransferData( inboundTransferStatusInfo.isDomainUnlocked );
 			}
 		} catch ( error ) {
 			setDomainNameValidationError( error.message );
