@@ -83,7 +83,7 @@ class TitanAddMailboxes extends Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
-			context,
+			source,
 		} = this.props;
 
 		page(
@@ -91,7 +91,7 @@ class TitanAddMailboxes extends Component {
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
 				currentRoute,
-				context
+				source
 			)
 		);
 	};
@@ -119,7 +119,7 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleContinue = async () => {
-		const { context, selectedSite } = this.props;
+		const { selectedSite, source } = this.props;
 		const { mailboxes } = this.state;
 
 		const validatedMailboxes = validateMailboxes( mailboxes );
@@ -153,7 +153,7 @@ class TitanAddMailboxes extends Component {
 		} );
 
 		if ( canContinue ) {
-			if ( context === INBOX ) {
+			if ( source === INBOX ) {
 				recordInboxUpsellTracksEvent( {
 					product: 'inbox',
 					provider: TITAN_PROVIDER_NAME,

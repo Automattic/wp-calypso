@@ -16,7 +16,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<GSuiteAddUsers
-					context={ pageContext.query.context }
+					source={ pageContext.query.source }
 					productType={ pageContext.params.productType }
 					selectedDomainName={ pageContext.params.domain }
 				/>
@@ -54,7 +54,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<TitanAddMailboxes
-					context={ pageContext.query.context }
+					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -67,7 +67,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<TitanSetUpMailbox
-					context={ pageContext.querystring.Context }
+					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -82,7 +82,7 @@ export default {
 				<EmailProvidersComparison
 					comparisonContext="email-purchase"
 					selectedDomainName={ pageContext.params.domain }
-					source={ pageContext.query.context }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -123,7 +123,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailManagementHome
-					context={ pageContext.query.context }
+					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
 				/>
 			</CalypsoShoppingCartProvider>

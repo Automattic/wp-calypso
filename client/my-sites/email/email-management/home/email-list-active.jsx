@@ -45,12 +45,12 @@ EmailListActiveWarning.propTypes = {
 class EmailListActive extends Component {
 	render() {
 		const {
-			context,
 			currentRoute,
 			domains,
 			selectedSiteSlug,
 			translate,
 			selectedSiteId,
+			source,
 		} = this.props;
 
 		if ( domains.length < 1 ) {
@@ -60,7 +60,7 @@ class EmailListActive extends Component {
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard
-					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute, context ) }
+					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute, source ) }
 					key={ domain.name }
 				>
 					<span className="email-list-active__item-icon">
@@ -90,10 +90,10 @@ class EmailListActive extends Component {
 
 EmailListActive.propTypes = {
 	// Props passed to this component
-	context: PropTypes.string,
 	currentRoute: PropTypes.string.isRequired,
 	domains: PropTypes.array.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
+	source: PropTypes.string,
 
 	// Props injected via connect()
 	translate: PropTypes.func.isRequired,

@@ -38,7 +38,6 @@ import './style.scss';
 class EmailManagementHome extends Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
-		context: PropTypes.string,
 		domains: PropTypes.array.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
@@ -47,12 +46,12 @@ class EmailManagementHome extends Component {
 		emailListInactiveHeader: PropTypes.element,
 		showActiveDomainList: PropTypes.bool,
 		sectionHeaderLabel: PropTypes.string,
+		source: PropTypes.string,
 	};
 
 	render() {
 		const {
 			canManageSite,
-			context,
 			currentRoute,
 			domains,
 			emailListInactiveHeader,
@@ -63,6 +62,7 @@ class EmailManagementHome extends Component {
 			selectedSite,
 			selectedSiteId,
 			sectionHeaderLabel,
+			source,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -87,13 +87,13 @@ class EmailManagementHome extends Component {
 						backPath={ domainManagementList( selectedSite.slug, null ) }
 						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
-						source={ context }
+						source={ source }
 					/>
 				);
 			}
 
 			return this.renderContentWithHeader(
-				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } context={ context } />
+				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
 			);
 		}
 
@@ -101,7 +101,7 @@ class EmailManagementHome extends Component {
 
 		if ( nonWpcomDomains.length < 1 ) {
 			return this.renderContentWithHeader(
-				<EmailNoDomain selectedSite={ selectedSite } context={ context } />
+				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
 			);
 		}
 
@@ -114,7 +114,7 @@ class EmailManagementHome extends Component {
 					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 					skipHeaderElement={ true }
-					source={ context }
+					source={ source }
 				/>
 			);
 		}
@@ -137,7 +137,7 @@ class EmailManagementHome extends Component {
 						domains={ domainsWithEmail }
 						selectedSiteId={ selectedSiteId }
 						selectedSiteSlug={ selectedSite.slug }
-						context={ context }
+						source={ source }
 					/>
 				) }
 
@@ -147,7 +147,7 @@ class EmailManagementHome extends Component {
 					headerComponent={ emailListInactiveHeader }
 					sectionHeaderLabel={ sectionHeaderLabel }
 					selectedSiteSlug={ selectedSite.slug }
-					context={ context }
+					source={ source }
 				/>
 			</>
 		);

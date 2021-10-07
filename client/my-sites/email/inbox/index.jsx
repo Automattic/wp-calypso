@@ -107,7 +107,7 @@ const InboxManagement = () => {
 				emailListInactiveHeader={ <MainHeader /> }
 				sectionHeaderLabel={ translate( 'Domains' ) }
 				showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-				context={ INBOX }
+				source={ INBOX }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

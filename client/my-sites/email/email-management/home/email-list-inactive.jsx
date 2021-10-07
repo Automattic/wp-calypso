@@ -9,12 +9,12 @@ import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/p
 class EmailListInactive extends Component {
 	render() {
 		const {
-			context,
 			currentRoute,
 			domains,
 			headerComponent,
 			sectionHeaderLabel,
 			selectedSiteSlug,
+			source,
 			translate,
 		} = this.props;
 		if ( domains.length < 1 ) {
@@ -31,7 +31,7 @@ class EmailListInactive extends Component {
 								selectedSiteSlug,
 								domain.name,
 								currentRoute,
-								context
+								source
 							) }
 						>
 							{ translate( 'Add Email' ) }
@@ -52,12 +52,12 @@ class EmailListInactive extends Component {
 }
 
 EmailListInactive.propTypes = {
-	context: PropTypes.string,
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array,
 	headerComponent: PropTypes.element,
 	sectionHeaderLabel: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 

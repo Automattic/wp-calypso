@@ -9,7 +9,7 @@ import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
 const noop = () => {};
 
-const EmailNoDomain = ( { context, selectedSite, translate } ) => {
+const EmailNoDomain = ( { selectedSite, translate, source } ) => {
 	const hasAvailableDomainCredit = useSelector( ( state ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
@@ -17,7 +17,7 @@ const EmailNoDomain = ( { context, selectedSite, translate } ) => {
 	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
 
 	const trackEvent =
-		context != null
+		source != null
 			? () =>
 					recordInboxUpsellTracksEvent( {
 						product: isFreePlanProduct ? 'plan' : 'domain',
@@ -70,8 +70,8 @@ const EmailNoDomain = ( { context, selectedSite, translate } ) => {
 
 EmailNoDomain.propTypes = {
 	// Props passed to this component
-	context: PropTypes.string,
 	selectedSite: PropTypes.object.isRequired,
+	source: PropTypes.string,
 
 	// Props injected via localize()
 	translate: PropTypes.func.isRequired,

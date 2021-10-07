@@ -74,14 +74,14 @@ class GSuiteAddUsers extends Component {
 	}
 
 	handleContinue = () => {
-		const { context, domains, productType, selectedSite } = this.props;
+		const { domains, productType, selectedSite, source } = this.props;
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
 
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
-			if ( context === INBOX ) {
+			if ( source === INBOX ) {
 				recordInboxUpsellTracksEvent( {
 					product: 'inbox',
 					provider: GOOGLE_PROVIDER_NAME,
@@ -289,6 +289,7 @@ GSuiteAddUsers.propTypes = {
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
 	} ).isRequired,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 

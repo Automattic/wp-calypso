@@ -23,7 +23,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const TitanSetUpMailbox = ( { selectedDomainName, context } ) => {
+const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const currentRoute = useSelector( getCurrentRoute );
@@ -52,7 +52,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, context } ) => {
 
 	if ( areSiteDomainsLoaded && ! hasTitanSubscription ) {
 		page(
-			emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute, context )
+			emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute, source )
 		);
 
 		return null;
@@ -87,8 +87,8 @@ const TitanSetUpMailbox = ( { selectedDomainName, context } ) => {
 };
 
 TitanSetUpMailbox.propType = {
-	context: PropTypes.string,
 	selectedDomainName: PropTypes.string.isRequired,
+	source: PropTypes.string,
 };
 
 export default TitanSetUpMailbox;

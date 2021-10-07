@@ -100,7 +100,7 @@ const EmailPlan = ( props ) => {
 	};
 
 	function getAddMailboxProps() {
-		const { context, currentRoute, domain, selectedSite } = props;
+		const { currentRoute, domain, selectedSite, source } = props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
@@ -109,7 +109,7 @@ const EmailPlan = ( props ) => {
 					domain.name,
 					getProductType( getGSuiteProductSlug( domain ) ),
 					currentRoute,
-					context
+					source
 				),
 			};
 		}
@@ -121,7 +121,7 @@ const EmailPlan = ( props ) => {
 						selectedSite.slug,
 						domain.name,
 						currentRoute,
-						context
+						source
 					),
 				};
 			}
@@ -340,9 +340,9 @@ const EmailPlan = ( props ) => {
 };
 
 EmailPlan.propType = {
-	context: PropTypes.string,
 	domain: PropTypes.object.isRequired,
 	selectedSite: PropTypes.object.isRequired,
+	source: PropTypes.string,
 
 	// Connected props
 	currentRoute: PropTypes.string,
