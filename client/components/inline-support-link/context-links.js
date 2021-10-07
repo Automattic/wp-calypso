@@ -1,28 +1,44 @@
 export const getContextLinks = () => ( {
-	pages: {
-		link: 'https://wordpress.com/support/pages/',
-		post_id: 86,
+	billing: {
+		link: 'https://wordpress.com/support/billing-history/',
+		post_id: 40792,
 	},
-	posts: {
-		link: 'https://wordpress.com/support/posts/',
-		post_id: 84,
+	comments: {
+		link: 'https://wordpress.com/support/comments/',
+		post_id: 113,
 	},
-	stats: {
-		link: 'https://wordpress.com/support/stats/',
-		post_id: 4454,
+	discussion: {
+		link: 'https://wordpress.com/support/settings/discussion-settings/',
+		post_id: 1504,
 	},
 	domains: {
 		link: 'https://wordpress.com/support/domains/',
 		post_id: 1988,
 	},
+	earn: {
+		link: 'https://wordpress.com/support/monetize-your-site/',
+		post_id: 120172,
+	},
 	emails: {
 		link: 'https://wordpress.com/support/add-email/',
 		post_id: 34087,
+	},
+	export: {
+		link: 'https://wordpress.com/support/export/',
+		post_id: 2087,
 	},
 	'getting-started-video': {
 		link:
 			'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
 		post_id: 158974,
+	},
+	'google-analytics-measurement-id': {
+		link: 'https://wordpress.com/support/google-analytics/#get-your-measurement-id',
+		post_id: 98905,
+	},
+	import: {
+		link: 'https://wordpress.com/support/import/',
+		post_id: 41,
 	},
 	'importers-blogger': {
 		link: 'https://wordpress.com/support/import/coming-from-blogger/',
@@ -57,29 +73,61 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/menus/',
 		post_id: 59580,
 	},
+	pages: {
+		link: 'https://wordpress.com/support/pages/',
+		post_id: 86,
+	},
 	'paid-newsletters': {
 		link: 'https://wordpress.com/support/paid-newsletters/',
 		post_id: 168381,
+	},
+	payment_methods: {
+		link: 'https://wordpress.com/support/payment/',
+		post_id: 76237,
+	},
+	plugins: {
+		link: 'https://wordpress.com/support/plugins/',
+		post_id: 2108,
+	},
+	podcasting: {
+		link: 'https://wordpress.com/support/audio/podcasting/',
+		post_id: 38147,
 	},
 	portfolios: {
 		link: 'https://wordpress.com/support/portfolios/',
 		post_id: 84808,
 	},
-	testimonials: {
-		link: 'https://wordpress.com/support/testimonials/',
-		post_id: 97757,
+	posts: {
+		link: 'https://wordpress.com/support/posts/',
+		post_id: 84,
 	},
-	comments: {
-		link: 'https://wordpress.com/support/comments/',
-		post_id: 113,
+	privacy: {
+		link: 'https://wordpress.com/support/settings/privacy-settings/',
+		post_id: 1507,
+	},
+	publicize: {
+		link: 'https://wordpress.com/support/publicize/',
+		post_id: 4789,
+	},
+	purchases: {
+		link: 'https://wordpress.com/support/manage-purchases/',
+		post_id: 111349,
 	},
 	'site-verification': {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
 	},
-	'google-analytics-measurement-id': {
-		link: 'https://wordpress.com/support/google-analytics/#get-your-measurement-id',
-		post_id: 98905,
+	stats: {
+		link: 'https://wordpress.com/support/stats/',
+		post_id: 4454,
+	},
+	team: {
+		link: 'https://wordpress.com/support/user-roles/',
+		post_id: 1221,
+	},
+	testimonials: {
+		link: 'https://wordpress.com/support/testimonials/',
+		post_id: 97757,
 	},
 	themes: {
 		link: 'https://wordpress.com/support/themes/',
@@ -96,54 +144,6 @@ export const getContextLinks = () => ( {
 	'themes-unsupported': {
 		link: 'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/',
 		post_id: 174865,
-	},
-	podcasting: {
-		link: 'https://wordpress.com/support/audio/podcasting/',
-		post_id: 38147,
-	},
-	publicize: {
-		link: 'https://wordpress.com/support/publicize/',
-		post_id: 4789,
-	},
-	earn: {
-		link: 'https://wordpress.com/support/monetize-your-site/',
-		post_id: 120172,
-	},
-	import: {
-		link: 'https://wordpress.com/support/import/',
-		post_id: 41,
-	},
-	export: {
-		link: 'https://wordpress.com/support/export/',
-		post_id: 2087,
-	},
-	team: {
-		link: 'https://wordpress.com/support/user-roles/',
-		post_id: 1221,
-	},
-	privacy: {
-		link: 'https://wordpress.com/support/settings/privacy-settings/',
-		post_id: 1507,
-	},
-	discussion: {
-		link: 'https://wordpress.com/support/settings/discussion-settings/',
-		post_id: 1504,
-	},
-	plugins: {
-		link: 'https://wordpress.com/support/plugins/',
-		post_id: 2108,
-	},
-	purchases: {
-		link: 'https://wordpress.com/support/manage-purchases/',
-		post_id: 111349,
-	},
-	billing: {
-		link: 'https://wordpress.com/support/billing-history/',
-		post_id: 40792,
-	},
-	payment_methods: {
-		link: 'https://wordpress.com/support/payment/',
-		post_id: 76237,
 	},
 	'webmaster-tools': {
 		link: 'https://wordpress.com/support/webmaster-tools/',
