@@ -85,8 +85,9 @@ class EmailManagementHome extends Component {
 				return (
 					<EmailProvidersComparison
 						backPath={ domainManagementList( selectedSite.slug, null ) }
-						comparisonContext={ context ?? 'email-home-selected-domain' }
+						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
+						source={ context }
 					/>
 				);
 			}
@@ -110,9 +111,10 @@ class EmailManagementHome extends Component {
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
 				<EmailProvidersComparison
-					comparisonContext={ context ?? 'email-home-single-domain' }
+					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 					skipHeaderElement={ true }
+					source={ context }
 				/>
 			);
 		}

@@ -90,6 +90,7 @@ class EmailProvidersComparison extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		showSkipButton: PropTypes.bool,
 		skipButtonLabel: PropTypes.string,
+		source: PropTypes.string,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
@@ -153,14 +154,14 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { comparisonContext, currentRoute, selectedDomainName, selectedSite } = this.props;
+		const { comparisonContext, currentRoute, selectedDomainName, selectedSite, source } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			provider: 'email-forwarding',
 			context: comparisonContext,
 		} );
 
-		if ( comparisonContext === INBOX ) {
+		if ( source === INBOX ) {
 			recordInboxUpsellTracksEvent( { product: 'forward' } );
 		}
 
@@ -184,7 +185,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain } = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain, source } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -240,7 +241,7 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( comparisonContext === INBOX ) {
+				if ( source === INBOX ) {
 					recordInboxUpsellTracksEvent( {
 						product: 'email',
 						provider: TITAN_PROVIDER_NAME,
@@ -263,7 +264,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { comparisonContext, domain, gSuiteProduct, hasCartDomain } = this.props;
+		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, source } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -304,7 +305,7 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( comparisonContext === INBOX ) {
+				if ( source === INBOX ) {
 					recordInboxUpsellTracksEvent( {
 						product: 'email',
 						provider: GOOGLE_PROVIDER_NAME,
