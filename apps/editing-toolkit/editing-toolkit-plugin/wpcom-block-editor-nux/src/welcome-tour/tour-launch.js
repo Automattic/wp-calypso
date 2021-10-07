@@ -11,13 +11,15 @@ import {
 	useState,
 	useRef,
 	createInterpolateElement,
+	useMemo,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
+import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
  */
-import usePopperHandler from './hooks/use-popper-handler';
+import Spotlight from './components/spotlight';
 import maximize from './icons/maximize';
 import KeyboardNavigation from './keyboard-navigation';
 import WelcomeTourCard from './tour-card';
@@ -126,17 +128,51 @@ function WelcomeTourFrame() {
 	// Preload card images
 	steps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
 
-	const { styles, attributes } = usePopperHandler(
-		steps[ currentStepIndex ].referenceElements.desktop,
-		popperElementRef
+	const referenceElementSelector = steps[ currentStepIndex ].referenceElements.desktop;
+	const referenceElement = document.querySelector( referenceElementSelector );
+	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
+		referenceElement,
+		popperElementRef?.current,
+		{
+			strategy: 'fixed',
+			modifiers: [
+				{
+					name: 'preventOverflow',
+					options: {
+						rootBoundary: 'document',
+						padding: 16, // same as the left/margin of the tour frame
+					},
+				},
+				useMemo(
+					() => ( {
+						name: 'offset',
+						options: {
+							offset: ( { placement, reference } ) => {
+								if ( placement === 'bottom' ) {
+									const boundary = document.querySelector( '.edit-post-header' );
+									const boundaryRect = boundary.getBoundingClientRect();
+									const boundaryBottomY = boundaryRect.height + boundaryRect.y;
+									const referenceBottomY = reference.height + reference.y;
+
+									return [ 0, boundaryBottomY - referenceBottomY + 16 ];
+								}
+								return [ 0, 0 ];
+							},
+						},
+					} ),
+					[]
+				),
+			],
+		}
 	);
 
-	const stepRepositionProps = ! isMinimized
-		? {
-				style: styles?.popper,
-				...attributes?.popper,
-		  }
-		: null;
+	const stepRepositionProps =
+		! isMinimized && referenceElement
+			? {
+					style: popperStyles?.popper,
+					...popperAttributes?.popper,
+			  }
+			: null;
 
 	return (
 		<>
@@ -150,7 +186,7 @@ function WelcomeTourFrame() {
 			/>
 			<div className="wpcom-editor-welcome-tour__container" ref={ tourContainerRef }>
 				{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
-				{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
+				{ ! isMinimized && <Spotlight referenceElementSelector={ referenceElementSelector } /> }
 				<div
 					className="wpcom-editor-welcome-tour-frame"
 					ref={ popperElementRef }
