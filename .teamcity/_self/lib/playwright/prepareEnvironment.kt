@@ -1,6 +1,8 @@
 package _self.lib.playwright
 
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 
 /**
  * Prepares the environment to run Playwright tests.
@@ -15,8 +17,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
  * It uses Yarn focus mode (https://yarnpkg.com/cli/workspaces/focus) to minimize the dependencies
  * installed and save some time. Yarn may throw some warnings about unused overrides, but they are safe to ignore.
  */
-fun prepareEnvironment(): ScriptBuildStep {
-	return ScriptBuildStep {
+fun BuildSteps.prepareEnvironment(): ScriptBuildStep {
+	return script {
 		scriptContent = """
 			#!/bin/bash
 			# Update node
