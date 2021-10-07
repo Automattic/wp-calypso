@@ -5,10 +5,13 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import filesize from 'filesize';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -79,7 +82,6 @@ class MediaSettingsPerformance extends Component {
 			isVideoPressFreeTier,
 			mediaStorageLimit,
 			mediaStorageUsed,
-			siteId,
 			sitePlanSlug,
 			siteSlug,
 			translate,
@@ -112,12 +114,7 @@ class MediaSettingsPerformance extends Component {
 				/>
 			) );
 
-		return (
-			<div className="site-settings__videopress-storage">
-				<QueryMediaStorage siteId={ siteId } />
-				{ renderedStorageInfo }
-			</div>
-		);
+		return <div className="site-settings__videopress-storage">{ renderedStorageInfo }</div>;
 	}
 
 	renderVideoUpgradeNudge() {
@@ -145,7 +142,7 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	render() {
-		const { isVideoPressAvailable, sitePlanSlug } = this.props;
+		const { isVideoPressAvailable, siteId, sitePlanSlug } = this.props;
 
 		if ( ! sitePlanSlug ) {
 			return null;
@@ -153,6 +150,7 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
+				<QueryMediaStorage siteId={ siteId } />
 				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
@@ -161,6 +159,22 @@ class MediaSettingsPerformance extends Component {
 }
 const checkForJetpackVideoPressProduct = ( purchase ) =>
 	purchase.active && isJetpackVideoPress( purchase );
+
+/**
+ * Security Daily plan no longer includes VideoPress as of end of day Oct 6 2021 UTC.
+ * This check enforces the upsell appears only for customers that purchased Security Daily after that date.
+ *
+ * @param {*} purchase
+ * @returns bool
+ */
+const checkForLegacySecurityDailyPlan = ( purchase ) =>
+	purchase.active &&
+	( PLAN_JETPACK_SECURITY_DAILY_MONTHLY === purchase.productSlug ||
+		PLAN_JETPACK_SECURITY_DAILY === purchase.productSlug ) &&
+	moment( purchase.subscribedDate ).isBefore( moment.utc( '2021-10-07' ) );
+
+const checkForActiveJetpackVideoPressPurchases = ( purchase ) =>
+	checkForJetpackVideoPressProduct( purchase ) || checkForLegacySecurityDailyPlan( purchase );
 
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
@@ -177,7 +191,9 @@ export default connect( ( state ) => {
 		isVideoPressFreeTier:
 			isJetpackSite( state, selectedSiteId ) &&
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
-			! getSitePurchases( state, selectedSiteId ).find( checkForJetpackVideoPressProduct ) &&
+			! getSitePurchases( state, selectedSiteId ).find(
+				checkForActiveJetpackVideoPressPurchases
+			) &&
 			// These features are used in current plans that include VP
 			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) &&
 			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) &&
