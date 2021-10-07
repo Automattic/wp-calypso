@@ -48,6 +48,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@storybook/addon-actions": "^6.3.8",
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/jest-dom": "^5.14.1",

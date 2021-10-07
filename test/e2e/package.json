@@ -18,6 +18,9 @@
 		"encryptconfig": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_CONFIG_ENV.json",
 		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
 	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
+	},
 	"dependencies": {
 		"@automattic/calypso-e2e": "^0.1.0",
 		"@automattic/mocha-debug-reporter": "^0.1.0",

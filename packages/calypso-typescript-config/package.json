@@ -1,28 +1,24 @@
 {
-	"name": "@automattic/typography",
+	"name": "@automattic/calypso-typescript-config",
 	"version": "1.0.0",
-	"description": "Typographic elements for WordPress.com products",
-	"main": "styles/fonts.scss",
+	"description": "Shared configuration files for TypeScript projects",
 	"keywords": [
-		"wordpress"
+		"typescript",
+		"build",
+		"calypso"
 	],
 	"author": "Automattic Inc.",
-	"private": true,
-	"contributors": [],
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/typography"
+		"directory": "packages/calypso-typescript-config"
 	},
 	"publishConfig": {
-		"access": "private"
+		"access": "public"
 	},
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
-	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }
