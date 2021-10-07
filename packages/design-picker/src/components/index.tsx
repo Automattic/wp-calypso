@@ -147,7 +147,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ showCategoryFilter && categories.length && (
+			{ showCategoryFilter && !! categories.length && (
 				<DesignPickerCategoryFilter
 					categories={ categories }
 					selectedCategory={ selectedCategory }
