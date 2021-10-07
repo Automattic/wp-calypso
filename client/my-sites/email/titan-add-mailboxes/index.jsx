@@ -30,7 +30,6 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { INBOX } from 'calypso/my-sites/email/inbox';
 import {

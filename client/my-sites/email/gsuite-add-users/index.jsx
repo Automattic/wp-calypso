@@ -35,7 +35,6 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { INBOX } from 'calypso/my-sites/email/inbox';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -74,7 +73,7 @@ class GSuiteAddUsers extends Component {
 	}
 
 	handleContinue = () => {
-		const { domains, productType, selectedSite, source } = this.props;
+		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
 

@@ -54,7 +54,6 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
@@ -219,7 +218,7 @@ class EmailProvidersComparison extends Component {
 			eventProperties.source = INBOX;
 		}
 
-		recordTracksEvent( 'calypso_email_providers_add_click',  );
+		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
 
 		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
 
