@@ -84,6 +84,11 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Check out', async function () {
+			// Purchasing a domain on a domain-only account results in multiple redirects
+			// to URLs such as `**/checkout/thank-you/no-site/**` and
+			// `**/checkout/thank-you/<selectedDomain>`, and this occurs multiple times.
+			// The following `waitForNavigation` is meant to catch those and ensure the page
+			// has loaded fully prior to next steps.
 			await Promise.all( [
 				page.waitForNavigation( {
 					url: `**/checkout/thank-you/${ selectedDomain }`,
@@ -91,6 +96,10 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
+
+			await page.waitForNavigation( {
+				url: `**/checkout/thank-you/${ selectedDomain }`,
+			} );
 		} );
 	} );
 
