@@ -81,12 +81,6 @@ class GSuiteAddUsers extends Component {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
-			if ( source === INBOX ) {
-				recordInboxUpsellTracksEvent( {
-					product: 'inbox',
-					provider: GOOGLE_PROVIDER_NAME,
-				} );
-			}
 			this.props.shoppingCartManager
 				.addProductsToCart(
 					getItemsForCart( domains, getProductSlug( productType ), users ).map( ( item ) =>
@@ -122,13 +116,20 @@ class GSuiteAddUsers extends Component {
 	};
 
 	recordClickEvent = ( eventName ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		const { users } = this.state;
-
-		recordTracksEvent( eventName, {
+		const eventObject = {
 			domain_name: selectedDomainName,
 			user_count: users.length,
-		} );
+		};
+
+		if ( source === INBOX ) {
+			eventObject.provider = GOOGLE_PROVIDER_NAME;
+			eventObject.product = 'inbox';
+			eventObject.source = INBOX;
+		}
+
+		recordTracksEvent( eventName, eventObject );
 	};
 
 	recordUsersChangedEvent = ( previousUsers, nextUsers ) => {

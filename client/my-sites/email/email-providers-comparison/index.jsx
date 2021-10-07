@@ -162,14 +162,16 @@ class EmailProvidersComparison extends Component {
 			source,
 		} = this.props;
 
-		recordTracksEvent( 'calypso_email_providers_add_click', {
+		const eventProperties = {
 			provider: 'email-forwarding',
 			context: comparisonContext,
-		} );
+		};
 
 		if ( source === INBOX ) {
-			recordInboxUpsellTracksEvent( { product: 'forward' } );
+			eventProperties.product = 'forward';
+			eventProperties.source = source;
 		}
+		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -202,14 +204,22 @@ class EmailProvidersComparison extends Component {
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
 
-		recordTracksEvent( 'calypso_email_providers_add_click', {
+		const eventProperties = {
 			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: 'titan',
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
-		} );
+		};
+
+		if ( source === INBOX ) {
+			eventProperties.product = 'email';
+			eventProperties.provider = TITAN_PROVIDER_NAME;
+			eventProperties.source = INBOX;
+		}
+
+		recordTracksEvent( 'calypso_email_providers_add_click',  );
 
 		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
 
@@ -247,13 +257,6 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( source === INBOX ) {
-					recordInboxUpsellTracksEvent( {
-						product: 'email',
-						provider: TITAN_PROVIDER_NAME,
-					} );
-				}
-
 				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
@@ -276,13 +279,20 @@ class EmailProvidersComparison extends Component {
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
-		recordTracksEvent( 'calypso_email_providers_add_click', {
+		const eventProperties = {
 			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
-			provider: 'google',
+			provider: GOOGLE_PROVIDER_NAME,
 			user_can_add_email: userCanAddEmail ? 1 : 0,
-		} );
+		};
+
+		if ( source === INBOX ) {
+			eventProperties.product = 'email';
+			eventProperties.source = INBOX;
+		}
+
+		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
 
 		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
@@ -309,13 +319,6 @@ class EmailProvidersComparison extends Component {
 				if ( errors && errors.length ) {
 					// Stay on the page to show the relevant error(s)
 					return;
-				}
-
-				if ( source === INBOX ) {
-					recordInboxUpsellTracksEvent( {
-						product: 'email',
-						provider: GOOGLE_PROVIDER_NAME,
-					} );
 				}
 
 				this.isMounted && page( '/checkout/' + selectedSite.slug );
