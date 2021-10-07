@@ -1,6 +1,7 @@
 package _self.projects
 
 import _self.bashNodeScript
+import _self.lib.playwright.prepareEnvironment
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -253,19 +254,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 		}
 
 		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					export NODE_ENV="test"
-					export PLAYWRIGHT_BROWSERS_PATH=0
-
-					# Install modules
-					${_self.yarn_install_cmd}
-
-					# Build packages
-					yarn workspace @automattic/calypso-e2e build
-				"""
-			}
+			prepareEnvironment()
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """

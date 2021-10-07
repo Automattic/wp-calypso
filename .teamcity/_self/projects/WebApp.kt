@@ -1,6 +1,8 @@
 package _self.projects
 
+import Settings
 import _self.bashNodeScript
+import _self.lib.playwright.prepareEnvironment
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -9,7 +11,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WebApp : Project({
@@ -19,10 +22,10 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"));
-	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"));
-	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
-	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
+	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"))
+	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"))
+	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
+	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
 })
 
@@ -592,20 +595,8 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		}
 
 		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					export NODE_ENV="test"
-					export PLAYWRIGHT_BROWSERS_PATH=0
+			prepareEnvironment()
 
-					# Install deps
-					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-					# Build packages
-					yarn workspace @automattic/calypso-e2e build
-				"""
-				dockerImage = "%docker_image_e2e%"
-			}
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
@@ -721,20 +712,7 @@ object PreReleaseE2ETests : BuildType({
 	}
 
 	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				export NODE_ENV="test"
-				export PLAYWRIGHT_BROWSERS_PATH=0
-
-				# Install modules
-				${_self.yarn_install_cmd}
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
+		prepareEnvironment()
 		bashNodeScript {
 			name = "Run pre-release e2e tests"
 			scriptContent = """
