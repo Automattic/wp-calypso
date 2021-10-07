@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 	} );
 
 	describe( 'Signup via /start', function () {
-		const targetDomain = `${ blogName }.com`;
+		const targetDomain = `${ blogName }.live`;
 
 		let cartCheckoutPage: CartCheckoutPage;
 
@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await userSignupPage.signup( email, username, signupPassword );
 		} );
 
-		it( 'Select a .com domain', async function () {
+		it( 'Select a .live domain', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
 			await domainSearchComponent.selectDomain( targetDomain );
@@ -74,9 +74,11 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await cartCheckoutPage.validateCartItem( targetDomain );
 		} );
 
-		it( 'Prices are shown with expected currency symbol for GBP', async function () {
-			const buttonText = await cartCheckoutPage.getPaymentButtonText();
-			await buttonText.startsWith( '£' );
+		it( 'Prices are shown in GBP', async function () {
+			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
+				rawString: true,
+			} ) ) as string;
+			expect( cartAmount.startsWith( '£' ) ).toBe( true );
 		} );
 
 		it( 'Remove domain purchase from cart', async function () {
