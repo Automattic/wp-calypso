@@ -643,6 +643,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 				branchFilter = """
 					+:*
 					-:pull*
+					-:trunk
 				""".trimIndent()
 			}
 		}
