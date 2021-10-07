@@ -136,7 +136,9 @@ export class SupportComponent {
 		}
 
 		await this.page.click( `:nth-match(${ selector }, ${ target })` );
-		await this.page.click( selectors.readMoreButton );
+		if ( category === 'article' ) {
+			await this.page.click( selectors.readMoreButton );
+		}
 	}
 
 	/**
