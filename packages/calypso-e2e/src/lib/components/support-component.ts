@@ -58,8 +58,16 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openPopover(): Promise< void > {
-		await this.page.click( selectors.supportPopoverButton );
-		await this.page.waitForSelector( selectors.supportPopover, { state: 'visible' } );
+		if ( await this.page.isVisible( selectors.supportPopover ) ) {
+			return;
+		}
+		await Promise.all( [
+			this.page.waitForResponse(
+				( response ) => response.status() === 200 && response.url().includes( 'language-names?' )
+			),
+			this.page.waitForSelector( selectors.supportPopover ),
+			this.page.click( selectors.supportPopoverButton ),
+		] );
 	}
 
 	/**
@@ -68,6 +76,9 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async closePopover(): Promise< void > {
+		if ( await this.page.isHidden( selectors.supportPopover ) ) {
+			return;
+		}
 		await this.page.click( selectors.supportPopoverButton );
 		await this.page.waitForSelector( selectors.supportPopover, { state: 'hidden' } );
 	}
@@ -147,6 +158,8 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
+		await this.page.waitForSelector( selectors.visitArticleButton );
+
 		const browserContext = this.page.context();
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
