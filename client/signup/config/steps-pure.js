@@ -707,13 +707,6 @@ export function generateSteps( {
 			},
 		},
 
-		design: {
-			stepName: 'design-picker',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
-		},
-
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],

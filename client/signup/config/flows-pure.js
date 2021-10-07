@@ -406,14 +406,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'with-design-picker',
-			steps: [ 'user', 'domains', 'plans', 'design' ],
-			destination: getSignupDestination,
-			description: 'Default onboarding experience with design picker as the last step',
-			lastModified: '2021-03-29',
-			showRecaptcha: true,
-		},
-		{
 			name: 'setup-site',
 			steps: isEnabled( 'signup/hero-flow' )
 				? [ 'intent', 'design-setup-site' ]
