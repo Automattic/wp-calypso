@@ -1,5 +1,5 @@
 {
-	"extends": "@automattic/calypso-build/typescript/mixed-package.json",
+	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
