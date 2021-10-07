@@ -432,7 +432,7 @@ export function generateFlows( {
 			name: 'do-it-for-me',
 			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
-			description: 'A flow DIFM leads',
+			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
 		},
 	];
