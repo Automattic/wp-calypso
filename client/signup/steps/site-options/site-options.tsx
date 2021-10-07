@@ -63,12 +63,7 @@ const SiteOptions: React.FC< Props > = ( {
 					{ translate( 'In a few words, explain what your blog is about.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
-			<Button
-				className="site-options__submit-button"
-				type="submit"
-				primary
-				disabled={ Object.values( formValues ).every( ( value ) => ! value ) }
-			>
+			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>
