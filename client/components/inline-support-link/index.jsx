@@ -15,7 +15,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { getContextLinks } from './context-links';
+import contextLinks from './context-links';
 
 import './style.scss';
 
@@ -117,7 +117,6 @@ class InlineSupportLink extends Component {
 
 const getLinkData = ( ownProps ) => {
 	const { supportContext } = ownProps;
-	const contextLinks = getContextLinks();
 	const linkData = contextLinks[ supportContext ];
 	if ( ! linkData ) {
 		return {};

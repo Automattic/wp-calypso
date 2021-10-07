@@ -33,12 +33,12 @@ function Link() {
 The `supportContext` is a combination of the `supportPostId` and `supportLink` found in _context-links.js_.
 
 ```js
-const getContextLinks = () => ( {
-	purchases: {
-		link: 'https://wordpress.com/support/manage-purchases/',
-		post_id: 111349,
-	},
-} );
+// ...
+purchases: {
+	link: 'https://wordpress.com/support/manage-purchases/',
+	post_id: 111349,
+},
+// ...
 ```
 
 ## Props

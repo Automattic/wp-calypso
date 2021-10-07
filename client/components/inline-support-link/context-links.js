@@ -1,4 +1,4 @@
-export const getContextLinks = () => ( {
+const contextLinks = {
 	billing: {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
@@ -149,4 +149,6 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,
 	},
-} );
+};
+
+export default contextLinks;
