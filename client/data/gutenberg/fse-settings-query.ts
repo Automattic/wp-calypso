@@ -8,7 +8,7 @@ export type GutenbergFSESettings = {
 export const useGutenbergFSESettingsQuery = (
 	siteId: string
 ): UseQueryResult< GutenbergFSESettings > => {
-	const queryKey = `${ siteId }:gutenbergFSESettings`;
+	const queryKey = [ 'gutenbergFSESettings', siteId ];
 
 	return useQuery< GutenbergFSESettings >( queryKey, () => {
 		return wpcom.req.get( {
