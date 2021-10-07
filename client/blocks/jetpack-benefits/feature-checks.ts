@@ -6,6 +6,10 @@ import {
 	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T2_YEARLY,
+	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T1_YEARLY,
 	FEATURE_JETPACK_SCAN_DAILY,
 	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 	FEATURE_JETPACK_SEARCH,
@@ -16,18 +20,26 @@ import {
 	isJetpackScanSlug,
 	JETPACK_SEARCH_PRODUCTS,
 	planHasFeature,
+	planHasAtLeastOneFeature,
 } from '@automattic/calypso-products';
 
-export const productHasBackups = ( productSlug: string ) => {
+export const productHasBackups = ( productSlug: string ): boolean => {
+	const BACKUP_FEATURES = [
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+		FEATURE_JETPACK_BACKUP_T1_YEARLY,
+		FEATURE_JETPACK_BACKUP_T2_MONTHLY,
+		FEATURE_JETPACK_BACKUP_T2_YEARLY,
+	];
+
 	return (
 		// standalone backup product
 		isJetpackBackupSlug( productSlug ) ||
 		// check plans for Jetpack backup features
-		( isJetpackPlanSlug( productSlug ) &&
-			( planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_DAILY ) ||
-				planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ) ||
-				planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_REALTIME ) ||
-				planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY ) ) )
+		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, BACKUP_FEATURES ) )
 	);
 };
 
