@@ -23,7 +23,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
-		recordTracksEvent( 'calypso_signup_submit_site_options', { siteTitle, tagline } );
+		recordTracksEvent( 'calypso_signup_submit_site_options', { site_title: siteTitle, tagline } );
 		dispatch( submitSignupStep( { stepName }, { siteTitle, tagline } ) );
 		goToNextStep();
 	};
