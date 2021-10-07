@@ -4,7 +4,6 @@
 import 'calypso/boot/polyfills';
 
 import page from 'page';
-import { QueryClient } from 'react-query';
 import { setupLocale } from 'calypso/boot/locale';
 import { render } from 'calypso/controller/web-util';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
@@ -23,17 +22,14 @@ const boot = ( currentUser ) => {
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
 	setupLocale( currentUser, store );
-	const queryClient = new QueryClient();
 
 	page( '*', ( context, next ) => {
 		context.store = store;
-		context.queryClient = queryClient;
 		next();
 	} );
 
 	page.exit( '*', ( context, next ) => {
 		context.store = store;
-		context.queryClient = queryClient;
 		next();
 	} );
 
