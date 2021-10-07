@@ -36,7 +36,7 @@ const VerticalsGrid = styled.div`
 export default function DIFMDesignPickerStep( props ) {
 	const translate = useTranslate();
 	const [ sitePreviewURL, setSitePreviewURL ] = useState( null );
-	const [ selectedVertical, setSelectedVertical ] = useState( 'Local services' );
+	const [ selectedVertical, setSelectedVertical ] = useState( 'Local Services' );
 	const { templates } = VerticalTemplateMapping[ selectedVertical ] ?? [];
 
 	const pickDesign = ( selectedDesign ) => {
@@ -46,6 +46,7 @@ export default function DIFMDesignPickerStep( props ) {
 			},
 			{
 				selectedDesign,
+				selectedVertical,
 			}
 		);
 

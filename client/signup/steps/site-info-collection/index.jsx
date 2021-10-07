@@ -15,7 +15,7 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import './style.scss';
 
 function getTypeformId() {
-	return config( 'difm_typeform_id' );
+	return config( 'difm_signup_typeform_id' );
 }
 const Container = styled.div`
 	@media ( max-width: 960px ) {
@@ -43,7 +43,9 @@ function SiteInformationCollection( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedDesign, username: signupUserName } = useSelector( getSignupDependencyStore );
+	const { selectedDesign, username: signupUserName, selectedVertical } = useSelector(
+		getSignupDependencyStore
+	);
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
 
@@ -79,6 +81,7 @@ function SiteInformationCollection( {
 					hidden={ {
 						username: username ? username : signupUserName,
 						design: selectedDesign,
+						vertical: selectedVertical,
 					} }
 					id={ getTypeformId() }
 					style={ {

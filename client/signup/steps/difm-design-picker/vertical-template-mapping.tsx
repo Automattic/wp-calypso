@@ -9,8 +9,8 @@ const template_url_photographer_1 = 'https://localphotographersite.wordpress.com
 const template_url_musician_1 = 'https://sinatrasworld845548587.wordpress.com/';
 
 const VerticalTemplateMapping = {
-	'Local services': {
-		name: 'Local services',
+	'Local Services': {
+		name: 'Local Services',
 		templates: [
 			{
 				name: 'local services 1',
@@ -79,8 +79,8 @@ const VerticalTemplateMapping = {
 			},
 		],
 	},
-	'Creative arts': {
-		name: 'Creative arts',
+	'Creative Arts': {
+		name: 'Creative Arts',
 		templates: [
 			{
 				name: 'Photographer',

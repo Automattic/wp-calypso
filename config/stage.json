@@ -14,6 +14,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"difm_typeform_id": "YMiXMYId",
+	"difm_signup_typeform_id": "m3s2pdgI",
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
