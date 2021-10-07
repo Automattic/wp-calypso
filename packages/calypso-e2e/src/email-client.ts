@@ -38,7 +38,10 @@ export class EmailClient {
 			subject: subject !== undefined ? subject : '',
 		};
 
-		const message = await this.client.messages.get( inboxId, searchCriteria );
+		// Get messages sent within the last 30 seconds.
+		const message = await this.client.messages.get( inboxId, searchCriteria, {
+			receivedAfter: new Date( Date.now() - 30 * 1000 ),
+		} );
 		return message;
 	}
 
@@ -66,5 +69,17 @@ export class EmailClient {
 			}
 		}
 		return Array.from( results );
+	}
+
+	/**
+	 * Given a Message object, permanently deletes the message from the server.
+	 *
+	 * @param {Message} message E-mail message to delete.
+	 */
+	async deleteMessage( message: Message ): Promise< void > {
+		if ( ! message.id ) {
+			throw new Error( 'Message ID not found.' );
+		}
+		return await this.client.messages.del( message.id );
 	}
 }
