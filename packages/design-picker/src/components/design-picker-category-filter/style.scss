@@ -2,6 +2,9 @@
 @import '@automattic/onboarding/styles/variables';
 @import '@automattic/typography/styles/fonts';
 
+$design-picker-category-filter-text-color: #3c434a;
+$design-picker-category-filter-text-color-active: #1d2327;
+
 .design-picker-category-filter {
 	flex: 0 calc( 307px - 1rem );
 	padding-right: 1rem;
@@ -9,7 +12,7 @@
 	.design-picker-category-filter__menu-item {
 		padding-left: 0;
 		padding-right: 0;
-		color: #3c434a;
+		color: $design-picker-category-filter-text-color;
 		display: block;
 		width: auto;
 
@@ -17,13 +20,23 @@
 		&:active:not( :disabled ) {
 			box-shadow: none;
 			background: transparent;
+			text-decoration: underline;
+			color: $design-picker-category-filter-text-color;
 		}
 
 		&.is-pressed {
 			text-decoration: underline;
 			font-weight: 500; /* stylelint-disable-line scales/font-weights */
-			color: #1d2327;
+			color: $design-picker-category-filter-text-color-active;
 			background: transparent;
+
+			&:hover:not( :disabled ) {
+				color: $design-picker-category-filter-text-color-active;
+			}
+
+			&:focus:not( :disabled ) {
+				box-shadow: inset 0 0 0 1px #fff, 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+			}
 		}
 
 		.components-menu-item__item {
