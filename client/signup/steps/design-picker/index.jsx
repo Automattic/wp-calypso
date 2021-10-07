@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker from '@automattic/design-picker';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -28,22 +27,16 @@ class DesignPickerStep extends Component {
 		stepName: PropTypes.string.isRequired,
 		locale: PropTypes.string.isRequired,
 		translate: PropTypes.func,
-		largeThumbnails: PropTypes.bool,
-		showOnlyThemes: PropTypes.bool,
 		fetchRecommendedThemes: PropTypes.func.isRequired,
 		themes: PropTypes.array.isRequired,
 	};
 
 	static defaultProps = {
 		useHeadstart: true,
-		largeThumbnails: false,
-		showOnlyThemes: false,
 	};
 
 	componentDidMount() {
-		if ( this.props.showOnlyThemes ) {
-			this.fetchThemes();
-		}
+		this.fetchThemes();
 	}
 
 	fetchThemes() {
@@ -69,29 +62,24 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		// Use <DesignPicker>'s preferred designs by default
-		let designs = undefined;
-
-		if ( this.props.showOnlyThemes ) {
-			// TODO fetching and filtering code should be pulled to a shared place that's usable by both
-			// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
-			// component itself. The `/new` environment needs helpers for making authenticated requests to
-			// the theme API before we can do this.
-			designs = this.props.themes
-				.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-				.map( ( { id, name, taxonomies } ) => ( {
-					categories: taxonomies?.theme_subject ?? [
-						{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
-					],
-					features: [],
-					is_premium: false,
-					slug: id,
-					template: id,
-					theme: id,
-					title: name,
-					...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-				} ) );
-		}
+		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
+		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
+		// component itself. The `/new` environment needs helpers for making authenticated requests to
+		// the theme API before we can do this.
+		const designs = this.props.themes
+			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
+			.map( ( { id, name, taxonomies } ) => ( {
+				categories: taxonomies?.theme_subject ?? [
+					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
+				],
+				features: [],
+				is_premium: false,
+				slug: id,
+				template: id,
+				theme: id,
+				title: name,
+				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+			} ) );
 
 		return (
 			<DesignPicker
@@ -99,9 +87,6 @@ class DesignPickerStep extends Component {
 				theme={ this.props.isReskinned ? 'light' : 'dark' }
 				locale={ this.props.locale } // props.locale obtained via `localize` HoC
 				onSelect={ this.pickDesign }
-				className={ classnames( {
-					'design-picker-step__is-large-thumbnails': this.props.largeThumbnails,
-				} ) }
 				highResThumbnails
 				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
 			/>

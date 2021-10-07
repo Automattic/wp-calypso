@@ -716,10 +716,6 @@ export function generateSteps( {
 
 		'design-setup-site': {
 			stepName: 'design-setup-site',
-			props: {
-				largeThumbnails: true,
-				showOnlyThemes: true,
-			},
 			apiRequestFunction: setDesignOnSite,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],

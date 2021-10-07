@@ -46,15 +46,13 @@
 		}
 	}
 
-	.design-picker.design-picker-step__is-large-thumbnails {
-		.design-picker__grid {
-			grid-template-columns: 1fr;
+	.design-picker__grid {
+		grid-template-columns: 1fr;
 
-			@include break-medium {
-				grid-template-columns: 1fr 1fr;
-				column-gap: 49px;
-				row-gap: 39px;
-			}
+		@include break-medium {
+			grid-template-columns: 1fr 1fr;
+			column-gap: 49px;
+			row-gap: 39px;
 		}
 	}
 
