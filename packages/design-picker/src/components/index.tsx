@@ -3,7 +3,7 @@
 import { Tooltip } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
@@ -130,13 +130,24 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
 		categories[ 0 ]?.slug ?? null
 	);
+
+	useEffect( () => {
+		// When the category list changes check that the current selection
+		// still matches one of the given slugs, and if it doesn't reset
+		// the current selection.
+		const findResult = categories.find( ( { slug } ) => slug === selectedCategory );
+		if ( ! findResult ) {
+			setSelectedCategory( categories[ 0 ]?.slug ?? null );
+		}
+	}, [ categories, selectedCategory ] );
+
 	const filteredDesigns = ! showCategoryFilter
 		? designs
 		: filterDesignsByCategory( designs, selectedCategory );
 
 	return (
 		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ showCategoryFilter && categories.length && (
+			{ showCategoryFilter && !! categories.length && (
 				<DesignPickerCategoryFilter
 					categories={ categories }
 					selectedCategory={ selectedCategory }
