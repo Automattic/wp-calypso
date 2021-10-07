@@ -11,8 +11,8 @@ import useKeydownHandler from './hooks/use-keydown-handler';
 interface Props {
 	onMinimize: () => void;
 	onDismiss: ( target: string ) => () => void;
-	onNextCardProgression: () => void;
-	onPreviousCardProgression: () => void;
+	onNextStepProgression: () => void;
+	onPreviousStepProgression: () => void;
 	tourContainerRef: React.MutableRefObject< null | HTMLElement >;
 	isMinimized: boolean;
 }
@@ -20,16 +20,16 @@ interface Props {
 const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 	onMinimize,
 	onDismiss,
-	onNextCardProgression,
-	onPreviousCardProgression,
+	onNextStepProgression,
+	onPreviousStepProgression,
 	tourContainerRef,
 	isMinimized,
 } ) => {
 	function ExpandedTourNav() {
 		useKeydownHandler( {
 			onEscape: onMinimize,
-			onArrowRight: onNextCardProgression,
-			onArrowLeft: onPreviousCardProgression,
+			onArrowRight: onNextStepProgression,
+			onArrowLeft: onPreviousStepProgression,
 		} );
 		return null;
 	}

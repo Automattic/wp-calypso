@@ -17,10 +17,11 @@ import { Icon, close } from '@wordpress/icons';
 /**
  * Internal Dependencies
  */
+import usePopperHandler from './hooks/use-popper-handler';
 import maximize from './icons/maximize';
 import KeyboardNavigation from './keyboard-navigation';
 import WelcomeTourCard from './tour-card';
-import getTourContent from './tour-content';
+import getTourSteps from './tour-steps';
 
 import './style-tour.scss';
 
@@ -38,7 +39,7 @@ function LaunchWpcomWelcomeTour() {
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
-	new window.Image().src = getTourContent( localeSlug )[ 0 ].imgSrc;
+	new window.Image().src = getTourSteps( localeSlug )[ 0 ].meta.imgSrc;
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -71,39 +72,39 @@ function WelcomeTourFrame() {
 	const focusedOnLaunchRef = useRef( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
+	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 	const localeSlug = useLocale();
-	const cardContent = getTourContent( localeSlug );
-	const lastCardIndex = cardContent.length - 1;
+	const steps = getTourSteps( localeSlug );
+	const lastStepIndex = steps.length - 1;
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 
 	const handleDismiss = ( source ) => {
 		return () => {
 			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 				is_gutenboarding: isGutenboarding,
-				slide_number: currentCardIndex + 1,
+				slide_number: currentStepIndex + 1,
 				action: source,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		};
 	};
 
-	const handleNextCardProgression = () => {
-		if ( lastCardIndex > currentCardIndex ) {
-			setCurrentCardIndex( currentCardIndex + 1 );
+	const handleNextStepProgression = () => {
+		if ( lastStepIndex > currentStepIndex ) {
+			setCurrentStepIndex( currentStepIndex + 1 );
 		}
 	};
 
-	const handlePreviousCardProgression = () => {
-		currentCardIndex && setCurrentCardIndex( currentCardIndex - 1 );
+	const handlePreviousStepProgression = () => {
+		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
 	};
 
 	const handleMinimize = () => {
 		setIsMinimized( true );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
 			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
+			slide_number: currentStepIndex + 1,
 		} );
 	};
 
@@ -112,7 +113,7 @@ function WelcomeTourFrame() {
 		setJustMaximized( true );
 		recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 			is_gutenboarding: isGutenboarding,
-			slide_number: currentCardIndex + 1,
+			slide_number: currentStepIndex + 1,
 		} );
 	};
 
@@ -122,37 +123,90 @@ function WelcomeTourFrame() {
 	}, [] );
 
 	// Preload card images
-	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
+	steps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
+
+	const referenceElementSelectors = [
+		{
+			mobile: null,
+			desktop: null,
+		},
+		{
+			mobile: null,
+			desktop: null,
+		},
+		{
+			mobile: '.edit-post-header-toolbar .components-button',
+			desktop: '.edit-post-header-toolbar .components-button',
+		},
+		{
+			mobile: null,
+			desktop: null,
+		},
+		{
+			mobile: null,
+			desktop: null,
+		},
+		{
+			mobile: '.edit-post-header__settings',
+			desktop: '.edit-post-header__settings',
+		},
+		{
+			mobile: '.edit-post-header-toolbar .components-button',
+			desktop: '.edit-post-header-toolbar .components-button',
+		},
+		{
+			mobile: null,
+			desktop: null,
+		},
+		{
+			mobile: null,
+			desktop: null,
+		},
+	];
+
+	const { styles, attributes } = usePopperHandler(
+		steps[ currentStepIndex ].referenceElements.desktop,
+		tourContainerRef
+	);
+
+	const stepRepositionProps = ! isMinimized
+		? {
+				style: styles?.popper,
+				...attributes?.popper,
+		  }
+		: null;
 
 	return (
 		<>
 			<KeyboardNavigation
 				onMinimize={ handleMinimize }
 				onDismiss={ handleDismiss }
-				onNextCardProgression={ handleNextCardProgression }
-				onPreviousCardProgression={ handlePreviousCardProgression }
+				onNextStepProgression={ handleNextStepProgression }
+				onPreviousStepProgression={ handlePreviousStepProgression }
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className="wpcom-editor-welcome-tour-frame" ref={ tourContainerRef }>
+			<div
+				className="wpcom-editor-welcome-tour-frame"
+				ref={ tourContainerRef }
+				{ ...stepRepositionProps }
+			>
 				{ ! isMinimized ? (
-					<>
-						<WelcomeTourCard
-							cardContent={ cardContent[ currentCardIndex ] }
-							currentCardIndex={ currentCardIndex }
-							justMaximized={ justMaximized }
-							key={ currentCardIndex }
-							lastCardIndex={ lastCardIndex }
-							onDismiss={ handleDismiss }
-							onMinimize={ handleMinimize }
-							setJustMaximized={ setJustMaximized }
-							setCurrentCardIndex={ setCurrentCardIndex }
-							onNextCardProgression={ handleNextCardProgression }
-							onPreviousCardProgression={ handlePreviousCardProgression }
-							isGutenboarding={ isGutenboarding }
-							focusedOnLaunchRef={ focusedOnLaunchRef }
-						/>
-					</>
+					<WelcomeTourCard
+						cardContent={ steps[ currentStepIndex ].meta }
+						currentStepIndex={ currentStepIndex }
+						justMaximized={ justMaximized }
+						key={ currentStepIndex }
+						lastStepIndex={ lastStepIndex }
+						onDismiss={ handleDismiss }
+						onMinimize={ handleMinimize }
+						setJustMaximized={ setJustMaximized }
+						setCurrentStepIndex={ setCurrentStepIndex }
+						onNextStepProgression={ handleNextStepProgression }
+						onPreviousStepProgression={ handlePreviousStepProgression }
+						isGutenboarding={ isGutenboarding }
+						focusedOnLaunchRef={ focusedOnLaunchRef }
+					/>
 				) : (
 					<WelcomeTourMinimized
 						onMaximize={ handleMaximize }
