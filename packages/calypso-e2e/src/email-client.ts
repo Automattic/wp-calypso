@@ -38,7 +38,7 @@ export class EmailClient {
 			subject: subject !== undefined ? subject : '',
 		};
 
-		// Get messages sent within the last 100 seconds.
+		// Get messages sent within the last 30 seconds.
 		const message = await this.client.messages.get( inboxId, searchCriteria, {
 			receivedAfter: new Date( Date.now() - 30 * 1000 ),
 		} );
