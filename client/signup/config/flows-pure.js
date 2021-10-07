@@ -419,6 +419,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			pageTitle: translate( 'Setup your site' ),
+			enableBranchSteps: true,
 		},
 		{
 			name: 'do-it-for-me',
