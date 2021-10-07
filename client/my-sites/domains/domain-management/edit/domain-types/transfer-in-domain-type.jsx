@@ -5,23 +5,38 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { resolveDomainStatus } from 'calypso/lib/domains';
+import { resolveDomainStatus, startInboundTransfer } from 'calypso/lib/domains';
 import { transferStatus } from 'calypso/lib/domains/constants';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
-import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getByPurchaseId,
-	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
 class TransferInDomainType extends Component {
 	startTransfer = () => {
-		const { domain, selectedSite } = this.props;
-		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
+		this.setState( { isTransferring: true }, this.inboundTransfer );
 	};
+
+	inboundTransfer() {
+		const { domain, selectedSite, translate } = this.props;
+		const domainName = domain.name;
+
+		startInboundTransfer( selectedSite.ID, domainName, null, ( error, result ) => {
+			this.setState( { isTransferring: false } );
+			if ( result ) {
+				this.props.fetchSiteDomains( selectedSite.ID );
+				page( domainManagementTransferIn( selectedSite.slug, domainName ) );
+			} else {
+				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
+			}
+		} );
+	}
 
 	renderPendingStart() {
 		const { domain, translate } = this.props;
@@ -41,7 +56,7 @@ class TransferInDomainType extends Component {
 					) }
 				</p>
 
-				<Button primary onClick={ this.startTransfer }>
+				<Button primary onClick={ this.startTransfer } busy={ this.state?.isTransferring }>
 					{ translate( 'Start transfer' ) }
 				</Button>
 			</>
@@ -133,11 +148,16 @@ class TransferInDomainType extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { subscriptionId } = ownProps.domain;
-	return {
-		purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
-	};
-} )( withLocalizedMoment( localize( TransferInDomainType ) ) );
+export default connect(
+	( state, ownProps ) => {
+		const { subscriptionId } = ownProps.domain;
+		return {
+			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( withLocalizedMoment( localize( TransferInDomainType ) ) );
