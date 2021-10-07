@@ -165,6 +165,13 @@ class MediaSettingsPerformance extends Component {
 const checkForJetpackVideoPressProduct = ( purchase ) =>
 	purchase.active && isJetpackVideoPress( purchase );
 
+/**
+ * Security Daily plan no longer includes VideoPress as of Oct 5 2021.
+ * This check enforces the upsell appears only for customers that purchased Security Daily after that date.
+ *
+ * @param {*} purchase
+ * @returns bool
+ */
 const checkForLegacySecurityDailyPlan = ( purchase ) =>
 	purchase.active &&
 	( PLAN_JETPACK_SECURITY_DAILY_MONTHLY === purchase.productSlug ||
