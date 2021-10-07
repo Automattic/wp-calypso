@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
+import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { compose } from '@wordpress/compose';
 import { withViewportMatch } from '@wordpress/viewport';
@@ -211,10 +212,22 @@ class DesignPickerStep extends Component {
 
 		return translate( 'Choose a design' );
 	}
-	subHeaderText() {
-		const { translate } = this.props;
 
-		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
+	subHeaderText() {
+		const { locale, translate } = this.props;
+
+		const text = translate(
+			'Pick your favorite homepage layout. You can customize or change it later.'
+		);
+
+		if ( englishLocales.includes( locale ) && isEnabled( 'signup/design-picker-categories' ) ) {
+			// An English only trick so the line wraps between sentences.
+			return text
+				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
+				.replace( /\.\s/g, '. ' ); // Replace all spaces at the end of sentences with a regular breaking space
+		}
+
+		return text;
 	}
 
 	skipLabelText() {
