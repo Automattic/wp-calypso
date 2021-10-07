@@ -30,9 +30,7 @@ export default function FseBetaFeedbackForm( { calypsoPort } ) {
 				setMessage( '' );
 				setConfirmation( {
 					title: __( 'Got it!' ),
-					message: __(
-						"We've received your feedback. Thank you for helping us make WordPress.com awesome!"
-					),
+					message: __( 'Thank you for helping us make WordPress.com awesome.' ),
 					isError: false,
 				} );
 			} else if ( 'error' === data ) {
@@ -56,7 +54,7 @@ export default function FseBetaFeedbackForm( { calypsoPort } ) {
 					disabled={ isSubmitting }
 					onChange={ setMessage }
 					placeholder={ __(
-						'How can we improve the site editing experience?',
+						'How can we improve your site editing experience?',
 						'full-site-editing'
 					) }
 					value={ message }

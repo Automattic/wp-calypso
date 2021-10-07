@@ -11,17 +11,17 @@ const noop = () => {};
 
 /**
  *
- * @param {string}	 message 	 The user's feedback message to send.
- * @param {string} 	 siteUrl 	 The current site Url.
- * @param {string} 	 userLocale  The user's locale.
- * @param {Function} then		 Function to handle response of post request.
- * @param {Function} handleError Function to handle error in post request.
+ * @param {string}	 message 	 	The user's feedback message to send.
+ * @param {string} 	 siteUrl 	 	The current site Url.
+ * @param {string} 	 userLocale  	The user's locale.
+ * @param {Function} handleSuccess	Function to handle response of post request.
+ * @param {Function} handleError 	Function to handle error in post request.
  */
 export const sendSiteEditorBetaFeedback = (
 	message,
 	siteUrl,
 	userLocale,
-	then = noop,
+	handleSuccess = noop,
 	handleError = noop
 ) => {
 	const kayakoMessage = `Site: ${ siteUrl ? siteUrl : 'N/A' }\n\n${ message }`;
@@ -34,6 +34,6 @@ export const sendSiteEditorBetaFeedback = (
 			client: config( 'client_slug' ),
 			is_chat_overflow: false,
 		} )
-		.then( then )
+		.then( handleSuccess )
 		.catch( handleError );
 };
