@@ -60,7 +60,7 @@ import {
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
-import { INBOX_MANAGEMENT } from 'calypso/my-sites/email/inbox';
+import { INBOX } from 'calypso/my-sites/email/inbox';
 import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -160,7 +160,7 @@ class EmailProvidersComparison extends Component {
 			context: comparisonContext,
 		} );
 
-		if ( comparisonContext === INBOX_MANAGEMENT ) {
+		if ( comparisonContext === INBOX ) {
 			recordInboxUpsellTracksEvent( { product: 'forward' } );
 		}
 
@@ -240,7 +240,7 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( comparisonContext === INBOX_MANAGEMENT ) {
+				if ( comparisonContext === INBOX ) {
 					recordInboxUpsellTracksEvent( {
 						product: 'email',
 						provider: TITAN_PROVIDER_NAME,
@@ -304,7 +304,7 @@ class EmailProvidersComparison extends Component {
 					return;
 				}
 
-				if ( comparisonContext === INBOX_MANAGEMENT ) {
+				if ( comparisonContext === INBOX ) {
 					recordInboxUpsellTracksEvent( {
 						product: 'email',
 						provider: GOOGLE_PROVIDER_NAME,

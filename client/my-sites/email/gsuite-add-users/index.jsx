@@ -36,7 +36,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import { INBOX_MANAGEMENT } from 'calypso/my-sites/email/inbox';
+import { INBOX } from 'calypso/my-sites/email/inbox';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
@@ -81,7 +81,7 @@ class GSuiteAddUsers extends Component {
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
-			if ( context === INBOX_MANAGEMENT ) {
+			if ( context === INBOX ) {
 				recordInboxUpsellTracksEvent( {
 					product: 'inbox',
 					provider: GOOGLE_PROVIDER_NAME,

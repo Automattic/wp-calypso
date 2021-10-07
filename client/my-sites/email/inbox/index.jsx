@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-export const INBOX_MANAGEMENT = 'inbox';
+export const INBOX = 'inbox';
 
 const NoAccessCard = () => {
 	const translate = useTranslate();
@@ -107,7 +107,7 @@ const InboxManagement = () => {
 				emailListInactiveHeader={ <MainHeader /> }
 				sectionHeaderLabel={ translate( 'Domains' ) }
 				showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-				context={ INBOX_MANAGEMENT }
+				context={ INBOX }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

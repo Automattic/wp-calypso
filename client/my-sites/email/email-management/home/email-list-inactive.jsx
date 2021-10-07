@@ -52,6 +52,7 @@ class EmailListInactive extends Component {
 }
 
 EmailListInactive.propTypes = {
+	context: PropTypes.string,
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array,
 	headerComponent: PropTypes.element,

@@ -119,7 +119,6 @@ const TitanNewMailboxList = ( {
 
 TitanNewMailboxList.propTypes = {
 	children: PropTypes.node,
-	context: PropTypes.string,
 	domain: PropTypes.string.isRequired,
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,
