@@ -1,0 +1,3 @@
+{
+	"extends": "@automattic/calypso-typescript-config/ts-package.json",
+}

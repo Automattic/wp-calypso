@@ -33,6 +33,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"asana-phrase": "0.0.8",
 		"chai": "4.3.4",
 		"copy-webpack-plugin": "^6.2.1",
