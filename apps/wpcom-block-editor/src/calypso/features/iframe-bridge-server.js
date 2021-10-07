@@ -9,7 +9,7 @@ import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
+import { comment, wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -19,6 +19,7 @@ import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+import FeedbackForm from './fse-beta/feedback-form';
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
  * not available in the post editor and causes WSOD in that case.  Instead, we can
@@ -1077,6 +1078,25 @@ async function preselectParentPage() {
 	}
 }
 
+function handleSiteEditorFeedbackPlugin( calypsoPort ) {
+	const PluginSidebar = editSitePackage?.PluginSidebar;
+	if ( PluginSidebar ) {
+		registerPlugin( 'a8c-fse-beta-feedback-plugin', {
+			render: () => (
+				<PluginSidebar
+					name="a8c-fse-beta-feedback-plugin"
+					title={ __( 'Site Editor Beta Feedback', 'full-site-editing' ) }
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					className="a8c-site-editor-feedback-plugin"
+					icon={ comment }
+				>
+					<FeedbackForm calypsoPort={ calypsoPort } />
+				</PluginSidebar>
+			),
+		} );
+	}
+}
+
 function handleCheckoutModalOpened( calypsoPort, data ) {
 	const { port1, port2 } = new MessageChannel();
 
@@ -1244,6 +1264,8 @@ function initPort( message ) {
 		handleCheckoutModal( calypsoPort );
 
 		handleInlineHelpButton( calypsoPort );
+
+		handleSiteEditorFeedbackPlugin( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

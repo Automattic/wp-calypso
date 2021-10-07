@@ -22,6 +22,7 @@ import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { selectMediaItems } from 'calypso/state/media/actions';
@@ -48,11 +49,11 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
+import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
 import type { RequestCart } from '@automattic/shopping-cart';
-
 import './style.scss';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -122,6 +123,7 @@ enum EditorActions {
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
+	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
 }
 
 type ComponentProps = Props &
@@ -489,6 +491,16 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					blockCount: payload.blockCount,
 				} );
 			}
+		}
+
+		if ( EditorActions.SendSiteEditorBetaFeedback === action ) {
+			sendSiteEditorBetaFeedback(
+				payload,
+				this.props.siteUrl,
+				this.props.currentUserLocale,
+				() => ports[ 0 ].postMessage( 'success' ),
+				() => ports[ 0 ].postMessage( 'error' )
+			);
 		}
 	};
 
@@ -881,6 +893,7 @@ const mapStateToProps = (
 		closeUrl,
 		closeLabel,
 		currentRoute,
+		currentUserLocale: getCurrentUserLocale( state ),
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
