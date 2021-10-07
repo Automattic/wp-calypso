@@ -4,6 +4,7 @@
 
 import { setupHooks, DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import type { Message } from 'mailosaur/lib/models';
 
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
 	const inboxId = DataHelper.config.get( 'defaultUserInboxId' ) as string;
@@ -16,8 +17,10 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	let magicLink: string;
 	let loginPage: LoginPage;
 	let page: Page;
+	let message: Message;
+	let emailClient: EmailClient;
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
@@ -31,8 +34,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	} );
 
 	it( 'Magic link is received', async function () {
-		const emailClient = new EmailClient();
-		const message = await emailClient.getLastEmail( {
+		emailClient = new EmailClient();
+		message = await emailClient.getLastEmail( {
 			inboxId: inboxId,
 			emailAddress: email,
 			subject: 'Log in to WordPress.com',
@@ -45,5 +48,11 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	it( 'Log in using magic link', async function () {
 		const loginPage = new LoginPage( page );
 		await loginPage.followMagicLink( magicLink );
+	} );
+
+	afterAll( async function () {
+		if ( message ) {
+			await emailClient.deleteMessage( message );
+		}
 	} );
 } );
