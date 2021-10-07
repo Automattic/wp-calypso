@@ -31,5 +31,8 @@
 		"clean": "npx rimraf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

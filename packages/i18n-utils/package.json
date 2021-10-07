@@ -29,6 +29,7 @@
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.1.1",
 		"@testing-library/react-hooks": "7.0.2",
