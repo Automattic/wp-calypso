@@ -62,6 +62,7 @@ export { isJetpackProductSlug } from './is-jetpack-product-slug';
 export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackSearch } from './is-jetpack-search';
+export { isJetpackSearchSlug } from './is-jetpack-search-slug';
 export { isJetpackVideoPress } from './is-jetpack-videopress';
 export { isJpphpBundle } from './is-jpphp-bundle';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
