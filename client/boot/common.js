@@ -2,12 +2,9 @@ import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
-import { throttle } from 'lodash';
 import page from 'page';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
-import { QueryClient } from 'react-query';
-import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
 import { ProviderWrappedLayout } from 'calypso/controller';
@@ -41,19 +38,10 @@ import { initConnection as initHappychatConnection } from 'calypso/state/happych
 import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import {
-	getInitialState,
-	persistOnChange,
-	shouldPersist,
-	MAX_AGE,
-	SERIALIZE_THROTTLE,
-} from 'calypso/state/initial-state';
-import {
-	loadPersistedState,
-	getPersistedStateItem,
-	storePersistedStateItem,
-} from 'calypso/state/persisted-state';
+import { getInitialState, persistOnChange } from 'calypso/state/initial-state';
+import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
+import { createQueryClient } from 'calypso/state/query-client';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
@@ -427,28 +415,6 @@ function renderLayout( reduxStore, reactQueryClient ) {
 		<ProviderWrappedLayout store={ reduxStore } queryClient={ reactQueryClient } />,
 		document.getElementById( 'wpcom' )
 	);
-}
-
-async function createQueryClient( userId ) {
-	const queryClient = new QueryClient();
-	if ( shouldPersist() ) {
-		const storeKey = `query-state-${ userId ?? 'logged-out' }`;
-		const persistor = {
-			persistClient: throttle(
-				( state ) => storePersistedStateItem( storeKey, state ),
-				SERIALIZE_THROTTLE,
-				{ leading: false, trailing: true }
-			),
-			restoreClient: () => getPersistedStateItem( storeKey ),
-			removeClient: () => {}, // not implemented
-		};
-		await persistQueryClient( {
-			queryClient,
-			persistor,
-			maxAge: MAX_AGE,
-		} );
-	}
-	return queryClient;
 }
 
 const boot = async ( currentUser, registerRoutes ) => {
