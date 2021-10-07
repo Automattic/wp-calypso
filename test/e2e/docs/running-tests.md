@@ -103,14 +103,6 @@ yarn jest specs/specs-playwright/wp-support__popover.ts specs/specs-playwright/w
 
 ## Running tests (Selenium)
 
-### All tests
-
-```
-yarn magellan --config=magellan-calypso.json
-```
-
-Configuration values for this command is read from `magellan-calypso.json`. This command will run all tests in the `test/e2e/specs/specs-calypso` directory using `magellan` with retries enabled.
-
 ### Individual spec file(s)
 
 Specify spec file(s) directly to mocha:

@@ -518,36 +518,10 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 		}
 
 		features {
-			perfmon {
-			}
-			pullRequests {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				provider = github {
-					authType = token {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-				}
-			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
+			perfmon {}
 		}
 
-		triggers {
-			vcs {
-				branchFilter = """
-					+:*
-					-:pull*
-				""".trimIndent()
-			}
-		}
+		triggers {}
 
 		failureConditions {
 			executionTimeoutMin = 20
@@ -558,18 +532,6 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
 			// been muted previously.
 			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
 		}
 
 		dependencies {
