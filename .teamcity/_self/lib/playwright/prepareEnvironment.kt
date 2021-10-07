@@ -19,6 +19,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
  */
 fun BuildSteps.prepareEnvironment(): ScriptBuildStep {
 	return script {
+		name = "Prepare environment"
 		scriptContent = """
 			#!/bin/bash
 			# Update node
