@@ -161,7 +161,7 @@ const checkForJetpackVideoPressProduct = ( purchase ) =>
 	purchase.active && isJetpackVideoPress( purchase );
 
 /**
- * Security Daily plan no longer includes VideoPress as of Oct 5 2021.
+ * Security Daily plan no longer includes VideoPress as of end of day Oct 6 2021 UTC.
  * This check enforces the upsell appears only for customers that purchased Security Daily after that date.
  *
  * @param {*} purchase
@@ -171,7 +171,7 @@ const checkForLegacySecurityDailyPlan = ( purchase ) =>
 	purchase.active &&
 	( PLAN_JETPACK_SECURITY_DAILY_MONTHLY === purchase.productSlug ||
 		PLAN_JETPACK_SECURITY_DAILY === purchase.productSlug ) &&
-	moment( purchase.subscribedDate ).isBefore( moment.utc( '2021-10-05' ) );
+	moment( purchase.subscribedDate ).isBefore( moment.utc( '2021-10-07' ) );
 
 const checkForActiveJetpackVideoPressPurchases = ( purchase ) =>
 	checkForJetpackVideoPressProduct( purchase ) || checkForLegacySecurityDailyPlan( purchase );
