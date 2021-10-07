@@ -1,8 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import intentImageUrl from 'calypso/assets/images/intent-screen/intent.svg';
+import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import flows from 'calypso/signup/config/flows';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import IntentScreen from './intent-screen';
@@ -15,6 +16,11 @@ interface Props {
 	stepName: string;
 }
 
+const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
+	write: [ 'design-setup-site' ],
+	build: [ 'site-options' ],
+};
+
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -25,25 +31,17 @@ export default function IntentStep( props: Props ): React.ReactNode {
 
 	const submitIntent = ( intent: IntentFlag ) => {
 		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
-
 		dispatch( submitSignupStep( { stepName }, { intent } ) );
 
-		if ( intent === 'write' ) {
-			dispatch(
-				submitSignupStep(
-					{ stepName: 'design-setup-site' },
-					{
-						selectedDesign: {
-							theme: 'independent-publisher-2',
-							slug: 'independent-publisher-2',
-						},
-					}
-				)
-			);
-		}
+		// TODO: Better way to handle branch steps
+		EXCLUDE_STEPS[ intent ].forEach( ( step ) => flows.excludeStep( step ) );
 
 		goToNextStep();
 	};
+
+	React.useEffect( () => {
+		flows.resetExcludedSteps();
+	}, [] );
 
 	return (
 		<StepWrapper
