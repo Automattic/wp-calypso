@@ -5,7 +5,10 @@ import { shouldPersist, MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/initia
 import { getPersistedStateItem, storePersistedStateItem } from 'calypso/state/persisted-state';
 
 export async function createQueryClient( userId: number | undefined ): Promise< QueryClient > {
-	const queryClient = new QueryClient();
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { cacheTime: MAX_AGE } },
+	} );
+
 	if ( shouldPersist() ) {
 		const storeKey = `query-state-${ userId ?? 'logged-out' }`;
 		const persistor = {
