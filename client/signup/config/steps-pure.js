@@ -729,9 +729,13 @@ export function generateSteps( {
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 		},
+		'difm-design': {
+			stepName: 'difm-design',
+			providesDependencies: [ 'username', 'selectedDesign', 'selectedVertical' ],
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'username', 'selectedDesign', 'selectedVertical' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},
