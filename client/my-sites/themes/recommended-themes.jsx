@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGutenbergFSESettingsQuery } from 'calypso/data/gutenberg/fse-settings-query';
+import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
@@ -11,10 +11,10 @@ import { ConnectedThemesSelection } from './themes-selection';
 const RecommendedThemes = ( props ) => {
 	const dispatch = useDispatch();
 	const { siteId } = props;
-	const { isLoading: isLoadingGutenbergFSESettings, data } = useGutenbergFSESettingsQuery( siteId );
+	const { isLoading: isLoadingBlockEditorSettings, data } = useBlockEditorSettingsQuery( siteId );
 
-	const isCoreFSEEligible = data?.is_core_fse_eligible ?? false;
-	const recommendedThemesFilter = isCoreFSEEligible ? 'block-templates' : 'auto-loading-homepage';
+	const isFSEEligible = data?.is_fse_eligible ?? false;
+	const recommendedThemesFilter = isFSEEligible ? 'block-templates' : 'auto-loading-homepage';
 
 	const customizedThemesList = useSelector( ( state ) =>
 		getRecommendedThemesSelector( state, recommendedThemesFilter )
@@ -25,15 +25,15 @@ const RecommendedThemes = ( props ) => {
 	);
 
 	useEffect( () => {
-		if ( ! isLoadingGutenbergFSESettings ) {
+		if ( ! isLoadingBlockEditorSettings ) {
 			dispatch( getRecommendedThemes( recommendedThemesFilter ) );
 		}
-	}, [ isLoadingGutenbergFSESettings, recommendedThemesFilter, dispatch ] );
+	}, [ isLoadingBlockEditorSettings, recommendedThemesFilter, dispatch ] );
 
 	return (
 		<ConnectedThemesSelection
 			{ ...props }
-			isLoading={ isLoadingGutenbergFSESettings || areThemesLoading }
+			isLoading={ isLoadingBlockEditorSettings || areThemesLoading }
 			customizedThemesList={ customizedThemesList }
 		/>
 	);
