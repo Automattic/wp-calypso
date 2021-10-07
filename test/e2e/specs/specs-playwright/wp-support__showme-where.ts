@@ -24,6 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 		{ siteType: 'Atomic', user: 'wooCommerceUser' },
 	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
+		let gutenboardingFlow: GutenboardingFlow;
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( page, user );
@@ -40,15 +41,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 			await supportComponent.openPopover();
 		} );
 
-		it( 'Displays default entries', async function () {
-			await supportComponent.defaultStateShown();
-		} );
-
-		it( 'Enter search keyword', async function () {
-			const keyword = 'domain';
-			await supportComponent.search( keyword );
-		} );
-
 		it( 'Search for help: Create a site', async function () {
 			await supportComponent.search( 'create a site' );
 		} );
@@ -57,9 +49,14 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 			await supportComponent.clickResult( 'where', 1 );
 		} );
 
+		it( 'Gutenboarding flow is started', async function () {
+			gutenboardingFlow = new GutenboardingFlow( page );
+			await gutenboardingFlow.enterSiteTitle( DataHelper.getRandomPhrase() );
+		} );
+
 		it( 'Exit Gutenboarding flow', async function () {
-			const gutenboardingFlow = new GutenboardingFlow( page );
 			await gutenboardingFlow.clickWpLogo();
+			await page.waitForURL( '**/home/**' );
 		} );
 	} );
 } );
