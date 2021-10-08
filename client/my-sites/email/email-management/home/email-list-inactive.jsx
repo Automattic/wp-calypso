@@ -14,6 +14,7 @@ class EmailListInactive extends Component {
 			headerComponent,
 			sectionHeaderLabel,
 			selectedSiteSlug,
+			source,
 			translate,
 		} = this.props;
 		if ( domains.length < 1 ) {
@@ -29,7 +30,8 @@ class EmailListInactive extends Component {
 							href={ emailManagementPurchaseNewEmailAccount(
 								selectedSiteSlug,
 								domain.name,
-								currentRoute
+								currentRoute,
+								source
 							) }
 						>
 							{ translate( 'Add Email' ) }
@@ -55,6 +57,7 @@ EmailListInactive.propTypes = {
 	headerComponent: PropTypes.element,
 	sectionHeaderLabel: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 

@@ -20,7 +20,7 @@ import {
 	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -31,6 +31,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
+import { INBOX } from 'calypso/my-sites/email/inbox';
 import {
 	emailManagement,
 	emailManagementNewTitanAccount,
@@ -81,13 +82,15 @@ class TitanAddMailboxes extends Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		page(
 			emailManagement(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute
+				currentRoute,
+				{ source }
 			)
 		);
 	};
@@ -115,7 +118,7 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleContinue = async () => {
-		const { selectedSite } = this.props;
+		const { selectedSite, source } = this.props;
 		const { mailboxes } = this.state;
 
 		const validatedMailboxes = validateMailboxes( mailboxes );
@@ -143,10 +146,21 @@ class TitanAddMailboxes extends Component {
 			validatedMailboxUuids,
 		} );
 
-		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
+		const eventProps = {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
-		} );
+		};
+
+		if ( source === INBOX ) {
+			eventProps.product = 'inbox';
+			eventProps.provider = TITAN_PROVIDER_NAME;
+			eventProps.source = INBOX;
+		}
+
+		this.recordClickEvent(
+			'calypso_email_management_titan_add_mailboxes_continue_button_click',
+			eventProps
+		);
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );
@@ -164,6 +178,7 @@ class TitanAddMailboxes extends Component {
 						// Stay on the page to show the relevant error
 						return;
 					}
+
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}

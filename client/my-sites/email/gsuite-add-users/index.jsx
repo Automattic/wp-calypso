@@ -22,7 +22,11 @@ import {
 	getGSuiteSupportedDomains,
 	getProductSlug,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_PRODUCT_TYPE,
+	GSUITE_PRODUCT_TYPE,
+} from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -31,6 +35,7 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import { INBOX } from 'calypso/my-sites/email/inbox';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
@@ -110,13 +115,20 @@ class GSuiteAddUsers extends Component {
 	};
 
 	recordClickEvent = ( eventName ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		const { users } = this.state;
-
-		recordTracksEvent( eventName, {
+		const eventObject = {
 			domain_name: selectedDomainName,
 			user_count: users.length,
-		} );
+		};
+
+		if ( source === INBOX ) {
+			eventObject.provider = GOOGLE_PROVIDER_NAME;
+			eventObject.product = 'inbox';
+			eventObject.source = INBOX;
+		}
+
+		recordTracksEvent( eventName, eventObject );
 	};
 
 	recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
@@ -277,6 +289,7 @@ GSuiteAddUsers.propTypes = {
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
 	} ).isRequired,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
