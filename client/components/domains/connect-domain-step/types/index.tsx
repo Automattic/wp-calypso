@@ -7,10 +7,12 @@ type Maybe< T > = T | null;
 type PossibleSlugs = ValueOf< typeof stepSlug >;
 type PossibleInitialModes = ValueOf< typeof useMyDomainInputMode >;
 
-export type AuthCodeValidationError = {
+export type DomainsApiError = {
 	error?: string;
 	message?: string;
 };
+
+export type AuthCodeValidationError = DomainsApiError;
 
 export type AuthCodeValidationData = {
 	domain: string;
@@ -27,6 +29,10 @@ export type AuthCodeValidationHandler = (
 	authData: AuthCodeValidationData,
 	onDone?: ( error?: Maybe< AuthCodeValidationError >, callbackData?: unknown ) => void
 ) => unknown;
+
+export type InboundTransferResult = {
+	success: boolean;
+};
 
 export type InboundTransferStatusInfo = {
 	creationDate: string;

@@ -1,6 +1,7 @@
 import page from 'page';
 import { DefaultRootState } from 'react-redux';
 import { Dispatch } from 'redux';
+import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	AuthCodeValidationError,
 	AuthCodeValidationHandler,
@@ -10,18 +11,21 @@ import { domainTransfer, updatePrivacyForDomain } from 'calypso/lib/cart-values/
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
 const noop = () => null;
 export const transferDomainAction: AuthCodeValidationHandler = (
-	{ selectedSite, verificationData, domain },
+	{ selectedSite, verificationData, domain, ...props },
 	onDone = noop
 ) => async ( _: Dispatch< never >, getState: () => DefaultRootState ) => {
+	const mode = ( props as Record< string, string > ).initialMode;
 	const productsList = getProductsList( getState() );
 	const transferrableStatuses = [
 		domainAvailability.TRANSFERRABLE,
 		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
 	];
+	const transferGenericErrorMessage = 'We were unable to start the transfer.';
 
 	if ( ! selectedSite ) return onDone( { message: 'Please specify a site.' } );
 
@@ -38,28 +42,56 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 			} );
 
 		const checkAvailabilityResult = await wpcomDomain.isDomainAvailable( selectedSite.ID, false );
-		let supportsPrivacy = false;
 
-		if ( transferrableStatuses.includes( checkAvailabilityResult.status ) ) {
-			supportsPrivacy = checkAvailabilityResult.supports_privacy;
+		const addTransferToCartAndCheckout = async () => {
+			let supportsPrivacy = false;
+
+			if ( transferrableStatuses.includes( checkAvailabilityResult.status ) ) {
+				supportsPrivacy = checkAvailabilityResult.supports_privacy;
+			}
+
+			let transfer = domainTransfer( {
+				domain,
+				extra: {
+					auth_code: authCode,
+					privacy_available: supportsPrivacy,
+				},
+			} );
+
+			if ( supportsPrivacy ) {
+				transfer = updatePrivacyForDomain( transfer, true );
+			}
+
+			await cartManagerClient
+				.forCartKey( selectedSite.ID.toString() )
+				.actions.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, productsList ) ] );
+			return page( '/checkout/' + selectedSite.slug );
+		};
+
+		const startInboundTransferAndReload = async () => {
+			try {
+				const result = await wpcomDomain
+					.undocumented()
+					.startInboundTransfer( selectedSite.ID, domain, authCode );
+				if ( result.success ) {
+					page( domainManagementTransferIn( selectedSite.slug, domain ) );
+				} else {
+					return onDone( {
+						message: transferGenericErrorMessage,
+					} );
+				}
+			} catch ( error ) {
+				return onDone( {
+					message: transferGenericErrorMessage,
+				} );
+			}
+		};
+
+		if ( inputMode.transferDomain === mode ) {
+			await startInboundTransferAndReload();
+		} else {
+			await addTransferToCartAndCheckout();
 		}
-
-		let transfer = domainTransfer( {
-			domain,
-			extra: {
-				auth_code: authCode,
-				privacy_available: supportsPrivacy,
-			},
-		} );
-
-		if ( supportsPrivacy ) {
-			transfer = updatePrivacyForDomain( transfer, true );
-		}
-
-		await cartManagerClient
-			.forCartKey( selectedSite.ID.toString() )
-			.actions.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, productsList ) ] );
-		return page( '/checkout/' + selectedSite.slug );
 	} catch ( error ) {
 		return onDone( error as AuthCodeValidationError );
 	}

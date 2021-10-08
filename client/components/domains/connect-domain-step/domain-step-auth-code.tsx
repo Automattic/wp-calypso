@@ -51,7 +51,7 @@ const DomainStepAuthCode = ( {
 			},
 			( error ) => {
 				if ( ! error ) return;
-				if ( 'ownership_verification_failed' === error.error ) {
+				if ( error.message ) {
 					setAuthCodeError( error.message );
 				}
 				setConnectInProgress( false );
