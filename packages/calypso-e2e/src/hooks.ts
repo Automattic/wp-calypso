@@ -1,7 +1,7 @@
-import { mkdir } from 'fs/promises';
+import { mkdir, unlink } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
-import { chromium, Page, Video } from 'playwright';
+import { BrowserContext, chromium, Page, Video } from 'playwright';
 import { getDefaultLoggerConfiguration } from './browser-helper';
 import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
 import { getDateString } from './data-helper';
@@ -36,13 +36,21 @@ function getTestNameWithTime( testName: string ): string {
  */
 export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): void => {
 	let page: Page;
+	let context: BrowserContext;
 
 	beforeAll( async () => {
+		// Obtain the default logger configuration.
 		const loggingConfiguration = await getDefaultLoggerConfiguration( artifactPath );
+
 		// Start the browser
 		await startBrowser( chromium );
+
 		// Launch context with logging.
-		const context = await newBrowserContext( loggingConfiguration );
+		context = await newBrowserContext( loggingConfiguration );
+
+		// Begin tracing the context.
+		await context.tracing.start( { screenshots: true, snapshots: true } );
+
 		// Launch a new page within the context.
 		page = await context.newPage();
 		callback( { page } );
@@ -52,7 +60,9 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		if ( ! browser ) {
 			throw new Error( 'No browser instance found.' );
 		}
+
 		const testName = __CURRENT_TEST_NAME__;
+
 		// Take screenshot for failed tests
 		if ( __CURRENT_TEST_FAILED__ ) {
 			const fileName = path.join(
@@ -63,9 +73,16 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			await mkdir( path.dirname( fileName ), { recursive: true } );
 			await page.screenshot( { path: fileName } );
 		}
-		// Close the browser. This needs to be called before trying to access
+		// Close the page. This needs to be called before trying to access
 		// the video recording.
 		await page.close();
+
+		// Stop tracing and remove the trace output if the test did not fail.
+		const traceOutputPath = path.join(artifactPath, 'trace.zip')
+		await context.tracing.stop( { path: traceOutputPath})
+		if (! __CURRENT_TEST_FAILED__ ) {
+			await unlink( traceOutputPath );
+		}
 
 		if ( __CURRENT_TEST_FAILED__ ) {
 			const destination = path.join(
