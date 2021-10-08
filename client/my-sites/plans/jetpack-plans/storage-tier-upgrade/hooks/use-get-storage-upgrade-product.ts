@@ -75,7 +75,7 @@ const useGetTier2UpgradeProduct = () => {
 							isDifferentiator: true,
 						},
 						{
-							text: translate( 'Unlimited one-click site restores for the past year' ),
+							text: translate( 'One-click restore from the past year of backups' ),
 							isHighlighted: true,
 							isDifferentiator: true,
 						},
