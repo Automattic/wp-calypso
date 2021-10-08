@@ -12,7 +12,6 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	setupHooks,
-	PreviewComponent,
 	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
@@ -27,7 +26,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
-	let previewComponent: PreviewComponent;
 	let publishedPostPage: PublishedPostPage;
 	const user = BrowserHelper.targetGutenbergEdge()
 		? 'gutenbergSimpleSiteEdgeUser'
@@ -72,33 +70,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Add post tag', async function () {
 			await editorSettingsSidebarComponent.expandSectionIfCollapsed( 'Tags' );
 			await editorSettingsSidebarComponent.enterTag( tag );
-		} );
-	} );
-
-	describe( 'Preview post', function () {
-		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional
-		it( 'Close settings sidebar', async function () {
-			await editorSettingsSidebarComponent.closeSidebar();
-		} );
-
-		it( 'Launch preview', async function () {
-			await gutenbergEditorPage.preview();
-			previewComponent = new PreviewComponent( page );
-			await previewComponent.previewReady();
-		} );
-
-		it( 'Post content is found in preview', async function () {
-			await previewComponent.validateTextInPreviewContent( title );
-			await previewComponent.validateTextInPreviewContent( quote );
-		} );
-
-		// We won't preview the metadata in the preview because of a race condition with tags.
-		// If you are really fast, like Playwright is, you can add a tag and launch a preview before
-		// the tag has been saved to the database, meaning it is not in the preview!
-		// It's sufficient to verify content in preview, and metadata in published post.
-
-		it( 'Close preview', async function () {
-			await previewComponent.closePreview();
 		} );
 	} );
 
