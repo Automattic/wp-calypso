@@ -183,6 +183,10 @@ const useMyDomain = ( context, next ) => {
 		let path = `/domains/add/${ context.params.site }`;
 		if ( context.query.initialQuery ) {
 			path += `?suggestion=${ context.query.initialQuery }`;
+
+			if ( context.query.initialMode ) {
+				path = `/domains/manage/${ context.params.site }`;
+			}
 		}
 
 		page( path );

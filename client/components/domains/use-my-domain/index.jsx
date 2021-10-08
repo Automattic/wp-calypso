@@ -46,11 +46,10 @@ function UseMyDomain( {
 		transferLockedDomainStepsDefinition
 	);
 	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
-	const [ mode, setMode ] = useState(
+	const wasInitialModeSet = Boolean(
 		Object.values( inputMode ).includes( initialMode ) && initialQuery
-			? initialMode
-			: inputMode.domainInput
 	);
+	const [ mode, setMode ] = useState( wasInitialModeSet ? initialMode : inputMode.domainInput );
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
 		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
 	);
@@ -79,6 +78,7 @@ function UseMyDomain( {
 				if ( prevTransferDomainStepsDefinition ) {
 					setTransferDomainFlowPageSlug( prevTransferDomainStepsDefinition );
 				} else {
+					if ( wasInitialModeSet ) return goBack();
 					setMode( inputMode.transferOrConnect );
 				}
 				return;
