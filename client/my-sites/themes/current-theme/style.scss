@@ -33,7 +33,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		@include breakpoint-deprecated( '>660px' ) {
 			border-right: $current-theme-border;
 			border-bottom: none;
-			max-height: 112px;
+			max-height: 150px;
 			width: auto;
 		}
 	}
@@ -53,15 +53,23 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		margin-top: 0;
+		flex-wrap: wrap;
+
+		// TODO: Figure out how to wrap description text
+		// @include breakpoint-deprecated( '>1040px' ) {
+		// 	flex-wrap: nowrap;
+		// }
 
 		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row-reverse;
 			justify-content: flex-end;
+			margin-top: -8px;
 		}
 	}
 
 	.current-theme__badge-beta {
-		margin-left: 6px;
+		margin-top: 8px;
 	}
 
 	.current-theme__label {
@@ -74,11 +82,12 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 120px;
 		margin-bottom: 4px;
+		margin-top: 8px;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			align-self: center;
-			margin-left: 8px;
 			margin-bottom: 0;
+			margin-right: 8px;
 		}
 	}
 
@@ -90,6 +99,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		text-overflow: ellipsis;
 		font-size: $font-body;
 		max-width: 100%;
+		margin-top: 8px;
+		margin-right: 8px;
 
 		@include breakpoint-deprecated( '>960px' ) {
 			font-size: $font-title-small;
@@ -105,7 +116,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	.current-theme__description {
 		align-self: center;
 		font-size: $font-body-small;
-		margin: 16px;
+		padding: 16px;
 
 		p {
 			color: var( --color-text-subtle );
