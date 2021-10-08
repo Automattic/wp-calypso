@@ -78,9 +78,9 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		await page.close();
 
 		// Stop tracing and remove the trace output if the test did not fail.
-		const traceOutputPath = path.join(artifactPath, 'trace.zip')
-		await context.tracing.stop( { path: traceOutputPath})
-		if (! __CURRENT_TEST_FAILED__ ) {
+		const traceOutputPath = path.join( artifactPath, 'trace.zip' );
+		await context.tracing.stop( { path: traceOutputPath } );
+		if ( ! __CURRENT_TEST_FAILED__ ) {
 			await unlink( traceOutputPath );
 		}
 
