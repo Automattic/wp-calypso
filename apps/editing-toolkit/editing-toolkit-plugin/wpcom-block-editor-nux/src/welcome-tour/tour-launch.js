@@ -147,45 +147,45 @@ function WelcomeTourFrame() {
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
-			{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
-			<div
-				className="wpcom-editor-welcome-tour-frame"
-				ref={ tourContainerRef }
-				{ ...stepRepositionProps }
-			>
-				{ ! isMinimized ? (
-					<WelcomeTourCard
-						cardContent={ steps[ currentStepIndex ].meta }
-						currentStepIndex={ currentStepIndex }
-						justMaximized={ justMaximized }
-						key={ currentStepIndex }
-						lastStepIndex={ lastStepIndex }
-						onDismiss={ handleDismiss }
-						onMinimize={ handleMinimize }
-						setJustMaximized={ setJustMaximized }
-						setCurrentStepIndex={ setCurrentStepIndex }
-						onNextStepProgression={ handleNextStepProgression }
-						onPreviousStepProgression={ handlePreviousStepProgression }
-						isGutenboarding={ isGutenboarding }
-						focusedOnLaunchRef={ focusedOnLaunchRef }
-					/>
-				) : (
-					<WelcomeTourMinimized
-						onMaximize={ handleMaximize }
-						onDismiss={ handleDismiss }
-						currentCardIndex={ currentCardIndex }
-						lastCardIndex={ lastCardIndex }
-					/>
-				) }
+			<div className="wpcom-editor-welcome-tour__container" ref={ tourContainerRef }>
+				{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
+				{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
+				<div className="wpcom-editor-welcome-tour-frame" { ...stepRepositionProps }>
+					{ ! isMinimized ? (
+						<>
+							<WelcomeTourCard
+								cardContent={ steps[ currentStepIndex ].meta }
+								currentStepIndex={ currentStepIndex }
+								justMaximized={ justMaximized }
+								key={ currentStepIndex }
+								lastStepIndex={ lastStepIndex }
+								onDismiss={ handleDismiss }
+								onMinimize={ handleMinimize }
+								setJustMaximized={ setJustMaximized }
+								setCurrentStepIndex={ setCurrentStepIndex }
+								onNextStepProgression={ handleNextStepProgression }
+								onPreviousStepProgression={ handlePreviousStepProgression }
+								isGutenboarding={ isGutenboarding }
+								focusedOnLaunchRef={ focusedOnLaunchRef }
+							/>
+						</>
+					) : (
+						<WelcomeTourMinimized
+							onMaximize={ handleMaximize }
+							onDismiss={ handleDismiss }
+							currentStepIndex={ currentStepIndex }
+							lastStepIndex={ lastStepIndex }
+						/>
+					) }
+				</div>
 			</div>
 		</>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize, onDismiss, currentCardIndex, lastCardIndex } ) {
-	const page = currentCardIndex + 1;
-	const numberOfPages = lastCardIndex + 1;
+function WelcomeTourMinimized( { onMaximize, onDismiss, currentStepIndex, lastStepIndex } ) {
+	const page = currentStepIndex + 1;
+	const numberOfPages = lastStepIndex + 1;
 
 	return (
 		<Flex gap={ 0 } className="wpcom-editor-welcome-tour__minimized">
