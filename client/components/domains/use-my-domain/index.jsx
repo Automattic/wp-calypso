@@ -34,6 +34,7 @@ function UseMyDomain( {
 	onTransfer,
 	selectedSite,
 	transferDomainUrl,
+	initialStep,
 } ) {
 	const inputMode = useMemo(
 		() => ( {
@@ -100,7 +101,7 @@ function UseMyDomain( {
 		return ! errorMessage;
 	}, [ domainName ] );
 
-	const setDomainTransferData = useCallback(
+	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
 			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
 			let lockStatus = UNKNOWN;
@@ -122,6 +123,32 @@ function UseMyDomain( {
 		[ setTransferDomainStepsDefinition, setDomainLockStatus ]
 	);
 
+	const setDomainTransferData = useCallback( async () => {
+		// TODO: remove this try-catch when the next statuses get added on the API
+		let inboundTransferStatusResult = {};
+		try {
+			inboundTransferStatusResult = await wpcom
+				.undocumented()
+				.getInboundTransferStatus( domainName );
+		} catch {}
+
+		const inboundTransferStatusInfo = {
+			creationDate: inboundTransferStatusResult.creation_date,
+			email: inboundTransferStatusResult.admin_email,
+			inRedemption: inboundTransferStatusResult.in_redemption,
+			losingRegistrar: inboundTransferStatusResult.registrar,
+			losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
+			privacy: inboundTransferStatusResult.privacy,
+			termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
+			transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
+			transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
+			unlocked: inboundTransferStatusResult.unlocked,
+		};
+
+		setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
+		setTransferStepsAndLockStatus( inboundTransferStatusInfo.unlocked );
+	}, [ domainName, setTransferStepsAndLockStatus ] );
+
 	const onNext = useCallback( async () => {
 		if ( ! validateDomainName() ) {
 			return;
@@ -135,26 +162,7 @@ function UseMyDomain( {
 				.domain( domainName )
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
-			// TODO: remove this try-catch when the next statuses get added on the API
-			let inboundTransferStatusResult = {};
-			try {
-				inboundTransferStatusResult = await wpcom
-					.undocumented()
-					.getInboundTransferStatus( domainName );
-			} catch {}
-
-			const inboundTransferStatusInfo = {
-				creationDate: inboundTransferStatusResult.creation_date,
-				email: inboundTransferStatusResult.admin_email,
-				inRedemption: inboundTransferStatusResult.in_redemption,
-				losingRegistrar: inboundTransferStatusResult.registrar,
-				losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
-				privacy: inboundTransferStatusResult.privacy,
-				termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
-				transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
-				transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
-				unlocked: inboundTransferStatusResult.unlocked,
-			};
+			await setDomainTransferData();
 
 			const availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
@@ -167,8 +175,6 @@ function UseMyDomain( {
 			} else {
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
-				setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
-				setDomainTransferData( inboundTransferStatusInfo.isDomainUnlocked );
 			}
 		} catch ( error ) {
 			setDomainNameValidationError( error.message );
@@ -179,8 +185,8 @@ function UseMyDomain( {
 		domainName,
 		inputMode.transferOrConnect,
 		selectedSite,
-		validateDomainName,
 		setDomainTransferData,
+		validateDomainName,
 	] );
 
 	const onDomainNameChange = ( event ) => {
@@ -201,6 +207,18 @@ function UseMyDomain( {
 		initialValidation.current = true;
 		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
 	}, [ initialQuery, onNext ] );
+
+	useEffect( () => {
+		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialStep )
+			setDomainTransferData();
+	}, [
+		mode,
+		domainName,
+		inputMode,
+		setDomainTransferData,
+		setDomainInboundTransferStatusInfo,
+		initialStep,
+	] );
 
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
