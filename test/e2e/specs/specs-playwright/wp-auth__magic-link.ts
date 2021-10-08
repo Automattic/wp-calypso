@@ -27,7 +27,6 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	it( 'Navigate to Login page', async function () {
 		loginPage = new LoginPage( page );
 		await loginPage.visit();
-		throw new Error();
 	} );
 
 	it( 'Request magic link', async function () {
