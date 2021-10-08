@@ -277,7 +277,6 @@ class EmailProvidersComparison extends Component {
 		};
 
 		if ( source === INBOX ) {
-			eventProperties.product = 'email';
 			eventProperties.source = INBOX;
 		}
 
