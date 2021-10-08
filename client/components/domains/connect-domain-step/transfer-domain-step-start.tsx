@@ -2,15 +2,16 @@ import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import CardHeading from 'calypso/components/card-heading';
 import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
 import { getDomainTransferrability } from 'calypso/components/domains/use-my-domain/utilities';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
+import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { StartStepProps } from './types';
-
 import './style.scss';
+import { StartStepProps } from './types';
 
 export default function TransferDomainStepStart( {
 	className,
@@ -22,7 +23,7 @@ export default function TransferDomainStepStart( {
 	isFetchingAvailability,
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
-	const switchToDomainConnect = () => null;
+	const switchToDomainConnect = () => page( MAP_EXISTING_DOMAIN );
 	const isDomainTransferrable = getDomainTransferrability( domainInboundTransferStatusInfo )
 		.transferrable;
 
