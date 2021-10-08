@@ -20,6 +20,9 @@ const selectors = {
 	requestMagicLoginButton: 'button:text("Request Email")',
 	magicLinkSentMessage: ':text-matches("We just emailed")',
 	magicLinkContinueLoginButton: ':text("Continue to WordPress.com")',
+
+	// Notices
+	noticeBox: '.notice',
 };
 
 interface LoginCredentials {
@@ -84,21 +87,35 @@ export class LoginPage {
 	 *
 	 * Call this method from any page to log into WordPress.com.
 	 *
+	 * If the credentials are rejected by the WordPress.com backend for any reason, this method
+	 * will throw.
+	 *
 	 * @param param0 LoginCredentials object.
 	 * @param {string} param0.username User name.
 	 * @param {string} param0.password Password.
+	 * @throws {Error} If credentials are rejected. Contains the text within the notice box.
 	 */
 	private async baseflow( { username, password }: LoginCredentials ): Promise< void > {
 		await this.page.fill( selectors.username, username );
 		await this.page.keyboard.press( 'Enter' );
 		await this.page.fill( selectors.password, password );
-		// Wait for navigation to resolve in a regular login.
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.loginButton ),
-		] );
-		// After navigation resolves, wait for `load` state to fire.
-		await this.page.waitForLoadState( 'load' );
+
+		await this.page.click( selectors.loginButton );
+
+		// Wait for the response from the login endpoint.
+		const response = await this.page.waitForResponse( '**/wp-login.php?action=login-endpoint' );
+
+		// If the account credentials are rejected, throw an error containing the text of
+		// the notice box.
+		if ( response.status() === 400 ) {
+			throw new Error(
+				await this.page
+					.waitForSelector( selectors.noticeBox )
+					.then( ( element ) => element.innerText() )
+			);
+		} else {
+			await this.page.waitForNavigation();
+		}
 	}
 
 	/* Log in methods */

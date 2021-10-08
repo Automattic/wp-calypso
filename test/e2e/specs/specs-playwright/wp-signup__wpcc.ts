@@ -87,8 +87,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		} );
 
 		it( 'Ensure user is unable to log in', async function () {
-			await loginPage.login( { username: email, password: signupPassword } );
-			await page.waitForSelector( ':text("This account has been closed")' );
+			expect( loginPage.login( { username: email, password: signupPassword } ) ).rejects.toThrow();
 		} );
 	} );
 } );
