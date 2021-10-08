@@ -53,7 +53,7 @@ export function emailManagementAddGSuiteUsers(
 			domainName,
 			productType + '/add-users',
 			relativeTo,
-			source ? { source } : null
+			{ source }
 		);
 	}
 
@@ -95,7 +95,7 @@ export function emailManagementNewTitanAccount(
 		domainName,
 		'titan/new',
 		relativeTo,
-		source ? { source } : null
+		{ source }
 	);
 }
 
@@ -110,7 +110,7 @@ export function emailManagementTitanSetUpMailbox(
 		domainName,
 		'titan/set-up-mailbox',
 		relativeTo,
-		source ? { source } : null
+		{ source }
 	);
 }
 
@@ -184,7 +184,7 @@ export function emailManagementPurchaseNewEmailAccount(
 		domainName,
 		'purchase',
 		relativeTo,
-		source ? { source } : null
+		{ source }
 	);
 }
 
