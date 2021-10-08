@@ -38,7 +38,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'specs/specs-playwright/shared-specs/**/*' ],
+			files: [ 'specs/specs-playwright/shared-specs/**/*', 'lib/shared-steps/**/*' ],
 			rules: {
 				// This directory is used to create shared specs that can be re-used in multiple places.
 				'jest/no-export': 'off',
