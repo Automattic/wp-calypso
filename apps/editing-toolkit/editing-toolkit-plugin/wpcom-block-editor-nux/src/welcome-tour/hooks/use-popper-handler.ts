@@ -17,7 +17,9 @@ const usePopperHandler = (
 	popperElementRef: React.MutableRefObject< null | HTMLElement >
 ): PopperProps => {
 	const referenceElement = document.querySelector( referenceElementSelector );
-	const { styles, attributes } = usePopper( referenceElement, popperElementRef?.current );
+	const { styles, attributes } = usePopper( referenceElement, popperElementRef?.current, {
+		strategy: 'fixed',
+	} );
 
 	return referenceElement ? { styles, attributes } : {};
 };
