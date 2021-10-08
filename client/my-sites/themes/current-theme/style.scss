@@ -10,7 +10,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		display: flex;
 		flex-direction: column;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			min-height: 112px;
 			flex-direction: row;
 		}
@@ -54,12 +54,10 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		flex-direction: column;
 		align-items: center;
 		margin-top: 0;
-		flex-wrap: wrap;
 
-		// TODO: Figure out how to wrap description text
-		// @include breakpoint-deprecated( '>1040px' ) {
-		// 	flex-wrap: nowrap;
-		// }
+		@include breakpoint-deprecated( '<960px' ) {
+			flex-wrap: wrap;
+		}
 
 		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row-reverse;
@@ -137,7 +135,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		justify-content: flex-end;
 		flex-grow: 1;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			border-top: none;
 			min-height: 112px;
 			padding-top: 0;
