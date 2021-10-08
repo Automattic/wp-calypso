@@ -342,7 +342,6 @@ class EmailProvidersComparison extends Component {
 
 	renderGoogleCard() {
 		const {
-			comparisonContext,
 			currencyCode,
 			domain,
 			gSuiteProduct,
@@ -461,7 +460,6 @@ class EmailProvidersComparison extends Component {
 
 	renderTitanCard() {
 		const {
-			comparisonContext,
 			currencyCode,
 			domain,
 			hasCartDomain,
