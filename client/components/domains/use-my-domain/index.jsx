@@ -174,13 +174,7 @@ function UseMyDomain( {
 		} finally {
 			setIsFetchingAvailability( false );
 		}
-	}, [
-		domainName,
-		inputMode.transferOrConnect,
-		selectedSite,
-		setDomainTransferData,
-		validateDomainName,
-	] );
+	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName ] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -198,20 +192,16 @@ function UseMyDomain( {
 		}
 
 		initialValidation.current = true;
-		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
+		initialQuery &&
+			! initialMode &&
+			! getDomainNameValidationErrorMessage( initialQuery ) &&
+			onNext();
 	}, [ initialQuery, onNext ] );
 
 	useEffect( () => {
-		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialStep )
+		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode )
 			setDomainTransferData();
-	}, [
-		mode,
-		domainName,
-		inputMode,
-		setDomainTransferData,
-		setDomainInboundTransferStatusInfo,
-		initialStep,
-	] );
+	}, [ mode, inputMode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
@@ -272,6 +262,7 @@ function UseMyDomain( {
 		return (
 			<ConnectDomainSteps
 				baseClassName={ 'connect-domain-step' }
+				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
 				domain={ domainName }
 				initialPageSlug={ transferDomainFlowPageSlug }
 				onTransfer={ onTransfer }

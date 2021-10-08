@@ -198,6 +198,7 @@ const useMyDomain = ( context, next ) => {
 				<UseMyDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					initialMode={ context.query.initialMode }
 					goBack={ handleGoBack }
 				/>
 			</CalypsoShoppingCartProvider>
