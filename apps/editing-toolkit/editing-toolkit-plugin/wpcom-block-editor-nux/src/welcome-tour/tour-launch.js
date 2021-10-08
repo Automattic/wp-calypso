@@ -70,6 +70,7 @@ function LaunchWpcomWelcomeTour() {
 function WelcomeTourFrame() {
 	const tourContainerRef = useRef( null );
 	const focusedOnLaunchRef = useRef( null );
+	const popperElementRef = useRef( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
@@ -127,7 +128,7 @@ function WelcomeTourFrame() {
 
 	const { styles, attributes } = usePopperHandler(
 		steps[ currentStepIndex ].referenceElements.desktop,
-		tourContainerRef
+		popperElementRef
 	);
 
 	const stepRepositionProps = ! isMinimized
@@ -150,7 +151,7 @@ function WelcomeTourFrame() {
 			<div className="wpcom-editor-welcome-tour__container" ref={ tourContainerRef }>
 				{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
 				{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
-				<div className="wpcom-editor-welcome-tour-frame" { ...stepRepositionProps }>
+				<div className="wpcom-editor-welcome-tour-frame" ref={ popperElementRef } { ...stepRepositionProps }>
 					{ ! isMinimized ? (
 						<>
 							<WelcomeTourCard

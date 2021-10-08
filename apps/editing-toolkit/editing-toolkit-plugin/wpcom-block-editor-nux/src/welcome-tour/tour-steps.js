@@ -52,8 +52,8 @@ function getTourSteps( localeSlug ) {
 		},
 		{
 			referenceElements: {
-				mobile: '.edit-post-header-toolbar .components-button',
-				desktop: '.edit-post-header-toolbar .components-button',
+				mobile: '.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+				desktop: '.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
 			},
 			meta: {
 				heading: __( 'Adding a new block', 'full-site-editing' ),
@@ -82,8 +82,8 @@ function getTourSteps( localeSlug ) {
 		},
 		{
 			referenceElements: {
-				desktop: null,
-				mobile: null,
+				mobile: '.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+				desktop: '.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
 			},
 			meta: {
 				heading: __( 'More Options', 'full-site-editing' ),
@@ -94,8 +94,8 @@ function getTourSteps( localeSlug ) {
 		},
 		{
 			referenceElements: {
-				mobile: '.edit-post-header__settings',
-				desktop: '.edit-post-header__settings',
+				mobile: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
+				desktop: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
 			},
 			meta: {
 				heading: __( 'Undo any mistake', 'full-site-editing' ),
@@ -106,8 +106,8 @@ function getTourSteps( localeSlug ) {
 		},
 		{
 			referenceElements: {
-				mobile: '.edit-post-header-toolbar .components-button',
-				desktop: '.edit-post-header-toolbar .components-button',
+				mobile: null,
+				desktop: null,
 			},
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
