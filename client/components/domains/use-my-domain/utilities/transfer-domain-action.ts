@@ -70,7 +70,7 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 
 		const startInboundTransferAndReload = async () => {
 			try {
-				const result = await wpcomDomain
+				const result = await wpcom
 					.undocumented()
 					.startInboundTransfer( selectedSite.ID, domain, authCode );
 				if ( result.success ) {
