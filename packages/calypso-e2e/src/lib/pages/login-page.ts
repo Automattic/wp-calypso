@@ -114,7 +114,11 @@ export class LoginPage {
 					.then( ( element ) => element.innerText() )
 			);
 		} else {
-			await this.page.waitForNavigation();
+			// This assumes the user will not be redirected to another page (eg. /posts) after login.
+			await Promise.race( [
+				this.page.waitForURL( '**/home/**', { waitUntil: 'load' } ),
+				this.page.waitForURL( '**/read', { waitUntil: 'load' } ),
+			] );
 		}
 	}
 
