@@ -42,3 +42,64 @@
 		}
 	}
 }
+
+/**
+ * New components style
+ 	- it's mostly style overrides
+ */
+
+// Modal component
+.components-modal-new__frame {
+	p {
+		font-size: 1rem; /* stylelint-disable-line */
+		color: var( --studio-gray-70 );
+		margin-bottom: 1em;
+
+		@include break-small {
+			font-size: 1.125rem; /* stylelint-disable-line */
+			line-height: 1.4444em;
+		}
+	}
+
+	strong {
+		font-weight: bold;
+	}
+
+	.components-modal__content {
+		display: block;
+		margin-top: 0;
+		padding: 24px 32px;
+		overflow: auto;
+
+		&::before {
+			margin: 0;
+		}
+	}
+
+	.components-modal__header {
+		position: static;
+		display: block;
+		height: auto;
+		border: none;
+		margin-top: 0;
+		padding: 0;
+
+		button {
+			position: absolute;
+			top: 5px;
+			right: 5px;
+			left: auto;
+		}
+
+		.components-modal__header-heading-container {
+			display: block;
+		}
+
+		.components-modal__header-heading {
+			font-size: 2rem;
+			font-weight: normal;
+			line-height: 1.25em;
+			margin-bottom: 0.75em;
+		}
+	}
+}

@@ -62,7 +62,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 
 	return (
 		<Modal
-			className="import__details-modal"
+			className="components-modal-new__frame import__details-modal"
 			title={ getTitle( platform ) }
 			onRequestClose={ onClose }
 		>

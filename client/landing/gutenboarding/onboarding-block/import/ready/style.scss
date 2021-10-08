@@ -103,22 +103,8 @@
 	}
 }
 
-
-.import__details-modal {
-	.import__details-modal-content {
-		max-width: 636px;
-	}
-
-	p {
-		font-size: 1.125em; /* stylelint-disable-line */
-		line-height: 1.5em;
-		color: var( --studio-gray-70 );
-		margin-bottom: 1em;
-	}
-
-	strong {
-		font-weight: bold;
-	}
+.import__details-modal.components-modal__frame {
+	max-width: 636px;
 
 	button.action-buttons__back {
 		font-size: 1.125em; /* stylelint-disable-line */
