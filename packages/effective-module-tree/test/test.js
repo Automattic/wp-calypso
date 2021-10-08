@@ -209,7 +209,6 @@ describe( 'Effective tree generation', () => {
 	} );
 
 	afterEach( () => {
-		//eslint-disable-next-line no-console
 		console.warn.mockRestore();
 	} );
 } );

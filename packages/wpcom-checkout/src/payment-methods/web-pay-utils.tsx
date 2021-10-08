@@ -111,7 +111,8 @@ export function useStripePaymentRequest( {
 				if ( ! isSubscribed ) {
 					return;
 				}
-				console.error( 'Error while creating stripe payment request', error ); // eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( 'Error while creating stripe payment request', error );
 				setPaymentRequestState( ( state ) => ( {
 					...state,
 					canMakePayment: false,

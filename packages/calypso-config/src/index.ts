@@ -48,7 +48,6 @@ function applyFlags( flagsString: string, modificationMethod: string ) {
 		const enabled = ! /^-/.test( flagRaw );
 		if ( configData.features ) {
 			configData.features[ flag ] = enabled;
-			// eslint-disable-next-line no-console
 			console.log(
 				'%cConfig flag %s via %s: %s',
 				'font-weight: bold;',

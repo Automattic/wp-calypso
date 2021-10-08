@@ -32,7 +32,8 @@ export function getTermDuration( term ) {
 	}
 
 	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` ); // eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.error( `Unexpected argument ${ term }, expected one of TERM_ constants` );
 	}
 }
 

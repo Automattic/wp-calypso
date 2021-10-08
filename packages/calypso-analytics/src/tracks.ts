@@ -189,7 +189,8 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
-				console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+				//eslint-disable-next-line no-console
+				console.error( errorMessage, eventProperties );
 				return;
 			}
 
