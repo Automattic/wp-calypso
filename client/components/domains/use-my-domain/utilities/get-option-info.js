@@ -13,7 +13,7 @@ import {
 	optionInfo,
 } from './index';
 
-const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
+export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
 	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
 
 	const result = {
