@@ -1,6 +1,16 @@
 {
 	"featured": [
 		{
+			"title": "Quadrat",
+			"slug": "quadrat",
+			"template": "blockbase",
+			"theme": "quadrat",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
 			"title": "Seedlet",
 			"slug": "seedlet-blocks",
 			"template": "seedlet-blocks",
