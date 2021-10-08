@@ -30,8 +30,8 @@ function WelcomeTourCard( {
 	onDismiss,
 	setJustMaximized,
 	setCurrentStepIndex,
-	onNextCardProgression,
-	onPreviousCardProgression,
+	onNextStepProgression,
+	onPreviousStepProgression,
 	isGutenboarding,
 	focusedOnLaunchRef,
 } ) {
@@ -84,8 +84,8 @@ function WelcomeTourCard( {
 						lastStepIndex={ lastStepIndex }
 						onDismiss={ onDismiss }
 						setCurrentStepIndex={ setCurrentStepIndex }
-						onNextCardProgression={ onNextCardProgression }
-						onPreviousCardProgression={ onPreviousCardProgression }
+						onNextStepProgression={ onNextStepProgression }
+						onPreviousStepProgression={ onPreviousStepProgression }
 						focusedOnLaunchRef={ focusedOnLaunchRef }
 					></CardNavigation>
 				) }
@@ -99,8 +99,8 @@ function CardNavigation( {
 	lastStepIndex,
 	onDismiss,
 	setCurrentStepIndex,
-	onNextCardProgression,
-	onPreviousCardProgression,
+	onNextStepProgression,
+	onPreviousStepProgression,
 	focusedOnLaunchRef,
 } ) {
 	// These are defined on their own lines because of a minification issue.
@@ -121,7 +121,7 @@ function CardNavigation( {
 						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
-					<Button isTertiary={ true } onClick={ onPreviousCardProgression }>
+					<Button isTertiary={ true } onClick={ onPreviousStepProgression }>
 						{ __( 'Back', 'full-site-editing' ) }
 					</Button>
 				) }
@@ -129,7 +129,7 @@ function CardNavigation( {
 				<Button
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
-					onClick={ onNextCardProgression }
+					onClick={ onNextStepProgression }
 					ref={ focusedOnLaunchRef }
 				>
 					{ currentStepIndex === 0 ? startTourLabel : nextLabel }

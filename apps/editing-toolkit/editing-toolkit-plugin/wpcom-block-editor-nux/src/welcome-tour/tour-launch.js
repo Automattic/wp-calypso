@@ -125,45 +125,6 @@ function WelcomeTourFrame() {
 	// Preload card images
 	steps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
 
-	const referenceElementSelectors = [
-		{
-			mobile: null,
-			desktop: null,
-		},
-		{
-			mobile: null,
-			desktop: null,
-		},
-		{
-			mobile: '.edit-post-header-toolbar .components-button',
-			desktop: '.edit-post-header-toolbar .components-button',
-		},
-		{
-			mobile: null,
-			desktop: null,
-		},
-		{
-			mobile: null,
-			desktop: null,
-		},
-		{
-			mobile: '.edit-post-header__settings',
-			desktop: '.edit-post-header__settings',
-		},
-		{
-			mobile: '.edit-post-header-toolbar .components-button',
-			desktop: '.edit-post-header-toolbar .components-button',
-		},
-		{
-			mobile: null,
-			desktop: null,
-		},
-		{
-			mobile: null,
-			desktop: null,
-		},
-	];
-
 	const { styles, attributes } = usePopperHandler(
 		steps[ currentStepIndex ].referenceElements.desktop,
 		tourContainerRef
@@ -186,6 +147,7 @@ function WelcomeTourFrame() {
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
+			{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
 			<div
 				className="wpcom-editor-welcome-tour-frame"
 				ref={ tourContainerRef }
