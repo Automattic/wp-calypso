@@ -155,14 +155,10 @@ class EmailProvidersComparison extends Component {
 	goToEmailForwarding = () => {
 		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
 
-		const eventProperties = {
+		recordTracksEvent( 'calypso_email_providers_add_click', {
 			provider: 'email-forwarding',
-		};
-
-		if ( source === INBOX_SOURCE ) {
-			eventProperties.source = source;
-		}
-		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
+			source: source === INBOX_SOURCE ? source : null,
+		} );
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -195,20 +191,15 @@ class EmailProvidersComparison extends Component {
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
 
-		const eventProperties = {
+		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: TITAN_PROVIDER_NAME,
+			source: source === INBOX_SOURCE ? source : null,
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
-		};
-
-		if ( source === INBOX_SOURCE ) {
-			eventProperties.source = INBOX_SOURCE;
-		}
-
-		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
+		} );
 
 		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
 
@@ -268,19 +259,14 @@ class EmailProvidersComparison extends Component {
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
-		const eventProperties = {
+		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: GOOGLE_PROVIDER_NAME,
+			source: source === INBOX_SOURCE ? source : null,
 			user_can_add_email: userCanAddEmail ? 1 : 0,
-		};
-
-		if ( source === INBOX_SOURCE ) {
-			eventProperties.source = INBOX_SOURCE;
-		}
-
-		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
+		} );
 
 		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;

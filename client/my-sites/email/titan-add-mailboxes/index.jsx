@@ -146,21 +146,14 @@ class TitanAddMailboxes extends Component {
 			validatedMailboxUuids,
 		} );
 
-		const eventProps = {
+		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
-		};
-
-		if ( source === INBOX_SOURCE ) {
-			eventProps.product = 'inbox';
-			eventProps.provider = TITAN_PROVIDER_NAME;
-			eventProps.source = INBOX_SOURCE;
-		}
-
-		this.recordClickEvent(
-			'calypso_email_management_titan_add_mailboxes_continue_button_click',
-			eventProps
-		);
+			...( source === INBOX_SOURCE && {
+				provider: TITAN_PROVIDER_NAME,
+				source,
+			} ),
+		} );
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );

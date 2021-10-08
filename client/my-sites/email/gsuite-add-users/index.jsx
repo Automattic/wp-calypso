@@ -117,18 +117,15 @@ class GSuiteAddUsers extends Component {
 	recordClickEvent = ( eventName ) => {
 		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		const { users } = this.state;
-		const eventObject = {
+
+		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
 			user_count: users.length,
-		};
-
-		if ( source === INBOX_SOURCE ) {
-			eventObject.provider = GOOGLE_PROVIDER_NAME;
-			eventObject.product = 'inbox';
-			eventObject.source = INBOX_SOURCE;
-		}
-
-		recordTracksEvent( eventName, eventObject );
+			...( source === INBOX_SOURCE && {
+				provider: GOOGLE_PROVIDER_NAME,
+				source,
+			} ),
+		} );
 	};
 
 	recordUsersChangedEvent = ( previousUsers, nextUsers ) => {
