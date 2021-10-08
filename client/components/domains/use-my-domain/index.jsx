@@ -201,12 +201,12 @@ function UseMyDomain( {
 			! initialMode &&
 			! getDomainNameValidationErrorMessage( initialQuery ) &&
 			onNext();
-	}, [ initialQuery, onNext ] );
+	}, [ initialMode, initialQuery, onNext ] );
 
 	useEffect( () => {
 		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode )
 			setDomainTransferData();
-	}, [ mode, inputMode, setDomainTransferData, initialMode ] );
+	}, [ mode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
