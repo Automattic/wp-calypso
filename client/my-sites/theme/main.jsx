@@ -26,6 +26,7 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -102,6 +103,11 @@ class ThemeSheet extends Component {
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
 		} ),
+		blockEditorSettings: PropTypes.objectOf(
+			PropTypes.shape( {
+				is_fse_eligible: PropTypes.bool,
+			} )
+		),
 	};
 
 	static defaultProps = {
@@ -178,17 +184,19 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
-		const { author, name, taxonomies, translate } = this.props;
+		const { author, blockEditorSettings, name, taxonomies, translate } = this.props;
 
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
+		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+		const showBetaBadge = isFullSiteEditingTheme( { taxonomies } ) && isFSEEligible;
 
 		return (
 			<div className="theme__sheet-bar">
 				<span className="theme__sheet-bar-title">
 					{ title }
-					{ isFullSiteEditingTheme( { taxonomies } ) && (
+					{ showBetaBadge && (
 						<Badge type="warning-clear" className="theme__sheet-badge-beta">
 							{ translate( 'Beta' ) }
 						</Badge>
@@ -794,6 +802,7 @@ class ThemeSheet extends Component {
 }
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
+const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
@@ -820,7 +829,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ConnectedThemeSheet
+		<ThemeSheetWithEditorSettings
 			{ ...props }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
