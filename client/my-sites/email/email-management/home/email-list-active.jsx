@@ -60,7 +60,7 @@ class EmailListActive extends Component {
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard
-					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute, source ) }
+					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute, { source } ) }
 					key={ domain.name }
 				>
 					<span className="email-list-active__item-icon">

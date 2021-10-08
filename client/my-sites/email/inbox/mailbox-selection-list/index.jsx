@@ -123,7 +123,7 @@ const NewMailboxUpsell = () => {
 	const selectedSiteSlug = selectedSite?.slug;
 
 	const handleCreateNewMailboxClick = useCallback( () => {
-		page( emailManagement( selectedSiteSlug, null, null, INBOX ) );
+		page( emailManagement( selectedSiteSlug, null, null, { source: INBOX } ) );
 	}, [ selectedSiteSlug ] );
 
 	return (

@@ -90,7 +90,7 @@ class TitanAddMailboxes extends Component {
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
 				currentRoute,
-				source
+				{ source }
 			)
 		);
 	};

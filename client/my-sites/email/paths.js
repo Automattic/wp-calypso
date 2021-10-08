@@ -4,6 +4,15 @@ import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sit
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 
+/**
+ * Retrieves the query string from an object
+ *
+ * @param {Object} parameters - optional path prefix
+ * @returns {string} the corresponding query string
+ */
+const buildQueryString = ( parameters = {} ) =>
+	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
+
 function resolveRootPath( relativeTo ) {
 	if ( relativeTo === emailManagementAllSitesPrefix || relativeTo === domainManagementRoot() ) {
 		return emailManagementAllSitesPrefix;
@@ -135,23 +144,13 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
-export function emailManagement( siteName, domainName, relativeTo = null, source = null ) {
+export function emailManagement( siteName, domainName, relativeTo = null, urlParameters = {} ) {
 	let path;
-	let urlParam = '';
 
-	if ( source != null ) {
-		urlParam = `?source=${ source }`;
-	}
 	if ( domainName ) {
-		path = emailManagementEdit(
-			siteName,
-			domainName,
-			'manage',
-			relativeTo,
-			source ? { source } : null
-		);
+		path = emailManagementEdit( siteName, domainName, 'manage', relativeTo, urlParameters );
 	} else if ( siteName ) {
-		path = '/email/' + siteName + urlParam;
+		path = '/email/' + siteName + buildQueryString( urlParameters );
 	} else {
 		path = '/email';
 	}
@@ -205,10 +204,6 @@ export function emailManagementEdit(
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	const urlParameterString = urlParameters
-		? stringify( urlParameters, { addQueryPrefix: true } )
-		: '';
-
 	return (
 		resolveRootPath( relativeTo ) +
 		'/' +
@@ -217,7 +212,7 @@ export function emailManagementEdit(
 		slug +
 		'/' +
 		siteName +
-		urlParameterString
+		buildQueryString( urlParameters )
 	);
 }
 

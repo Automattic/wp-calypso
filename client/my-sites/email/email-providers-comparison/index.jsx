@@ -153,21 +153,13 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const {
-			comparisonContext,
-			currentRoute,
-			selectedDomainName,
-			selectedSite,
-			source,
-		} = this.props;
+		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
 
 		const eventProperties = {
 			provider: 'email-forwarding',
-			context: comparisonContext,
 		};
 
 		if ( source === INBOX ) {
-			eventProperties.product = 'forward';
 			eventProperties.source = source;
 		}
 		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
@@ -207,14 +199,12 @@ class EmailProvidersComparison extends Component {
 			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
-			provider: 'titan',
+			provider: TITAN_PROVIDER_NAME,
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 		};
 
 		if ( source === INBOX ) {
-			eventProperties.product = 'email';
-			eventProperties.provider = TITAN_PROVIDER_NAME;
 			eventProperties.source = INBOX;
 		}
 
@@ -427,7 +417,6 @@ class EmailProvidersComparison extends Component {
 						selectedDomainName={ selectedDomainName }
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
-						context={ comparisonContext }
 					>
 						<div className="email-providers-comparison__gsuite-user-list-actions-container">
 							<Button
@@ -532,7 +521,6 @@ class EmailProvidersComparison extends Component {
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
-				context={ comparisonContext }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"
