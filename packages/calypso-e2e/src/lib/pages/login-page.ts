@@ -83,9 +83,7 @@ export class LoginPage {
 	}
 
 	/**
-	 * The basic flow of filling out username/email and password into the form then submitting.
-	 *
-	 * Call this method from any page to log into WordPress.com.
+	 * Fills out the login form then submit.
 	 *
 	 * If the credentials are rejected by the WordPress.com backend for any reason, this method
 	 * will throw.
@@ -113,12 +111,6 @@ export class LoginPage {
 					.waitForSelector( selectors.noticeBox )
 					.then( ( element ) => element.innerText() )
 			);
-		} else {
-			// This assumes the user will not be redirected to another page (eg. /posts) after login.
-			await Promise.race( [
-				this.page.waitForURL( '**/home/**', { waitUntil: 'load' } ),
-				this.page.waitForURL( '**/read', { waitUntil: 'load' } ),
-			] );
 		}
 	}
 
@@ -147,7 +139,10 @@ export class LoginPage {
 			( { username, password } = credentials );
 		}
 
-		await this.baseflow( { username, password } );
+		await Promise.all( [
+			this.page.waitForNavigation( { waitUntil: 'load' } ),
+			this.baseflow( { username, password } ),
+		] );
 	}
 
 	/* Signup */

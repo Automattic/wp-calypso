@@ -3,7 +3,7 @@
  */
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	DomainsPage,
 	SidebarComponent,
 	setupHooks,
@@ -24,8 +24,8 @@ describe( DataHelper.createSuiteTitle( 'Domains: Map/Connect a Domain' ), functi
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'defaultUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'defaultUser' } );
 	} );
 
 	it( 'Navigate to Upgrades > Domains', async function () {

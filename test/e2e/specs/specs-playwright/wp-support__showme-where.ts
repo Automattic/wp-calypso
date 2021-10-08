@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	SupportComponent,
 	setupHooks,
@@ -27,8 +27,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 		let gutenboardingFlow: GutenboardingFlow;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Tools > Marketing', async function () {

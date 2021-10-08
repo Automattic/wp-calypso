@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	BrowserManager,
-	LoginFlow,
+	LoginPage,
 	DomainsPage,
 	SidebarComponent,
 	DomainSearchComponent,
@@ -31,8 +31,8 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 	let domainsPage: DomainsPage;
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'calypsoPreReleaseUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'calypsoPreReleaseUser' } );
 	} );
 
 	it( 'Set store cookie', async function () {

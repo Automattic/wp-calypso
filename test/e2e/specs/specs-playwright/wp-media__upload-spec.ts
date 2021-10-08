@@ -6,7 +6,7 @@ import assert from 'assert';
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	MediaHelper,
@@ -40,8 +40,8 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		let mediaPage: MediaPage;
 
 		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Media', async function () {
