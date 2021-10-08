@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-
 import {
 	Dispatch,
 	SetStateAction,
@@ -13,7 +12,6 @@ import {
 	useMemo,
 	useState,
 } from 'react';
-
 import * as React from 'react';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';

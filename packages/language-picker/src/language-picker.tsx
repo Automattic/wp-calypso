@@ -9,10 +9,10 @@ import {
 	FlexItem,
 } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import type { ReactNode, ComponentType } from 'react';
 import { useCallback, useState } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
 import type { Language, LanguageGroup } from './Language';
+import type { ReactNode, ComponentType } from 'react';
 
 import './style.scss';
 

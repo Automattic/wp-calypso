@@ -1,9 +1,9 @@
 import classnames from 'classnames';
-import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 import Modal from 'react-modal';
 import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
