@@ -21,7 +21,7 @@ import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import { INBOX } from 'calypso/my-sites/email/inbox';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
@@ -123,7 +123,7 @@ const NewMailboxUpsell = () => {
 	const selectedSiteSlug = selectedSite?.slug;
 
 	const handleCreateNewMailboxClick = useCallback( () => {
-		page( emailManagement( selectedSiteSlug, null, null, { source: INBOX } ) );
+		page( emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } ) );
 	}, [ selectedSiteSlug ] );
 
 	return (

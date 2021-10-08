@@ -31,7 +31,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
-import { INBOX } from 'calypso/my-sites/email/inbox';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import {
 	emailManagement,
 	emailManagementNewTitanAccount,
@@ -151,10 +151,10 @@ class TitanAddMailboxes extends Component {
 			mailbox_count: mailboxes.length,
 		};
 
-		if ( source === INBOX ) {
+		if ( source === INBOX_SOURCE ) {
 			eventProps.product = 'inbox';
 			eventProps.provider = TITAN_PROVIDER_NAME;
-			eventProps.source = INBOX;
+			eventProps.source = INBOX_SOURCE;
 		}
 
 		this.recordClickEvent(

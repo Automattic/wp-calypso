@@ -59,7 +59,7 @@ import {
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
-import { INBOX } from 'calypso/my-sites/email/inbox';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -159,7 +159,7 @@ class EmailProvidersComparison extends Component {
 			provider: 'email-forwarding',
 		};
 
-		if ( source === INBOX ) {
+		if ( source === INBOX_SOURCE ) {
 			eventProperties.source = source;
 		}
 		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
@@ -204,8 +204,8 @@ class EmailProvidersComparison extends Component {
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 		};
 
-		if ( source === INBOX ) {
-			eventProperties.source = INBOX;
+		if ( source === INBOX_SOURCE ) {
+			eventProperties.source = INBOX_SOURCE;
 		}
 
 		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
@@ -276,8 +276,8 @@ class EmailProvidersComparison extends Component {
 			user_can_add_email: userCanAddEmail ? 1 : 0,
 		};
 
-		if ( source === INBOX ) {
-			eventProperties.source = INBOX;
+		if ( source === INBOX_SOURCE ) {
+			eventProperties.source = INBOX_SOURCE;
 		}
 
 		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
