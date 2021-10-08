@@ -1,5 +1,5 @@
 import { BackButton } from '@automattic/onboarding';
-import { Modal, Panel, PanelBody } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, close, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,57 +11,6 @@ interface DetailsProps {
 	platform: string;
 	onClose: () => void;
 }
-
-const WixPanelInfo: React.FunctionComponent< DetailsProps > = () => {
-	const { __ } = useI18n();
-
-	return (
-		<Panel>
-			<PanelBody title={ __( 'Import to a new site' ) } initialOpen={ false }>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-			<PanelBody title={ __( 'Import to an existing site' ) } initialOpen={ false }>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-		</Panel>
-	);
-};
-
-const SquarespacePanelInfo: React.FunctionComponent< DetailsProps > = () => {
-	const { __ } = useI18n();
-
-	return (
-		<Panel>
-			<PanelBody title={ __( 'Downloading your Squarespace export file' ) } initialOpen={ false }>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-			<PanelBody
-				title={ __( 'Importing your Squarespace export file to WordPress.com' ) }
-				initialOpen={ false }
-			>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-			<PanelBody title={ __( 'Business and eCommerce plan sites' ) } initialOpen={ false }>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-		</Panel>
-	);
-};
-
-const BloggerPanelInfo: React.FunctionComponent< DetailsProps > = () => {
-	const { __ } = useI18n();
-
-	return (
-		<Panel>
-			<PanelBody title={ __( 'Export from Blogger' ) } initialOpen={ false }>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-			<PanelBody title={ __( 'Import to WordPress.com' ) } initialOpen={ false }>
-				<p>Body txt: lorem ipsum dolor sit amet</p>
-			</PanelBody>
-		</Panel>
-	);
-};
 
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
@@ -163,19 +112,6 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 						</li>
 					</ul>
 				</div>
-
-				{ ( () => {
-					switch ( platform ) {
-						case 'Wix':
-							return <WixPanelInfo { ...data } />;
-						case 'Squarespace':
-							return <SquarespacePanelInfo { ...data } />;
-						case 'Blogger':
-							return <BloggerPanelInfo { ...data } />;
-						default:
-							return null;
-					}
-				} )() }
 			</div>
 		</Modal>
 	);

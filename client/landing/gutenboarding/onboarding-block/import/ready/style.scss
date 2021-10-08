@@ -126,19 +126,6 @@
 		margin-bottom: 2em;
 	}
 
-	.components-panel {
-		border: none;
-	}
-
-	.components-panel__body:first-child {
-		border: none;
-	}
-
-	.components-panel__body-title button {
-		font-size: 1.125em; /* stylelint-disable-line */
-		color: var( --studio-gray-100 );
-	}
-
 	.import__details-features {
 		p {
 			font-size: 1em; /* stylelint-disable-line */
