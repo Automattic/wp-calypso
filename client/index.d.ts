@@ -1,1 +1,1 @@
-import '@automattic/calypso-build/typings/calypso-assets/index.d';
+import '@automattic/calypso-build';

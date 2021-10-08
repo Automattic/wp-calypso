@@ -33,6 +33,7 @@
 	"browserslist": [
 		"extends @wordpress/browserslist-config"
 	],
+	"types": "./typings/calypso-assets/index.d.ts",
 	"dependencies": {
 		"@automattic/webpack-rtl-plugin": "^5.0.0",
 		"@babel/cli": "^7.14.8",
