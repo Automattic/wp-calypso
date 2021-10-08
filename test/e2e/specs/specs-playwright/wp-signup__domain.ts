@@ -12,7 +12,6 @@ import {
 	CartCheckoutPage,
 	NavbarComponent,
 	IndividualPurchasePage,
-	LoginPage,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -85,6 +84,11 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Check out', async function () {
+			// Purchasing a domain on a domain-only account results in multiple redirects
+			// to URLs such as `**/checkout/thank-you/no-site/**` and
+			// `**/checkout/thank-you/<selectedDomain>`, and this occurs multiple times.
+			// The following `waitForNavigation` is meant to catch those and ensure the page
+			// has loaded fully prior to next steps.
 			await Promise.all( [
 				page.waitForNavigation( {
 					url: `**/checkout/thank-you/${ selectedDomain }`,
@@ -125,20 +129,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 	} );
 
 	describe( 'Delete user account', function () {
-		it( 'Re-log in', async function () {
-			// This step is necessary due to an issue exposed in PR
-			// https://github.com/Automattic/wp-calypso/pull/56803.
-			// When closing a Domain-only account that has never logged out,
-			// the redirect to Account Closed page does not occur as expected.
-			// See issue: https://github.com/Automattic/wp-calypso/issues/56841
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await Promise.all( [
-				page.waitForNavigation( { url: '**/read' } ),
-				loginPage.login( { username: username, password: signupPassword } ),
-			] );
-		} );
-
 		it( 'Close account', async function () {
 			const closeAccountFlow = new CloseAccountFlow( page );
 			await closeAccountFlow.closeAccount();
