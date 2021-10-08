@@ -186,7 +186,6 @@ export function changePaymentMethod( context, next ) {
 						siteSlug={ context.params.site }
 						getManagePurchaseUrlFor={ managePurchaseUrl }
 						purchaseListUrl={ purchasesRoot }
-						isFullWidth={ true }
 					/>
 				</Main>
 			</PurchasesWrapper>
