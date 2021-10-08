@@ -550,9 +550,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		description = "Runs Calypso e2e tests as $targetDevice using Playwright"
 
 		artifactRules = """
-			reports => reports
 			logs.tgz => logs.tgz
 			screenshots => screenshots
+			trace.tgz => trace.tgz
 		""".trimIndent()
 
 		vcs {
@@ -595,7 +595,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% specs/specs-playwright/wp-auth
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -610,6 +610,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 					mkdir -p logs
 					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 tar cvfz trace.tgz
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
