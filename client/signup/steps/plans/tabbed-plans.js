@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Gridicon, Popover } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -53,7 +53,7 @@ function SharedFeatures( {
 }
 
 function TermToggleRadioButton( {
-	checked,
+	isChecked,
 	children,
 	isDisabled = false,
 	name,
@@ -74,7 +74,7 @@ function TermToggleRadioButton( {
 
 	return (
 		<RadioButtonLabel isDisabled={ isDisabled } onClick={ handleClick }>
-			<input type="radio" checked={ checked } name={ name } onChange={ toggleAction } />
+			<input type="radio" checked={ isChecked } name={ name } onChange={ toggleAction } />
 			<Checkmark />
 			<span ref={ radioPopoverRef }>{ children }</span>
 			{ showPopover && popoverMessage && (
@@ -104,9 +104,10 @@ function TabbedPlans( {
 	const [ selectedTab, setSelectedTab ] = useState( tabList[ 1 ] );
 	const [ termLength, setTermLength ] = useState( 'annually' );
 	const [ displayedPlans, setDisplayedPlans ] = useState( planOrder[ selectedTab ] );
-	const [ isLoading, setIsLoading ] = useState( true );
 	const [ planDetails, setPlanDetails ] = useState();
-	const [ primaryButton, setPrimaryButton ] = useState( 'Premium' );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ isMobile, setIsMobile ] = useState();
+	const [ primaryPlan, setPrimaryPlan ] = useState( 'Business' );
 	const dispatch = useDispatch();
 
 	const toggleTab = () => {
@@ -130,9 +131,16 @@ function TabbedPlans( {
 		onUpgradeClick( args );
 	};
 
+	const filterPlans = ( planArray ) =>
+		planArray.map( ( plan ) => {
+			return planProperties.filter( ( obj ) => {
+				return obj.planName === plan && obj.termLength === termLength;
+			} )[ 0 ];
+		} );
+
 	useEffect( () => {
 		setTermLength( 'annually' );
-		selectedTab === tabList[ 0 ] ? setPrimaryButton( 'Personal' ) : setPrimaryButton( 'Business' );
+		selectedTab === tabList[ 0 ] ? setPrimaryPlan( 'Personal' ) : setPrimaryPlan( 'Business' );
 		setDisplayedPlans( planOrder[ selectedTab ] );
 		dispatch(
 			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
@@ -151,14 +159,22 @@ function TabbedPlans( {
 
 	useEffect( () => {
 		setIsLoading( true );
-		const filteredPlans = displayedPlans.map( ( plan ) => {
-			return planProperties.filter( ( obj ) => {
-				return obj.planName === plan && obj.termLength === termLength;
-			} )[ 0 ];
-		} );
+		const filteredPlans = filterPlans( displayedPlans );
 		setPlanDetails( filteredPlans );
 		setIsLoading( false );
 	}, [ displayedPlans, planProperties, termLength ] );
+
+	useEffect( () => {
+		const filteredPlans = filterPlans( displayedPlans );
+		setPlanDetails( filteredPlans );
+
+		if ( isWithinBreakpoint( '<660px' ) ) {
+			setIsMobile( true );
+		}
+		subscribeIsWithinBreakpoint( '<660px', ( isActive ) => setIsMobile( isActive ) );
+	}, [] );
+
+	if ( isLoading ) return null;
 
 	return (
 		<>
@@ -188,14 +204,14 @@ function TabbedPlans( {
 			<Grid className="tabbed-plans__grid-container">
 				<TermToggles className="tabbed-plans__term-toggles">
 					<TermToggleRadioButton
-						checked={ termLength === 'annually' ? 'checked' : '' }
+						isChecked={ termLength === 'annually' }
 						name="annually"
-						toggleAction={ selectedTab === 'Professional' ? toggleTerm : null }
+						toggleAction={ toggleTerm }
 					>
 						<span>Pay annually</span>
 					</TermToggleRadioButton>
 					<TermToggleRadioButton
-						checked={ termLength === 'monthly' ? 'checked' : '' }
+						isChecked={ termLength === 'monthly' }
 						isDisabled={ selectedTab === 'Starter' }
 						name="monthly"
 						popoverMessage={
@@ -203,30 +219,20 @@ function TabbedPlans( {
 								? `Monthly payments are only available for our Professional plans.`
 								: null
 						}
-						toggleAction={ selectedTab === 'Professional' ? toggleTerm : null }
+						toggleAction={ toggleTerm }
 					>
 						<span>Pay monthly</span>
 					</TermToggleRadioButton>
 				</TermToggles>
 
-				<PlanBorderOne />
-				<PlanBorderTwo featured={ true } />
-				{ selectedTab === 'Professional' && (
-					<>
-						<FeaturedPlanProfessional />
-						<PlanBorderThree />
-					</>
-				) }
-				{ selectedTab === 'Starter' && (
-					<>
-						<FeaturedPlanStarter />
-					</>
-				) }
-
 				{ ! isLoading &&
-					planDetails &&
 					planDetails.map( ( plan, index ) => (
 						<React.Fragment key={ `planDetails${ index }` }>
+							<PlanStyle
+								key={ `planDetails${ index }` }
+								planOrder={ `${ index + 1 }` }
+								featured={ plan.planName === primaryPlan }
+							/>
 							<PlanHeader
 								key={ `planHeader${ index }` }
 								className={ `tabbed-plans__header-${ index + 1 }` }
@@ -271,30 +277,25 @@ function TabbedPlans( {
 									key={ `planCtaTop${ index }` }
 									className={ `tabbed-plans__top-button-${ index + 1 }` }
 									onClick={ () => handleUpgradeButtonClick( plan.planSlug, plan.planProductId ) }
-									primary={ plan.planName === primaryButton }
+									primary={ plan.planName === primaryPlan }
 								>
 									{ `Start with ${ plan.planName }` }
 								</CtaButton>
 							) }
-							<CtaButton
-								key={ `planCta${ index }` }
-								className={ `tabbed-plans__button-${ index + 1 }` }
-								onClick={ () => handleUpgradeButtonClick( plan.planSlug, plan.planProductId ) }
-								primary={ plan.planName === primaryButton }
-							>
-								{ `Start with ${ plan.planName }` }
-							</CtaButton>
+
 							{ featuresOrder[ selectedTab ].map( ( feature, featureIndex ) => {
 								const featureObject =
 									planFeatureDescriptions[ plan.planName ][ feature ][ termLength ];
 								const featureIncluded =
 									Object.keys( featureObject ).length !== 0 && featureObject?.notIncluded !== true;
 								let featureDescriptionCopy;
-								if ( isWithinBreakpoint( '<660px' ) ) {
+								if ( isMobile ) {
 									if ( featureIncluded ) {
 										featureDescriptionCopy = featureObject?.mobileCopy
 											? featureObject.mobileCopy
 											: featureObject.copy;
+									} else {
+										return null;
 									}
 								} else {
 									featureDescriptionCopy = featureObject?.copy ? (
@@ -307,14 +308,24 @@ function TabbedPlans( {
 								return (
 									<Feature
 										key={ `feature${ index }${ featureIndex }` }
-										className={ `tabbed-plans__feature-${ index + 1 }-${ featureIndex + 1 }` }
 										included={ featureIncluded }
+										gridArea={ `feature-${ index + 1 }-${ featureIndex + 1 }` }
 									>
 										{ featureDescriptionCopy }
 									</Feature>
 								);
 							} ) }
-							{ isWithinBreakpoint( '<660px' ) && plan.planName !== 'Free' && (
+
+							<CtaButton
+								key={ `planCta${ index }` }
+								className={ `tabbed-plans__button-${ index + 1 }` }
+								onClick={ () => handleUpgradeButtonClick( plan.planSlug, plan.planProductId ) }
+								primary={ plan.planName === primaryPlan }
+							>
+								{ `Start with ${ plan.planName }` }
+							</CtaButton>
+
+							{ isMobile && plan.planName !== 'Free' && (
 								<SharedFeatures
 									sharedFeatures={ sharedFeatures[ selectedTab ] }
 									className={ classNames(
@@ -330,7 +341,7 @@ function TabbedPlans( {
 				{ featuresOrder[ selectedTab ].map( ( feature, index, arr ) => (
 					<FeatureTitle
 						key={ `featureTitle${ index }` }
-						className={ `tabbed-plans__feature-title-${ index + 1 }` }
+						gridArea={ `ft-${ index + 1 }` }
 						isLast={ arr.length === index + 1 }
 					>
 						{ featureDescriptions[ feature ].name }
@@ -345,7 +356,7 @@ function TabbedPlans( {
 					</FeatureTitle>
 				) ) }
 
-				{ isWithinBreakpoint( '>660px' ) && (
+				{ ! isMobile && (
 					<>
 						<FreeBanner>
 							{ selectedTab === 'Professional' && (
@@ -692,6 +703,7 @@ const SharedFeatureHeader = styled.div`
 `;
 
 const SharedFeature = styled.div`
+	grid-area: ${ ( props ) => props.gridArea };
 	padding: 5px 0;
 	font-weight: 400;
 	font-size: 14px;
@@ -737,6 +749,7 @@ const CtaButton = styled( Button )`
 `;
 
 const Feature = styled.div`
+	grid-area: ${ ( props ) => props.gridArea };
 	padding: 15px 24px;
 	border-bottom: ${ ( props ) => ( props.isLast ? '0' : '1px solid rgba( 220, 220, 222, 0.2 )' ) };
 	font-weight: 500;
@@ -767,6 +780,7 @@ const Feature = styled.div`
 `;
 
 const FeatureTitle = styled.div`
+	grid-area: ${ ( props ) => props.gridArea };
 	justify-self: stretch;
 	padding: 15px 36px 15px 0;
 	border-bottom: ${ ( props ) => ( props.isLast ? '0' : '1px solid rgba( 220, 220, 222, 0.2 )' ) };
@@ -895,20 +909,6 @@ const SelectedTab = styled( Tab )`
 	border-radius: 5px;
 `;
 
-const FeaturedPlanProfessional = styled.div`
-	grid-column: 3;
-	grid-row: 1 / button-1;
-	background: rgba( 187, 224, 250, 0.3 );
-	border-radius: 2px;
-`;
-
-const FeaturedPlanStarter = styled.div`
-	grid-column: 3;
-	grid-row: 1 / button-1;
-	background: rgba( 187, 224, 250, 0.3 );
-	border-radius: 2px;
-`;
-
 const TermToggles = styled.div`
 	padding-top: 24px;
 	display: flex;
@@ -986,33 +986,18 @@ const Checkmark = styled.span`
 	}
 `;
 
-const PlanBorderOne = styled.div`
-	@media ( max-width: 660px ) {
-		margin: 24px 24px 0 24px;
-		grid-column: 1;
-		grid-row: plan-header-1 / shared-features-1;
-		border-radius: 2px;
-		background: ${ ( props ) => ( props.featured ? '#f1f5f8' : '#fff' ) };
-		border: ${ ( props ) => ( props.featured ? '0' : '1px solid #dcdcde' ) };
-	}
-`;
+const PlanStyle = styled.div`
+	grid-column: ${ ( props ) => parseInt( props.planOrder ) + 1 };
+	grid-row: ${ ( props ) => `plan-header-${ props.planOrder } / button-${ props.planOrder }` };
 
-const PlanBorderTwo = styled.div`
-	@media ( max-width: 660px ) {
-		margin: 24px 24px 0 24px;
-		grid-column: 1;
-		grid-row: plan-header-2 / shared-features-2;
-		background: ${ ( props ) => ( props.featured ? '#f1f5f8' : '#fff' ) };
-		border: ${ ( props ) => ( props.featured ? '0' : '1px solid #dcdcde' ) };
-		border-radius: 2px;
-	}
-`;
+	background: ${ ( props ) => ( props.featured ? 'rgba( 187, 224, 250, 0.3 )' : '' ) };
+	border-radius: ${ ( props ) => ( props.featured ? '2px' : '0' ) };
 
-const PlanBorderThree = styled.div`
 	@media ( max-width: 660px ) {
 		margin: 24px 24px 0 24px;
 		grid-column: 1;
-		grid-row: plan-header-3 / shared-features-3;
+		grid-row: ${ ( props ) =>
+			`plan-header-${ props.planOrder } / shared-features-${ props.planOrder }` };
 		border-radius: 2px;
 		background: ${ ( props ) => ( props.featured ? '#f1f5f8' : '#fff' ) };
 		border: ${ ( props ) => ( props.featured ? '0' : '1px solid #dcdcde' ) };
