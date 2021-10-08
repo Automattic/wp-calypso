@@ -120,6 +120,7 @@ function UseMyDomain( {
 
 	const setDomainTransferData = useCallback( async () => {
 		// TODO: remove this try-catch when the next statuses get added on the API
+		setIsFetchingAvailability( true );
 		let inboundTransferStatusResult = {};
 		try {
 			inboundTransferStatusResult = await wpcom
@@ -142,6 +143,8 @@ function UseMyDomain( {
 
 		setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
 		setTransferStepsAndLockStatus( inboundTransferStatusInfo.unlocked );
+
+		setIsFetchingAvailability( false );
 	}, [ domainName, setTransferStepsAndLockStatus ] );
 
 	const onNext = useCallback( async () => {
@@ -265,6 +268,7 @@ function UseMyDomain( {
 			<ConnectDomainSteps
 				baseClassName={ 'connect-domain-step' }
 				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
+				isFetchingAvailability={ isFetchingAvailability }
 				initialMode={ initialMode }
 				domain={ domainName }
 				initialPageSlug={ transferDomainFlowPageSlug }

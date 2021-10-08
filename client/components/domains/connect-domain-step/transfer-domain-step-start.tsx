@@ -19,6 +19,7 @@ export default function TransferDomainStepStart( {
 	progressStepList,
 	domainInboundTransferStatusInfo,
 	domain,
+	isFetchingAvailability,
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => null;
@@ -27,7 +28,7 @@ export default function TransferDomainStepStart( {
 
 	const stepContent = (
 		<>
-			{ ! isDomainTransferrable && (
+			{ ! isFetchingAvailability && ! isDomainTransferrable && (
 				<Notice
 					status="is-error"
 					showDismiss={ false }
@@ -68,7 +69,12 @@ export default function TransferDomainStepStart( {
 						}
 					) }
 				</p>
-				<Button primary onClick={ onNextStep } disabled={ ! isDomainTransferrable }>
+				<Button
+					primary
+					onClick={ onNextStep }
+					disabled={ ! isDomainTransferrable }
+					busy={ isFetchingAvailability }
+				>
 					{ __( 'Start setup' ) }
 				</Button>
 			</div>

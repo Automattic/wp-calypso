@@ -52,6 +52,7 @@ export type StartStepProps = {
 	pageSlug: PossibleSlugs;
 	onNextStep: () => void;
 	stepContent: JSX.Element;
+	isFetchingAvailability: boolean;
 	progressStepList: Record< PossibleSlugs, string >;
 	domainInboundTransferStatusInfo: Partial< InboundTransferStatusInfo >;
 	initialMode: PossibleInitialModes;
