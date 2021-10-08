@@ -147,6 +147,7 @@ function WelcomeTourFrame() {
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
+			{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
 			{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
 			<div
 				className="wpcom-editor-welcome-tour-frame"

@@ -19,6 +19,15 @@ const usePopperHandler = (
 	const referenceElement = document.querySelector( referenceElementSelector );
 	const { styles, attributes } = usePopper( referenceElement, popperElementRef?.current, {
 		strategy: 'fixed',
+		modifiers: [
+			{
+				name: 'preventOverflow',
+				options: {
+					rootBoundary: 'document',
+					padding: 16, // same as the left/margin of the tour frame
+				},
+			},
+		],
 	} );
 
 	return referenceElement ? { styles, attributes } : {};
