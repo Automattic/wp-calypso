@@ -1,7 +1,10 @@
 import page from 'page';
 import { DefaultRootState } from 'react-redux';
 import { Dispatch } from 'redux';
-import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import {
+	transferDomainError,
+	useMyDomainInputMode as inputMode,
+} from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	AuthCodeValidationError,
 	AuthCodeValidationHandler,
@@ -25,9 +28,8 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 		domainAvailability.TRANSFERRABLE,
 		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
 	];
-	const transferGenericErrorMessage = 'We were unable to start the transfer.';
 
-	if ( ! selectedSite ) return onDone( { message: 'Please specify a site.' } );
+	if ( ! selectedSite ) return onDone( { message: transferDomainError.NO_SELECTED_SITE } );
 
 	try {
 		const wpcomDomain = wpcom.domain( domain );
@@ -38,7 +40,7 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 		if ( ! authCodeCheckResult.success )
 			return onDone( {
 				error: 'ownership_verification_failed',
-				message: 'Invalid auth code. Please check the specified code and try again.',
+				message: transferDomainError.AUTH_CODE,
 			} );
 
 		const checkAvailabilityResult = await wpcomDomain.isDomainAvailable( selectedSite.ID, false );
@@ -77,12 +79,12 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 					page( domainManagementTransferIn( selectedSite.slug, domain ) );
 				} else {
 					return onDone( {
-						message: transferGenericErrorMessage,
+						message: transferDomainError.GENERIC_ERROR,
 					} );
 				}
 			} catch ( error ) {
 				return onDone( {
-					message: transferGenericErrorMessage,
+					message: transferDomainError.GENERIC_ERROR,
 				} );
 			}
 		};

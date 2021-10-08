@@ -67,3 +67,9 @@ export const useMyDomainInputMode = {
 	ownershipVerification: 'ownership-verification',
 	transferDomain: 'transfer-domain',
 } as const;
+
+export const transferDomainError = {
+	AUTH_CODE: __( 'Invalid auth code. Please check the specified code and try again.' ),
+	NO_SELECTED_SITE: __( 'Please specify a site.' ),
+	GENERIC_ERROR: __( 'We were unable to start the transfer.' ),
+};

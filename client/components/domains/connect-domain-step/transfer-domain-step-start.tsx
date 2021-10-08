@@ -24,8 +24,8 @@ export default function TransferDomainStepStart( {
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => page( MAP_EXISTING_DOMAIN );
-	const isDomainTransferrable = getDomainTransferrability( domainInboundTransferStatusInfo )
-		.transferrable;
+	const isDomainTransferrable =
+		true || getDomainTransferrability( domainInboundTransferStatusInfo ).transferrable;
 
 	const stepContent = (
 		<>
