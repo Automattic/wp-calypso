@@ -132,6 +132,15 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
+	FEATURE_JETPACK_10GB_BACKUP_STORAGE,
+	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
+	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+	FEATURE_JETPACK_PRODUCT_BACKUP,
+	FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+	FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
+	FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -822,12 +831,14 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate( 'Browse or restore any backup made since you activated the service.' ),
 	},
+
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
 		getSlug: () => FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited backup storage space' ),
 		getDescription: () =>
 			i18n.translate( 'Absolutely no limits on storage space for your backups.' ),
 	},
+
 	[ FEATURE_AUTOMATED_RESTORES ]: {
 		getSlug: () => FEATURE_AUTOMATED_RESTORES,
 		getTitle: () => i18n.translate( 'Automated restores' ),
@@ -1078,7 +1089,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Site Search: up to 100k records' ),
+		getTitle: () => i18n.translate( 'Site Search up to 100k records' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1107,7 +1118,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_V2 ]: {
 		getSlug: () => FEATURE_CRM_V2,
-		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
+		getTitle: () => i18n.translate( 'CRM Entrepreneur' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1344,6 +1355,47 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_STORAGE,
 		getTitle: () => i18n.translate( '1TB of storage' ),
 	},
+
+	/* START - Jetpack tiered product-specific features */
+	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( '10GB of backup storage' ),
+	},
+	[ FEATURE_JETPACK_1TB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_1TB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( '1TB of backup storage' ),
+	},
+	[ FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( '30-day archive & activity log' ),
+	},
+	[ FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( '1-year archive & activity log' ),
+	},
+	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
+		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
+		getTitle: () => i18n.translate( 'All Backup features' ),
+		isHighlighted: () => true,
+	},
+	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
+		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+		getTitle: () => i18n.translate( 'VideoPress' ),
+	},
+	[ FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES ]: {
+		getSlug: () => FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+		getTitle: () => i18n.translate( 'All Backup & Security features' ),
+	},
+	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
+		getTitle: () => i18n.translate( 'Real-time cloud backups' ),
+	},
+	[ FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
+		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
+		isHighlighted: () => true,
+	},
+	/* END - Jetpack tiered product-specific features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

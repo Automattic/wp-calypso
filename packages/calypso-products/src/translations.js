@@ -244,7 +244,9 @@ export const getJetpackProductsDescriptions = () => {
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const backupT1Description = backupDailyDescription;
+	const backupT1Description = translate(
+		'Save every change with real-time backups and get back online quickly with one-click restores.'
+	);
 	const backupT2Description = translate(
 		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
 		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
