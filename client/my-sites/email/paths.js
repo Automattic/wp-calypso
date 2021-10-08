@@ -48,13 +48,9 @@ export function emailManagementAddGSuiteUsers(
 	source = null
 ) {
 	if ( domainName ) {
-		return emailManagementEdit(
-			siteName,
-			domainName,
-			productType + '/add-users',
-			relativeTo,
-			{ source }
-		);
+		return emailManagementEdit( siteName, domainName, productType + '/add-users', relativeTo, {
+			source,
+		} );
 	}
 
 	return '/email/' + productType + '/add-users/' + siteName;
@@ -90,13 +86,7 @@ export function emailManagementNewTitanAccount(
 	relativeTo = null,
 	source = null
 ) {
-	return emailManagementEdit(
-		siteName,
-		domainName,
-		'titan/new',
-		relativeTo,
-		{ source }
-	);
+	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo, { source } );
 }
 
 export function emailManagementTitanSetUpMailbox(
@@ -105,13 +95,9 @@ export function emailManagementTitanSetUpMailbox(
 	relativeTo = null,
 	source = null
 ) {
-	return emailManagementEdit(
-		siteName,
-		domainName,
-		'titan/set-up-mailbox',
-		relativeTo,
-		{ source }
-	);
+	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo, {
+		source,
+	} );
 }
 
 export function emailManagementTitanSetUpThankYou(
@@ -179,13 +165,7 @@ export function emailManagementPurchaseNewEmailAccount(
 	relativeTo = null,
 	source = null
 ) {
-	return emailManagementEdit(
-		siteName,
-		domainName,
-		'purchase',
-		relativeTo,
-		{ source }
-	);
+	return emailManagementEdit( siteName, domainName, 'purchase', relativeTo, { source } );
 }
 
 export function emailManagementEdit(
