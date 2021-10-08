@@ -306,6 +306,7 @@
 		}
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"bunyan": "^1.8.15",
 		"chokidar": "^3.5.1",
 		"eslint-nibble": "^7.0.0"

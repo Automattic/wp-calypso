@@ -52,6 +52,11 @@
     typescript "^4.3.5"
     webpack-cli "^4.7.2"
 
+"@automattic/calypso-eslint-overrides@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@automattic/calypso-eslint-overrides/-/calypso-eslint-overrides-1.0.0.tgz#a93f544e902bde696ed26f747c744f8e1ecfd426"
+  integrity sha512-e6iE5iEGltPIa4k7uTntY/JjV/ubGXPCroHoQkgnXbdNwsTgS9c6RMhUCYqXI1nXKyoUU0qAzeKkKU8ewssj/Q==
+
 "@automattic/webpack-rtl-plugin@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@automattic/webpack-rtl-plugin/-/webpack-rtl-plugin-5.0.0.tgz#5afee3ee152cf51a05e4ac614f30097cc2a17f85"

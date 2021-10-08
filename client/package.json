@@ -243,6 +243,7 @@
 		"yamlparser": "^0.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.1.1",
 		"@testing-library/react-hooks": "7.0.2",

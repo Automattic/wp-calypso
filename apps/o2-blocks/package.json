@@ -45,6 +45,7 @@
 		"redux": "^4.0.5"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"enzyme": "^3.11.0",
 		"jest": "^27.0.6",
 		"postcss": "^8.2.6",
