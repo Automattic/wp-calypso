@@ -135,6 +135,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     postcss: ^8.2.15
     postcss-custom-properties: ^11.0.0
