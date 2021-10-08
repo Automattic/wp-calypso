@@ -47,7 +47,9 @@ function UseMyDomain( {
 	);
 	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
 	const [ mode, setMode ] = useState(
-		Object.values( inputMode ).includes( initialMode ) ? initialMode : inputMode.domainInput
+		Object.values( inputMode ).includes( initialMode ) && initialQuery
+			? initialMode
+			: inputMode.domainInput
 	);
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
 		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
