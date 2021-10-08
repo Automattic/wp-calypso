@@ -4,11 +4,12 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { resolveDomainStatus, startInboundTransfer } from 'calypso/lib/domains';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import { transferStatus } from 'calypso/lib/domains/constants';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
-import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getByPurchaseId,
@@ -24,18 +25,10 @@ class TransferInDomainType extends Component {
 	};
 
 	inboundTransfer() {
-		const { domain, selectedSite, translate } = this.props;
-		const domainName = domain.name;
-
-		startInboundTransfer( selectedSite.ID, domainName, null, ( error, result ) => {
-			this.setState( { isTransferring: false } );
-			if ( result ) {
-				this.props.fetchSiteDomains( selectedSite.ID );
-				page( domainManagementTransferIn( selectedSite.slug, domainName ) );
-			} else {
-				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
-			}
-		} );
+		const { domain, selectedSite } = this.props;
+		page(
+			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.transferDomain )
+		);
 	}
 
 	renderPendingStart() {
@@ -56,7 +49,7 @@ class TransferInDomainType extends Component {
 					) }
 				</p>
 
-				<Button primary onClick={ this.startTransfer } busy={ this.state?.isTransferring }>
+				<Button primary onClick={ this.startTransfer }>
 					{ translate( 'Start transfer' ) }
 				</Button>
 			</>
