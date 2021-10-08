@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import log from 'loglevel';
-import type { Logger, LogLevelDesc } from 'loglevel';
+import type { LogLevelDesc } from 'loglevel';
 
 type ConsoleImpl = {
 	trace: ( ...args: unknown[] ) => void;
@@ -22,10 +22,13 @@ const nativeConsoleMethods: ConsoleImpl = {
 };
 
 export const setup = ( logLevel: LogLevelDesc ): void => {
+	log.setDefaultLevel( logLevel );
+
 	log.methodFactory = function ( methodName ) {
 		return nativeConsoleMethods[ methodName as keyof ConsoleImpl ] ?? nativeConsoleMethods.log;
 	};
-	log.setLevel( logLevel, false );
+	// This call is used to apply methodFactory changes
+	log.setLevel( log.getLevel() );
 
 	window.console.trace = log.trace.bind( log );
 	window.console.debug = log.debug.bind( log );
@@ -33,16 +36,18 @@ export const setup = ( logLevel: LogLevelDesc ): void => {
 	window.console.info = log.info.bind( log );
 	window.console.warn = log.warn.bind( log );
 	window.console.error = log.error.bind( log );
+
+	window.__setLoggerLevel = log.setLevel.bind( log );
 };
 
-export const debugFactory2 = ( name: string ): ( ( ...msg: unknown[] ) => void ) => {
+export const debugLoggerFactory = ( name: string ): ( ( ...msg: unknown[] ) => void ) => {
 	const namedLogger = log.getLogger( name );
 	namedLogger.methodFactory = function ( methodName, logLevel, loggerName ) {
 		const rawMethod = log.methodFactory( methodName, logLevel, loggerName );
 		return function ( msg ) {
-			rawMethod( name + msg );
+			rawMethod( name + ' ' + msg );
 		};
 	};
-	namedLogger.setLevel( 'debug', false );
+	namedLogger.setLevel( 'debug' );
 	return namedLogger.debug.bind( namedLogger );
 };

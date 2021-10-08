@@ -1,6 +1,6 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
-import { setup as setupLogger, debugFactory2 } from '@automattic/calypso-logger';
+import { setup as setupLogger, debugLoggerFactory } from '@automattic/calypso-logger';
 import { getUrlParts } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import page from 'page';
@@ -51,7 +51,7 @@ import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
-const debug2 = debugFactory2( 'calypso' );
+const debugLogger = debugLoggerFactory( 'calypso' );
 
 const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
@@ -451,9 +451,18 @@ export const bootApp = async ( appName, registerRoutes ) => {
 
 	const user = await initializeCurrentUser();
 
-	console.debug( `Starting ${ appName }. Let's do this. 1` );
-	debug( `Starting ${ appName }. Let's do this. 2 ` );
-	debug2( `Starting ${ appName }. Let's do this. 3` );
+	console.trace( 'This is trace' );
+	console.debug( 'This is debug' );
+	console.log( 'This is log' );
+	console.log( 'This is log', 'with multiple', 'strings' );
+	console.log( 'This is log with formatting %i', 42 );
+	console.log( 'This is log with objects', { a: true } );
+	console.info( 'This is info' );
+	console.warn( 'This is warn. This should come from common.js' );
+	console.error( 'This is error. This should come from common.js' );
+
+	debug( `Starting ${ appName }. Let's do this. This is the old debug` );
+	debugLogger( `Starting ${ appName }. Let's do this. This is the new debug` );
 
 	boot( user, registerRoutes );
 };
