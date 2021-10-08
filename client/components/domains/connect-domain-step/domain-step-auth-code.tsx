@@ -21,6 +21,7 @@ const DomainStepAuthCode = ( {
 	selectedSite,
 	buttonMessage,
 	customHeading,
+	...props
 }: DomainStepAuthCodeProps ) => {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
@@ -43,6 +44,7 @@ const DomainStepAuthCode = ( {
 
 		validateHandler(
 			{
+				...props,
 				domain,
 				selectedSite,
 				verificationData: getVerificationData(),

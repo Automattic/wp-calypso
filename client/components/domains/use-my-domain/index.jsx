@@ -263,6 +263,7 @@ function UseMyDomain( {
 			<ConnectDomainSteps
 				baseClassName={ 'connect-domain-step' }
 				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
+				initialMode={ initialMode }
 				domain={ domainName }
 				initialPageSlug={ transferDomainFlowPageSlug }
 				onTransfer={ onTransfer }
