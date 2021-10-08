@@ -4,6 +4,8 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import {
 	Dispatch,
+	ReactNode,
+	HTMLAttributes,
 	SetStateAction,
 	Children,
 	Fragment,
@@ -124,7 +126,7 @@ export const CheckoutSummaryArea = ( {
 	children,
 	className,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
 } ): JSX.Element => {
 	return (
@@ -201,7 +203,7 @@ export const CheckoutSteps = ( {
 };
 
 interface CheckoutStepsProps {
-	children?: React.ReactNode;
+	children?: ReactNode;
 	areStepsActive?: boolean;
 }
 
@@ -209,7 +211,7 @@ export function Checkout( {
 	children,
 	className,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
 } ): JSX.Element {
 	const { isRTL } = useI18n();
@@ -485,10 +487,10 @@ export function CheckoutStepArea( {
 	submitButtonFooter,
 	disableSubmitButton,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
-	submitButtonHeader?: React.ReactNode;
-	submitButtonFooter?: React.ReactNode;
+	submitButtonHeader?: ReactNode;
+	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
 	const onEvent = useEvents();
@@ -566,7 +568,7 @@ export function CheckoutStepArea( {
 	);
 }
 
-const StepWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const StepWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
@@ -585,9 +587,7 @@ const StepWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	}
 `;
 
-const StepContentWrapper = styled.div<
-	StepContentWrapperProps & React.HTMLAttributes< HTMLDivElement >
->`
+const StepContentWrapper = styled.div< StepContentWrapperProps & HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
@@ -602,9 +602,7 @@ interface StepContentWrapperProps {
 	isVisible?: boolean;
 }
 
-const StepSummaryWrapper = styled.div<
-	StepContentWrapperProps & React.HTMLAttributes< HTMLDivElement >
->`
+const StepSummaryWrapper = styled.div< StepContentWrapperProps & HTMLAttributes< HTMLDivElement > >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
@@ -717,12 +715,12 @@ interface CheckoutStepBodyProps {
 	className?: string;
 	stepNumber?: number;
 	stepId: string;
-	titleContent: React.ReactNode;
+	titleContent: ReactNode;
 	goToThisStep?: () => void;
 	goToNextStep?: () => void;
-	activeStepContent?: React.ReactNode;
+	activeStepContent?: ReactNode;
 	formStatus?: FormStatus;
-	completeStepContent?: React.ReactNode;
+	completeStepContent?: ReactNode;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
 }
@@ -776,7 +774,7 @@ export function useSetStepComplete(): ( stepNumber: number, newStatus: boolean )
 	return setTargetStepCompleteStatus;
 }
 
-const StepTitle = styled.span< StepTitleProps & React.HTMLAttributes< HTMLSpanElement > >`
+const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
 	color: ${ ( props ) =>
 		props.isActive ? props.theme.colors.textColorDark : props.theme.colors.textColor };
 	font-weight: ${ ( props ) =>
@@ -795,7 +793,7 @@ interface StepTitleProps {
 	fullWidth?: boolean;
 }
 
-const StepHeader = styled.h2< StepHeaderProps & React.HTMLAttributes< HTMLHeadingElement > >`
+const StepHeader = styled.h2< StepHeaderProps & HTMLAttributes< HTMLHeadingElement > >`
 	font-size: 16px;
 	display: flex;
 	width: 100%;
@@ -828,7 +826,7 @@ function CheckoutStepHeader( {
 	id: string;
 	className?: string;
 	stepNumber?: number;
-	title: React.ReactNode;
+	title: ReactNode;
 	isActive?: boolean;
 	isComplete?: boolean;
 	onEdit?: () => void;
@@ -877,7 +875,7 @@ const StepNumberOuterWrapper = styled.div`
 `;
 
 const StepNumberInnerWrapper = styled.div<
-	StepNumberInnerWrapperProps & React.HTMLAttributes< HTMLDivElement >
+	StepNumberInnerWrapperProps & HTMLAttributes< HTMLDivElement >
 >`
 	position: relative;
 	transform-origin: center center;
@@ -890,7 +888,7 @@ interface StepNumberInnerWrapperProps {
 	isComplete?: boolean;
 }
 
-const StepNumber = styled.div< StepNumberProps & React.HTMLAttributes< HTMLDivElement > >`
+const StepNumber = styled.div< StepNumberProps & HTMLAttributes< HTMLDivElement > >`
 	background: ${ getStepNumberBackgroundColor };
 	font-weight: normal;
 	width: 27px;
@@ -960,7 +958,7 @@ function Stepper( {
 	className?: string;
 	isComplete?: boolean;
 	isActive?: boolean;
-	children?: React.ReactNode;
+	children?: ReactNode;
 } ) {
 	// Prevent showing complete stepper when active
 	const isCompleteAndInactive = isActive ? false : isComplete;
