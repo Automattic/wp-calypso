@@ -8,6 +8,7 @@ import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/c
 import {
 	stepSlug,
 	domainLockStatusType,
+	useMyDomainInputMode as inputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	connectADomainOwnershipVerificationStepsDefinition,
@@ -34,18 +35,8 @@ function UseMyDomain( {
 	onTransfer,
 	selectedSite,
 	transferDomainUrl,
-	initialStep,
+	initialMode,
 } ) {
-	const inputMode = useMemo(
-		() => ( {
-			domainInput: 'domain-input',
-			transferOrConnect: 'transfer-or-connect',
-			ownershipVerification: 'ownership-verification',
-			transferDomain: 'transfer-domain',
-		} ),
-		[]
-	);
-
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
@@ -55,7 +46,9 @@ function UseMyDomain( {
 		transferLockedDomainStepsDefinition
 	);
 	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
-	const [ mode, setMode ] = useState( inputMode.domainInput );
+	const [ mode, setMode ] = useState(
+		Object.values( inputMode ).includes( initialMode ) ? initialMode : inputMode.domainInput
+	);
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
 		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
 	);

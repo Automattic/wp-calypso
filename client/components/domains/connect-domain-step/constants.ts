@@ -60,3 +60,10 @@ export const stepsHeadingTransfer = __( 'Initial setup' );
 export const authCodeStepDefaultDescription = __(
 	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
 );
+
+export const useMyDomainInputMode = {
+	domainInput: 'domain-input',
+	transferOrConnect: 'transfer-or-connect',
+	ownershipVerification: 'ownership-verification',
+	transferDomain: 'transfer-domain',
+} as const;
