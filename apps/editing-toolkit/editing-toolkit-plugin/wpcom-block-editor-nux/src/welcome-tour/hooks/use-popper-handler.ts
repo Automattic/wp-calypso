@@ -9,8 +9,8 @@ type PopperProps = Partial< Pick< ReturnType< typeof usePopper >, 'styles' | 'at
 /**
  * A hook that returns Popper styles and attributes to apply at the given reference element to reposition.
  *
- * @param referenceElementSelector The selector to reposition popperElementRef around (e.g. a button/section in a page)
- * @param popperElementRef A reference to the element we want to reposition (e.g. this would be the tour-container)
+ * @param referenceElementSelector The element selector to reposition popper-element around (e.g. a button/section on the page)
+ * @param popperElementRef Reference to element we want to reposition (e.g. the tour-frame)
  */
 const usePopperHandler = (
 	referenceElementSelector: string,
