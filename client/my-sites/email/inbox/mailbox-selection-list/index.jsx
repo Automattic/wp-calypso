@@ -2,7 +2,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -231,12 +231,15 @@ const MailboxSelectionList = () => {
 	const dispatch = useDispatch();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID ?? null;
-	const selectedSiteIdRef = useRef( null );
 	const translate = useTranslate();
 
 	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
 		retry: 2,
 	} );
+
+	useEffect( () => {
+		dispatch( recordPageView( emailManagementInbox( ':site' ), 'Inbox' ) );
+	}, [ dispatch ] );
 
 	if ( isLoading || selectedSiteId === null ) {
 		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
@@ -249,12 +252,6 @@ const MailboxSelectionList = () => {
 	const mailboxes = ( data?.mailboxes ?? [] ).filter(
 		( mailbox ) => ! isEmailForwardAccount( mailbox )
 	);
-
-	if ( selectedSiteId !== selectedSiteIdRef.current ) {
-		dispatch( recordPageView( emailManagementInbox( selectedSiteId ), 'Inbox' ) );
-	}
-
-	selectedSiteIdRef.current = selectedSiteId;
 
 	return (
 		<div className="mailbox-selection-list__container">
