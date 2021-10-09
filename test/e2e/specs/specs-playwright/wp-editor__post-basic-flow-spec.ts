@@ -74,6 +74,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Publish post', function () {
+		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional
+		it( 'Close settings sidebar', async function () {
+			await editorSettingsSidebarComponent.closeSidebar();
+		} );
+
 		it( 'Publish and visit post', async function () {
 			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
 			expect( publishedURL ).toBe( await page.url() );
