@@ -555,7 +555,7 @@ $image-height: 47px;
 }
 
 .wp-login__p2-powered-by {
-	margin: 24px 0 auto;
+	margin: 24px 0;
 	width: 100%;
 	display: flex;
 	justify-content: center;
@@ -566,10 +566,9 @@ $image-height: 47px;
 	width: 20px;
 	height: 20px;
 	display: inline-block;
-	margin-bottom: 3px;
 	margin-right: 8px;
 }
 
 .wp-login__p2-powered-by-text {
-	font-size: var( --p2-font-size-form-xs );
+	font-size: var( --p2-font-size-form-xxs );
 }

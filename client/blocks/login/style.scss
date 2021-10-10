@@ -266,15 +266,76 @@
 }
 
 .layout.is-p2-login {
-	background: #fff;
+	background: var( --p2-color-white );
+	font-family: var( --p2-font-inter );
+	color: var( --p2-color-text );
+	letter-spacing: -0.01em;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+
+	a {
+		@extend %p2-link;
+	}
+
+	&.is-section-login {
+		padding-bottom: 0;
+		min-height: auto;
+	}
+
+	&.is-section-login.has-no-masterbar .layout__content {
+		padding: 0;
+		height: 100%;
+	}
+
+	.layout__primary {
+		padding: 0;
+		height: 100%;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+	}
 
 	.wp-login__main.main {
-		max-width: 490px;
-		padding: 0 20px;
+		padding: 96px 24px 0;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+
+		@include break-mobile {
+			padding: 80px 20px 0;
+			max-width: 400px;
+		}
+	}
+
+	.login__form-header-wrapper {
+		margin-bottom: 3em;
 	}
 
 	form {
-		padding: 0 25px;
+		padding: 0;
+		margin-bottom: 3em;
+	}
+
+	.login__form {
+		padding: 0;
+		margin-bottom: 2em;
+		box-shadow: none;
+	}
+
+	.login__form-userdata {
+		margin-bottom: 2em;
+	}
+
+	.login__form label {
+		font-size: var( --p2-font-size-form-xxs );
+		color: var( --p2-color-text );
+		font-weight: 500; /* stylelint-disable-line */
+		margin-bottom: 0.5em;
+		line-height: 1.8;
 	}
 
 	.form-text-input {
@@ -290,18 +351,41 @@
 	}
 
 	.login__form-header {
-		font-size: var( --p2-font-size-form-xl );
-		font-weight: 700;
-		margin-bottom: 5px;
+		color: var( --p2-color-text );
+		font-size: var( --p2-font-size-form-xxl );
+		font-weight: 900; /* stylelint-disable-line */
+		text-align: center;
+		line-height: 1.3;
+		margin-top: 0;
+		margin-bottom: 0.5em;
+	}
+
+	.login__header-subtitle {
+		line-height: 1.8;
+		color: var( --p2-color-text );
+		margin-bottom: 0;
 	}
 
 	.login__form-terms {
-		margin-top: 24px;
 		margin-bottom: 1rem;
+		color: var( --p2-color-text );
 	}
 
-	.login__form, .login__social {
+	.login__form-action {
+		button:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.login__social {
+		padding: 0;
 		box-shadow: none;
+		margin-bottom: 2em;
+	}
+
+	.login__social-tos {
+		color: var( --p2-color-text );
+		margin: 1em 0 0;
 	}
 
 	.login button {
@@ -318,21 +402,27 @@
 
 	.wp-login__links {
 		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-bottom: 2em;
 
 		a {
 			@extend %p2-link;
-			border-bottom: none;
+			border-bottom: 1px solid currentColor;
 			font-size: var( --p2-font-size-form-xs );
 			font-weight: 400;
-			margin: 24px 4px;
+			margin: 0 0 0.8em;
 			padding: 0;
+			line-height: 1.5;
+			display: inline-block;
+			width: auto;
 		}
 	}
 
 	.login__divider {
 		color: var( --p2-color-border );
 		font-size: var( --p2-font-size-form-xs );
-		margin: 0 auto 1rem;
+		margin: 0 auto 2rem;
 		max-width: 400px;
 		overflow: hidden;
 		text-align: center;

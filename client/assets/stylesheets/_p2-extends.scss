@@ -13,21 +13,21 @@
 	line-height: 1.5;
 	padding: 14px 16px;
 
-	&:hover,
-	&:focus {
+	&:hover:enabled,
+	&:focus:enabled {
 		border-color: var( --p2-color-link );
 	}
 
-	&:focus,
-	&:focus:hover {
+	&:focus:enabled,
+	&:focus:hover:enabled {
 		box-shadow: 0 0 0 1px var( --p2-color-link );
 	}
 
 	&.is-error {
 		border-color: var( --p2-color-error );
 
-		&:focus,
-		&:focus:hover {
+		&:focus:enabled,
+		&:focus:hover:enabled {
 			box-shadow: 0 0 0 1px var( --p2-color-error );
 		}
 	}
@@ -104,10 +104,17 @@
 		&:focus {
 			background-color: var( --p2-color-link-dark );
 		}
+
+		&[disabled] {
+			opacity: 0.5;
+			background-color: var( --p2-color-link );
+			color: var( --p2-color-white );
+		}
 	}
 
 	&[disabled] {
 		background-color: var( --p2-color-button );
+		color: var( --p2-color-text-light );
 		cursor: default;
 	}
 }
