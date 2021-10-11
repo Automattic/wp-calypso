@@ -50,9 +50,10 @@
 
 			&::before {
 				content: url( '/calypso/images/jetpack/star-green.svg' );
-				vertical-align: middle;
-				padding-inline-end: 12px;
-				margin-inline-start: -27px;
+				position: relative;
+				top: 6px;
+				padding-inline-end: 6px;
+				margin-inline-start: -31px;
 			}
 		}
 	}
