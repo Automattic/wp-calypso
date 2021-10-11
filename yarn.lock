@@ -19840,7 +19840,7 @@ fsevents@~2.1.2:
     debug: ^4.0.0
     events: ^3.0.0
     hash.js: ^1.1.5
-    interpolate-components: ^1.1.1
+    interpolate-components: ^1.1.2
     lodash: ^4.17.21
     lru: ^3.1.0
     react: ^17.0.2
@@ -20209,16 +20209,16 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"interpolate-components@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "interpolate-components@npm:1.1.1"
+"interpolate-components@^1.1.2, interpolate-components@workspace:packages/interpolate-components":
+  version: 0.0.0-use.local
+  resolution: "interpolate-components@workspace:packages/interpolate-components"
   dependencies:
-    react: ^0.14.3 || ^15.1.0 || ^16.0.0
-    react-addons-create-fragment: ^0.14.3 || ^15.1.0
-    react-dom: ^0.14.3 || ^15.1.0 || ^16.0.0
-  checksum: 2b8c5b3f4640a1828bcb1c5e3d224ee2bc19af0f7c9c3d75b8bc2b48b27b68eb9ca1005da85fad0ec279e25852f6016b62b633defeaac164ba167f427267f738
-  languageName: node
-  linkType: hard
+    "@automattic/calypso-typescript-config": ^1.0.0
+    react-dom: ^17.0.2
+  peerDependencies:
+    react: ^17.0.2
+  languageName: unknown
+  linkType: soft
 
 "interpret@npm:^2.2.0":
   version: 2.2.0
@@ -29616,17 +29616,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-addons-create-fragment@npm:^0.14.3 || ^15.1.0":
-  version: 15.6.2
-  resolution: "react-addons-create-fragment@npm:15.6.2"
-  dependencies:
-    fbjs: ^0.8.4
-    loose-envify: ^1.3.1
-    object-assign: ^4.1.0
-  checksum: 1afbe01c29a748103c25bb66c665403e0e2b5d08c7c571d50c211c900b057dddf05ebf11e1b5a827c91b1f216f28771f41c070edada13c3c5ac06257113ab43e
-  languageName: node
-  linkType: hard
-
 "react-addons-shallow-compare@npm:^15.6.2":
   version: 15.6.2
   resolution: "react-addons-shallow-compare@npm:15.6.2"
@@ -29815,7 +29804,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^0.14.3 || ^15.1.0 || ^16.0.0, react-dom@npm:^16.13.1":
+"react-dom@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-dom@npm:16.13.1"
   dependencies:
@@ -30375,7 +30364,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:^0.14.3 || ^15.1.0 || ^16.0.0, react@npm:^16.13.1":
+"react@npm:^16.13.1":
   version: 16.13.1
   resolution: "react@npm:16.13.1"
   dependencies:
