@@ -2,10 +2,9 @@ import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import SectionHeader from 'calypso/components/section-header';
-import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import { useSharingButtonsQuery } from 'calypso/my-sites/marketing/buttons/use-sharing-buttons-query';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery,
@@ -20,7 +19,7 @@ const StatShares = ( { siteId } ) => {
 	const isLoading = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats' )
 	);
-	const shareButtons = useSelector( ( state ) => getSharingButtons( state, siteId ) );
+	const { data: shareButtons } = useSharingButtonsQuery( siteId );
 	const hasError = useSelector( ( state ) => hasSiteStatsQueryFailed( state, siteId, 'stats' ) );
 	const siteStats = useSelector( ( state ) => getSiteStatsForQuery( state, siteId, 'stats' ) );
 	const classes = [
@@ -34,7 +33,6 @@ const StatShares = ( { siteId } ) => {
 	return (
 		<div>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
-			{ siteId && <QuerySharingButtons siteId={ siteId } /> }
 			<SectionHeader label={ translate( 'Shares' ) } />
 			<Card className={ classNames( ...classes ) }>
 				<StatsTabs borderless>

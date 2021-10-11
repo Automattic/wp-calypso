@@ -804,43 +804,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 };
 
 /**
- * Return a list of sharing buttons for the specified site, with optional
- * query parameters
- *
- * @param {number|string} siteId The site ID or domain
- * @param {object} query Optional query parameters
- * @param {Function} fn Method to invoke when request is complete
- */
-Undocumented.prototype.sharingButtons = function ( siteId, query, fn ) {
-	if ( 'undefined' === typeof fn && 'function' === typeof query ) {
-		fn = query;
-		query = {};
-	}
-
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/sharing-buttons', query, fn );
-};
-
-/**
- * Saves the set of sharing buttons for the specified site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Array} buttons An array of sharing button objects
- * @param {Function} fn Method to invoke when request is complete
- */
-Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteId + '/sharing-buttons',
-			body: { sharing_buttons: buttons },
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Return a list of P2's connected services
  *
  * @param {number} hubId hub identifier
