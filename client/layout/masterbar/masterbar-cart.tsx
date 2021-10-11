@@ -5,8 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useRef, useState } from 'react';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
 import MasterbarItem from './item';
+import { MasterbarCartLineItems } from './masterbar-cart-line-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 import './masterbar-cart-style.scss';
@@ -97,7 +97,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 						} ) }
 					</span>
 				</div>
-				<WPOrderReviewLineItems
+				<MasterbarCartLineItems
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
 					responseCart={ responseCart }
