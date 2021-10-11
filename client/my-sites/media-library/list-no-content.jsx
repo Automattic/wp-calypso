@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,7 +12,10 @@ class MediaLibraryListNoContent extends Component {
 		site: PropTypes.object,
 		filter: PropTypes.string,
 		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 	};
+
+	changeSource = () => this.props.onSourceChange( 'pexels' );
 
 	getLabel() {
 		const { filter, source, translate } = this.props;
@@ -90,6 +94,11 @@ class MediaLibraryListNoContent extends Component {
 				title={ this.getLabel() }
 				line={ line }
 				action={ action }
+				secondaryAction={
+					config.isEnabled( 'external-media/free-photo-library' ) &&
+					this.props.translate( 'Browse free images' )
+				}
+				secondaryActionCallback={ this.changeSource }
 				illustration={ mediaImage }
 				illustrationWidth={ 150 }
 			/>

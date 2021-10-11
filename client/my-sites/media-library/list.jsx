@@ -36,6 +36,8 @@ export class MediaLibraryList extends Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
+		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -214,6 +216,7 @@ export class MediaLibraryList extends Component {
 				filter: this.props.filter,
 				search: this.props.search,
 				source: this.props.source,
+				onSourceChange: this.props.onSourceChange,
 			} );
 		}
 
