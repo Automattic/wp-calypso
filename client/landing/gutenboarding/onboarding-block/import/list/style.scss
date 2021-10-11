@@ -1,0 +1,60 @@
+@import '../../../mixins';
+
+.gutenboarding-page.import {
+	.list__wrapper {
+		margin-left: auto !important;
+		margin-right: auto !important;
+
+		@include break-wide {
+			max-width: 1032px;
+		}
+
+		h3 {
+			font-size: 1.125em; /* stylelint-disable-line */
+			color: var( --studio-gray-90 );
+			margin-bottom: 1em;
+		}
+
+		img {
+			display: none;
+			margin: 40px 0;
+
+			@include break-small {
+				display: block;
+				max-width: 1032px;
+			}
+		}
+
+		ul {
+			li {
+				margin-bottom: 10px;
+			}
+
+			a {
+				font-size: 0.875em; /* stylelint-disable-line */
+				text-decoration: underline;
+				color: var( --studio-gray-100 );
+			}
+		}
+
+		.importer__service-icon {
+			width: 48px;
+			height: 48px;
+			margin-top: 10px;
+		}
+
+		.list__importers-primary {
+			margin-bottom: 1.5em;
+		}
+
+		.list__importers-secondary {
+			ul {
+				margin-left: 0;
+
+				@include break-small {
+					margin-left: 72px;
+				}
+			}
+		}
+	}
+}

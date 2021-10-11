@@ -5,7 +5,6 @@
 .gutenboarding-page.import {
 	.import__header {
 		@include onboarding-heading-padding;
-
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -13,10 +12,13 @@
 
 	.import__heading {
 		flex-grow: 1;
-		text-align: center;
 
 		@include break-large {
 			max-width: 600px;
+		}
+
+		&.center {
+			text-align: center;
 		}
 
 		strong {
@@ -24,9 +26,14 @@
 		}
 
 		.onboarding-title {
-			line-height: 1em;
-			margin-bottom: 28px;
+			font-size: 2.25rem;
+			line-height: 1.0833em;
+			margin-bottom: 20px;
 			color: var( --studio-gray-100 );
+
+			@include break-small {
+				font-size: 3rem;
+			}
 		}
 
 		.import__buttons-group {
@@ -41,12 +48,71 @@
 			color: var( --studio-gray-100 );
 		}
 	}
+
+	.import__heading-center {
+		text-align: center;
+	}
+
+	// Layout
+	.import-layout {
+		@include onboarding-heading-padding;
+		display: flex;
+		flex-direction: column;
+
+		@include break-small {
+			flex-direction: row;
+		}
+	}
+
+	.import-layout__column {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+	}
 }
 
 /**
  * New components style
  	- it's mostly style overrides
  */
+
+// ActionCard component
+.card.action-card {
+	box-shadow: 0 1px 0 var( --studio-gray-5 );
+
+	&.is-compact {
+		display: flex;
+		padding: 13px 0;
+	}
+
+	&:last-child {
+		box-shadow: none;
+	}
+
+	.action-card__heading {
+		margin: 0 0 2px;
+		color: 0 1px 0 var( --studio-gray-100 );
+	}
+
+	.action-card__main p {
+		color: var( --studio-gray-40 );
+		font-size: 0.875em; /* stylelint-disable-line */
+	}
+
+	.action-card__button-container {
+		text-align: right;
+	}
+
+	.action-card__button-container button {
+		padding-right: 0;
+		border: none;
+	}
+
+	.action-card__button-container button svg {
+		fill: var( --studio-gray-30 );
+	}
+
+}
 
 // Modal component
 .components-modal-new__frame {

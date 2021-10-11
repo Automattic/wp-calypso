@@ -21,7 +21,7 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 	return (
 		<>
 			<div className="import__header">
-				<div className="import__heading">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Your content is ready for its brand new home' ) }</Title>
 					<SubTitle>
 						{ createInterpolateElement(
@@ -69,7 +69,7 @@ const ReadyNotStep: React.FunctionComponent< Props > = () => {
 	return (
 		<>
 			<div className="import__header">
-				<div className="import__heading">
+				<div className="import__heading  import__heading-center">
 					<Title>{ __( "Your existing content can't be imported" ) }</Title>
 					<SubTitle>
 						{ __(
@@ -95,7 +95,7 @@ const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
 	return (
 		<>
 			<div className="import__header">
-				<div className="import__heading">
+				<div className="import__heading  import__heading-center">
 					<Title>{ __( 'Your content is ready for its new home' ) }</Title>
 					<SubTitle>
 						{ sprintf(
