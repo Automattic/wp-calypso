@@ -130,6 +130,12 @@ function TabbedPlans( {
 		onUpgradeClick( args );
 	};
 
+	const setPlanOrderForDisplaySize = () => {
+		isMobile
+			? setDisplayedPlans( planOrder.mobile[ selectedTab ] )
+			: setDisplayedPlans( planOrder[ selectedTab ] );
+	};
+
 	const filterPlans = ( planArray ) =>
 		planArray.map( ( plan ) => {
 			return planProperties.filter( ( obj ) => {
@@ -141,7 +147,7 @@ function TabbedPlans( {
 		setIsLoading( true );
 		setTermLength( 'annually' );
 		selectedTab === tabList[ 0 ] ? setPrimaryPlan( 'Premium' ) : setPrimaryPlan( 'Business' );
-		setDisplayedPlans( planOrder[ selectedTab ] );
+		setPlanOrderForDisplaySize();
 		dispatch(
 			recordTracksEvent( 'calypso_signup_plans_page_clicks', {
 				tab: selectedTab,
@@ -165,11 +171,13 @@ function TabbedPlans( {
 	}, [ displayedPlans, planProperties, termLength ] );
 
 	useEffect( () => {
-		const filteredPlans = filterPlans( displayedPlans );
-		setPlanDetails( filteredPlans );
+		setPlanOrderForDisplaySize();
+	}, [ isMobile ] );
 
+	useEffect( () => {
 		if ( isWithinBreakpoint( '<660px' ) ) {
 			setIsMobile( true );
+			setDisplayedPlans( planOrder.mobile[ selectedTab ] );
 		}
 		subscribeIsWithinBreakpoint( '<660px', ( isActive ) => setIsMobile( isActive ) );
 	}, [] );
@@ -467,6 +475,10 @@ function getPlanOrder() {
 	return {
 		Starter: [ 'Free', 'Personal', 'Premium' ],
 		Professional: [ 'Premium', 'Business', 'eCommerce' ],
+		mobile: {
+			Starter: [ 'Premium', 'Personal', 'Free' ],
+			Professional: [ 'Business', 'Premium', 'eCommerce' ],
+		},
 	};
 }
 
