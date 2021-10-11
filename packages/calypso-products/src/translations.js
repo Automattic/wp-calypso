@@ -52,8 +52,8 @@ export const getJetpackProductsShortNames = () => {
 		} ),
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup Pro' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup Pro' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup' ),
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
