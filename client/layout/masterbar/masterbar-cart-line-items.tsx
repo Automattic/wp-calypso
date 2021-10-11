@@ -28,15 +28,13 @@ const MasterbarCartLineItemWrapper = styled.li`
 `;
 
 export function MasterbarCartLineItems( {
-	isSummary,
 	removeProductFromCart,
 	removeCoupon,
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
 }: {
-	isSummary?: boolean;
-	removeProductFromCart?: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
@@ -54,7 +52,6 @@ export function MasterbarCartLineItems( {
 							product={ product }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
-							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
 							isPwpoUser={ isPwpoUser }
@@ -66,8 +63,6 @@ export function MasterbarCartLineItems( {
 				<MasterbarCartLineItemWrapper key={ couponLineItem.id }>
 					<NonProductLineItem
 						lineItem={ couponLineItem }
-						isSummary={ isSummary }
-						hasDeleteButton={ ! isSummary }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						isPwpoUser={ isPwpoUser }
@@ -75,12 +70,7 @@ export function MasterbarCartLineItems( {
 				</MasterbarCartLineItemWrapper>
 			) }
 			{ creditsLineItem && responseCart.sub_total_integer > 0 && (
-				<NonProductLineItem
-					subtotal
-					lineItem={ creditsLineItem }
-					isSummary={ isSummary }
-					isPwpoUser={ isPwpoUser }
-				/>
+				<NonProductLineItem subtotal lineItem={ creditsLineItem } isPwpoUser={ isPwpoUser } />
 			) }
 		</MasterbarCartLineItemsWrapper>
 	);
