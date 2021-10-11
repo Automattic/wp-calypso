@@ -337,6 +337,7 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
 			} )
 		)
 		.then( () => {
