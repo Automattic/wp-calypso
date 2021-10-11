@@ -490,7 +490,10 @@ export function recommendedThemes( state = {}, action ) {
 		case RECOMMENDED_THEMES_SUCCESS:
 			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
 		case RECOMMENDED_THEMES_FAIL:
-			return { ...state, [ action.filter ]: { isLoading: false, themes: [] } };
+			return {
+				...state,
+				[ action.filter ]: { isLoading: false, themes: state[ action.filter ]?.themes ?? [] },
+			};
 	}
 
 	return state;
