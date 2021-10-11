@@ -47,6 +47,7 @@ import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import getScanState from 'calypso/state/selectors/get-site-scan-state';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
@@ -92,6 +93,7 @@ export class MySitesSidebar extends Component {
 		setLayoutFocus: PropTypes.func.isRequired,
 		path: PropTypes.string,
 		currentUser: PropTypes.object,
+		isDIFMLiteInProgress: PropTypes.bool,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
@@ -984,7 +986,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	renderSidebarMenus() {
-		if ( this.props.isDomainOnly ) {
+		if ( this.props.isDomainOnly || this.props.isDIFMLiteInProgress ) {
 			return (
 				<SidebarMenu>
 					<SidebarItem
@@ -1137,6 +1139,7 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
+		isDIFMLiteInProgress: isDIFMLiteInProgress( state, selectedSiteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),

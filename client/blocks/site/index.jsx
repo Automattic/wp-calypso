@@ -165,6 +165,10 @@ class Site extends Component {
 									: translate( 'Private' ) }
 							</span>
 						) }
+						{ site.options && site.options.is_difm_lite_in_progress && (
+							// TODO: Change name
+							<span className="site__badge site__badge-domain-only">{ translate( 'DIFM' ) }</span>
+						) }
 						{ shouldShowPublicComingSoonSiteBadge && (
 							<span className="site__badge site__badge-coming-soon">
 								{ translate( 'Coming Soon' ) }

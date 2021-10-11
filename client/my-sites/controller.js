@@ -40,6 +40,7 @@ import {
 	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
+import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -50,6 +51,7 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -153,6 +155,15 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	clientRender( reactContext );
 }
 
+function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
+	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
+
+	reactContext.secondary = createNavigation( reactContext );
+
+	makeLayout( reactContext, noop );
+	clientRender( reactContext );
+}
+
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
 		domainManagementContactsPrivacy,
@@ -238,6 +249,20 @@ function onSelectedSiteAvailable( context ) {
 		)
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		return false;
+	}
+
+	// The paths allowed for domain-only sites and DIFM in-progress sites are the same
+	if (
+		isDIFMLiteInProgress( state, selectedSite.ID ) &&
+		! isPathAllowedForDomainOnlySite(
+			context.pathname,
+			selectedSite.slug,
+			primaryDomain,
+			context.params
+		)
+	) {
+		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
 	}
 
