@@ -72,7 +72,6 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 		);
 	}
 	const isBackup = data?.is_backup ?? false;
-	// TODO: add real "Learn more" link because "backup" is not obvious
 	return (
 		<div className="payment-method-backup-toggle">
 			<CheckboxControl
@@ -80,7 +79,12 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 				onChange={ toggleIsBackup }
 				label={ translate( 'Use as backup. {{link}}Learn more{{/link}}', {
 					components: {
-						link: <ExternalLink icon href="https://wordpress.com/support/manage-purchases/" />,
+						link: (
+							<ExternalLink
+								icon
+								href="https://wordpress.com/support/payment/#manage-payment-methods"
+							/>
+						),
 					},
 				} ) }
 			/>
