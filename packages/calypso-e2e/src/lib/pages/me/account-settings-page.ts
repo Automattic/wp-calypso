@@ -11,6 +11,12 @@ const selectors = {
 	usernameSpan: `span.account-close__confirm-dialog-target-username`,
 	usernameConfirmationInput: `input[id="confirmAccountCloseInput"]`,
 	modalCloseAccountButton: `button:text("Close your account")`,
+
+	// UI Language
+	uiLanguageButton: 'button.language-picker',
+	uiLanguageSearch: '.language-picker-component__search-desktop .search-component__input',
+	uiLanguageItem: '.language-picker-component__language-button',
+	uiLanguageApplyButton: '.language-picker__modal-buttons button.is-secondary',
 };
 
 /**
@@ -51,5 +57,15 @@ export class AccountSettingsPage {
 			.then( ( element ) => element.innerText() );
 		await this.page.fill( selectors.usernameConfirmationInput, username );
 		await this.page.click( selectors.modalCloseAccountButton );
+	}
+
+	/**
+	 * Changes the UI language for the currently logged in user.
+	 */
+	async changeUILanguage( localeSlug: string ): Promise< void > {
+		await this.page.click( selectors.uiLanguageButton );
+		await this.page.fill( selectors.uiLanguageSearch, localeSlug );
+		await this.page.click( `${ selectors.uiLanguageItem }:has([lang="${ localeSlug }"])` );
+		await this.page.click( selectors.uiLanguageApplyButton );
 	}
 }
