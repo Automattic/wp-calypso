@@ -6,10 +6,13 @@ interface Props {
 	item: ProductCardFeaturesItem;
 }
 
-const JetpackProductCardFeaturesItem: React.FC< Props > = ( { item: { text, isHighlighted } } ) => (
+const JetpackProductCardFeaturesItem: React.FC< Props > = ( {
+	item: { text, isHighlighted, isDifferentiator },
+} ) => (
 	<li
 		className={ classnames( 'jetpack-product-card__features-item', {
 			'is-highlighted': isHighlighted,
+			'is-differentiator': isDifferentiator,
 		} ) }
 	>
 		{ preventWidows( text ) }

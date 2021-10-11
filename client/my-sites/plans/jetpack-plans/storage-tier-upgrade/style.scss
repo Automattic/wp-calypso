@@ -41,6 +41,22 @@
 		margin-bottom: 0;
 	}
 
+	.jetpack-product-card__features-item {
+		/* Set a custom list bullet for differentiating items,
+		   but keep them center-aligned with the regular bullets */
+		&.is-differentiator {
+			list-style: none;
+			font-weight: 700;
+
+			&::before {
+				content: url( '/calypso/images/jetpack/star-yellow.svg' );
+				vertical-align: middle;
+				padding-inline-end: 12px;
+				margin-inline-start: -27px;
+			}
+		}
+	}
+
 	.jetpack-product-card__features-item:first-child {
 		margin: 0 0 14px;
 	}
