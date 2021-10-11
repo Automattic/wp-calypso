@@ -105,7 +105,7 @@ function TabbedPlans( {
 	const [ displayedPlans, setDisplayedPlans ] = useState( planOrder[ selectedTab ] );
 	const [ planDetails, setPlanDetails ] = useState();
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ isMobile, setIsMobile ] = useState();
+	const [ isMobile, setIsMobile ] = useState( false );
 	const [ primaryPlan, setPrimaryPlan ] = useState( 'Business' );
 	const dispatch = useDispatch();
 
@@ -138,6 +138,7 @@ function TabbedPlans( {
 		} );
 
 	useEffect( () => {
+		setIsLoading( true );
 		setTermLength( 'annually' );
 		selectedTab === tabList[ 0 ] ? setPrimaryPlan( 'Premium' ) : setPrimaryPlan( 'Business' );
 		setDisplayedPlans( planOrder[ selectedTab ] );
@@ -282,6 +283,7 @@ function TabbedPlans( {
 									planFeatureDescriptions[ plan.planName ][ feature ][ termLength ];
 								const featureIncluded =
 									Object.keys( featureObject ).length !== 0 && featureObject?.notIncluded !== true;
+								const notIncluded = <Gridicon icon="cross" size={ 18 } />;
 								let featureDescriptionCopy;
 								if ( isMobile ) {
 									if ( featureIncluded ) {
@@ -292,11 +294,7 @@ function TabbedPlans( {
 										return null;
 									}
 								} else {
-									featureDescriptionCopy = featureObject?.copy ? (
-										featureObject.copy
-									) : (
-										<Gridicon icon="cross" size={ 18 } />
-									);
+									featureDescriptionCopy = featureObject?.copy ? featureObject.copy : notIncluded;
 								}
 
 								return (
@@ -492,7 +490,8 @@ function getFeatureDescriptions() {
 	return {
 		css: {
 			name: 'CSS Customization',
-			tooltip: 'Description coming soon.',
+			tooltip:
+				'Customize your selected theme template with extended color schemes, background designs, and complete control over website CSS.',
 		},
 		domains: {
 			name: 'Custom domain name',
@@ -536,7 +535,8 @@ function getFeatureDescriptions() {
 		},
 		videos: {
 			name: 'Upload videos',
-			tooltip: 'Description coming soon.',
+			tooltip:
+				'Upload, host, and have total control of video files so you can place them anywhere you want on your website.',
 		},
 	};
 }
@@ -568,7 +568,7 @@ function getPlanFeatureDescriptions() {
 				annually: { copy: 'Simple', mobileCopy: 'Simple SEO' },
 			},
 			support: {
-				annually: { copy: 'Live chat and email' },
+				annually: { copy: 'Email support' },
 			},
 			themes: { annually: {} },
 			videos: { annually: {} },
