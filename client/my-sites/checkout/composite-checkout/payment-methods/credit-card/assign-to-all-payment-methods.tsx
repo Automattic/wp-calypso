@@ -15,7 +15,6 @@ export default function AssignToAllPaymentMethods( {
 	onChange: ( isChecked: boolean ) => void;
 } ): JSX.Element {
 	const translate = useTranslate();
-	// TODO: Add real "Learn more" link target
 	return (
 		<CheckboxWrapper>
 			<CheckboxControl
@@ -25,7 +24,12 @@ export default function AssignToAllPaymentMethods( {
 					'Use this payment method for all subscriptions on my account. {{link}}Learn more.{{/link}}',
 					{
 						components: {
-							link: <ExternalLink icon href="https://wordpress.com/support/manage-purchases/" />,
+							link: (
+								<ExternalLink
+									icon
+									href="https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions"
+								/>
+							),
 						},
 					}
 				) }
