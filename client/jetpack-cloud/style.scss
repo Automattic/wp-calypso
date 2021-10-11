@@ -3,6 +3,9 @@
 	// border-radius
 	--jetpack-corners-sharp: 0;
 	--jetpack-corners-soft: 4px;
+
+	--jetpack-button-color: var( --studio-black );
+	--jetpack-button-color-hover: var( --studio-gray-80 );
 }
 
 .theme-jetpack-cloud,
@@ -44,27 +47,39 @@
 	}
 }
 
+.layout__primary a:not( .button ):not( .section-nav-tab__link ):not( .select-dropdown__item ):not( .add-stored-credit-card ) {
+	color: var( --jetpack-button-color );
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		text-decoration-thickness: 3px;
+	}
+}
+
 .button {
-	color: var( --color-accent );
+	color: var( --jetpack-button-color );
 	background: var( --studio-white );
-	border: 1px solid var( --color-accent );
+	border: 1px solid var( --jetpack-button-color );
 	border-radius: var( --jetpack-corners-soft );
 	box-sizing: border-box;
 	font-weight: 500; /* stylelint-disable-line scales/font-weights */
+	text-decoration: none;
 
 	&:hover {
+		color: var( --jetpack-button-color );
 		background-color: var( --color-accent-0 );
 		border-color: var( --color-accent-80 );
 	}
 
 	&:focus {
-		border-width: 1.5px;
+		outline: none;
+		color: var( --jetpack-button-color );
+		border: 1px solid var( --studio-white );
 	}
 
 	&:active {
-		background: var( --color-accent-5 );
-		border-color: var( --color-accent-40 );
-		border-width: 1px;
+		background: var( --jetpack-button-color );
 	}
 
 	&[disabled],
@@ -72,27 +87,30 @@
 		background: var( --color-accent-5 );
 		color: var( --color-accent-20 );
 		border-color: var( --color-accent-5 );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 1px var( --jetpack-button-color );
 	}
 }
 
 .button.is-primary {
-	background-color: var( --studio-jetpack-green-50 );
-	border-color: var( --studio-jetpack-green-50 );
+	background-color: var( --jetpack-button-color );
+	border-color: var( --jetpack-button-color );
 
 	&:hover {
-		background-color: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
+		background-color: var( --jetpack-button-color-hover );
+		border-color: var( --jetpack-button-color-hover );
 	}
 
 	&:focus {
-		background-color: var( --studio-jetpack-green-70 );
-		border-color: var( --studio-white );
-		box-shadow: 0 0 0 1px var( --studio-jetpack-green-70 );
+		background-color: var( --jetpack-button-color );
+		border: 1px solid var( --studio-white );
 	}
 
 	&:active {
-		background: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
+		background: var( --jetpack-button-color );
+		border-color: var( --jetpack-button-color );
 	}
 
 	&[disabled],
@@ -100,6 +118,10 @@
 		background: var( --color-accent-5 );
 		color: var( --color-accent-20 );
 		border-color: var( --color-accent-5 );
+	}
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 1px var( --jetpack-button-color );
 	}
 }
 
@@ -126,6 +148,7 @@
 	&:focus {
 		background-color: var( --studio-white );
 		border-color: var( --color-scary-70 );
+		border-width: 1px;
 		color: var( --color-scary-70 );
 	}
 
@@ -155,6 +178,7 @@
 	&:focus {
 		background-color: var( --color-scary-70 );
 		border-color: var( --studio-white );
+		border-width: 1px;
 		box-shadow: 0 0 0 1px var( --color-scary-70 );
 	}
 

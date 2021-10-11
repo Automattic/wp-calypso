@@ -46,14 +46,14 @@
 		border: initial;
 		font-weight: normal;
 		vertical-align: initial;
-		color: var( --color-link );
 		background: inherit;
+		text-decoration: underline;
 
 		&:hover,
 		&:active,
 		&:focus {
 			background: initial;
-			color: var( --color-link-dark );
+			text-decoration-thickness: 3px;
 		}
 
 		&:hover,
