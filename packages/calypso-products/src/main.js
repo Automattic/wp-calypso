@@ -134,7 +134,7 @@ export function planHasFeature( plan, feature ) {
  *
  *
  * @param {object|string} plan	Plan object or plan name
- * @param {[string]} features	Array of feature names
+ * @param {string[]} features	Array of feature names
  * @returns {boolean}			Whether or not the specified plan has one of the features
  */
 export function planHasAtLeastOneFeature( plan, features ) {
