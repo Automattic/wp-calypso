@@ -5,13 +5,13 @@ import wpcom from 'calypso/lib/wp';
 export function useSharingButtonsQuery( siteId ) {
 	return useQuery(
 		[ 'sharing-buttons', siteId ],
-		() => wpcom.req.get( `/sites/${ siteId }/sharing-buttons` ),
+		() =>
+			wpcom.req
+				.get( `/sites/${ siteId }/sharing-buttons` )
+				.then( ( data ) => data.sharing_buttons ),
 
 		{
 			enabled: !! siteId,
-			select( data ) {
-				return data.sharing_buttons;
-			},
 		}
 	);
 }
@@ -23,9 +23,7 @@ export function useSaveSharingButtonsMutation( siteId ) {
 			wpcom.req.post( `/sites/${ siteId }/sharing-buttons`, { sharing_buttons: buttons } ),
 		{
 			onSuccess( data ) {
-				queryClient.setQueryData( [ 'sharing-buttons', siteId ], () => ( {
-					sharing_buttons: data.updated,
-				} ) );
+				queryClient.setQueryData( [ 'sharing-buttons', siteId ], data.updated );
 			},
 		}
 	);
