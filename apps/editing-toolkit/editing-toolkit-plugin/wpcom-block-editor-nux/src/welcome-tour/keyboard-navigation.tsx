@@ -39,7 +39,7 @@ const KeyboardNavigation: React.FunctionComponent< Props > = ( {
 		return null;
 	}
 
-	const isTourFocused = useFocusHandler( tourContainerRef );
+	const isTourFocused = useFocusHandler( tourContainerRef, ! isMinimized );
 
 	if ( ! isTourFocused ) {
 		return null;
