@@ -59,7 +59,6 @@ import {
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -157,7 +156,7 @@ class EmailProvidersComparison extends Component {
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			provider: 'email-forwarding',
-			source: source === INBOX_SOURCE ? source : null,
+			source,
 		} );
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
@@ -196,7 +195,7 @@ class EmailProvidersComparison extends Component {
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: TITAN_PROVIDER_NAME,
-			source: source === INBOX_SOURCE ? source : null,
+			source,
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 		} );
@@ -264,7 +263,7 @@ class EmailProvidersComparison extends Component {
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: GOOGLE_PROVIDER_NAME,
-			source: source === INBOX_SOURCE ? source : null,
+			source,
 			user_can_add_email: userCanAddEmail ? 1 : 0,
 		} );
 

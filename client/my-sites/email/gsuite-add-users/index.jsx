@@ -35,7 +35,6 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
@@ -120,11 +119,9 @@ class GSuiteAddUsers extends Component {
 
 		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
+			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_count: users.length,
-			...( source === INBOX_SOURCE && {
-				provider: GOOGLE_PROVIDER_NAME,
-				source,
-			} ),
 		} );
 	};
 
