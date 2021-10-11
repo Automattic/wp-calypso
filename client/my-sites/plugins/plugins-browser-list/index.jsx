@@ -33,7 +33,11 @@ class PluginsBrowserList extends Component {
 		} );
 
 		if ( this.props.showPlaceholders ) {
-			pluginsViewsList = pluginsViewsList.concat( this.renderPlaceholdersViews() );
+			if ( this.props.paginated ) {
+				pluginsViewsList = this.renderPlaceholdersViews();
+			} else {
+				pluginsViewsList = pluginsViewsList.concat( this.renderPlaceholdersViews() );
+			}
 		}
 
 		// We need to complete the list with empty elements to keep the grid drawn.

@@ -102,17 +102,27 @@ export function lists( state = {}, action ) {
 }
 
 export function listsPagination( state = {}, action ) {
+	const { category, pagination, searchTerm } = action;
 	switch ( action.type ) {
 		case PLUGINS_WPORG_LIST_RECEIVE:
-			// The API supports pagination only for categories right now
-			if ( action.pagination && action.category ) {
-				return {
-					...state,
-					category: {
-						...state.category,
-						[ action.category ]: action.pagination,
-					},
-				};
+			if ( pagination ) {
+				if ( category ) {
+					return {
+						...state,
+						category: {
+							...state.category,
+							[ category ]: pagination,
+						},
+					};
+				} else if ( searchTerm ) {
+					return {
+						...state,
+						search: {
+							...state.search,
+							[ searchTerm ]: pagination,
+						},
+					};
+				}
 			}
 	}
 	return state;
