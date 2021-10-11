@@ -74,6 +74,10 @@ class MediaLibraryListNoContent extends Component {
 	render() {
 		let line = '';
 		let action = '';
+		const showPexelsButton =
+			config.isEnabled( 'external-media/free-photo-library' ) &&
+			userCan( 'upload_files', this.props.site ) &&
+			! this.props.source;
 
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
 			line = this.props.translate( 'Would you like to upload something?' );
@@ -94,10 +98,7 @@ class MediaLibraryListNoContent extends Component {
 				title={ this.getLabel() }
 				line={ line }
 				action={ action }
-				secondaryAction={
-					config.isEnabled( 'external-media/free-photo-library' ) &&
-					this.props.translate( 'Browse free images' )
-				}
+				secondaryAction={ showPexelsButton && this.props.translate( 'Browse free images' ) }
 				secondaryActionCallback={ this.changeSource }
 				illustration={ mediaImage }
 				illustrationWidth={ 150 }
