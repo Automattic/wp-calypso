@@ -48,12 +48,10 @@
 		}
 
 		.list__importers-secondary {
-			ul {
-				margin-left: 0;
+			padding-left: 0;
 
-				@include break-small {
-					margin-left: 72px;
-				}
+			@include break-small {
+				padding-left: 72px;
 			}
 		}
 	}
