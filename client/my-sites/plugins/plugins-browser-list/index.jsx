@@ -32,8 +32,6 @@ class PluginsBrowserList extends Component {
 			);
 		} );
 
-		this.renderPlaceholdersViews( pluginsViewsList );
-
 		// We need to complete the list with empty elements to keep the grid drawn.
 		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -50,29 +48,24 @@ class PluginsBrowserList extends Component {
 		return pluginsViewsList;
 	}
 
-	renderPlaceholdersViews( pluginViewsList ) {
-		if ( ! this.props.showPlaceholders ) {
-			return null;
-		}
-
-		const placeholders = times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
+	renderPlaceholdersViews() {
+		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
 			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
 		) );
-
-		if ( this.props.paginated || undefined === pluginViewsList ) {
-			return placeholders;
-		}
-
-		// this is for handling infinite scroll
-		return pluginViewsList.concat( placeholders );
 	}
 
 	renderViews() {
-		if ( this.props.plugins.length ) {
-			return this.renderPluginsViewList();
-		} else if ( this.props.showPlaceholders ) {
+		const { plugins, showPlaceholders, paginated } = this.props;
+		if ( showPlaceholders ) {
+			if ( ! paginated ) {
+				// this case is needed to handle infinite scroll
+				return this.renderPluginsViewList().concat( this.renderPlaceholdersViews() );
+			}
 			return this.renderPlaceholdersViews();
+		} else if ( plugins.length ) {
+			return this.renderPluginsViewList();
 		}
+		return this.renderPlaceholdersViews();
 	}
 
 	renderLink() {
