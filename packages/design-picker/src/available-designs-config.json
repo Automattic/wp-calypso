@@ -3,7 +3,7 @@
 		{
 			"title": "Quadrat",
 			"slug": "quadrat",
-			"template": "blockbase",
+			"template": "quadrat",
 			"theme": "quadrat",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
@@ -11,17 +11,31 @@
 			"features": []
 		},
 		{
-			"title": "Seedlet",
-			"slug": "seedlet-blocks",
-			"template": "seedlet-blocks",
-			"theme": "seedlet-blocks",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
+			"title": "Quadrat",
+			"slug": "quadrat",
+			"template": "quadrat",
+			"theme": "quadrat",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist",
+			"slug": "geologist",
+			"template": "geologist",
+			"theme": "geologist",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist",
+			"slug": "geologist",
+			"template": "geologist",
+			"theme": "geologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
 			"features": []
 		},
 		{
@@ -449,20 +463,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
-		},
-		{
-			"title": "Mayland",
-			"slug": "mayland-blocks",
-			"template": "mayland-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Raleway",
-				"base": "Cabin"
-			},
-			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
 		},
 		{
 			"title": "Start with an empty page",
