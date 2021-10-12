@@ -780,7 +780,11 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			margin-top: 40px;
 
 			@include break-mobile {
-				margin-top: 28px;
+				margin-top: 11px;
+			}
+
+			@include break-xlarge {
+				margin-top: 6px;
 			}
 		}
 	}

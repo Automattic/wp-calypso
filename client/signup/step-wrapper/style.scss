@@ -79,6 +79,10 @@
 		font-size: 0.875rem;
 		font-weight: 500; /* stylelint-disable-line */
 
+		.button {
+			border-radius: 4px; /* stylelint-disable-line scales/radii */
+		}
+
 		&.has-underline {
 			text-decoration: underline;
 		}
