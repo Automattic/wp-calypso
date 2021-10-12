@@ -16,6 +16,7 @@ const DEFAULT_CATEGORY = 'all';
 const DEFAULT_FIRST_PAGE = 1;
 
 const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
+const WPORG_CORE_TRANSLATIONS_ENDPOINT = 'https://api.wordpress.org/translations/core/1.0/';
 
 function getWporgLocaleCode() {
 	const currentLocaleCode = i18n.getLocaleSlug();
@@ -162,4 +163,14 @@ export function fetchThemesList( options = {} ) {
 	};
 
 	return themeRequest( WPORG_THEMES_ENDPOINT, query );
+}
+
+//export function fetchTranslationsList( options = {} ) {
+export function fetchTranslationsList( ) {
+	// const { search, page, number } = options;
+	const query = {
+		version: '5.8', // FIXME
+	};
+
+	return themeRequest( WPORG_CORE_TRANSLATIONS_ENDPOINT, query );
 }
