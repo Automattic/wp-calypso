@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Component, Fragment, useCallback, useEffect, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -61,59 +61,56 @@ const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId(
 	sendEventMessage: sendEvent,
 } )( MessageLink );
 
+const FormattedMessageText = ( { message, messageId, links = [], isExternalUrl } ) => {
+	const children = [];
+	let lastIndex = 0;
+
+	links.forEach( ( [ url, linkStartIndex, length ] ) => {
+		// If there's text before this link, add it.
+		if ( lastIndex < linkStartIndex ) {
+			children.push( message.slice( lastIndex, linkStartIndex ) );
+		}
+
+		const text = url;
+		let href = url;
+		let rel = null;
+		let target = null;
+
+		href = addSchemeIfMissing( href, 'http' );
+		if ( isExternalUrl( href ) ) {
+			rel = 'noopener noreferrer';
+			target = '_blank';
+		} else if ( typeof window !== 'undefined' ) {
+			// Force internal URLs to the current scheme to avoid a page reload
+			const scheme = window.location.protocol.replace( /:+$/, '' );
+			href = setUrlScheme( href, scheme );
+		}
+		children.push(
+			<MessageLinkConnected href={ href } rel={ rel } target={ target } messageId={ messageId }>
+				{ text }
+			</MessageLinkConnected>
+		);
+		lastIndex = linkStartIndex + length;
+	} );
+	if ( lastIndex < message.length ) {
+		children.push( message.slice( lastIndex ) );
+	}
+
+	return children.map( ( child, index ) => <Fragment key={ index }>{ child }</Fragment> );
+};
+
 /*
  * Render a formatted message.
  */
 const Message = ( { message, messageId, isEdited, isOptimistic, links = [], isExternalUrl } ) => {
-	const children = links.reduce(
-		( { parts, last }, [ url, startIndex, length ] ) => {
-			const text = url;
-			let href = url;
-			let rel = null;
-			let target = null;
-
-			href = addSchemeIfMissing( href, 'http' );
-			if ( isExternalUrl( href ) ) {
-				rel = 'noopener noreferrer';
-				target = '_blank';
-			} else if ( typeof window !== 'undefined' ) {
-				// Force internal URLs to the current scheme to avoid a page reload
-				const scheme = window.location.protocol.replace( /:+$/, '' );
-				href = setUrlScheme( href, scheme );
-			}
-
-			if ( last < startIndex ) {
-				parts = parts.concat(
-					<span key={ parts.length }>{ message.slice( last, startIndex ) }</span>
-				);
-			}
-
-			parts = parts.concat(
-				<MessageLinkConnected
-					key={ parts.length }
-					href={ href }
-					rel={ rel }
-					target={ target }
-					messageId={ messageId }
-				>
-					{ text }
-				</MessageLinkConnected>
-			);
-
-			return { parts, last: startIndex + length };
-		},
-		{ parts: [], last: 0 }
-	);
-
-	if ( children.last < message.length ) {
-		children.parts = children.parts.concat(
-			<span key="last">{ message.slice( children.last ) }</span>
-		);
-	}
-
 	return (
 		<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
-			{ children.parts }
+			<FormattedMessageText
+				message={ message }
+				messageId={ messageId }
+				links={ links }
+				isExternalUrl={ isExternalUrl }
+			/>
 			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 		</p>
 	);
