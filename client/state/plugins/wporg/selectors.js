@@ -1,4 +1,5 @@
 import 'calypso/state/plugins/init';
+import { Pagination } from './types';
 
 export function getAllPlugins( state ) {
 	return state?.plugins.wporg.items;
@@ -47,7 +48,6 @@ export function isFetchingPluginsList( state, category, searchTerm ) {
 
 /**
  * Retrieve the next page for the particular plugins list.
- * Pagination is currently supported only for category queries in the API.
  *
  * @param {object} state    State object
  * @param {string} category Plugin category
@@ -61,4 +61,15 @@ export function getNextPluginsListPage( state, category ) {
 	}
 
 	return null;
+}
+
+/**
+ * Retrieve the current state of pagination.
+ *
+ * @param {object} state		State object
+ * @param {string} searchTerm	Plugin search term
+ * @returns {Pagination}		Pagination object, including current page, total pages, and total results
+ */
+export function getPluginsListPagination( state, searchTerm ) {
+	return state.plugins.wporg.listsPagination?.search?.[ searchTerm ];
 }
