@@ -68,10 +68,12 @@ class TitanAddMailboxes extends Component {
 	}
 
 	recordClickEvent = ( eventName, eventProps ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
+			source,
+			provider: TITAN_PROVIDER_NAME,
 		} );
 	};
 
@@ -117,7 +119,7 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleContinue = async () => {
-		const { selectedSite, source } = this.props;
+		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
 
 		const validatedMailboxes = validateMailboxes( mailboxes );
@@ -148,8 +150,6 @@ class TitanAddMailboxes extends Component {
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
-			provider: TITAN_PROVIDER_NAME,
-			source,
 		} );
 
 		if ( canContinue ) {
