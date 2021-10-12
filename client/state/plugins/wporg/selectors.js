@@ -64,7 +64,7 @@ export function getNextPluginsListPage( state, category ) {
 }
 
 /**
- * Retrieve the next page for the particular plugins list.
+ * Retrieve the current state of pagination.
  *
  * @param {object} state		State object
  * @param {string} searchTerm	Plugin search term
