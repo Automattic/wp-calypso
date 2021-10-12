@@ -136,10 +136,7 @@ const GoogleAnalyticsJetpackForm = ( {
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
-								<InlineSupportLink
-									supportPostId={ 98905 }
-									supportLink="https://wordpress.com/support/google-analytics/#get-your-measurement-id"
-								>
+								<InlineSupportLink supportContext="google-analytics-measurement-id">
 									{ translate( 'Where can I find my Measurement ID?' ) }
 								</InlineSupportLink>
 							</FormFieldset>

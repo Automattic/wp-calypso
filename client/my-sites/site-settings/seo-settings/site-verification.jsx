@@ -315,10 +315,7 @@ class SiteVerification extends Component {
 								components: {
 									b: <strong />,
 									supportLink: (
-										<InlineSupportLink
-											supportPostId={ 5022 }
-											supportLink="https://wordpress.com/support/site-verification-services/"
-										>
+										<InlineSupportLink supportContext="site-verification">
 											{ translate( 'full instructions', {
 												comment: 'Full phrase: Read the full instructions',
 											} ) }
