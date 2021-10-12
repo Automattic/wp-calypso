@@ -76,7 +76,7 @@ const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 	const { data: wporgTranslations, error, isLoading } = useQuery(
 		'wporg-translations-' + wpVersion,
 		async () => fetchWporgTranslationsList( wpVersion ),
-		{ enabled: siteIsJetpack }
+		{ enabled: !! siteIsJetpack }
 	);
 
 	// We only need to modify the language list for jetpack or atomic sites
