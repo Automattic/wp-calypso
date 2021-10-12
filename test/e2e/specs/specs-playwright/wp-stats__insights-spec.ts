@@ -26,7 +26,6 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		it( 'Log In', async function () {
 			const loginFlow = new LoginFlow( page, user );
 			await loginFlow.logIn();
-			throw new Error();
 		} );
 
 		it( 'Navigate to Stats', async function () {
