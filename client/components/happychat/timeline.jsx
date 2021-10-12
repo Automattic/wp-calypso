@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, useCallback, useEffect, useMemo, useRef } from 'react';
@@ -13,8 +12,6 @@ import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
 import './timeline.scss';
-
-const debug = debugFactory( 'calypso:happychat:timeline' );
 
 class MessageLink extends Component {
 	handleClick = () => {
@@ -126,30 +123,20 @@ const Message = ( { message, messageId, isEdited, isOptimistic, links = [], isEx
  * Group messages based on user so when any user sends multiple messages they will be grouped
  * within the same message bubble until it reaches a message from a different user.
  */
-const renderGroupedMessages = ( { item, isCurrentUser, isExternalUrl }, index ) => {
-	const [ event, ...rest ] = item;
+const renderGroupedMessages = ( { messages, isCurrentUser, isExternalUrl }, index ) => {
 	return (
 		<div
 			className={ classnames( 'happychat__timeline-message', {
 				'is-user-message': isCurrentUser,
 			} ) }
-			key={ event.id || index }
+			key={ messages[ 0 ].id || index }
 		>
 			<div className="happychat__message-text">
-				<Message
-					name={ event.name }
-					message={ event.message }
-					messageId={ event.id }
-					isEdited={ event.isEdited }
-					isOptimistic={ event.isOptimistic }
-					links={ event.links }
-					isExternalUrl={ isExternalUrl }
-				/>
-				{ rest.map( ( { message, id, isEdited, isOptimistic, links } ) => (
+				{ messages.map( ( { message, id, isEdited, isOptimistic, links } ) => (
 					<Message
 						key={ id }
 						message={ message }
-						messageId={ event.id }
+						messageId={ id }
 						isEdited={ isEdited }
 						isOptimistic={ isOptimistic }
 						links={ links }
@@ -162,28 +149,23 @@ const renderGroupedMessages = ( { item, isCurrentUser, isExternalUrl }, index ) 
 };
 
 const groupMessages = ( messages ) => {
-	const grouped = messages.reduce(
-		( { user_id, type, group, groups, source }, message ) => {
-			const message_user_id = message.user_id;
-			const message_type = message.type;
-			const message_source = message.source;
-			debug( 'compare source', message_source, message.source );
-			if ( user_id !== message_user_id || message_type !== type || message_source !== source ) {
-				return {
-					user_id: message_user_id,
-					type: message_type,
-					source: message_source,
-					group: [ message ],
-					groups: group ? groups.concat( [ group ] ) : groups,
-				};
-			}
-			// it's the same user so group it together
-			return { user_id, group: group.concat( [ message ] ), groups, type, source };
-		},
-		{ groups: [] }
-	);
+	const groups = [];
+	let user_id;
+	let type;
+	let source;
 
-	return grouped.groups.concat( [ grouped.group ] );
+	messages.forEach( ( message ) => {
+		if ( user_id !== message.user_id || type !== message.type || source !== message.source ) {
+			// This message is not like the others in this group, start a new group...
+			groups.push( [] );
+			// ... and update the comparison variables to what we expect to find in this new group.
+			( { user_id, type, source } = message );
+		}
+		// Add this message to the last group.
+		groups[ groups.length - 1 ].push( message );
+	} );
+
+	return groups;
 };
 
 function WelcomeMessage( { currentUserEmail } ) {
@@ -254,10 +236,10 @@ function Timeline( props ) {
 				onMouseEnter={ scrollbleed.lock }
 				onMouseLeave={ scrollbleed.unlock }
 			>
-				{ groupMessages( timeline ).map( ( item ) =>
+				{ groupMessages( timeline ).map( ( messages ) =>
 					renderGroupedMessages( {
-						item,
-						isCurrentUser: isCurrentUser( item[ 0 ] ),
+						messages,
+						isCurrentUser: isCurrentUser( messages[ 0 ] ),
 						isExternalUrl,
 					} )
 				) }
