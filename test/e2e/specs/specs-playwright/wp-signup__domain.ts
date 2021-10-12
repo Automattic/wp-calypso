@@ -76,12 +76,14 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 			await cartCheckoutPage.enterPaymentDetails( DataHelper.getTestPaymentDetails() );
 		} );
 
-		it( 'Prices are shown in Japanese Yen', async function () {
-			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
-				rawString: true,
-			} ) ) as string;
-			expect( cartAmount.startsWith( '¥' ) ).toBe( true );
-		} );
+		// Skipping this test because of inconsistency in cookie working in this flow
+		// See GH Issue #56961 (https://github.com/Automattic/wp-calypso/issues/56961)
+		// it( 'Prices are shown in Japanese Yen', async function () {
+		// 	const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
+		// 		rawString: true,
+		// 	} ) ) as string;
+		// 	expect( cartAmount.startsWith( '¥' ) ).toBe( true );
+		// } );
 
 		it( 'Check out', async function () {
 			// Purchasing a domain on a domain-only account results in multiple redirects
