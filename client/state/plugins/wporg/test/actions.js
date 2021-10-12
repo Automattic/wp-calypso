@@ -71,7 +71,7 @@ describe( 'WPorg Data Actions', () => {
 		expect( fetchPluginsList ).toBeInstanceOf( Function );
 	} );
 
-	test( 'FetchPluginList action should make a request', async () => {
+	test( 'FetchPluginList action should dispatch two actions and make a request', async () => {
 		await store.dispatch( fetchPluginsList( 'new', 1, undefined ) );
 		expect( store.dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( wporg.fetchPluginsList ).toHaveBeenCalledTimes( 1 );
@@ -79,7 +79,6 @@ describe( 'WPorg Data Actions', () => {
 
 	test( "FetchPluginList action shouldn't return an error", async () => {
 		await store.dispatch( fetchPluginsList( 'new', 1, undefined ) );
-		expect( store.dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( store.dispatch ).toHaveBeenLastCalledWith(
 			expect.not.objectContaining( { error: expect.anything() } )
 		);
@@ -87,7 +86,6 @@ describe( 'WPorg Data Actions', () => {
 
 	test( 'FetchPluginList action should return a plugin list', async () => {
 		await store.dispatch( fetchPluginsList( 'new', 1, undefined ) );
-		expect( store.dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( store.dispatch ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
 				category: 'new',
@@ -97,7 +95,6 @@ describe( 'WPorg Data Actions', () => {
 
 	test( 'FetchPluginList action should return plugins for search term', async () => {
 		await store.dispatch( fetchPluginsList( undefined, 1, 'woocommerce' ) );
-		expect( store.dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( store.dispatch ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
 				searchTerm: 'woocommerce',
