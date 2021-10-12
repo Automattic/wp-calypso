@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 $current-theme-border: 1px solid var( --color-border-subtle );
 
 .current-theme {
@@ -10,7 +13,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		display: flex;
 		flex-direction: column;
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include break-xlarge {
 			min-height: 112px;
 			flex-direction: row;
 		}
@@ -54,9 +57,10 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		flex-direction: column;
 		align-items: center;
 		margin-top: 0;
+		flex-wrap: wrap;
 
-		@include breakpoint-deprecated( '<960px' ) {
-			flex-wrap: wrap;
+		@include break-large {
+			flex-wrap: initial;
 		}
 
 		@include breakpoint-deprecated( '>660px' ) {
@@ -135,7 +139,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		justify-content: flex-end;
 		flex-grow: 1;
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include break-xlarge {
 			border-top: none;
 			min-height: 112px;
 			padding-top: 0;
