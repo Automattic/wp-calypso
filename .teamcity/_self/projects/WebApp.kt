@@ -552,7 +552,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		artifactRules = """
 			logs.tgz => logs.tgz
 			screenshots => screenshots
-			trace.tgz => trace
+			trace => trace
 		""".trimIndent()
 
 		vcs {
@@ -612,7 +612,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 
 					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace.tgz
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
