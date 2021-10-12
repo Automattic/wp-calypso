@@ -229,7 +229,7 @@ class EditorMediaModalDetailFields extends Component {
 					/>
 					<span>
 						{ this.props.translate(
-							'Display share menu and allow viewers to embed or download this video'
+							'Display share menu and allow viewers to copy a link or embed this video'
 						) }
 					</span>
 				</FormLabel>
