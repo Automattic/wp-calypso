@@ -671,9 +671,9 @@ object PreReleaseE2ETests : BuildType({
 	maxRunningBuilds = 1
 
 	artifactRules = """
-		reports => reports
 		logs.tgz => logs.tgz
 		screenshots => screenshots
+		trace => trace
 	""".trimIndent()
 
 	vcs {
@@ -721,6 +721,9 @@ object PreReleaseE2ETests : BuildType({
 
 				mkdir -p logs
 				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
