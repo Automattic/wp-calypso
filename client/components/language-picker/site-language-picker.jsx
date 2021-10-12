@@ -72,19 +72,21 @@ const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 	const wpVersion = selectedSite?.options?.software_version;
 
 	let languages = origLanguages;
+	// If site is Jetpack or Atomic, do an API request for a list of WP.org translations
 	const { data: wporgTranslations, error, isLoading } = useQuery(
 		'wporg-translations-' + wpVersion,
 		async () => fetchWporgTranslationsList( wpVersion ),
 		{ enabled: siteIsJetpack }
 	);
 
+	// We only need to modify the language list for jetpack or atomic sites
 	if ( siteIsJetpack ) {
 		// WP.org translations: Keep only the ones that aren't also in Calypso
 		let wporgOnlyTranslat = [];
 		if ( ! error && ! isLoading && wporgTranslations?.translations ) {
-			const langSeen = new Set( languages.map( ( l ) => l.wpLocale ) );
+			const calyLangSeen = new Set( languages.map( ( l ) => l.wpLocale ) );
 			wporgOnlyTranslat = wporgTranslations.translations.filter(
-				( l ) => ! langSeen.has( l.language )
+				( l ) => ! calyLangSeen.has( l.language )
 			);
 		}
 
@@ -103,8 +105,22 @@ const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 
 		// For jetpack and atomic sites:
 		// (1) Remove Calypso-only languages
-		// (2) Add WP.org only languages
+		// (1a) Some calypso languages don't have a wpLocale set at all.
 		languages = languages.filter( ( l ) => l.wpLocale !== '' );
+
+		// (1b) Some calypso languages have a .wpLocale set, but WP.org doesn't
+		// have a matching translation, and trying to set an atomic/jetpack
+		// site to that language causes an error.
+		// Example: Can't set an atomic site to: { langSlug: "br", name: "Brezhoneg", wpLocale: "bre", ... }
+		let wpOrgLangSeen = new Set();
+		if ( wporgTranslations?.translations ) {
+			wpOrgLangSeen = new Set( wporgTranslations.translations.map( ( l ) => l.language ) );
+			languages = languages.filter(
+				( l ) => wpOrgLangSeen.has( l.wpLocale ) || l.wpLocale === 'en_US'
+			);
+		}
+
+		// (2) Add WP.org only languages
 		languages = languages.concat( wporgOnlyLanguages );
 	}
 	return <LanguagePicker languages={ languages } { ...restProps } />;
