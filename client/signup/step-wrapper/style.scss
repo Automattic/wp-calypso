@@ -49,6 +49,10 @@
 	align-items: center;
 	font-size: 0.875rem;
 
+	&:empty {
+		display: none;
+	}
+
 	@mixin unstick {
 		position: absolute;
 		top: 2px;
@@ -162,7 +166,7 @@
 			margin-bottom: 0;
 		}
 
-		&.has-header-buttons {
+		&.has-navigation {
 			padding-bottom: 60px;
 		}
 	}
