@@ -114,11 +114,20 @@ export class LoginLinks extends Component {
 		return login( loginParameters );
 	};
 
+	getLoginLinkText = () => {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Get a login link on your email' );
+		}
+
+		return this.props.translate( 'Email me a login link' );
+	};
+
 	renderBackLink() {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isGutenboarding
+			this.props.isGutenboarding ||
+			this.props.isP2Login
 		) {
 			return null;
 		}
@@ -234,7 +243,7 @@ export class LoginLinks extends Component {
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
-				{ this.props.translate( 'Email me a login link' ) }
+				{ this.getLoginLinkText() }
 			</a>
 		);
 	}
@@ -279,6 +288,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isGutenboarding,
+			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
@@ -294,6 +304,13 @@ export class LoginLinks extends Component {
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
+		}
+
+		if ( isP2Login && query?.redirect_to ) {
+			const urlParts = getUrlParts( query.redirect_to );
+			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
+				return null;
+			}
 		}
 
 		return (

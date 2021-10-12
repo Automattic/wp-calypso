@@ -26,6 +26,7 @@ const enhanceContextWithLogin = ( context ) => {
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
 			isGutenboarding={ isGutenboarding === 'new' }
+			isP2Login={ query && query.from === 'p2' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }

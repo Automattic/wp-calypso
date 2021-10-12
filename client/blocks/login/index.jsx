@@ -200,6 +200,7 @@ class Login extends Component {
 			isJetpack,
 			isGutenboarding,
 			isJetpackWooCommerceFlow,
+			isP2Login,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
@@ -367,6 +368,13 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
+		} else if ( isP2Login ) {
+			headerText = translate( 'Log in' );
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate( 'Enter your details to log in to your account.' ) }
+				</p>
+			);
 		}
 
 		if ( isGutenboarding ) {
@@ -415,6 +423,7 @@ class Login extends Component {
 			domain,
 			isJetpack,
 			isGutenboarding,
+			isP2Login,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -468,6 +477,7 @@ class Login extends Component {
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
 				isGutenboarding={ isGutenboarding }
+				isP2Login={ isP2Login }
 				locale={ locale }
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
