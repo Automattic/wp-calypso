@@ -254,18 +254,13 @@ function Timeline( props ) {
 				onMouseEnter={ scrollbleed.lock }
 				onMouseLeave={ scrollbleed.unlock }
 			>
-				{ groupMessages( timeline ).map( ( item ) => {
-					const firstItem = item[ 0 ];
-					if ( firstItem.type !== 'message' ) {
-						debug( 'no handler for message type', firstItem.type, firstItem );
-						return null;
-					}
-					return renderGroupedMessages( {
+				{ groupMessages( timeline ).map( ( item ) =>
+					renderGroupedMessages( {
 						item,
-						isCurrentUser: isCurrentUser( firstItem ),
+						isCurrentUser: isCurrentUser( item[ 0 ] ),
 						isExternalUrl,
-					} );
-				} ) }
+					} )
+				) }
 			</div>
 			{ unreadMessagesCount > 0 && (
 				<div className="happychat__unread-messages-container">
