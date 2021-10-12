@@ -14,7 +14,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import $ from 'jquery';
-import { filter, forEach, get, map } from 'lodash';
+import { filter, find, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
@@ -435,6 +435,90 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		updateImageBlocks( select( 'core/editor' ).getBlocks(), image );
 		updateFeaturedImagePreview( image );
 	}
+}
+
+/**
+ * Prevents the default preview flow and sends a message to the parent frame
+ * so we preview a post from there.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handlePreview( calypsoPort ) {
+	document.getElementById( 'editor' )?.addEventListener(
+		'click',
+		( e ) => {
+			if ( ! e.target.classList.contains( 'editor-post-preview' ) ) {
+				return;
+			}
+			e.preventDefault();
+			e.stopPropagation();
+
+			const postUrl = select( 'core/editor' ).getCurrentPostAttribute( 'link' );
+			const previewChannel = new MessageChannel();
+
+			calypsoPort.postMessage(
+				{
+					action: 'previewPost',
+					payload: {
+						postUrl: postUrl,
+					},
+				},
+				[ previewChannel.port2 ]
+			);
+
+			const isAutosaveable = select( 'core/editor' ).isEditedPostAutosaveable();
+
+			// If we don't need to autosave the post before previewing, then we simply
+			// generate the preview.
+			if ( ! isAutosaveable ) {
+				sendPreviewData();
+				return;
+			}
+
+			// Request an autosave before generating the preview.
+			const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+			const isDraft = [ 'draft', 'auto-draft' ].indexOf( postStatus ) !== -1;
+			if ( isDraft ) {
+				dispatch( 'core/editor' ).savePost( { isPreview: true } );
+			} else {
+				dispatch( 'core/editor' ).autosave( { isPreview: true } );
+			}
+			const unsubscribe = subscribe( () => {
+				const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+				if ( previewUrl ) {
+					unsubscribe();
+					sendPreviewData();
+				}
+			} );
+
+			function sendPreviewData() {
+				const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+
+				const featuredImageId = select( 'core/editor' ).getEditedPostAttribute( 'featured_media' );
+				const featuredImage = featuredImageId
+					? get( select( 'core' ).getMedia( featuredImageId ), 'source_url' )
+					: null;
+
+				const authorId = select( 'core/editor' ).getCurrentPostAttribute( 'author' );
+				const author = find( select( 'core' ).getAuthors(), { id: authorId } );
+				const editedPost = {
+					title: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+					URL: select( 'core/editor' ).getEditedPostAttribute( 'link' ),
+					excerpt: select( 'core/editor' ).getEditedPostAttribute( 'excerpt' ),
+					content: select( 'core/editor' ).getEditedPostAttribute( 'content' ),
+					featured_image: featuredImage,
+					author: author,
+				};
+
+				previewChannel.port1.postMessage( {
+					previewUrl: previewUrl,
+					editedPost: editedPost,
+				} );
+				previewChannel.port1.close();
+			}
+		},
+		{ capture: true }
+	);
 }
 
 /**
@@ -1156,6 +1240,8 @@ function initPort( message ) {
 		handleUpdateImageBlocks( calypsoPort );
 
 		handleInsertClassicBlockMedia( calypsoPort );
+
+		handlePreview( calypsoPort );
 
 		handleCloseEditor( calypsoPort );
 
