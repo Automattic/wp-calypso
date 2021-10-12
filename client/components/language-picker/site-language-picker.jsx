@@ -1,4 +1,3 @@
-import { localize } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import { fetchTranslationsList as fetchWporgTranslationsList } from 'calypso/lib/wporg';
 import LanguagePicker from './index';
@@ -63,47 +62,45 @@ const territoryLookup = {
 	tah: '143', // Tahitian - Asia-Pacific
 };
 
-const SiteLanguagePicker = localize(
-	( { languages: origLanguages, siteIsJetpack, ...restProps } ) => {
-		let languages = origLanguages;
-		const { data: wporgTranslations, error, isLoading } = useQuery(
-			'wporg-translations',
-			async () => fetchWporgTranslationsList(),
-			{ enabled: siteIsJetpack }
+const SiteLanguagePicker = ( { languages: origLanguages, siteIsJetpack, ...restProps } ) => {
+	let languages = origLanguages;
+	const { data: wporgTranslations, error, isLoading } = useQuery(
+		'wporg-translations',
+		async () => fetchWporgTranslationsList(),
+		{ enabled: siteIsJetpack }
+	);
+
+	// Filter the WP.org translations by removing languages also in Calypso
+	let wporgOnlyTranslat = [];
+	if ( ! error && ! isLoading && wporgTranslations?.translations ) {
+		const langSeen = new Set( languages.map( ( l ) => l.wpLocale ) );
+		wporgOnlyTranslat = wporgTranslations.translations.filter(
+			( l ) => ! langSeen.has( l.language )
 		);
-
-		// Filter the WP.org translations by removing languages also in Calypso
-		let wporgOnlyTranslat = [];
-		if ( ! error && ! isLoading && wporgTranslations?.translations ) {
-			const langSeen = new Set( languages.map( ( l ) => l.wpLocale ) );
-			wporgOnlyTranslat = wporgTranslations.translations.filter(
-				( l ) => ! langSeen.has( l.language )
-			);
-		}
-
-		// Map from WP.org API format to Calypso language format
-		const wporgOnlyLanguages = wporgOnlyTranslat.map( ( l ) => ( {
-			value: l.language,
-			langSlug: l.language,
-			name: l.native_name,
-			wpLocale: l.language,
-			parentLangSlug: null,
-			calypsoPercentTranslated: null,
-			isTranslatedCompletely: null,
-			territories: [ territoryLookup[ l.language ] ],
-			revision: null,
-		} ) );
-
-		if ( siteIsJetpack ) {
-			// For jetpack and atomic sites:
-			// (1) Remove Calypso-only languages
-			// (2) Add WP.org only languages
-			languages = languages.filter( ( l ) => l.wpLocale !== '' );
-			languages = languages.concat( wporgOnlyLanguages );
-		}
-		return <LanguagePicker languages={ languages } { ...restProps } />;
 	}
-);
+
+	// Map from WP.org API format to Calypso language format
+	const wporgOnlyLanguages = wporgOnlyTranslat.map( ( l ) => ( {
+		value: l.language,
+		langSlug: l.language,
+		name: l.native_name,
+		wpLocale: l.language,
+		parentLangSlug: null,
+		calypsoPercentTranslated: null,
+		isTranslatedCompletely: null,
+		territories: [ territoryLookup[ l.language ] ],
+		revision: null,
+	} ) );
+
+	if ( siteIsJetpack ) {
+		// For jetpack and atomic sites:
+		// (1) Remove Calypso-only languages
+		// (2) Add WP.org only languages
+		languages = languages.filter( ( l ) => l.wpLocale !== '' );
+		languages = languages.concat( wporgOnlyLanguages );
+	}
+	return <LanguagePicker languages={ languages } { ...restProps } />;
+};
 export default SiteLanguagePicker;
 
 /*

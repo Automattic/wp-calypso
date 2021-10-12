@@ -166,7 +166,7 @@ export function fetchThemesList( options = {} ) {
 }
 
 //export function fetchTranslationsList( options = {} ) {
-export function fetchTranslationsList( ) {
+export function fetchTranslationsList() {
 	// const { search, page, number } = options;
 	const query = {
 		version: '5.8', // FIXME
