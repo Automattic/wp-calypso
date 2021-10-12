@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
+import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyStep, ReadyNotStep, ReadyNoUrlStep } from './ready';
 import ScanningStep from './scanning';
@@ -21,6 +22,7 @@ const ImportSite: React.FunctionComponent = () => {
 	return (
 		<div className="gutenboarding-page import">
 			{ query.get( 'step' ) === 'list' && <ListStep /> }
+			{ query.get( 'step' ) === 'capture' && <CaptureStep /> }
 			{ query.get( 'step' ) === 'ready' && (
 				<ReadyStep platform={ data.platform } website={ data.website } />
 			) }
