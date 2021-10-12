@@ -15,7 +15,6 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeMoreButton from './more-button';
 
 import './style.scss';
@@ -282,9 +281,6 @@ export class Theme extends Component {
 
 const ThemeWithEditorSettings = withBlockEditorSettings( Theme );
 
-export default connect(
-	( state ) => {
-		return { siteId: getSelectedSiteId( state ) };
-	},
-	{ recordTracksEvent, setThemesBookmark }
-)( localize( ThemeWithEditorSettings ) );
+export default connect( null, { recordTracksEvent, setThemesBookmark } )(
+	localize( ThemeWithEditorSettings )
+);
