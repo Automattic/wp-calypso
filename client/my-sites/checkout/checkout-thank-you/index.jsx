@@ -391,6 +391,7 @@ export class CheckoutThankYou extends Component {
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainMappingOrTransferProduct = false;
+		let wasDomainMappingAndRegistrationWithTitanProduct = false;
 		let wasTitanEmailOnlyProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -405,6 +406,11 @@ export class CheckoutThankYou extends Component {
 				purchases.some(
 					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
 				);
+			wasDomainMappingAndRegistrationWithTitanProduct =
+				purchases.some( isDomainRegistration ) &&
+				purchases.some( isTitanMail ) &&
+				purchases.some( isDomainMapping ) &&
+				purchases.length === 3;
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 		}
@@ -485,6 +491,14 @@ export class CheckoutThankYou extends Component {
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
+			);
+		} else if ( wasDomainMappingAndRegistrationWithTitanProduct ) {
+			return (
+				<TitanSetUpThankYou
+					domainName={ purchases[ 0 ].meta }
+					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
+					title={ translate( 'Congratulations on your purchase!' ) }
+				/>
 			);
 		} else if ( wasDomainMappingOrTransferProduct ) {
 			const [ purchaseType, predicate ] = purchases.some( isDomainMapping )
