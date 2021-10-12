@@ -106,9 +106,11 @@
 		width: 100%;
 		height: 0;
 		border: 1px solid;
+		box-sizing: border-box;
 		position: relative;
 		overflow: hidden;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		transition: border-color 0.15s ease-in-out;
 
 		img {
 			position: absolute;
@@ -204,6 +206,13 @@
 			}
 		}
 	}
+
+	.design-button-container:hover,
+	.design-button-container:focus-within {
+		.design-picker__design-option .design-picker__image-frame {
+			border-color: var( --studio-white );
+		}
+	}
 }
 
 // light theme styles
@@ -245,6 +254,79 @@
 					opacity: 0;
 				}
 			}
+		}
+	}
+
+	.design-button-container:hover,
+	.design-button-container:focus-within {
+		.design-picker__design-option .design-picker__image-frame {
+			border-color: var( --studio-blue-20 );
+		}
+	}
+}
+
+.design-button-container {
+	position: relative;
+	display: flex;
+	font-size: $font-body-small;
+
+	.design-picker__design-option {
+		flex: 1;
+	}
+
+	.design-button-cover {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		display: none;
+		align-items: center;
+		justify-content: center;
+		z-index: 1;
+		opacity: 0;
+		transition: opacity 0.15s ease-in-out;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			width: 100%;
+			padding-top: 66%;
+			background-color: rgba( 255, 255, 255, 0.72 );
+			z-index: -1;
+		}
+
+		@include break-medium {
+			display: flex;
+		}
+	}
+
+	.design-button-cover__button-groups {
+		display: flex;
+		flex-direction: column;
+
+		.design-button-cover__button:not( :first-child ) {
+			margin-top: 8px;
+		}
+	}
+
+	.design-button-cover__button {
+		justify-content: center;
+		font-size: inherit;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		line-height: 20px;
+
+		&:not( .is-primary ) {
+			border: 1px solid #c3c4c7;
+			background: #ffffff;
+		}
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-button-cover {
+			opacity: 1;
 		}
 	}
 }

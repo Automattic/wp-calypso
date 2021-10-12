@@ -774,6 +774,14 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				margin-right: 0;
 			}
 		}
+
+		.design-picker__preview .step-wrapper__header {
+			margin-top: 40px;
+
+			@include break-mobile {
+				margin-top: 28px;
+			}
+		}
 	}
 
 	button.is-primary {

@@ -3,10 +3,14 @@ import { addQueryArgs } from '@wordpress/url';
 import { availableDesignsConfig } from './available-designs-config';
 import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
-import type { Design } from '../types';
+import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
 
-export const getDesignUrl = ( design: Design, locale: string ): string => {
+export const getDesignUrl = (
+	design: Design,
+	locale: string,
+	options: DesignUrlOptions = {}
+): string => {
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
@@ -20,6 +24,7 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
+			...options,
 		}
 	);
 };
