@@ -94,7 +94,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 			await Promise.all( [
 				page.waitForNavigation( {
 					url: `**/checkout/thank-you/${ selectedDomain }`,
-					timeout: 90 * 1000,
+					timeout: 120 * 1000,
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
