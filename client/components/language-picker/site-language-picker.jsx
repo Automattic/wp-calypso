@@ -6,6 +6,22 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import territoryLookup from './territory-lookup.js';
 import LanguagePicker from './index';
 
+/*
+ * <SiteLanguagePicker> is a wrapper around <LanguagePicker> with one additional
+ * bit of logic concerning Jetpack and Atomic sites:
+ *
+ *   - If the currently selected site is a jetpack or atomic site, the component:
+ *     - Removes languages from props.languages that WP.Org doesn't support
+ *     - Does an API request to WP.org to find additional languages to add to the languages prop
+ *     - The goal is to update the list of languages to match /wp-admin/options-general.php on
+ *       an atomic or jetpack site.
+ *   - If the currently selected site is not a jetpack or atomic site,
+ *     no changes are made and we passthrough to <LanguagePicker>.
+ *
+ * This component is appropriate for using in a site context on /settings/general,
+ * but not appropriate on for example, /me/account, which affects calypso in general.
+ * Some of the languages we add may not be supported by calypso.
+ */
 const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
