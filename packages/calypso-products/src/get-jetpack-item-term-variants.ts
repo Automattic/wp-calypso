@@ -14,13 +14,13 @@ export function getJetpackItemTermVariants(
 ): termMap | undefined {
 	if ( isJetpackPlanSlug( itemSlug ) ) {
 		return JETPACK_PLANS_BY_TERM.find( ( terms ) =>
-			Object.values( terms ).includes( itemSlug )
+			( Object.values( terms ) as JetpackPurchasableItemSlug[] ).includes( itemSlug )
 		) as termMap;
 	}
 
 	if ( isJetpackProductSlug( itemSlug ) ) {
 		return JETPACK_PRODUCTS_BY_TERM.find( ( terms ) =>
-			Object.values( terms ).includes( itemSlug )
+			( Object.values( terms ) as JetpackPurchasableItemSlug[] ).includes( itemSlug )
 		) as termMap;
 	}
 }
