@@ -340,6 +340,7 @@
 
 	.form-text-input {
 		@extend %p2-form-input-text;
+		margin-bottom: 0;
 	}
 
 	.form-input-validation {
