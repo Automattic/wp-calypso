@@ -72,8 +72,8 @@ class TitanAddMailboxes extends Component {
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
-			source,
 			provider: TITAN_PROVIDER_NAME,
+			source,
 		} );
 	};
 
