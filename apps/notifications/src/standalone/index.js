@@ -132,4 +132,4 @@ const init = ( wpcom ) => {
 	);
 };
 
-createClient.then( init );
+createClient().then( init );
