@@ -1,5 +1,8 @@
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 import { fetchTranslationsList as fetchWporgTranslationsList } from 'calypso/lib/wporg';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import LanguagePicker from './index';
 
 /*
@@ -62,37 +65,42 @@ const territoryLookup = {
 	tah: '143', // Tahitian - Asia-Pacific
 };
 
-const SiteLanguagePicker = ( { languages: origLanguages, siteIsJetpack, ...restProps } ) => {
+const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const wpVersion = selectedSite?.options?.software_version;
+
 	let languages = origLanguages;
 	const { data: wporgTranslations, error, isLoading } = useQuery(
-		'wporg-translations',
-		async () => fetchWporgTranslationsList(),
+		'wporg-translations-' + wpVersion,
+		async () => fetchWporgTranslationsList( wpVersion ),
 		{ enabled: siteIsJetpack }
 	);
 
-	// Filter the WP.org translations by removing languages also in Calypso
-	let wporgOnlyTranslat = [];
-	if ( ! error && ! isLoading && wporgTranslations?.translations ) {
-		const langSeen = new Set( languages.map( ( l ) => l.wpLocale ) );
-		wporgOnlyTranslat = wporgTranslations.translations.filter(
-			( l ) => ! langSeen.has( l.language )
-		);
-	}
-
-	// Map from WP.org API format to Calypso language format
-	const wporgOnlyLanguages = wporgOnlyTranslat.map( ( l ) => ( {
-		value: l.language,
-		langSlug: l.language,
-		name: l.native_name,
-		wpLocale: l.language,
-		parentLangSlug: null,
-		calypsoPercentTranslated: null,
-		isTranslatedCompletely: null,
-		territories: [ territoryLookup[ l.language ] ],
-		revision: null,
-	} ) );
-
 	if ( siteIsJetpack ) {
+		// WP.org translations: Keep only the ones that aren't also in Calypso
+		let wporgOnlyTranslat = [];
+		if ( ! error && ! isLoading && wporgTranslations?.translations ) {
+			const langSeen = new Set( languages.map( ( l ) => l.wpLocale ) );
+			wporgOnlyTranslat = wporgTranslations.translations.filter(
+				( l ) => ! langSeen.has( l.language )
+			);
+		}
+
+		// Map from WP.org API format to Calypso language format
+		const wporgOnlyLanguages = wporgOnlyTranslat.map( ( l ) => ( {
+			value: l.language,
+			langSlug: l.language,
+			name: l.native_name,
+			wpLocale: l.language,
+			parentLangSlug: null,
+			calypsoPercentTranslated: null,
+			isTranslatedCompletely: null,
+			territories: [ territoryLookup[ l.language ] ],
+			revision: null,
+		} ) );
+
 		// For jetpack and atomic sites:
 		// (1) Remove Calypso-only languages
 		// (2) Add WP.org only languages

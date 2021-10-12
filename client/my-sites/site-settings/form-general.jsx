@@ -279,7 +279,6 @@ export class SiteSettingsFormGeneral extends Component {
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 					showEmpathyModeControl={ false }
 					getIncompleteLocaleNoticeMessage={ this.getIncompleteLocaleNoticeMessage }
-					siteIsJetpack={ siteIsJetpack }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
