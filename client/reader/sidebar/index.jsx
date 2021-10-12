@@ -28,9 +28,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { hideAppBanner, showAppBanner } from 'calypso/state/ui/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarPromo from './promo';
 import ReaderSidebarLists from './reader-sidebar-lists';
@@ -59,15 +57,6 @@ export class ReaderSidebar extends Component {
 	componentDidMount() {
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.layoutFocus !== this.props.layoutFocus ) {
-			// Hide the App Banner when viewing the sidebar on mobile.
-			this.props.layoutFocus === 'sidebar'
-				? this.props.hideAppBanner()
-				: this.props.showAppBanner();
-		}
 	}
 
 	handleClick = ( event ) => {
@@ -266,7 +255,6 @@ export default connect(
 			subscribedLists: getSubscribedLists( state ),
 			teams: getReaderTeams( state ),
 			organizations: getReaderOrganizations( state ),
-			layoutFocus: getCurrentLayoutFocus( state ),
 		};
 	},
 	{
@@ -274,7 +262,5 @@ export default connect(
 		setNextLayoutFocus,
 		toggleListsVisibility: toggleReaderSidebarLists,
 		toggleTagsVisibility: toggleReaderSidebarTags,
-		hideAppBanner,
-		showAppBanner,
 	}
 )( localize( ReaderSidebar ) );

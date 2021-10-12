@@ -20,7 +20,7 @@ import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
-import { getSectionName, getSelectedSiteId, appBannerIsVisible } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId, appBannerIsEnabled } from 'calypso/state/ui/selectors';
 import {
 	ALLOWED_SECTIONS,
 	EDITOR,
@@ -77,7 +77,7 @@ export class AppBanner extends Component {
 	};
 
 	isVisible() {
-		const { dismissedUntil, currentSection, isTosBannerVisible, isAppBannerVisible } = this.props;
+		const { dismissedUntil, currentSection, isTosBannerVisible, isAppBannerEnabled } = this.props;
 
 		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
 		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
@@ -87,7 +87,7 @@ export class AppBanner extends Component {
 		}
 
 		// In some cases such as error we want to hide the app banner completely.
-		if ( ! isAppBannerVisible ) {
+		if ( ! isAppBannerEnabled ) {
 			return false;
 		}
 
@@ -248,7 +248,7 @@ const mapStateToProps = ( state ) => {
 		fetchingPreferences: isFetchingPreferences( state ),
 		siteId: getSelectedSiteId( state ),
 		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),
-		isAppBannerVisible: appBannerIsVisible( state ),
+		isAppBannerEnabled: appBannerIsEnabled( state ),
 	};
 };
 

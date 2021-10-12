@@ -78,7 +78,7 @@ import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream'
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { hideAppBanner, showAppBanner } from 'calypso/state/ui/actions';
+import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostUnavailable from './unavailable';
@@ -120,6 +120,8 @@ export class FullPostView extends Component {
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
+
+		this.props.disableAppBanner();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -144,13 +146,14 @@ export class FullPostView extends Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
 		const is_post_error = this.props?.post?.is_error;
 		const is_post_error_prev = prevProps?.post?.is_error;
 		if ( is_post_error !== is_post_error_prev ) {
 			// Only attempt to show the AppBanner if we had loaded the Post and Post is not an error.
-			typeof is_post_error === 'undefined' && this.hasLoaded
-				? this.props.showAppBanner()
-				: this.props.hideAppBanner();
+			typeof is_post_error || ! this.hasLoaded
+				? this.props.disableAppBanner()
+				: this.props.enableAppBanner();
 		}
 	}
 
@@ -162,7 +165,7 @@ export class FullPostView extends Component {
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
-		this.props.showAppBanner(); // reset the app banner
+		this.props.enableAppBanner(); // reset the app banner
 	}
 
 	handleBack = ( event ) => {
@@ -634,8 +637,8 @@ export default connect(
 		return props;
 	},
 	{
-		hideAppBanner,
-		showAppBanner,
+		disableAppBanner,
+		enableAppBanner,
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,

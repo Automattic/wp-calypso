@@ -7,11 +7,11 @@ import 'calypso/state/ui/init';
  *
  * @returns {object} Action object
  */
-export const hideAppBanner = () => ( { type: APP_BANNER_TOGGLE_VISIBILITY, isVisible: false } );
+export const disableAppBanner = () => ( { type: APP_BANNER_TOGGLE_VISIBILITY, isVisible: false } );
 
 /**
  * Show the AppBanner.
  *
  * @returns {object} Action object
  */
-export const showAppBanner = () => ( { type: APP_BANNER_TOGGLE_VISIBILITY, isVisible: true } );
+export const enableAppBanner = () => ( { type: APP_BANNER_TOGGLE_VISIBILITY, isVisible: true } );

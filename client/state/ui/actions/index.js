@@ -3,6 +3,6 @@
  */
 export { setSection, setSectionLoading } from '../section/actions';
 export { setSelectedSiteId, setAllSitesSelected } from './set-sites';
-export { showAppBanner, hideAppBanner } from '../app-banner-visibility/actions';
+export { disableAppBanner, enableAppBanner } from '../app-banner-visibility/actions';
 export { showMasterbar, hideMasterbar } from '../masterbar-visibility/actions';
 export { toggleNotificationsPanel } from './notifications';
