@@ -16,13 +16,6 @@ import './timeline.scss';
 
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
-const MessageParagraph = ( { message, isEdited, isOptimistic } ) => (
-	<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
-		{ message }
-		{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
-	</p>
-);
-
 class MessageLink extends Component {
 	handleClick = () => {
 		const { href, messageId, sendEventMessage, userId } = this.props;
@@ -70,18 +63,11 @@ class MessageLink extends Component {
 const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId( state ) } ), {
 	sendEventMessage: sendEvent,
 } )( MessageLink );
+
 /*
- * Given a message and array of links contained within that message, returns the message
- * with clickable links inside of it.
+ * Render a formatted message.
  */
-const MessageWithLinks = ( {
-	message,
-	messageId,
-	isEdited,
-	isOptimistic,
-	links,
-	isExternalUrl,
-} ) => {
+const Message = ( { message, messageId, isEdited, isOptimistic, links = [], isExternalUrl } ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -137,17 +123,6 @@ const MessageWithLinks = ( {
 };
 
 /*
- * If a message event has a message with links in it, return a component with clickable links.
- * Otherwise just return a single paragraph with the text.
- */
-const MessageText = ( props ) =>
-	props.links && props.links.length > 0 ? (
-		<MessageWithLinks { ...props } />
-	) : (
-		<MessageParagraph { ...props } />
-	);
-
-/*
  * Group messages based on user so when any user sends multiple messages they will be grouped
  * within the same message bubble until it reaches a message from a different user.
  */
@@ -161,7 +136,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, isExternalUrl }, index ) 
 			key={ event.id || index }
 		>
 			<div className="happychat__message-text">
-				<MessageText
+				<Message
 					name={ event.name }
 					message={ event.message }
 					messageId={ event.id }
@@ -171,7 +146,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, isExternalUrl }, index ) 
 					isExternalUrl={ isExternalUrl }
 				/>
 				{ rest.map( ( { message, id, isEdited, isOptimistic, links } ) => (
-					<MessageText
+					<Message
 						key={ id }
 						message={ message }
 						messageId={ event.id }
