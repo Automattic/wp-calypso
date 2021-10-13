@@ -177,7 +177,9 @@ export function createCreditCardPaymentMethodStore( {
 				cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
 				cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
 				brand: brandReducer( state.brand, action ),
-				useForAllSubscriptions: allSubscriptionsReducer( state.useForAllSubscriptions, action ),
+				useForAllSubscriptions: allowUseForAllSubscriptions
+					? allSubscriptionsReducer( state.useForAllSubscriptions, action )
+					: false,
 			};
 		},
 		actions,
