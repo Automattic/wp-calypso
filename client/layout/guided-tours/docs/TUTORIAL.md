@@ -75,11 +75,7 @@ import {
 	Quit,
 	Continue,
 } from 'calypso/layout/guided-tours/config-elements';
-import {
-	isNewUser,
-	isEnabled,
-	isSelectedSitePreviewable,
-} from 'calypso/state/guided-tours/contexts';
+import { isNewUser } from 'calypso/state/guided-tours/contexts';
 import meta from './meta';
 
 export const TutorialSitePreviewTour = makeTour();
