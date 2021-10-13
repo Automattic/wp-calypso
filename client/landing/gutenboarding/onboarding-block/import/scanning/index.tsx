@@ -10,9 +10,9 @@ const ScanningStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 
 	return (
-		<>
+		<div className="import-layout__center">
 			<div className="import__header scanning__header">
-				<div className="import__heading">
+				<div className="import__heading import__heading-center">
 					<Title>{ __( 'Scanning your site' ) }</Title>
 					<SubTitle>{ __( "We'll be done in no time." ) }</SubTitle>
 				</div>
@@ -21,7 +21,7 @@ const ScanningStep: React.FunctionComponent = () => {
 			<div className={ 'scanning__content' }>
 				<Spinner />
 			</div>
-		</>
+		</div>
 	);
 };
 
