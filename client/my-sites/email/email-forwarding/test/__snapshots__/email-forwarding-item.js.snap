@@ -38,9 +38,7 @@ exports[`EmailForwardingItem it renders EmailForwardingItem correctly 1`] = `
     </svg>
   </button>
   <span>
-    <strong>
-      
-    </strong>
+    <strong />
      
     <em>
       forwards to

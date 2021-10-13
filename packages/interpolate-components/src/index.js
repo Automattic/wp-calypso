@@ -72,6 +72,12 @@ function buildChildren( tokens, components ) {
 		}
 	}
 
+	children = children.filter( Boolean );
+
+	if ( children.length === 0 ) {
+		return null;
+	}
+
 	if ( children.length === 1 ) {
 		return children[ 0 ];
 	}
