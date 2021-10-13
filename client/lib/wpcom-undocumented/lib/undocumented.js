@@ -2183,11 +2183,4 @@ Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, 
 	);
 };
 
-Undocumented.prototype.restoreAtomicPlanSoftware = function ( siteIdOrSlug ) {
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
 export default Undocumented;

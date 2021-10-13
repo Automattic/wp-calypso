@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
@@ -8,28 +8,29 @@ import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function RestorePlanSoftwareCard( props ) {
-	const {
-		translate,
-		siteId,
-		successNotice: showSuccessNotice,
-		errorNotice: showErrorNotice,
-	} = props;
+export default function RestorePlanSoftwareCard() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
 
 	function requestRestore() {
-		wpcom
-			.undocumented()
-			.restoreAtomicPlanSoftware( siteId )
+		wpcom.req
+			.post( {
+				path: `/sites/${ siteId }/hosting/restore-plan-software`,
+				apiNamespace: 'wpcom/v2',
+			} )
 			.then( () => {
-				showSuccessNotice(
-					translate( 'Requested restoration of plugins and themes that come with your plan.' )
+				dispatch(
+					successNotice(
+						translate( 'Requested restoration of plugins and themes that come with your plan.' )
+					)
 				);
 			} )
 			.catch( ( error ) => {
 				const message =
 					stripHTML( error.message ) ||
 					translate( 'Failed to request restoration of plan plugin and themes.' );
-				showErrorNotice( message );
+				dispatch( errorNotice( message ) );
 			} );
 	}
 
@@ -48,13 +49,3 @@ function RestorePlanSoftwareCard( props ) {
 		</Card>
 	);
 }
-
-export default connect(
-	( state ) => ( {
-		siteId: getSelectedSiteId( state ),
-	} ),
-	{
-		successNotice,
-		errorNotice,
-	}
-)( localize( RestorePlanSoftwareCard ) );
