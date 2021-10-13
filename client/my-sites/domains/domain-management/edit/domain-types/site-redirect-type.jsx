@@ -1,31 +1,25 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DomainStatus from '../card/domain-status';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
+import { resolveDomainStatus } from 'calypso/lib/domains';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
-import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import DomainStatus from '../card/domain-status';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
-import { resolveDomainStatus } from 'calypso/lib/domains';
 
-class SiteRedirectType extends React.Component {
+class SiteRedirectType extends Component {
 	renderDefaultRenewButton() {
 		const { domain, purchase, isLoadingPurchase } = this.props;
 

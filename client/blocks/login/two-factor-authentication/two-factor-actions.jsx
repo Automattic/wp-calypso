@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
-import { isWebAuthnSupported } from 'calypso/lib/webauthn';
+import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
 
-/**
- * Style dependencies
- */
 import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {

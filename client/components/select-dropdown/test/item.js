@@ -2,17 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import SelectDropdownItem from '../item';
 
 describe( 'item', () => {

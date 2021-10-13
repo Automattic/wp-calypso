@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-import { Button } from '@automattic/components';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import {
-	EMAIL_WARNING_SLUG_GOOGLE_MAILBOX_TOS,
-	EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS,
-} from 'calypso/lib/emails/email-provider-constants';
+import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import {
 	getEmailForwardAddress,
 	hasGoogleAccountTOSWarning,
 	isGoogleEmailAccount,
 } from 'calypso/lib/emails';
-import { getGmailUrl } from 'calypso/lib/gsuite';
-import Gridicon from 'calypso/components/gridicon';
+import {
+	EMAIL_WARNING_SLUG_GOOGLE_MAILBOX_TOS,
+	EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS,
+} from 'calypso/lib/emails/email-provider-constants';
 import { isEmailForwardAccount } from 'calypso/lib/emails/is-email-forward-account';
+import { getGmailUrl } from 'calypso/lib/gsuite';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
 

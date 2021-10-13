@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { isVideoPressItem } from 'calypso/lib/media/utils';
-import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 import EditorMediaModalDetailPreviewMediaFile from './detail-preview-media-file';
+import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'EditorMediaModalDetailPreviewAudio';
 
 	static propTypes = {

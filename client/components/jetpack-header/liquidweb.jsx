@@ -1,8 +1,3 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-
 function JetpackLiquidWebLogo( { darkColorScheme } ) {
 	const color1 = darkColorScheme ? '#fff' : '#58595b';
 	const color2 = darkColorScheme ? '#fff' : '#e6e7e8';

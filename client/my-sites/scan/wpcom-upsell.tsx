@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo, ReactElement } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import Main from 'calypso/components/main';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import Gridicon from 'calypso/components/gridicon';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 
-/**
- * Asset dependencies
- */
-import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import './style.scss';
 
 export default function WPCOMScanUpsellPage(): ReactElement {
@@ -55,7 +45,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	// Don't show the Activity Log promo for Personal or Premium plan owners.
-	const filteredPromos: PromoSectionProps = React.useMemo( () => {
+	const filteredPromos: PromoSectionProps = useMemo( () => {
 		if ( isPersonalPlan( planSlug ) || isPremiumPlan( planSlug ) ) {
 			return { promos: [ promos[ 0 ] ] };
 		}

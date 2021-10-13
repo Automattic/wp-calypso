@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { shouldRequestTagImages } from 'calypso/state/reader/tags/images/selectors';
 import { requestTagImages } from 'calypso/state/reader/tags/images/actions';
+import { shouldRequestTagImages } from 'calypso/state/reader/tags/images/selectors';
 
 class QueryReaderTagImages extends Component {
 	UNSAFE_componentWillMount() {

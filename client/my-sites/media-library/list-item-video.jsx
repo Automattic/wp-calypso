@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'calypso/lib/media/constants';
 import resize from 'calypso/lib/resize-image-url';
 import ListItemFileDetails from './list-item-file-details';
-import Gridicon from 'calypso/components/gridicon';
-import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'calypso/lib/media/constants';
-
-/**
- * Style dependencies
- */
-import './list-item-video.scss';
 import MediaFile from './media-file';
+import './list-item-video.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'MediaLibraryListItemVideo';
 
 	static propTypes = {

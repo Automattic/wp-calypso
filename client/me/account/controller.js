@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import page from 'page';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import page from 'page';
+import { createElement } from 'react';
 import AccountComponent, { noticeId as meSettingsNoticeId } from 'calypso/me/account/main';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 
 export function account( context, next ) {
@@ -28,7 +20,7 @@ export function account( context, next ) {
 		page.replace( context.pathname );
 	}
 
-	context.primary = React.createElement( AccountComponent, {
+	context.primary = createElement( AccountComponent, {
 		path: context.path,
 	} );
 	next();

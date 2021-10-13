@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
 
 describe( 'isPublicizeEnabled()', () => {

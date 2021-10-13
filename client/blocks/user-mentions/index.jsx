@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import connectUserMentions from './connect';
+import { PureComponent, forwardRef } from 'react';
 import addUserMentions from './add';
+import connectUserMentions from './connect';
 
 /**
  * withUserMentions is a higher-order component that adds connected user mention support to whatever input it wraps.
  *
- * @example: withUserMentions( Component )
- *
+ * @example withUserMentions( Component )
  * @param {object} WrappedComponent - React component to wrap
  * @returns {object} the enhanced component
  */
 const withUserMentions = ( WrappedComponent ) => {
-	class TextInputWrapper extends React.PureComponent {
+	class TextInputWrapper extends PureComponent {
 		static propTypes = {
 			siteId: PropTypes.number,
 		};
@@ -31,7 +23,7 @@ const withUserMentions = ( WrappedComponent ) => {
 
 	return connectUserMentions(
 		addUserMentions(
-			React.forwardRef( ( props, ref ) => {
+			forwardRef( ( props, ref ) => {
 				return <TextInputWrapper { ...props } forwardedRef={ ref } />;
 			} )
 		)

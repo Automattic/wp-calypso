@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { isEmpty, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	REWIND_BACKUP_PROGRESS_REQUEST,
 	REWIND_BACKUP_DISMISS_PROGRESS,
@@ -19,6 +8,10 @@ import {
 	updateRewindBackupProgress,
 	rewindBackupUpdateError,
 } from 'calypso/state/activity-log/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;

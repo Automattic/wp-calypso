@@ -2,21 +2,13 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { RegionAddressFieldsets } from '../region-address-fieldsets';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from '../constants';
+import { RegionAddressFieldsets } from '../region-address-fieldsets';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( x ) => x,

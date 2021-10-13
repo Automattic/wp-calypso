@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { getGuidedTransferIssue } from 'calypso/state/sites/guided-transfer/selectors';
-import { Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { getGuidedTransferIssue } from 'calypso/state/sites/guided-transfer/selectors';
 
 const Issue = ( props ) => (
 	<li className="guided-transfer__issue">

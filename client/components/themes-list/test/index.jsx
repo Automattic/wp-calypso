@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import deepFreeze from 'deep-freeze';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import Theme from 'calypso/components/theme';
 import { ThemesList } from '../';

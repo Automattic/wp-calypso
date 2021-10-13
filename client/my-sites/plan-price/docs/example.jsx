@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PlanPrice from '../';
 
 function PlanPriceExample() {

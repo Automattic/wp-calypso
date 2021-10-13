@@ -1,28 +1,22 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useCallback, useMemo, useState } from 'react';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
+import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
+import Pagination from 'calypso/components/pagination';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
-import isRequestingJetpackScanHistory from 'calypso/state/selectors/is-requesting-jetpack-scan-history';
+import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
 import getSiteScanThreatCounts, {
 	JetpackScanThreatCounts,
 } from 'calypso/state/selectors/get-site-scan-threat-counts';
-import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
-import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
-import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
-import Pagination from 'calypso/components/pagination';
-import ThreatStatusFilter, { FilterValue, FilterOption } from './threat-status-filter';
+import isRequestingJetpackScanHistory from 'calypso/state/selectors/is-requesting-jetpack-scan-history';
+import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ListItems, { ListItemsPlaceholder } from './list-items';
+import ThreatStatusFilter, { FilterValue, FilterOption } from './threat-status-filter';
 
 const THREATS_PER_PAGE = 10;
 

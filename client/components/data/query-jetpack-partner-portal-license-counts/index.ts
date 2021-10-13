@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { fetchLicenseCounts } from 'calypso/state/partner-portal/licenses/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
 

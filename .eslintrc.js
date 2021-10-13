@@ -1,6 +1,7 @@
+const path = require( 'path' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
-const path = require( 'path' );
 
 module.exports = {
 	root: true,
@@ -57,13 +58,8 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*' ],
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'no-console': 'off',
-				'no-process-exit': 'off',
-				'valid-jsdoc': 'off',
-			},
+			files: [ 'bin/**/*', 'test/**/*' ],
+			...nodeConfig,
 		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
@@ -166,111 +162,13 @@ module.exports = {
 				'no-undef': 'off',
 				'no-unused-vars': 'off',
 				'react/jsx-no-undef': 'off',
+				'react/jsx-uses-react': 'off',
 				'react/react-in-jsx-scope': 'off',
-				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
 				'jsdoc/check-param-names': 'off',
 				'@typescript-eslint/no-empty-function': 'off',
-			},
-		},
-		{
-			files: [
-				'apps/editing-toolkit/**/*',
-				'apps/notifications/**/*',
-				'client/auth/**/*',
-				'client/boot/**/*',
-				'client/controller/**/*',
-				'client/document/**/*',
-				'client/gutenberg/**/*',
-				'client/incoming-redirect/**/*',
-				'client/mailing-lists/**/*',
-				'client/my-sites/customer-home/**/*',
-				'client/notifications/**/*',
-				'client/root.js',
-				'client/sections-filter.js',
-				'client/sections-helper.js',
-				'client/sections-middleware.js',
-				'client/sections-preloaders.js',
-				'client/sections.js',
-				'client/support/**/*',
-				'client/test-helpers/**/*',
-				'client/types.ts',
-				'client/webpack.config.desktop.js',
-				'client/webpack.config.js',
-				'client/webpack.config.node.js',
-				'desktop/e2e/**/*',
-				'desktop/webpack.config.js',
-				'packages/accessible-focus/**/*',
-				'packages/babel-plugin-i18n-calypso/**/*',
-				'packages/babel-plugin-transform-wpcalypso-async/**/*',
-				'packages/browser-data-collector/**/*',
-				'packages/calypso-analytics/**/*',
-				'packages/calypso-build/**/*',
-				'packages/calypso-codemods/**/*',
-				'packages/calypso-config/**/*',
-				'packages/calypso-e2e/**/*',
-				'packages/calypso-polyfills/**/*',
-				'packages/calypso-products/**/*',
-				'packages/calypso-stripe/**/*',
-				'packages/components/**/*',
-				'packages/composite-checkout/**/*',
-				'packages/create-calypso-config/**/*',
-				'packages/data-stores/**/*',
-				'packages/design-picker/**/*',
-				'packages/domain-picker/**/*',
-				'packages/eslint-plugin-wpcalypso/**/*',
-				'packages/explat-client-react-helpers/**/*',
-				'packages/explat-client/**/*',
-				'packages/format-currency/**/*',
-				'packages/i18n-calypso-cli/**/*',
-				'packages/i18n-calypso/**/*',
-				'packages/i18n-utils/**/*',
-				'packages/js-utils/**/*',
-				'packages/language-picker/**/*',
-				'packages/languages/**/*',
-				'packages/launch/**/*',
-				'packages/load-script/**/*',
-				'packages/mocha-debug-reporter/**/*',
-				'packages/onboarding/**/*',
-				'packages/page-pattern-modal/**/*',
-				'packages/photon/**/*',
-				'packages/plans-grid/**/*',
-				'packages/popup-monitor/**/*',
-				'packages/request-external-access/**/*',
-				'packages/search/**/*',
-				'packages/shopping-cart/**/*',
-				'packages/social-previews/**/*',
-				'packages/spec-junit-reporter/**/*',
-				'packages/spec-xunit-reporter/**/*',
-				'packages/state-utils/**/*',
-				'packages/tree-select/**/*',
-				'packages/viewport-react/**/*',
-				'packages/viewport/**/*',
-				'packages/webpack-config-flag-plugin/**/*',
-				'packages/webpack-inline-constant-exports-plugin/**/*',
-				'packages/whats-new/**/*',
-				'packages/wp-babel-makepot/**/*',
-				'packages/wpcom-checkout/**/*',
-				'packages/wpcom-proxy-request/**/*',
-				'packages/wpcom.js/**/*',
-				'test/client/**/*',
-				'test/e2e/**/*',
-				'test/server/**/*',
-			],
-			rules: {
-				'wpcalypso/import-docblock': 'off',
-				'import/order': [
-					'error',
-					{
-						'newlines-between': 'never',
-						alphabetize: {
-							order: 'asc',
-						},
-						groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
-					},
-				],
 			},
 		},
 	],
@@ -339,7 +237,15 @@ module.exports = {
 		],
 
 		// Only use known tag names plus `jest-environment`.
-		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
+		'jsdoc/check-tag-names': [
+			'error',
+			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+		],
+
+		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
+		'jsdoc/require-param-description': 'off',
+		'jsdoc/require-param': 'off',
+		'jsdoc/require-returns-description': 'off',
 
 		// Deprecated rule, fails in some valid cases with custom input components
 		'jsx-a11y/label-has-for': 'off',
@@ -358,7 +264,7 @@ module.exports = {
 					// Prevent naked import of gridicons module. Use 'components/gridicon' instead.
 					{
 						name: 'gridicons',
-						message: "Please use 'components/gridicon' instead.",
+						message: "Please use '@automattic/components' instead.",
 					},
 					// Prevent importing Redux's combineReducers.
 					{
@@ -459,6 +365,16 @@ module.exports = {
 		'import/namespace': 'error',
 		'import/default': 'error',
 		'import/no-duplicates': 'error',
+		'import/order': [
+			'error',
+			{
+				'newlines-between': 'never',
+				alphabetize: {
+					order: 'asc',
+				},
+				groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
+			},
+		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',

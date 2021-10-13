@@ -1,32 +1,20 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	isEcommercePlan,
 	isBusinessPlan,
 	isPremiumPlan,
 	isPersonalPlan,
 } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
+import { some } from 'lodash';
+import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DATE_FORMAT_SHORT = 'MMMM D';
@@ -89,7 +77,7 @@ const GMClosureNotice = ( {
 	const MAIN_MESSAGES = {
 		before: {
 			hasPlan: translate(
-				'Live chat support will be closed from %(closes_at)s until %(reopens_at)s. Email support will remain open.',
+				'Live chat support will be closed from %(closes_at)s until %(reopens_at)s. Customer support via email will remain open.',
 				{ args: mainMessageArgs }
 			),
 			nonPlan: translate(

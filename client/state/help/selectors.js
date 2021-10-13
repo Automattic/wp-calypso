@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getSelectedOrPrimarySiteId from 'calypso/state/selectors/get-selected-or-primary-site-id';
 import { getSite } from 'calypso/state/sites/selectors';
 

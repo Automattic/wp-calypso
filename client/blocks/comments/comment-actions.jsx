@@ -1,30 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * WordPress dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { changeCommentStatus } from 'calypso/state/comments/actions';
-import CommentLikeButtonContainer from './comment-likes';
-import CommentApproveAction from './comment-approve-action';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
+import { changeCommentStatus } from 'calypso/state/comments/actions';
+import CommentApproveAction from './comment-approve-action';
+import CommentLikeButtonContainer from './comment-likes';
 
-/**
- * Style dependencies
- */
 import './comment-actions.scss';
 
 const noop = () => {};

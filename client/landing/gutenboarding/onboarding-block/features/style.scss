@@ -6,12 +6,6 @@
 .gutenboarding-page.features {
 	padding-bottom: $onboarding-footer-height + 28px;
 
-	// TODO: This shouldn't be here. Find out why
-	// this is blue in features page but black in others.
-	.onboarding-title {
-		color: var( --studio-gray-100 );
-	}
-
 	.onboarding-subtitle {
 		// Just to make the 2nd sentence fall on second line.
 		max-width: 620px;

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ImageEditor from '../';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import ImageEditor from '../';
 
 class ImageEditorExample extends Component {
 	constructor() {

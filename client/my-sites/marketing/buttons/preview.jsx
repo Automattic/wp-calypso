@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import { filter, some } from 'lodash';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { filter, some } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import ButtonsLabelEditor from './label-editor';
-import ButtonsPreviewButtons from './preview-buttons';
-import ButtonsPreviewAction from './preview-action';
-import ButtonsTray from './tray';
-import { decodeEntities } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { decodeEntities } from 'calypso/lib/formatting';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ButtonsLabelEditor from './label-editor';
+import ButtonsPreviewAction from './preview-action';
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsTray from './tray';
 
-class SharingButtonsPreview extends React.Component {
+class SharingButtonsPreview extends Component {
 	static displayName = 'SharingButtonsPreview';
 
 	static propTypes = {

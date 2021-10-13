@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
-import EmptyContent from './empty';
-import Stream from 'calypso/reader/stream';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import FeedError from 'calypso/reader/feed-error';
-import { getSite } from 'calypso/state/reader/sites/selectors';
+import SiteBlocked from 'calypso/reader/site-blocked';
+import Stream from 'calypso/reader/stream';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
-import SiteBlocked from 'calypso/reader/site-blocked';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import EmptyContent from './empty';
 
-class SiteStream extends React.Component {
+class SiteStream extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		className: PropTypes.string,

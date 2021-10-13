@@ -1,32 +1,21 @@
-/**
- * External Dependencies
- */
-import React from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { get, defer } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import { get, defer } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
+import { createRef, createElement, Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
-import { translate } from 'i18n-calypso';
-import { preloadEditor } from 'calypso/sections-preloaders';
-import { Button } from '@automattic/components';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'calypso/reader/stats';
-import { getDailyPostType } from './helper';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getDailyPostType } from './helper';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function getPingbackAttributes( post ) {
@@ -43,7 +32,7 @@ function getPingbackAttributes( post ) {
 	};
 }
 
-export class DailyPostButton extends React.Component {
+export class DailyPostButton extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -52,7 +41,7 @@ export class DailyPostButton extends React.Component {
 
 		this._closeTimerId = null;
 		this._isMounted = false;
-		this.dailyPostButtonRef = React.createRef();
+		this.dailyPostButtonRef = createRef();
 	}
 
 	static propTypes = {
@@ -160,7 +149,7 @@ export class DailyPostButton extends React.Component {
 			return null;
 		}
 
-		return React.createElement(
+		return createElement(
 			this.props.tagName,
 			{
 				className: 'daily-post-button',

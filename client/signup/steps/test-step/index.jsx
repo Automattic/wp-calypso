@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import SubmitStepButton from 'calypso/signup/submit-step-button';
 
-export default class TestStep extends React.Component {
+export default class TestStep extends Component {
 	render() {
 		return (
 			<span>

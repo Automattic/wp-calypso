@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { FacebookPreview } from '@automattic/social-previews';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class FacebookSharePreview extends PureComponent {

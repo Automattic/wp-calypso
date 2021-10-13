@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
+import { Title } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Title } from '@automattic/onboarding';
+import * as React from 'react';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const AnchorError: React.FunctionComponent = () => {

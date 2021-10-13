@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
@@ -83,7 +82,7 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
 				)
 			);
-			page( `/me/concierge/${ siteSlug }/book` );
+			page( `/me/quickstart/${ siteSlug }/book` );
 		},
 		reschedule: ( siteId, siteSlug, sessionId ) => ( dispatch ) => {
 			dispatch(
@@ -94,7 +93,7 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
 				)
 			);
-			page( `/me/concierge/${ siteSlug }/${ sessionId }/cancel` );
+			page( `/me/quickstart/${ siteSlug }/${ sessionId }/cancel` );
 		},
 	}
 )( QuickStart );

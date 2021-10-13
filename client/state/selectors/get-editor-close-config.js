@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
+import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Gets the URL for the close button for the block editor, dependent previous referral state

@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { useTranslate } from 'i18n-calypso';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useGetDisplayDate from '../use-get-display-date';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import cloudErrorIcon from './icons/cloud-error.svg';
+
+import './style.scss';
 
 const BackupFailed = ( { backup } ) => {
 	const translate = useTranslate();

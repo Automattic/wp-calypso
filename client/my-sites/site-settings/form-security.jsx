@@ -1,27 +1,19 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import wrapSettingsForm from './wrap-settings-form';
-import Protect from './protect';
-import Sso from './sso';
+import { pick } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import { isATEnabled } from 'calypso/lib/automated-transfer';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Protect from './protect';
 import SpamFilteringSettings from './spam-filtering-settings';
-import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
+import Sso from './sso';
+import wrapSettingsForm from './wrap-settings-form';
 
 class SiteSettingsFormSecurity extends Component {
 	render() {
@@ -126,18 +118,17 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = partialRight( pick, [
-	'akismet',
-	'protect',
-	'jetpack_protect_global_whitelist',
-	'sso',
-	'jetpack_sso_match_by_email',
-	'jetpack_sso_require_two_step',
-	'wordpress_api_key',
-] );
+const getFormSettings = ( settings ) =>
+	pick( settings, [
+		'akismet',
+		'protect',
+		'jetpack_protect_global_whitelist',
+		'sso',
+		'jetpack_sso_match_by_email',
+		'jetpack_sso_require_two_step',
+		'wordpress_api_key',
+	] );
 
-export default flowRight(
-	connectComponent,
-	localize,
-	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormSecurity );
+export default connectComponent(
+	localize( wrapSettingsForm( getFormSettings )( SiteSettingsFormSecurity ) )
+);

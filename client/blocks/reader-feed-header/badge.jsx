@@ -1,9 +1,5 @@
-/**
- * External Dependencies
- */
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 
 const ReaderFeedHeaderSiteBadge = ( { site } ) => {
 	/* eslint-disable wpcalypso/jsx-gridicon-size */

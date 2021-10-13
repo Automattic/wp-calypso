@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
 import { getPost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { isSitePreviewable } from 'calypso/state/sites/selectors';
-import { setAllSitesPreviewSiteId, setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setAllSitesPreviewSiteId, setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { bumpStatGenerator } from './utils';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {

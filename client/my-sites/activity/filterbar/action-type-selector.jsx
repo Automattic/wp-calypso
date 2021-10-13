@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
+import { Button, Card, Popover, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, without, isEmpty, find } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import { createRef, Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Popover from 'calypso/components/popover';
-import { requestActivityActionTypeCounts } from 'calypso/state/data-getters';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { requestActivityActionTypeCounts } from 'calypso/state/data-getters';
 import MobileSelectPortal from './mobile-select-portal';
 
 export class ActionTypeSelector extends Component {
@@ -29,7 +20,7 @@ export class ActionTypeSelector extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.activityTypeButton = React.createRef();
+		this.activityTypeButton = createRef();
 	}
 
 	resetActivityTypeSelector = ( event ) => {

@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog, Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function DeleteSiteWarningDialog( { isVisible, onClose } ) {

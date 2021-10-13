@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import bodyParser from 'body-parser';
 import qs from 'qs';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 
 function loginEndpointData() {
@@ -75,7 +68,7 @@ function redirectToCalypso( request, response, next ) {
 export default function ( app ) {
 	return app.post(
 		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
-		bodyParser.urlencoded(),
+		bodyParser.urlencoded( { extended: true } ),
 		loginWithApple,
 		redirectToCalypso
 	);

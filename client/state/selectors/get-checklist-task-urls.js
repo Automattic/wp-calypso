@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { createSelector } from '@automattic/state-utils';
 import { find, get, some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
-import { createSelector } from '@automattic/state-utils';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 
 export const FIRST_TEN_SITE_POSTS_QUERY = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
@@ -56,5 +49,8 @@ export default createSelector(
 			woocommerce_setup: getSiteUrl( state, siteId ) + '/wp-admin/admin.php?page=wc-admin',
 		};
 	},
-	( state, siteId ) => [ getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ) ]
+	( state, siteId ) => [
+		getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ),
+		getFrontPageEditorUrl( state, siteId ),
+	]
 );

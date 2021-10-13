@@ -1,10 +1,10 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isDomainMapping,
+} from '@automattic/calypso-products';
 import debugModule from 'debug';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React from 'react';
 import {
 	clone,
 	defer,
@@ -19,30 +19,26 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import * as oauthToken from 'calypso/lib/oauth-token';
-import {
-	isDomainRegistration,
-	isDomainTransfer,
-	isDomainMapping,
-} from '@automattic/calypso-products';
-import SignupFlowController from 'calypso/lib/signup/flow-controller';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import {
 	recordSignupStart,
 	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
 } from 'calypso/lib/analytics/signup';
-import DocumentHead from 'calypso/components/data/document-head';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import * as oauthToken from 'calypso/lib/oauth-token';
+import SignupFlowController from 'calypso/lib/signup/flow-controller';
+import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
+import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
+import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -51,29 +47,25 @@ import {
 	currentUserHasFlag,
 	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
-import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
-import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { showSitePreview, hideSitePreview } from 'calypso/state/signup/preview/actions';
-import steps from './config/steps';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
-import {
-	canResumeFlow,
-	getCompletedSteps,
-	getDestination,
-	getFirstInvalidStep,
-	getStepUrl,
-} from './utils';
+import steps from './config/steps';
+import { addP2SignupClassName } from './controller';
+import SiteMockups from './site-mockup';
 import {
 	persistSignupDestination,
 	retrieveSignupDestination,
@@ -84,18 +76,16 @@ import {
 	setSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
 } from './storageUtils';
+import {
+	canResumeFlow,
+	getCompletedSteps,
+	getDestination,
+	getFirstInvalidStep,
+	getStepUrl,
+	isReskinnedFlow,
+} from './utils';
 import WpcomLoginForm from './wpcom-login-form';
-import SiteMockups from './site-mockup';
-import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
-import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
-
-/**
- * Style dependencies
- */
 import './style.scss';
-import { addP2SignupClassName } from './controller';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -126,11 +116,13 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
-function isReskinnedFlow( flowName ) {
-	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+function showProgressIndicator( flowName ) {
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site' ];
+
+	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
 
-class Signup extends React.Component {
+class Signup extends Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
@@ -589,11 +581,15 @@ class Signup extends React.Component {
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
+			const destination = this.signupFlowController.getDestination();
 
 			return (
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
+					// If destination is not setup-site flow, we'll apply default design now
+					// because the user cannot choose design in current flow
+					hasAppliedDesign={ ! destination.startsWith( '/start/setup-site' ) }
 				/>
 			);
 		}
@@ -707,8 +703,6 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 
 		return (
@@ -719,7 +713,7 @@ class Signup extends React.Component {
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
 						rightComponent={
-							showProgressIndicator && (
+							showProgressIndicator( this.props.flowName ) && (
 								<FlowProgressIndicator
 									positionInFlow={ this.getPositionInFlow() }
 									flowLength={ this.getInteractiveStepsCount() }

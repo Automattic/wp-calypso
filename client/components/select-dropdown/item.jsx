@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
 import Count from 'calypso/components/count';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
@@ -29,7 +21,7 @@ class SelectDropdownItem extends Component {
 		selected: false,
 	};
 
-	linkRef = React.createRef();
+	linkRef = createRef();
 
 	// called by the parent `SelectDropdown` component to focus the item on keyboard navigation
 	focusLink() {

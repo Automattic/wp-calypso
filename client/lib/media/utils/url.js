@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import photon from 'photon';
-
-/**
- * Internal dependencies
- */
 import resize from 'calypso/lib/resize-image-url';
 
 /**

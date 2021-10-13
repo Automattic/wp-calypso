@@ -1,37 +1,17 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { sample } from 'lodash';
-import store from 'store';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * WordPress dependencies
- */
+import { Dialog, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { Dialog } from '@automattic/components';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
-
-/**
- * Image dependencies
- */
+import { sample } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import store from 'store';
 import wordpressLogoImage from 'calypso/assets/images/illustrations/logo-jpc.svg';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -74,7 +54,7 @@ export const getPromoLink = ( location, promoDetails ) => {
 	return `https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`;
 };
 
-export class AppPromo extends React.Component {
+export class AppPromo extends Component {
 	static displayName = 'AppPromo';
 
 	static propTypes = {

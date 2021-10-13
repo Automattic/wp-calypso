@@ -1,14 +1,10 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ *WARNING: No ES6 modules here. Not transpiled! ****
  */
-/* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
+const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 /**
  * Internal variables
@@ -24,7 +20,6 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
  * @param   {object}  env                           environment options
  * @param   {object}  argv                          options map
  * @param   {object}  argv.entry                    Entry point(s)

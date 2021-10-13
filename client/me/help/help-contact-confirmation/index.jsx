@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'HelpContactConfirmation';
 
 	static propTypes = {

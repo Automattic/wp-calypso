@@ -1,38 +1,24 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { Card, Button } from '@automattic/components';
+import { PanelBody } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * WordPress dependencies
- */
-import { PanelBody } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
+import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import ExternalLink from 'calypso/components/external-link';
 import MaterialIcon from 'calypso/components/material-icon';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getHttpData, requestHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import RestorePasswordDialog from './restore-db-password';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
-import ExternalLink from 'calypso/components/external-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getHttpData, requestHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import RestorePasswordDialog from './restore-db-password';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const requestId = ( siteId ) => `pma-link-request-${ siteId }`;

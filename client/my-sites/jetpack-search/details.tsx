@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
 import { translate } from 'i18n-calypso';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
 import JetpackSearchLogo from './logo';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 interface Props {
 	isSearchEnabled: boolean;

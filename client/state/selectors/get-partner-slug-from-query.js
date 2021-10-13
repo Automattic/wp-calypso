@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 
 /**

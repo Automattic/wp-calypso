@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
 
 const noop = () => {};
 

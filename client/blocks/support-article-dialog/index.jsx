@@ -1,12 +1,4 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
 import isInlineSupportArticleVisible from 'calypso/state/selectors/is-inline-support-article-visible';
 

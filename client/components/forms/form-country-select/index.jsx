@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEmpty, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class FormCountrySelect extends Component {

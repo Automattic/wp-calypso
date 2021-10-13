@@ -4,16 +4,8 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testOnBlur", "expect.*"] }] */
 
-/**
- * External dependencies
- */
 import { render, mount } from 'enzyme';
 import { filter, map } from 'lodash';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import fixtures from './lib/fixtures';
 import TokenFieldWrapper from './lib/token-field-wrapper';
 

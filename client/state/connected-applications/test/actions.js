@@ -1,18 +1,15 @@
-/**
- * Internal dependencies
- */
-import {
-	deleteConnectedApplication,
-	deleteConnectedApplicationSuccess,
-	receiveConnectedApplications,
-	requestConnectedApplications,
-} from '../actions';
 import {
 	CONNECTED_APPLICATION_DELETE,
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
 	CONNECTED_APPLICATIONS_RECEIVE,
 	CONNECTED_APPLICATIONS_REQUEST,
 } from 'calypso/state/action-types';
+import {
+	deleteConnectedApplication,
+	deleteConnectedApplicationSuccess,
+	receiveConnectedApplications,
+	requestConnectedApplications,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( 'requestConnectedApplications()', () => {

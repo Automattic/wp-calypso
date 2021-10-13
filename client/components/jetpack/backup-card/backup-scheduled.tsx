@@ -1,33 +1,20 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import React, { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-/**
- * Style dependencies
- */
-import './style.scss';
-import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-schedule.svg';
-
-/**
- * Type dependencies
- */
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Moment } from 'moment';
+
+import './style.scss';
 
 type Props = { lastBackupDate: Moment; isFeatured: boolean };
 

@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { addQueryArgs } from '@wordpress/url';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
+import { ReactElement, FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PromoCard from 'calypso/components/promo-section/promo-card';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
-import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
-import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';

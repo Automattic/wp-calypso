@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
-import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DEFAULT_HEIGHT = 20;

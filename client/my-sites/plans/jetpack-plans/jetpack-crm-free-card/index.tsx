@@ -1,30 +1,17 @@
-/**
- * External dependencies
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	PRODUCT_JETPACK_CRM_FREE,
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
+import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-
-/**
- * Type dependencies
- */
 import type { Duration, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type OwnProps = {

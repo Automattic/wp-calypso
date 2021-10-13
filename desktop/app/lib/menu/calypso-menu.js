@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );

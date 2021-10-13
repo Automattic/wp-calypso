@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import * as React from 'react';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+
+import './style.scss';
 
 interface Props {
 	threat: Threat;
 	action: 'fix' | 'ignore';
 	siteName: string;
 	showDialog: boolean;
-	onCloseDialog: Function;
-	onConfirmation: Function;
+	onCloseDialog: ( action?: string | React.MouseEvent ) => void;
+	onConfirmation: React.MouseEventHandler;
 }
 
 const ThreatDialog: React.FC< Props > = ( {

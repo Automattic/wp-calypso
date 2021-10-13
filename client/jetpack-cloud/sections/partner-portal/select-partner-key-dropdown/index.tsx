@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { ReactElement, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import {
 	getActivePartnerKeyId,
 	getCurrentPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import SelectDropdown from 'calypso/components/select-dropdown';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function SelectPartnerKeyDropdown(): ReactElement | null {

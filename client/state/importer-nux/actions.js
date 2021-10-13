@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	IMPORTER_NUX_SITE_DETAILS_SET,
 	IMPORTER_NUX_URL_INPUT_SET,

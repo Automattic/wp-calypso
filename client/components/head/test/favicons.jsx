@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Favicons from '../favicons';
+
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 describe( 'Favicons', () => {
 	beforeEach( () => {

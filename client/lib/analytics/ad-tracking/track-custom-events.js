@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { debug, TRACKING_IDS } from './constants';
 
 // Ensure setup has run.

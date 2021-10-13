@@ -1,45 +1,34 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { trim, flatMap } from 'lodash';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { CompactCard } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { trim, flatMap } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import SearchInput from 'calypso/components/search';
-import { recordAction } from 'calypso/reader/stats';
-import SiteResults from './site-results';
-import PostResults from './post-results';
-import ReaderMain from 'calypso/reader/components/reader-main';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
-import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
+import withDimensions from 'calypso/lib/with-dimensions';
+import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import FollowButton from 'calypso/reader/follow-button';
+import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
+import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import { recordAction } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
 	SORT_BY_RELEVANCE,
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
-import withDimensions from 'calypso/lib/with-dimensions';
-import SuggestionProvider from './suggestion-provider';
-import Suggestion from './suggestion';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
-import FollowButton from 'calypso/reader/follow-button';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
-import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import PostResults from './post-results';
+import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
+import SiteResults from './site-results';
+import Suggestion from './suggestion';
+import SuggestionProvider from './suggestion-provider';
 import './style.scss';
 
 const WIDE_DISPLAY_CUTOFF = 660;
@@ -111,6 +100,9 @@ class SearchStream extends React.Component {
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );
+		const segmentedControlClass = wideDisplay
+			? 'search-stream__sort-picker is-wide'
+			: 'search-stream__sort-picker';
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
@@ -170,22 +162,6 @@ class SearchStream extends React.Component {
 							initialValue={ query || '' }
 							value={ query || '' }
 						/>
-						{ query && (
-							<SegmentedControl compact className="search-stream__sort-picker">
-								<SegmentedControl.Item
-									selected={ sortOrder !== 'date' }
-									onClick={ this.useRelevanceSort }
-								>
-									{ TEXT_RELEVANCE_SORT }
-								</SegmentedControl.Item>
-								<SegmentedControl.Item
-									selected={ sortOrder === 'date' }
-									onClick={ this.useDateSort }
-								>
-									{ TEXT_DATE_SORT }
-								</SegmentedControl.Item>
-							</SegmentedControl>
-						) }
 					</CompactCard>
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
@@ -202,6 +178,19 @@ class SearchStream extends React.Component {
 								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
 						</div>
+					) }
+					{ query && (
+						<SegmentedControl compact className={ segmentedControlClass }>
+							<SegmentedControl.Item
+								selected={ sortOrder !== 'date' }
+								onClick={ this.useRelevanceSort }
+							>
+								{ TEXT_RELEVANCE_SORT }
+							</SegmentedControl.Item>
+							<SegmentedControl.Item selected={ sortOrder === 'date' } onClick={ this.useDateSort }>
+								{ TEXT_DATE_SORT }
+							</SegmentedControl.Item>
+						</SegmentedControl>
 					) }
 					{ query && (
 						<SearchStreamHeader

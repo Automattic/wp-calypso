@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { throttle, values } from 'lodash';
-import { localize } from 'i18n-calypso';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import compareProps from 'calypso/lib/compare-props';
-import Month from './month';
 import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { throttle, values } from 'lodash';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SectionHeader from 'calypso/components/section-header';
+import compareProps from 'calypso/lib/compare-props';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Month from './month';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PostTrends extends React.Component {
+class PostTrends extends Component {
 	static displayName = 'PostTrends';
 
 	static propTypes = {
@@ -40,8 +30,8 @@ class PostTrends extends React.Component {
 		canScrollRight: false,
 	};
 
-	wrapperRef = React.createRef();
-	yearRef = React.createRef();
+	wrapperRef = createRef();
+	yearRef = createRef();
 
 	componentDidMount() {
 		const node = this.wrapperRef.current;

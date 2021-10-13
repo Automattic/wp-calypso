@@ -1,6 +1,3 @@
-/**
- * WordPress dependencies
- */
 import '@automattic/calypso-polyfills';
 
 import * as AnonId from '../anon-id';

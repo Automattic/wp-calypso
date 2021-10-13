@@ -4,18 +4,10 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["TestUtils.*"] }] */
 
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { expect } from 'chai';
-import Gridicon from 'calypso/components/gridicon';
-import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
+import TestUtils from 'react-dom/test-utils';
 import FormRange from '../';
 
 describe( 'index', () => {

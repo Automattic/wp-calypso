@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 
 const ReaderSubscriptionListItemPlaceholder = () => {

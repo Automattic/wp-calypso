@@ -24,6 +24,7 @@ Release notes:
 <!--
 As you complete the tasks in this list, please update the relevant lines with diff and other IDs
 -->
+
 **Install and activate**
 - [ ] Copy & install [v#.#.#]-rc.1 (######-code, ######-code)
 - [ ] Activate [v#.#.#]-rc.1 on edge (######-code)
@@ -46,6 +47,7 @@ As you complete the tasks in this list, please update the relevant lines with di
 - [ ] Clean up unused releases
 - [ ] Add log entry to the Gutenberg Upgrade Log (pcoGjb-g-p2)
 - [ ] [Open a new issue](https://github.com/Automattic/wp-calypso/issues/new?assignees=&labels=gutenberg-upgrade%2C+%5BType%5D+Task&template=gutenberg-plugin-upgrade.md&title=Gutenberg%3A+%5Bv%23.%23.%23%5D+plugin+upgrade) for the next upgrade, transfer remaining tasks, close this issue.
+
 
  ### Blockers 🤷‍♀️
 

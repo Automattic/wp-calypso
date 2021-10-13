@@ -57,8 +57,7 @@ export default function transformer( file, api ) {
 	 * Removes the extra newlines between two import statements
 	 * caused by `insertAfter()`:
 	 *
-	 * @link https://github.com/benjamn/recast/issues/371
-	 *
+	 * @see {@link https://github.com/benjamn/recast/issues/371}
 	 * @param  {string} str String
 	 * @returns {string}     Cleaned string
 	 */
@@ -131,7 +130,6 @@ export default function transformer( file, api ) {
 	 *      page.redirect('/bar');
 	 *   }
 	 * }
-	 *
 	 * @param  {object}  node AST Node
 	 * @returns {boolean}      True if any `page.redirect()` exist inside the function node, otherwise False
 	 */
@@ -221,7 +219,6 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
-	 *
 	 * @param {object} path Path object that wraps a single node
 	 * @returns {object} Single node object
 	 */
@@ -249,7 +246,6 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
-	 *
 	 * @param {object} path Path object that wraps a single node
 	 * @returns {object} Single node object
 	 */
@@ -285,7 +281,6 @@ export default function transformer( file, api ) {
 	 * ```
 	 * context.primary = <Example />;
 	 * ```
-	 *
 	 * @param {object} path Path object that wraps a single node
 	 * @param {object} expressionCallee `callee` parameter for finding `CallExpression` nodes.
 	 * @returns {object} Single node object

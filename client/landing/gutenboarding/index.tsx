@@ -1,34 +1,23 @@
-/**
- * External dependencies
- */
 import '@automattic/calypso-polyfills';
-import * as React from 'react';
-import ReactDom from 'react-dom';
-import { isEqual } from 'lodash';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import config from '@automattic/calypso-config';
-import { subscribe, select, dispatch } from '@wordpress/data';
-import { initializeAnalytics } from '@automattic/calypso-analytics';
-import type { Site as SiteStore } from '@automattic/data-stores';
 import accessibleFocus from '@automattic/accessible-focus';
+import { initializeAnalytics } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getAvailableDesigns } from '@automattic/design-picker';
+import { subscribe, select, dispatch } from '@wordpress/data';
+import { isEqual } from 'lodash';
+import ReactDom from 'react-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import { LocaleContext } from './components/locale-context';
+import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
+import { setupWpDataDebug } from './devtools';
+import Gutenboard from './gutenboard';
+import { Step, path } from './path';
+import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
+import { SITE_STORE } from './stores/site';
+import type { Site as SiteStore } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 
-/**
- * Internal dependencies
- */
-import Gutenboard from './gutenboard';
-import { LocaleContext } from './components/locale-context';
-import { setupWpDataDebug } from './devtools';
-import { Step, path } from './path';
-import { SITE_STORE } from './stores/site';
-import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
-
-/**
- * Style dependencies
- */
 import 'calypso/assets/stylesheets/gutenboarding.scss';
 import 'calypso/components/environment-badge/style.scss';
 

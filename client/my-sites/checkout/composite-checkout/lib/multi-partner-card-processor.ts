@@ -1,28 +1,22 @@
-/**
- * External dependencies
- */
+import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
-import getDomainDetails from './get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:multi-partner-card-processor' );
 
@@ -36,6 +30,7 @@ type StripeCardTransactionRequest = {
 	name: string;
 	countryCode: string | undefined;
 	postalCode: string | undefined;
+	cardNumberElement: StripeCardNumberElement;
 };
 
 type EbanxCardTransactionRequest = {
@@ -87,7 +82,7 @@ async function stripeCardProcessor(
 		debug( 'transaction failed' );
 		// Errors here are "expected" errors, meaning that they (hopefully) come
 		// from stripe and not from some bug in the frontend code.
-		return makeErrorResponse( error.message );
+		return makeErrorResponse( ( error as Error ).message );
 	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
@@ -117,7 +112,7 @@ async function stripeCardProcessor(
 				// 3DS authentication required
 				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
-					submitData.stripeConfiguration,
+					submitData.stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
 			}
@@ -166,7 +161,7 @@ async function ebanxCardProcessor(
 		debug( 'transaction failed' );
 		// Errors here are "expected" errors, meaning that they (hopefully) come
 		// from Ebanx and not from some bug in the frontend code.
-		return makeErrorResponse( error.message );
+		return makeErrorResponse( ( error as Error ).message );
 	}
 
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
@@ -236,6 +231,9 @@ function isValidStripeCardTransactionData(
 	if ( ! data?.stripeConfiguration ) {
 		throw new Error( 'Transaction requires stripeConfiguration and none was provided' );
 	}
+	if ( ! data.cardNumberElement ) {
+		throw new Error( 'Transaction requires credit card field and none was provided' );
+	}
 	return true;
 }
 
@@ -251,16 +249,18 @@ function isValidEbanxCardTransactionData(
 
 function createStripePaymentMethodToken( {
 	stripe,
+	cardNumberElement,
 	name,
 	country,
 	postalCode,
 }: {
 	stripe: Stripe;
+	cardNumberElement: StripeCardNumberElement;
 	name: string | undefined;
 	country: string | undefined;
 	postalCode: string | undefined;
 } ) {
-	return createStripePaymentMethod( stripe, {
+	return createStripePaymentMethod( stripe, cardNumberElement, {
 		name,
 		address: {
 			country,

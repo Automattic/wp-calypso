@@ -14,12 +14,13 @@
 		"node_modules"
 	],
 	"license": "GPL-2.0-or-later",
-	"bin": {
-		"effective-module-tree": "./cli.js"
-	},
+	"bin": "./cli.js",
 	"dependencies": {
 		"debug": "^4.1.1",
 		"object-treeify": "^1.1.23",
 		"yargs": "^17.0.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

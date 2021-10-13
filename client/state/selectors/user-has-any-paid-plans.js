@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { createSelector } from '@automattic/state-utils';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlan } from '@automattic/calypso-products';
+import { createSelector } from '@automattic/state-utils';
+import { some } from 'lodash';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 /**
  * Whether the user currently has any paid plans

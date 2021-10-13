@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { Moment } from 'moment';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
+import type { Moment } from 'moment';
 
 interface Props {
 	statType?: string;

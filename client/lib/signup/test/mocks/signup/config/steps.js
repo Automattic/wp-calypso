@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { defer } from 'lodash';
 
 export default {
@@ -107,5 +103,3 @@ export default {
 		optionalDependencies: [ 'surveyQuestion' ],
 	},
 };
-
-export const isDomainStepSkippable = jest.fn( () => false );

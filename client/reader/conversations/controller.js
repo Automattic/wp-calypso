@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { sectionify } from 'calypso/lib/route';
-import { recordTrack } from 'calypso/reader/stats';
 import AsyncLoad from 'calypso/components/async-load';
+import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
+import { recordTrack } from 'calypso/reader/stats';
 
 export function conversations( context, next ) {
 	const basePath = sectionify( context.path );

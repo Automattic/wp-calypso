@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-/**
- * Mock dependencies
- */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
@@ -14,14 +11,6 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
 jest.mock( 'calypso/state/selectors/get-site-scan-state' );
-
-/**
- * Internal dependencies
- */
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 
 describe( 'HasVaultPressSwitch', () => {
 	beforeAll( () => {

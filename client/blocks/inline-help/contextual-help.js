@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import { compact, get } from 'lodash';
 import i18n, { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 /**
  * Module variables
@@ -585,9 +577,9 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://wordpress.com/support/webmaster-tools/' ),
+			link: localizeUrl( 'https://wordpress.com/support/site-verification-services/' ),
 			post_id: 5022,
-			title: translate( 'Webmaster Tools' ),
+			title: translate( 'Site Verification Services' ),
 			description: translate(
 				'Learn how to verify your WordPress.com site for the webmaster tools that many search engines provide.'
 			),
@@ -684,15 +676,6 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 		{
-			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
-			post_id: 12112,
-			title: translate( 'Premium Themes' ),
-			description: translate(
-				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
-					'no extra cost, as many times as you’d like.'
-			),
-		},
-		{
 			link: localizeUrl(
 				'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/child-themes/'
 			),
@@ -712,15 +695,6 @@ const getContextLinksForSection = () => ( {
 			description: translate(
 				'A theme controls the general look and feel of your site including things like ' +
 					'page layout, widget locations, and default font.'
-			),
-		},
-		{
-			link: localizeUrl( 'https://wordpress.com/support/premium-themes/' ),
-			post_id: 12112,
-			title: translate( 'Premium Themes' ),
-			description: translate(
-				'On a site with the Premium or Business plan, you can switch to any premium theme at ' +
-					'no extra cost, as many times as you’d like.'
 			),
 		},
 		{
@@ -1485,15 +1459,15 @@ export function getContextResults( section ) {
 
 	// make sure editorially to show at most one tour and one video at once
 	// `first` is a safe-guard in case that fails
-	const video = get( videosForSection, section )?.[ 0 ];
-	const tour = get( toursForSection, section )?.[ 0 ];
-	const links = get( contextLinksForSection, section, fallbackLinks );
+	const video = videosForSection[ section ]?.[ 0 ];
+	const tour = toursForSection[ section ]?.[ 0 ];
+	const links = contextLinksForSection[ section ] ?? fallbackLinks;
 
 	// If true, still display fallback links in addition (as opposed to instead
 	// of) the other context links.
 	if ( section === 'home' ) {
-		return compact( [ tour, video, ...getFallbackLinks(), ...links ] );
+		return [ tour, video, ...getFallbackLinks(), ...links ].filter( Boolean );
 	}
 
-	return compact( [ tour, video, ...links ] );
+	return [ tour, video, ...links ].filter( Boolean );
 }

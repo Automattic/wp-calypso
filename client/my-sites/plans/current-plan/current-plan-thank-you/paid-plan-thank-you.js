@@ -1,26 +1,14 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { Button, ProgressBar, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import React, { Component, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import fireworksIllustration from 'calypso/assets/images/illustrations/fireworks.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import { SETTING_UP_PREMIUM_SERVICES } from 'calypso/lib/url/support';
-import { Button, ProgressBar } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThankYou from './thank-you';
-
-/**
- * Image dependencies
- */
-import fireworksIllustration from 'calypso/assets/images/illustrations/fireworks.svg';
 
 const INSTALL_STATE_COMPLETE = 1;
 const INSTALL_STATE_INCOMPLETE = 2;

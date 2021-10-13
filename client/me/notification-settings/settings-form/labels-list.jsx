@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { getLabelForSetting } from './locales';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'NotificationSettingsFormLabelList';
 
 	static propTypes = {

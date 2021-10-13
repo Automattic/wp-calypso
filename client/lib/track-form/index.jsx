@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import debugFactory from 'debug';
+import { Component } from 'react';
 
 const debug = debugFactory( 'calypso:track-form' );
 

@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const stateImpliesJetpackIsDisconnected = ( productState?: {
 	state?: string;

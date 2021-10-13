@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { createElement } from 'react';
 import SiteBlockListComponent from 'calypso/me/site-blocks/main';
 
 export function siteBlockList( context, next ) {
-	context.primary = React.createElement( SiteBlockListComponent );
+	context.primary = createElement( SiteBlockListComponent );
 	next();
 }

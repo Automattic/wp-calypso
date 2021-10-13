@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
+import { Component } from 'react';
 
-import React, { Component } from 'react';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class VerticalNav extends Component {

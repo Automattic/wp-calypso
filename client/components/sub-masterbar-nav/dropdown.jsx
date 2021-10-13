@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Item from './item';
 
 const OptionShape = PropTypes.shape( {

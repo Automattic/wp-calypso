@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import React from 'react';
-import PropTypes from 'prop-types';
+import { RootChild, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, without } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { RootChild } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import ReactDom from 'react-dom';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-export class DropZone extends React.Component {
+export class DropZone extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		fullScreen: PropTypes.bool,
@@ -50,7 +39,7 @@ export class DropZone extends React.Component {
 		isDraggingOverElement: false,
 	};
 
-	zoneRef = React.createRef();
+	zoneRef = createRef();
 
 	componentDidMount() {
 		this.dragEnterNodes = [];

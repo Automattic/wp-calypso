@@ -1,37 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
+import Site from 'calypso/blocks/site';
+import FoldableCard from 'calypso/components/foldable-card';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
-import Site from 'calypso/blocks/site';
+import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PluginSiteNetwork extends React.Component {
+class PluginSiteNetwork extends Component {
 	static displayName = 'PluginSiteNetwork';
 
 	static propTypes = {

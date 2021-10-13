@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'calypso/state/action-types';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noticeOptions = ( siteId ) => ( {
 	duration: 8000,
@@ -42,6 +34,7 @@ export const requestPlanOwnershipTransfer = ( action ) =>
  * Dispatches a success notice when the request succeeded.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.siteId
  * @returns {object} Success notice action
  */
 export const handleTransferSuccess = ( { siteId } ) => [
@@ -56,7 +49,9 @@ export const handleTransferSuccess = ( { siteId } ) => [
  * Dispatches an error notice when the request failed.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.siteId
  * @param   {object} error  Error object
+ * @param   {string} error.message
  * @returns {object} Error notice action
  */
 export const handleTransferError = ( { siteId }, { message } ) =>

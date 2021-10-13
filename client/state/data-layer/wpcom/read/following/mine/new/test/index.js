@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import { requestFollow, receiveFollow, followError } from '../';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
+import { requestFollow, receiveFollow, followError } from '../';
 
 describe( 'requestFollow', () => {
 	test( 'should dispatch a http request', () => {
@@ -42,6 +39,7 @@ describe( 'receiveFollow', () => {
 				date_subscribed: '1976-09-15T12:00:00Z',
 				delivery_methods: {},
 				is_owner: false,
+				last_updated: null,
 			},
 		};
 		const result = receiveFollow( action, response );
@@ -56,6 +54,7 @@ describe( 'receiveFollow', () => {
 					date_subscribed: 211636800000,
 					delivery_methods: {},
 					is_owner: false,
+					last_updated: NaN,
 				} )
 			)
 		);

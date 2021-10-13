@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { number } from 'prop-types';
 import classnames from 'classnames';
+import { number } from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PulsingDot extends React.Component {
+class PulsingDot extends Component {
 	timeout = null;
 
 	state = {

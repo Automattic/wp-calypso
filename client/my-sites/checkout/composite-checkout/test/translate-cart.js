@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 
 describe( 'translateResponseCartToWPCOMCart', function () {

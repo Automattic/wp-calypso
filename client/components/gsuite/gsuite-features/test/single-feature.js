@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import renderer from 'react-test-renderer';
-
-/**
- * Internal dependencies
- */
 import GSuiteSingleFeature from '../single-feature';
 
 describe( 'GSuiteSingleFeature', () => {

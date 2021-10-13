@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchLogo from './logo';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

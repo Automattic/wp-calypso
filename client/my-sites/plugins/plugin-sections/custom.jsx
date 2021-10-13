@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SectionNav from 'calypso/components/section-nav';
 import { sanitizeSectionContent } from 'calypso/lib/plugins/sanitize-section-content';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PluginSectionsCustom = ( { plugin, translate } ) => {

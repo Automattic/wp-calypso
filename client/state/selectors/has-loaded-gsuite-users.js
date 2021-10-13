@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 
 /**

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,
@@ -15,6 +8,7 @@ import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
+	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,
 	HAPPYCHAT_IO_RECEIVE_RECONNECTING,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
@@ -132,6 +126,18 @@ export const receiveLocalizedSupport = ( isAvailable ) => ( {
  * @returns {object} Action object
  */
 export const receiveMessage = ( message ) => ( { type: HAPPYCHAT_IO_RECEIVE_MESSAGE, message } );
+
+/**
+ * Returns an action object for the optimistic message event,
+ * as it was received from Happychat.
+ *
+ * @param  {object} message Message received
+ * @returns {object} Action object
+ */
+export const receiveMessageOptimistic = ( message ) => ( {
+	type: HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
+	message: { ...message, isOptimistic: true },
+} );
 
 /**
  * Returns an action object for the message update event,

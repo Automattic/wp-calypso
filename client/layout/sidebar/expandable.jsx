@@ -1,37 +1,29 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useMemo, useState, useRef, useLayoutEffect } from 'react';
+import { Children, createRef, useMemo, useState, useRef, useLayoutEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { get } from 'lodash';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import TranslatableString from 'calypso/components/translatable/proptype';
-import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
-import { hasTouch } from 'calypso/lib/touch-detect';
 import HoverIntent from 'calypso/lib/hover-intent';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import ExpandableSidebarHeading from './expandable-heading';
 
 const isTouch = hasTouch();
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, ( child ) => {
+	Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
 
-		if ( get( child, 'props.selected' ) ) {
+		if ( child?.props?.selected ) {
 			selectedItemFound = true;
 		} else {
-			const descendants = get( child, 'props.children' );
+			const descendants = child?.props?.children;
 
 			if ( descendants ) {
 				selectedItemFound = containsSelectedSidebarItem( descendants );
@@ -61,7 +53,7 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
-	const menu = React.createRef(); // Needed for HoverIntent.
+	const menu = createRef(); // Needed for HoverIntent.
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 	const isUnifiedMenuEnabled = useSelector( isNavUnificationEnabled );

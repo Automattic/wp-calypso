@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { Dialog } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { getPostRevisionsSelectedRevision } from 'calypso/state/posts/selectors/get-post-revisions-selected-revision';
-import { isPostRevisionsDialogVisible } from 'calypso/state/posts/selectors/is-post-revisions-dialog-visible';
-import { getEditorPostId } from 'calypso/state/editor/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import EditorRevisions from 'calypso/post-editor/editor-revisions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
 import {
 	closePostRevisionsDialog,
 	selectPostRevision,
 } from 'calypso/state/posts/revisions/actions';
-import EditorRevisions from 'calypso/post-editor/editor-revisions';
-import CloseOnEscape from 'calypso/components/close-on-escape';
+import { getPostRevisionsSelectedRevision } from 'calypso/state/posts/selectors/get-post-revisions-selected-revision';
+import { isPostRevisionsDialogVisible } from 'calypso/state/posts/selectors/is-post-revisions-dialog-visible';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {

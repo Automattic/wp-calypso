@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Rating from 'calypso/components/rating';
 
 describe( '<Rating />', () => {

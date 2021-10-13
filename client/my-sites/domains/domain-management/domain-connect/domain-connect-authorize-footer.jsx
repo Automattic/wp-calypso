@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { actionType } from './constants';
 
 class DomainConnectAuthorizeFooter extends Component {

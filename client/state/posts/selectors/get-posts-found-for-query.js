@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
 
 import 'calypso/state/posts/init';

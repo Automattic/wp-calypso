@@ -1,4 +1,5 @@
 const path = require( 'path' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 
 module.exports = {
 	// Allow fetch api function usage (and similar)
@@ -14,9 +15,14 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: [ '**/test/**/*' ],
+			files: [ './webpack.*.js', './server/**/*', '**/test/**/*' ],
+			...nodeConfig,
+		},
+		{
+			files: [ './**/docs/example.jsx' ],
 			rules: {
-				'import/no-nodejs-modules': 'off',
+				// We use a log of console.log() in examples.
+				'no-console': 'off',
 			},
 		},
 	],

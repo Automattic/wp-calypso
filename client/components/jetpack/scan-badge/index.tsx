@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { ScreenReaderText } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import Badge from 'calypso/components/badge';
 import './style.scss';
 

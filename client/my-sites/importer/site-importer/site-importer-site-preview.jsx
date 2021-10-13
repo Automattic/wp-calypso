@@ -1,30 +1,20 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import ErrorPane from 'calypso/my-sites/importer/error-pane';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Spinner from 'calypso/components/spinner';
 import { loadmShotsPreview } from 'calypso/lib/mshots';
-import ImportableContent from 'calypso/my-sites/importer/site-importer/site-importer-importable-content';
+import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImportableContent from 'calypso/my-sites/importer/site-importer/site-importer-importable-content';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './site-importer-site-preview.scss';
 
-class SiteImporterSitePreview extends React.Component {
+class SiteImporterSitePreview extends Component {
 	static propTypes = {
 		siteURL: PropTypes.string.isRequired,
 		importData: PropTypes.object,
@@ -93,9 +83,9 @@ class SiteImporterSitePreview extends React.Component {
 		return (
 			<div>
 				{ ! isError ? (
-					<React.Fragment>
+					<Fragment>
 						{ ! isLoading && (
-							<React.Fragment>
+							<Fragment>
 								<div className="site-importer__site-importer-confirm-site-pane-container">
 									<div className="site-importer__site-importer-confirm-site-label">
 										{ this.props.translate( 'Is this your site?' ) }
@@ -129,16 +119,16 @@ class SiteImporterSitePreview extends React.Component {
 										{ this.props.translate( 'Yes! Start import' ) }
 									</ImporterActionButton>
 								</ImporterActionButtonContainer>
-							</React.Fragment>
+							</Fragment>
 						) }
 						{ isLoading && (
 							<div className="site-importer__site-preview-loading-overlay">
 								<Spinner />
 							</div>
 						) }
-					</React.Fragment>
+					</Fragment>
 				) : (
-					<React.Fragment>
+					<Fragment>
 						<div className="site-importer__site-preview-error">
 							<ErrorPane
 								type="importError"
@@ -152,7 +142,7 @@ class SiteImporterSitePreview extends React.Component {
 								{ this.props.translate( 'Cancel' ) }
 							</ImporterActionButton>
 						</ImporterActionButtonContainer>
-					</React.Fragment>
+					</Fragment>
 				) }
 			</div>
 		);

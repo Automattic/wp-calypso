@@ -4,14 +4,22 @@
 
 - [Style Guide](#style-guide)
   - [Tests](#tests)
+    - [Other Notes on TypeScript Test Scripts](#other-notes-on-typescript-test-scripts)
   - [Components](#components)
   - [Page Objects](#page-objects)
   - [Flows](#flows)
+  - [Variable naming](#variable-naming)
   - [Async / Await](#async--await)
   - [Selectors](#selectors)
-    - [Type](#type)
+    - [Engine](#engine)
     - [Naming](#naming)
-  - [Test Naming](#test-naming)
+    - [Stability](#stability)
+    - [Dynamic Selectors](#dynamic-selectors)
+  - [Test steps](#test-steps)
+    - [Naming](#naming)
+    - [Step size](#step-size)
+  - [Maximum 1 top-level describe block](#maximum-1-top-level-describe-block)
+  - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 
@@ -25,33 +33,41 @@ There should only be [one top-level describe block](style-guide.md#maximum-1-top
 <summary>Example Test File</summary>
 
 ```typescript
-describe( 'Feature: @parallel', function () {
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	describe( 'Test case 1', function () {
+	describe( 'Input valid search query', function () {
 		let someComponent: SomeComponent;
+		const searchQuery = 'valid search string';
 
 		it( 'Check title', async function () {
 			someComponent = await SomeComponent.Expect( page );
 			await someComponent.clickMyPages();
 			const resultValue = await someComponent.getTitle();
-			assert( resultValue === expectedValue );
+			assert.strictEqual( resultValue, expectedValue );
+		} );
+
+		it( 'Enter search string', async function () {
+			await someComponent.search( searchQuery );
+			await someComponent.clickResult( 1 );
 		} );
 	} );
 
-	describe( 'Test case 2', function () {
+	describe( 'Change preview value', function () {
 		let anotherComponent: AnotherComponent;
 
-		before( 'Set up before all test steps', async function () {
-			anotherComponent = await AnotherComponent.Expect( page, 'param' );
-		} );
-
-		it( 'Test step', async function () {
-			// tests here
+		it.each`
+			value         | expected
+			${ 'small' }  | ${ 's' }
+			${ 'medium' } | ${ 'm' }
+		`( 'Click on $value on AnotherComponent', function ( { value, expected } ) {
+			anotherComponent = await AnotherComponent.Expect( page );
+			const resultValue = await anotherComponent.click( value );
+			assert.strictEqual( resultValue, expected );
 		} );
 	} );
 } );
@@ -77,11 +93,10 @@ Components represent a sub-portion of the page, and are often shared across mult
 <summary>Example Component Object</summary>
 
 ```typescript
-
 const selectors = {
 	sidebar: '.sidebar',
 	myHome: '.my-home',
-}
+};
 
 /**
  * JSDoc is expected for Class definitions.
@@ -90,12 +105,11 @@ const selectors = {
  */
 export class SomeComponent extends BaseContainer {
 	/**
-	 * JSDoc is expected for constructor.
+	 * JSDoc is expected for constructor if present.
 	 *
 	 * @param {Page} page Page object.
 	 */
-	constructor( page: Page ) {
-	}
+	constructor( page: Page ) {}
 
 	/**
 	 * JSDoc is expected for functions.
@@ -103,7 +117,7 @@ export class SomeComponent extends BaseContainer {
 	 * @param {string} menu Menu to be clicked.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickOnMenu( menu: string ): Promise<void> {
+	async clickOnMenu( menu: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.selectorName );
 
 		await this.page.click( menu );
@@ -113,9 +127,8 @@ export class SomeComponent extends BaseContainer {
 
 // Then, in a test file, page, or flow...
 
-	const someComponent = await SomeComponent.Expect( this.page );
-	await someComponent.clickOnMenu();
-
+const someComponent = await SomeComponent.Expect( this.page );
+await someComponent.clickOnMenu();
 ```
 
 </details>
@@ -124,13 +137,13 @@ export class SomeComponent extends BaseContainer {
 
 ## Page Objects
 
-Page objects are to be used to represent a corresponding page on WPCOM. It can hold element selectors, class methods to interact with the page and define other helper functions.
+Page objects are to be used to represent a corresponding page on WPCOM. It can hold attributes, class methods to interact with the page and define other helper functions.
 
 A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand.
 
-Every page object file should contain an object outside of the class definition to hold element selectors. The Page object should access element selector values using dot notation within the method calls.
-
-On many pages of WPCOM elements will load asynchronously. This leads to issues when initializing page objects as constructors cannot be asynchronous. To address this, page objects almost always inherit from the `BaseContainer` class as it provides asynchronous initialization of the page object through use of static method `Expect`. Only use synchronous class constructor if the page in question does not require any post-initialization setup.
+- **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
+- **maintainability**: if a page changes, update the page object at one spot.
+- **readability**: named variables and functions are much easier to decipher than series of strings.
 
 Some in-repo example pages:
 
@@ -140,25 +153,21 @@ Some in-repo example pages:
 <summary>Example Page Object</summary>
 
 ```typescript
-
 const selectors = {
 	titleInput: '.editor-post-title__input',
 	publishPanelToggle: '.editor-post-publish-panel__toggle',
-}
+};
 
 /**
  * JSDoc is expected for Class definitions.
- *
- * @augments {BaseContainer}
  */
-export class SomePage extends BaseContainer {
+export class SomePage {
 	/**
 	 * JSDoc is expected for constructor.
 	 *
 	 * @param {Page} page Page object.
 	 */
-	constructor( page: Page ) {
-	}
+	constructor( page: Page ) {}
 
 	/**
 	 * JSDoc is expected for functions.
@@ -166,23 +175,22 @@ export class SomePage extends BaseContainer {
 	 * @param {string} text Text to be entered into the field.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async enterText( text: string ): Promise<void> {
+	async enterText( text: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.selectorName );
 
 		//Some tricky section of code
-		await Promise.all([
+		await Promise.all( [
 			// calls
-		])
+		] );
 	}
 }
 
 // Then, in a test file...
 
-it('Test case', async function() {
-	const somePage = await SomePage.Expect( this.page );
+it( 'Test case', async function () {
+	const somePage = new SomePage( this.page );
 	await somePage.enterText( 'blah' );
-})
-
+} );
 ```
 
 </details>
@@ -213,21 +221,41 @@ export class SomeFlow {
 	 * JSDoc is expected for methods.
 	 */
 	async executeFlow(): Promise< void > {
-		const componentA = await ComponentA.Expect( this.page );
+		const componentA = new ComponentA( page );
 		await componentA.clickOnSomething();
-		const componentB = await ComponentB.Expect( this.page );
-		const componentC = await ComponentC.Expect( this.page );
+		const componentB = new ComponentB( page );
+		const componentC = new ComponentC( page );
 		await componentC.doFinalSomething();
 	}
 }
 
 // Then in a test file...
 
-const someFlow = await SomeFlow( this.page );
+const someFlow = new SomeFlow( page );
 await someFlow.executeFlow();
 ```
 
 </details>
+
+---
+
+## Variable naming
+
+Variables that derive from a page/component object (eg. SidebarComponent) should be named after the object following camelCase convention.
+
+**Avoid**:
+
+```typescript
+const bar = new SidebarComponent( page );
+const mhp = new MyHomePage( page );
+```
+
+**Instead**:
+
+```typescript
+const sidebarComponent = new SidebarComponent( page );
+const myHomePage = new MyHomePage( page );
+```
 
 ---
 
@@ -242,10 +270,8 @@ We don't chain function calls together and avoid using `.then` calls.
 
 ```typescript
 async function openModal() {
-	const modal = await this.page.waitForSelector('modal-open');
-	await modal
-		.click( )
-		.then( () => this.page.waitForSelector( 'modal-is-open' ) );
+	const modal = await this.page.waitForSelector( 'modal-open' );
+	await modal.click().then( () => this.page.waitForSelector( 'modal-is-open' ) );
 }
 ```
 
@@ -263,13 +289,95 @@ async function openModal() {
 
 ## Selectors
 
-### Type
+Selectors form the core of any automated e2e test scripts. For an overview please refer to the [MDN page on CSS selectors](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors).
 
-Where possible, prioritize selector types as follows:
+Ideally, a selector satisfies all of the following:
 
-`CSS > Text = CSS with Attribute > Xpath`
+- **unique**: one selector, one element.
+- **reliable**: the same element is selected with each iteration.
+- **brief**: selector is short and easy to read.
 
-Please refer to the [Playwright documentation](https://playwright.dev/docs/selectors/#quick-guide) for more information.
+Place selectors within the same file, but outside of the class representing the object. Never place a selector within the class definition itself.
+
+**Avoid**:
+
+```typescript
+class SomeObject() {
+	submitButtonSelector: '#submit'
+}
+```
+
+**Instead**:
+
+```typescript
+const selectors = {
+	submitButton: '#submit',
+}
+
+class SomeObject() {
+	// class things
+}
+
+```
+
+Selectors should be defined in an key:value object mapping as follows:
+
+```typescript
+const selectors = {
+	// Buttons
+	submitButton: '#submit',
+	cancelButton: '#cancel',
+};
+```
+
+Within the class, call on selectors as follows:
+
+```typescript
+await this.page.click( selectors.submitButton );
+```
+
+While defining one-off selectors within a code block is acceptable, if the same selector is used multiple times in different sections of the code, move the selector into the `selectors` object:
+
+**Avoid**:
+
+```typescript
+class SomeObject() {
+	async doSomething() {
+		await this.page.click( '#submit' );
+	}
+
+	async doSomethingElse() {
+		await this.page.click( '#submit' );
+	}
+}
+```
+
+**Instead**:
+
+```typescript
+const selectors = {
+	submitButton: '#submit',
+}
+
+class SomeObject() {
+	async doSomething() {
+		await this.page.click( selectors.submitButton );
+	}
+
+	async doSomethingElse() {
+		await this.page.click( selectors.submitButton );
+	}
+}
+
+```
+
+### Engine
+
+Where possible, use text or CSS selectors:
+
+`Text > CSS > Text/CSS with Attribute > Xpath`
+
+Please refer to the [Playwright documentation](https://playwright.dev/docs/selectors/#quick-guide) for more information on selector engines.
 
 **Avoid**:
 
@@ -277,27 +385,29 @@ Please refer to the [Playwright documentation](https://playwright.dev/docs/selec
 await page.click( 'xpath=//button' );
 ```
 
+```
+await page.click( 'div.someclass .yet-another-class .attribute .very-long-attrbute');
+```
+
 **Instead**:
 
 ```
-await page.click( '.button text("Contact us")' );
+await page.click( 'button:text("Contact us")' );
 ```
 
 ### Naming
 
-Where possible, name selectors based on the CSS selector instead its location.
+Where possible, name selectors based on the CSS selector instead of its location.
 
 If the above is not possible, fall back to describing its usage, function or type.
 
 Avoid appending the term 'Selector' or something similar to the selector name. It is redundant.
 
-Avoid using the location of the element as its name. Element placement can shift, but its role likely does not change.
-
 **Avoid**:
 
-```
+```typescript
 const selectors = {
-	buttonOnHeaderPane: '.button contact-us',
+	contactButtonOnHeaderPane: '.button contact-us',
 	secondButtonOnPopupSelector: '.button send-form',
 	...
 }
@@ -305,7 +415,7 @@ const selectors = {
 
 **Instead**:
 
-```
+```typescript
 const selectors = {
 	contactUsButton: '.button contact-us',
 	submitFormButton: '.button send-form',
@@ -313,15 +423,45 @@ const selectors = {
 }
 ```
 
-### Selectors for Stability
+### Stability
 
 Where possible, use CSS selectors that rely on user-facing attributes (like an `aria-label` instead of a `class` name). These are less likely to change over time and add stability to your tests.
 
 You can read more about this in the [Playwright selector best practices](https://playwright.dev/docs/selectors/#prioritize-user-facing-attributes).
 
+Furthermore, where possible, only involve selectors that are required for the test flow.
+
+**Avoid**:
+
+```typescript
+await this.page.waitForSelector( '.some-unnecessary-selector-not-related-to-the-test-flow' );
+await this.page.fill( '.someclass__form-input .is-selected' );
+```
+
+**Instead**:
+
+```typescript
+await this.page.fill( 'input[aria-placeholder="Enter contact details"]' );
+```
+
+### Dynamic Selectors
+
+Define dynamic selectors as follows:
+
+```typescript
+const selectors = {
+	isVisible: (viewport) => {
+		const suffix = viewport === 'mobile' ? '.is-mobile' : '.is-desktop';
+		return 'div span${suffix}`;
+	}
+}
+```
+
 ---
 
-## Test Naming
+## Test steps
+
+### Naming
 
 Use step description.
 
@@ -329,24 +469,72 @@ Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
 
 **Avoid**:
 
-```
-it( 'Can log in' )
+```typescript
+it( 'Can log in' );
 
-it( 'Should be able to start new post' )
+it( 'Should be able to start new post' );
 ```
 
 **Instead**:
 
+```typescript
+it( 'Log In' );
+
+it( 'Start new post' );
 ```
-it( 'Log In' )
 
-it( 'Start new post' )
+### Step size
+
+Prefer more of smaller steps.
+
+**Avoid**:
+
+```typescript
+it( 'Log in, select home page and start a search' );
 ```
 
-## Other Best Practices
+**Instead**:
 
-### Only Involve Necessary Elements
+```typescript
+it( 'Log In' );
 
-Only involve or wait for elements that are actually critical to the test flow and that you will interact directly with. 
+it( 'Navigate to home page' );
 
-For example, do not wait for a wrapper to click a button that’s inside — wait only for that button instead.
+it( 'Search for ${string}' );
+```
+
+---
+
+## Maximum 1 top-level describe block
+
+Each test file should only contain at most 1 top-level `describe` block.
+
+Additionally, you should avoid going too deep on the layers of nested `describe` blocks beneath that top level, as it can make the overall flow of the spec a bit more confusing to follow.
+
+---
+
+## Destructure parameters
+
+Use destructuring for default values as this makes calling the function explicit and avoids boolean traps.
+
+**Avoid**:
+
+```typescript
+constructor( selector: string, visit:boolean = true, culture:string = 'en', flow:string = '', domainFirst:boolean = false, domainFirstDomain:string = '' ) {}
+
+// In another file
+
+const startPage = new StartPage( selector, true, 'en', '', true, '' ).displayed();
+```
+
+**Instead**:
+
+```typescript
+constructor( selector: string, { visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' }: {visit: boolean, culture: string, flow: string, domainFirst: boolean, domainFirstDomain: string} = {} ) {}
+
+// In another file
+
+const startPage = new StartPage( selector, { visit: true, domainFirst: true } ).displayed();
+```
+
+---

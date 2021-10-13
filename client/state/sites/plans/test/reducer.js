@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { plans } from '../reducer';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -16,6 +8,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_REMOVE,
 } from 'calypso/state/action-types';
+import { plans } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {

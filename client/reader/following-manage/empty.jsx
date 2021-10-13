@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class FollowingManageEmptyContent extends React.Component {
+class FollowingManageEmptyContent extends Component {
 	componentDidMount() {
 		this.props.recordReaderTracksEvent( 'calypso_reader_empty_manage_following_loaded' );
 	}

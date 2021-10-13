@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNING,
@@ -21,9 +14,6 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 } from 'calypso/state/happychat/constants';
 
-/**
- * Style dependencies
- */
 import './notices.scss';
 
 /*

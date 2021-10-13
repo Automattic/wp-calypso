@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import inherits from 'inherits';
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 function ValidationError( code ) {

@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { values as objectValues } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { AspectRatios, MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
-import { getImageEditorAspectRatio } from 'calypso/state/editor/image-editor/selectors';
+import { localize } from 'i18n-calypso';
+import { values as objectValues } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
 } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios, MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'calypso/state/editor/image-editor/selectors';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 const noop = () => {};

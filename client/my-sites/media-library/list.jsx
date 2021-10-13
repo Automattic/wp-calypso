@@ -1,30 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex } from 'lodash';
+import PropTypes from 'prop-types';
+import { createElement, Component } from 'react';
 import ReactDom from 'react-dom';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import { getMimePrefix } from 'calypso/lib/media/utils';
-import ListItem from './list-item';
-import ListNoResults from './list-no-results';
-import ListNoContent from './list-no-content';
-import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
-import SortedGrid from 'calypso/components/sorted-grid';
+import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SortedGrid from 'calypso/components/sorted-grid';
+import { getMimePrefix } from 'calypso/lib/media/utils';
 import { selectMediaItems } from 'calypso/state/media/actions';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+import ListItem from './list-item';
+import ListNoContent from './list-no-content';
+import ListNoResults from './list-no-results';
+import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 
 const noop = () => {};
 
-export class MediaLibraryList extends React.Component {
+export class MediaLibraryList extends Component {
 	static displayName = 'MediaLibraryList';
 
 	static propTypes = {
@@ -43,6 +36,8 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
+		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -216,11 +211,12 @@ export class MediaLibraryList extends React.Component {
 		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
-			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
+			return createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
 				search: this.props.search,
 				source: this.props.source,
+				onSourceChange: this.props.onSourceChange,
 			} );
 		}
 

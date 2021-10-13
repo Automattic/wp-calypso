@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'calypso/components/gridicon';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from '../index';
 
 describe( 'External Link', () => {

@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import { reduce, snakeCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import PostSelectorPosts from './selector';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'PostSelector';
 
 	static propTypes = {

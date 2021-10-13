@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { stringify } from 'qs';
 import { debounce } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { stringify } from 'qs';
+import { createElement } from 'react';
+import EmptyContent from 'calypso/components/empty-content';
+import { login } from 'calypso/lib/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
 import AsyncLoad from './devdocs-async-load';
-import DocsComponent from './main';
-import { login } from 'calypso/lib/paths';
 import SingleDocComponent from './doc';
-import DevWelcome from './welcome';
+import DocsComponent from './main';
 import Sidebar from './sidebar';
-import EmptyContent from 'calypso/components/empty-content';
+import DevWelcome from './welcome';
 import WizardComponent from './wizard-component';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const devdocs = {
 	/*
@@ -28,7 +21,7 @@ const devdocs = {
 	 * so #secondary needs to be cleaned up
 	 */
 	sidebar: function ( context, next ) {
-		context.secondary = React.createElement( Sidebar, {
+		context.secondary = createElement( Sidebar, {
 			path: context.path,
 		} );
 
@@ -59,7 +52,7 @@ const devdocs = {
 			page.replace( newUrl, context.state, false, false );
 		}
 
-		context.primary = React.createElement( DocsComponent, {
+		context.primary = createElement( DocsComponent, {
 			term: context.query.term,
 			// we debounce with wait time of 0, so that the search doesn’t happen
 			// in the same tick as the keyUp event and possibly cause typing lag
@@ -72,7 +65,7 @@ const devdocs = {
 	 * Controller for single developer document
 	 */
 	singleDoc: function ( context, next ) {
-		context.primary = React.createElement( SingleDocComponent, {
+		context.primary = createElement( SingleDocComponent, {
 			path: context.params.path,
 			term: context.query.term,
 			sectionId: Object.keys( context.hash )[ 0 ],
@@ -139,7 +132,7 @@ const devdocs = {
 	pleaseLogIn: function ( context, next ) {
 		const redirectTo = window.location.origin + '/devdocs/welcome';
 		if ( ! isUserLoggedIn( context.store.getState() ) ) {
-			context.primary = React.createElement( EmptyContent, {
+			context.primary = createElement( EmptyContent, {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',
 				action: 'Log In to WordPress.com',
@@ -156,7 +149,7 @@ const devdocs = {
 
 	// Welcome screen
 	welcome: function ( context, next ) {
-		context.primary = React.createElement( DevWelcome, {} );
+		context.primary = createElement( DevWelcome, {} );
 		next();
 	},
 };

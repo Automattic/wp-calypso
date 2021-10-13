@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getOKIcon, getWarningIcon } from './icons.js';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import isTwoStepSmsEnabled from 'calypso/state/selectors/is-two-step-sms-enabled';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupTwoFactorAuthentication extends React.Component {
+class SecurityCheckupTwoFactorAuthentication extends Component {
 	static propTypes = {
 		areUserSettingsLoaded: PropTypes.bool,
 		hasTwoStepEnabled: PropTypes.bool,
@@ -37,10 +30,10 @@ class SecurityCheckupTwoFactorAuthentication extends React.Component {
 
 		if ( ! areUserSettingsLoaded ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<QueryUserSettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 
@@ -76,7 +69,7 @@ class SecurityCheckupTwoFactorAuthentication extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<QueryUserSettings />
 				<SecurityCheckupNavigationItem
 					path={ '/me/security/two-step' }
@@ -84,7 +77,7 @@ class SecurityCheckupTwoFactorAuthentication extends React.Component {
 					text={ translate( 'Two-Step Authentication' ) }
 					description={ description }
 				/>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

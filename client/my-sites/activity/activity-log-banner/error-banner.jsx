@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ActivityLogBanner from './index';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import HappychatButton from 'calypso/components/happychat/button';
-import Gridicon from 'calypso/components/gridicon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	dismissRewindBackupProgress,
 	dismissRewindRestoreProgress as dismissRewindRestoreProgressAction,
 } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ActivityLogBanner from './index';
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {

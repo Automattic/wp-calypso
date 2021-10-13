@@ -1,19 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
 import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'calypso/lib/url/support';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DesignatedAgentNotice = ( props ) => (

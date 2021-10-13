@@ -1,22 +1,17 @@
-/**
- * External Dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import HappychatButton from 'calypso/components/happychat/button';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import HappychatButton from 'calypso/components/happychat/button';
+import MaterialIcon from 'calypso/components/material-icon';
+import { hasIncludedDomain } from 'calypso/lib/purchases';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 class PrecancellationChatButton extends Component {
 	static propTypes = {
+		icon: PropTypes.string,
 		purchase: PropTypes.object.isRequired,
 		surveyStep: PropTypes.string,
 		onClick: PropTypes.func.isRequired,
@@ -42,13 +37,14 @@ class PrecancellationChatButton extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { icon, translate } = this.props;
 
 		return (
 			<HappychatButton
 				className="precancellation-chat-button__main-button"
 				onClick={ this.handleClick }
 			>
+				{ icon && <MaterialIcon icon={ icon } /> }
 				{ translate( 'Need help? Chat with us' ) }
 			</HappychatButton>
 		);

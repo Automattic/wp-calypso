@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { isEmpty, last } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { mergePostEdits } from 'calypso/state/posts/utils/merge-post-edits';
 
 /**

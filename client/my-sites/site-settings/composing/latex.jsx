@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SupportInfo from 'calypso/components/support-info';
 import { Card } from '@automattic/components';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class Latex extends Component {
 	static defaultProps = {

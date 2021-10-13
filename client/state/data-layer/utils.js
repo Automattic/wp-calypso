@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { camelCase, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
 import { extendAction } from '@automattic/state-utils';
+import { camelCase, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
 
 const doBypassDataLayer = {
 	meta: {

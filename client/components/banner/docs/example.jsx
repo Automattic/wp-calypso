@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Banner from 'calypso/components/banner';
 
 const BannerExample = () => (

@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class ListMissing extends React.Component {
+class ListMissing extends Component {
 	recordAction = () => {
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );

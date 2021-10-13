@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import FormattedBlock from 'calypso/components/notes-formatted-block';
-
-/**
- * Type dependencies
- */
 import { Activity } from 'calypso/state/activity-log/types';
 
 interface Props {

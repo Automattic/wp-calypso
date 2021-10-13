@@ -1,32 +1,37 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
-import { decodeEntities } from 'calypso/lib/formatting';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { requestExternalContributors } from 'calypso/state/data-getters';
-/**
- * Style dependencies
- */
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import useP2GuestsQuery from 'calypso/data/p2/use-p2-guests-query';
+import { decodeEntities } from 'calypso/lib/formatting';
+import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
+import { recordTrack } from 'calypso/reader/stats';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+
 import './style.scss';
 
-class PeopleProfile extends Component {
-	getRole = () => {
-		const { invite, user } = this.props;
+const PeopleProfile = ( { siteId, type, user, invite } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+	const { data: externalContributors } = useExternalContributorsQuery( siteId );
+	const { data: p2Guests } = useP2GuestsQuery( siteId );
+
+	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+
+	const getRole = () => {
+		const wpcomFollowerRole = getWpcomFollowerRole( isPrivate, translate );
 
 		if ( invite && invite.role ) {
+			if ( 'follower' === invite.role && wpcomFollowerRole ) {
+				return wpcomFollowerRole.display_name?.toLowerCase();
+			}
+
 			return invite.role;
 		}
 
@@ -41,43 +46,44 @@ class PeopleProfile extends Component {
 		return;
 	};
 
-	getRoleBadgeText = ( role ) => {
+	const getRoleBadgeText = ( role = getRole() ) => {
 		let text;
-		role = 'undefined' === typeof role ? this.getRole() : role;
-
 		switch ( role ) {
 			case 'super admin':
-				text = this.props.translate( 'Super Admin', {
+				text = translate( 'Super Admin', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'administrator':
-				text = this.props.translate( 'Admin', {
+				text = translate( 'Admin', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'editor':
-				text = this.props.translate( 'Editor', {
+				text = translate( 'Editor', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'author':
-				text = this.props.translate( 'Author', {
+				text = translate( 'Author', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'contributor':
-				text = this.props.translate( 'Contributor', {
+				text = translate( 'Contributor', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'subscriber':
-				text = this.props.translate( 'Subscriber', {
+				text = translate( 'Subscriber', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'follower':
-				text = this.props.translate( 'Follower' );
+				text = translate( 'Follower' );
+				break;
+			case 'viewer':
+				text = translate( 'Viewer' );
 				break;
 			default:
 				text = role;
@@ -86,12 +92,11 @@ class PeopleProfile extends Component {
 		return text;
 	};
 
-	getRoleBadgeClass = ( role ) => {
-		role = 'undefined' === typeof role ? this.getRole() : role;
+	const getRoleBadgeClass = ( role = getRole() ) => {
 		return 'role-' + role;
 	};
 
-	handleLinkToReaderSiteStream = ( event ) => {
+	const handleLinkToReaderSiteStream = ( event ) => {
 		const modifierPressed =
 			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 
@@ -103,7 +108,7 @@ class PeopleProfile extends Component {
 			return;
 		}
 
-		const blogId = get( this.props.user, 'follow_data.params.blog_id', false );
+		const blogId = get( user, 'follow_data.params.blog_id', false );
 
 		if ( ! blogId ) {
 			return;
@@ -113,9 +118,7 @@ class PeopleProfile extends Component {
 		page( `/read/blogs/${ blogId }` );
 	};
 
-	renderNameOrEmail = () => {
-		const { translate, type, user } = this.props;
-
+	const renderNameOrEmail = () => {
 		let name;
 		let userTitle = null;
 		if ( ! user ) {
@@ -147,7 +150,7 @@ class PeopleProfile extends Component {
 		return (
 			<div className="people-profile__username" title={ userTitle }>
 				{ blogId ? (
-					<a href={ user.url } onClick={ this.handleLinkToReaderSiteStream }>
+					<a href={ user.url } onClick={ handleLinkToReaderSiteStream }>
 						{ decodeEntities( name ) }
 					</a>
 				) : (
@@ -157,14 +160,14 @@ class PeopleProfile extends Component {
 		);
 	};
 
-	renderLogin = () => {
+	const renderLogin = () => {
 		let login;
-		if ( ! this.props.user ) {
-			login = this.props.translate( 'Loading Users', {
+		if ( ! user ) {
+			login = translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
-		} else if ( this.props.user.login ) {
-			login = this.props.user.login;
+		} else if ( user.login ) {
+			login = user.login;
 		}
 
 		if ( login ) {
@@ -178,32 +181,34 @@ class PeopleProfile extends Component {
 		return login;
 	};
 
-	renderRole = () => {
-		const { isExternalContributor, translate, user } = this.props;
-
+	const renderRole = () => {
 		let contractorBadge;
 		let superAdminBadge;
 		let roleBadge;
+		let p2GuestBadge;
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
 				<div className="people-profile__role-badge role-super-admin">
-					{ this.getRoleBadgeText( 'super admin' ) }
+					{ getRoleBadgeText( 'super admin' ) }
 				</div>
 			);
 		}
 
-		if ( this.getRole() ) {
+		if ( getRole() ) {
 			roleBadge = (
-				<div className={ classNames( 'people-profile__role-badge', this.getRoleBadgeClass() ) }>
-					{ this.getRoleBadgeText() }
+				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass() ) }>
+					{ getRoleBadgeText() }
 				</div>
 			);
 		}
 
-		if ( isExternalContributor ) {
+		if (
+			externalContributors &&
+			externalContributors.includes( user?.linked_user_ID ?? user?.ID )
+		) {
 			contractorBadge = (
-				<Fragment>
+				<>
 					<div className="people-profile__role-badge role-contractor">
 						{ translate( 'Contractor', {
 							context: 'Noun: A user role',
@@ -214,11 +219,25 @@ class PeopleProfile extends Component {
 							{ translate( 'This user is a freelancer, consultant, or agency.' ) }
 						</InfoPopover>
 					</div>
-				</Fragment>
+				</>
+			);
+		}
+		if ( p2Guests?.guests && p2Guests.guests.includes( user?.linked_user_ID ?? user?.ID ) ) {
+			p2GuestBadge = (
+				<>
+					<div className="people-profile__role-badge role-p2-guest">{ translate( 'Guest' ) }</div>
+					<div className="people-profile__role-badge-info">
+						<InfoPopover position="top right">
+							{ translate(
+								'This user is a member of this P2 as a guest, but not a member of the workspace.'
+							) }
+						</InfoPopover>
+					</div>
+				</>
 			);
 		}
 
-		if ( ! roleBadge && ! superAdminBadge && ! contractorBadge ) {
+		if ( ! roleBadge && ! superAdminBadge && ! contractorBadge && ! p2GuestBadge ) {
 			return;
 		}
 
@@ -227,56 +246,55 @@ class PeopleProfile extends Component {
 				{ superAdminBadge }
 				{ roleBadge }
 				{ contractorBadge }
+				{ p2GuestBadge }
 			</div>
 		);
 	};
 
-	renderSubscribedDate = () => {
-		if ( ! this.props.user || ! this.props.user.date_subscribed ) {
+	const renderSubscribedDate = () => {
+		if ( ! user || ! user.date_subscribed ) {
 			return;
 		}
 
 		return (
 			<div className="people-profile__subscribed">
-				{ this.props.translate( 'Since %(formattedDate)s', {
+				{ translate( 'Since %(formattedDate)s', {
 					context: 'How long a user has been subscribed to a blog. Example: "Since Sep 16, 2015"',
 					args: {
-						formattedDate: this.props.moment( this.props.user.date_subscribed ).format( 'll' ),
+						formattedDate: moment( user.date_subscribed ).format( 'll' ),
 					},
 				} ) }
 			</div>
 		);
 	};
 
-	isFollowerType = () => {
-		return this.props.user && ! this.props.user.roles && this.props.user.date_subscribed;
+	const isFollowerType = () => {
+		return user && ! user.roles && user.date_subscribed;
 	};
 
-	render() {
-		const { user } = this.props;
+	const classes = classNames( 'people-profile', {
+		'is-placeholder': ! user,
+	} );
 
-		const classes = classNames( 'people-profile', {
-			'is-placeholder': ! user,
-		} );
-
-		return (
-			<div className={ classes }>
-				<div className="people-profile__gravatar">
-					<Gravatar user={ user } size={ 72 } />
-				</div>
-				<div className="people-profile__detail">
-					{ this.renderNameOrEmail() }
-					{ this.renderLogin() }
-					{ this.isFollowerType() ? this.renderSubscribedDate() : this.renderRole() }
-				</div>
+	return (
+		<div className={ classes }>
+			<div className="people-profile__gravatar">
+				<Gravatar user={ user } size={ 72 } />
 			</div>
-		);
-	}
-}
+			<div className="people-profile__detail">
+				{ renderNameOrEmail() }
+				{ renderLogin() }
+				{ isFollowerType() ? renderSubscribedDate() : renderRole() }
+			</div>
+		</div>
+	);
+};
 
-export default connect( ( _state, { siteId, user } ) => {
-	const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
-	return {
-		isExternalContributor: externalContributors.includes( user?.linked_user_ID ?? user?.ID ),
-	};
-} )( localize( withLocalizedMoment( PeopleProfile ) ) );
+PeopleProfile.propType = {
+	siteId: PropTypes.number.isRequired,
+	user: PropTypes.object,
+	type: PropTypes.string,
+	invite: PropTypes.object,
+};
+
+export default PeopleProfile;

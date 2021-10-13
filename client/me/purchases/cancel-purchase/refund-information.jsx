@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import {
 	getName,
 	isRefundable,
@@ -17,12 +12,8 @@ import {
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
-import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
-import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormRadio from 'calypso/components/forms/form-radio';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,

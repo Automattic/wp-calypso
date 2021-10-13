@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getDomainType } from 'calypso/lib/domains/utils';
 
 export const createLightSiteDomainObject = ( domain ) => {

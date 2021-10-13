@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
-import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
-import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import {
-	requestJetpackProductInstallStatus,
-	startJetpackProductInstall,
-} from 'calypso/state/jetpack-product-install/actions';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getPluginKeys,
 	requestPluginKeys,
 } from 'calypso/state/data-getters/wpcom/jetpack-blogs/keys';
-import { SiteId, TimeoutMS } from 'calypso/types';
+import {
+	requestJetpackProductInstallStatus,
+	startJetpackProductInstall,
+} from 'calypso/state/jetpack-product-install/actions';
 import { logToLogstash } from 'calypso/state/logstash/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
+import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteId, TimeoutMS } from 'calypso/types';
 
 type PluginStateDescriptor = string;
 type PluginSlug = 'akismet' | 'vaultpress';

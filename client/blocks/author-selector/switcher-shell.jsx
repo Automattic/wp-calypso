@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component, createRef } from 'react';
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { Gridicon, Popover } from '@automattic/components';
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, createRef } from 'react';
+import ReactDom from 'react-dom';
 import AsyncLoad from 'calypso/components/async-load';
-import Gridicon from 'calypso/components/gridicon';
-import Popover from 'calypso/components/popover';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import UserItem from 'calypso/components/user';
 import InfiniteList from 'calypso/components/infinite-list';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import UserItem from 'calypso/components/user';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 /**

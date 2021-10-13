@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import Main from 'calypso/components/main';
 import AddStoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/add-stored-credit-card';
+import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import StoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card';
-
-/**
- * Style dependencies
- */
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import './style.scss';
 
 export default function PaymentMethodList(): ReactElement {

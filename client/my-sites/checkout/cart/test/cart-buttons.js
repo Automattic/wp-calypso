@@ -2,17 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { mount } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { CartButtons } from '../cart-buttons';
 import page from 'page';
+import { CartButtons } from '../cart-buttons';
 
 jest.mock( 'page', () => jest.fn() );
 

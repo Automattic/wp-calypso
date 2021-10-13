@@ -1,11 +1,5 @@
-/*
- * External dependencies
- */
 const keytar = require( 'keytar' );
 
-/*
- * Module constants
- */
 const keychainService = 'WordPress.com';
 
 async function write( key, value ) {

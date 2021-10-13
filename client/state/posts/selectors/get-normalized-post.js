@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { getPost } from 'calypso/state/posts/selectors/get-post';
 import { normalizePostForDisplay } from 'calypso/state/posts/utils';

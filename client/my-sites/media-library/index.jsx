@@ -1,38 +1,27 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import classNames from 'classnames';
 import { includes, isEqual, some } from 'lodash';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Content from './content';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
+import searchUrl from 'calypso/lib/search-url';
+import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import MediaLibraryDropZone from './drop-zone';
-import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
-import filterToMimePrefix from './filter-to-mime-prefix';
-import FilterBar from './filter-bar';
-import QueryPreferences from 'calypso/components/data/query-preferences';
-import searchUrl from 'calypso/lib/search-url';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
-import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
-import { selectMediaItems } from 'calypso/state/media/actions';
+import Content from './content';
+import MediaLibraryDropZone from './drop-zone';
+import FilterBar from './filter-bar';
+import filterToMimePrefix from './filter-to-mime-prefix';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // External media sources that do not need a user to connect them should be listed here.

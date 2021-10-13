@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const { By } = require( 'selenium-webdriver' );
 const AsyncBaseContainer = require( '../async-base-container' );
 const driverHelper = require( '../driver-helper' );
@@ -24,7 +21,7 @@ class CheckoutPage extends AsyncBaseContainer {
 			// 	By.css( '.checkout__payment-methods-step' )
 			// );
 		} catch ( e ) {
-			console.log( 'Composite checkout is not displayed. Trying with regular checkout...' ); // eslint-disable-line no-console
+			console.log( 'Composite checkout is not displayed. Trying with regular checkout...' );
 			await driverHelper.waitTillPresentAndDisplayed(
 				this.driver,
 				By.css( '.payment-box__content' )

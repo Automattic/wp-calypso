@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupConnectedApplications extends React.Component {
+class SecurityCheckupConnectedApplications extends Component {
 	static propTypes = {
 		connectedApps: PropTypes.array,
 		translate: PropTypes.func.isRequired,
@@ -59,10 +52,10 @@ class SecurityCheckupConnectedApplications extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<QueryConnectedApplications />
 				{ content }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Bluehost from './bluehost';
-import ErrorNotice from './error-notice';
-import SiteGround from './siteground';
-import Pressable from './pressable';
-import SectionHeader from 'calypso/components/section-header';
 import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SectionHeader from 'calypso/components/section-header';
 import { saveHostDetails } from 'calypso/state/sites/guided-transfer/actions';
 import {
 	isGuidedTransferSavingHostDetails,
 	isGuidedTransferAwaitingPurchase,
 } from 'calypso/state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import Bluehost from './bluehost';
+import ErrorNotice from './error-notice';
+import Pressable from './pressable';
+import SiteGround from './siteground';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {

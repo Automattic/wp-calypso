@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef, useState } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useRef, useState } from 'react';
 import type {
 	RequestCartProduct,
 	ApplyCouponToCart,
@@ -10,9 +7,6 @@ import type {
 	ReplaceProductsInCart,
 } from '@automattic/shopping-cart';
 
-/**
- * Internal dependencies
- */
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 
 export type isPendingAddingProductsFromUrl = boolean;
@@ -38,6 +32,13 @@ export default function useAddProductsFromUrl( {
 	addProductsToCart: AddProductsToCart;
 	replaceProductsInCart: ReplaceProductsInCart;
 } ): isPendingAddingProductsFromUrl {
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
 
@@ -55,7 +56,7 @@ export default function useAddProductsFromUrl( {
 			! isCartPendingUpdate
 		) {
 			debug( 'no products or coupons to add; skipping initial cart requests' );
-			setIsLoading( false );
+			isMounted.current && setIsLoading( false );
 			return;
 		}
 	}, [
@@ -100,7 +101,7 @@ export default function useAddProductsFromUrl( {
 		}
 		Promise.all( cartPromises ).then( () => {
 			debug( 'initial cart requests have completed' );
-			setIsLoading( false );
+			isMounted.current && setIsLoading( false );
 		} );
 		hasRequestedInitialProducts.current = true;
 	}, [

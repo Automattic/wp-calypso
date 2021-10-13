@@ -1,3 +1,37 @@
+.visible-days-limit {
+	text-align: center;
+
+	.status-card__message-head {
+		margin-block-end: 24px;
+	}
+
+	.status-card__label {
+		text-align: center;
+	}
+
+	.status-card__button.form-button {
+		max-width: 240px;
+		margin: 32px auto;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-block-end: initial;
+		text-align: initial;
+
+		.status-card__message-head {
+			margin-block-end: initial;
+		}
+
+		.status-card__label {
+			text-align: initial;
+		}
+
+		.status-card__button.form-button {
+			margin: 32px 0;
+		}
+	}
+}
+
 .status-card__message-head {
 	color: var( --studio-gray-80 );
 
@@ -37,11 +71,14 @@
 }
 
 .status-card__label {
-	max-width: 500px;
 	margin-top: 24px;
 
 	color: var( --studio-gray-80 );
 	text-align: left;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		max-width: 500px;
+	}
 }
 
 .status-card__meta {
@@ -65,7 +102,11 @@
 
 /* Buttons */
 .daily-backup-status .form-button.status-card__support-button {
-	margin: 32px 0;
+	margin: 32px auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 32px 0;
+	}
 }
 
 /* Status-specific rules */

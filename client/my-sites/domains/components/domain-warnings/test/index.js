@@ -2,20 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import moment from 'moment';
-import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
-import { DomainWarnings } from '../';
+import TestUtils from 'react-dom/test-utils';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import { DomainWarnings } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 

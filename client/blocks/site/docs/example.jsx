@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Site from 'calypso/blocks/site';
 import { Card } from '@automattic/components';
+import { get } from 'lodash';
+import { connect } from 'react-redux';
+import Site from 'calypso/blocks/site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 

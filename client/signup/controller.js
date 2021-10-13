@@ -1,19 +1,31 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-import React from 'react';
-import page from 'page';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
-import { sectionify } from 'calypso/lib/route';
+import { isEmpty } from 'lodash';
+import page from 'page';
+import { createElement } from 'react';
+import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import SignupComponent from './main';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { login } from 'calypso/lib/paths';
+import { sectionify } from 'calypso/lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import {
+	getSiteVerticalId,
+	getSiteVerticalIsUserInput,
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
+import SignupComponent from './main';
 import {
 	getStepUrl,
 	canResumeFlow,
@@ -23,29 +35,8 @@ import {
 	getValidPath,
 	getFlowPageTitle,
 	shouldForceLogin,
+	isReskinnedFlow,
 } from './utils';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import store from 'store';
-import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import {
-	getSiteVerticalId,
-	getSiteVerticalIsUserInput,
-} from 'calypso/state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { login } from 'calypso/lib/paths';
-import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
-
-const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -101,10 +92,7 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if (
-			config( 'reskinned_flows' ).includes( currentFlowName ) &&
-			config.isEnabled( 'signup/reskin' )
-		) {
+		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
@@ -120,16 +108,8 @@ export default {
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
-			// We still want to keep the original styling for the new user creation step
-			// so people know they are creating an account at WP.com.
-			if ( context.pathname.includes( 'user' ) ) {
-				removeP2SignupClassName();
-			} else {
-				addP2SignupClassName();
-			}
-
+			addP2SignupClassName();
 			removeWhiteBackground();
-
 			next();
 		} else {
 			next();
@@ -312,31 +292,21 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		let actualFlowName = flowName;
-		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
-			const experimentAssignment = await loadExperimentAssignment(
-				'design_picker_after_onboarding'
-			);
-			debug(
-				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
-			);
-			if ( 'treatment' === experimentAssignment?.variationName ) {
-				actualFlowName = 'with-design-picker';
-			}
-		}
+		// ExPlat: Temporarily testing out the effects of prefetching experiments. Delete after 2021 week 31.
+		loadExperimentAssignment( 'explat_test_aa_weekly_calypso_2021_week_31' );
 
-		context.primary = React.createElement( SignupComponent, {
+		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: actualFlowName,
+			flowName,
 			queryObject: query,
 			refParameter: query && query.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( actualFlowName, userLoggedIn ),
+			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
 		} );
 
 		next();
@@ -345,24 +315,31 @@ export default {
 		const { getState, dispatch } = signupStore;
 		const signupDependencies = getSignupDependencyStore( getState() );
 
-		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
-		if ( ! siteSlug ) {
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			query?.siteSlug ||
+			signupDependencies?.siteId ||
+			query?.siteId;
+		if ( ! siteIdOrSlug ) {
 			next();
 			return;
 		}
-		const siteId = getSiteId( getState(), siteSlug );
+		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
 			next();
 		} else {
-			// Fetch the site by siteSlug and then try to select again
-			dispatch( requestSite( siteSlug ) )
-				.catch( () => null )
+			// Fetch the site by siteIdOrSlug and then try to select again
+			dispatch( requestSite( siteIdOrSlug ) )
+				.catch( () => {
+					next();
+					return null;
+				} )
 				.then( () => {
-					let freshSiteId = getSiteId( getState(), siteSlug );
+					let freshSiteId = getSiteId( getState(), siteIdOrSlug );
 
 					if ( ! freshSiteId ) {
-						const wpcomStagingFragment = siteSlug.replace(
+						const wpcomStagingFragment = siteIdOrSlug.replace(
 							/\.wordpress\.com$/,
 							'.wpcomstaging.com'
 						);
@@ -371,10 +348,10 @@ export default {
 
 					if ( freshSiteId ) {
 						dispatch( setSelectedSiteId( freshSiteId ) );
-						next();
 					}
+
+					next();
 				} );
-			next();
 		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {

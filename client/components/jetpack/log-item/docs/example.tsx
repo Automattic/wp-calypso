@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent, ReactNode } from 'react';
-
-/**
- * Internal dependencies
- */
-import LogItem from '../';
+import { PureComponent, ReactNode } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import LogItem from '../';
 
 export default class LogItemExample extends PureComponent {
 	static displayName = 'LogItem';

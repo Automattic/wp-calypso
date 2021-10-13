@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Snackbar } from '@wordpress/components';
 
 const SnackbarExample = () => {

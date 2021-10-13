@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
-import VerificationCodeForm from './verification-code-form';
 import SecurityKeyForm from './security-key-form';
+import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 
 export default function TwoFactorContent( {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 
 export default class SitePlaceholderExample extends PureComponent {

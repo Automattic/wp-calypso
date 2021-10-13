@@ -1,32 +1,20 @@
-/**
- * External dependencies
- */
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import debugModule from 'debug';
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { flowRight, get, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { flowRight, get, omit } from 'lodash';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
-import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
-import versionCompare from 'calypso/lib/version-compare';
-import { addQueryArgs } from 'calypso/lib/route';
 import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs } from 'calypso/lib/route';
+import versionCompare from 'calypso/lib/version-compare';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { clearPlan, retrieveMobileRedirect, retrievePlan, storePlan } from './persistence-utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
-import { redirect } from './utils';
-import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
 import {
 	ALREADY_CONNECTED,
 	IS_DOT_COM,
@@ -39,6 +27,11 @@ import {
 	SITE_BLOCKED,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
+import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import { clearPlan, retrieveMobileRedirect, retrievePlan, storePlan } from './persistence-utils';
+import { redirect } from './utils';
 
 const debug = debugModule( 'calypso:jetpack-connect:main' );
 

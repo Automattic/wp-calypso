@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import EmailForwardingItem from './email-forwarding-item';
 
-class EmailForwardingList extends React.Component {
+class EmailForwardingList extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
 	};

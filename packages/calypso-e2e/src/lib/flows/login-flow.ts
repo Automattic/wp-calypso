@@ -3,6 +3,14 @@ import { getAccountCredential, getCalypsoURL } from '../../data-helper';
 import { LoginPage } from '../pages';
 
 /**
+ * A username/password set of credentials that can be used to log in.
+ */
+export interface LoginCredentials {
+	username: string;
+	password: string;
+}
+
+/**
  * Class representing the end-to-end log in process.
  */
 export class LoginFlow {
@@ -14,14 +22,19 @@ export class LoginFlow {
 	 * Creates an instance of the log in flow.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {string} [accountType] Type of account to be used for the log in process.
+	 * @param {string} [account] Account information to be used to login. Can be either an account type from config, or credentials.
 	 */
-	constructor( page: Page, accountType = 'defaultUser' ) {
+	constructor( page: Page, account: string | LoginCredentials = 'defaultUser' ) {
 		this.page = page;
 
-		const [ username, password ] = getAccountCredential( accountType );
-		this.username = username;
-		this.password = password;
+		if ( typeof account === 'string' ) {
+			const [ username, password ] = getAccountCredential( account );
+			this.username = username;
+			this.password = password;
+		} else {
+			this.username = account.username;
+			this.password = account.password;
+		}
 	}
 
 	/**
@@ -42,7 +55,7 @@ export class LoginFlow {
 			page = this.page;
 		}
 
-		const loginPage = await LoginPage.Expect( page );
+		const loginPage = new LoginPage( page );
 		await loginPage.login( { username: this.username, password: this.password } );
 	}
 
@@ -56,7 +69,7 @@ export class LoginFlow {
 	 */
 	async logIn(): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'log-in' ) );
-		await this.baseflow();
+		await Promise.all( [ this.page.waitForNavigation(), this.baseflow() ] );
 	}
 
 	/**

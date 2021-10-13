@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteAdminUrl from './get-site-admin-url';
 
 /**

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
+import { omit } from 'lodash';
 import {
 	GUIDED_TOUR_UPDATE,
 	GUIDED_TOUR_PAUSE,

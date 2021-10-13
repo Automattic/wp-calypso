@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import D3Base from '..';
 
 const noop = () => {};

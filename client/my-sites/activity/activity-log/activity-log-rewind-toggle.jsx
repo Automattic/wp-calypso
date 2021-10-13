@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { activateRewind } from 'calypso/state/activity-log/actions';
-import isRewindActivating from 'calypso/state/selectors/is-rewind-activating';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import isRewindActivating from 'calypso/state/selectors/is-rewind-activating';
 
-/**
- * Style dependencies
- */
 import './activity-log-rewind-toggle.scss';
 
 class ActivityLogRewindToggle extends Component {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import wp from 'calypso/lib/wp';
+import genericRedirectProcessor from '../lib/generic-redirect-processor';
 
 jest.mock( 'calypso/lib/wp' );
 

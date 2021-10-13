@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import titlecase from 'to-title-case';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-class StatsModuleHeader extends React.Component {
+class StatsModuleHeader extends Component {
 	static displayName = 'StatsModuleHeader';
 
 	static propTypes = {

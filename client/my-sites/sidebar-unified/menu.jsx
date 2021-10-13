@@ -3,26 +3,17 @@
  *
  * Renders a top level menu item with children.
  * This item can be expanded and collapsed by clicking.
- **/
-
-/**
- * External dependencies
  */
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
+
 import { isWithinBreakpoint } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-
-import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
-import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
-import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import MySitesSidebarUnifiedItem from './item';
+import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import { navigate } from 'calypso/lib/navigate';
+import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
+import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
+import MySitesSidebarUnifiedItem from './item';
 import { itemLinkMatches } from './utils';
 
 export const MySitesSidebarUnifiedMenu = ( {

@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 import 'calypso/state/themes/init';
 

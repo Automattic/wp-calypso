@@ -1,53 +1,53 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
+import { Card, ProgressBar, Button } from '@automattic/components';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import { includes, find, isEmpty, flowRight } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import UploadDropZone from 'calypso/blocks/upload-drop-zone';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EmptyContent from 'calypso/components/empty-content';
+import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import FeatureExample from 'calypso/components/feature-example';
-import { Card, ProgressBar, Button } from '@automattic/components';
-import UploadDropZone from 'calypso/blocks/upload-drop-zone';
-import EmptyContent from 'calypso/components/empty-content';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import Main from 'calypso/components/main';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
-import QueryActiveTheme from 'calypso/components/data/query-active-theme';
-import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
-
 import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
+import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -58,30 +58,17 @@ import {
 	getUploadProgressLoaded,
 	isInstallInProgress,
 } from 'calypso/state/themes/upload-theme/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
-import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { connectOptions } from 'calypso/my-sites/themes/theme-options';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-} from 'calypso/state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
-class Upload extends React.Component {
+class Upload extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		selectedSite: PropTypes.object,
@@ -345,11 +332,7 @@ class Upload extends React.Component {
 						{
 							components: {
 								learnMoreLink: (
-									<InlineSupportLink
-										supportLink="https://wordpress.com/support/themes/uploading-setting-up-custom-themes/"
-										supportPostId={ 134784 }
-										showIcon={ false }
-									/>
+									<InlineSupportLink supportContext="themes-upload" showIcon={ false } />
 								),
 							},
 						}

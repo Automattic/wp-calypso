@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Placeholder, Notice } from '@wordpress/components';
 import { more } from '@wordpress/icons';
 

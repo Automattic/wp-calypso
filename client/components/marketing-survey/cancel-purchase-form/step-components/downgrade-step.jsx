@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 
 const noop = () => {};
 
@@ -50,7 +42,7 @@ export class DowngradeStep extends Component {
 			refundReason = (
 				<p>
 					{ translate(
-						'WordPress.com Personal still gives you access to email support, removal of ads, and more — and for 50% of the cost of your current plan.'
+						'WordPress.com Personal still gives you access to customer support via email, removal of ads, and more — and for 50% of the cost of your current plan.'
 					) }
 				</p>
 			);

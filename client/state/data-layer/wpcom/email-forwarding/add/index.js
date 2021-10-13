@@ -1,23 +1,14 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { EMAIL_FORWARDING_ADD_REQUEST } from 'calypso/state/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	receiveAddEmailForwardSuccess,
 	receiveAddEmailForwardFailure,
 } from 'calypso/state/email-forwarding/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 export const addEmailForward = ( action ) => {
 	return http(

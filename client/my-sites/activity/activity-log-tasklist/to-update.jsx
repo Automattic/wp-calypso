@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { requestSiteAlerts } from 'calypso/state/data-getters';
 import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSiteSecondaryNetworkSite } from 'calypso/state/sites/selectors';
-import { requestSiteAlerts } from 'calypso/state/data-getters';
 
 const emptyList = [];
 

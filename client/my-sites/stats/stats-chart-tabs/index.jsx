@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import { Card } from '@automattic/components';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
-import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
-import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
-import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { buildChartData, getQueryDate } from './utility';
-import StatTabs from '../stats-tabs';
+import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
+import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
+import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatTabs from '../stats-tabs';
+import { buildChartData, getQueryDate } from './utility';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ChartTabShape = PropTypes.shape( {

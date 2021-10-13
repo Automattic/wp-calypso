@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { loadScript } from '@automattic/load-script';
-
-/**
- * Internal dependencies
- */
-import { isFormDisabled } from 'calypso/state/login/selectors';
 import requestExternalAccess from '@automattic/request-external-access';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { cloneElement, Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import AppleIcon from 'calypso/components/social-icons/apple';
+import { isFormDisabled } from 'calypso/state/login/selectors';
+
+import './style.scss';
 
 const appleClientUrl =
 	'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
@@ -136,7 +126,7 @@ class AppleLoginButton extends Component {
 				onClick: this.handleClick,
 			};
 
-			customButton = React.cloneElement( children, childProps );
+			customButton = cloneElement( children, childProps );
 		}
 
 		return (

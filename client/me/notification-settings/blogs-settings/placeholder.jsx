@@ -1,18 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
+import { CompactCard, Gridicon } from '@automattic/components';
+import { Component } from 'react';
 
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'NotificationsBlogSettingsPlaceholder';
 
 	shouldComponentUpdate() {

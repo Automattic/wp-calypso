@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSite } from 'calypso/state/sites/selectors';
-import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import {
 	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import JetpackSearchPlaceholder from './placeholder';
-import JetpackSearchUpsell from './upsell';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { isRequestingSiteSettings, getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import JetpackSearchDetails from './details';
+import JetpackSearchPlaceholder from './placeholder';
 import { hasJetpackSearchPurchaseOrPlan } from './purchases';
+import JetpackSearchUpsell from './upsell';
 
 interface Props {
 	siteId: number;

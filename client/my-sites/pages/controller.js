@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import Pages from './main';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import Pages from './main';
 
 export function pages( context, next ) {
 	const author =

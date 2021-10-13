@@ -1,25 +1,21 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { Button, Card } from '@automattic/components';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
-import { Button, Card } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import EmailHeader from 'calypso/my-sites/email/email-header';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
+import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
@@ -27,32 +23,31 @@ import {
 	getProductSlug,
 } from 'calypso/lib/gsuite';
 import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_PRODUCT_TYPE,
+	GSUITE_PRODUCT_TYPE,
+} from 'calypso/lib/gsuite/constants';
+import {
 	areAllUsersValid,
 	getItemsForCart,
 	newUsers,
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
-import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import SectionHeader from 'calypso/components/section-header';
-import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
-import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import EmailHeader from 'calypso/my-sites/email/email-header';
+import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class GSuiteAddUsers extends React.Component {
+class GSuiteAddUsers extends Component {
 	state = {
 		users: [],
 	};
@@ -119,11 +114,13 @@ class GSuiteAddUsers extends React.Component {
 	};
 
 	recordClickEvent = ( eventName ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		const { users } = this.state;
 
 		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
+			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_count: users.length,
 		} );
 	};
@@ -286,6 +283,7 @@ GSuiteAddUsers.propTypes = {
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
 	} ).isRequired,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -306,4 +304,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( localize( GSuiteAddUsers ) ) );
+)( withShoppingCart( withCartKey( localize( GSuiteAddUsers ) ) ) );

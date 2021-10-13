@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
 
 const DocsExampleToggle = ( { onClick, text } ) => <Button onClick={ onClick }>{ text }</Button>;
 

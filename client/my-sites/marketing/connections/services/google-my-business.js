@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import PropTypes from 'prop-types';
 import GoogleMyBusinessLogo from 'calypso/my-sites/google-my-business/logo';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
-import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
-import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
-import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
-import getSiteUserConnectionsForGoogleMyBusiness from 'calypso/state/selectors/get-site-user-connections-for-google-my-business';
 import {
 	connectGoogleMyBusinessAccount,
 	connectGoogleMyBusinessLocation,
 	disconnectAllGoogleMyBusinessAccounts,
 } from 'calypso/state/google-my-business/actions';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import getSiteUserConnectionsForGoogleMyBusiness from 'calypso/state/selectors/get-site-user-connections-for-google-my-business';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
+import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {

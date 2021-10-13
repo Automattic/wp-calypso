@@ -1,9 +1,7 @@
-/**
- * External dependencies
- */
 import { Button } from '@wordpress/components';
+import { forwardRef, FunctionComponent } from 'react';
 import { Link as RouterLink, LinkProps } from 'react-router-dom';
-import React, { forwardRef, FunctionComponent } from 'react';
+import type { MouseEvent } from 'react';
 import type { Assign } from 'utility-types';
 
 interface LinkButtonProps extends Button.AnchorProps {
@@ -17,7 +15,7 @@ const LinkButton = forwardRef< HTMLAnchorElement, LinkButtonProps >(
 		const { target } = rest;
 		const props = {
 			...rest,
-			onClick: ( event: React.MouseEvent< HTMLAnchorElement > ) => {
+			onClick: ( event: MouseEvent< HTMLAnchorElement > ) => {
 				try {
 					if ( onClick ) onClick( event );
 				} catch ( ex ) {
@@ -69,6 +67,6 @@ const Link: FunctionComponent< Props > = ( { children, ...props } ) => {
 };
 export default Link;
 
-function isModifiedEvent( event: React.MouseEvent ) {
+function isModifiedEvent( event: MouseEvent ) {
 	return !! ( event.metaKey || event.altKey || event.ctrlKey || event.shiftKey );
 }

@@ -6,11 +6,11 @@ rescheduling appointments.
 ## Supported routes
 
 ```js
-'/me/concierge'; // site selector step
-'/me/concierge/:siteSlug/book'; // booking concierge appointment wizard
-'/me/concierge/:siteSlug'; // redirects to calendar step for booking
-'/me/concierge/:siteSlug/:appointmentId/cancel'; // cancellation page for concierge appointment
-'/me/concierge/:siteSlug/:appointmentId/reschedule'; // rescheduling concierge appointments wizard
+'/me/quickstart'; // site selector step
+'/me/quickstart/:siteSlug/book'; // booking concierge appointment wizard
+'/me/quickstart/:siteSlug'; // redirects to calendar step for booking
+'/me/quickstart/:siteSlug/:appointmentId/cancel'; // cancellation page for concierge appointment
+'/me/quickstart/:siteSlug/:appointmentId/reschedule'; // rescheduling concierge appointments wizard
 ```
 
 ## Folder structure

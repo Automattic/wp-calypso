@@ -82,6 +82,8 @@ Plan or product slug. Can be one of the following:
 - `jetpack_anti_spam_realtime_monthly_v2`
 - `jetpack_search_v2`
 - `jetpack_search_monthly_v2`
+- `jetpack_videopress`
+- `jetpack_videopress_monthly`
 
 ### `className`
 

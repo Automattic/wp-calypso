@@ -11,6 +11,7 @@ import {
 import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { ThemeProvider } from '@emotion/react';
 import { Button, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -18,8 +19,7 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { ThemeProvider } from 'emotion-theming';
-import React from 'react';
+import * as React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
 

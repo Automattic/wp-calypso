@@ -1,7 +1,7 @@
 import '@automattic/calypso-config';
 
 import '../../constants';
-import { getDesignUrl, getDesignImageUrl, getAvailableDesigns } from '../available-designs';
+import { getDesignUrl, getAvailableDesigns } from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
 import { shuffleArray } from '../shuffle';
 import type { Design } from '../../types';
@@ -28,7 +28,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -38,7 +38,7 @@ jest.mock( '../available-designs-config', () => {
 		slug: 'mock-premium-design-slug',
 		template: 'mock-premium-design-template',
 		theme: 'mock-premium-design-theme',
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -52,7 +52,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: true,
 		features: [],
 	};
@@ -66,7 +66,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		is_fse: true,
 		features: [],
@@ -81,7 +81,7 @@ jest.mock( '../available-designs-config', () => {
 			headings: 'Arvo',
 			base: 'Cabin',
 		},
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		is_alpha: true,
 		features: [],
@@ -92,7 +92,7 @@ jest.mock( '../available-designs-config', () => {
 		slug: 'mock-blank-canvas-design-slug',
 		template: 'mock-blank-canvas-design-template',
 		theme: 'mock-blank-canvas-design-theme',
-		categories: [ 'featured' ],
+		categories: [ { slug: 'featured', name: 'Featured' } ],
 		is_premium: false,
 		features: [],
 	};
@@ -128,16 +128,6 @@ describe( 'Design Picker design utils', () => {
 
 			expect( getDesignUrl( mockDesignWithoutFonts, mockLocale ) ).toEqual(
 				`https://public-api.wordpress.com/rest/v1/template/demo/${ mockDesignWithoutFonts.theme }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
-			);
-		} );
-	} );
-
-	describe( 'getDesignImageUrl', () => {
-		it( 'should compose the correct design API URL', () => {
-			const mockDesign = availableDesignsConfig.featured[ 0 ];
-
-			expect( getDesignImageUrl( mockDesign ) ).toMatchInlineSnapshot(
-				`"/calypso/images/design-screenshots/mock-design-slug_mock-design-template_mock-design-theme.webp?v=3"`
 			);
 		} );
 	} );

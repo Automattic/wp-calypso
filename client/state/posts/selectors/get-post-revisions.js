@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, orderBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { get, orderBy } from 'lodash';
 
 import 'calypso/state/posts/init';
 

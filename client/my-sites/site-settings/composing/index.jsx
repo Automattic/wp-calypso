@@ -1,23 +1,14 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Latex from './latex';
-import Shortcodes from './shortcodes';
 import { CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
-import PublishConfirmation from './publish-confirmation';
+import Latex from './latex';
 import Markdown from './markdown';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import PublishConfirmation from './publish-confirmation';
+import Shortcodes from './shortcodes';
 
 const Composing = ( {
 	eventTracker,

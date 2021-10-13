@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 
 const Form: FunctionComponent = () => {

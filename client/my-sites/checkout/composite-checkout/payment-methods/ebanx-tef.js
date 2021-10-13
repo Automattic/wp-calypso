@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import styled from '@emotion/styled';
-import debugFactory from 'debug';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -15,22 +7,23 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
-import { camelCase } from 'lodash';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import { Field } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
+import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import { camelCase } from 'lodash';
+import { Fragment } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
+import { maskField } from 'calypso/lib/checkout';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
-import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
-import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
-import { maskField } from 'calypso/lib/checkout';
+import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { errorNotice } from 'calypso/state/notices/actions';
 import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:ebanx-tef-payment-method' );
@@ -398,12 +391,12 @@ function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 
 function EbanxTefLabel() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>{ 'Transferência bancária' }</span>
 			<PaymentMethodLogos className="ebanx-tef__logo payment-logos">
 				<EbanxTefLogo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

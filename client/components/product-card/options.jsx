@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { isEmpty } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import { Fragment } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import InfoPopover from 'calypso/components/info-popover';

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { setSiteStyle } from '../actions';
 import { SIGNUP_STEPS_SITE_STYLE_SET } from 'calypso/state/action-types';
+import { setSiteStyle } from '../actions';
 
 describe( 'setSiteStyle()', () => {
 	test( 'should return the expected action object', () => {

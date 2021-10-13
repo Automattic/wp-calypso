@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import Emojify from 'calypso/components/emojify';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import Popover from 'calypso/components/popover';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { urlToDomainAndPath } from 'calypso/lib/url';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteComment } from 'calypso/state/comments/selectors';
-import getSiteSetting from 'calypso/state/selectors/get-site-setting';
-import isAuthorsEmailBlocked from 'calypso/state/selectors/is-authors-email-blocked';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
+import isAuthorsEmailBlocked from 'calypso/state/selectors/is-authors-email-blocked';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -152,12 +142,11 @@ export class CommentAuthorMoreInfo extends Component {
 					<div className="comment__author-more-info-element">
 						<Gridicon icon="link" />
 						<div>
-							{ !! authorUrl && (
-								<ExternalLink href={ authorUrl }>
-									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
-								</ExternalLink>
+							{ authorUrl ? (
+								<ExternalLink href={ authorUrl }>{ urlToDomainAndPath( authorUrl ) }</ExternalLink>
+							) : (
+								<em>{ translate( 'No website' ) }</em>
 							) }
-							{ ! authorUrl && <em>{ translate( 'No website' ) }</em> }
 						</div>
 					</div>
 

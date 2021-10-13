@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CustomDomainPurchaseDetail from 'calypso/my-sites/checkout/checkout-thank-you/custom-domain-purchase-detail';
 
 export default function CustomDomainPurchaseDetailItem( {

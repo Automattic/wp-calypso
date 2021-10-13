@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-
-/**
- * Style dependencies
- */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
 
 interface Props {

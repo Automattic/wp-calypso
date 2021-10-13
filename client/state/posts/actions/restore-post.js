@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { truncate } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
 	POST_RESTORE,
 } from 'calypso/state/action-types';
-import { getSitePost } from 'calypso/state/posts/selectors';
-import { receivePost } from 'calypso/state/posts/actions/receive-post';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { receivePost } from 'calypso/state/posts/actions/receive-post';
+import { getSitePost } from 'calypso/state/posts/selectors';
 
 import 'calypso/state/posts/init';
 

@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { getPost } from 'calypso/state/posts/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
-import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuDuplicate( {

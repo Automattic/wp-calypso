@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { Button, Card, CompactCard } from '@automattic/components';
-import page from 'page';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
 import wpLib from 'calypso/lib/wp';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
-import './section-migrate.scss';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
 import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import './section-migrate.scss';
 
 const wpcom = wpLib.undocumented();
 

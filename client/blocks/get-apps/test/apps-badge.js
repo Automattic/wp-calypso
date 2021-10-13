@@ -2,15 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import { AppsBadge } from '../apps-badge';
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( {

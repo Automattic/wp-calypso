@@ -1,21 +1,15 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { find, flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { find, flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import DisconnectJetpack from 'calypso/blocks/disconnect-jetpack';
 import DocumentHead from 'calypso/components/data/document-head';
-import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
@@ -23,7 +17,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
 
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {

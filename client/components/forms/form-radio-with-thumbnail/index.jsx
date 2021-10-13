@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import FormRadio from 'calypso/components/forms/form-radio';
+import PropTypes from 'prop-types';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const FormRadioWithThumbnail = ( { label, thumbnail, disabled, ...otherProps } ) => {

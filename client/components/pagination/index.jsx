@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import PaginationPage from './pagination-page';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Pagination extends Component {

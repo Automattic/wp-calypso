@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ImporterActionButton from './action-button';
-import { appStates } from 'calypso/state/imports/constants';
-import { cancelImport } from 'calypso/state/imports/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { cancelImport } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import ImporterActionButton from './action-button';
 
-export class ImporterCloseButton extends React.PureComponent {
+export class ImporterCloseButton extends PureComponent {
 	static displayName = 'ImporterCloseButton';
 
 	static propTypes = {

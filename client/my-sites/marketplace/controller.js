@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { navigate } from 'calypso/lib/navigate';
 import { getSiteFragment } from 'calypso/lib/route';
-import MarketplacePluginDetails from 'calypso/my-sites/marketplace/pages/marketplace-product-details';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketplace-domain-upsell';
 import MarketplacePluginSetup from 'calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status';
+import MarketplacePluginDetails from 'calypso/my-sites/marketplace/pages/marketplace-product-details';
 import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/pages/marketplace-stand-alone-thank-you';
 import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
-import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
-import { navigate } from 'calypso/lib/navigate';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 
 export function renderMarketplaceProduct( context, next ) {
 	const siteFragment = getSiteFragment( context.path );

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,

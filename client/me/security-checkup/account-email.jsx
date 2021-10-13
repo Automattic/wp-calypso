@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,
@@ -16,7 +9,7 @@ import {
 import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupAccountEmail extends React.Component {
+class SecurityCheckupAccountEmail extends Component {
 	static propTypes = {
 		primaryEmail: PropTypes.string,
 		primaryEmailVerified: PropTypes.bool,

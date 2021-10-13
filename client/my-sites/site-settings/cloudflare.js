@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { CompactCard } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import config from '@automattic/calypso-config';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { CompactCard } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import jetpackIllustration from 'calypso/assets/images/illustrations/jetpack-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Cloudflare = () => {
 	const translate = useTranslate();

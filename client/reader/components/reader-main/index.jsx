@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import { Component } from 'react';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
-
-/**
- * Style dependencies
- */
+import Main from 'calypso/components/main';
 import './style.scss';
 
 /*
@@ -41,7 +30,7 @@ const setIsReaderPage = ( add ) => {
  * This class is used by pieces of the Reader to indicate they want "editorial" styles.
  * Notably, this overrides the background color of the document and is used as a hook by other parts to override styles.
  */
-export default class ReaderMain extends React.Component {
+export default class ReaderMain extends Component {
 	componentDidMount() {
 		activeReaderMainRefCount++;
 		setIsReaderPage( true );

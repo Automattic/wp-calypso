@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { OnboardAction } from './actions';
+import type { SiteVertical } from './types';
 import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import type { Design, FontPair } from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
-import type { SiteVertical } from './types';
-import type { OnboardAction } from './actions';
+import type { Reducer } from 'redux';
 
 type FeatureId = WPCOMFeatures.FeatureId;
 
@@ -236,6 +229,13 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
+const shouldEnrollInFseBeta: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_ENROLL_IN_FSE_BETA' ) {
+		return action.enrollInFseBeta;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -256,6 +256,7 @@ const reducer = combineReducers( {
 	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,
+	shouldEnrollInFseBeta,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -1,36 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { Button, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { logToLogstash } from 'calypso/state/logstash/actions';
 import {
 	activatePlugin,
 	installPlugin as installAndActivatePlugin,
 	fetchPlugins,
 } from 'calypso/state/plugins/installed/actions';
-import { Button, ProgressBar } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import {
 	getPlugins as getInstalledPlugins,
 	getStatusForSite,
 } from 'calypso/state/plugins/installed/selectors';
+import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
+import { recordTrack } from '../lib/analytics';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
-import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getSelectedSiteWithFallback, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-import { recordTrack } from '../lib/analytics';
 
 // Time in seconds to complete various steps.
 const TIME_TO_TRANSFER_ACTIVE = 5;

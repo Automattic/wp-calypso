@@ -2,7 +2,8 @@ import { Button, SVG, Path } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import { useSupportedPlans } from '../hooks';
 import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
@@ -10,9 +11,6 @@ import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../stores';
 import type { DisabledPlansMap } from '../plans-table/types';
 import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;

@@ -107,7 +107,7 @@ describe( 'DataHelper Tests', function () {
 		`(
 			'Returns $expected if toTitleCase is called with $words',
 			function ( { suite, viewport, expected } ) {
-				process.env.VIEWPORT_NAME = viewport;
+				process.env.TARGET_DEVICE = viewport;
 				expect( createSuiteTitle( suite ) ).toStrictEqual( expected );
 			}
 		);

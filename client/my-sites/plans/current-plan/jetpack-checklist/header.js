@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Fragment } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
 const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (

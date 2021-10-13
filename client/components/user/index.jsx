@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Gravatar from 'calypso/components/gravatar';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class User extends Component {

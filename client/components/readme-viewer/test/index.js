@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import ReadmeViewer from 'calypso/components/readme-viewer';
 
 ReadmeViewer.prototype.componentDidMount = jest.fn( function () {

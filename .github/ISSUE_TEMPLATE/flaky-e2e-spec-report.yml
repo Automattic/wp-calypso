@@ -10,19 +10,15 @@ body:
   - type: input
     id: spec
     attributes:
-      label: Spec
-      description: Name of the spec file that is flaky.
+      label: Spec file
       placeholder: eg. wp-likes__post.js
     validations:
       required: true
   - type: input
     id: suite
     attributes:
-      label: Suite
-      description: Name of the suite or step that is flaky.
-      placeholder: eg. Like a new Post
-    validations:
-      required: true
+      label: Suite or step
+      placeholder: eg. Like new post
   - type: dropdown
     id: framework
     attributes:

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { recordTracksRailcarInteract } from 'calypso/reader/stats';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordTracksRailcarInteract } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 export class Suggestion extends Component {

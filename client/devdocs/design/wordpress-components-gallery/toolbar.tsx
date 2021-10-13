@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
+import { Toolbar, ToolbarButton, ToolbarGroup, SVG, Path } from '@wordpress/components';
 import {
 	alignCenter,
 	alignLeft,
@@ -18,7 +11,6 @@ import {
 	more,
 	paragraph,
 } from '@wordpress/icons';
-import { Toolbar, ToolbarButton, ToolbarGroup, SVG, Path } from '@wordpress/components';
 
 function InlineImageIcon() {
 	return (

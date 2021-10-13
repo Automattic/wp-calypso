@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';

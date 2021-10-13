@@ -1,46 +1,30 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { filter, get, range } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { filter, get, range } from 'lodash';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Spinner from 'calypso/components/spinner';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SERVICE_AKISMET,
 	JETPACK_SERVICE_VAULTPRESS,
 	JETPACK_SUPPORT,
 } from 'calypso/lib/url/support';
-import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-// Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
-import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { requestSites } from 'calypso/state/sites/actions';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import {
+	getPluginOnSite,
+	isRequesting as isRequestingInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 import { installPlugin } from 'calypso/state/plugins/premium/actions';
 import {
 	getPluginsForSite,
@@ -51,17 +35,20 @@ import {
 	isRequesting,
 	hasRequested,
 } from 'calypso/state/plugins/premium/selectors';
-import {
-	getPluginOnSite,
-	isRequesting as isRequestingInstalledPlugins,
-} from 'calypso/state/plugins/installed/selectors';
+import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { requestSites } from 'calypso/state/sites/actions';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './style.scss';
 
 const helpLinks = {
 	vaultpress: JETPACK_SERVICE_VAULTPRESS,
 	akismet: JETPACK_SERVICE_AKISMET,
 };
 
-class PlansSetup extends React.Component {
+class PlansSetup extends Component {
 	static displayName = 'PlanSetup';
 	sentTracks = false;
 

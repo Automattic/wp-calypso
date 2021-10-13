@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { Field } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
 import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
+import CVVImage from './cvv-image';
 import {
 	GridRow,
 	FieldRow,
@@ -20,7 +13,6 @@ import {
 	CreditCardFieldsWrapper,
 	CreditCardField,
 } from './form-layout-components';
-import CVVImage from './cvv-image';
 
 export default function CreditCardLoading() {
 	const { __ } = useI18n();

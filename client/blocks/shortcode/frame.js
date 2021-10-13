@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { isEqual, omit } from 'lodash';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
+import { isEqual, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ResizableIframe from 'calypso/components/resizable-iframe';
+import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
 
-export default class ShortcodeFrame extends React.Component {
+export default class ShortcodeFrame extends Component {
 	static propTypes = {
 		body: PropTypes.string,
 		scripts: PropTypes.object,

@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) => {

@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { find, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
-import SuggestionSearch from 'calypso/components/suggestion-search';
-import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
 import QueryVerticals from 'calypso/components/data/query-verticals';
+import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
+import SuggestionSearch from 'calypso/components/suggestion-search';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getVerticals } from 'calypso/state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class SiteVerticalsSuggestionSearch extends Component {
@@ -74,14 +64,14 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 * Show the popular topics component when the search field is empty and
 	 * `props.showPopular` tell us to.
 	 *
-	 * @returns {Bool} Whether we should display the popular topics component.
+	 * @returns {boolean} Whether we should display the popular topics component.
 	 */
 	shouldShowPopularTopics = () => ! this.state.inputValue && this.props.showPopular;
 
 	/**
 	 * Checks for the existence of vertical results. If there are none we assume
 	 *
-	 * @returns {Bool} Whether we should display the popular topics component.
+	 * @returns {boolean} Whether we should display the popular topics component.
 	 */
 	isVerticalSearchPending = () => this.state.inputValue && 0 === this.props.verticals.length;
 

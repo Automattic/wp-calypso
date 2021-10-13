@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import TimeSince from 'calypso/components/time-since';
 
-/**
- * Style dependencies
- */
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
 function unescape( str ) {
 	return str.replace( /&#(\d+);/g, ( match, entity ) => String.fromCharCode( entity ) );
 }
 
-export default class PostTrackback extends React.Component {
+export default class PostTrackback extends Component {
 	render() {
 		const commentsTree = this.props.commentsTree;
 		const comment = get( commentsTree[ this.props.commentId ], 'data' );

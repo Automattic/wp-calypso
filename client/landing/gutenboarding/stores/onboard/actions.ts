@@ -1,27 +1,19 @@
-/**
- * External dependencies
- */
 import {
 	DomainSuggestions,
 	Site,
 	VerticalsTemplates,
 	WPCOMFeatures,
 } from '@automattic/data-stores';
-import { dispatch, select } from '@wordpress/data-controls';
-import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
-import { getLanguage } from 'calypso/lib/i18n-utils';
-import { __ } from '@wordpress/i18n';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import type { Design, FontPair } from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
-
-import { STORE_KEY as ONBOARD_STORE } from './constants';
+import { dispatch, select } from '@wordpress/data-controls';
+import { __ } from '@wordpress/i18n';
+import { getLanguage } from 'calypso/lib/i18n-utils';
+import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { SITE_STORE } from '../site';
+import { STORE_KEY as ONBOARD_STORE } from './constants';
 import type { State } from '.';
 import type { SiteVertical } from './types';
+import type { Design, FontPair } from '@automattic/design-picker';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -232,6 +224,11 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const enrollInFseBeta = ( enrollInFseBeta: boolean ) => ( {
+	type: 'SET_ENROLL_IN_FSE_BETA' as const,
+	enrollInFseBeta,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -256,4 +253,5 @@ export type OnboardAction = ReturnType<
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
 	| typeof startOnboarding
+	| typeof enrollInFseBeta
 >;

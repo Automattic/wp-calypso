@@ -5,165 +5,6 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	margin-bottom: 24px;
 }
 
-.current-theme__pre-revamp {
-	$current-theme-height: 56px;
-	$current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
-
-	.current-theme {
-		font-weight: 600;
-		padding: 0;
-		margin-bottom: 24px;
-	}
-
-	.current-theme__current {
-		@include breakpoint-deprecated( '>480px' ) {
-			width: 50%;
-			float: left;
-		}
-		height: $current-theme-height;
-	}
-
-	.current-theme__img {
-		@include breakpoint-deprecated( '<480px' ) {
-			border-left: $current-theme-border;
-			float: right;
-		}
-		@include breakpoint-deprecated( '>480px' ) {
-			border-right: $current-theme-border;
-			float: left;
-		}
-		height: 100%;
-	}
-
-	.current-theme__img-placeholder {
-		@include breakpoint-deprecated( '<480px' ) {
-			float: right;
-		}
-		@include breakpoint-deprecated( '>480px' ) {
-			float: left;
-		}
-		width: 75px;
-		color: transparent;
-		background-color: var( --color-neutral-0 );
-		animation: loading-fade 1.6s ease-in-out infinite;
-		height: 100%;
-	}
-
-	.current-theme__label {
-		font-size: 0.875rem;
-		color: var( --color-neutral-light );
-		text-transform: uppercase;
-		padding-left: 15px;
-		padding-top: 10px;
-		margin-bottom: -2px;
-		display: inline-block;
-	}
-
-	.current-theme__name {
-		box-sizing: border-box;
-		padding-left: 15px;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		max-width: 100%;
-		display: block;
-	}
-
-	.current-theme__placeholder {
-		color: transparent;
-		background-color: var( --color-neutral-0 );
-		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.current-theme__actions {
-		height: $current-theme-height;
-		border-top: $current-theme-border;
-		box-sizing: border-box;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			width: 50%;
-			float: right;
-			border-top: none;
-			border-left: $current-theme-border;
-		}
-
-		&.two-buttons {
-			@include breakpoint-deprecated( '>480px' ) {
-				width: 33.3%;
-			}
-
-			.current-theme__button {
-				width: 50%;
-			}
-		}
-	}
-
-	.current-theme__button {
-		height: $current-theme-height;
-		box-sizing: border-box;
-		width: 33.33%;
-		float: left;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		margin: 0;
-		font-weight: normal;
-		/* transition: all 200ms ease-in-out; /* Unfortunately gradients don't transition (long-content-fade) */
-		position: relative;
-
-		&:link,
-		&:visited {
-			color: var( --color-neutral-70 );
-		}
-
-		&.disabled {
-			cursor: default;
-
-			span {
-				color: var( --color-neutral-light );
-			}
-		}
-
-		&:not( .disabled ):hover {
-			background: var( --color-primary-0 );
-			cursor: pointer;
-		}
-
-		&:not( .disabled ):active {
-			background: var( --color-primary-0 );
-		}
-
-		.accessible-focus &:focus {
-			z-index: z-index( 'root', '.accessible-focus .current-theme__button:focus' );
-			outline: solid 3px var( --color-primary-light );
-		}
-	}
-
-	.current-theme__button-label {
-		overflow: hidden;
-		white-space: nowrap;
-		max-width: 95%;
-
-		&::after {
-			@include long-content-fade( $size: 10% );
-		}
-
-		.current-theme__button:not( .disabled ):hover &::after {
-			@include long-content-fade( $color: var( --color-primary-0-rgb ), $size: 10% );
-		}
-	}
-
-	.current-theme__info {
-		border-left: $current-theme-border;
-		border-right: $current-theme-border;
-
-		&:last-child {
-			border-right: none;
-		}
-	}
-}
-
 .current-theme__post-revamp {
 	.current-theme__current {
 		display: flex;
@@ -211,12 +52,16 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	.current-theme__title-wrapper {
 		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
+		align-items: center;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row-reverse;
 			justify-content: flex-end;
 		}
+	}
+
+	.current-theme__badge-beta {
+		margin-left: 6px;
 	}
 
 	.current-theme__label {
@@ -289,6 +134,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__button {
+		display: flex;
 		margin-right: 10px;
 		margin-bottom: 16px;
 		font-weight: normal;

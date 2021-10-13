@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import signupDependencyStore from '../reducer';
 import { SIGNUP_STEPS_SITE_TYPE_SET } from 'calypso/state/action-types';
+import signupDependencyStore from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should update the site type', () => {

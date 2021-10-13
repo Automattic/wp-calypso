@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import classnames from 'classnames';
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import { CompactCard } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import {
 	getNumberOfMailboxesText,
 	resolveEmailPlanStatus,
 } from 'calypso/my-sites/email/email-management/home/utils';
-import MaterialIcon from 'calypso/components/material-icon';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 
 const EmailListActiveWarning = ( { domain, selectedSiteId } ) => {
 	const { data, error, isLoading } = useEmailAccountsQuery( selectedSiteId, domain.name, {
@@ -49,9 +42,16 @@ EmailListActiveWarning.propTypes = {
 	selectedSiteId: PropTypes.number.isRequired,
 };
 
-class EmailListActive extends React.Component {
+class EmailListActive extends Component {
 	render() {
-		const { currentRoute, domains, selectedSiteSlug, translate, selectedSiteId } = this.props;
+		const {
+			currentRoute,
+			domains,
+			selectedSiteSlug,
+			translate,
+			selectedSiteId,
+			source,
+		} = this.props;
 
 		if ( domains.length < 1 ) {
 			return null;
@@ -60,7 +60,7 @@ class EmailListActive extends React.Component {
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard
-					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }
+					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute, { source } ) }
 					key={ domain.name }
 				>
 					<span className="email-list-active__item-icon">
@@ -93,6 +93,7 @@ EmailListActive.propTypes = {
 	currentRoute: PropTypes.string.isRequired,
 	domains: PropTypes.array.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
+	source: PropTypes.string,
 
 	// Props injected via connect()
 	translate: PropTypes.func.isRequired,

@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ThemeSheetComponent from '../main';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
 import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
+import ThemeSheetComponent from '../main';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/wp', () => ( {

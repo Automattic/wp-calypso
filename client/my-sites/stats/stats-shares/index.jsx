@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
-import ErrorPanel from '../stats-error';
-import SectionHeader from 'calypso/components/section-header';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
-import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import SectionHeader from 'calypso/components/section-header';
+import { useSharingButtonsQuery } from 'calypso/my-sites/marketing/buttons/use-sharing-buttons-query';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
-import { useTranslate } from 'i18n-calypso';
+import ErrorPanel from '../stats-error';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
 const StatShares = ( { siteId } ) => {
 	const translate = useTranslate();
 	const isLoading = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats' )
 	);
-	const shareButtons = useSelector( ( state ) => getSharingButtons( state, siteId ) );
+	const { data: shareButtons } = useSharingButtonsQuery( siteId );
 	const hasError = useSelector( ( state ) => hasSiteStatsQueryFailed( state, siteId, 'stats' ) );
 	const siteStats = useSelector( ( state ) => getSiteStatsForQuery( state, siteId, 'stats' ) );
 	const classes = [
@@ -43,7 +33,6 @@ const StatShares = ( { siteId } ) => {
 	return (
 		<div>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="stats" /> }
-			{ siteId && <QuerySharingButtons siteId={ siteId } /> }
 			<SectionHeader label={ translate( 'Shares' ) } />
 			<Card className={ classNames( ...classes ) }>
 				<StatsTabs borderless>

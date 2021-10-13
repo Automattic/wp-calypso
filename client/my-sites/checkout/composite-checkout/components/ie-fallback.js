@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import styled from '@emotion/styled';
 
 export const LeftColumn = styled.div`

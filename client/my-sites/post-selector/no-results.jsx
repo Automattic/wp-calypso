@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-class PostSelectorNoResults extends React.Component {
+class PostSelectorNoResults extends Component {
 	static displayName = 'PostSelectorNoResults';
 
 	static propTypes = {

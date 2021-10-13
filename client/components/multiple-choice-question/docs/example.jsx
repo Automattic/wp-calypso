@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button, CompactCard as Card } from '@automattic/components';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import MultipleChoiceQuestion from '../';
 import { successNotice } from 'calypso/state/notices/actions';
+import MultipleChoiceQuestion from '../';
 
 function MultipleChoiceQuestionExamples() {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );

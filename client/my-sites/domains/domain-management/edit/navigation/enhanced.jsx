@@ -1,24 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { addQueryArgs } from '@wordpress/url';
+import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import MaterialIcon from 'calypso/components/material-icon';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
 import {
 	getDomainTypeText,
 	isSubdomain,
 	isDomainUpdateable,
 	isDomainInGracePeriod,
 } from 'calypso/lib/domains';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import MaterialIcon from 'calypso/components/material-icon';
+import { type as domainTypes, transferStatus, sslStatuses } from 'calypso/lib/domains/constants';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { isCancelable } from 'calypso/lib/purchases';
+import { getUnmappedUrl } from 'calypso/lib/site/utils';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { withoutHttp } from 'calypso/lib/url';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
+import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import {
 	domainAddNew,
 	domainManagementNameServers,
@@ -33,27 +36,14 @@ import {
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import { type as domainTypes, transferStatus, sslStatuses } from 'calypso/lib/domains/constants';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { isCancelable } from 'calypso/lib/purchases';
-import { cancelPurchase } from 'calypso/me/purchases/paths';
-import { getUnmappedUrl } from 'calypso/lib/site/utils';
-import { withoutHttp } from 'calypso/lib/url';
-import RemovePurchase from 'calypso/me/purchases/remove-purchase';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class DomainManagementNavigationEnhanced extends React.Component {
+class DomainManagementNavigationEnhanced extends Component {
 	getEmail() {
 		const { selectedSite, translate, currentRoute, domain } = this.props;
 		const { emailForwardsCount } = domain;
@@ -567,7 +557,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	renderRegisteredDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getNameServers() }
 				{ this.getEmail() }
@@ -576,23 +566,23 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderSiteRedirectNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getRedirectSettings() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderMappedDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getEmail() }
@@ -602,28 +592,28 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderTransferInDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getDnsRecords() }
 				{ this.getSecurity() }
 				{ this.getDeleteDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
 	renderWpcomDomainNavigation() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ this.getManageSite() }
 				{ this.getSiteAddressChange() }
 				{ this.getPickCustomDomain() }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

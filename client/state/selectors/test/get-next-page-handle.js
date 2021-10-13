@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getNextPageHandle from 'calypso/state/selectors/get-next-page-handle';
 
 describe( 'getNextPageHandle', () => {

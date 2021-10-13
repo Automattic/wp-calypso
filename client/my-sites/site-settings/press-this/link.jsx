@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { newPost } from 'calypso/lib/paths';
 
 /**
@@ -30,7 +23,11 @@ const pressThis = function ( postURL ) {
 	} else if ( docGetSel ) {
 		sel = docGetSel();
 	} else {
-		sel = docSel ? docSel.createRange().text : 0;
+		sel = docSel ? docSel.createRange().text : '';
+	}
+
+	if ( ! encodeURIComponent( sel ) ) {
+		sel = doc.title;
 	}
 
 	const url =
@@ -59,7 +56,7 @@ const pressThis = function ( postURL ) {
 	void 0;
 };
 
-class PressThisLink extends React.Component {
+class PressThisLink extends Component {
 	static propTypes = {
 		site: PropTypes.object.isRequired,
 	};

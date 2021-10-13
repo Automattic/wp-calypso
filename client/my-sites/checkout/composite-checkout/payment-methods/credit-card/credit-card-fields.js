@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import styled from '@emotion/styled';
-import { useTheme } from 'emotion-theming';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	FormStatus,
 	useEvents,
@@ -12,21 +5,21 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useI18n } from '@wordpress/react-i18n';
+import { Fragment, useState, useEffect } from 'react';
 import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
 import ContactFields from './contact-fields';
-import CreditCardNumberField from './credit-card-number-field';
-import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
-import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
+import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardLoading from './credit-card-loading';
+import CreditCardNumberField from './credit-card-number-field';
+import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 
 export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields } ) {
 	const { __ } = useI18n();
@@ -182,10 +175,10 @@ const StripeFields = styled.div`
 
 function LoadingFields() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<LoadingIndicator />
 			<CreditCardLoading />
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

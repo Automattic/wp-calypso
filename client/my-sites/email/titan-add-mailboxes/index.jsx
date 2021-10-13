@@ -1,17 +1,26 @@
-/**
- * External dependencies
- */
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { isEnabled } from '@automattic/calypso-config';
+import { Button, Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import HeaderCake from 'calypso/components/header-cake';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import {
+	getMaxTitanMailboxCount,
+	getTitanProductName,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -19,53 +28,28 @@ import {
 	transformMailboxForCart,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import { Button, Card } from '@automattic/components';
-import DocumentHead from 'calypso/components/data/document-head';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	emailManagement,
-	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
-	emailManagementTitanControlPanelRedirect,
+	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import {
-	getMaxTitanMailboxCount,
-	getTitanProductName,
-	hasTitanMailWithUs,
-} from 'calypso/lib/titan';
+import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
+import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getDomainsBySiteId,
 	hasLoadedSiteDomains,
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import {
-	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-	TITAN_MAIL_MONTHLY_SLUG,
-} from 'calypso/lib/titan/constants';
-import SectionHeader from 'calypso/components/section-header';
-import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
-import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
-class TitanAddMailboxes extends React.Component {
+class TitanAddMailboxes extends Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 		isAddingToCart: false,
@@ -84,10 +68,12 @@ class TitanAddMailboxes extends React.Component {
 	}
 
 	recordClickEvent = ( eventName, eventProps ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
+			provider: TITAN_PROVIDER_NAME,
+			source,
 		} );
 	};
 
@@ -97,13 +83,15 @@ class TitanAddMailboxes extends React.Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		page(
 			emailManagement(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute
+				currentRoute,
+				{ source }
 			)
 		);
 	};
@@ -180,6 +168,7 @@ class TitanAddMailboxes extends React.Component {
 						// Stay on the page to show the relevant error
 						return;
 					}
+
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
@@ -195,22 +184,12 @@ class TitanAddMailboxes extends React.Component {
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_create_mailbox_click' );
 
-		const domainName = isSelectedDomainNameValid ? selectedDomainName : null;
-
-		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
-			page(
-				emailManagementManageTitanAccount( selectedSite.slug, domainName, currentRoute, {
-					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-				} )
-			);
-
-			return;
-		}
-
-		window.open(
-			emailManagementTitanControlPanelRedirect( selectedSite.slug, domainName, currentRoute, {
-				context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-			} )
+		page(
+			emailManagementTitanSetUpMailbox(
+				selectedSite.slug,
+				isSelectedDomainNameValid ? selectedDomainName : null,
+				currentRoute
+			)
 		);
 	};
 
@@ -272,7 +251,6 @@ class TitanAddMailboxes extends React.Component {
 		}
 
 		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
-		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
 			<>
@@ -294,11 +272,11 @@ class TitanAddMailboxes extends React.Component {
 					{ selectedDomain && (
 						<TitanUnusedMailboxesNotice
 							domain={ selectedDomain }
-							linkIsExternal={ finishSetupLinkIsExternal }
 							maxTitanMailboxCount={ maxTitanMailboxCount }
 							onFinishSetupClick={ this.handleUnusedMailboxFinishSetupClick }
 						/>
 					) }
+
 					{ selectedDomain && titanMonthlyProduct && (
 						<TitanMailboxPricingNotice
 							domain={ selectedDomain }
@@ -337,4 +315,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) );
+)( withShoppingCart( withCartKey( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );

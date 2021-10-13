@@ -1,19 +1,31 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
-import { findLast, times } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { findLast, times } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component, Fragment } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import InfiniteList from 'calypso/components/infinite-list';
+import ListEnd from 'calypso/components/list-end';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
+import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import EmptyContent from './empty';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
+import UpdateNotice from 'calypso/reader/update-notice';
+import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
+import XPostHelper from 'calypso/reader/xpost-helper';
+import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import { viewStream } from 'calypso/state/reader-ui/actions';
+import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
 	selectItem,
@@ -26,33 +38,9 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
-
-import { shouldShowLikes } from 'calypso/reader/like-helper';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import ListEnd from 'calypso/components/list-end';
-import InfiniteList from 'calypso/components/infinite-list';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
-import PostPlaceholder from './post-placeholder';
-import UpdateNotice from 'calypso/reader/update-notice';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
-import scrollTo from 'calypso/lib/scroll-to';
-import XPostHelper from 'calypso/reader/xpost-helper';
+import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
-import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
-import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
-import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { viewStream } from 'calypso/state/reader-ui/actions';
-import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
-import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-
-/**
- * Style dependencies
- */
+import PostPlaceholder from './post-placeholder';
 import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
@@ -60,7 +48,7 @@ const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
 
-class ReaderStream extends React.Component {
+class ReaderStream extends Component {
 	static propTypes = {
 		trackScrollPage: PropTypes.func.isRequired,
 		suppressSiteNameLink: PropTypes.bool,
@@ -100,7 +88,7 @@ class ReaderStream extends React.Component {
 		forcePlaceholders: false,
 	};
 
-	listRef = React.createRef();
+	listRef = createRef();
 
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
@@ -371,7 +359,7 @@ class ReaderStream extends React.Component {
 			} );
 
 		return (
-			<React.Fragment key={ itemKey }>
+			<Fragment key={ itemKey }>
 				<PostLifecycle
 					ref={ itemKey /* The ref is stored into `InfiniteList`'s `this.ref` map */ }
 					isSelected={ isSelected }
@@ -392,7 +380,7 @@ class ReaderStream extends React.Component {
 					compact={ this.props.useCompactCards }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
-			</React.Fragment>
+			</Fragment>
 		);
 	};
 

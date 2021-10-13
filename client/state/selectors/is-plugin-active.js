@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/plugins/init';
 
 /**

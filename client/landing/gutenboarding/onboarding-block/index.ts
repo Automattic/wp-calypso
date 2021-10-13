@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import type { BlockConfiguration } from '@wordpress/blocks';
-
-/**
- * Internal dependencies
- */
-import type { Attributes } from './types';
 import edit from './edit';
+import type { Attributes } from './types';
+import type { BlockConfiguration } from '@wordpress/blocks';
 
 export const name = 'automattic/onboarding';
 

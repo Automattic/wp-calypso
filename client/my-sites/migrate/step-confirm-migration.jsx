@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { Button, CompactCard } from '@automattic/components';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
-import MigrateButton from './migrate-button.jsx';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import MigrateButton from './migrate-button.jsx';
 
-/**
- * Style dependencies
- */
 import './section-migrate.scss';
 
 class StepConfirmMigration extends Component {

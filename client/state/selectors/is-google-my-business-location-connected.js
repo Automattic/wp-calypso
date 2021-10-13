@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 
 import 'calypso/state/site-keyrings/init';

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';

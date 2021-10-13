@@ -1,17 +1,8 @@
-/**
- * External dependencies
- */
+import { useSelect, useDispatch } from '@wordpress/data';
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
-import { useSelect, useDispatch } from '@wordpress/data';
-import type { BlockEditProps } from '@wordpress/blocks';
 import { isE2ETest } from 'calypso/lib/e2e';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY } from '../stores/onboard';
-import { SITE_STORE } from '../stores/site';
+import { usePrevious } from '../hooks/use-previous';
 import {
 	GutenLocationStateType,
 	Step,
@@ -23,19 +14,21 @@ import {
 	useAnchorFmParams,
 	useStepRouteParam,
 } from '../path';
-import { usePrevious } from '../hooks/use-previous';
-import Designs from './designs';
-import CreateSite from './create-site';
-import CreateSiteError from './create-site-error';
+import { STORE_KEY } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
 import AcquireIntent from './acquire-intent';
 import AnchorError from './anchor-error';
-import StylePreview from './style-preview';
-import Features from './features';
-import Plans from './plans';
+import CreateSite from './create-site';
+import CreateSiteError from './create-site-error';
+import Designs from './designs';
 import Domains from './domains';
+import Features from './features';
+import FseBetaOptIn from './fse-beta-opt-in';
 import Language from './language';
-
+import Plans from './plans';
+import StylePreview from './style-preview';
 import type { Attributes } from './types';
+import type { BlockEditProps } from '@wordpress/blocks';
 
 import './colors.scss';
 import './style.scss';
@@ -46,6 +39,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		hasSelectedDesign,
 		hasSelectedDesignWithoutFonts,
 		isRedirecting,
+		isEnrollingInFse,
 	} = useSelect(
 		( select ) => {
 			const onboardSelect = select( STORE_KEY );
@@ -55,6 +49,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
 				isRedirecting: onboardSelect.getIsRedirecting(),
+				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta(),
 			};
 		},
 		[ STORE_KEY ]
@@ -116,8 +111,8 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}, [ hasSelectedDesign ] );
 
 	const shouldSkipStyleStep = React.useCallback( (): boolean => {
-		return hasSelectedDesignWithoutFonts;
-	}, [ hasSelectedDesignWithoutFonts ] );
+		return hasSelectedDesignWithoutFonts || isEnrollingInFse;
+	}, [ hasSelectedDesignWithoutFonts, isEnrollingInFse ] );
 
 	const canUseFeatureStep = React.useCallback( (): boolean => {
 		return hasSelectedDesign;
@@ -206,6 +201,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
+				</Route>
+
+				<Route path={ makePath( Step.FseBetaOptIn ) }>
+					<FseBetaOptIn />
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>

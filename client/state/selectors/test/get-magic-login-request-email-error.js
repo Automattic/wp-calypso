@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 
 describe( 'getMagicLoginRequestEmailError()', () => {

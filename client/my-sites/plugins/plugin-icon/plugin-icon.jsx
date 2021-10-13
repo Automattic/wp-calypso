@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PluginIcon = ( { className, image, isPlaceholder } ) => {

@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
-import { Button } from '@automattic/components';
+import Notice from 'calypso/components/notice';
 import {
 	createPasswordlessUser,
 	verifyPasswordlessUser,
 } from 'calypso/lib/signup/step-actions/passwordless';
-import Notice from 'calypso/components/notice';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 export class PasswordlessStep extends Component {

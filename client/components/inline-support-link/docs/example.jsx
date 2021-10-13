@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'InlineSupportLink';
 
 	render() {

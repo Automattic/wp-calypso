@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button, ProgressBar } from '@automattic/components';
-import ThankYou, { ThankYouCtaType } from './thank-you';
+import { useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
+import { connect } from 'react-redux';
 import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ThankYou, { ThankYouCtaType } from './thank-you';
 
 const ThankYouCta: ThankYouCtaType = ( { siteAdminUrl, recordThankYouClick } ) => {
 	const translate = useTranslate();

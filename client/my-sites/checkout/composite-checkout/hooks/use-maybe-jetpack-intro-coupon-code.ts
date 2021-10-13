@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
-
-/**
- * Internal dependencies
- */
 import { isJetpackProductSlug, isJetpackPlanSlug } from '@automattic/calypso-products';
-
-/**
- * Type dependencies
- */
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';
@@ -20,8 +11,9 @@ const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';
 const useMaybeJetpackIntroCouponCode = (
 	products: RequestCartProduct[],
 	isCouponApplied: boolean
-): string | undefined =>
-	useMemo( () => {
+): string | undefined => {
+	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
+	return useMemo( () => {
 		if ( isCouponApplied ) {
 			return undefined;
 		}
@@ -41,7 +33,16 @@ const useMaybeJetpackIntroCouponCode = (
 			return undefined;
 		}
 
+		// Only apply FRESHPACK to monthly products if a sale is running
+		if (
+			jetpackSaleCoupon &&
+			! jetpackProducts.some( ( product ) => product.product_slug.endsWith( '_monthly' ) )
+		) {
+			return undefined;
+		}
+
 		return JETPACK_INTRO_COUPON_CODE;
-	}, [ products, isCouponApplied ] );
+	}, [ products, isCouponApplied, jetpackSaleCoupon ] );
+};
 
 export default useMaybeJetpackIntroCouponCode;

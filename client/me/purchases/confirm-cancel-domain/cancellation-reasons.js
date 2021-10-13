@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 
 export default [

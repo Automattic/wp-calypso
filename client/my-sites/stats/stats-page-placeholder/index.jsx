@@ -1,19 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */

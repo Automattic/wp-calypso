@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { times } from 'lodash';
-
-/**
- * WordPress dependencies
- */
 import { Button, Guide } from '@wordpress/components';
+import { times } from 'lodash';
+import { useState } from 'react';
 
 const GuideExample = () => {
 	const numberOfPages = 5;

@@ -1,72 +1,58 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { get, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { protectForm } from 'calypso/lib/protect-form';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import {
-	getSeoTitleFormatsForSite,
-	isJetpackSite,
-	isRequestingSite,
-} from 'calypso/state/sites/selectors';
-import {
-	isSiteSettingsSaveSuccessful,
-	getSiteSettingsSaveError,
-} from 'calypso/state/site-settings/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
-import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestSite } from 'calypso/state/sites/actions';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
+import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, isEqual, mapValues, omit, pickBy } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
+import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
 import WebPreview from 'calypso/components/web-preview';
+import { protectForm } from 'calypso/lib/protect-form';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
+import {
+	isSiteSettingsSaveSuccessful,
+	getSiteSettingsSaveError,
+} from 'calypso/state/site-settings/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import {
+	getSeoTitleFormatsForSite,
+	isJetpackSite,
+	isRequestingSite,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Image dependencies
- */
-import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -83,7 +69,7 @@ function stateForSite( site ) {
 	};
 }
 
-export class SeoForm extends React.Component {
+export class SeoForm extends Component {
 	static displayName = 'SiteSettingsFormSEO';
 
 	state = {
@@ -517,12 +503,12 @@ const mapDispatchToProps = {
 	refreshSiteData: requestSite,
 	requestSiteSettings,
 	saveSiteSettings,
-	trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
-	trackTitleFormatsUpdated: partial( recordTracksEvent, 'calypso_seo_tools_title_formats_updated' ),
-	trackFrontPageMetaUpdated: partial(
-		recordTracksEvent,
-		'calypso_seo_tools_front_page_meta_updated'
-	),
+	trackFormSubmitted: ( properties ) =>
+		recordTracksEvent( 'calypso_seo_settings_form_submit', properties ),
+	trackTitleFormatsUpdated: ( properties ) =>
+		recordTracksEvent( 'calypso_seo_tools_title_formats_updated', properties ),
+	trackFrontPageMetaUpdated: ( properties ) =>
+		recordTracksEvent( 'calypso_seo_tools_front_page_meta_updated', properties ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) );

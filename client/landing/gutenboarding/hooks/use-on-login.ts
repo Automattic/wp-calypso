@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { USER_STORE } from '../stores/user';
-import { SITE_STORE } from '../stores/site';
-import { useNewSiteVisibility } from './use-selected-plan';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
 import { useNewQueryParam, useIsAnchorFm } from '../path';
+import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { SITE_STORE } from '../stores/site';
+import { USER_STORE } from '../stores/user';
+import { useNewSiteVisibility } from './use-selected-plan';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -29,7 +22,7 @@ export default function useOnLogin(): void {
 	const visibility = useNewSiteVisibility();
 	const isAnchorFmSignup = useIsAnchorFm();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if (
 			! isCreatingSite &&
 			! newSite &&

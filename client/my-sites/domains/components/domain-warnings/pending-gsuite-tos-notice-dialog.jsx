@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import React, { Fragment, useState } from 'react';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { Button, Dialog } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import PropTypes from 'prop-types';
+import { Fragment, useState } from 'react';
+import { connect } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { getLoginUrlWithTOSRedirect } from 'calypso/lib/gsuite';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import wp from 'calypso/lib/wp';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getLoginUrlWithTOSRedirect } from 'calypso/lib/gsuite';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import wp from 'calypso/lib/wp';
 
 function PendingGSuiteTosNoticeDialog( props ) {
 	const [ password, setPassword ] = useState( false );

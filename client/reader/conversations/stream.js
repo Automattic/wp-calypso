@@ -1,20 +1,8 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import Stream from 'calypso/reader/stream';
-import DocumentHead from 'calypso/components/data/document-head';
-import ConversationsIntro from './intro';
 import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
-
-/**
- * Style dependencies
- */
+import DocumentHead from 'calypso/components/data/document-head';
+import Stream from 'calypso/reader/stream';
+import ConversationsIntro from './intro';
 import './stream.scss';
 
 export default function ( props ) {

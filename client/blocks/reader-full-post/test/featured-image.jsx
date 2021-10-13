@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FeaturedImage from '../featured-image';
 
 describe( 'FeaturedImage', () => {

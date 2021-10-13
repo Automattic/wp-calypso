@@ -1,4 +1,3 @@
-/* eslint-disable import/no-nodejs-modules, no-console, no-process-exit */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const makeDir = require( 'make-dir' );

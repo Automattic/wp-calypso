@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'FormTextInputWithAffixes';
 
 	static propTypes = {

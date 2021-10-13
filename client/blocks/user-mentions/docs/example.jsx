@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import UserMentionsExampleInput from './example-input';
 
 const exampleSuggestions = [

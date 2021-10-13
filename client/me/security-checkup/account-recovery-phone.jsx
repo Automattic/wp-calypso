@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import {
 	getAccountRecoveryPhone,
 	isAccountRecoveryPhoneActionInProgress,
 	isAccountRecoveryPhoneValidated,
 } from 'calypso/state/account-recovery/settings/selectors';
 import { getOKIcon, getWarningIcon } from './icons.js';
-import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupAccountRecoveryPhone extends React.Component {
+class SecurityCheckupAccountRecoveryPhone extends Component {
 	static propTypes = {
 		accountRecoveryPhone: PropTypes.object,
 		accountRecoveryPhoneActionInProgress: PropTypes.bool,
@@ -36,10 +29,10 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 
 		if ( accountRecoveryPhoneActionInProgress ) {
 			return (
-				<React.Fragment>
+				<Fragment>
 					<QueryAccountRecoverySettings />
 					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</React.Fragment>
+				</Fragment>
 			);
 		}
 

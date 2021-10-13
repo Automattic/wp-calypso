@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
-
-/**
- * Style dependencies
- */
+import classnames from 'classnames';
+import { ReactElement } from 'react';
+import * as React from 'react';
 import './style.scss';
 
 interface Props {

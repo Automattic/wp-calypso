@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import PropTypes from 'prop-types';
+import { useState, useCallback } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

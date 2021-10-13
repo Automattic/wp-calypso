@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './wpcom.scss';
 
 class AmpWpcom extends Component {

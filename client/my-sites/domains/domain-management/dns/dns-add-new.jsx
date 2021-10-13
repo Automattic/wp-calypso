@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { includes, find, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ARecord from './a-record';
-import CnameRecord from './cname-record';
+import { includes, find, flatMap } from 'lodash';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import MxRecord from './mx-record';
-import TxtRecord from './txt-record';
-import SrvRecord from './srv-record';
 import formState from 'calypso/lib/form-state';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { addDns } from 'calypso/state/domains/dns/actions';
 import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import ARecord from './a-record';
+import CnameRecord from './cname-record';
+import MxRecord from './mx-record';
+import SrvRecord from './srv-record';
+import TxtRecord from './txt-record';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {

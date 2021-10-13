@@ -1,33 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-
-/**
- * Style dependencies
- */
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import './style.scss';
 
-class ReaderLikeButton extends React.Component {
+class ReaderLikeButton extends Component {
 	state = {
 		showLikesPopover: false,
 	};
 
 	hidePopoverTimeout = null;
-	likeButtonRef = React.createRef();
+	likeButtonRef = createRef();
 
 	componentWillUnmount() {
 		clearTimeout( this.hidePopoverTimeout );

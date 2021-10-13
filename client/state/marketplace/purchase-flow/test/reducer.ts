@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import {
-	default as purchaseFlowReducer,
-	defaultState as defaultMarketPlaceState,
-} from 'calypso/state/marketplace/purchase-flow/reducer';
 import {
 	pluginInstallationStateChange,
 	setPrimaryDomainCandidate,
 	siteTransferStateChange,
 	siteTransferWithPluginInstallTriggered,
 } from 'calypso/state/marketplace/purchase-flow/actions';
+import {
+	default as purchaseFlowReducer,
+	defaultState as defaultMarketPlaceState,
+} from 'calypso/state/marketplace/purchase-flow/reducer';
 import {
 	IPurchaseFlowState,
 	MARKETPLACE_ASYNC_PROCESS_STATUS,

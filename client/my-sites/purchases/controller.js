@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	Purchases,
 	PurchaseDetails,
@@ -14,7 +7,6 @@ import {
 	PurchaseCancelDomain,
 	PurchaseChangePaymentMethod,
 } from 'calypso/my-sites/purchases/main';
-import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	PaymentMethods,
 	SiteLevelAddNewPaymentMethod,

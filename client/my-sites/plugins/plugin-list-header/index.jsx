@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { findDOMNode } from 'react-dom';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import getSites from 'calypso/state/selectors/get-sites';
-import SectionHeader from 'calypso/components/section-header';
-import ButtonGroup from 'calypso/components/button-group';
-import { Button } from '@automattic/components';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import { connect } from 'react-redux';
 import BulkSelect from 'calypso/components/bulk-select';
+import ButtonGroup from 'calypso/components/button-group';
+import SectionHeader from 'calypso/components/section-header';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import getSites from 'calypso/state/selectors/get-sites';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // Constants help determine if the action bar should be a dropdown

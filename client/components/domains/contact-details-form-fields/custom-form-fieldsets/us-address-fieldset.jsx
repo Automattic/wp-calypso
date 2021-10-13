@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import { StateSelect, Input } from 'calypso/my-sites/domains/components/form';
 import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils.js';
 

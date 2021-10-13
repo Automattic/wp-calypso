@@ -1,23 +1,14 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-import { get, partial } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import AutoDirection from 'calypso/components/auto-direction';
 import FeaturedAsset from './featured-asset';
 
 const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
-	let onVideoThumbnailClick = null;
-	if ( get( post, 'canonical_media.mediaType' ) === 'video' ) {
-		onVideoThumbnailClick = partial( expandCard, { postKey, post, site } );
-	}
+	const onVideoThumbnailClick =
+		post.canonical_media?.mediaType === 'video'
+			? () => expandCard( { postKey, post, site } )
+			: null;
+
 	return (
 		<div className="reader-post-card__post">
 			<FeaturedAsset
@@ -30,7 +21,7 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>{ post.title }</Emojify>
+							{ post.title }
 						</a>
 					</h2>
 				</AutoDirection>

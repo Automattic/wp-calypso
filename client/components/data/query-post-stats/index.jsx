@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { requestPostStats } from 'calypso/state/stats/posts/actions';
+import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
 class QueryPostStats extends Component {
 	static defaultProps = {

@@ -1,29 +1,3 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import AsyncLoad from 'calypso/components/async-load';
-import { Dialog } from '@automattic/components';
-import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import DocumentHead from 'calypso/components/data/document-head';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import PurchasesListing from './purchases-listing';
-import QuerySites from 'calypso/components/data/query-sites';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import {
 	getPlan,
 	JETPACK_LEGACY_PLANS,
@@ -37,37 +11,55 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
+import { Dialog } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySites from 'calypso/components/data/query-sites';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
-import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
-import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
-import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
+import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
-import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
+import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
 import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
 import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import VideoPressProductThankYou from './current-plan-thank-you/jetpack-videopress-thank-you';
+import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
+import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
+import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import PurchasesListing from './purchases-listing';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CurrentPlan extends Component {
@@ -114,7 +106,7 @@ class CurrentPlan extends Component {
 	};
 
 	renderThankYou() {
-		const { currentPlan, product, selectedSite } = this.props;
+		const { currentPlan, jetpackSearchCustomizeUrl, product } = this.props;
 
 		if ( JETPACK_BACKUP_PRODUCTS.includes( product ) ) {
 			return <BackupProductThankYou />;
@@ -128,9 +120,12 @@ class CurrentPlan extends Component {
 			return <AntiSpamProductThankYou />;
 		}
 
+		if ( JETPACK_VIDEOPRESS_PRODUCTS.includes( product ) ) {
+			return <VideoPressProductThankYou />;
+		}
+
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
-			const jetpackVersion = selectedSite?.options?.jetpack_version ?? 0;
-			return <SearchProductThankYou { ...{ jetpackVersion } } />;
+			return <SearchProductThankYou { ...{ jetpackSearchCustomizeUrl } } />;
 		}
 
 		if (
@@ -297,6 +292,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		purchases,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, selectedSiteId ),
 		selectedSite,
 		selectedSiteId,
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,

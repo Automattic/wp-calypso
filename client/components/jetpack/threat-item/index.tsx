@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import classnames from 'classnames';
 import { Button } from '@automattic/components';
+import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-
-/**
- * Internal dependencies
- */
-import LogItem from '../log-item';
-import ThreatDescription from '../threat-description';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import LogItem from '../log-item';
+import ThreatDescription from '../threat-description';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 interface Props {
 	threat: Threat;

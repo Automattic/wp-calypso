@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { createContext } from 'react';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -13,7 +6,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { LicenseListContext as LicenseListContextInterface } from 'calypso/state/partner-portal/types';
 
-const LicenseListContext = React.createContext< LicenseListContextInterface >( {
+const LicenseListContext = createContext< LicenseListContextInterface >( {
 	currentPage: 1,
 	search: '',
 	filter: LicenseFilter.NotRevoked,

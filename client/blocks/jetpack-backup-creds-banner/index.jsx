@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import Banner from 'calypso/components/banner';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import jetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
+import Banner from 'calypso/components/banner';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class JetpackBackupCredsBanner extends Component {

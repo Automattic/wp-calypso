@@ -1,37 +1,25 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Notice from 'calypso/components/notice';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'calypso/lib/url/support';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isSupportSession as hasEnteredSupportSession } from 'calypso/state/support/selectors';
 
-/**
- * Image dependencies
- */
-import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
-
-class TransferDomainPrecheck extends React.Component {
+class TransferDomainPrecheck extends Component {
 	static propTypes = {
 		authCodeValid: PropTypes.bool,
 		checkAuthCode: PropTypes.func,

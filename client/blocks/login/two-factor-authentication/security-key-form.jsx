@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import FormButton from 'calypso/components/forms/form-button';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormButton from 'calypso/components/forms/form-button';
+import Spinner from 'calypso/components/spinner';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
-import Spinner from 'calypso/components/spinner';
 
-/**
- * Style dependencies
- */
 import './verification-code-form.scss';
 
 class SecurityKeyForm extends Component {

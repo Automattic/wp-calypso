@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
+import { FunctionComponent } from 'react';
 
 /**
  * Annotate a form field element with a label, description, and an optional

@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './close-link.scss';
 
 const noop = () => {};
 
-class AccountSettingsCloseLink extends React.Component {
+class AccountSettingsCloseLink extends Component {
 	render() {
 		const { translate } = this.props;
 		const href = '/me/account/close';

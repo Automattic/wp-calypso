@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
-import Gridicon from 'calypso/components/gridicon';
 
-class SecurityAccountRecoveryManageContactButtons extends React.Component {
+class SecurityAccountRecoveryManageContactButtons extends Component {
 	static displayName = 'SecurityAccountRecoveryManageContactButtons';
 
 	static propTypes = {

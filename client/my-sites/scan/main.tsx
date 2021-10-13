@@ -1,52 +1,37 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Button, Card, ProgressBar } from '@automattic/components';
+import { Button, Card, ProgressBar, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import FormattedHeader from 'calypso/components/formatted-header';
-import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
-import { Scan, Site } from 'calypso/my-sites/scan/types';
-import Gridicon from 'calypso/components/gridicon';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
-import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
-import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
-import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
-import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import { Scan, Site } from 'calypso/my-sites/scan/types';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
+import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
-import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
-import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
-
-/**
- * Type dependencies
- */
 import type { utc } from 'moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

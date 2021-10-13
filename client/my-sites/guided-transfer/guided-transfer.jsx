@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
-import Main from 'calypso/components/main';
-import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import TransferUnavailableCard from './transfer-unavailable-card';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const guidedTransferHosts = {
@@ -41,7 +31,7 @@ const guidedTransferHosts = {
 	},
 };
 
-class GuidedTransfer extends React.Component {
+class GuidedTransfer extends Component {
 	static displayName = 'GuidedTransfer';
 
 	static propTypes = {

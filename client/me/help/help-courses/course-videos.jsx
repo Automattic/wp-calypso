@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import CourseVideo from './course-video';
-import { Card } from '@automattic/components';
 
 export default localize( ( props ) => {
 	const { videos, translate } = props;

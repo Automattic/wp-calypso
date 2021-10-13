@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import page from 'page';
 import { localize } from 'i18n-calypso';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import page from 'page';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
-
-import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
-import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
+import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
+import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 
 class CheckoutPending extends PureComponent {
 	static propTypes = {

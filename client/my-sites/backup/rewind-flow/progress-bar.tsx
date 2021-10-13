@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { ProgressBar } from '@automattic/components';
-
-/**
- * Type dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {

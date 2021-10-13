@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .activity-log-item {
 	display: flex;
 	position: relative;
@@ -47,14 +50,15 @@
 	}
 }
 
+// Right side of <FoldableCard> is hidden.
+// We set up our right side action buttons in .foldable-card__main,
+// which gives us more flexibilty with responsive design
 .activity-log-item .foldable-card__secondary {
-	flex-grow: 0;
-
-	.foldable-card__summary {
-		display: flex;
-		align-items: center;
-		margin-right: 0;
-	}
+	display: none;
+}
+// Therefore, we no longer need to reserve 36px for the main section
+.activity-log-item .foldable-card__main {
+	max-width: 100%;
 }
 
 .activity-log-item__type {
@@ -175,10 +179,12 @@
 
 .activity-log-item__card-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
 	min-width: 0;
-	padding-left: 56px;
+	@include break-wide {
+		padding-left: 56px;
+	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		flex-direction: column;
@@ -196,7 +202,7 @@
 	margin-right: 32px;
 	align-items: center;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-wide {
 		flex: 0 0 180px;
 		margin-left: -56px;
 	}
@@ -317,25 +323,10 @@
 
 .activity-log-item__action {
 	display: flex;
-	justify-content: flex-end;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		margin-top: 16px;
 		text-align: left;
-	}
-
-	.ellipsis-menu {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		right: 0;
-
-		.button {
-			position: relative;
-			top: 50%;
-			width: 48px;
-			transform: translateY( -50% );
-		}
 	}
 }
 
@@ -454,5 +445,59 @@
 	}
 	100% {
 		opacity: 0;
+	}
+}
+
+.activity-log-item .foldable-card__action {
+	display: flex;
+	align-items: center;
+	position: static;
+}
+
+.activity-log-item {
+	a.button,
+	button {
+		margin-right: 8px;
+	}
+}
+
+.activity-log-item__description {
+	display: flex;
+
+	// Mobile-Medium: Action buttons under description
+	flex-direction: column;
+	.activity-log-item__action {
+		justify-content: normal;
+	}
+	.activity-log-item__description-actions {
+		padding-top: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	}
+
+	@include break-wide {
+		// Wide+: Action buttons right of description
+		flex-direction: row;
+		.activity-log-item__action {
+			justify-content: flex-end;
+		}
+		.activity-log-item__description-actions {
+			padding-top: 0;
+			justify-content: flex-end;
+		}
+	}
+}
+
+// When side by side, desc = [    text 66%    | act %33 ]
+.activity-log-item__description-text {
+	flex-grow: 2;
+}
+.activity-log-item__description-actions {
+	flex-grow: 1;
+	flex-shrink: 0;
+
+	@include break-wide {
+		margin-left: 1rem;
 	}
 }

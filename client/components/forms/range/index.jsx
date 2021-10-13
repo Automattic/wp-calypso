@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { omit } from 'lodash';
 import classnames from 'classnames';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import FormRange from 'calypso/components/forms/form-range';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'Range';
 
 	static propTypes = {

@@ -1,33 +1,27 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { without } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
-import Timezone from 'calypso/components/timezone';
+import { localize } from 'i18n-calypso';
+import { without } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
-import getConciergeAppointmentDetails from 'calypso/state/selectors/get-concierge-appointment-details';
-import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
-import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import Timezone from 'calypso/components/timezone';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	rescheduleConciergeAppointment,
 	updateConciergeAppointmentDetails,
 } from 'calypso/state/concierge/actions';
-import AvailableTimePicker from '../shared/available-time-picker';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getConciergeAppointmentDetails from 'calypso/state/selectors/get-concierge-appointment-details';
+import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
 import { CONCIERGE_STATUS_BOOKING, CONCIERGE_STATUS_BOOKED } from '../constants';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import AvailableTimePicker from '../shared/available-time-picker';
+import { renderDisallowed } from '../shared/utils';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -88,6 +82,10 @@ class CalendarStep extends Component {
 			scheduleId,
 			translate,
 		} = this.props;
+		const canChangeAppointment = appointmentDetails?.meta.canChangeAppointment;
+		if ( appointmentDetails && ! canChangeAppointment ) {
+			return renderDisallowed( translate, site.slug );
+		}
 
 		return (
 			<div>

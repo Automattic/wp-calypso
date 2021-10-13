@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryTheme from 'calypso/components/data/query-theme';
-import ThemeSetupCard from './theme-setup-card';
-import ThemeSetupPlaceholder from './theme-setup-placeholder';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getActiveTheme, getTheme } from 'calypso/state/themes/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { toggleDialog } from 'calypso/state/theme-setup/actions';
+import { getActiveTheme, getTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ThemeSetupCard from './theme-setup-card';
+import ThemeSetupPlaceholder from './theme-setup-placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ThemeSetup extends Component {

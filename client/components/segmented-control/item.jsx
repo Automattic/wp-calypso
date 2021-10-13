@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-class SegmentedControlItem extends React.Component {
+class SegmentedControlItem extends Component {
 	static propTypes = {
 		children: PropTypes.node.isRequired,
 		path: PropTypes.string,

@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const { BrowserWindow, ipcMain: ipc } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const log = require( '../../lib/logger' )( 'desktop:printer' );
 
 module.exports = function () {

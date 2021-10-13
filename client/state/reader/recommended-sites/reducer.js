@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { uniqBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { READER_RECOMMENDED_SITES_RECEIVE } from 'calypso/state/reader/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 

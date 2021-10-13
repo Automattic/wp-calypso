@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
-/**
- * Style dependencies
- */
 import './progress-indicator.scss';
 
 const ProgressIndicator = ( { stepNumber, totalSteps } ) => {

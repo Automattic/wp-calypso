@@ -22,15 +22,6 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import React from 'react';
-import { applyMiddleware, createStore } from 'redux';
-import { Provider } from 'react-redux';
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -41,13 +32,14 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
-import thunkMiddleware from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
-import { SiteSettingsFormGeneral } from '../form-general';
+import { render, fireEvent } from '@testing-library/react';
+import { shallow } from 'enzyme';
+import '@testing-library/jest-dom/extend-expect';
 import moment from 'moment';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { SiteSettingsFormGeneral } from '../form-general';
 
 moment.tz = {
 	guess: () => moment(),

@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import { getSiteFrontPage, getSitePostsPage } from 'calypso/state/sites/selectors';
 
 export function isFrontPage( state, siteId, pageId ) {

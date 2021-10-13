@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ReskinSideExplainer extends React.Component {
+class ReskinSideExplainer extends Component {
 	getStrings() {
 		const { type, translate } = this.props;
 

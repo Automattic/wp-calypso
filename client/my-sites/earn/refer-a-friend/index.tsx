@@ -1,35 +1,21 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
-import { compact } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import wp from 'calypso/lib/wp';
-import { SiteSlug } from 'calypso/types';
 import { useTranslate } from 'i18n-calypso';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
-
-/**
- * Image dependencies
- */
+import { compact } from 'lodash';
+import { FunctionComponent, Fragment, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import referralImage from 'calypso/assets/images/earn/referral.svg';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import wp from 'calypso/lib/wp';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { SiteSlug } from 'calypso/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface ConnectedProps {
@@ -140,7 +126,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >(
+export default connect< ConnectedProps, unknown, unknown >(
 	( state ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );

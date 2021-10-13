@@ -1,21 +1,4 @@
-/**
- * External dependencies
- */
 import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { plans } from './plans/reducer';
-import { products } from './products/reducer';
-import { featuresReducer as features } from './features/reducer';
-import connection from './connection/reducer';
-import domains from './domains/reducer';
-import guidedTransfer from './guided-transfer/reducer';
-import monitor from './monitor/reducer';
-import sharingButtons from './sharing-buttons/reducer';
-import mediaStorage from './media-storage/reducer';
-import blogStickers from './blog-stickers/reducer';
 import {
 	MEDIA_DELETE,
 	SITE_DELETE_RECEIVE,
@@ -36,8 +19,17 @@ import {
 	SITE_MIGRATION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
-import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import blogStickers from './blog-stickers/reducer';
+import connection from './connection/reducer';
+import domains from './domains/reducer';
+import { featuresReducer as features } from './features/reducer';
+import guidedTransfer from './guided-transfer/reducer';
+import mediaStorage from './media-storage/reducer';
+import monitor from './monitor/reducer';
+import { plans } from './plans/reducer';
+import { products } from './products/reducer';
+import { sitesSchema, hasAllSitesListSchema } from './schema';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -359,7 +351,6 @@ export default combineReducers( {
 	guidedTransfer,
 	monitor,
 	requesting,
-	sharingButtons,
 	blogStickers,
 	hasAllSitesList,
 } );

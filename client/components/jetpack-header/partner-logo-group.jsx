@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 class PartnerLogoGroup extends PureComponent {

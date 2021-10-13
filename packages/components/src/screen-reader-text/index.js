@@ -1,8 +1,3 @@
-import React from 'react';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ScreenReaderText( { children } ) {

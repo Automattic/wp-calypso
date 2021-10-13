@@ -1,32 +1,25 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { get, map, take, values } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getSiteName } from 'calypso/reader/get-helpers';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import { getStreamUrl } from 'calypso/reader/route';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
-import { getStreamUrl } from 'calypso/reader/route';
-import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
-import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 
 const TAGS_TO_SHOW = 3;
 
-class TagLink extends React.Component {
+class TagLink extends Component {
 	recordSingleTagClick = () => {
 		const tag = this.props.tag;
 		recordAction( 'click_tag' );
@@ -52,7 +45,7 @@ class TagLink extends React.Component {
 	}
 }
 
-class PostByline extends React.Component {
+class PostByline extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,

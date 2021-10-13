@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { getCurrentUser } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies
- */
 import { badNaiveClientSideRollout } from '../index';
 
 jest.mock( '@automattic/calypso-analytics' );

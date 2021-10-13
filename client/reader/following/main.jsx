@@ -1,36 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { flatMap, trim } from 'lodash';
-import { connect, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
-import Stream from 'calypso/reader/stream';
 import { CompactCard, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { flatMap, trim } from 'lodash';
+import page from 'page';
+import { connect, useDispatch } from 'react-redux';
 import SearchInput from 'calypso/components/search';
-import { recordTrack } from 'calypso/reader/stats';
+import SectionHeader from 'calypso/components/section-header';
+import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import Suggestion from 'calypso/reader/search-stream/suggestion';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
-import FollowingIntro from './intro';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
-import SectionHeader from 'calypso/components/section-header';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { recordTrack } from 'calypso/reader/stats';
+import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
-import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
+import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
-
-/**
- * Style dependencies
- */
+import FollowingIntro from './intro';
 import './style.scss';
 
 function handleSearch( query ) {

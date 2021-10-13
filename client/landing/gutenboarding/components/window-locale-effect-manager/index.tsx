@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import { switchWebpackCSS } from '../../../../lib/i18n-utils/switch-locale';
+import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { useLocale } from '@automattic/i18n-utils';
+import { switchWebpackCSS } from '../../../../lib/i18n-utils/switch-locale';
 
 export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 	const { __, _x, isRTL } = useI18n();
@@ -25,9 +22,9 @@ export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 
 	// This line is required to make `isRTL()` work as expected for chunked translations:
 	// The `./bin/build-languages.js` script scans our codebase for calls to __() and puts only the neccessary strings
-	// in `./calypso-strings.pot`. Internally, isRTL() uses the translation for `ltr` to determine the text direction.
+	// in `./public/calypso-strings.pot`. Internally, isRTL() uses the translation for `ltr` to determine the text direction.
 	// But because isRTL is defined in the `@wordpress/i18n` package, our `./bin/build-languages.js` script
-	// does not know to include `ltr` in `./calypso-strings.pot`.
+	// does not know to include `ltr` in `./public/calypso-strings.pot`.
 	// see https://github.com/Automattic/wp-calypso/pull/43132#discussion_r448537345
 	_x( 'ltr', 'text direction' );
 

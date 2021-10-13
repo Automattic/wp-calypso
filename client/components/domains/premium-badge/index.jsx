@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import Badge from 'calypso/components/badge';
 import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
 
-class PremiumBadge extends React.Component {
+class PremiumBadge extends Component {
 	getPopoverText( restrictedPremium ) {
 		const { translate } = this.props;
 		if ( restrictedPremium ) {

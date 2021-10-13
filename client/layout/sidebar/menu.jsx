@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import classNames from 'classnames';
+import { forwardRef } from 'react';
 
-const SidebarMenu = React.forwardRef( ( { children, className, ...props }, ref ) => (
+const SidebarMenu = forwardRef( ( { children, className, ...props }, ref ) => (
 	<ul ref={ ref } className={ classNames( 'sidebar__menu', className ) } { ...props }>
 		{ children }
 	</ul>

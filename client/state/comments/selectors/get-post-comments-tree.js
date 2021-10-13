@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import treeSelect from '@automattic/tree-select';
 import { filter, groupBy, keyBy, map, mapValues, partition } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get, find } from 'lodash';
 
 const DISCOVER_BLOG_ID = 53424024;

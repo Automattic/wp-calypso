@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { createRef, PureComponent } from 'react';
+import { connect } from 'react-redux';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRecentViewsForPost } from 'calypso/state/stats/recent-post-views/selectors';
-import { ScreenReaderText } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PostActionCounts extends PureComponent {
@@ -32,7 +22,7 @@ class PostActionCounts extends PureComponent {
 		showLikesPopover: false,
 	};
 
-	liRef = React.createRef();
+	liRef = createRef();
 
 	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;

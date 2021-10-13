@@ -1,30 +1,23 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { omit, includes } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import PostPlaceholder from './post-placeholder';
-import PostUnavailable from './post-unavailable';
-import ListGap from 'calypso/reader/list-gap';
-import CrossPost from './x-post';
-import RecommendedPosts from './recommended-posts';
-import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
-import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
-import Post from './post';
-import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import CombinedCard from 'calypso/blocks/reader-combined-card';
-import EmptySearchRecommendedPost from './empty-search-recommended-post';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
+import ListGap from 'calypso/reader/list-gap';
+import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import EmptySearchRecommendedPost from './empty-search-recommended-post';
+import Post from './post';
+import PostPlaceholder from './post-placeholder';
+import PostUnavailable from './post-unavailable';
+import RecommendedPosts from './recommended-posts';
+import CrossPost from './x-post';
 
-class PostLifecycle extends React.Component {
+class PostLifecycle extends Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,

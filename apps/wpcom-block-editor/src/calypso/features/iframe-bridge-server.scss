@@ -52,3 +52,7 @@ body.is-fullscreen-mode {
 .wpcom-block-editor__close-button {
 	height: $header-height !important;
 }
+
+.a8c-site-editor-feedback-plugin .components-panel__body {
+	border-bottom: none;
+}

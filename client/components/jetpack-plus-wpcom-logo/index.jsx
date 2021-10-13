@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
 import colorStudio from '@automattic/color-studio';
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Module constants

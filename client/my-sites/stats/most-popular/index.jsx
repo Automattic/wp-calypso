@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsMostPopular extends Component {

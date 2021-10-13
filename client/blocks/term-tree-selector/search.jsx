@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-/**
- * Style dependencies
- */
 import './search.scss';
 
 function TermTreeSelectorSearch( { searchTerm, onSearch } ) {

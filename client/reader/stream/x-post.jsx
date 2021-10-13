@@ -1,30 +1,22 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import ReactDom from 'react-dom';
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
-import closest from 'component-closest';
-import { get, forEach, uniqBy } from 'lodash';
-import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { Card } from '@automattic/components';
-import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import Emojify from 'calypso/components/emojify';
 import { getUrlParts } from '@automattic/calypso-url';
+import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import closest from 'component-closest';
+import { localize } from 'i18n-calypso';
+import { get, forEach, uniqBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -211,11 +203,11 @@ class CrossPost extends PureComponent {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								<Emojify>{ xpostTitle }</Emojify>
+								{ xpostTitle }
 							</a>
 						</h1>
 					) }
-					{ post.author && <Emojify>{ this.getDescription( post.author.first_name ) }</Emojify> }
+					{ post.author && this.getDescription( post.author.first_name ) }
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }

@@ -2,15 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import SingleDocClass from '../doc';
 
 jest.mock( 'calypso/devdocs/service', () => ( {

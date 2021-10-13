@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { addQueryArgs } from 'calypso/lib/url';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { isRequesting, getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isRequesting, getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 
-/**
- * Style dependencies
- */
 import './jetpack.scss';
 
 const AmpJetpack = ( {

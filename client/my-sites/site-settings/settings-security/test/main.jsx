@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
 import { PLAN_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { shallow } from 'enzyme';
 import { SiteSettingsSecurity } from '../main';
 
 const props = {

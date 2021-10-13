@@ -1,30 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
-import QuerySites from 'calypso/components/data/query-sites';
-import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
-import { Button, CompactCard } from '@automattic/components';
-import Main from 'calypso/components/main';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Confirmation from '../shared/confirmation';
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import QuerySites from 'calypso/components/data/query-sites';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { cancelConciergeAppointment } from 'calypso/state/concierge/actions';
-import { CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING } from '../constants';
-import { getSite } from 'calypso/state/sites/selectors';
 import getConciergeAppointmentDetails from 'calypso/state/selectors/get-concierge-appointment-details';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSite } from 'calypso/state/sites/selectors';
+import { CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING } from '../constants';
+import Confirmation from '../shared/confirmation';
+import { renderDisallowed } from '../shared/utils';
 
 class ConciergeCancel extends Component {
 	static propTypes = {
@@ -54,24 +48,6 @@ class ConciergeCancel extends Component {
 		);
 	}
 
-	renderDisallowed() {
-		const { translate, siteSlug } = this.props;
-		return (
-			<>
-				<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
-					{ translate( 'Reschedule or cancel' ) }
-				</HeaderCake>
-				<CompactCard>
-					<div>
-						{ translate(
-							'Sorry, you cannot reschedule or cancel less than 60 minutes before the session.'
-						) }
-					</div>
-				</CompactCard>
-			</>
-		);
-	}
-
 	getDisplayComponent = () => {
 		const {
 			appointmentId,
@@ -91,7 +67,7 @@ class ConciergeCancel extends Component {
 					>
 						<Button
 							className="cancel__schedule-button"
-							href={ `/me/concierge/${ siteSlug }/book` }
+							href={ `/me/quickstart/${ siteSlug }/book` }
 							primary={ true }
 						>
 							{ translate( 'Schedule', {
@@ -116,7 +92,7 @@ class ConciergeCancel extends Component {
 				const canChangeAppointment = appointmentDetails?.meta.canChangeAppointment;
 
 				if ( appointmentDetails && ! canChangeAppointment ) {
-					return this.renderDisallowed();
+					return renderDisallowed( translate, siteSlug );
 				}
 
 				return (
@@ -128,7 +104,7 @@ class ConciergeCancel extends Component {
 							/>
 						) }
 
-						<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
+						<HeaderCake backHref={ `/me/quickstart/${ siteSlug }/book` }>
 							{ translate( 'Reschedule or cancel' ) }
 						</HeaderCake>
 						<Confirmation
@@ -143,7 +119,7 @@ class ConciergeCancel extends Component {
 									<Button
 										className="cancel__reschedule-button"
 										disabled={ disabledRescheduling }
-										href={ `/me/concierge/${ siteSlug }/${ appointmentId }/reschedule` }
+										href={ `/me/quickstart/${ siteSlug }/${ appointmentId }/reschedule` }
 									>
 										{ translate( 'Reschedule session' ) }
 									</Button>

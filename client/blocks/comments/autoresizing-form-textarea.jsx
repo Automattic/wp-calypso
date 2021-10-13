@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { forwardRef } from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { forwardRef } from 'react';
+import withUserMentions from 'calypso/blocks/user-mentions/index';
 import AutoDirection from 'calypso/components/auto-direction';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import withUserMentions from 'calypso/blocks/user-mentions/index';
 import withPasteToLink from 'calypso/lib/paste-to-link';
 
 import './autoresizing-form-textarea.scss';

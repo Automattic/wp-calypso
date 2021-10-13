@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 class SetupNotices extends Component {
 	static propTypes = {

@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classnames from 'classnames';
-import { useSelect } from '@wordpress/data';
-import { Icon, chevronDown } from '@wordpress/icons';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
 import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import Link from '../link';
+import { useSelect } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
+import { Icon, chevronDown } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { usePath, Step } from '../../path';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import Link from '../link';
+import type { FunctionComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const DomainPickerButton: React.FunctionComponent = () => {
+const DomainPickerButton: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const makePath = usePath();

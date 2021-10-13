@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import statsStrings from '../stats-strings';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Geochart from '../geochart';
 import StatsModule from '../stats-module';
+import statsStrings from '../stats-strings';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatCountries extends Component {

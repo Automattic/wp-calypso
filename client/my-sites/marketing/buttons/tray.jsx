@@ -1,21 +1,15 @@
-/**
- * External dependencies
- */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { filter, find } from 'lodash';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { filter, find } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import SortableList from 'calypso/components/forms/sortable-list';
-import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
+import ButtonsPreviewButtons from './preview-buttons';
 
-class SharingButtonsTray extends React.Component {
+class SharingButtonsTray extends Component {
 	static displayName = 'SharingButtonsTray';
 
 	static propTypes = {
@@ -161,11 +155,25 @@ class SharingButtonsTray extends React.Component {
 	getLimitedButtonsNoticeElement = () => {
 		if ( this.props.limited ) {
 			return (
-				<em className="sharing-buttons-preview__panel-notice">
-					{ this.props.translate( 'Sharing options are limited on private sites.', {
-						context: 'Sharing: Buttons',
-					} ) }
-				</em>
+				<p className="sharing-buttons-preview__panel-notice">
+					<em>
+						{ this.props.translate(
+							'It looks like your site is Private. Make it Public to take advantage of more sharing options.',
+							{
+								context: 'Sharing: Buttons',
+							}
+						) }
+					</em>
+					<a
+						href="https://wordpress.com/support/settings/privacy-settings/"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ this.props.translate( 'Check out our guide for more details.', {
+							context: 'Sharing: Buttons',
+						} ) }
+					</a>
+				</p>
 			);
 		}
 	};

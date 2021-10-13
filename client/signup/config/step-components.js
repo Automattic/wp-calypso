@@ -20,6 +20,7 @@ const stepNameToModuleName = {
 	'import-preview': 'import-preview',
 	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'import-url': 'import-url-onboarding',
+	'intent-screen': 'intent-screen',
 	launch: 'launch-site',
 	plans: 'plans',
 	'plans-new': 'plans',
@@ -42,6 +43,7 @@ const stepNameToModuleName = {
 	'site-style': 'site-style',
 	'site-title': 'site-title',
 	'site-title-without-domains': 'site-title',
+	'site-options': 'site-options',
 	'site-topic': 'site-topic',
 	'site-topic-with-theme': 'site-topic',
 	'site-type': 'site-type',
@@ -70,7 +72,10 @@ const stepNameToModuleName = {
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
-	design: 'design-picker',
+	'design-setup-site': 'design-picker',
+	'difm-design': 'difm-design-picker',
+	'site-info-collection': 'site-info-collection',
+	intent: 'intent',
 };
 
 export function getStepModuleName( stepName ) {
@@ -80,7 +85,7 @@ export function getStepModuleName( stepName ) {
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.jsx$/ */ `calypso/signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.[j|t]sx$/ */ `calypso/signup/steps/${ moduleName }`
 	);
 	return module.default;
 }

@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import SignupSitePreviewIframe from 'calypso/components/signup-site-preview/iframe';
 import SignupSitePreviewScreenshot from 'calypso/components/signup-site-preview/screenshot';
 import Spinner from 'calypso/components/spinner';
 import { getSiteVerticalPreviewScreenshot } from 'calypso/state/signup/steps/site-vertical/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function MockupChromeMobile() {

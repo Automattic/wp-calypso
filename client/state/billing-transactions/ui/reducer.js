@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	BILLING_TRANSACTIONS_FILTER_SET_APP,
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
@@ -28,6 +25,9 @@ export const app = ( state = null, action ) => {
  *
  * @param  {object} state  Current state
  * @param  {object} action Action payload
+ * @param  {string} action.type
+ * @param  action.month
+ * @param  action.operator
  * @returns {object}        Updated state
  */
 export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {

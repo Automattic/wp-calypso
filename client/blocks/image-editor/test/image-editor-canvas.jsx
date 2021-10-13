@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { ImageEditorCanvas } from '../image-editor-canvas';
 
 jest.mock( 'calypso/blocks/image-editor/image-editor-crop', () => {

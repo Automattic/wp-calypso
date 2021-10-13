@@ -1,10 +1,5 @@
-import { keyframes } from '@emotion/core';
-import React from 'react';
-import styled from '../lib/styled';
-
-export default function Spinner( { className }: { className?: string } ) {
-	return <SpinnerWrapper className={ className } />;
-}
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
 
 const rotate = keyframes`
 	100% {
@@ -48,3 +43,7 @@ const SpinnerWrapper = styled.div`
 		}
 	}
 `;
+
+export default function Spinner( { className }: { className?: string } ): JSX.Element {
+	return <SpinnerWrapper className={ className } />;
+}

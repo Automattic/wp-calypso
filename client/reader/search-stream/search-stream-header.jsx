@@ -1,17 +1,10 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { values } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import NavTabs from 'calypso/components/section-nav/tabs';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 
 const noop = () => {};
 export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };

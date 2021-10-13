@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import type { Activity } from '../types';
 
 interface OwnProps {

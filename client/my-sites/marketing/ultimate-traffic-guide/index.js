@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
+import { isTrafficGuide, WPCOM_TRAFFIC_GUIDE } from '@automattic/calypso-products';
 import { Button, CompactCard } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { isFetchingUserPurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isTrafficGuide, WPCOM_TRAFFIC_GUIDE } from '@automattic/calypso-products';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const hasTrafficGuidePurchase = ( purchases ) =>

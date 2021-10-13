@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Favicon from 'calypso/reader/components/favicon';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import ReaderSidebarHelper from '../helper';
 
 /**
  * Styles
@@ -34,7 +28,7 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 	};
 
 	render() {
-		const { site, path } = this.props;
+		const { site, path, moment } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -51,7 +45,12 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 				>
 					<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
 
-					<span className="sidebar__menu-item-sitename">{ site.name }</span>
+					<span className="sidebar__menu-item-sitename">
+						{ site.name }
+						<span className="sidebar__menu-item-last-updated">
+							{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
+						</span>
+					</span>
 					{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 				</a>
 			</li>
@@ -62,4 +61,4 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 
 export default connect( null, {
 	recordReaderTracksEvent,
-} )( ReaderSidebarOrganizationsListItem );
+} )( withLocalizedMoment( ReaderSidebarOrganizationsListItem ) );

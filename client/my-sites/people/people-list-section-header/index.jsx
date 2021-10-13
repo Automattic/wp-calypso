@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { get, startsWith } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get, startsWith } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { Button } from '@automattic/components';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PeopleListSectionHeader extends Component {

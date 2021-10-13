@@ -1,16 +1,7 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import Edit from './index';
 
-class SiteRedirect extends React.PureComponent {
+class SiteRedirect extends PureComponent {
 	render() {
 		return <Edit { ...this.props } isSiteRedirect={ true } />;
 	}

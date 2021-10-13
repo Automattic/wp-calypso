@@ -2,15 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow, mount } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import { JetpackHeader } from '..';
 
 describe( 'JetpackHeader', () => {

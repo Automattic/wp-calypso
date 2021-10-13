@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent, Fragment } from 'react';
+import { connect } from 'react-redux';
 import ListEnd from 'calypso/components/list-end';
 import { bumpStat } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class InvitesListEnd extends React.PureComponent {
+class InvitesListEnd extends PureComponent {
 	static propTypes = {
 		shown: PropTypes.number,
 		found: PropTypes.number,
@@ -39,7 +29,7 @@ class InvitesListEnd extends React.PureComponent {
 		const { shown, found, translate } = this.props;
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ shown < found && (
 					<div className="people-invites__max-items-notice">
 						{ translate(
@@ -52,7 +42,7 @@ class InvitesListEnd extends React.PureComponent {
 					</div>
 				) }
 				<ListEnd />
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

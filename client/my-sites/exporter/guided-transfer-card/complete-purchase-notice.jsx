@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import page from 'page';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const redirectToCart = ( siteSlug ) => () => {
 	page( `/checkout/${ siteSlug }/guided_transfer` );

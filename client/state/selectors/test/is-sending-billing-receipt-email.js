@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 
 describe( 'isSendingBillingReceiptEmail()', () => {

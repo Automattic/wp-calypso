@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import * as React from 'react';
 
 /**
  * Hook that executes `callback` is the 'Escape' key is pressed

@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import chrono from 'chrono-node';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -21,7 +11,7 @@ import './style.scss';
  */
 const supportedLanguages = [ 'en', 'jp' ];
 
-class InputChrono extends React.Component {
+class InputChrono extends Component {
 	static displayName = 'InputChrono';
 
 	static propTypes = {

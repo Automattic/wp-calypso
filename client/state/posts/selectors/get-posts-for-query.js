@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { includes } from 'lodash';
 import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
 import { getSerializedPostsQuery, normalizePostForDisplay } from 'calypso/state/posts/utils';
 

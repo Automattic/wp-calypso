@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import Notice from 'calypso/components/notice';
+import { get } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import PostShare from 'calypso/blocks/post-share';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import { Card } from '@automattic/components';
+import Notice from 'calypso/components/notice';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSitePosts } from 'calypso/state/posts/selectors';
+import { getSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
 
 class PostShareExample extends Component {
 	state = {

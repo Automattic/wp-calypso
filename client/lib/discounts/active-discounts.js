@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,

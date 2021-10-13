@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 
 describe( 'canCurrentUserManagePlugins()', () => {

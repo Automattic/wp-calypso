@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import queryKey from 'calypso/state/reader/feed-searches/query-key';
 
 import 'calypso/state/reader/init';

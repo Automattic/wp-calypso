@@ -1,36 +1,25 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import { connect } from 'react-redux';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import DomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/components/domain-contact-details';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
-import { requestContactDetailsCache, saveWhois } from 'calypso/state/domains/management/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import TransferLockOptOut from 'calypso/my-sites/domains/domain-management/list/transfer-lock-opt-out';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import wp from 'calypso/lib/wp';
+import DomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/components/domain-contact-details';
+import TransferLockOptOut from 'calypso/my-sites/domains/domain-management/list/transfer-lock-opt-out';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestContactDetailsCache, saveWhois } from 'calypso/state/domains/management/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 const wpcom = wp.undocumented();
 
-/**
- * Style dependencies
- */
 import './list-all.scss';
 
-class BulkEditContactInfo extends React.Component {
+class BulkEditContactInfo extends Component {
 	static propTypes = {
 		handleSaveContactInfo: PropTypes.func.isRequired,
 		isDisabled: PropTypes.bool,

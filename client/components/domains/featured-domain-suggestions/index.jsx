@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import FeaturedDomainSuggestionsPlaceholder from './placeholder';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class FeaturedDomainSuggestions extends Component {
@@ -24,9 +14,8 @@ export class FeaturedDomainSuggestions extends Component {
 		isCartPendingUpdate: PropTypes.bool,
 		fetchAlgo: PropTypes.string,
 		showStrikedOutPrice: PropTypes.bool,
-		primarySuggestion: PropTypes.object,
 		railcarId: PropTypes.string,
-		secondarySuggestion: PropTypes.object,
+		featuredSuggestions: PropTypes.array,
 		showPlaceholders: PropTypes.bool,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
@@ -49,14 +38,17 @@ export class FeaturedDomainSuggestions extends Component {
 	}
 
 	getMaxTitleLength() {
-		const { primarySuggestion = {}, secondarySuggestion = {} } = this.props;
-		const { domain_name: primaryDomainName = '' } = primarySuggestion;
-		const { domain_name: secondaryDomainName = '' } = secondarySuggestion;
-		const longestDomainName =
-			primaryDomainName.length >= secondaryDomainName.length
-				? primaryDomainName
-				: secondaryDomainName;
-		return longestDomainName.length;
+		const { featuredSuggestions } = this.props;
+
+		const allDomainNameLengths = featuredSuggestions?.map(
+			( suggestion ) => suggestion.domain_name.length
+		);
+
+		if ( ! featuredSuggestions ) {
+			return 0;
+		}
+
+		return Math.max( ...allDomainNameLengths );
 	}
 
 	getTextSizeClass() {
@@ -96,15 +88,13 @@ export class FeaturedDomainSuggestions extends Component {
 	}
 
 	hasMatchReasons() {
-		const { primarySuggestion = {}, secondarySuggestion = {} } = this.props;
-		return (
-			Array.isArray( primarySuggestion.match_reasons ) ||
-			Array.isArray( secondarySuggestion.match_reasons )
+		return this.props.featuredSuggestions?.some( ( suggestion ) =>
+			Array.isArray( suggestion.match_reason )
 		);
 	}
 
 	render() {
-		const { primarySuggestion, secondarySuggestion } = this.props;
+		const { featuredSuggestions } = this.props;
 		const childProps = this.getChildProps();
 
 		if ( this.props.showPlaceholders ) {
@@ -113,34 +103,21 @@ export class FeaturedDomainSuggestions extends Component {
 
 		return (
 			<div className={ this.getClassNames() }>
-				{ primarySuggestion && (
+				{ featuredSuggestions.map( ( suggestion, index ) => (
 					<DomainRegistrationSuggestion
-						suggestion={ primarySuggestion }
+						key={ suggestion.domain_name }
+						suggestion={ suggestion }
 						isFeatured
-						railcarId={ this.props.railcarId + '-0' }
+						railcarId={ this.props.railcarId + '-' + index }
 						isSignupStep={ this.props.isSignupStep }
-						uiPosition={ 0 }
-						premiumDomain={ this.props.premiumDomains[ primarySuggestion.domain_name ] }
-						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
+						uiPosition={ index }
+						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
+						fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
 						buttonStyles={ { primary: true } }
 						isReskinned={ this.props.isReskinned }
 						{ ...childProps }
 					/>
-				) }
-				{ secondarySuggestion && (
-					<DomainRegistrationSuggestion
-						suggestion={ secondarySuggestion }
-						isFeatured
-						railcarId={ this.props.railcarId + '-1' }
-						isSignupStep={ this.props.isSignupStep }
-						uiPosition={ 1 }
-						premiumDomain={ this.props.premiumDomains[ secondarySuggestion.domain_name ] }
-						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
-						buttonStyles={ this.props.isReskinned ? { primary: true } : {} }
-						isReskinned={ this.props.isReskinned }
-						{ ...childProps }
-					/>
-				) }
+				) ) }
 			</div>
 		);
 	}

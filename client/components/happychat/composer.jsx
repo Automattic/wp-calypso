@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEmpty, throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { withScrollbleed } from './scrollbleed';
-import { Button } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './composer.scss';
 
 const sendThrottledTyping = throttle(
@@ -30,7 +20,7 @@ const sendThrottledTyping = throttle(
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-class Composer extends React.Component {
+class Composer extends Component {
 	static propTypes = {
 		disabled: PropTypes.bool,
 		message: PropTypes.string,

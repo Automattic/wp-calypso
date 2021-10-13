@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 /**
@@ -9,6 +6,7 @@ import wpcom from 'calypso/lib/wp';
  *
  * @param {Function} callback Callback function
  * @param {object}   data     POST data object
+ * @param {string}   data.email
  */
 export function createPasswordlessUser( callback, { email } ) {
 	wpcom
@@ -23,6 +21,8 @@ export function createPasswordlessUser( callback, { email } ) {
  *
  * @param {Function} callback Callback function
  * @param {object}   data     POST data object
+ * @param {string}   data.email
+ * @param {string}   data.code
  */
 export function verifyPasswordlessUser( callback, { email, code } ) {
 	wpcom

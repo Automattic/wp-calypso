@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
-import { times } from 'lodash';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class Rating extends React.PureComponent {
+export default class Rating extends PureComponent {
 	static defaultProps = {
 		rating: 0,
 		size: 24,

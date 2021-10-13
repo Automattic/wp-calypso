@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 class OlarkChat extends Component {
 	componentDidMount() {

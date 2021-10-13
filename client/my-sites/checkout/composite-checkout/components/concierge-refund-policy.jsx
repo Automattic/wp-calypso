@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { REFUNDS } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
 import { hasConciergeSession } from 'calypso/lib/cart-values/cart-items';
+import { REFUNDS } from 'calypso/lib/url/support';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class ConciergeRefundPolicy extends React.Component {
+class ConciergeRefundPolicy extends Component {
 	static displayName = 'RegistrationRefundPolicy';
 
 	recordRefundsSupportClick = () => {

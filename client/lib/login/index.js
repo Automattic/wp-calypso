@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, includes, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
@@ -33,6 +26,20 @@ export function getSocialServiceFromClientId( clientId ) {
 	}
 
 	return null;
+}
+
+/**
+ * Adds/ensures a leading slash to any string intended to be used as an absolute path.
+ *
+ * @param path The path to encode with a leading slash.
+ */
+export function pathWithLeadingSlash( path ) {
+	// Note: Check for string type to ensure sanity. Technically the type here may be `unknown`.
+	if ( 'string' !== typeof path ) {
+		return '';
+	}
+
+	return path ? `/${ path.replace( /^\/+/, '' ) }` : '';
 }
 
 export function getSignupUrl(
@@ -119,6 +126,13 @@ export function getSignupUrl(
 			oauth2_redirect: redirectTo,
 		} );
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
+	}
+
+	if ( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) {
+		const params = new URLSearchParams( {
+			redirect_to: redirectTo,
+		} );
+		signupUrl = `/start/account?${ params.toString() }`;
 	}
 
 	return signupUrl;

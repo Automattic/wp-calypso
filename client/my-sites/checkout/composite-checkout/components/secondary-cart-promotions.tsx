@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import styled from '@emotion/styled';
-import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import styled from '@emotion/styled';
+import { FunctionComponent, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';
 
-type PartialCart = Pick< ResponseCart, 'products' >;
+export type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
 	addItemToCart: ( item: RequestCartProduct ) => void;
-}
-
-export interface MockResponseCart extends PartialCart {
-	hasLoadedFromServer: boolean;
+	isCartPendingUpdate: boolean;
 }
 
 type DivProps = {
@@ -78,18 +68,16 @@ const UpsellWrapper = styled.div< DivProps >`
 	}
 `;
 
-const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, addItemToCart } ) => {
+const SecondaryCartPromotions: FunctionComponent< Props > = ( {
+	responseCart,
+	addItemToCart,
+	isCartPendingUpdate,
+} ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
 	const isPurchaseRenewal = useMemo(
 		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
 		[ responseCart ]
 	);
-
-	// By this point we have definitely loaded the cart using useShoppingCart
-	// so we mock the loaded property the CartStore would inject.
-	const mockCart = useMemo( () => ( { ...responseCart, hasLoadedFromServer: true } ), [
-		responseCart,
-	] );
 
 	if (
 		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
@@ -98,14 +86,18 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, ad
 	) {
 		return (
 			<UpsellWrapper>
-				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
+				<UpcomingRenewalsReminder cart={ responseCart } addItemToCart={ addItemToCart } />
 			</UpsellWrapper>
 		);
 	}
 
 	return (
 		<UpsellWrapper>
-			<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
+			<CartFreeUserPlanUpsell
+				cart={ responseCart }
+				addItemToCart={ addItemToCart }
+				isCartPendingUpdate={ isCartPendingUpdate }
+			/>
 		</UpsellWrapper>
 	);
 };

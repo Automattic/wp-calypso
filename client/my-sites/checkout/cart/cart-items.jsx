@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import CartItem from './cart-item';
-import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
+import CartItem from './cart-item';
 
 const COLLAPSED_ITEMS_COUNT = 2;
 
-export class CartItems extends React.Component {
+export class CartItems extends Component {
 	static propTypes = {
 		collapse: PropTypes.bool.isRequired,
 	};

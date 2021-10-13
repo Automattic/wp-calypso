@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import cloudScheduleIcon from './icons/cloud-schedule.svg';
+
+import './style.scss';
 
 const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, lastBackupDate } ) => {
 	const translate = useTranslate();

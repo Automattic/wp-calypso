@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ActivityIcon from '../activity-log-item/activity-icon';
 import { Card } from '@automattic/components';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { decodeEntities } from 'calypso/lib/formatting';
+import ActivityIcon from '../activity-log-item/activity-icon';
 
 class ActivityLogTaskUpdate extends Component {
 	static propTypes = {

@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SelectDropdown from 'calypso/components/select-dropdown';
 
 const StatsModuleSelectDropdown = ( { initialSelected, options, onSelect = () => {} } ) => {

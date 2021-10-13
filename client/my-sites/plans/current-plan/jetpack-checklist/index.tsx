@@ -1,37 +1,3 @@
-/**
- * External dependencies
- */
-import { isDesktop } from '@automattic/viewport';
-import React, { Fragment, PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { localize, LocalizeProps } from 'i18n-calypso';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { Checklist, Task } from 'calypso/components/checklist';
-import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
-import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
-import JetpackChecklistHeader from './header';
-import QueryJetpackProductInstallStatus from 'calypso/components/data/query-jetpack-product-install-status';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
-// eslint-disable-next-line no-restricted-imports
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import {
-	getSiteSlug,
-	getCustomizerUrl,
-	getSiteProducts,
-	isJetpackMinimumVersion,
-} from 'calypso/state/sites/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
-import { URL } from 'calypso/types';
-import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
 import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	JETPACK_BACKUP_PRODUCTS,
@@ -42,24 +8,43 @@ import {
 	isJetpackOfferResetPlan,
 	planHasFeature,
 } from '@automattic/calypso-products';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
-import JetpackProductInstall from 'calypso/my-sites/plans/current-plan/jetpack-product-install';
+import { isDesktop } from '@automattic/viewport';
+import { localize, LocalizeProps } from 'i18n-calypso';
+import moment from 'moment';
+import { Fragment, PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { Checklist, Task } from 'calypso/components/checklist';
+import QueryJetpackProductInstallStatus from 'calypso/components/data/query-jetpack-product-install-status';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+// eslint-disable-next-line no-restricted-imports
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getTaskList } from 'calypso/lib/checklist';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import JetpackProductInstall from 'calypso/my-sites/plans/current-plan/jetpack-product-install';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-/**
- * Type dependencies
- */
+import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
+import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
+import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import {
+	getSiteSlug,
+	getCustomizerUrl,
+	getSiteProducts,
+	isJetpackMinimumVersion,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { URL } from 'calypso/types';
+import JetpackChecklistHeader from './header';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
+import './style.scss';
 interface Props {
 	hasVideoHosting: boolean;
 	isPaidPlan: boolean;

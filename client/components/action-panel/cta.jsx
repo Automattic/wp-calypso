@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import classNames from 'classnames';
 
 const ActionPanelCta = ( { children, className } ) => {

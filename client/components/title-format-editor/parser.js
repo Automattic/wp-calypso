@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { compact, flowRight as compose, get, map, matchesProperty, reduce } from 'lodash';
 import { convertFromRaw, convertToRaw } from 'draft-js';
+import { compact, flowRight as compose, get, map, matchesProperty, reduce } from 'lodash';
 
 /*
  * The functions in this file convert between the
@@ -72,7 +69,7 @@ import { convertFromRaw, convertToRaw } from 'draft-js';
  * Since the editor constrains us to a single block, we can
  * safely assume that we only need to convert the first one
  *
- * @param {ContentState} content Content of editor
+ * @param {object} content Content of editor
  * @returns {Array} title format
  */
 export const fromEditor = ( content ) => {
@@ -199,7 +196,7 @@ const buildBlockMap = compose( ( format, tokens ) =>
  *
  * @param {Array} format pieces used to build title format
  * @param {object} tokens mapping between token names and translated titles
- * @returns {ContentState} content for editor
+ * @returns {object} content for editor
  */
 export const toEditor = ( format, tokens ) => {
 	const [ blocks /* lastIndex */, , entityGuide ] = buildBlockMap( format, tokens );

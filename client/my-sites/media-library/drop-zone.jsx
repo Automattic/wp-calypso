@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { bumpStat } from 'calypso/lib/analytics/mc';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { userCan } from 'calypso/lib/site/utils';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';
 import { addMedia } from 'calypso/state/media/thunks';
-import { getEditorPostId } from 'calypso/state/editor/selectors';
 
 const noop = () => {};
 
-class MediaLibraryDropZone extends React.Component {
+class MediaLibraryDropZone extends Component {
 	static displayName = 'MediaLibraryDropZone';
 
 	static propTypes = {

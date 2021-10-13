@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import { Fragment } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
-import TranslatableString from 'calypso/components/translatable/proptype';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 export const AddNewSite = ( { title, icon } ) => {

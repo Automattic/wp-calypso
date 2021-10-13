@@ -1,36 +1,38 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import Count from 'calypso/components/count';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import ReaderSidebarFollowingItem from './item';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
-import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
-import SidebarItem from 'calypso/layout/sidebar/item';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Count from 'calypso/components/count';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import ReaderSidebarFollowingItem from './item';
 import '../style.scss';
 
 export class ReaderSidebarFollowedSites extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			sitePage: 1,
+		};
+	}
+
+	static defaultProps = {
+		sitesPerPage: 50,
+	};
+
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
 		isFollowingOpen: PropTypes.bool,
+		sitesPerPage: PropTypes.number,
 	};
 
 	handleReaderSidebarFollowedSitesClicked = () => {
@@ -56,20 +58,38 @@ export class ReaderSidebarFollowedSites extends Component {
 		);
 	}
 
-	renderSites() {
-		const { sites, path } = this.props;
+	loadMoreSites = () => {
+		const { sitePage } = this.state;
+		const { sites, sitesPerPage } = this.props;
+
+		//If we've reached the end of the set of sites, all sites have loaded
+		if ( sitesPerPage * sitePage >= sites.length ) {
+			return;
+		}
+
+		this.setState( {
+			sitePage: this.state.sitePage + 1,
+		} );
+	};
+
+	renderSites = ( sites ) => {
+		const { path } = this.props;
 		return map(
 			sites,
 			( site ) => site && <ReaderSidebarFollowingItem key={ site.ID } path={ path } site={ site } />
 		);
-	}
+	};
 
 	render() {
-		const { path, sites, translate } = this.props;
+		const { path, translate, sites, sitesPerPage } = this.props;
+		const { sitePage } = this.state;
+		const allSitesLoaded = sitesPerPage * sitePage >= sites.length;
+		const sitesToShow = sites.slice( 0, sitesPerPage * sitePage );
 
-		if ( ! sites ) {
+		if ( ! sitesToShow ) {
 			return null;
 		}
+
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isFollowingOpen }
@@ -87,7 +107,17 @@ export class ReaderSidebarFollowedSites extends Component {
 				}
 			>
 				{ this.renderAll() }
-				{ this.renderSites() }
+				{ this.renderSites( sitesToShow ) }
+				{ ! allSitesLoaded && (
+					<Button
+						plain
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="sidebar-streams__following-load-more"
+						onClick={ this.loadMoreSites }
+					>
+						{ translate( 'Load more sites' ) }
+					</Button>
+				) }
 			</ExpandableSidebarMenu>
 		);
 	}

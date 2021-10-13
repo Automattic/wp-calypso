@@ -1,34 +1,26 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import FormSecurity from 'calypso/my-sites/site-settings/form-security';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
 import JetpackCredentialsBanner from 'calypso/my-sites/site-settings/jetpack-credentials-banner';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
-import Main from 'calypso/components/main';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
-import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
-import isRewindActive from 'calypso/state/selectors/is-rewind-active';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const SiteSettingsSecurity = ( {
 	site,

@@ -1,12 +1,8 @@
-/**
- * Internal dependencies
- */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'calypso/state/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'calypso/state/checklist/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const noop = () => {};
 
@@ -28,6 +24,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	JETPACK_LAZY_IMAGES: 'jetpack_lazy_images',
 	JETPACK_VIDEO_HOSTING: 'jetpack_video_hosting',
 	JETPACK_SEARCH: 'jetpack_search',
+	PROFESSIONAL_EMAIL_MAILBOX_CREATED: 'professional_email_mailbox_created',
 };
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks

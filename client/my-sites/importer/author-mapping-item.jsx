@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { defer } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import User from 'calypso/components/user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './author-mapping-item.scss';
 
 const userShape = ( nameField ) =>
@@ -27,7 +17,7 @@ const userShape = ( nameField ) =>
 		avatar_URL: PropTypes.string.isRequired,
 	} );
 
-class ImporterAuthorMapping extends React.Component {
+class ImporterAuthorMapping extends Component {
 	static displayName = 'ImporterAuthorMapping';
 
 	static propTypes = {

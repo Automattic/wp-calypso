@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';

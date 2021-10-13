@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { planHasFeature } from '@automattic/calypso-products';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { createElement, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
@@ -16,6 +9,7 @@ interface productButtonLabelProps {
 	product: SelectorProduct;
 	isOwned: boolean;
 	isUpgradeableToYearly: boolean;
+	isSuperseded: boolean;
 	isDeprecated: boolean;
 	currentPlan?: SitePlan | null;
 }
@@ -25,6 +19,7 @@ export default function productButtonLabel( {
 	isOwned,
 	isUpgradeableToYearly,
 	isDeprecated,
+	isSuperseded,
 	currentPlan,
 }: productButtonLabelProps ): TranslateResult {
 	if ( isDeprecated ) {
@@ -37,6 +32,7 @@ export default function productButtonLabel( {
 
 	if (
 		isOwned ||
+		isSuperseded ||
 		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
 	) {
 		return product.type !== ITEM_TYPE_PRODUCT

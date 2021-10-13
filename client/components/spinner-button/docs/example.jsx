@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import SpinnerButton from '../index';
 
 export default class SpinnerButtonExample extends Component {

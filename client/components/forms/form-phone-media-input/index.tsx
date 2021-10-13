@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { ReactNode, RefObject } from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import PhoneInput from 'calypso/components/phone-input';
-import FormLabel from 'calypso/components/forms/form-label';
+import { ReactNode, RefObject } from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import PhoneInput from 'calypso/components/phone-input';
 
 type FormPhoneMediaInputProps = {
 	additionalClasses?: string[];

@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { domainConnect } from 'calypso/lib/domains/constants';
+import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
 import { getNormalizedData } from 'calypso/state/domains/dns/utils';
-import DnsRecordsList from '../dns-records/list';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import DnsRecordsListItem from '../dns-records/item';
+import DnsRecordsList from '../dns-records/list';
 
-/**
- * Style dependencies
- */
 import './domain-connect-record.scss';
 
-class DomainConnectRecord extends React.Component {
+class DomainConnectRecord extends Component {
 	static propTypes = {
 		enabled: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

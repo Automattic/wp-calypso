@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { cloneElement, Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
@@ -63,7 +56,7 @@ class ManageContact extends Component {
 		if ( views.EDITING === this.state.currentView ) {
 			view = (
 				<div className="security-account-recovery-contact__detail">
-					{ React.cloneElement( this.props.children, {
+					{ cloneElement( this.props.children, {
 						onCancel: this.onCancel,
 						onSave: this.onSave,
 						onDelete: this.onDelete,

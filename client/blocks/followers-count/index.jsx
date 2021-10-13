@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 class FollowersCount extends Component {
 	render() {

@@ -1,29 +1,15 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/**
- * External dependencies
- */
-import React from 'react';
+
 import { localize, useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { withInlineHelpSearchResults } from 'calypso/blocks/inline-help/data/use-inline-help-search-query';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getInlineHelpAdminSectionSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-admin-section-search-results-query';
-import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
-import { selectResult } from 'calypso/state/inline-help/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import QueryInlineHelpSearch from 'calypso/components/data/query-inline-help-search';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import './style.scss';
 
 export function PopUpSearch( props ) {
 	const translate = useTranslate();
@@ -54,7 +40,6 @@ export function PopUpSearch( props ) {
 					query={ props.searchQuery }
 					placeholder={ translate( 'Search wordpress actions' ) }
 				/>
-				<QueryInlineHelpSearch query={ props.searchQuery } />
 				{ props.searchResults.length > 0 && (
 					<div className="popup-search__results" aria-label="Pop Up Search">
 						{ props.searchResults.slice( 0, 10 ).map( ( { link, key, title, description } ) => (
@@ -82,11 +67,8 @@ export function PopUpSearch( props ) {
 export default connect(
 	( state ) => ( {
 		searchQuery: getSearchQuery( state ),
-		searchResults: getInlineHelpAdminSectionSearchResultsForQuery( state ),
-		hasAPIResults: hasInlineHelpAPIResults( state ),
 	} ),
 	{
 		track: recordTracksEvent,
-		selectSearchResult: selectResult,
 	}
-)( localize( PopUpSearch ) );
+)( localize( withInlineHelpSearchResults( PopUpSearch ) ) );

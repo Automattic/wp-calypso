@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
 import { compact, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { applyDuplicatesHandlers, removeDuplicateGets } from './remove-duplicate-gets';
 import { retryOnFailure } from './retry-on-failure';
 
 /**
  * @typedef {object} InboundData
  * @property {object} originalRequest the Redux action describing the inbound request
- * @property {ReduxStore} store Redux store
+ * @property {object} store Redux store
  * @property {*} originalData response data from returned network request
  * @property {*} originalError response error from returned network request
  * @property {*} originalHeaders response headers from returned network request
@@ -34,7 +26,7 @@ import { retryOnFailure } from './retry-on-failure';
 /**
  * @typedef {object} OutboundData
  * @property {object} originalRequest the Redux action describing the outbound request
- * @property {ReduxStore} store Redux store
+ * @property {object} store Redux store
  * @property {?object} nextRequest the processed request to pass along the chain
  */
 

@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
 import { has, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import Spinner from 'calypso/components/spinner';
+import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { ProgressBar } from '@automattic/components';
 import AuthorMappingPane from './author-mapping-pane';
-import Spinner from 'calypso/components/spinner';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 
-import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
-import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
-import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
-import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-
-/**
- * Style dependencies
- */
 import './importing-pane.scss';
 
 const sum = ( a, b ) => a + b;
@@ -89,7 +78,7 @@ const hasProgressInfo = ( progress ) => {
 	return true;
 };
 
-class ImportingPane extends React.PureComponent {
+class ImportingPane extends PureComponent {
 	static displayName = 'ImportingPane';
 
 	static propTypes = {

@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { clone, difference, forEach, last, map, some, take } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import isSuggestionLabel from './helpers';
 import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:token-field' );
@@ -118,6 +109,7 @@ class TokenField extends PureComponent {
 					tabIndex="-1"
 					onMouseDown={ this._onContainerTouched }
 					onTouchStart={ this._onContainerTouched }
+					role="textbox"
 				>
 					{ this._renderTokensAndInput() }
 				</div>
@@ -345,12 +337,14 @@ class TokenField extends PureComponent {
 			match = match.toLocaleLowerCase();
 
 			suggestions.forEach( ( suggestion ) => {
-				const index = suggestion.toLocaleLowerCase().indexOf( match );
-				if ( this.props.value.indexOf( suggestion ) === -1 ) {
-					if ( index === 0 ) {
-						startsWithMatch.push( suggestion );
-					} else if ( index > 0 ) {
-						containsMatch.push( suggestion );
+				if ( ! isSuggestionLabel( suggestion ) ) {
+					const index = suggestion.toLocaleLowerCase().indexOf( match );
+					if ( this.props.value.indexOf( suggestion ) === -1 ) {
+						if ( index === 0 ) {
+							startsWithMatch.push( suggestion );
+						} else if ( index > 0 ) {
+							containsMatch.push( suggestion );
+						}
 					}
 				}
 			} );
@@ -371,7 +365,7 @@ class TokenField extends PureComponent {
 		let preventDefault = false;
 		const selectedSuggestion = this._getSelectedSuggestion();
 
-		if ( selectedSuggestion ) {
+		if ( selectedSuggestion && ! isSuggestionLabel( selectedSuggestion ) ) {
 			this._addNewToken( selectedSuggestion );
 			preventDefault = true;
 		} else if ( this._inputHasValidValue() ) {

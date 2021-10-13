@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
 import { forEach, omit } from 'lodash';
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavSegmented from 'calypso/components/section-nav/segmented';
-import NavItem from 'calypso/components/section-nav/item';
+import { PureComponent } from 'react';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavSegmented from 'calypso/components/section-nav/segmented';
+import NavTabs from 'calypso/components/section-nav/tabs';
 
 /**
  * Main

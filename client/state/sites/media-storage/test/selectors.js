@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getMediaStorage, isRequestingMediaStorage, isOverMediaLimit } from '../selectors';
 
 describe( 'selectors', () => {

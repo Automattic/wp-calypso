@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/jitm/init';

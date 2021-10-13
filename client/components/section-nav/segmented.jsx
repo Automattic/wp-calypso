@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { Children, Component } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-/**
- * Style dependencies
- */
 import './segmented.scss';
 
 class NavSegmented extends Component {
@@ -43,7 +32,7 @@ class NavSegmented extends Component {
 	}
 
 	getControlItems() {
-		return React.Children.map( this.props.children, ( child, index ) => (
+		return Children.map( this.props.children, ( child, index ) => (
 			<SegmentedControl.Item { ...child.props } key={ index } />
 		) );
 	}

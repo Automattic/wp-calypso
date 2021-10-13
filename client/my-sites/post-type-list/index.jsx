@@ -1,44 +1,34 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SitePreview from 'calypso/blocks/site-preview';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
+import ListEnd from 'calypso/components/list-end';
+import SectionHeader from 'calypso/components/section-header';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 import { DEFAULT_POST_QUERY } from 'calypso/lib/query-manager/post/constants';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getPostType, getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'calypso/state/posts/selectors';
-import { getPostType, getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
-import ListEnd from 'calypso/components/list-end';
-import PostItem from 'calypso/blocks/post-item';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
-import SectionHeader from 'calypso/components/section-header';
-import { Button } from '@automattic/components';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import PostItem from './post-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -283,6 +273,7 @@ class PostTypeList extends Component {
 				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
+				<SitePreview />
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpsellNudge

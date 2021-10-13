@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
+import { FunctionComponent, ChangeEventHandler, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import React, {
-	FunctionComponent,
-	ChangeEventHandler,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
-
-/**
- * Internal dependencies
- */
 import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {

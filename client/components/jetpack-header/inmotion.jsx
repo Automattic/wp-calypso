@@ -1,11 +1,3 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-
-/**
- * Module variables
- */
 const lightColorSchemeLogo = (
 	<g fillRule="nonzero" transform="translate(360)">
 		<path

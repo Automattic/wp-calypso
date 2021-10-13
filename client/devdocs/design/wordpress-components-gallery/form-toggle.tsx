@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { FormToggle } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import { useState } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 
 const FormToggleExample = () => {

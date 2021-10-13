@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { isExternal } from 'calypso/lib/url';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 

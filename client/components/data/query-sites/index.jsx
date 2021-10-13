@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React, { Fragment, useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { getPreference } from 'calypso/state/preferences/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { requestSites, requestSite } from 'calypso/state/sites/actions';
 import {
 	isRequestingSites,
 	isRequestingSite,
 	hasAllSitesList,
 } from 'calypso/state/sites/selectors';
-import { requestSites, requestSite } from 'calypso/state/sites/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 const getRecentSites = ( state ) => getPreference( state, 'recentSites' );
 

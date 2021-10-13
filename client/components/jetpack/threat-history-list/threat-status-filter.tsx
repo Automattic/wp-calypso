@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export type FilterValue = 'all' | 'fixed' | 'ignored';

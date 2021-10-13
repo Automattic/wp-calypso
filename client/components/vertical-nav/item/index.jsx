@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

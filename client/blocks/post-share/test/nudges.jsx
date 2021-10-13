@@ -3,16 +3,6 @@ jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { UpgradeToPremiumNudgePure } from '../nudges';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,
@@ -34,6 +24,8 @@ import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import { UpgradeToPremiumNudgePure } from '../nudges';
 
 const props = {
 	translate: ( x ) => x,

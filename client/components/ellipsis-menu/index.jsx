@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import PopoverMenu from 'calypso/components/popover-menu';
 
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import PopoverMenu from 'calypso/components/popover/menu';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -41,7 +29,7 @@ class EllipsisMenu extends Component {
 		isMenuVisible: false,
 	};
 
-	popoverContext = React.createRef();
+	popoverContext = createRef();
 
 	handleClick = ( event ) => {
 		const { onClick } = this.props;

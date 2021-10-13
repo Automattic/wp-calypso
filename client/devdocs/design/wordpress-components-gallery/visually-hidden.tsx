@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { VisuallyHidden } from '@wordpress/components';
 
 const VisuallyHiddenExample = () => (

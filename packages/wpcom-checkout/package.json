@@ -37,21 +37,28 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/wpcom-checkout#readme",
 	"dependencies": {
+		"@automattic/calypso-products": "^1.0.0",
 		"@automattic/calypso-stripe": "^1.0.0",
 		"@automattic/composite-checkout": "^1.0.0",
-		"@automattic/shopping-cart": "^1.0.0",
-		"@emotion/styled": "^10.0.27",
-		"@wordpress/i18n": "^3.20.0",
-		"@wordpress/react-i18n": "^1.0.3",
+		"@automattic/shopping-cart": "^2.0.0",
+		"@emotion/styled": "^11.3.0",
+		"@stripe/stripe-js": "^1.17.1",
+		"@wordpress/i18n": "^4.2.2",
+		"@wordpress/react-i18n": "^3.0.1",
 		"debug": "^4.1.1",
 		"i18n-calypso": "^5.0.0",
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0",
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@testing-library/jest-dom": "^5.14.1",
-		"@testing-library/react": "^12.0.0"
+		"@testing-library/react": "^12.1.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"typescript": "^4.4.3"
+	},
+	"peerDependencies": {
+		"@emotion/react": "^11.4.1"
 	},
 	"private": true
 }

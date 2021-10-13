@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { PLAN_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import config from '@automattic/calypso-config';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { PLAN_PREMIUM, FEATURE_CLOUDFLARE_ANALYTICS } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Banner from 'calypso/components/banner';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Cloudflare = () => {
 	const translate = useTranslate();

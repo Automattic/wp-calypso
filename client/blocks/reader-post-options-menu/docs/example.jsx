@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 
-export default class ReaderPostOptionsMenuExample extends React.Component {
+export default class ReaderPostOptionsMenuExample extends Component {
 	static displayName = 'ReaderPostOptionsMenuExample';
 
 	render() {

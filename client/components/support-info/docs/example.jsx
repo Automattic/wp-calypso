@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import SupportInfo from 'calypso/components/support-info';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'SupportInfo';
 
 	render() {

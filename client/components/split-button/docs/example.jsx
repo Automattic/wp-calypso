@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SplitButton from '../';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import { Card } from '@automattic/components';
+import { map } from 'lodash';
+import { PureComponent } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
+import SplitButton from '../';
 
 const popoverItems = [
 	<PopoverMenuItem key="sbe-oa" icon="add">
@@ -29,7 +21,7 @@ const popoverItems = [
 	</PopoverMenuItem>,
 ];
 
-class SplitButtonExample extends React.PureComponent {
+class SplitButtonExample extends PureComponent {
 	state = {
 		compactButtons: false,
 	};

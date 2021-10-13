@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
-/**
- * Internal Dependencies
- */
-import { CompactCard } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/style.scss';
 
 const PurchasesListHeader = ( { showSite = false } ) => {

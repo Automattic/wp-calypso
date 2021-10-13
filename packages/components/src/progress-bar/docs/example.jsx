@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import ProgressBar from '..';
 
 export default class extends PureComponent {

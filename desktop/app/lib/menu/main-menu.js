@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
+const platform = require( '../../lib/platform' );
 const appMenu = require( './app-menu' );
 const editMenu = require( './edit-menu' );
+const helpMenu = require( './help-menu' );
 const viewMenu = require( './view-menu' );
 const windowMenu = require( './window-menu' );
-const helpMenu = require( './help-menu' );
-const platform = require( '../../lib/platform' );
 
 module.exports = function ( app, appWindow ) {
 	const menu = [

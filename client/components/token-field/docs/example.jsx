@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import TokenField from 'calypso/components/token-field';
 import { Card } from '@automattic/components';
+import { PureComponent } from 'react';
+import TokenField from 'calypso/components/token-field';
 
 /**
  * Module variables
@@ -74,12 +66,27 @@ const suggestions = [
 	'their',
 ];
 
-class TokenFields extends React.PureComponent {
+const expandedSuggestions = [
+	{ label: 'Foo Bar Tokens' },
+	'foo',
+	'bar',
+	'baz',
+	{ label: 'Lorem Ipsum Tokens' },
+	'lorem',
+	'ipsum',
+	'dolor',
+	'sit',
+	'amet',
+];
+
+class TokenFields extends PureComponent {
 	static displayName = 'TokenFields';
 
 	state = {
 		tokenSuggestions: suggestions,
 		tokens: Object.freeze( [ 'foo', 'bar' ] ),
+		expandedTokens: Object.freeze( [ 'foo', 'bar' ] ),
+		expandedTokenSuggestions: expandedSuggestions,
 		placeholderTokens: [],
 		disabledTokens: [ 'foo', 'bar' ],
 		statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] ),
@@ -101,6 +108,17 @@ class TokenFields extends React.PureComponent {
 						suggestions={ this.state.tokenSuggestions }
 						value={ this.state.tokens }
 						onChange={ this._onTokensChange }
+					/>
+				</Card>
+
+				<Card>
+					<h3>TokenField with Expanded Suggestions and Labels</h3>
+					<TokenField
+						isExpanded
+						isBorderless={ this.state.isBorderless }
+						suggestions={ this.state.expandedTokenSuggestions }
+						value={ this.state.expandedTokens }
+						onChange={ this._onExpandedTokensChange }
 					/>
 				</Card>
 
@@ -164,6 +182,10 @@ class TokenFields extends React.PureComponent {
 
 	_onTokensChange = ( value ) => {
 		this.setState( { tokens: value } );
+	};
+
+	_onExpandedTokensChange = ( value ) => {
+		this.setState( { expandedTokens: value } );
 	};
 
 	_onPlaceholderTokensChange = ( value ) => {

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import actions from '../state/actions';
@@ -23,7 +23,7 @@ const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 // from $wpnc__title-bar-height in boot/sizes.scss
 const TITLE_OFFSET = 38;
 
-export class NoteList extends React.Component {
+export class NoteList extends Component {
 	static defaultProps = {
 		scrollTimeout: 200,
 	};

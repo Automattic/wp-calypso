@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component, Fragment } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 const SecurityCheckupNavigationItemContents = function ( props ) {
 	const { materialIcon, materialIconStyle, text, description } = props;
 	return (
-		<React.Fragment>
+		<Fragment>
 			<MaterialIcon
 				icon={ materialIcon }
 				style={ materialIconStyle }
@@ -23,11 +16,11 @@ const SecurityCheckupNavigationItemContents = function ( props ) {
 				<div>{ text }</div>
 				<small>{ description }</small>
 			</div>
-		</React.Fragment>
+		</Fragment>
 	);
 };
 
-class SecurityCheckupNavigationItem extends React.Component {
+class SecurityCheckupNavigationItem extends Component {
 	static propTypes = {
 		description: PropTypes.node,
 		external: PropTypes.bool,

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { fromApi, updateProgress } from '../';
 import { updateRewindRestoreProgress } from 'calypso/state/activity-log/actions';
+import { fromApi, updateProgress } from '../';
 
 const siteId = 77203074;
 const timestamp = 1496768464;

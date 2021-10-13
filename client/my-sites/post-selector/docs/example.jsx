@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import PostSelector from '../';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import PostSelector from '../';
 
 class PostSelectorExample extends Component {
 	state = {

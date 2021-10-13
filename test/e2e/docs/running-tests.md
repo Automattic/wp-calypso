@@ -7,40 +7,49 @@
 - [Run tests](#run-tests)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
-  - [Target environment](#target-environment)
+    - [Selenium legacy e2e](#selenium-legacy-e2e)
+    - [Playwright e2e](#playwright-e2e)
+  - [Target endpoint](#target-endpoint)
     - [Staging](#staging)
     - [Localhost](#localhost)
-  - [Running tests Selenium](#running-tests-selenium)
-    - [All tests](#all-tests)
-    - [Individual spec files](#individual-spec-files)
-    - [Individual suite](#individual-suite)
   - [Running tests Playwright](#running-tests-playwright)
     - [All tests](#all-tests)
     - [Individual spec files](#individual-spec-files)
-    - [Individual suite](#individual-suite)
-  - [Execution parameters](#execution-parameters)
-    - [Headful](#headful)
-    - [Headless](#headless)
+  - [Running tests Selenium](#running-tests-selenium)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
   - [TeamCity](#teamcity)
 
 <!-- /TOC -->
 
 ## Overview
 
-Calypso e2e tests use a combination of [`mocha`](https://mochajs.org/) and [`magellan`](https://github.com/TestArmada/magellan) to run its tests.
+> As of 2021-08, Calypso e2e is undergoing migration from Selenium to Playwright. Until the migration is complete, there will be two methods to run e2e tests.
+
+### Selenium (legacy) e2e
+
+Selenium e2e tests use a combination of [`mocha`](https://mochajs.org/) and [`magellan`](https://github.com/TestArmada/magellan) to run its tests.
 
 `mocha` is the test framework and runner.
 `magellan` is a test runner runner that parallelizes `mocha` instances and adds automatic retries and suite support.
 
-Calypso e2e when run in the CI environment uses `magellan` to spin up multiple `mocha` processes, each tasked with running one scenario (tagged with `@parallel`) from beginning to end. If any failures are encountered, the `mocha` process bails early (due to the `--bail` flag) and `magellan` schedules an automatic retry of the suite until the maximum number of attempts are reached.
+Calypso e2e when run in the CI environment uses `magellan` to spin up multiple `mocha` processes, each tasked with running one scenario (tagged with `@parallel`) from beginning to end. If any failures are encountered, the `mocha` process bails immediately and `magellan` schedules an automatic retry of the suite until the maximum number of attempts are reached.
 
 Calypso e2e when run locally can use either `magellan` for identical behavior as in CI, or alternatively invoke `mocha` directly.
 
-## Target environment
+### Playwright e2e
+
+Playwright e2e tests use Jest as the test framework and runner.
+
+Jest natively parallelizes test suites, halting execution if any failures are detected. Automatic retry is not available with Jest.
+
+---
+
+## Target endpoint
 
 ### Staging
 
-By default, end-to-end tests run from the developer's hardware will hit the WPCOM Staging environment. This is specified inside the [`default.json`](config/default.json) file, under `calypsoBaseUrl`.
+By default, end-to-end tests run from the developer's hardware will hit the WPCOM Staging environment, defined by the value `calypsoBaseUrl` within [`default.json`](config/default.json) file.
 
 ### Localhost
 
@@ -64,25 +73,39 @@ yarn start
 
 The local environment is now ready for testing. When a test is run, it will hit againt the local development server instead of the WordPress.com staging environment.
 
+---
+
+## Running tests (Playwright)
+
+First, transpile TypeScript code:
+
+```
+yarn workspace @automattic/calypso-e2e build --watch
+```
+
+### A suite of specs
+
+We use [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) to group and run suites of specs.
+
+Use the `--group` arg to provide a suite to test `Jest`. For example, to run all the tests run on a Calypso PR, run...
+
+```
+yarn jest --group=calypso-pr
+```
+
+### Individual spec file(s)
+
+Specify the file(s) directly:
+
+```
+yarn jest specs/specs-playwright/wp-support__popover.ts specs/specs-playwright/wp-support__home.ts
+```
+
 ## Running tests (Selenium)
-
-### All tests
-
-```
-yarn magellan --config=magellan-calypso.json
-```
-
-Configuration values for this command is read from `magellan-calypso.json`. This command will run all tests in the `test/e2e/specs/specs-calypso` directory using `magellan` with retries enabled.
-
-You can use other config files in `test/e2e/magellan-*.json` to run a different set of tests.
 
 ### Individual spec file(s)
 
 Specify spec file(s) directly to mocha:
-
-```
-yarn mocha <path_to_e2e_spec>
-```
 
 <details>
 <summary>Example (mocha)</summary>
@@ -113,115 +136,7 @@ describe.only( 'Logging In and Out:', function() {
 
 </details>
 
-:warning: ensure this syntax should be removed once the test is to be committed to the repository.
-There is an ESLint rule that checks for `.only` syntax, but please also exercise due diligence.
-
-### Individual suite
-
-```
-yarn mocha <path_to_e2e_spec> -g "<test_case_name>"
-```
-
-eg.
-
-```
-yarn mocha specs/specs-wpcom/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
-```
-
-## Running tests (Playwright)
-
-Playwright is the new framework and the intention is to migrate most (if not all) of our Selenium-based tests to this new framework.
-
-The steps to run calypso e2e tests developed for Playwright are very similar to Selenium-based suites.
-
-### All tests
-
-Specify a directory to `mocha`:
-
-<details>
-<summary>Example (mocha)</summary>
-
-```
-mocha --config .mocharc_playwright.yml specs/specs-playwright
-```
-
-</details>
-
-<details>
-<summary>Example (magellan)</summary>
-
-```
-yarn magellan --config=magellan-playwright.json
-```
-
-</details>
-
-### Individual spec file(s)
-
-Specify the file(s) directly to `mocha`:
-
-```
-mocha --config .mocharc_playwright.yml specs/specs-playwright/<spec_file>
-```
-
-<details>
-<summary>Example (mocha)</summary>
-
-```
-mocha --config .mocharc_playwright.yml specs/specs-playwright/wp-log-in-out-spec.js
-```
-
-</details>
-
-<details>
-<summary>Example (magellan)</summary>
-
-```
-yarn magellan --config=magellan-playwright.json --test=specs-playwright/wp-log-in-out-spec.js
-```
-
-</details>
-
-### Individual suite
-
-Specify the name to `mocha`:
-
-</details>
-
-<details>
-<summary>Example (mocha)</summary>
-
-```
-mocha --config .mocharc_playwright.yml specs/specs-playwright -g 'Subsuite 2-1 @parallel'
-```
-
-</details>
-
-## Execution parameters
-
-### Headful
-
-To run tests in headful mode, either approach can be taken:
-
-<details>
-<summary>Using environment variables</summary>
-
-```
-BROWSERSIZE=<viewport> yarn mocha <path_to_e2e_spec>
-```
-
-</details>
-
-### Headless
-
-By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute. This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back.
-
-If using `mocha` or `magellan`, export an environment variable:
-
-```shell
-export HEADLESS=1
-yarn mocha <path_to_e2e_spec>
-```
+> :warning: ensure this syntax should be removed once the test is to be committed to the repository. There is an ESLint rule that checks for `.only` syntax, but please also exercise due diligence.
 
 ## TeamCity
 

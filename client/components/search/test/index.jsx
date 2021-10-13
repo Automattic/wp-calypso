@@ -2,21 +2,13 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-import React from 'react';
+import { createElement } from 'react';
 import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import searchClass from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {} ) );
-jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'Search', () => {
 	describe( 'initialValue', () => {
@@ -31,7 +23,7 @@ describe( 'Search', () => {
 			const initialValue = 'hello';
 
 			beforeEach( () => {
-				const searchElement = React.createElement( searchClass, {
+				const searchElement = createElement( searchClass, {
 					initialValue,
 					onSearch,
 				} );
@@ -45,7 +37,7 @@ describe( 'Search', () => {
 
 		describe( 'without initialValue', () => {
 			beforeEach( () => {
-				const searchElement = React.createElement( searchClass, {
+				const searchElement = createElement( searchClass, {
 					onSearch,
 				} );
 				rendered = TestUtils.renderIntoDocument( searchElement );

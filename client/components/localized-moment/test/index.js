@@ -2,19 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import globalMoment from 'moment';
-
-/**
- * Internal dependencies
- */
-import MomentProvider from '../provider';
+import { PureComponent } from 'react';
+import { createStore } from 'redux';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
+import MomentProvider from '../provider';
 
 // helper to create state object with specified `languageSlug`
 const createState = ( localeSlug ) => ( { ui: { language: { localeSlug } } } );
@@ -31,7 +24,7 @@ const reducer = ( state, action ) => {
 
 // Pure component that renders a "day-name month-name" label
 // We'll be testing if it rerenders the date despite being pure
-class Label extends React.PureComponent {
+class Label extends PureComponent {
 	render() {
 		const { moment, date } = this.props;
 		return moment( date ).format( 'dddd MMMM' );

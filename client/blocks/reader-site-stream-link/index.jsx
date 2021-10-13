@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import Emojify from 'calypso/components/emojify';
 
-class ReaderSiteStreamLink extends React.Component {
+class ReaderSiteStreamLink extends Component {
 	static propTypes = {
 		feedId: PropTypes.number,
 		siteId: PropTypes.number,
@@ -28,21 +19,18 @@ class ReaderSiteStreamLink extends React.Component {
 	};
 
 	render() {
+		const { feedId, siteId, post, children, ...rest } = this.props;
+
 		// If we can't make a link, just return children
-		if ( ! this.props.feedId && ! this.props.siteId ) {
-			return (
-				<span>
-					<Emojify>{ this.props.children }</Emojify>
-				</span>
-			);
+		if ( ! feedId && ! siteId ) {
+			return <span>{ children }</span>;
 		}
 
-		const link = getStreamUrl( this.props.feedId, this.props.siteId );
-		const omitProps = [ 'feedId', 'siteId', 'post' ];
+		const link = getStreamUrl( feedId, siteId );
 
 		return (
-			<a { ...omit( this.props, omitProps ) } href={ link } onClick={ this.recordClick }>
-				<Emojify>{ this.props.children }</Emojify>
+			<a { ...rest } href={ link } onClick={ this.recordClick }>
+				{ children }
 			</a>
 		);
 	}

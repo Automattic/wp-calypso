@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-export default class ChartBarTooltip extends React.PureComponent {
+export default class ChartBarTooltip extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		icon: PropTypes.string,

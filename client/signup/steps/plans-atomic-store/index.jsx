@@ -1,26 +1,4 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSiteId } from 'calypso/state/sites/selectors';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import QueryPlans from 'calypso/components/data/query-plans';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { isEnabled } from '@automattic/calypso-config';
-import PlanFeatures from 'calypso/my-sites/plan-features';
-import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -30,10 +8,20 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
-
-/**
- * Style dependencies
- */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import PlanFeatures from 'calypso/my-sites/plan-features';
+import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 export class PlansAtomicStoreStep extends Component {

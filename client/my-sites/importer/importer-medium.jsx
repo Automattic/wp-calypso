@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FileImporter from './file-importer';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
+import FileImporter from './file-importer';
 
-class ImporterMedium extends React.PureComponent {
+class ImporterMedium extends PureComponent {
 	static displayName = 'ImporterMedium';
 
 	render() {

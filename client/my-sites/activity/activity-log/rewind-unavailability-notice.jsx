@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 export const RewindUnavailabilityNotice = ( {
 	adminUrl,

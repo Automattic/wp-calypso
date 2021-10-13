@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import debugFactory from 'debug';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -13,10 +6,10 @@ import {
 	useFormStatus,
 	useSelect,
 } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
@@ -37,6 +30,8 @@ export default function CreditCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
+	const elements = useElements();
+	const cardNumberElement = elements?.getElement( CardNumberElement ) ?? undefined;
 
 	return (
 		<Button
@@ -52,6 +47,7 @@ export default function CreditCardPayButton( {
 							items,
 							total,
 							stripeConfiguration,
+							cardNumberElement,
 							paymentPartner,
 							countryCode: fields?.countryCode?.value,
 							postalCode: fields?.postalCode?.value,

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
-import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 
 describe( 'isJetpackSettingsSaveFailure()', () => {

@@ -1,27 +1,21 @@
 /**
  * External dependendies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import withServerCredentialsForm from '../with-server-credentials-form';
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSelect from 'calypso/components/forms/form-select';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import withServerCredentialsForm from '../with-server-credentials-form';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ServerCredentialsForm = ( {
@@ -37,7 +31,7 @@ const ServerCredentialsForm = ( {
 	labels = {},
 	showCancelButton = true,
 } ) => {
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( formSubmissionStatus === 'success' ) {
 			onComplete && onComplete();
 		}

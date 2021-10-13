@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import Spinner from 'calypso/components/spinner';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 
-/**
- * Style dependencies
- */
 import './closed.scss';
 
 class AccountSettingsClosedComponent extends Component {
@@ -25,11 +14,7 @@ class AccountSettingsClosedComponent extends Component {
 	};
 
 	render() {
-		const { isUserAccountClosed, previousRoute, translate } = this.props;
-
-		if ( previousRoute !== '/me/account/close' ) {
-			page( '/me/account/close' );
-		}
+		const { isUserAccountClosed, translate } = this.props;
 
 		if ( ! isUserAccountClosed ) {
 			return (

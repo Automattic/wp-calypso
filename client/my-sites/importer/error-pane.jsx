@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import Page from 'page';
-
-/**
- * Internal dependencies
- */
-import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import Page from 'page';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import Notice from 'calypso/components/notice';
 
 const noop = () => {};
 
-class ImporterError extends React.PureComponent {
+class ImporterError extends PureComponent {
 	static displayName = 'ImporterError';
 	static defaultProps = {
 		retryImport: noop,

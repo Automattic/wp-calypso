@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { TextareaControl } from '@wordpress/components';
+import { useState } from 'react';
 
 const TextareaControlExample = () => {
 	const [ value, setValue ] = useState( '' );

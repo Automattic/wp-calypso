@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import { SITES_BLOG_STICKER_REMOVE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { addBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { addBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
 export const requestBlogStickerRemove = ( action ) =>
 	http(

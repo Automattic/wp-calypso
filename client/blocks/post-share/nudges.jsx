@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { findFirstSimilarPlanKey, TYPE_PREMIUM, TERM_ANNUALLY } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSitePlan } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'calypso/state/sites/plans/selectors';
+import { getSitePlan } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const UpgradeToPremiumNudgePure = ( props ) => {
 	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;
@@ -35,7 +27,6 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 			translate( 'Remove all advertising from your site.' ),
 			translate( 'Enjoy live chat support.' ),
 			translate( 'Easy monetization options' ),
-			translate( 'Unlimited premium themes.' ),
 		];
 	}
 

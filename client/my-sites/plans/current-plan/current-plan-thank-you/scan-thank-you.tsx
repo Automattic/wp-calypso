@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useCallback, ReactElement } from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import ThankYou, { ThankYouCtaType } from './thank-you';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, ReactElement } from 'react';
+import { useSelector } from 'react-redux';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import ThankYou, { ThankYouCtaType } from './thank-you';
 
 const ThankYouCta: ThankYouCtaType = ( {
 	dismissUrl,

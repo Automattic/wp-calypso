@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const path = require( 'path' );
-const stats = require( path.join( __dirname, '..', 'build', 'assets-evergreen.json' ) );
-const _ = require( 'lodash' );
+const stats = require( path.join( __dirname, '..', 'build', 'assets.json' ) );
 const gzipSize = require( 'gzip-size' );
+const _ = require( 'lodash' );
 
 function getChunkByName( name ) {
 	return stats.chunks.find( ( chunk ) => chunk.names.indexOf( name ) !== -1 );

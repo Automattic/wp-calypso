@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupSocialLogins extends React.Component {
+class SecurityCheckupSocialLogins extends Component {
 	static propTypes = {
 		socialConnectionCount: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,

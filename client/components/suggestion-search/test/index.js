@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import SuggestionSearch from '..';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import SuggestionSearch from '..';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),

@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { get } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
-import Emojify from 'calypso/components/emojify';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -45,16 +33,12 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
 	if ( ! siteUrl ) {
-		return (
-			<span className={ classes }>
-				<Emojify>{ children }</Emojify>
-			</span>
-		);
+		return <span className={ classes }>{ children }</span>;
 	}
 
 	return (
 		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
-			<Emojify>{ children }</Emojify>
+			{ children }
 		</a>
 	);
 };

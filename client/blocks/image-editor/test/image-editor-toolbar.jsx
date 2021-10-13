@@ -2,18 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { ImageEditorToolbar } from '../image-editor-toolbar';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { ImageEditorToolbar } from '../image-editor-toolbar';
 
 describe( 'ImageEditorToolbar', () => {
 	let defaultProps;

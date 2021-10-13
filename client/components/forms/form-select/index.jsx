@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import classNames from 'classnames';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class FormSelect extends React.Component {
+class FormSelect extends Component {
 	static defaultProps = {
 		isError: false,
 	};

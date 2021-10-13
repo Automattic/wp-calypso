@@ -2,20 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import * as jetpackScanActions from 'calypso/state/jetpack-scan/actions';
 import { JETPACK_SCAN_REQUEST } from 'calypso/state/action-types';
+import * as jetpackScanActions from 'calypso/state/jetpack-scan/actions';
 
 function setup( siteId ) {
 	// Set spy on action creator to verify it gets called when the component renders.

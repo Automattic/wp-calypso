@@ -15,7 +15,7 @@ import { ESCAPE } from '@wordpress/keycodes';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import { Post } from '../../types';
 import CreatePage from '../create-page';
@@ -298,7 +298,7 @@ function useNavItems(): NavItemRecord {
 			getCurrentPostType,
 			getEditedPostAttribute,
 		} = select( 'core/editor' );
-		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+		const statuses = select( 'core' ).getEntityRecords( 'root', 'status', { context: 'edit' } );
 
 		if ( ! statuses ) {
 			return { current: [], drafts: [], recent: [] };

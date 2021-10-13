@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import Version from 'calypso/components/version';
 
 export default class VersionExample extends PureComponent {

@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { defer } from 'lodash';
 import config from '@automattic/calypso-config';
+import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
-import page from 'page';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import Gridicon from 'calypso/components/gridicon';
+import { defer } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SiteSelector from 'calypso/components/site-selector';
 import SocialLogo from 'calypso/components/social-logo';
+import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import SiteSelector from 'calypso/components/site-selector';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { Button } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -77,7 +66,7 @@ function buildQuerystringForPost( post ) {
 	return params.toString();
 }
 
-class ReaderShare extends React.Component {
+class ReaderShare extends Component {
 	static propTypes = {
 		iconSize: PropTypes.number,
 	};
@@ -94,7 +83,7 @@ class ReaderShare extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.mounted = false;
-		this.shareButton = React.createRef();
+		this.shareButton = createRef();
 	}
 
 	componentDidMount() {

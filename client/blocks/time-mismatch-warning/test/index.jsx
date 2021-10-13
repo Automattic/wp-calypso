@@ -1,18 +1,11 @@
 /* eslint-disable no-irregular-whitespace */
-/**
- * External dependencies
- */
-import React from 'react';
+
 import { shallow } from 'enzyme';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { TimeMismatchWarning } from '../index';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import { TimeMismatchWarning } from '../index';
 
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),

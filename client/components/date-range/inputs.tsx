@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useRef, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { FunctionComponent, useRef, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Button, ButtonGroup } from '@wordpress/components';
 
 const ButtonGroupExample = () => {

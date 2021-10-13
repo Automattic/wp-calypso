@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
 import { LiveProvider } from 'react-live';
-
-/**
- * Internal dependencies
- */
 import ComponentPlayground from '../component-playground';
 
 jest.mock( 'calypso/devdocs/design/playground-scope', () => 'PlaygroundScope' );

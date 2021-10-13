@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { composeHandlers } from 'calypso/controller/shared';
 import {
 	getThemeFilterStringFromTerm,
 	getThemeFilterTerm,
@@ -13,7 +7,6 @@ import {
 	isValidThemeFilterTerm,
 } from 'calypso/state/themes/selectors';
 import { fetchThemeFilters } from './controller';
-import { composeHandlers } from 'calypso/controller/shared';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {

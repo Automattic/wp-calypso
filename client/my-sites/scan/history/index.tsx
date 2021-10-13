@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
@@ -17,9 +9,6 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ScanNavigation from '../navigation';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

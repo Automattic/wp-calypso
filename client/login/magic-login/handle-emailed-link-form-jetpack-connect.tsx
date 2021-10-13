@@ -1,35 +1,28 @@
-/**
- * External dependencies
- */
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import JetpackConnected from 'calypso/assets/images/jetpack/connected.svg';
 import EmptyContent from 'calypso/components/empty-content';
-import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import { login } from 'calypso/lib/paths';
-import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
 } from 'calypso/state/login/magic-login/actions';
-import { rebootAfterLogin } from 'calypso/state/login/actions';
-import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
-import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
-import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
 import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import JetpackConnected from 'calypso/assets/images/jetpack/connected.svg';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
+import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
 	emailAddress: string;

@@ -1,43 +1,36 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import page from 'page';
+import { YOAST_PREMIUM, YOAST_FREE, WOO_UPS_SHIPPING } from '@automattic/calypso-products';
+import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { Button, Card, CompactCard } from '@automattic/components';
-import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
+import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
+import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import Notice from 'calypso/components/notice';
+import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
+import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	fetchAutomatedTransferStatus,
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-transfer/selectors';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import {
 	getPluginOnSite,
 	getPlugins,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
-import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
-import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
-import Notice from 'calypso/components/notice';
-import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
-import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
-import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
 export const Container = styled.div`
 	margin: 0 25px;
@@ -86,6 +79,10 @@ export default function MarketplaceTest(): JSX.Element {
 		{
 			name: 'Yoast Free Details Page',
 			path: `/marketplace/product/details/${ YOAST }/${ YOAST_FREE }`,
+		},
+		{
+			name: 'UPS Shipping Details Page',
+			path: `/marketplace/product/details/${ WOO }/${ WOO_UPS_SHIPPING }`,
 		},
 		{ name: 'Loading Page', path: '/marketplace/product/setup' },
 		{ name: 'Domains Page', path: '/marketplace/domain' },

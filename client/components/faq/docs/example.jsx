@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'FAQ';
 
 	render() {

@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { keys, trim } from 'lodash';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import { keys, trim } from 'lodash';
+import PropTypes from 'prop-types';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExternalLink from 'calypso/components/external-link';
-import { recordPermalinkClick } from 'calypso/reader/stats';
 import TimeSince from 'calypso/components/time-since';
-import ReaderFullPostHeaderTags from './header-tags';
 import { isDiscoverPost } from 'calypso/reader/discover/helper';
+import { recordPermalinkClick } from 'calypso/reader/stats';
+import ReaderFullPostHeaderTags from './header-tags';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {

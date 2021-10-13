@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, isEmpty } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
 
 import 'calypso/state/automated-transfer/init';

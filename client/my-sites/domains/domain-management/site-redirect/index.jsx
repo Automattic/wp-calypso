@@ -1,51 +1,41 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { CompactCard as Card } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import page from 'page';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import { withoutHttp } from 'calypso/lib/url';
+import { SITE_REDIRECT } from 'calypso/lib/url/support';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementSiteRedirect,
 	domainManagementRedirectSettings,
 } from 'calypso/my-sites/domains/paths';
 import {
-	closeSiteRedirectNotice,
-	fetchSiteRedirect,
-	updateSiteRedirect,
-} from 'calypso/state/domains/site-redirect/actions';
-import { CompactCard as Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
-import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	closeSiteRedirectNotice,
+	fetchSiteRedirect,
+	updateSiteRedirect,
+} from 'calypso/state/domains/site-redirect/actions';
 import { getSiteRedirectLocation } from 'calypso/state/domains/site-redirect/selectors';
-import { withoutHttp } from 'calypso/lib/url';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class SiteRedirect extends React.Component {
+class SiteRedirect extends Component {
 	static propTypes = {
 		location: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

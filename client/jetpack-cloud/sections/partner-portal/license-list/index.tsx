@@ -1,36 +1,25 @@
-/**
- * External dependencies
- */
-import React, { PropsWithChildren, ReactElement, useContext, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { PropsWithChildren, ReactElement, useContext, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
-
-/**
- * Internal dependencies
- */
-import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
+import Pagination from 'calypso/components/pagination';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty';
+import LicenseListHeader from 'calypso/jetpack-cloud/sections/partner-portal/license-list/header';
+import LicensePreview, {
+	LicensePreviewPlaceholder,
+} from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
 import { addQueryArgs } from 'calypso/lib/route';
-import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import {
 	getPaginatedLicenses,
 	hasFetchedLicenses,
 	isFetchingLicenses,
 } from 'calypso/state/partner-portal/licenses/selectors';
-import LicensePreview, {
-	LicensePreviewPlaceholder,
-} from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';
-import Pagination from 'calypso/components/pagination';
-import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
-import LicenseListHeader from 'calypso/jetpack-cloud/sections/partner-portal/license-list/header';
-import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty';
-
-/**
- * Style dependencies
- */
+import { License, PaginatedItems } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 function setPage( pageNumber: number ): void {

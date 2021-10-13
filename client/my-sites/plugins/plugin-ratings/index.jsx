@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { ProgressBar } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Rating from 'calypso/components/rating';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ratingTiers = [ 5, 4, 3, 2, 1 ];
 
-class PluginRatings extends React.Component {
+class PluginRatings extends Component {
 	static propTypes = {
 		rating: PropTypes.number,
 		ratings: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),

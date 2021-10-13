@@ -35,15 +35,30 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour__resume-btn {
+.wpcom-editor-welcome-tour__minimized {
 	border-radius: 2px;
 	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
 		0 1px 1px rgba( 0, 0, 0, 0.08 );
 	background-color: $white;
 	color: $black;
 
-	&.components-button {
+	.components-button {
 		height: 44px;
+
+		.wpcom-editor-welcome-tour__minimized-tour-index {
+			color: $gray-600;
+		}
+
+		svg {
+			color: #50575e;
+		}
+
+		&:hover {
+			.wpcom-editor-welcome-tour__minimized-tour-index,
+			svg {
+				color: inherit;
+			}
+		}
 	}
 }
 
@@ -64,6 +79,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 .welcome-tour-card {
 	width: 400px;
+	max-width: 92vw;
 
 	&.welcome-tour-card.is-elevated {
 		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
@@ -85,8 +101,6 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 
 	.components-card__footer {
-		width: auto;
-
 		.welcome-tour__end-text {
 			color: $gray-600;
 			font-size: 0.875rem;
@@ -150,17 +164,32 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 		min-width: 32px;
 		height: 32px;
 		background: $welcome-tour-button-background-color;
-		opacity: 0;
 		transition: opacity 200ms;
+		opacity: 0.7;
+
+		&:active {
+			opacity: 0.9;
+		}
 	}
-}
 
-.wpcom-editor-welcome-tour-frame:hover .welcome-tour-card__overlay-controls .components-button {
-	opacity: 0.7;
-}
+	@media ( hover: hover ) and ( pointer: fine ) {
+		// styles only applicable for hoverable viewports with precision pointing devices connected (eg: mouse)
+		.components-button {
+			opacity: 0;
+		}
 
-.wpcom-editor-welcome-tour-frame .welcome-tour-card__overlay-controls .components-button:hover {
-	opacity: 0.9;
+		.wpcom-editor-welcome-tour-frame:hover &,
+		.wpcom-editor-welcome-tour-frame:focus-within & {
+			.components-button {
+				opacity: 0.7;
+
+				&:hover,
+				&:focus {
+					opacity: 0.9;
+				}
+			}
+		}
+	}
 }
 
 .welcome-tour-card__next-btn {

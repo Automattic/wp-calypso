@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
-import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import wpcom from 'calypso/lib/wp';
 import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getHelpSelectedSite } from 'calypso/state/help/selectors';
+import getGroups from 'calypso/state/happychat/selectors/get-groups';
 import getSkills from 'calypso/state/happychat/selectors/get-skills';
+import { getHelpSelectedSite } from 'calypso/state/help/selectors';
 
 const sign = ( payload ) => wpcom.req.post( '/jwt/sign', { payload: JSON.stringify( payload ) } );
 

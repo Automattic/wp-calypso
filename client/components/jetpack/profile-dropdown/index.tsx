@@ -1,27 +1,14 @@
-/**
- * External dependencies
- */
-import React, { useState, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import useOutsideClickCallback from './use-outside-click-callback';
+import { useState, useCallback } from 'react';
+import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-
-/**
- * Type dependencies
- */
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import useOutsideClickCallback from './use-outside-click-callback';
 import type { UserData } from 'calypso/lib/user/user';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ProfileDropdown: React.FC = () => {

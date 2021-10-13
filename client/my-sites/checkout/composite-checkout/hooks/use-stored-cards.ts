@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { useReducer, useEffect } from 'react';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useReducer, useEffect } from 'react';
 import type { StoredCard } from '../types/stored-cards';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-stored-cards' );

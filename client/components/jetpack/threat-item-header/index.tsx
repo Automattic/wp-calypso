@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
 

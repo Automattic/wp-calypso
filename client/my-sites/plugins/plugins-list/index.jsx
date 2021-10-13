@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SectionHeader from 'calypso/components/section-header';
 import acceptDialog from 'calypso/lib/accept';
-import { warningNotice } from 'calypso/state/notices/actions';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
-import PluginNotices from 'calypso/my-sites/plugins/notices';
-import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { warningNotice } from 'calypso/state/notices/actions';
 import {
 	activatePlugin,
 	deactivatePlugin,
@@ -30,16 +20,15 @@ import {
 	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
-import getSites from 'calypso/state/selectors/get-sites';
 import {
 	getPluginsOnSites,
 	getPluginStatusesByType,
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import getSites from 'calypso/state/selectors/get-sites';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
@@ -56,7 +45,7 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-export class PluginsList extends React.Component {
+export class PluginsList extends Component {
 	static propTypes = {
 		plugins: PropTypes.arrayOf(
 			PropTypes.shape( {

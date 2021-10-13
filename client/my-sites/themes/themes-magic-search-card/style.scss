@@ -26,9 +26,9 @@
 	.search {
 		position: relative;
 		flex: 0 1 auto;
-		margin: 0 5px 0 10px;
 		height: 36px;
 		border: solid 1px var( --color-neutral-10 );
+		margin: 10px;
 
 		&.has-focus,
 		&.has-focus:hover {
@@ -66,7 +66,7 @@
 	.segmented-control {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding: 11px 14px;
+		padding: 11px 10px 11px 5px;
 
 		.segmented-control__item,
 		.segmented-control__link,
@@ -89,10 +89,6 @@
 					color: var( --color-neutral-70 );
 				}
 			}
-		}
-
-		&.showcase-revamp {
-			padding: 11px 10px 11px 5px;
 		}
 	}
 
@@ -260,6 +256,7 @@
 }
 
 .button.themes-magic-search-card__advanced-toggle {
+	display: flex;
 	font-size: 0.75rem;
 	white-space: nowrap;
 	border: 0;

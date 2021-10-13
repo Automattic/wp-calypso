@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faProgress from 'calypso/me/security-2fa-progress';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-class Security2faSetupBackupCodes extends React.Component {
+class Security2faSetupBackupCodes extends Component {
 	state = {
 		backupCodes: [],
 		lastError: false,

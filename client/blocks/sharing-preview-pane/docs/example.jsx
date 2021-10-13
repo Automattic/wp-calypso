@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Card } from '@automattic/components';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import QuerySites from 'calypso/components/data/query-sites';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSitePosts } from 'calypso/state/posts/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import { Card } from '@automattic/components';
-import QuerySites from 'calypso/components/data/query-sites';
 
 const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (
 	<div>

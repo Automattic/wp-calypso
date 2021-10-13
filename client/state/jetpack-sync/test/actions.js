@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
@@ -14,9 +7,9 @@ import {
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'calypso/state/action-types';
-import { getSyncStatus, scheduleJetpackFullysync } from '../actions';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { getSyncStatus, scheduleJetpackFullysync } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox;

@@ -2,13 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import moment from 'moment';
-import { shallow } from 'enzyme';
 import { Card } from '@automattic/components';
+import { shallow } from 'enzyme';
+import moment from 'moment';
 
 const mockGoBack = jest.fn();
 jest.mock( 'page', () => ( { back: mockGoBack } ) );

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 
 describe( 'RenderSwitch', () => {

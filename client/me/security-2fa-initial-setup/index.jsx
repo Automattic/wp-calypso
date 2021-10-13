@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-class Security2faInitialSetup extends React.Component {
+const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
+
+class Security2faInitialSetup extends Component {
 	static displayName = 'Security2faInitialSetup';
 
 	static propTypes = {

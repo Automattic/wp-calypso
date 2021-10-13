@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
-import { Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
+import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -31,7 +20,7 @@ class PluginsBrowserList extends Component {
 	renderPluginsViewList() {
 		let emptyCounter = 0;
 
-		let pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
+		const pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
 			return (
 				<PluginBrowserItem
 					site={ this.props.site }
@@ -43,9 +32,7 @@ class PluginsBrowserList extends Component {
 			);
 		} );
 
-		if ( this.props.showPlaceholders ) {
-			pluginsViewsList = pluginsViewsList.concat( this.renderPlaceholdersViews() );
-		}
+		this.renderPlaceholdersViews( pluginsViewsList );
 
 		// We need to complete the list with empty elements to keep the grid drawn.
 		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
@@ -63,10 +50,21 @@ class PluginsBrowserList extends Component {
 		return pluginsViewsList;
 	}
 
-	renderPlaceholdersViews() {
-		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
+	renderPlaceholdersViews( pluginViewsList ) {
+		if ( ! this.props.showPlaceholders ) {
+			return null;
+		}
+
+		const placeholders = times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
 			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
 		) );
+
+		if ( this.props.paginated || undefined === pluginViewsList ) {
+			return placeholders;
+		}
+
+		// this is for handling infinite scroll
+		return pluginViewsList.concat( placeholders );
 	}
 
 	renderViews() {

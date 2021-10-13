@@ -27,8 +27,8 @@ function render() {
 This behavior can be overridden by passing a child to the PluginAction component.
 
 ```js
-import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { Button } from '@automattic/components';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 
 function render() {
 	return (

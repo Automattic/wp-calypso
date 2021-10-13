@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DataSynchronization from './data-synchronization';
-import DisconnectSiteLink from './disconnect-site-link';
+import { flowRight } from 'lodash';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import SiteOwnership from './site-ownership';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
+import DataSynchronization from './data-synchronization';
+import DisconnectSiteLink from './disconnect-site-link';
+import SiteOwnership from './site-ownership';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ManageConnection extends Component {

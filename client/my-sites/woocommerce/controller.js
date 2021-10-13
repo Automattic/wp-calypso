@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import main from './main';
+import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getSelectedSiteWithFallback,
 	getSiteOption,
 	getSiteWooCommerceUrl,
 } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import main from './main';
 
 export function checkPrerequisites( context, next ) {
 	const state = context.store.getState();
@@ -42,6 +35,6 @@ export function setup( context, next ) {
 		return page.redirect( '/woocommerce-installation' );
 	}
 
-	context.primary = React.createElement( main );
+	context.primary = createElement( main );
 	next();
 }

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { filter, find, get, pick, reduce, some, sortBy } from 'lodash';
 import {
 	getSite,
 	getSiteTitle,

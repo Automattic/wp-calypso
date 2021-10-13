@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
-import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	let sandbox;

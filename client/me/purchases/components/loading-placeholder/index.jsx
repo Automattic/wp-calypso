@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class LoadingPlaceholder extends React.Component {
+class LoadingPlaceholder extends Component {
 	static propTypes = {
 		path: PropTypes.string,
 		title: PropTypes.string.isRequired,

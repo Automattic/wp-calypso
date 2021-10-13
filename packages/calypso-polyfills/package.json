@@ -1,8 +1,8 @@
 {
 	"name": "@automattic/calypso-polyfills",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "Polyfills required for Calypso to work across various browsers and in node.",
-	"browser": "browser-fallback.js",
+	"browser": "browser.js",
 	"main": "node.js",
 	"sideEffects": true,
 	"keywords": [
@@ -25,9 +25,10 @@
 	},
 	"dependencies": {
 		"core-js": "^3.6.3",
-		"element-closest": "^3.0.2",
 		"isomorphic-fetch": "^2.2.1",
-		"regenerator-runtime": "^0.13.3",
-		"svg4everybody": "^2.1.9"
+		"regenerator-runtime": "^0.13.9"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

@@ -9,14 +9,18 @@ import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
-const gutenbergUser = 'siteEditorSimpleSiteUser';
+const gutenbergUser =
+	process.env.GUTENBERG_EDGE === 'true'
+		? 'siteEditorSimpleSiteEdgeUser'
+		: 'siteEditorSimpleSiteUser';
 
 describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-		await this.loginFlow.loginAndSelectMySite();
+		const userConfig = dataHelper.getAccountConfig( gutenbergUser );
+		await this.loginFlow.loginAndSelectMySite( userConfig[ 2 ] );
 	} );
 
 	it( 'Can open site editor', async function () {

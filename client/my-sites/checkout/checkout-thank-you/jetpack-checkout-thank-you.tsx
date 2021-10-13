@@ -1,23 +1,17 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getHttpData, DataState, requestHttpData } from 'calypso/state/data-layer/http-data';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
-import Main from 'calypso/components/main';
 
 interface Props {
 	site: number | string;
@@ -79,6 +73,12 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 
 	return (
 		<Main className="jetpack-checkout-thank-you">
+			<PageViewTracker
+				options={ { useJetpackGoogleAnalytics: true } }
+				path="/checkout/jetpack/thank-you/:site/:product"
+				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Thank You"
+			/>
 			<Card className="jetpack-checkout-thank-you__card">
 				<JetpackLogo full size={ 45 } />
 				{ hasProductInfo && <QueryProducts type="jetpack" /> }

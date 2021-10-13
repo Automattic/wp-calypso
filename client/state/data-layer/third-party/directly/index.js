@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'calypso/state/action-types';
-import { initializationCompleted, initializationFailed } from 'calypso/state/help/directly/actions';
 import * as directly from 'calypso/lib/directly';
+import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { initializationCompleted, initializationFailed } from 'calypso/state/help/directly/actions';
 
 export function askQuestion( { dispatch }, action ) {
 	return directly

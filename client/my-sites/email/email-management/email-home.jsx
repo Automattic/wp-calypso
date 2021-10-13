@@ -1,18 +1,18 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React from 'react';
-import titleCase from 'to-title-case';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
@@ -20,30 +20,22 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
-import EmptyContent from 'calypso/components/empty-content';
+import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import Main from 'calypso/components/main';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import SectionHeader from 'calypso/components/section-header';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class EmailManagementHome extends React.Component {
+class EmailManagementHome extends Component {
 	static propTypes = {
 		canManageSite: PropTypes.bool.isRequired,
 		domains: PropTypes.array.isRequired,
@@ -51,18 +43,26 @@ class EmailManagementHome extends React.Component {
 		selectedDomainName: PropTypes.string,
 		selectedSiteId: PropTypes.number.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		emailListInactiveHeader: PropTypes.element,
+		showActiveDomainList: PropTypes.bool,
+		sectionHeaderLabel: PropTypes.string,
+		source: PropTypes.string,
 	};
 
 	render() {
 		const {
+			canManageSite,
+			currentRoute,
 			domains,
+			emailListInactiveHeader,
 			hasSiteDomainsLoaded,
 			hasSitesLoaded,
-			canManageSite,
-			selectedSite,
+			showActiveDomainList = true,
 			selectedDomainName,
-			currentRoute,
+			selectedSite,
 			selectedSiteId,
+			sectionHeaderLabel,
+			source,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -84,21 +84,25 @@ class EmailManagementHome extends React.Component {
 			if ( ! domainHasEmail( selectedDomain ) ) {
 				return (
 					<EmailProvidersComparison
-						selectedDomainName={ selectedDomainName }
 						backPath={ domainManagementList( selectedSite.slug, null ) }
+						comparisonContext="email-home-selected-domain"
+						selectedDomainName={ selectedDomainName }
+						source={ source }
 					/>
 				);
 			}
 
 			return this.renderContentWithHeader(
-				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } />
+				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
 			);
 		}
 
 		const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 		if ( nonWpcomDomains.length < 1 ) {
-			return this.renderContentWithHeader( <EmailNoDomain selectedSite={ selectedSite } /> );
+			return this.renderContentWithHeader(
+				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
+			);
 		}
 
 		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
@@ -107,24 +111,43 @@ class EmailManagementHome extends React.Component {
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
 				<EmailProvidersComparison
+					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 					skipHeaderElement={ true }
+					source={ source }
 				/>
 			);
 		}
 
+		if (
+			domainsWithEmail.length === 1 &&
+			domainsWithNoEmail.length === 0 &&
+			domainsWithEmail[ 0 ].domain === selectedSite.domain &&
+			domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount > 0 &&
+			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
+		) {
+			page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedSite.domain ) );
+		}
+
 		return this.renderContentWithHeader(
 			<>
-				<EmailListActive
-					domains={ domainsWithEmail }
-					selectedSiteSlug={ selectedSite.slug }
-					currentRoute={ currentRoute }
-					selectedSiteId={ selectedSiteId }
-				/>
+				{ showActiveDomainList && (
+					<EmailListActive
+						currentRoute={ currentRoute }
+						domains={ domainsWithEmail }
+						selectedSiteId={ selectedSiteId }
+						selectedSiteSlug={ selectedSite.slug }
+						source={ source }
+					/>
+				) }
+
 				<EmailListInactive
-					domains={ domainsWithNoEmail }
-					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
+					domains={ domainsWithNoEmail }
+					headerComponent={ emailListInactiveHeader }
+					sectionHeaderLabel={ sectionHeaderLabel }
+					selectedSiteSlug={ selectedSite.slug }
+					source={ source }
 				/>
 			</>
 		);

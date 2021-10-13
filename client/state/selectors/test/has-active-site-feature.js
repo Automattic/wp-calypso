@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 
 describe( 'selectors', () => {

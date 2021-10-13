@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
 
-/**
- * Style dependencies
- */
 import './all-sites-icon.scss';
 
 const MAX_ICONS = 10;
 
-export default class AllSitesIcon extends React.Component {
+export default class AllSitesIcon extends Component {
 	static propTypes = {
 		sites: PropTypes.array.isRequired,
 	};

@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Dialog } from '@automattic/components';
-import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	isDomainRegistration,
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import { Button, Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -107,7 +100,7 @@ class AutoRenewDisablingDialog extends Component {
 			case 'atomic':
 				return translate(
 					'By canceling auto-renewal, your %(planName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
-						'When it does, you will lose plugins, themes, design customizations, and possibly some content. ' +
+						'When it expires, plugins, themes and design customizations will be deactivated. ' +
 						'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
 					{
 						args: {
@@ -239,12 +232,12 @@ class AutoRenewDisablingDialog extends Component {
 		const buttons = [
 			{
 				action: 'close',
-				label: translate( "I'll keep it" ),
+				label: translate( 'Keep auto-renew on' ),
 				onClick: this.closeAndCleanup,
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Confirm cancellation' ),
+				label: translate( 'Turn off auto-renew' ),
 				onClick: this.onClickGeneralConfirm,
 				isPrimary: true,
 			},

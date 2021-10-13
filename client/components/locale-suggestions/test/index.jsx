@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
 import { getLocaleSlug } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { LocaleSuggestions } from '../';
 
 jest.mock( 'calypso/lib/i18n-utils', () => ( { addLocaleToPath: ( locale ) => locale } ) );

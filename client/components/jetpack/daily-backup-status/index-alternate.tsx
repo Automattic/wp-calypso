@@ -1,41 +1,28 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import BackupCard from 'calypso/components/jetpack/backup-card';
+import BackupFailed from 'calypso/components/jetpack/backup-card/backup-failed';
+import BackupInProgress from 'calypso/components/jetpack/backup-card/backup-in-progress';
+import BackupJustCompleted from 'calypso/components/jetpack/backup-card/backup-just-completed';
+import BackupScheduled from 'calypso/components/jetpack/backup-card/backup-scheduled';
+import NoBackupsOnSelectedDate from 'calypso/components/jetpack/backup-card/no-backups-on-selected-date';
+import NoBackupsYet from 'calypso/components/jetpack/backup-card/no-backups-yet';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
-import BackupCard from 'calypso/components/jetpack/backup-card';
-import BackupFailed from 'calypso/components/jetpack/backup-card/backup-failed';
-import BackupJustCompleted from 'calypso/components/jetpack/backup-card/backup-just-completed';
-import BackupInProgress from 'calypso/components/jetpack/backup-card/backup-in-progress';
-import BackupScheduled from 'calypso/components/jetpack/backup-card/backup-scheduled';
-import NoBackupsOnSelectedDate from 'calypso/components/jetpack/backup-card/no-backups-on-selected-date';
-import NoBackupsYet from 'calypso/components/jetpack/backup-card/no-backups-yet';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-/**
- * Type dependencies
- */
-import type { Moment } from 'moment';
+import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { Activity } from 'calypso/state/activity-log/types';
+import type { Moment } from 'moment';
+
+import './style.scss';
 
 type Props = {
 	selectedDate: Moment;

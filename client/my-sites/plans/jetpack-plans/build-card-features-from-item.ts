@@ -1,14 +1,7 @@
-/**
- * Internal dependencies
- */
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { Product } from '@automattic/calypso-products';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { getForCurrentCROIteration, Iterations } from './iterations';
 import objectIsPlan from './object-is-plan';
-
-/**
- * Type dependencies
- */
 import type { SelectorProductFeaturesItem, SelectorProductFeaturesSection } from './types';
 import type { Plan } from '@automattic/calypso-products';
 
@@ -54,7 +47,7 @@ function buildCardFeatureItemFromFeatureKey(
 						.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
 						.filter( Boolean )
 				: undefined,
-			isHighlighted: feature.isProduct?.( variation ) || feature.isPlan,
+			isHighlighted: feature.isHighlighted?.() ?? false,
 		};
 	}
 }

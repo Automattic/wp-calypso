@@ -1,21 +1,12 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
+import Emitter from 'calypso/lib/mixins/emitter';
+import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:ProductsList' );
 
 /**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import Emitter from 'calypso/lib/mixins/emitter';
-
-/**
  * Initialize a new list of products.
  *
- * @api public
  * @returns {ProductsList} Products List
  */
 function ProductsList() {
@@ -35,7 +26,6 @@ Emitter( ProductsList.prototype );
  * Gets the list of products from current object or store, triggers fetch on first request to update stale data.
  *
  * @returns {Array} The array of products
- * @api public
  */
 ProductsList.prototype.get = function () {
 	let data;
@@ -65,8 +55,6 @@ ProductsList.prototype.get = function () {
 
 /**
  * Fetchs the list of products from the API.
- *
- * @api public
  */
 ProductsList.prototype.fetch = function () {
 	debug( 'getting ProductsList from api' );
@@ -108,7 +96,7 @@ ProductsList.prototype.fetch = function () {
  * Initializes data with a list of products.
  *
  * @param {object} productsList The list of products
- **/
+ */
 ProductsList.prototype.initialize = function ( productsList ) {
 	this.data = productsList;
 	this.initialized = true;

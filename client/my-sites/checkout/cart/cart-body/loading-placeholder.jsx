@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CartItemLoadingPlaceholder from 'calypso/my-sites/checkout/cart/cart-item/loading-placeholder';
 
 const CartBodyLoadingPlaceholder = () => (

@@ -1,15 +1,3 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -22,37 +10,37 @@ import {
 	isSiteRedirect,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
+import { Button, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { preventWidows } from 'calypso/lib/formatting';
 import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { localize } from 'i18n-calypso';
-import { preventWidows } from 'calypso/lib/formatting';
+import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
 import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import Gridicon from 'calypso/components/gridicon';
-import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
-import { Button } from '@automattic/components';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getJetpackSearchCustomizeUrl } from 'calypso/state/sites/selectors';
+import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
 		isAtomic: PropTypes.bool,
-		siteAdminUrl: PropTypes.string,
 		displayMode: PropTypes.string,
 		upgradeIntent: PropTypes.string,
 		selectedSite: PropTypes.object,
@@ -365,7 +353,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		//Maybe record tracks event
 
-		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
+		window.location.href = '/me/quickstart/' + selectedSite.slug + '/book';
 	};
 
 	visitTitanWebmail = ( event ) => {
@@ -392,21 +380,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
-	goToCustomizer = ( event ) => {
-		event.preventDefault();
-		const { siteAdminUrl } = this.props;
-
-		if ( ! siteAdminUrl ) {
-			return;
-		}
-
+	recordThankYouClick = () => {
 		this.props.recordTracksEvent( 'calypso_jetpack_product_thankyou', {
 			product_name: 'search',
 			value: 'Customizer',
 			site: 'wpcom',
 		} );
-
-		window.location.href = siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search';
 	};
 
 	getButtonText = () => {
@@ -507,6 +486,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	getButtons() {
 		const {
 			hasFailedPurchases,
+			jetpackSearchCustomizeUrl,
 			translate,
 			primaryPurchase,
 			purchases,
@@ -522,9 +502,14 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isSearch ) {
 			return (
 				<div className="checkout-thank-you__header-button">
-					<button className={ headerButtonClassName } onClick={ this.goToCustomizer }>
-						{ translate( 'Try Search and customize it now' ) }
-					</button>
+					<Button
+						className={ headerButtonClassName }
+						primary
+						href={ jetpackSearchCustomizeUrl }
+						onClick={ this.recordThankYouClick }
+					>
+						{ translate( 'Customize Search' ) }
+					</Button>
 				</div>
 			);
 		}
@@ -655,7 +640,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
-		siteAdminUrl: getSiteAdminUrl( state, ownProps.selectedSite?.ID ),
+		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
 	} ),
 	{
 		recordStartTransferClickInThankYou,

@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
+import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
@@ -14,10 +10,6 @@ import {
 	computeFullAndMonthlyPricesForPlan,
 	computeProductsWithPrices,
 } from '../selectors';
-
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),

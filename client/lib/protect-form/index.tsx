@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import debugModule from 'debug';
-import page from 'page';
-import i18n from 'i18n-calypso';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import debugModule from 'debug';
+import i18n from 'i18n-calypso';
+import page from 'page';
+import { useRef, useCallback, useEffect } from 'react';
 
 /**
  * Module variables
@@ -55,11 +52,11 @@ type ProtectForm = {
 };
 
 export const useProtectForm = (): ProtectForm => {
-	const formId = React.useRef< FormId >( [] );
-	const _markSaved = React.useCallback( () => markSaved( formId.current ), [] );
-	const _markChanged = React.useCallback( () => markChanged( formId.current ), [] );
+	const formId = useRef< FormId >( [] );
+	const _markSaved = useCallback( () => markSaved( formId.current ), [] );
+	const _markChanged = useCallback( () => markChanged( formId.current ), [] );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		addBeforeUnloadListener();
 
 		return () => {
@@ -96,7 +93,7 @@ export const protectForm = createHigherOrderComponent( ( Component ) => {
 export const ProtectFormGuard = ( { isChanged }: { isChanged: boolean } ): null => {
 	const { markChanged, markSaved } = useProtectForm();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( isChanged ) {
 			markChanged();
 			return () => markSaved();

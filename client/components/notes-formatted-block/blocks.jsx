@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 export const Strong = ( { children } ) => <strong>{ children }</strong>;

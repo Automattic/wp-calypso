@@ -1,37 +1,30 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import { find, get, omit } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
+import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import wp from 'calypso/lib/wp';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { domainManagementList, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
-import { domainManagementList, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
-import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
-import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import TransferConfirmationDialog from './confirmation-dialog';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import wp from 'calypso/lib/wp';
 import { requestSites } from 'calypso/state/sites/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TransferConfirmationDialog from './confirmation-dialog';
 
 const wpcom = wp.undocumented();
 
-export class TransferToOtherSite extends React.Component {
+export class TransferToOtherSite extends Component {
 	static propTypes = {
 		currentUserCanManage: PropTypes.bool.isRequired,
 		hasSiteDomainsLoaded: PropTypes.bool.isRequired,

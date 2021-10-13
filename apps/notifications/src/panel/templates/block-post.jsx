@@ -1,7 +1,3 @@
-/**
- * Exernal dependencies
- */
-import React from 'react';
 import { html } from '../indices-to-html';
 import { p } from './functions';
 

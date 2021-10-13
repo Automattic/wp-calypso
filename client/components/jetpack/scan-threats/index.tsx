@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { numberFormat, translate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import { numberFormat, translate } from 'i18n-calypso';
+import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem from 'calypso/components/jetpack/threat-item';
 import { FixableThreat, Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
-import { useThreats } from 'calypso/lib/jetpack/use-threats';
 import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
+import { useThreats } from 'calypso/lib/jetpack/use-threats';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Site {

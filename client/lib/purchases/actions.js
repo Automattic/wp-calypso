@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 
@@ -23,7 +16,14 @@ export function cancelPurchase( purchaseId, onComplete ) {
 }
 
 export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
-	wpcom.undocumented().cancelAndRefundPurchase( purchaseId, data, onComplete );
+	wpcom.req.post(
+		{
+			path: `/purchases/${ purchaseId }/cancel`,
+			body: data,
+			apiNamespace: 'wpcom/v2',
+		},
+		onComplete
+	);
 }
 
 export function submitSurvey( surveyName, siteID, surveyData ) {

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect } from '@wordpress/data';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
-import { USER_STORE } from '../stores/user';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
+import { USER_STORE } from '../stores/user';
 
 interface AnchorEndpointResult {
 	location: string | false;
@@ -31,9 +24,9 @@ export default function useDetectMatchingAnchorSite(): boolean {
 	} = useAnchorFmParams();
 	const isAnchorFm = useIsAnchorFm();
 	const currentUserExists = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
-	const [ isLoading, setIsLoading ] = React.useState( !! ( isAnchorFm && currentUserExists ) );
+	const [ isLoading, setIsLoading ] = useState( !! ( isAnchorFm && currentUserExists ) );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		// Must be a logged-in user on anchor FM to check
 		if ( ! isAnchorFm || ! currentUserExists || anchorFmIsNewSite ) {
 			setIsLoading( false );

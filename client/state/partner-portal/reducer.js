@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
-import partner from 'calypso/state/partner-portal/partner/reducer';
 import licenses from 'calypso/state/partner-portal/licenses/reducer';
+import partner from 'calypso/state/partner-portal/partner/reducer';
+import { combineReducers } from 'calypso/state/utils';
 
 const combinedReducer = combineReducers( {
 	partner,

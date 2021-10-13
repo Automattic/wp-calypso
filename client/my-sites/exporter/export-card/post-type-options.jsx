@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FormRadio from 'calypso/components/forms/form-radio';
 import Label from 'calypso/components/forms/form-label';
-import Select from './select';
+import FormRadio from 'calypso/components/forms/form-radio';
 import Tooltip from 'calypso/components/tooltip';
 import { setPostType } from 'calypso/state/exporter/actions';
 import {
@@ -19,6 +11,7 @@ import {
 	isDateRangeValid as isExportDateRangeValid,
 } from 'calypso/state/exporter/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import Select from './select';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
@@ -45,7 +38,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  * legend.
  */
 
-class PostTypeOptions extends React.PureComponent {
+class PostTypeOptions extends PureComponent {
 	static displayName = 'PostTypeOptions';
 
 	static propTypes = {

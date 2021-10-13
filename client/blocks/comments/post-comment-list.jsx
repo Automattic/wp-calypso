@@ -1,44 +1,33 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, size, delay } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import {
-	commentsFetchingStatus,
-	getActiveReplyCommentId,
-	getCommentById,
-	getPostCommentsTree,
-} from 'calypso/state/comments/selectors';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
 	requestPostComments,
 	requestComment,
 	setActiveReply,
 } from 'calypso/state/comments/actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import PostComment from './post-comment';
-import PostCommentFormRoot from './form-root';
-import CommentCount from './comment-count';
-import SegmentedControl from 'calypso/components/segmented-control';
-import Gridicon from 'calypso/components/gridicon';
-import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import {
+	commentsFetchingStatus,
+	getActiveReplyCommentId,
+	getCommentById,
+	getPostCommentsTree,
+} from 'calypso/state/comments/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import CommentCount from './comment-count';
+import PostCommentFormRoot from './form-root';
+import PostComment from './post-comment';
 
-/**
- * Style dependencies
- */
 import './post-comment-list.scss';
 
 /**
@@ -58,7 +47,7 @@ import './post-comment-list.scss';
  *
  */
 
-class PostCommentList extends React.Component {
+class PostCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,

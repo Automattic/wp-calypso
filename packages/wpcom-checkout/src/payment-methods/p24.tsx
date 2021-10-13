@@ -7,13 +7,13 @@ import {
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
+import { Fragment } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
-import styled from '../styled';
 import { SummaryLine, SummaryDetails } from '../summary-details';
 import type {
 	PaymentMethodStore,
@@ -234,12 +234,12 @@ function isFormValid( store: P24Store ): boolean {
 
 function P24Label() {
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>Przelewy24</span>
 			<PaymentMethodLogos className="p24__logo payment-logos">
 				<P24Logo />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

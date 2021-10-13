@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FacebookIcon from 'calypso/components/social-icons/facebook';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

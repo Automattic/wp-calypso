@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { flowRight as compose, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import { Button } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Rating from 'calypso/components/rating';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];

@@ -2,14 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import * as route from '../';
 
 describe( 'route', function () {

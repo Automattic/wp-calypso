@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import PostQueryKey from '../key';
 
 describe( 'PostQueryKey', () => {

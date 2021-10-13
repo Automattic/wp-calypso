@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { localize } from 'i18n-calypso';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import Notice from 'calypso/components/notice';
+import { getSelectedDomain } from 'calypso/lib/domains';
 
 const NonOwnerCard = ( { domains, selectedDomainName, translate } ) => {
 	const domain = getSelectedDomain( { domains, selectedDomainName } );

@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
+import * as React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-import classNames from 'classnames';
-import { Moment } from 'moment';
-import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { Moment } from 'moment';
+import { useCallback, useMemo } from 'react';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';
-import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SEARCH_LINK_CLICK = recordTracksEvent( 'calypso_jetpack_backup_search' );
@@ -55,7 +46,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
 	);
 
-	const canGoToDate = useCanGoToDate( selectedDate, oldestDateAvailable );
+	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable );
 
 	const { previousDisplayDate, nextDisplayDate } = useMemo( () => {
 		const yesterday = moment( today ).subtract( 1, 'day' );

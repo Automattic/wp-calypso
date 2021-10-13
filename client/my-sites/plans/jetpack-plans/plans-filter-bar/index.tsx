@@ -1,35 +1,22 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import classNames from 'classnames';
-import { ToggleControl } from '@wordpress/components';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_PRODUCTS_BY_TERM,
 	JETPACK_RESET_PLANS_BY_TERM,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { ToggleControl } from '@wordpress/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect, useMemo } from 'react';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 import getHighestAnnualDiscount from './get-highest-annual-discount';
-
-/**
- * Type dependencies
- */
 import type { Duration, DurationChangeCallback } from '../types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface FilterBarProps {

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { createElement } from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -22,10 +15,6 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
-
-/**
- * Type dependencies
- */
 import type { UserData } from 'calypso/lib/user/user';
 import type PageJS from 'page';
 
@@ -161,7 +150,7 @@ const siteSelectionWithFragment = async (
 const renderNoJetpackSites = ( context: PageJS.Context, siteSlug?: string ) => {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
-	context.primary = React.createElement( NoJetpackSitesMessage, { siteSlug } );
+	context.primary = createElement( NoJetpackSitesMessage, { siteSlug } );
 
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	makeLayout( context, () => {} );
@@ -228,7 +217,10 @@ export function noSite(
  * @param {PageJS.Context} context Route context
  * @param {Function} next Next middleware function
  */
-export function cloudSiteSelection( context: PageJS.Context, next: () => void ): void {
+export async function cloudSiteSelection(
+	context: PageJS.Context,
+	next: () => void
+): Promise< void > {
 	const siteFragment = parseSiteFragment( context );
 
 	if ( noSite( siteFragment, context ) ) {
@@ -236,8 +228,15 @@ export function cloudSiteSelection( context: PageJS.Context, next: () => void ):
 	}
 
 	if ( siteFragment ) {
-		siteSelectionWithFragment( siteFragment, context, next );
+		if ( context.path.startsWith( '/pricing' ) ) {
+			const { id } = await fetchSite( context, siteFragment );
+			if ( ! id ) {
+				await siteSelectionWithoutFragment( context, next );
+				return;
+			}
+		}
+		await siteSelectionWithFragment( siteFragment, context, next );
 	} else {
-		siteSelectionWithoutFragment( context, next );
+		await siteSelectionWithoutFragment( context, next );
 	}
 }

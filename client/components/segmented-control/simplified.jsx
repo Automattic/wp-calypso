@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { useState } from 'react';
 import SegmentedControl from '.';
 
 const noop = () => {};

@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins.scss';
 @import '../../variables.scss';
@@ -265,11 +267,11 @@
 	}
 
 	.is-viewport-tablet & {
-		padding-top: 768 / 1024 * 100%;
+		padding-top: math.div( 768, 1024 ) * 100%;
 	}
 
 	.is-viewport-mobile & {
-		padding-top: 691 / 351 * 100%;
+		padding-top: math.div( 691, 351 ) * 100%;
 	}
 
 	@include break-small {
@@ -352,8 +354,8 @@ html:not( .accessible-focus ) .style-preview__viewport-select-button:focus:not( 
 	$scale-factor: 0.7;
 	// Extra specificify to override editor iframe styles
 	.style-preview__preview & {
-		width: 100% / $scale-factor;
-		height: 100% / $scale-factor;
+		width: math.div( 100%, $scale-factor );
+		height: math.div( 100%, $scale-factor );
 	}
 
 	position: absolute;
@@ -365,12 +367,12 @@ html:not( .accessible-focus ) .style-preview__viewport-select-button:focus:not( 
 	.is-viewport-desktop & {
 		top: $gutenboarding-style-preview-bar-height-mobile;
 		height: calc(
-			#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height-mobile / $scale-factor}
+			#{math.div( 100%, $scale-factor )} - #{math.div( $gutenboarding-style-preview-bar-height-mobile, $scale-factor )}
 		);
 		@include break-small {
 			top: $gutenboarding-style-preview-bar-height;
 			height: calc(
-				#{100% / $scale-factor} - #{$gutenboarding-style-preview-bar-height / $scale-factor}
+				#{math.div( 100%, $scale-factor )} - #{math.div( $gutenboarding-style-preview-bar-height, $scale-factor )}
 			);
 		}
 	}

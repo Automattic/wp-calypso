@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import i18n from 'i18n-calypso';
 import {
 	has,
 	pick,
@@ -16,17 +13,10 @@ import {
 	partition,
 	includes,
 } from 'lodash';
-import classNames from 'classnames';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { cosineSimilarity } from 'calypso/lib/trigram';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SEARCH_THRESHOLD = 0.45;
@@ -44,7 +34,7 @@ function SuggestionsButtonAll( props ) {
 	);
 }
 
-class KeyedSuggestions extends React.Component {
+class KeyedSuggestions extends Component {
 	static propTypes = {
 		suggest: PropTypes.func,
 		terms: PropTypes.object,

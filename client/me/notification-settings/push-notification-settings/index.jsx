@@ -1,33 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Card, Button, Dialog, ScreenReaderText, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
 import Notice from 'calypso/components/notice';
+import { toggleEnabled, toggleUnblockInstructions } from 'calypso/state/push-notifications/actions';
 import {
 	getStatus,
 	isApiReady,
 	isShowingUnblockInstructions,
 	isEnabled,
 } from 'calypso/state/push-notifications/selectors';
-import { toggleEnabled, toggleUnblockInstructions } from 'calypso/state/push-notifications/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PushNotificationSettings extends React.Component {
+class PushNotificationSettings extends Component {
 	static propTypes = {
 		toggleEnabled: PropTypes.func.isRequired,
 		toggleUnblockInstructions: PropTypes.func.isRequired,

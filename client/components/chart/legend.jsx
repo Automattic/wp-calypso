@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ChartLegendItem from './legend-item';
 
 const noop = () => {};
 
-class ChartLegend extends React.Component {
+class ChartLegend extends Component {
 	static propTypes = {
 		activeCharts: PropTypes.array,
 		activeTab: PropTypes.object.isRequired,

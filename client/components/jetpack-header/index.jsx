@@ -1,21 +1,10 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
-
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackPartnerLogoGroup from './partner-logo-group';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class JetpackHeader extends PureComponent {

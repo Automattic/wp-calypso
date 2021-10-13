@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 import ThankYou from './thank-you';
 

@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import MaterialIcon from 'calypso/components/material-icon';
-import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import PremiumBadge from 'calypso/components/domains/premium-badge';
+import MaterialIcon from 'calypso/components/material-icon';
 
-class DomainStatus extends React.Component {
+class DomainStatus extends Component {
 	static propTypes = {
 		header: PropTypes.string,
 		icon: PropTypes.string,

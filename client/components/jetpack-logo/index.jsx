@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import colorStudio from '@automattic/color-studio';
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import useAriaProps from 'calypso/lib/a11y/use-aria-props';
 
 /**

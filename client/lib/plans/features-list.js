@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -45,6 +36,7 @@ import {
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
+	FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
 	FEATURE_CRM_LEADS_AND_FUNNEL,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
@@ -72,6 +64,10 @@ import {
 	FEATURE_INSTANT_EMAIL_V2,
 	FEATURE_JETPACK_ADVANCED,
 	FEATURE_JETPACK_ESSENTIAL,
+	FEATURE_JETPACK_VIDEOPRESS,
+	FEATURE_JETPACK_VIDEOPRESS_EDITOR,
+	FEATURE_JETPACK_VIDEOPRESS_STORAGE,
+	FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
@@ -103,7 +99,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -124,7 +119,6 @@ import {
 	FEATURE_SPELLING_CORRECTION_V2,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UNLIMITED_STORAGE,
 	FEATURE_UPLOAD_PLUGINS,
@@ -138,10 +132,20 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
+	FEATURE_JETPACK_10GB_BACKUP_STORAGE,
+	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
+	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+	FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+	FEATURE_JETPACK_PRODUCT_BACKUP,
+	FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+	FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
+	FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
 } from '@automattic/calypso-products';
-import MaterialIcon from 'calypso/components/material-icon';
+import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
 export const FEATURES_LIST = {
@@ -236,7 +240,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () => {
 			return i18n.translate(
-				'Including unlimited premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+				'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
 			);
 		},
 	},
@@ -264,9 +268,9 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Free domain for one year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free domain for one year. ' +
-					'Doesn’t apply to plan upgrades, renewals, or to premium domains. ' +
-					'After one year, domain renews at its {{a}}regular price{{/a}}.',
+				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br}}{{br}}' +
+					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
 				{
 					components: {
 						a: (
@@ -276,6 +280,7 @@ export const FEATURES_LIST = {
 								rel="noopener noreferrer"
 							/>
 						),
+						br: <br />,
 					},
 				}
 			),
@@ -287,15 +292,6 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
-			),
-	},
-
-	[ FEATURE_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
 			),
 	},
 
@@ -327,7 +323,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -448,9 +444,9 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free domain for one year. ' +
-					'Doesn’t apply to plan upgrades, renewals, or to premium domains. ' +
-					'After one year, domain renews at its {{a}}regular price{{/a}}.',
+				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
+					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
 				{
 					components: {
 						a: (
@@ -460,6 +456,7 @@ export const FEATURES_LIST = {
 								rel="noopener noreferrer"
 							/>
 						),
+						br: <br />,
 					},
 				}
 			);
@@ -485,22 +482,6 @@ export const FEATURES_LIST = {
 					'to a previous point in time with just a click! While you’re at it, ' +
 					'improve your SEO with our Advanced SEO tools and automate social media sharing.'
 			),
-	},
-
-	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
-		getSlug: () => FEATURE_UNLIMITED_PREMIUM_THEMES,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Unlimited{{/strong}} Premium themes', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, ' +
-					'including designs specifically tailored for businesses.'
-			),
-		getStoreSlug: () => 'unlimited_themes',
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
@@ -734,7 +715,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -850,12 +831,14 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate( 'Browse or restore any backup made since you activated the service.' ),
 	},
+
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
 		getSlug: () => FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited backup storage space' ),
 		getDescription: () =>
 			i18n.translate( 'Absolutely no limits on storage space for your backups.' ),
 	},
+
 	[ FEATURE_AUTOMATED_RESTORES ]: {
 		getSlug: () => FEATURE_AUTOMATED_RESTORES,
 		getTitle: () => i18n.translate( 'Automated restores' ),
@@ -971,7 +954,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'All Business features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Including the ability to upload plugins and themes, priority support, advanced monetization options, and unlimited premium themes.'
+				'Including the ability to upload plugins and themes, priority support and advanced monetization options.'
 			),
 	},
 
@@ -1081,7 +1064,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
-		getTitle: () => i18n.translate( 'Comment and form protection' ),
+		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
@@ -1106,7 +1089,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Site Search: up to 100k records' ),
+		getTitle: () => i18n.translate( 'Site Search up to 100k records' ),
 
 		getDescription: () =>
 			i18n.translate(
@@ -1135,7 +1118,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_V2 ]: {
 		getSlug: () => FEATURE_CRM_V2,
-		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
+		getTitle: () => i18n.translate( 'CRM Entrepreneur' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1147,6 +1130,11 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ FEATURE_CRM_INTEGRATED_WITH_WORDPRESS ]: {
+		getSlug: () => FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
+		getTitle: () => i18n.translate( 'CRM fully integrated with WordPress' ),
+	},
+
 	[ FEATURE_CRM_LEADS_AND_FUNNEL ]: {
 		getSlug: () => FEATURE_CRM_LEADS_AND_FUNNEL,
 		getTitle: () => i18n.translate( 'Easily view leads and sales funnel' ),
@@ -1154,7 +1142,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_PROPOSALS_AND_INVOICES ]: {
 		getSlug: () => FEATURE_CRM_PROPOSALS_AND_INVOICES,
-		getTitle: () => i18n.translate( 'Create proposals and invoices' ),
+		getTitle: () => i18n.translate( 'Manage billing and create invoices' ),
 	},
 
 	[ FEATURE_CRM_TRACK_TRANSACTIONS ]: {
@@ -1164,7 +1152,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CRM_NO_CONTACT_LIMITS ]: {
 		getSlug: () => FEATURE_CRM_NO_CONTACT_LIMITS,
-		getTitle: () => i18n.translate( 'No contact limits' ),
+		getTitle: () => i18n.translate( 'Unlimited contacts' ),
 	},
 
 	[ FEATURE_COLLECT_PAYMENTS_V2 ]: {
@@ -1187,7 +1175,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => FEATURE_SECURE_STORAGE_V2,
-		getTitle: () => i18n.translate( 'Unlimited site storage' ),
+		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 
 	[ FEATURE_ONE_CLICK_RESTORE_V2 ]: {
@@ -1347,6 +1335,65 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
 		getDescription: () => i18n.translate( 'Live chat is available 24/7.' ),
 	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_EDITOR ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_EDITOR,
+		getTitle: () => i18n.translate( 'Built into WordPress editor' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_UNBRANDED ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_UNBRANDED,
+		getTitle: () => i18n.translate( 'Ad-free and brandable player' ),
+	},
+
+	[ FEATURE_JETPACK_VIDEOPRESS_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_VIDEOPRESS_STORAGE,
+		getTitle: () => i18n.translate( '1TB of storage' ),
+	},
+
+	/* START - Jetpack tiered product-specific features */
+	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( '10GB of backup storage' ),
+	},
+	[ FEATURE_JETPACK_1TB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_1TB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( '1TB of backup storage' ),
+	},
+	[ FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( '30-day archive & activity log' ),
+	},
+	[ FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG ]: {
+		getSlug: () => FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
+		getTitle: () => i18n.translate( '1-year archive & activity log' ),
+	},
+	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
+		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
+		getTitle: () => i18n.translate( 'All Backup features' ),
+	},
+	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
+		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+		getTitle: () => i18n.translate( 'VideoPress' ),
+	},
+	[ FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES ]: {
+		getSlug: () => FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+		getTitle: () => i18n.translate( 'All Backup & Security features' ),
+	},
+	[ FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
+		getTitle: () => i18n.translate( 'Real-time cloud backups' ),
+	},
+	[ FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING ]: {
+		getSlug: () => FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
+		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
+	},
+	/* END - Jetpack tiered product-specific features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

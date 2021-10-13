@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	DEACTIVATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import * as selectors from '../selectors';
-import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import { getSite } from 'calypso/state/sites/selectors';
+import * as selectors from '../selectors';
+import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const createError = function ( error, message, name = false ) {
 	const errorObj = new Error( message );

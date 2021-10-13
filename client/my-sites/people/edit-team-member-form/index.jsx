@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
-import PeopleProfile from 'calypso/my-sites/people/people-profile';
+import page from 'page';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import useUserQuery from 'calypso/data/users/use-user-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useProtectForm } from 'calypso/lib/protect-form';
 import DeleteUser from 'calypso/my-sites/people/delete-user';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import EditUserForm from './edit-user-form';
+import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import useUserQuery from 'calypso/data/users/use-user-query';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import EditUserForm from './edit-user-form';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const EditTeamMemberForm = ( {
@@ -53,7 +42,7 @@ export const EditTeamMemberForm = ( {
 	const { markChanged, markSaved } = useProtectForm();
 	const { data: user, error, isLoading } = useUserQuery( siteId, userLogin, { retry: false } );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		! isLoading && error && page.redirect( `/people/team/${ siteSlug }` );
 	}, [ error, isLoading, siteSlug ] );
 

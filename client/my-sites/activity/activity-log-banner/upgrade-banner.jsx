@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 	FEATURE_ACTIVITY_LOG,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './upgrade-banner.scss';
 
 class UpgradeBanner extends Component {

@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { get, has } from 'lodash';
-import React from 'react';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
@@ -192,8 +191,8 @@ export const redirect = async ( context, next ) => {
 		return next();
 	}
 
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		const postType = determinePostType( context );
+	const postType = determinePostType( context );
+	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const postId = getPostID( context );
 
 		const url =

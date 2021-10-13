@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -17,8 +11,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { deleteComment } from 'calypso/state/comments/actions';
 import { getSiteComment } from 'calypso/state/comments/selectors';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 
 const CommentDeleteWarning = ( { isLoading, destroyComment, translate } ) =>
 	! isLoading && (

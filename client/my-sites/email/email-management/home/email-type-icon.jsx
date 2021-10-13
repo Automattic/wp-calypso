@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import emailForwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import Gridicon from 'calypso/components/gridicon';
+import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 
 const EmailTypeIcon = ( { translate, domain } ) => {
 	if ( hasTitanMailWithUs( domain ) ) {

@@ -5,12 +5,8 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: jest.fn( () => ( x ) => x ),
 } ) );
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
 import { PLAN_FREE } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
 import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {

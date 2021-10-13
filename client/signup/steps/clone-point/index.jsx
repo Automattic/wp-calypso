@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { Card } from '@automattic/components';
-import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
-import Pagination from 'calypso/components/pagination';
-import QuerySites from 'calypso/components/data/query-sites';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import Tile from 'calypso/components/tile-grid/tile';
-import TileGrid from 'calypso/components/tile-grid';
-import { requestActivityLogs } from 'calypso/state/data-getters';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Pagination from 'calypso/components/pagination';
+import TileGrid from 'calypso/components/tile-grid';
+import Tile from 'calypso/components/tile-grid/tile';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { requestActivityLogs } from 'calypso/state/data-getters';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 const PAGE_SIZE = 20;

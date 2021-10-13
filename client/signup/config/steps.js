@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { current as currentPage } from 'page';
-
-/**
- * Internal dependencies
- */
 import {
 	addPlanToCart,
 	createAccount,
@@ -14,7 +6,9 @@ import {
 	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
+	setDesignOnSite,
 	setThemeOnSite,
+	setOptionsOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
@@ -33,7 +27,9 @@ export default generateSteps( {
 	createSiteOrDomain,
 	createSiteWithCart,
 	currentPage,
+	setDesignOnSite,
 	setThemeOnSite,
+	setOptionsOnSite,
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
@@ -42,7 +38,3 @@ export default generateSteps( {
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 } );
-
-export function isDomainStepSkippable( flowName ) {
-	return flowName === 'test-fse';
-}

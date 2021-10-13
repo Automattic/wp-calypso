@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { CredentialsTestProgress as Progress } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
 import getJetpackCredentialsUpdateError, {
 	UpdateError,
 } from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
-import { CredentialsTestProgress as Progress } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import './style.scss';
 
 interface Props {
 	onFinishUp: () => void;

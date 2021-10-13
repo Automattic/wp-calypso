@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 /**

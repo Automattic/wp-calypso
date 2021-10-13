@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { PureComponent } from 'react';
 
-class ListItemPlaceholder extends React.PureComponent {
+class ListItemPlaceholder extends PureComponent {
 	render() {
 		return (
 			<CompactCard className="domain-management-list-item is-placeholder">

@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import Count from 'calypso/components/count';
 import { preload } from 'calypso/sections-helper';
 
-/**
- * Style dependencies
- */
 import './item.scss';
 
 class NavItem extends PureComponent {

@@ -1,21 +1,14 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { flowRight as compose } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import connectSite from 'calypso/lib/reader-connect-site';
-import SubscriptionListItem from '.';
 import { isFollowing as isFollowingSelector } from 'calypso/state/reader/follows/selectors';
+import SubscriptionListItem from '.';
 
 const noop = () => {};
 
-class ConnectedSubscriptionListItem extends React.Component {
+class ConnectedSubscriptionListItem extends Component {
 	static propTypes = {
 		feed: PropTypes.object,
 		site: PropTypes.object,

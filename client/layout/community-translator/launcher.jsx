@@ -1,45 +1,32 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import i18n, { localize } from 'i18n-calypso';
-import React, { Fragment } from 'react';
-import ReactDOM from 'react-dom';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { addQueryArgs } from '@wordpress/url';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import translator, { trackTranslatorStatus } from 'calypso/lib/translator-jumpstart';
+import { Button, Dialog, Gridicon } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
+import i18n, { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { createRef, Component, Fragment } from 'react';
+import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import localStorageHelper from 'store';
-import { Button, Dialog } from '@automattic/components';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import { TranslationScanner } from 'calypso/lib/i18n-utils/translation-scanner';
 import {
 	getLanguageEmpathyModeActive,
 	toggleLanguageEmpathyMode,
 } from 'calypso/lib/i18n-utils/empathy-mode';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
-import { setLocale } from 'calypso/state/ui/language/actions';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
+import { TranslationScanner } from 'calypso/lib/i18n-utils/translation-scanner';
+import translator, { trackTranslatorStatus } from 'calypso/lib/translator-jumpstart';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-
-/**
- * Style dependencies
- */
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { setLocale } from 'calypso/state/ui/language/actions';
 import './style.scss';
 
-class TranslatorLauncher extends React.Component {
+class TranslatorLauncher extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 	};
@@ -69,7 +56,7 @@ class TranslatorLauncher extends React.Component {
 		scrollTop: 0,
 	};
 
-	highlightRef = React.createRef();
+	highlightRef = createRef();
 
 	componentDidMount() {
 		i18n.on( 'change', this.onI18nChange );

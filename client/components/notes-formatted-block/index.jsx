@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import * as Blocks from './blocks';
 
 export const FormattedBlockRenderer = ( blockTypeMapping ) => ( {

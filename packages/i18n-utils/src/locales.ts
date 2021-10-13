@@ -7,8 +7,8 @@
 export type Locale = string;
 export const i18nDefaultLocaleSlug: Locale = 'en';
 export const localesWithBlog: Locale[] = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
-export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de' ];
-export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de' ];
+export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
+export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 
 type LocaleSubdomain = string;
 
@@ -25,7 +25,7 @@ export const localesToSubdomains: Record< string, LocaleSubdomain > = {
 export const englishLocales: Locale[] = [ 'en', 'en-gb' ];
 
 // replaces config( 'livechat_support_locales' )
-export const livechatSupportLocales: Locale[] = [ 'en', 'es', 'pt-br' ];
+export const livechatSupportLocales: Locale[] = [ 'en' ];
 
 // replaces config( 'support_site_locales' )
 export const supportSiteLocales: Locale[] = [

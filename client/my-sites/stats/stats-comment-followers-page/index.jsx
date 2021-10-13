@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import ErrorPanel from '../stats-error';
-import Pagination from 'calypso/components/pagination';
-import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Pagination from 'calypso/components/pagination';
+import SectionHeader from 'calypso/components/section-header';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ErrorPanel from '../stats-error';
+import StatsList from '../stats-list';
+import StatsListLegend from '../stats-list/legend';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
 class StatModuleFollowersPage extends Component {
 	render() {

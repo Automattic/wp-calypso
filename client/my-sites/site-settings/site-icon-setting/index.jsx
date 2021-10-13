@@ -1,46 +1,36 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEqual, flow, compact, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { createElement, Component } from 'react';
+import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
-import { Button } from '@automattic/components';
 import AsyncLoad from 'calypso/components/async-load';
-import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
-import accept from 'calypso/lib/accept';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
-import { setEditorMediaModalView } from 'calypso/state/editor/actions';
-import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import InfoPopover from 'calypso/components/info-popover';
+import accept from 'calypso/lib/accept';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import {
 	getImageEditorCrop,
 	getImageEditorTransform,
 } from 'calypso/state/editor/image-editor/selectors';
+import { uploadSiteIcon } from 'calypso/state/media/thunks';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteSupportingImageEditor from 'calypso/state/selectors/is-site-supporting-image-editor';
-import { uploadSiteIcon } from 'calypso/state/media/thunks';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
+import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SiteIconSetting extends Component {
@@ -218,7 +208,7 @@ class SiteIconSetting extends Component {
 						) }
 					</InfoPopover>
 				</FormLabel>
-				{ React.createElement(
+				{ createElement(
 					buttonProps.href ? 'a' : 'button',
 					{
 						...buttonProps,

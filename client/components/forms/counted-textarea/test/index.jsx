@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
-/**
- * Internal dependencies
- */
 import { CountedTextarea } from '../';
 
 describe( 'index', () => {

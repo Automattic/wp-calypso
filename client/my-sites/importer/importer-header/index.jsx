@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import { includes } from 'lodash';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import { appStates } from 'calypso/state/imports/constants';
 import { isUploading } from 'calypso/state/imports/uploads/selectors';
-import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -25,7 +15,7 @@ import './style.scss';
  */
 const startStates = [ appStates.DISABLED, appStates.INACTIVE ];
 
-class ImporterHeader extends React.PureComponent {
+class ImporterHeader extends PureComponent {
 	static displayName = 'ImporterHeader';
 
 	static propTypes = {

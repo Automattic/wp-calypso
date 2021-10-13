@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import React, { Children, PureComponent, cloneElement } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import { Children, PureComponent, cloneElement } from 'react';
+import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
-import { Card } from '@automattic/components';
 
 class Checklist extends PureComponent {
 	static propTypes = {

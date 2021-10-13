@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { getCurrencyObject } from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Badge from 'calypso/components/badge';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PlanPrice extends Component {

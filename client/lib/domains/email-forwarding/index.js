@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { mapValues } from 'lodash';
 import emailValidator from 'email-validator';
+import { mapValues } from 'lodash';
 
 function validateAllFields( fieldValues ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {

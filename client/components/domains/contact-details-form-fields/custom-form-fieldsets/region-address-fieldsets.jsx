@@ -1,24 +1,16 @@
-/**
- * External	dependencies
- *
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './constants';
-import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
-import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import UsAddressFieldset from './us-address-fieldset';
 
 const noop = () => {};
 

@@ -1,28 +1,25 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import { isEmpty } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { isEmpty } from 'lodash';
+import { PureComponent } from 'react';
 import Input from './input';
 
 export class HiddenInput extends PureComponent {
 	constructor( props, context ) {
 		super( props, context );
 		this.state = {
-			wasClicked: false,
+			wasClicked: ! isEmpty( props.value ),
 			toggled: ! isEmpty( props.value ),
 		};
 		this.inputField = null;
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		if ( props.toggled !== undefined && state.toggled !== props.toggled ) {
-			return { ...state, toggled: props.toggled };
+		if ( props.toggled === undefined ) return null;
+
+		const toggled = !! props.toggled;
+		if ( state.toggled !== toggled ) {
+			return { ...state, toggled };
 		}
 
 		return null;

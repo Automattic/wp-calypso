@@ -1,35 +1,29 @@
-/**
- * External dependencies
- */
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import Notice from 'calypso/components/notice';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	domainRegistration,
 	domainTransfer,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
-import Notice from 'calypso/components/notice';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import { withShoppingCart } from '@automattic/shopping-cart';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 export class TransferDomain extends Component {
 	static propTypes = {
@@ -199,4 +193,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( withShoppingCart( TransferDomain ) );
+} ) )( withShoppingCart( withCartKey( TransferDomain ) ) );

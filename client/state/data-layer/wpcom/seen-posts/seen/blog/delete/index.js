@@ -1,13 +1,10 @@
-/**
- * Internal Dependencies
- */
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { receiveMarkAsUnseen } from 'calypso/state/reader/seen-posts/actions';
-import { READER_SEEN_MARK_AS_UNSEEN_BLOG_REQUEST } from 'calypso/state/reader/action-types';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import { READER_SEEN_MARK_AS_UNSEEN_BLOG_REQUEST } from 'calypso/state/reader/action-types';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
+import { receiveMarkAsUnseen } from 'calypso/state/reader/seen-posts/actions';
 
 const toApi = ( action ) => {
 	return {

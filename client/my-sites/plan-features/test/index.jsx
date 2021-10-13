@@ -8,12 +8,6 @@ jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanRawPrice: jest.fn(),
 } ) );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-import ReactDOM from 'react-dom';
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -31,15 +25,13 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from '../index';
+import { shallow } from 'enzyme';
+import ReactDOM from 'react-dom';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
+import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from '../index';
 
 const identity = ( x ) => x;
 

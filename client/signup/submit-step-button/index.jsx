@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 export class SubmitStepButton extends Component {

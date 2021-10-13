@@ -1,32 +1,24 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'calypso/components/gridicon';
-import page from 'page';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import Emojify from 'calypso/components/emojify';
+import { get } from 'lodash';
+import page from 'page';
+import { Component } from 'react';
+import titlecase from 'to-title-case';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { flagUrl } from 'calypso/lib/flags';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordTrack } from 'calypso/reader/stats';
 import Follow from './action-follow';
+import OpenLink from './action-link';
 import Page from './action-page';
 import Spam from './action-spam';
-import OpenLink from './action-link';
-import titlecase from 'to-title-case';
-import { flagUrl } from 'calypso/lib/flags';
-import { recordTrack } from 'calypso/reader/stats';
-import { decodeEntities } from 'calypso/lib/formatting';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
 
-class StatsListItem extends React.Component {
+class StatsListItem extends Component {
 	static displayName = 'StatsListItem';
 
 	state = {
@@ -263,11 +255,11 @@ class StatsListItem extends React.Component {
 
 				itemLabel = (
 					<a onClick={ onClickHandler } href={ href } title={ labelItem.linkTitle }>
-						<Emojify>{ decodeEntities( labelText ) }</Emojify>
+						{ decodeEntities( labelText ) }
 					</a>
 				);
 			} else {
-				itemLabel = <Emojify>{ decodeEntities( labelText ) }</Emojify>;
+				itemLabel = decodeEntities( labelText );
 			}
 
 			return (

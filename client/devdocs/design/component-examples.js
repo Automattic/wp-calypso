@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export { default as Animate } from 'calypso/components/animate/docs/example';
 export { default as BackButton } from 'calypso/components/back-button/docs/example';
@@ -23,7 +20,6 @@ export { default as DateRange } from 'calypso/components/date-range/docs/example
 export { default as DiffViewerExample } from 'calypso/components/diff-viewer/docs/example';
 export { default as DropZones } from 'calypso/components/drop-zone/docs/example';
 export { default as EllipsisMenu } from 'calypso/components/ellipsis-menu/docs/example';
-export { default as EmojifyExample } from 'calypso/components/emojify/docs/example';
 export { default as EmptyContent } from 'calypso/components/empty-content/docs/example';
 export { default as ExternalLink } from 'calypso/components/external-link/docs/example';
 export { default as FAQ } from 'calypso/components/faq/docs/example';
@@ -55,7 +51,7 @@ export { default as Notices } from 'calypso/components/notice/docs/example';
 export { default as PaginationExample } from 'calypso/components/pagination/docs/example';
 export { default as PaymentLogo } from 'calypso/components/payment-logo/docs/example';
 export { default as PieChart } from 'calypso/components/pie-chart/docs/example';
-export { default as Popovers } from 'calypso/components/popover/docs/example';
+export { default as Popovers } from 'calypso/components/popover-menu/docs/example';
 export { default as ProgressBar } from '@automattic/components/src/progress-bar/docs/example';
 export { default as PromoSection } from 'calypso/components/promo-section/docs/example';
 export { default as PromoCard } from 'calypso/components/promo-section/promo-card/docs/example';

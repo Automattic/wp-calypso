@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
 import Head from '../';
 
 describe( 'Head', () => {

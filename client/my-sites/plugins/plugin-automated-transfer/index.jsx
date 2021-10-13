@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
 import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 	isAutomatedTransferFailed,
 } from 'calypso/state/automated-transfer/selectors';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginAutomatedTransfer extends Component {

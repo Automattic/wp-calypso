@@ -1,12 +1,13 @@
 import { ProcessPayment } from '@automattic/composite-checkout';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React, { useCallback } from 'react';
+import { Fragment, useCallback } from 'react';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import PaymentRequestButton from '../payment-request-button';
 import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
@@ -29,12 +30,12 @@ export function ApplePayLabel(): JSX.Element {
 	const { __ } = useI18n();
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<span>{ __( 'Apple Pay' ) }</span>
 			<PaymentMethodLogos className="apple-pay__logo payment-logos">
 				<ApplePayIcon fill="black" />
 			</PaymentMethodLogos>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 
@@ -92,7 +93,7 @@ export function ApplePaySubmitButton( {
 
 export function ApplePaySummary(): JSX.Element {
 	const { __ } = useI18n();
-	return <React.Fragment>{ __( 'Apple Pay' ) }</React.Fragment>;
+	return <Fragment>{ __( 'Apple Pay' ) }</Fragment>;
 }
 
 function ApplePayIcon( { fill }: { fill: string } ): JSX.Element {

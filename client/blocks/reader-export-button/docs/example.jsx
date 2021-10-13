@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ReaderExportButtonBlock from 'calypso/blocks/reader-export-button';
 
 const ReaderExportButton = () => (

@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import getThemes from 'calypso/lib/signup/themes';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ThemesList from 'calypso/components/themes-list';
-
-/**
- * Style dependencies
- */
+import getThemes from 'calypso/lib/signup/themes';
 import './style.scss';
 
 const noop = () => {};

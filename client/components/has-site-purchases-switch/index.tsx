@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
+import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import { resetSiteState } from 'calypso/state/purchases/actions';
 import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	getSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import RenderSwitch from 'calypso/components/jetpack/render-switch';
-import { resetSiteState } from 'calypso/state/purchases/actions';
 
 type Props = {
 	siteId: number;

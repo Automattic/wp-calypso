@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import page from 'page';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import controller from './controller';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import controller from './controller';
 
 export default function () {
 	if ( config.isEnabled( 'devdocs' ) ) {

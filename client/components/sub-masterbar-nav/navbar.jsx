@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import Item from './item';
 
 const SIDE_PADDING = 50;

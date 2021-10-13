@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import { omit } from 'lodash';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { omit } from 'lodash';
+import { createRef, Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class FormPasswordInput extends React.Component {
+class FormPasswordInput extends Component {
 	static displayName = 'FormPasswordInput';
 
-	textFieldRef = React.createRef();
+	textFieldRef = createRef();
 
 	constructor( props ) {
 		super( props );

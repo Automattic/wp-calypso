@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { includes } from 'lodash';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { createElement } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 //Sizes 47, 21, and 11 are deprecated; use the nearest equivalent
@@ -29,7 +18,7 @@ function CardHeading( { tagName = 'h1', size = 20, isBold = false, className, ch
 		className && className,
 		classNameObject
 	);
-	return React.createElement( tagName, { className: classes }, preventWidows( children, 2 ) );
+	return createElement( tagName, { className: classes }, preventWidows( children, 2 ) );
 }
 
 CardHeading.propTypes = {

@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ActivityLogItem from '../activity-log-item';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
-import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import ActivityLogItem from '../activity-log-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ActivityLogExample extends Component {

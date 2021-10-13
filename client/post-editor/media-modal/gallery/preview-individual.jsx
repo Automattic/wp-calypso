@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import markup from '../markup';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import markup from '../markup';
 
-class EditorMediaModalGalleryPreviewIndividual extends React.Component {
+class EditorMediaModalGalleryPreviewIndividual extends Component {
 	static propTypes = {
 		items: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
@@ -31,7 +23,7 @@ class EditorMediaModalGalleryPreviewIndividual extends React.Component {
 				); //eslint-disable-line react/no-danger
 			}
 
-			return React.cloneElement( caption, { key: item.ID } );
+			return cloneElement( caption, { key: item.ID } );
 		} );
 
 		return (

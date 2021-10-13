@@ -1,18 +1,5 @@
 /** @jest-environment jsdom */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { render, screen } from 'calypso/test-helpers/config/testing-library';
-
-/**
- * Internal dependencies
- */
-import { TERM_MONTHLY } from '@automattic/calypso-products';
-import productsList from 'calypso/state/products-list/reducer';
-import { reducer as purchases } from 'calypso/state/purchases/reducer';
-
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn( () => 'USD' ),
 } ) );
@@ -21,6 +8,10 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 100 ),
 } ) );
 
+import { TERM_MONTHLY } from '@automattic/calypso-products';
+import productsList from 'calypso/state/products-list/reducer';
+import { reducer as purchases } from 'calypso/state/purchases/reducer';
+import { render, screen } from 'calypso/test-helpers/config/testing-library';
 import PlanUpgradeSection from '../index';
 
 const initialState = {

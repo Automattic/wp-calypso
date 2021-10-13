@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { domainAvailability } from './constants';
 

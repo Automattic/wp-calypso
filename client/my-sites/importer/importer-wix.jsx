@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import SiteImporter from './site-importer';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import importerConfig from 'calypso/lib/importer/importer-config';
+import SiteImporter from './site-importer';
 
-class ImporterWix extends React.PureComponent {
+class ImporterWix extends PureComponent {
 	static displayName = 'ImporterWix';
 
 	static propTypes = {

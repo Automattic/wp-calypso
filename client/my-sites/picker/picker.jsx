@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 const noop = () => {};
 
-class SitePicker extends React.Component {
+class SitePicker extends Component {
 	static displayName = 'SitePicker';
 
 	static propTypes = {
@@ -84,6 +76,12 @@ class SitePicker extends React.Component {
 		this.closePicker( null );
 	};
 
+	filterSites = ( site ) => {
+		return site?.options?.jetpack_connection_active_plugins
+			? site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
+			: true;
+	};
+
 	render() {
 		return (
 			<div>
@@ -95,9 +93,11 @@ class SitePicker extends React.Component {
 					showAllSites={ true }
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
+					/* eslint-disable-next-line jsx-a11y/no-autofocus */
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
 					groups={ true }
+					filter={ this.filterSites }
 				/>
 			</div>
 		);

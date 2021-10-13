@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import { omit } from 'lodash';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { translate } from 'i18n-calypso';
+import { omit } from 'lodash';
+import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	SITE_DELETE_RECEIVE,
@@ -27,11 +17,13 @@ import {
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
-
-import 'calypso/state/data-layer/wpcom/sites/homepage';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import 'calypso/state/data-layer/wpcom/sites/homepage';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -227,12 +219,12 @@ export function deleteSite( siteId ) {
 					dispatch(
 						errorNotice(
 							translate(
-								'Your P2 has spaces. You must delete all spaces before you can delete this P2.'
+								'Your P2 Workspace has P2s. You must delete all P2s in this workspace before you can delete it.'
 							),
 							{
 								id: siteDeletionNoticeId,
 								showDismiss: false,
-								button: translate( 'Manage P2 spaces' ),
+								button: translate( 'Manage P2s' ),
 								href: hubUrl,
 							}
 						)

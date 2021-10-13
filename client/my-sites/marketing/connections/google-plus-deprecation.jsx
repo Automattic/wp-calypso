@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import { Fragment } from 'react';
 
 const GooglePlusDeprication = ( { translate } ) => (
 	<Fragment>

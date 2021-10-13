@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import {
 	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_REQUEST,
@@ -13,8 +8,6 @@ import {
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
-import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/billing-transactions/init';

@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
-import { DEFAULT_PREFERENCE_VALUES, USER_SETTING_KEY } from '../constants';
 import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
@@ -21,6 +12,8 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
+import { DEFAULT_PREFERENCE_VALUES, USER_SETTING_KEY } from '../constants';
 
 describe( 'actions', () => {
 	let sandbox;

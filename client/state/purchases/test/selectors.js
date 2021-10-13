@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 import {
 	getByPurchaseId,
@@ -73,6 +70,7 @@ describe( 'selectors', () => {
 				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
+				blogCreatedDate: undefined,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
 				costToUnbundle: NaN,
@@ -90,12 +88,16 @@ describe( 'selectors', () => {
 				introductoryOffer: null,
 				isCancelable: false,
 				isDomainRegistration: false,
+				isLocked: false,
 				isRechargeable: true,
 				isRefundable: false,
 				isRenewable: false,
 				isRenewal: false,
 				meta: undefined,
 				mostRecentRenewDate: undefined,
+				partnerKeyId: undefined,
+				partnerName: undefined,
+				partnerSlug: undefined,
 				payment: {
 					countryCode: undefined,
 					countryName: undefined,
@@ -111,8 +113,10 @@ describe( 'selectors', () => {
 				totalRefundAmount: NaN,
 				totalRefundText: undefined,
 				refundAmount: NaN,
+				refundOptions: undefined,
 				refundText: undefined,
 				renewDate: undefined,
+				saleAmount: undefined,
 				siteName: undefined,
 				subscribedDate: undefined,
 				subscriptionStatus: undefined,

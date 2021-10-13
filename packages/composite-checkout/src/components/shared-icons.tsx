@@ -1,8 +1,10 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
 
-export function CheckIcon( { className, id }: { className?: string; id: string } ) {
+const CheckIconSvg = styled.svg`
+	fill: #fff;
+`;
+
+export function CheckIcon( { className, id }: { className?: string; id: string } ): JSX.Element {
 	return (
 		<CheckIconSvg
 			width="20"
@@ -30,16 +32,7 @@ export function CheckIcon( { className, id }: { className?: string; id: string }
 	);
 }
 
-CheckIcon.propTypes = {
-	className: PropTypes.string,
-	id: PropTypes.string,
-};
-
-const CheckIconSvg = styled.svg`
-	fill: #fff;
-`;
-
-export function ErrorIcon( { className }: { className?: string } ) {
+export function ErrorIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +50,7 @@ export function ErrorIcon( { className }: { className?: string } ) {
 	);
 }
 
-export function InfoIcon( { className }: { className?: string } ) {
+export function InfoIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

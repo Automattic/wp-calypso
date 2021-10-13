@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { getActions } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';

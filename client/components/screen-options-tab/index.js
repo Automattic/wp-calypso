@@ -1,26 +1,15 @@
-/**
- * External Dependencies
- */
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import versionCompare from 'calypso/lib/version-compare';
-import QuickSwitchModal from 'calypso/blocks/nav-unification-quick-switch-modal';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const isBoolean = ( val ) => 'boolean' === typeof val;
@@ -104,7 +93,6 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 
 	return (
 		<div className="screen-options-tab" ref={ ref } data-testid="screen-options-tab">
-			<QuickSwitchModal />
 			<button className="screen-options-tab__button" onClick={ handleToggle }>
 				<span className="screen-options-tab__label">{ __( 'Screen Options' ) }</span>
 				<span

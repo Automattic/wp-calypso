@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import canJetpackSiteAutoUpdateFiles from './can-jetpack-site-auto-update-files';
 
 /**

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
 import { FormToggle, BaseControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import cssSafeUrl from 'calypso/lib/css-safe-url';
+import classNames from 'classnames';
 import SocialLogo from 'calypso/components/social-logo';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	const {

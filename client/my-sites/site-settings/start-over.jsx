@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import { Button } from '@automattic/components';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import HeaderCake from 'calypso/components/header-cake';
 import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

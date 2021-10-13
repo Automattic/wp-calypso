@@ -1,39 +1,4 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { get, includes, some } from 'lodash';
-import { localize } from 'i18n-calypso';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { Button, Card, CompactCard } from '@automattic/components';
-import Count from 'calypso/components/count';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import ExternalLink from 'calypso/components/external-link';
-import Notice from 'calypso/components/notice';
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
-import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import config from '@automattic/calypso-config';
-import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
-import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
-import PluginInformation from 'calypso/my-sites/plugins/plugin-information';
-import WpcomPluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button-wpcom';
-import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-transfer';
-import { getExtensionSettingsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import { userCan } from 'calypso/lib/site/utils';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
@@ -42,20 +7,23 @@ import {
 	isEcommerce,
 	isEnterprise,
 } from '@automattic/calypso-products';
-import { addSiteFragment } from 'calypso/lib/route';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { Button, Card, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, includes, some } from 'lodash';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Count from 'calypso/components/count';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import ExternalLink from 'calypso/components/external-link';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
-import {
-	getPluginOnSites,
-	isPluginActionInProgress,
-} from 'calypso/state/plugins/installed/selectors';
-import { updatePlugin } from 'calypso/state/plugins/installed/actions';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -63,6 +31,29 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import { userCan } from 'calypso/lib/site/utils';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-transfer';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginInformation from 'calypso/my-sites/plugins/plugin-information';
+import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
+import WpcomPluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button-wpcom';
+import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/selectors';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import {
+	getPluginOnSites,
+	isPluginActionInProgress,
+} from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import withPluginRedirect from '../with-plugin-redirect';
 
 const activationPreventionActions = [
@@ -78,9 +69,6 @@ const removalPreventionActions = [
 	DISABLE_AUTOUPDATE_PLUGIN,
 ];
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PluginMeta extends Component {
@@ -566,9 +554,6 @@ export class PluginMeta extends Component {
 			plugin = this.getPluginForSite( this.props.selectedSite.ID );
 		}
 
-		const path =
-			( ! this.props.selectedSite || plugin.active ) && getExtensionSettingsPath( plugin );
-
 		return (
 			<div className="plugin-meta">
 				{ this.props.atEnabled && this.props.selectedSite && (
@@ -590,15 +575,6 @@ export class PluginMeta extends Component {
 						{ this.renderActions() }
 					</div>
 				</Card>
-
-				{ path && (
-					<CompactCard
-						className="plugin-meta__settings-link"
-						href={ addSiteFragment( path, this.props.slug ) }
-					>
-						{ this.props.translate( 'Edit plugin settings' ) }
-					</CompactCard>
-				) }
 
 				{ ! this.props.isMock && get( this.props.selectedSite, 'jetpack' ) && (
 					<PluginInformation

@@ -1,211 +1,57 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
+import {
+	render,
+	fireEvent,
+	screen,
+	within,
+	waitFor,
+	act,
+	waitForElementToBeRemoved,
+} from '@testing-library/react';
+import nock from 'nock';
 import page from 'page';
-import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
-import { render, act, fireEvent, screen, within } from '@testing-library/react';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import CompositeCheckout from '../composite-checkout';
-
-/**
- * Mocked dependencies
- */
-jest.mock( 'calypso/state/sites/selectors' );
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import CompositeCheckout from '../composite-checkout';
+import {
+	siteId,
+	domainProduct,
+	domainTransferProduct,
+	planWithBundledDomain,
+	planWithoutDomain,
+	fetchStripeConfiguration,
+	mockSetCartEndpoint,
+	mockGetCartEndpointWith,
+	getActivePersonalPlanDataForType,
+	getPersonalPlanForInterval,
+	getBusinessPlanForInterval,
+	getVariantItemTextForInterval,
+	getPlansItemsState,
+	createTestReduxStore,
+	countryList,
+	gSuiteProduct,
+	caDomainProduct,
+} from './util';
+
+/* eslint-disable jest/no-conditional-expect */
+
+jest.mock( 'calypso/state/sites/selectors' );
+jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
+jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
-
-const siteId = 13579;
-
-const domainProduct = {
-	product_name: '.cash Domain',
-	product_slug: 'domain_reg',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
-	},
-	free_trial: false,
-	meta: 'foo.cash',
-	product_id: 6,
-	volume: 1,
-	is_domain_registration: true,
-	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
-	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
-};
-
-const domainTransferProduct = {
-	product_name: '.cash Domain',
-	product_slug: 'domain_transfer',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
-	},
-	free_trial: false,
-	meta: 'foo.cash',
-	product_id: 6,
-	volume: 1,
-	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
-	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
-};
-
-const planWithBundledDomain = {
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-		domain_to_bundle: 'foo.cash',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1009,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planWithoutDomain = {
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1009,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planWithoutDomainMonthly = {
-	product_name: 'WordPress.com Personal Monthly',
-	product_slug: 'personal-bundle-monthly',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1019,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planWithoutDomainBiannual = {
-	product_name: 'WordPress.com Personal 2 Year',
-	product_slug: 'personal-bundle-2y',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1029,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planLevel2 = {
-	product_name: 'WordPress.com Business',
-	product_slug: 'business-bundle',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1008,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planLevel2Monthly = {
-	product_name: 'WordPress.com Business Monthly',
-	product_slug: 'business-bundle-monthly',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1018,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const planLevel2Biannual = {
-	product_name: 'WordPress.com Business 2 Year',
-	product_slug: 'business-bundle-2y',
-	currency: 'BRL',
-	extra: {
-		context: 'signup',
-	},
-	free_trial: false,
-	meta: '',
-	product_id: 1028,
-	volume: 1,
-	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
-	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
-};
-
-const fetchStripeConfiguration = async () => {
-	return {
-		public_key: 'abc123',
-		js_url: 'https://js.stripe.com/v3/',
-	};
-};
 
 describe( 'CompositeCheckout', () => {
 	let container;
@@ -246,145 +92,37 @@ describe( 'CompositeCheckout', () => {
 			coupon_discounts_integer: [],
 		};
 
-		const countryList = [
-			{
-				code: 'US',
-				name: 'United States',
-				has_postal_codes: true,
-			},
-			{
-				code: 'CW',
-				name: 'Curacao',
-				has_postal_codes: false,
-			},
-			{
-				code: 'AU',
-				name: 'Australia',
-				has_postal_codes: true,
-			},
-		];
+		const store = createTestReduxStore();
 
-		const store = applyMiddleware( thunk )( createStore )( () => {
-			return {
-				plans: {
-					items: getPlansItemsState(),
-				},
-				sites: { items: {} },
-				siteSettings: { items: {} },
-				ui: { selectedSiteId: siteId },
-				productsList: {
-					items: {
-						[ planWithoutDomain.product_slug ]: {
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomain.item_subtotal_display,
-							currency_code: planWithoutDomain.currency,
-						},
-						[ planWithoutDomainMonthly.product_slug ]: {
-							product_id: planWithoutDomainMonthly.product_id,
-							product_slug: planWithoutDomainMonthly.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomainMonthly.item_subtotal_display,
-							currency_code: planWithoutDomainMonthly.currency,
-						},
-						[ planWithoutDomainBiannual.product_slug ]: {
-							product_id: planWithoutDomainBiannual.product_id,
-							product_slug: planWithoutDomainBiannual.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomainBiannual.item_subtotal_display,
-							currency_code: planWithoutDomainBiannual.currency,
-						},
-						[ planLevel2.product_slug ]: {
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planWithoutDomain.item_subtotal_display,
-							currency_code: planWithoutDomain.currency,
-						},
-						[ planLevel2Monthly.product_slug ]: {
-							product_id: planLevel2Monthly.product_id,
-							product_slug: planLevel2Monthly.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planLevel2Monthly.item_subtotal_display,
-							currency_code: planLevel2Monthly.currency,
-						},
-						[ planLevel2Biannual.product_slug ]: {
-							product_id: planLevel2Biannual.product_id,
-							product_slug: planLevel2Biannual.product_slug,
-							product_type: 'bundle',
-							available: true,
-							is_domain_registration: false,
-							cost_display: planLevel2Biannual.item_subtotal_display,
-							currency_code: planLevel2Biannual.currency,
-						},
-						domain_map: {
-							product_id: 5,
-							product_name: 'Product',
-							product_slug: 'domain_map',
-						},
-						domain_reg: {
-							product_id: 6,
-							product_name: 'Product',
-							product_slug: 'domain_reg',
-						},
-						premium_theme: {
-							product_id: 39,
-							product_name: 'Product',
-							product_slug: 'premium_theme',
-						},
-						'concierge-session': {
-							product_id: 371,
-							product_name: 'Product',
-							product_slug: 'concierge-session',
-						},
-						jetpack_backup_daily: {
-							product_id: 2100,
-							product_name: 'Jetpack Backup (Daily)',
-							product_slug: 'jetpack_backup_daily',
-						},
-						jetpack_scan: {
-							product_id: 2106,
-							product_name: 'Jetpack Scan Daily',
-							product_slug: 'jetpack_scan',
-						},
-					},
-				},
-				purchases: {},
-				countries: { payments: countryList, domains: countryList },
-			};
-		} );
-
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => (
-			<ReduxProvider store={ store }>
-				<ShoppingCartProvider
-					cartKey={ 'foo.com' }
-					setCart={ mockSetCartEndpoint }
-					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
-					{ ...additionalCartProps }
-				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CompositeCheckout
-							siteId={ siteId }
-							siteSlug={ 'foo.com' }
-							getStoredCards={ async () => [] }
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
-					</StripeHookProvider>
-				</ShoppingCartProvider>
-			</ReduxProvider>
-		);
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
+			const managerClient = createShoppingCartManagerClient( {
+				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
+				setCart: mockSetCartEndpoint,
+			} );
+			const mainCartKey = 'foo.com';
+			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
+			return (
+				<ReduxProvider store={ store }>
+					<ShoppingCartProvider
+						managerClient={ managerClient }
+						options={ {
+							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+						} }
+						{ ...additionalCartProps }
+					>
+						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+							<CompositeCheckout
+								siteId={ siteId }
+								siteSlug={ 'foo.com' }
+								getStoredCards={ async () => [] }
+								overrideCountryList={ countryList }
+								{ ...additionalProps }
+							/>
+						</StripeHookProvider>
+					</ShoppingCartProvider>
+				</ReduxProvider>
+			);
+		};
 	} );
 
 	afterEach( () => {
@@ -393,125 +131,104 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the line items with prices', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
 	} );
 
 	it( 'renders the tax amount', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'Tax' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Tax' ).map( ( element ) => expect( element ).toHaveTextContent( 'R$7' ) );
 	} );
 
 	it( 'renders the total amount', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'Total' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Total' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$156' )
-		);
 	} );
 
 	it( 'renders the paypal payment method option', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'PayPal' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when no credits are available', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when partial credits are available', async () => {
-		let renderResult;
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the paypal payment method option when partial credits are available', async () => {
-		let renderResult;
 		const cartChanges = { credits_integer: 15400, credits_display: 'R$154' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'PayPal' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'PayPal' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
-		let renderResult;
 		const cartChanges = {
 			sub_total_integer: 0,
 			sub_total_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( /WordPress.com Credits:/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the other payment method options when full credits are available', async () => {
-		let renderResult;
 		const cartChanges = {
 			sub_total_integer: 0,
 			sub_total_display: '0',
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the free payment method option when the purchase is not free', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( 'Free Purchase' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the paypal payment method option when the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( 'PayPal' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = {
 			sub_total_integer: 0,
 			sub_total_display: '0',
@@ -522,134 +239,280 @@ describe( 'CompositeCheckout', () => {
 			credits_integer: 15600,
 			credits_display: 'R$156',
 		};
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /WordPress.com Credits:/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the free payment method option when the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Free Purchase' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Free Purchase' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
-		let renderResult;
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect(
+				screen.queryByText( /Enter your (billing|contact) information/ )
+			).not.toBeInTheDocument();
 		} );
-		const { queryByText } = renderResult;
-		expect( queryByText( /Enter your (billing|contact) information/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
 		} );
-		const { getByText, queryByText } = renderResult;
-		expect( getByText( 'Postal code' ) ).toBeInTheDocument();
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( queryByText( 'Phone' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'Email' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'City' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'State' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 		} );
-		const { getByText, queryByText } = renderResult;
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
-		expect( queryByText( 'Address' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'City' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'State' ) ).not.toBeInTheDocument();
-		expect( queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
 		} );
-		const { getByText, getByLabelText } = renderResult;
-		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'US' } } );
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
-		expect( getByText( 'Address' ) ).toBeInTheDocument();
-		expect( getByText( 'City' ) ).toBeInTheDocument();
-		expect( getByText( 'State' ) ).toBeInTheDocument();
-		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Address' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'City' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'State' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		await act( async () => {
-			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
 		} );
-		const { getByText, queryByText, getByLabelText } = renderResult;
-		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'CW' } } );
-		expect( getByText( 'Country' ) ).toBeInTheDocument();
-		expect( getByText( 'Phone' ) ).toBeInTheDocument();
-		expect( getByText( 'Email' ) ).toBeInTheDocument();
-		expect( queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
-	it( 'renders the checkout summary', async () => {
-		let renderResult;
-		await act( async () => {
-			renderResult = render( <MyCheckout />, container );
+	it( 'does not complete the contact step when the contact step button has not been clicked', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		{ complete: 'does', valid: 'valid', name: 'plan', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'domain', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'domain', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'gsuite', email: 'fails', logged: 'in' },
+		{ complete: 'does not', valid: 'invalid', name: 'gsuite', email: 'fails', logged: 'in' },
+		{ complete: 'does', valid: 'valid', name: 'plan', email: 'passes', logged: 'out' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'passes', logged: 'out' },
+		{ complete: 'does not', valid: 'valid', name: 'domain', email: 'fails', logged: 'out' },
+		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'out' },
+	] )(
+		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
+		async ( { complete, valid, name, email, logged } ) => {
+			const product = ( () => {
+				switch ( name ) {
+					case 'plan':
+						return planWithoutDomain;
+					case 'domain':
+						return caDomainProduct;
+					case 'gsuite':
+						return gSuiteProduct;
+				}
+			} )();
+			const endpointPath = ( () => {
+				switch ( name ) {
+					case 'plan':
+						return '/rest/v1.1/me/tax-contact-information/validate';
+					case 'domain':
+						return '/rest/v1.2/me/domain-contact-information/validate';
+					case 'gsuite':
+						return '/rest/v1.1/me/google-apps/validate';
+				}
+			} )();
+			const validContactDetails = {
+				postal_code: '10001',
+				country_code: 'US',
+				email: 'test@example.com',
+			};
+			nock.cleanAll();
+			const messages = ( () => {
+				if ( valid === 'valid' ) {
+					return undefined;
+				}
+				if ( name === 'domain' ) {
+					return {
+						postal_code: [ 'Postal code error message' ],
+						'extra.ca.cira_agreement_accepted': [ 'Missing CIRA agreement' ],
+					};
+				}
+				return {
+					postal_code: [ 'Postal code error message' ],
+				};
+			} )();
+			nock( 'https://public-api.wordpress.com' )
+				.post( endpointPath, ( body ) => {
+					if (
+						body.contact_information.postal_code === validContactDetails.postal_code &&
+						body.contact_information.country_code === validContactDetails.country_code
+					) {
+						if ( name === 'domain' ) {
+							return (
+								body.contact_information.email === validContactDetails.email &&
+								body.domain_names[ 0 ] === product.meta
+							);
+						}
+						if ( name === 'gsuite' ) {
+							return body.domain_names[ 0 ] === product.meta;
+						}
+						return true;
+					}
+				} )
+				.reply( 200, {
+					success: valid === 'valid',
+					messages,
+				} );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
+					return (
+						body.locale === 'en' &&
+						body.is_from_registrationless_checkout === true &&
+						body.email === validContactDetails.email
+					);
+				} )
+				.reply( 200, () => {
+					if ( logged === 'out' && email === 'fails' ) {
+						return {
+							success: false,
+							messages: { email: { taken: 'An account with this email already exists.' } },
+						};
+					}
+
+					return {
+						success: email === 'passes',
+					};
+				} );
+
+			render(
+				<MyCheckout
+					cartChanges={ { products: [ product ] } }
+					additionalProps={ { isLoggedOutCart: logged === 'out' } }
+				/>,
+				container
+			);
+
+			// Wait for the cart to load
+			await screen.findByText( 'Country' );
+
+			// Fill in the contact form
+			if ( name === 'domain' || logged === 'out' ) {
+				fireEvent.change( screen.getByLabelText( 'Email' ), {
+					target: { value: validContactDetails.email },
+				} );
+			}
+			fireEvent.change( screen.getByLabelText( 'Country' ), {
+				target: { value: validContactDetails.country_code },
+			} );
+			fireEvent.change( screen.getByLabelText( /(Postal|ZIP) code/i ), {
+				target: { value: validContactDetails.postal_code },
+			} );
+			fireEvent.click( await screen.findByText( 'Continue' ) );
+
+			// Wait for the validation to complete
+			await waitForElementToBeRemoved( () => screen.queryByText( 'Updating cart…' ) );
+
+			if ( complete === 'does' ) {
+				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+			} else {
+				// This is a little tricky because we need to verify something never happens,
+				// even after some time passes, so we use this slightly convoluted technique:
+				// https://stackoverflow.com/a/68318058/2615868
+				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
+				// Make sure the error message is displayed
+				if ( valid !== 'valid' ) {
+					if ( logged === 'out' && email === 'fails' ) {
+						expect(
+							screen.getByText( ( content ) =>
+								content.startsWith( 'That email address is already in use' )
+							)
+						);
+					} else if ( email === 'passes' ) {
+						expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
+					}
+
+					if ( name === 'domain' ) {
+						expect( screen.getByText( 'Missing CIRA agreement' ) ).toBeInTheDocument();
+					}
+				}
+			}
+		}
+	);
+
+	it( 'renders the checkout summary', async () => {
+		render( <MyCheckout />, container );
+		await waitFor( () => {
+			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
+			expect( page.redirect ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it.each( [
@@ -818,10 +681,10 @@ describe( 'CompositeCheckout', () => {
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( () => {
+			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 		} );
-		expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it outside of edit mode', async () => {
@@ -835,17 +698,15 @@ describe( 'CompositeCheckout', () => {
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( async () => {
+			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 		} );
-		expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		await act( async () => {
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
@@ -854,17 +715,15 @@ describe( 'CompositeCheckout', () => {
 		);
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( () => {
+			expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-		expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		await act( async () => {
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
-		} );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
@@ -873,87 +732,81 @@ describe( 'CompositeCheckout', () => {
 		);
 		fireEvent.click( removeProductButton );
 		const confirmButton = await screen.findByText( 'Continue' );
-		await act( async () => {
-			fireEvent.click( confirmButton );
+		fireEvent.click( confirmButton );
+		await waitFor( async () => {
+			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty when it loads', async () => {
 		const cartChanges = { products: [] };
-		await act( async () => {
-			render( <MyCheckout cartChanges={ cartChanges } />, container );
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( async () => {
+			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
-		expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
-		await act( async () => {
-			render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			expect( page.redirect ).not.toHaveBeenCalled();
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the aliased plan to the cart when the url has a plan alias', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
-		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
 		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+		} );
 	} );
 
 	it( 'adds the product to the cart when the url has a jetpack product', async () => {
 		isJetpackSite.mockImplementation( () => true );
 		isAtomicSite.mockImplementation( () => false );
 
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
-		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$41' )
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
 		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Jetpack Scan Daily' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$41' ) );
+		} );
 	} );
 
 	it( 'adds two products to the cart when the url has two jetpack products', async () => {
 		isJetpackSite.mockImplementation( () => true );
 		isAtomicSite.mockImplementation( () => false );
 
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Jetpack Scan Daily' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$41' ) );
+			screen
+				.getAllByLabelText( 'Jetpack Backup (Daily)' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$42' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$41' )
-		);
-		getAllByLabelText( 'Jetpack Backup (Daily)' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$42' )
-		);
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
@@ -969,22 +822,20 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			screen
+				.getAllByLabelText( 'Support Session' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$49' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		getAllByLabelText( 'Support Session' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$49' )
-		);
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
@@ -1000,22 +851,20 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			screen
+				.getAllByLabelText( 'Premium Theme: Ovation' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$69' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		getAllByLabelText( 'Premium Theme: Ovation' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$69' )
-		);
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
@@ -1031,460 +880,105 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			screen
+				.getAllByLabelText( 'bar.com' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$0' ) );
 		} );
-		const { getAllByLabelText, getAllByText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-		getAllByLabelText( 'bar.com' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$0' )
-		);
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
-		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
 		);
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+		} );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain registration', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 		} );
-		const { getAllByText } = renderResult;
-		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 	} );
 
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( async () => {
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
-		const { getAllByText } = renderResult;
-		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'adds renewal products to the cart when the url has multiple renewals', async () => {
-		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = {
 			productAliasFromUrl: 'domain_map:bar.com,domain_reg:bar.com',
 			purchaseId: '12345,54321',
 		};
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( () => {
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 		} );
-		const { getAllByText } = renderResult;
-		expect( getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-		expect( getAllByText( 'bar.com' ) ).toHaveLength( 5 );
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
-		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = {
 			couponCode: 'MYCOUPONCODE',
 			coupon_savings_total_integer: 10,
 			coupon_savings_total_display: '$R10',
 		};
-		await act( async () => {
-			renderResult = render(
-				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
-				container
-			);
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+			screen
+				.getAllByLabelText( 'Coupon: MYCOUPONCODE' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$10' ) );
 		} );
-		const { getAllByLabelText } = renderResult;
-		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$144' )
-		);
-		getAllByLabelText( 'Coupon: MYCOUPONCODE' ).map( ( element ) =>
-			expect( element ).toHaveTextContent( 'R$10' )
-		);
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
-		let renderResult;
-		const additionalCartProps = { cartKey: undefined };
 		await act( async () => {
-			renderResult = render(
-				<MyCheckout additionalCartProps={ additionalCartProps } />,
-				container
-			);
+			render( <MyCheckout useUndefinedCartKey={ true } />, container );
 		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
-	} );
-
-	it( 'does not display loading when old cart store has pending updates and then they complete', async () => {
-		let renderResult;
-		let additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
-		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		const { queryByText, rerender } = renderResult;
-		additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: false } };
-		await act( async () => {
-			rerender( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		expect( queryByText( 'Loading checkout' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
 } );
-
-async function mockSetCartEndpoint( _, requestCart ) {
-	const {
-		products: requestProducts,
-		currency: requestCurrency,
-		coupon: requestCoupon,
-		locale: requestLocale,
-	} = requestCart;
-	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
-
-	const taxInteger = products.reduce( ( accum, current ) => {
-		return accum + current.item_tax;
-	}, 0 );
-
-	const totalInteger = products.reduce( ( accum, current ) => {
-		return accum + current.item_subtotal_integer;
-	}, taxInteger );
-
-	return {
-		products,
-		locale: requestLocale,
-		currency: requestCurrency,
-		credits_integer: 0,
-		credits_display: '0',
-		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
-		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
-		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
-		savings_total_integer: requestCoupon ? 1000 : 0,
-		total_tax_display: 'R$7',
-		total_tax_integer: taxInteger,
-		total_cost_display: 'R$156',
-		total_cost_integer: totalInteger,
-		sub_total_display: 'R$149',
-		sub_total_integer: totalInteger - taxInteger,
-		coupon: requestCoupon,
-		is_coupon_applied: true,
-		coupon_discounts_integer: [],
-		tax: { location: {}, display_taxes: true },
-	};
-}
-
-function convertRequestProductToResponseProduct( currency ) {
-	return ( product ) => {
-		const { product_id } = product;
-
-		switch ( product_id ) {
-			case 1009: // WPCOM Personal Bundle
-				return {
-					product_id: 1009,
-					product_name: 'WordPress.com Personal',
-					product_slug: 'personal-bundle',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 14400,
-					item_original_cost_display: 'R$144',
-					item_subtotal_integer: 14400,
-					item_subtotal_display: 'R$144',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 5:
-				return {
-					product_id: 5,
-					product_name: 'Domain Mapping',
-					product_slug: 'domain_map',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 0,
-					item_original_cost_display: 'R$0',
-					item_subtotal_integer: 0,
-					item_subtotal_display: 'R$0',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 6:
-				return {
-					product_id: 6,
-					product_name: 'Domain Registration',
-					product_slug: 'domain_reg',
-					currency: currency,
-					is_domain_registration: true,
-					item_original_cost_integer: 70,
-					item_original_cost_display: 'R$70',
-					item_subtotal_integer: 70,
-					item_subtotal_display: 'R$70',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 39:
-				return {
-					product_id: 39,
-					product_name: 'Premium Theme: Ovation',
-					product_slug: 'premium_theme',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 69,
-					item_original_cost_display: 'R$69',
-					item_subtotal_integer: 69,
-					item_subtotal_display: 'R$69',
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 371:
-				return {
-					product_id: 371,
-					product_name: 'Support Session',
-					product_slug: 'concierge-session',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 49,
-					item_original_cost_display: 'R$49',
-					item_subtotal_integer: 49,
-					item_subtotal_display: 'R$49',
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 2106:
-				return {
-					product_id: 2106,
-					product_name: 'Jetpack Scan Daily',
-					product_slug: 'jetpack_scan',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 4100,
-					item_original_cost_display: 'R$41',
-					item_subtotal_integer: 4100,
-					item_subtotal_display: 'R$41',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-			case 2100:
-				return {
-					product_id: 2100,
-					product_name: 'Jetpack Backup (Daily)',
-					product_slug: 'jetpack_backup_daily',
-					currency: currency,
-					is_domain_registration: false,
-					item_original_cost_integer: 4200,
-					item_original_cost_display: 'R$42',
-					item_subtotal_integer: 4200,
-					item_subtotal_display: 'R$42',
-					months_per_bill_period: 12,
-					item_tax: 0,
-					meta: product.meta,
-					volume: 1,
-					extra: {},
-				};
-		}
-
-		return {
-			product_id: product_id,
-			product_name: `Unknown mocked product: ${ product_id }`,
-			product_slug: 'unknown',
-			currency: currency,
-			is_domain_registration: false,
-			savings_total_display: '$0',
-			savings_total_integer: 0,
-			item_subtotal_display: '$0',
-			item_subtotal_integer: 0,
-			item_tax: 0,
-		};
-	};
-}
-
-function mockGetCartEndpointWith( initialCart ) {
-	return async () => {
-		return initialCart;
-	};
-}
-
-function getActivePersonalPlanDataForType( type ) {
-	switch ( type ) {
-		case 'none':
-			return null;
-		case 'monthly':
-			return [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			];
-		case 'yearly':
-			return [
-				{
-					interval: 365,
-					productSlug: planWithoutDomain.product_slug,
-					currentPlan: true,
-				},
-			];
-		case 'two-year':
-			return [
-				{
-					interval: 730,
-					productSlug: planWithoutDomainBiannual.product_slug,
-					currentPlan: true,
-				},
-			];
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getPersonalPlanForInterval( type ) {
-	switch ( type ) {
-		case 'monthly':
-			return planWithoutDomainMonthly;
-		case 'yearly':
-			return planWithoutDomain;
-		case 'two-year':
-			return planWithoutDomainBiannual;
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getBusinessPlanForInterval( type ) {
-	switch ( type ) {
-		case 'monthly':
-			return planLevel2Monthly;
-		case 'yearly':
-			return planLevel2;
-		case 'two-year':
-			return planLevel2Biannual;
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getVariantItemTextForInterval( type ) {
-	switch ( type ) {
-		case 'monthly':
-			return 'One month';
-		case 'yearly':
-			return 'One year';
-		case 'two-year':
-			return 'Two years';
-		default:
-			throw new Error( `Unknown plan type '${ type }'` );
-	}
-}
-
-function getPlansItemsState() {
-	return [
-		{
-			product_id: planWithoutDomain.product_id,
-			product_slug: planWithoutDomain.product_slug,
-			bill_period: 365,
-			product_type: 'bundle',
-			available: true,
-			price: '$48',
-			formatted_price: '$48',
-			raw_price: 48,
-		},
-		{
-			product_id: planWithoutDomainMonthly.product_id,
-			product_slug: planWithoutDomainMonthly.product_slug,
-			bill_period: 30,
-			product_type: 'bundle',
-			available: true,
-			price: '$7',
-			formatted_price: '$7',
-			raw_price: 7,
-		},
-		{
-			product_id: planWithoutDomainBiannual.product_id,
-			product_slug: planWithoutDomainBiannual.product_slug,
-			bill_period: 730,
-			product_type: 'bundle',
-			available: true,
-			price: '$84',
-			formatted_price: '$84',
-			raw_price: 84,
-		},
-		{
-			product_id: planLevel2.product_id,
-			product_slug: planLevel2.product_slug,
-			bill_period: 365,
-			product_type: 'bundle',
-			available: true,
-			price: '$300',
-			formatted_price: '$300',
-			raw_price: 300,
-		},
-		{
-			product_id: planLevel2Monthly.product_id,
-			product_slug: planLevel2Monthly.product_slug,
-			bill_period: 30,
-			product_type: 'bundle',
-			available: true,
-			price: '$33',
-			formatted_price: '$33',
-			raw_price: 33,
-		},
-		{
-			product_id: planLevel2Biannual.product_id,
-			product_slug: planLevel2Biannual.product_slug,
-			bill_period: 730,
-			product_type: 'bundle',
-			available: true,
-			price: '$499',
-			formatted_price: '$499',
-			raw_price: 499,
-		},
-	];
-}

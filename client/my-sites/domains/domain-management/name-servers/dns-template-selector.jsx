@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
-class DnsTemplateSelector extends React.PureComponent {
+class DnsTemplateSelector extends PureComponent {
 	handleOnSelect = ( option ) => {
 		this.props.onTemplateClick( option.label );
 	};

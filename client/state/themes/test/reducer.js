@@ -1,25 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, {
-	queryRequests,
-	queryRequestErrors,
-	queries,
-	lastQuery,
-	themeRequests,
-	themeRequestErrors,
-	activeThemes,
-	activationRequests,
-	activeThemeRequests,
-	themeInstalls,
-	completedActivationRequests,
-	recommendedThemes,
-} from '../reducer';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
@@ -43,6 +22,20 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import reducer, {
+	queryRequests,
+	queryRequestErrors,
+	queries,
+	lastQuery,
+	themeRequests,
+	themeRequestErrors,
+	activeThemes,
+	activationRequests,
+	activeThemeRequests,
+	themeInstalls,
+	completedActivationRequests,
+	recommendedThemes,
+} from '../reducer';
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -1000,6 +993,18 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should preserve current state while refreshing data', () => {
+			const state = recommendedThemes(
+				{ [ filter ]: { isLoading: true, themes: [ 'a' ] } },
+				{
+					type: RECOMMENDED_THEMES_FETCH,
+					filter,
+				}
+			);
+
+			expect( state ).toEqual( { [ filter ]: { isLoading: true, themes: [ 'a' ] } } );
+		} );
+
 		test( 'should update isLoading on fetch fail', () => {
 			const state = recommendedThemes(
 				{ [ filter ]: { isLoading: true, themes: [] } },
@@ -1009,6 +1014,17 @@ describe( 'reducer', () => {
 				}
 			);
 			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [] } } );
+		} );
+
+		test( 'should preserve current state on fetch fail', () => {
+			const state = recommendedThemes(
+				{ [ filter ]: { isLoading: true, themes: [ 'a' ] } },
+				{
+					type: RECOMMENDED_THEMES_FAIL,
+					filter,
+				}
+			);
+			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [ 'a' ] } } );
 		} );
 	} );
 } );

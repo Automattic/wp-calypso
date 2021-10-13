@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import Notice from 'calypso/components/notice';
 
 const EmailExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName } ) => {

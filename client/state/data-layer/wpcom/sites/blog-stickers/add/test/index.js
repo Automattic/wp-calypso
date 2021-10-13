@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 import {
 	requestBlogStickerAdd,
 	receiveBlogStickerAdd,
 	receiveBlogStickerAddError,
 	fromApi,
 } from '../';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-add', () => {
 	describe( 'requestBlogStickerAdd', () => {

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

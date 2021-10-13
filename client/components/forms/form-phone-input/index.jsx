@@ -1,26 +1,18 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTelInput from 'calypso/components/forms/form-tel-input';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import phoneValidation from 'calypso/lib/phone-validation';
 
 const CLEAN_REGEX = /^0|[\s.\-()]+/g;
 const noop = () => {};
 
-export class FormPhoneInput extends React.Component {
+export class FormPhoneInput extends Component {
 	static propTypes = {
 		initialCountryCode: PropTypes.string,
 		initialPhoneNumber: PropTypes.string,

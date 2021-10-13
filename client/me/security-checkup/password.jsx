@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { getOKIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
-class SecurityCheckupPassword extends React.Component {
+class SecurityCheckupPassword extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 	};

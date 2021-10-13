@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
 import nock from 'nock';
-
-/**
- * Internal dependencies
- */
-import { receiveTagImages, requestTagImages } from '../actions';
 import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_RECEIVE,
 } from 'calypso/state/reader/action-types';
+import { receiveTagImages, requestTagImages } from '../actions';
 import sampleSuccessResponse from './sample-responses.json';
 
 describe( 'actions', () => {

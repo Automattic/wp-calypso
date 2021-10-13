@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const JetpackColophon = ( { className, translate } ) => {

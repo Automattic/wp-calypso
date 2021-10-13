@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import classNames from 'classnames';
+import type { PropsWithChildren, FunctionComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-interface Props {
-	children: React.ReactElement[];
-	className?: string;
-}
+type Props = PropsWithChildren< { className?: string } >;
 
-const Badge: React.FunctionComponent< Props > = ( { children, className, ...props } ) => (
+const Badge: FunctionComponent< Props > = ( { children, className, ...props } ) => (
 	<span { ...props } className={ classNames( 'badge', className ) }>
 		{ children }
 	</span>

@@ -9,7 +9,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import React from 'react';
+import { Fragment } from 'react';
 import { PaymentLogo } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
@@ -106,7 +106,7 @@ function ExistingCardLabel( {
 	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
 				<CardDetails>{ maskedCardDetails }</CardDetails>
@@ -115,7 +115,7 @@ function ExistingCardLabel( {
 			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
 			</div>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

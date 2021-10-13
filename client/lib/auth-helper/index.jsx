@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import ReactDom from 'react-dom';
 import FormRadio from 'calypso/components/forms/form-radio';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function AuthHelper() {

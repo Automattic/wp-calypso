@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:signup:wpcom-login' );
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
+import { Component } from 'react';
+
+const debug = debugFactory( 'calypso:signup:wpcom-login' );
 
 export default class WpcomLoginForm extends Component {
 	form = null;

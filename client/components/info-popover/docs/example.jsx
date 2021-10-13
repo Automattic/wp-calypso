@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import InfoPopover from 'calypso/components/info-popover';
 
-class InfoPopoverExample extends React.PureComponent {
+class InfoPopoverExample extends PureComponent {
 	static displayName = 'InfoPopover';
 
 	state = {

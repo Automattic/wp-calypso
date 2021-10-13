@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { NOTIFICATIONS_EXCEPTIONS } from './constants';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { NOTIFICATIONS_EXCEPTIONS } from './constants';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'NotificationSettingsFormStreamOptions';
 
 	static propTypes = {

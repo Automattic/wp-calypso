@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import LoggedOutShowcase from '../logged-out';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
 import { THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import LoggedOutShowcase from '../logged-out';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>

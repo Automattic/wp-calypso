@@ -1,43 +1,32 @@
-/**
- * External Dependencies
- */
+import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { Card } from '@automattic/components';
+import BlogStickers from 'calypso/blocks/blog-stickers';
+import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import ReaderFollowButton from 'calypso/reader/follow-button';
-import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
-import HeaderBack from 'calypso/reader/header-back';
 import {
 	getSiteDescription,
 	getSiteName,
 	getSiteUrl,
 	isEligibleForUnseen,
 } from 'calypso/reader/get-helpers';
-import SiteIcon from 'calypso/blocks/site-icon';
-import BlogStickers from 'calypso/blocks/blog-stickers';
-import ReaderFeedHeaderSiteBadge from './badge';
-import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import Gridicon from 'calypso/components/gridicon';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import HeaderBack from 'calypso/reader/header-back';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import ReaderFeedHeaderSiteBadge from './badge';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class FeedHeader extends Component {
@@ -132,7 +121,10 @@ class FeedHeader extends Component {
 									disabled={ feed.unseen_count === 0 }
 								>
 									<Gridicon icon="visible" size={ 18 } />
-									<span title={ translate( 'Mark all as seen' ) }>
+									<span
+										className="reader-feed-header__visibility"
+										title={ translate( 'Mark all as seen' ) }
+									>
 										{ translate( 'Mark all as seen' ) }
 									</span>
 								</button>

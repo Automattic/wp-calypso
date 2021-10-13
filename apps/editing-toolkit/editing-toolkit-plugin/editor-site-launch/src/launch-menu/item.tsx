@@ -1,7 +1,7 @@
 import { Button, SVG, Circle } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">

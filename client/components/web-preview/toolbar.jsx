@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { partial } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { Button } from '@automattic/components';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -140,7 +130,7 @@ class PreviewToolbar extends Component {
 							<SelectDropdown.Item
 								key={ device }
 								selected={ device === currentDevice }
-								onClick={ partial( setDeviceViewport, device ) }
+								onClick={ () => setDeviceViewport( device ) }
 								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
 								e2eTitle={ device }
 							>

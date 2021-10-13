@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 

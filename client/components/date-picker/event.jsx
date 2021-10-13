@@ -1,14 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import SocialLogo from 'calypso/components/social-logo';
 
 const renderIcon = ( icon ) =>

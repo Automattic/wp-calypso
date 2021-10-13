@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
 import { getWindowInnerWidth } from '@automattic/viewport';
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { createRef, Children, cloneElement, Component } from 'react';
+import ReactDom from 'react-dom';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
-/**
- * Style dependencies
- */
 import './tabs.scss';
 
 /**
@@ -41,7 +31,7 @@ class NavTabs extends Component {
 		isDropdown: false,
 	};
 
-	navGroupRef = React.createRef();
+	navGroupRef = createRef();
 	tabRefMap = new Map();
 
 	componentDidMount() {
@@ -73,8 +63,8 @@ class NavTabs extends Component {
 	}
 
 	render() {
-		const tabs = React.Children.map( this.props.children, ( child, index ) => {
-			return child && React.cloneElement( child, { ref: this.storeTabRefs( index ) } );
+		const tabs = Children.map( this.props.children, ( child, index ) => {
+			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
 		const tabsClassName = classNames( 'section-nav-tabs', {
@@ -112,7 +102,7 @@ class NavTabs extends Component {
 	}
 
 	getDropdown() {
-		const dropdownOptions = React.Children.map( this.props.children, ( child, index ) => {
+		const dropdownOptions = Children.map( this.props.children, ( child, index ) => {
 			if ( ! child ) {
 				return null;
 			}

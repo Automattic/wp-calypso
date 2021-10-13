@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { mapValues, omit, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
+import { mapValues, omit, map } from 'lodash';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
-import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -41,7 +34,7 @@ import {
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 } from 'calypso/state/themes/action-types';
-import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
@@ -50,7 +43,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 
 /**
  * Returns the updated active theme state after an action has been
@@ -490,11 +483,17 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 export function recommendedThemes( state = {}, action ) {
 	switch ( action.type ) {
 		case RECOMMENDED_THEMES_FETCH:
-			return { ...state, [ action.filter ]: { isLoading: true, themes: [] } };
+			return {
+				...state,
+				[ action.filter ]: { isLoading: true, themes: state[ action.filter ]?.themes ?? [] },
+			};
 		case RECOMMENDED_THEMES_SUCCESS:
 			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
 		case RECOMMENDED_THEMES_FAIL:
-			return { ...state, [ action.filter ]: { isLoading: false, themes: [] } };
+			return {
+				...state,
+				[ action.filter ]: { isLoading: false, themes: state[ action.filter ]?.themes ?? [] },
+			};
 	}
 
 	return state;

@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 
-/**
- * Style Dependencies
- */
 import './style.scss';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'Gauge';
 
 	static propTypes = {

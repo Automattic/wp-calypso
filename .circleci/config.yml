@@ -8,17 +8,16 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:14.17.3
+      - image: cimg/node:16.7.0
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
       PUPPETEER_SKIP_DOWNLOAD: 'true'
-      DETECT_CHROMEDRIVER_VERSION: 'false'
-      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'true'
+      SKIP_TSC: 'true'
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
-      YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
-      CHROME_VERSION: 84.0.4147.135-1
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
 
@@ -113,8 +112,10 @@ references:
     command: |
       source "$HOME/.nvm/nvm.sh"
       nvm use
-      npm install -g yarn
-      yarn run build-desktop:install-app-deps
+      npm install -g yarn@1.22.10
+      yarn
+      cd desktop
+      yarn
   desktop-cache-paths: &desktop-cache-paths
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
@@ -123,38 +124,6 @@ references:
     command: |
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-  desktop-restore-yarn-cache: &desktop-restore-yarn-cache
-    name: Restore yarn cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
-  desktop-save-yarn-cache: &desktop-save-yarn-cache
-    name: Save yarn cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-    paths:
-      - ~/.cache/yarn
-  desktop-restore-packages-cache: &desktop-restore-packages-cache
-    name: Restore packages cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
-  desktop-save-packages-cache: &desktop-save-packages-cache
-    name: Save packages cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
-    paths:
-      - packages
-      - packages-cache-restored
-  desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
-    name: Restore Calypso build cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
-  desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
-    name: Save Calypso build cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - .cache/evergreen/css-loader
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -168,23 +137,6 @@ references:
     fail_only: true
     mentions: '$CIRCLE_USERNAME'
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
-  install-specific-chrome-browser: &install-specific-chrome-browser
-    name: Install Chrome
-    command: |
-      sudo apt-get update
-      cd /tmp
-      wget --no-check-certificate https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb
-      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt-get -y -f install
-      rm google-chrome-stable_${CHROME_VERSION}_amd64.deb;
-      sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' "/opt/google/chrome/google-chrome"
-      CHROME_VERSION="$(google-chrome --version)"
-      CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')"
-      CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
-      CHROMEDRIVER_VERSION=$(curl --silent --show-error --location --fail --retry 4 --retry-delay 5 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_RELEASE})
-      curl --silent --show-error --location --fail --retry 4 --retry-delay 5 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-      cd /tmp && unzip chromedriver_linux64.zip && rm -rf chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin/chromedriver && sudo chmod +x /usr/local/bin/chromedriver
-      google-chrome --version
-      chromedriver --version
 
 commands:
   prepare:
@@ -215,7 +167,6 @@ jobs:
       - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
-      - run: *install-specific-chrome-browser
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
@@ -233,7 +184,7 @@ jobs:
           name: Extract strings
           command: |
             yarn run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+            mv public/calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
@@ -309,6 +260,7 @@ jobs:
           environment:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
+            USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -367,7 +319,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:14.17.3-browsers
+      - image: circleci/node:16.7.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
@@ -387,6 +339,7 @@ jobs:
           name: Build Desktop Linux
           environment:
             CSC_LINK: resource/certificates/win.p12
+            USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -396,7 +349,8 @@ jobs:
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 
-            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop
+            cd desktop
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build
       - run:
           name: e2e Tests
           command: |
@@ -452,13 +406,16 @@ jobs:
             nvm use $NODE_VERSION
       - run:
           name: Install Yarn
-          command: npm install -g yarn
+          command: npm install -g yarn@1.22.10
       - run:
           name: Install Make
           command: cinst make
       - run:
           name: Install Desktop Dependencies
-          command: yarn run build-desktop:install-app-deps
+          command: |
+            yarn
+            cd desktop
+            yarn
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -591,9 +548,9 @@ workflows:
           filters:
             branches:
               only:
-              - trunk
-              - /release\/.*/
-              - /desktop\/.*/
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets

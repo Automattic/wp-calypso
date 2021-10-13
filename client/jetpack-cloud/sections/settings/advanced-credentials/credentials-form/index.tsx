@@ -1,33 +1,21 @@
-/**
- * External dependencies
- */
-import { useDispatch } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState, FormEventHandler } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
-import { getHostInfoFromId } from '../host-info';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { FunctionComponent, useState, FormEventHandler } from 'react';
+import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextArea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
+import FormTextArea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
-import InlineInfo from './inline-info';
 import SegmentedControl from 'calypso/components/segmented-control';
-
-/**
- * Style dependencies
- */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
+import { getHostInfoFromId } from '../host-info';
+import InlineInfo from './inline-info';
 import './style.scss';
 
 interface Props {

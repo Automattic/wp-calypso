@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
 import { shouldShowTax } from 'calypso/lib/cart-values';
 
-class CartTotal extends React.Component {
+class CartTotal extends Component {
 	static propTypes = {
 		cart: PropTypes.shape( {
 			tax: PropTypes.shape( {
@@ -27,16 +19,6 @@ class CartTotal extends React.Component {
 
 	render() {
 		const cart = this.props.cart;
-
-		if ( cart.hasPendingServerUpdates ) {
-			return (
-				<div className="cart__total">
-					{ this.props.translate( 'Recalculating…', {
-						context: 'Upgrades: Updating cart cost in checkout',
-					} ) }
-				</div>
-			);
-		}
 
 		if ( ! cart.total_cost_display ) {
 			return <div className="cart__total" />;

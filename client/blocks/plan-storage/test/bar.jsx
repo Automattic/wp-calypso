@@ -1,11 +1,5 @@
 const translate = ( x ) => x;
 
-/**
- * External dependencies
- */
-import { assert } from 'chai';
-import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -17,10 +11,8 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { assert } from 'chai';
+import { shallow } from 'enzyme';
 import { PlanStorageBar } from '../bar';
 
 describe( 'PlanStorageBar basic tests', () => {

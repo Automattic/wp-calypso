@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 import { COMMENTS_CHANGE_STATUS } from 'calypso/state/action-types';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 
 const actionKey = getRequestKey( {
 	type: COMMENTS_CHANGE_STATUS,

@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import SocialLogo from 'calypso/components/social-logo';
 import services from './services';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

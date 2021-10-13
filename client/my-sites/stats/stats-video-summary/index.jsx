@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SummaryChart from '../stats-summary';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -18,6 +10,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SummaryChart from '../stats-summary';
 
 class StatsVideoSummary extends Component {
 	static propTypes = {

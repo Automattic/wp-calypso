@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 
 describe( 'getPostLikes()', () => {

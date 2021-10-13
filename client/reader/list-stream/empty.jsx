@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class ListEmptyContent extends React.Component {
+class ListEmptyContent extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}

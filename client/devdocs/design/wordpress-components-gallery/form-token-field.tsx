@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { FormTokenField } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 

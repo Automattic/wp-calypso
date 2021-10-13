@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ListEnd() {

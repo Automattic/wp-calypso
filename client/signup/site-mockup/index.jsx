@@ -1,19 +1,19 @@
-/**
- * External dependencies
- */
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { debounce, isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { debounce, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryVerticals from 'calypso/components/data/query-verticals';
 import SignupSitePreview from 'calypso/components/signup-site-preview';
 import { getPreviewParamClass } from 'calypso/components/signup-site-preview/utils';
+import { getLocaleSlug, getLanguage } from 'calypso/lib/i18n-utils';
+import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'calypso/lib/signup/site-theme';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalName,
@@ -22,17 +22,6 @@ import {
 	getSiteVerticalPreviewStyles,
 	getSiteVerticalSlug,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
-import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'calypso/lib/signup/site-theme';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getLocaleSlug, getLanguage } from 'calypso/lib/i18n-utils';
-import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import QueryVerticals from 'calypso/components/data/query-verticals';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function SiteMockupHelpTip( { siteType } ) {

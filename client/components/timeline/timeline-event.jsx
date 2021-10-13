@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class TimelineEvent extends PureComponent {

@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import SupportInfo from 'calypso/components/support-info';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MediaSettingsWriting extends Component {
 	static propTypes = {

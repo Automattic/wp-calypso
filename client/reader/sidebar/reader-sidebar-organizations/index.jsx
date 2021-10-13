@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import ReaderSidebarOrganizationsList from './list';
 
 export class ReaderSidebarOrganizations extends Component {

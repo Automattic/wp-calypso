@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { omit, flowRight as compose } from 'lodash';
-import React, { Component, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import ActivityDescription from './activity-description';
-import ActivityIcon from './activity-icon';
-import ActivityLogItem from '../activity-log-item';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { addQueryArgs } from 'calypso/lib/url';
+import { filterStateToQuery } from 'calypso/state/activity-log/utils';
+import { getActivityLogFilter } from 'calypso/state/selectors/get-activity-log-filter';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { Button } from '@automattic/components';
-import { getActivityLogFilter } from 'calypso/state/selectors/get-activity-log-filter';
-import { filterStateToQuery } from 'calypso/state/activity-log/utils';
-import { addQueryArgs } from 'calypso/lib/url';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import ActivityLogItem from '../activity-log-item';
 import ActivityActor from './activity-actor';
+import ActivityDescription from './activity-description';
+import ActivityIcon from './activity-icon';
 import ActivityMedia from './activity-media';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 

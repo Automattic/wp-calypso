@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gravatar from 'calypso/components/gravatar';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import Gravatar from 'calypso/components/gravatar';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PostLikes extends React.PureComponent {
+class PostLikes extends PureComponent {
 	static defaultProps = {
 		postType: 'post',
 		showDisplayNames: false,

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import getLostFocusTimestamp from '../get-lostfocus-timestamp';
 
 // Simulate the time Feb 27, 2017 05:25 UTC

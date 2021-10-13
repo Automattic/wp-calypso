@@ -1,12 +1,9 @@
 import classNames from 'classnames';
 import { findKey, includes } from 'lodash';
-import React from 'react';
+import * as React from 'react';
 import { iconToProductSlugMap, paths } from './config';
 import type { SupportedSlugs } from './config';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Props = {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-import { fetchCommentsTreeForSite, addCommentsTree, announceFailure } from '../';
 import { COMMENTS_TREE_SITE_ADD, NOTICE_CREATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { fetchCommentsTreeForSite, addCommentsTree, announceFailure } from '../';
 
 describe( 'comments-tree', () => {
 	const action = { type: 'DUMMY_ACTION', query: { status: 'approved', siteId: 77203074 } };

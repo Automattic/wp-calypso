@@ -1,13 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import { useSelector } from 'react-redux';
+import EmptyContent from 'calypso/components/empty-content';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import { Purchase } from 'calypso/lib/purchases/types';
+import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
 import {
 	getSitePurchases,
@@ -15,15 +12,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import { CompactCard } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
-import { Purchase } from 'calypso/lib/purchases/types';
-import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function SubscriptionsContent( {

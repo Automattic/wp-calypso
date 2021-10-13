@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import { mount, shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { BulkSelect } from '../index';
 
 const noop = () => {};

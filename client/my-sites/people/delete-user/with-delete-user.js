@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { useDispatch } from 'react-redux';
 import useDeleteUserMutation from 'calypso/data/users/use-delete-user-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 

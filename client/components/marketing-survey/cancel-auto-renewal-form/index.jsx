@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { shuffle } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { localize } from 'i18n-calypso';
+import { shuffle } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
-import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CancelAutoRenewalForm extends Component {

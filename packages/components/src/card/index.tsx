@@ -1,11 +1,8 @@
 import classNames from 'classnames';
-import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
-import React from 'react';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
+import { createElement, forwardRef, memo } from 'react';
+import Gridicon from '../gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export type TagName< P = any > = ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -59,7 +56,7 @@ const Card = < T extends TagName = 'div' >(
 			{ children }
 		</a>
 	) : (
-		React.createElement(
+		createElement(
 			tagName,
 			{ ...props, className: elementClass, ref: forwardedRef },
 			displayAsLink && (
@@ -70,7 +67,7 @@ const Card = < T extends TagName = 'div' >(
 	);
 };
 
-const ForwardedRefCard = React.forwardRef( Card );
+const ForwardedRefCard = forwardRef( Card );
 ForwardedRefCard.displayName = 'Card';
 
-export default React.memo( ForwardedRefCard );
+export default memo( ForwardedRefCard );

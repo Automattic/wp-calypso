@@ -1,40 +1,29 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { get, some, flatMap } from 'lodash';
-import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import TimeSince from 'calypso/components/time-since';
+import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { get, some, flatMap } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import Gravatar from 'calypso/components/gravatar';
-import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
-import { getStreamUrl } from 'calypso/reader/route';
-import PostCommentContent from './post-comment-content';
-import PostCommentForm from './form';
-import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
+import withDimensions from 'calypso/lib/with-dimensions';
+import { getStreamUrl } from 'calypso/reader/route';
+import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
+import { expandComments } from 'calypso/state/comments/actions';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import CommentActions from './comment-actions';
+import CommentEditForm from './comment-edit-form';
+import PostCommentForm from './form';
+import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
-import CommentActions from './comment-actions';
-import Emojify from 'calypso/components/emojify';
-import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import withDimensions from 'calypso/lib/with-dimensions';
-import { expandComments } from 'calypso/state/comments/actions';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './post-comment.scss';
 
 const noop = () => {};
@@ -56,7 +45,7 @@ const noop = () => {};
  *   conversations tool uses a mix depending on the situation.
  */
 
-class PostComment extends React.PureComponent {
+class PostComment extends PureComponent {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -303,11 +292,11 @@ class PostComment extends React.PureComponent {
 				onClick={ this.handleAuthorClick }
 				id={ `comment-${ commentId }` }
 			>
-				<Emojify>{ authorName }</Emojify>
+				{ authorName }
 			</a>
 		) : (
 			<strong className={ className } id={ `comment-${ commentId }` }>
-				<Emojify>{ authorName }</Emojify>
+				{ authorName }
 			</strong>
 		);
 	};

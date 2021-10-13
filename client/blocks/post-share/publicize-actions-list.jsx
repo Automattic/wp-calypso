@@ -1,33 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import getPostSharePublishedActions from 'calypso/state/selectors/get-post-share-published-actions';
-
-import getPostShareScheduledActions from 'calypso/state/selectors/get-post-share-scheduled-actions';
-import QuerySharePostActions from 'calypso/components/data/query-share-post-actions/index.jsx';
-import SocialLogo from 'calypso/components/social-logo';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { SCHEDULED, PUBLISHED } from './constants';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
 import { isEnabled } from '@automattic/calypso-config';
-import { Dialog } from '@automattic/components';
-import { deletePostShareAction } from 'calypso/state/sharing/publicize/publicize-actions/actions';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import SharingPreviewModal from './sharing-preview-modal';
-import Notice from 'calypso/components/notice';
+import { Dialog, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import QuerySharePostActions from 'calypso/components/data/query-share-post-actions/index.jsx';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SocialLogo from 'calypso/components/social-logo';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import getPostSharePublishedActions from 'calypso/state/selectors/get-post-share-published-actions';
+import getPostShareScheduledActions from 'calypso/state/selectors/get-post-share-scheduled-actions';
+import { deletePostShareAction } from 'calypso/state/sharing/publicize/publicize-actions/actions';
+import { SCHEDULED, PUBLISHED } from './constants';
+import SharingPreviewModal from './sharing-preview-modal';
 
 class PublicizeActionsList extends PureComponent {
 	static propTypes = {

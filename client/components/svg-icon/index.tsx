@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import { Assign } from 'utility-types';
 
 interface Props {

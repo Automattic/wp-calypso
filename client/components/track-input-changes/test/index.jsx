@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-import React, { Component } from 'react';
-import TestUtils from 'react-dom/test-utils';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
+import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import TrackInputChanges from '../';
 
 /**

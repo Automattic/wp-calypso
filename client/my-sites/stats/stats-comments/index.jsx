@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import CommentTab from './comment-tab';
-import StatsErrorPanel from '../stats-error';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleContent from '../stats-module/content-text';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import SectionHeader from 'calypso/components/section-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsErrorPanel from '../stats-error';
+import StatsModuleContent from '../stats-module/content-text';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
+import CommentTab from './comment-tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace*/

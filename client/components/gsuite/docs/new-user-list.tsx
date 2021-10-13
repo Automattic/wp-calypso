@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import FormLabel from 'calypso/components/forms/form-label';
 import { CompactCard as Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { useState } from 'react';
+import * as React from 'react';
+import FormLabel from 'calypso/components/forms/form-label';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {
 	areAllUsersValid,

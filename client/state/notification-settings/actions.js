@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	NOTIFICATION_SETTINGS_FETCH,

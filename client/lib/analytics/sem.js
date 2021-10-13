@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { pushEventToTracksQueue } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import debugFactory from 'debug';
-import { pushEventToTracksQueue } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies.
- */
 import { urlParseAmpCompatible } from 'calypso/lib/analytics/utils';
 
 /**

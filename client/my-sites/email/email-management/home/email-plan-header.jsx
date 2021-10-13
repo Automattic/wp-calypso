@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import classnames from 'classnames';
 import { CompactCard } from '@automattic/components';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import MaterialIcon from 'calypso/components/material-icon';
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
-import MaterialIcon from 'calypso/components/material-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
 
 const EmailPlanHeader = ( {

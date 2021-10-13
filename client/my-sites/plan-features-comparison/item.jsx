@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 
 export function PlanFeaturesItem( props ) {

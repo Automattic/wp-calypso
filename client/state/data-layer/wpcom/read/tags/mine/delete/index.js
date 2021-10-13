@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
-import { READER_UNFOLLOW_TAG_REQUEST } from 'calypso/state/reader/action-types';
-import { receiveUnfollowTag as receiveUnfollowTagAction } from 'calypso/state/reader/tags/items/actions';
+import { translate } from 'i18n-calypso';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { translate } from 'i18n-calypso';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { READER_UNFOLLOW_TAG_REQUEST } from 'calypso/state/reader/action-types';
+import { receiveUnfollowTag as receiveUnfollowTagAction } from 'calypso/state/reader/tags/items/actions';
 
 export function requestUnfollow( action ) {
 	return http( {
@@ -27,7 +19,7 @@ export function requestUnfollow( action ) {
 /**
  * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
  *
- * @param  {RemovedTag} apiResponse api response from the unfollow
+ * @param  {object} apiResponse api response from the unfollow
  * @returns {number} the ID of the tag that was removed
  */
 export const fromApi = ( apiResponse ) => {
@@ -52,7 +44,8 @@ export function receiveError( action, error ) {
 	} );
 
 	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( errorText, error ); // eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.error( errorText, error );
 	}
 	return errorNotice( errorText );
 }

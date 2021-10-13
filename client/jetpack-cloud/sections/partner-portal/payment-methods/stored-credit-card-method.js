@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CreditCardFields from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields';
 import CreditCardPayButton from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-pay-button';
 

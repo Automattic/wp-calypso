@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import getSites from 'calypso/state/selectors/get-sites';
 
 const matches = ( item, term, keys ) =>

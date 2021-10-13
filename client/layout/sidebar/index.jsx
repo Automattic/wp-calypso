@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
+import { Children } from 'react';
 import SidebarRegion from './region';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Sidebar = ( { children, onClick, className, ...props } ) => {
-	const hasRegions = React.Children.toArray( children ).some( ( el ) => el.type === SidebarRegion );
+	const hasRegions = Children.toArray( children ).some( ( el ) => el.type === SidebarRegion );
 	const finalClassName = classNames( 'sidebar', className, { 'has-regions': hasRegions } );
 
 	return (

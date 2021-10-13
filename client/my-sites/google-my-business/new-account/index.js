@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
-import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { withEnhancers } from 'calypso/state/utils';
 import { connectGoogleMyBusinessAccount } from 'calypso/state/google-my-business/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { withEnhancers } from 'calypso/state/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class GoogleMyBusinessNewAccount extends Component {

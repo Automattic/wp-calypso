@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 describe( 'isSiteWPForTeams()', () => {

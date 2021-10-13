@@ -1,32 +1,24 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import ExternalLink from 'calypso/components/external-link';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
-import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 class Sitemaps extends Component {
 	static defaultProps = {

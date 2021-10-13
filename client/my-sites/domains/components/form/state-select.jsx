@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import QueryCountryStates from 'calypso/components/data/query-country-states';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { getCountryStates } from 'calypso/state/country-states/selectors';
-import QueryCountryStates from 'calypso/components/data/query-country-states';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
 import Input from './input';
 
 class StateSelect extends PureComponent {

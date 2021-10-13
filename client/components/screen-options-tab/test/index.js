@@ -2,24 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
-import ScreenOptionsTab from '../index';
-import { render as rtlRender } from 'config/testing-library';
-import { reducer as ui } from 'calypso/state/ui/reducer';
 import jetpack from 'calypso/state/jetpack/reducer';
-
-jest.mock( 'calypso/state/preferences/selectors', () => ( {
-	hasReceivedRemotePreferences: jest.fn( () => true ),
-	getPreference: jest.fn( () => true ),
-} ) );
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { render as rtlRender } from 'calypso/test-helpers/config/testing-library';
+import ScreenOptionsTab from '../index';
 
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),

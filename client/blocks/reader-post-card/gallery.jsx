@@ -1,19 +1,10 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { map, take, filter } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
@@ -58,7 +49,7 @@ const PostGallery = ( { post, children, isDiscover } ) => {
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>{ post.title }</Emojify>
+							{ post.title }
 						</a>
 					</h2>
 				</AutoDirection>

@@ -1,39 +1,29 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { createElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { omit } from 'lodash';
-import { localize } from 'i18n-calypso';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import QueryDomainInfo from 'calypso/components/data/query-domain-info';
 import Main from 'calypso/components/main';
-import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
-import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
 import { getSelectedDomain, getTopLevelOfTld } from 'calypso/lib/domains';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import IcannVerification from './icann-verification.jsx';
 import Locked from './locked.jsx';
-import Unlocked from './unlocked.jsx';
 import SelectIpsTag from './select-ips-tag.jsx';
-import TransferProhibited from './transfer-prohibited.jsx';
 import TransferLock from './transfer-lock.jsx';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import QueryDomainInfo from 'calypso/components/data/query-domain-info';
-import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+import TransferProhibited from './transfer-prohibited.jsx';
+import Unlocked from './unlocked.jsx';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class Transfer extends React.Component {
+class Transfer extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
@@ -67,7 +57,7 @@ class Transfer extends React.Component {
 			section = Unlocked;
 		}
 
-		return React.createElement( section, omit( this.props, [ 'children' ] ) );
+		return createElement( section, omit( this.props, [ 'children' ] ) );
 	}
 
 	render() {

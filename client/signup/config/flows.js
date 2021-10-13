@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import stepConfig from './steps';
-import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -53,6 +47,8 @@ function getRedirectDestination( dependencies ) {
 			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
 		) {
 			return dependencies.oauth2_redirect;
+		} else if ( dependencies.redirect ) {
+			return dependencies.redirect;
 		}
 	} catch {
 		return '/';
@@ -61,12 +57,29 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( dependencies ) {
-	if ( 'no-site' === dependencies.siteSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug } ) {
+	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
+	let queryParam = { siteSlug };
+	if ( domainItem ) {
+		// If the user is purchasing a domain then the site's primary url might change from
+		// `siteSlug` to something else during the checkout process, which means the
+		// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
+		// case we use the ID because we know it won't change depending on whether the user
+		// successfully completes the checkout process or not.
+		queryParam = { siteId };
+	}
 
-	return `/home/${ dependencies.siteSlug }`;
+	if ( isEnabled( 'signup/hero-flow' ) ) {
+		return addQueryArgs( queryParam, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
+	}
+
+	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
+		return addQueryArgs( queryParam, '/start/setup-site' );
+	}
+
+	return `/home/${ siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
@@ -83,6 +96,13 @@ function getChecklistThemeDestination( dependencies ) {
 
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
+}
+
+function getDestinationFromIntent( dependencies ) {
+	if ( dependencies.intent === 'write' ) {
+		return `/post/${ dependencies.siteSlug }`;
+	}
+	return getChecklistThemeDestination( dependencies );
 }
 
 function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
@@ -105,6 +125,7 @@ const flows = generateFlows( {
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getImportDestination,
+	getDestinationFromIntent,
 } );
 
 function removeUserStepFromFlow( flow ) {

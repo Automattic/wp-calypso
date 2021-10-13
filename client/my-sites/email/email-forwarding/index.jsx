@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import EmailForwardingPlaceholder from './email-forwarding-placeholder';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import EmailForwardingList from './email-forwarding-list';
-import EmailForwardingAddNew from './email-forwarding-add-new';
-import EmailForwardingDetails from './email-forwarding-details';
-import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
-import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
-import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
-import { emailManagement } from 'calypso/my-sites/email/paths';
 import { CompactCard as Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import Main from 'calypso/components/main';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
 import getEmailForwardingType from 'calypso/state/selectors/get-email-forwarding-type';
 import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import EmailForwardingAddNew from './email-forwarding-add-new';
+import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
+import EmailForwardingDetails from './email-forwarding-details';
+import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
+import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
+import EmailForwardingList from './email-forwarding-list';
+import EmailForwardingPlaceholder from './email-forwarding-placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class EmailForwarding extends Component {

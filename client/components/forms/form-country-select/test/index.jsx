@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
 
 describe( 'FormCountrySelect', () => {

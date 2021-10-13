@@ -1,16 +1,12 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { ACTIVE_PROMOTIONS_REQUEST } from 'calypso/state/action-types';
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestFailureAction,
 	activePromotionsRequestSuccessAction,
 } from 'calypso/state/active-promotions/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * @module state/data-layer/wpcom/active-promotions
@@ -36,7 +32,8 @@ export const requestActivePromotions = ( action ) =>
  * Dispatches returned WordPress.com active promotions data
  *
  * @param {object} action Redux action
- * @param {Array} active_promotions raw data from active promotions API
+ * @param {object} obj
+ * @param {Array} obj.active_promotions raw data from active promotions API
  * @returns {Array<object>} Redux actions
  */
 export const receiveActivePromotions = ( action, { active_promotions } ) => [

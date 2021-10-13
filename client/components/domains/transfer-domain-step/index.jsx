@@ -1,18 +1,27 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import {
+	isDomainBundledWithPlan,
+	isNextDomainFree,
+	hasToUpgradeToPayForADomain,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	checkAuthCode,
 	checkDomainAvailability,
@@ -24,47 +33,29 @@ import {
 	getTld,
 	startInboundTransfer,
 } from 'calypso/lib/domains';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import Notice from 'calypso/components/notice';
+import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
-import HeaderCake from 'calypso/components/header-cake';
-import { Button } from '@automattic/components';
-import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
-import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import QueryPlans from 'calypso/components/data/query-plans';
-import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
-import {
-	isDomainBundledWithPlan,
-	isNextDomainFree,
-	hasToUpgradeToPayForADomain,
-} from 'calypso/lib/cart-values/cart-items';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import TransferDomainPrecheck from './transfer-domain-precheck';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class TransferDomainStep extends React.Component {
+class TransferDomainStep extends Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,
@@ -455,7 +446,7 @@ class TransferDomainStep extends React.Component {
 			<div className={ 'transfer-domain-step__domain-availability' }>
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
-					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
+					isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					onButtonClick={ this.registerSuggestedDomain }
@@ -730,4 +721,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( withShoppingCart( localize( TransferDomainStep ) ) );
+)( withShoppingCart( withCartKey( localize( TransferDomainStep ) ) ) );

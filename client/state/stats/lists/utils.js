@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { sortBy, camelCase, mapKeys, get, filter, map, concat, flatten } from 'lodash';
 import { translate, getLocaleSlug } from 'i18n-calypso';
+import { sortBy, camelCase, mapKeys, get, filter, map, concat, flatten } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
 /**

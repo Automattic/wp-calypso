@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
@@ -8,7 +5,7 @@ const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
 export const ADDING_USERS = `${ root }/adding-users`;
-export const AUTO_RENEWAL = `${ root }/auto-renewal`;
+export const AUTO_RENEWAL = `${ root }/manage-purchases/#automatic-renewal`;
 export const BANDPAGE_WIDGET = `${ root }/widgets/bandpage-widget`;
 export const CATEGORIES_VS_TAGS = `${ root }/posts/categories-vs-tags`;
 export const CHANGE_NAME_SERVERS = `${ root }/domains/custom-dns/#changing-name-servers-to-point-to-wordpress-com`;
@@ -42,6 +39,7 @@ export const INCOMING_DOMAIN_TRANSFER = `${ root }/incoming-domain-transfer/`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#unlock`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#auth-code`;
 export const INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID = `${ root }/incoming-domain-transfer/#auth-code-invalid`;
+export const INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS = `${ root }/incoming-domain-transfer/#which-tl-ds-extensions-can-i-transfer-to-word-press-com`;
 export const EDIT_PAYMENT_DETAILS = `${ root }/payment/#edit-payment-details`;
 export const EMAIL_FORWARDING = `${ root }/email-forwarding`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;
@@ -75,7 +73,7 @@ export const MANAGE_PURCHASES_AUTOMATIC_RENEWAL = `${ root }/manage-purchases/#a
 export const MANAGE_PURCHASES_FAQ_CANCELLING = `${ root }/manage-purchases/#cancel-a-purchase`;
 export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
 export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`;
-export const MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS = `${ root }/domains/map-existing-domain/#using-a-records`;
+export const MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS = `${ root }/domains/map-existing-domain/#mapping-with-our-a-records`;
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
 export const MAP_SUBDOMAIN_WITH_CNAME_RECORDS = `${ root }/domains/map-subdomain/#adding-cname-records-with-your-registrar`;
 export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/map-existing-domain/#change-your-domains-name-servers`;

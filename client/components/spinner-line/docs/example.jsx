@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import SpinnerLine from 'calypso/components/spinner-line';
 
 export default class SpinnerLineExample extends PureComponent {

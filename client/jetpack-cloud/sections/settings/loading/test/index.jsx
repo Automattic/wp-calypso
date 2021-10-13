@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
+import { render } from 'calypso/test-helpers/config/testing-library';
 import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencies
- */
-import { render } from 'config/testing-library';
 import AdvancedCredentialsLoadingPlaceholder from '../index';
 
 describe( 'AdvancedCredentialsLoadingPlaceholder', () => {

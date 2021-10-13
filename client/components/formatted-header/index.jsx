@@ -1,19 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function FormattedHeader( {

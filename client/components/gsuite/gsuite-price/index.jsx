@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import Badge from 'calypso/components/badge';
 import { getAnnualPrice, getMonthlyPrice } from 'calypso/lib/gsuite';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

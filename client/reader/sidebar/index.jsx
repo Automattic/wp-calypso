@@ -1,53 +1,42 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderSidebarHelper from './helper';
-import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarTags from './reader-sidebar-tags';
-import ReaderSidebarOrganizations from './reader-sidebar-organizations';
-import ReaderSidebarNudges from './reader-sidebar-nudges';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
+import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
+import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarTags,
 } from 'calypso/state/reader-ui/sidebar/actions';
 import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import ReaderSidebarPromo from './promo';
-import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
-import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
-import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import { isEnabled } from '@automattic/calypso-config';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import ReaderSidebarHelper from './helper';
+import ReaderSidebarPromo from './promo';
+import ReaderSidebarLists from './reader-sidebar-lists';
+import ReaderSidebarNudges from './reader-sidebar-nudges';
+import ReaderSidebarOrganizations from './reader-sidebar-organizations';
+import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
+import './style.scss';
 
 const A8CConversationsIcon = () => (
 	<svg
@@ -62,7 +51,7 @@ const A8CConversationsIcon = () => (
 	</svg>
 );
 
-export class ReaderSidebar extends React.Component {
+export class ReaderSidebar extends Component {
 	state = {};
 
 	componentDidMount() {
@@ -150,95 +139,8 @@ export class ReaderSidebar extends React.Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_like_activity_clicked' );
 	};
 
-	renderForRegularUsers() {
-		const { path, translate } = this.props;
-		return (
-			<SidebarMenu>
-				<QueryReaderLists />
-				<QueryReaderTeams />
-				<QueryReaderOrganizations />
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
-						'sidebar-streams__following': true,
-					} ) }
-					label={ translate( 'Followed Sites' ) }
-					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-					materialIcon="check_circle"
-					link="/read"
-				/>
-
-				<li>
-					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-				</li>
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
-						'sidebar-streams__conversations': true,
-					} ) }
-					label={ translate( 'Conversations' ) }
-					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					materialIcon="question_answer"
-					link="/read/conversations"
-				/>
-
-				{ isDiscoverEnabled() && (
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
-							'sidebar-streams__discover': true,
-						} ) }
-						label={ translate( 'Discover' ) }
-						onNavigate={ this.handleReaderSidebarDiscoverClicked }
-						icon="my-sites"
-						link="/discover"
-					/>
-				) }
-
-				<SidebarItem
-					label={ translate( 'Search' ) }
-					onNavigate={ this.handleReaderSidebarSearchClicked }
-					materialIcon="search"
-					link="/read/search"
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
-						'sidebar-streams__search': true,
-					} ) }
-				/>
-
-				<SidebarItem
-					label={ translate( 'My Likes' ) }
-					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					materialIcon="star_border"
-					link="/activities/likes"
-					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
-						'sidebar-activity__likes': true,
-					} ) }
-				/>
-
-				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
-					<ReaderSidebarLists
-						lists={ this.props.subscribedLists }
-						path={ path }
-						isOpen={ this.props.isListsOpen }
-						onClick={ this.props.toggleListsVisibility }
-						currentListOwner={ this.state.currentListOwner }
-						currentListSlug={ this.state.currentListSlug }
-					/>
-				) }
-
-				<ReaderSidebarTags
-					tags={ this.props.followedTags }
-					path={ path }
-					isOpen={ this.props.isTagsOpen }
-					onClick={ this.props.toggleTagsVisibility }
-					onFollowTag={ this.highlightNewTag }
-					currentTag={ this.state.currentTag }
-				/>
-			</SidebarMenu>
-		);
-	}
-
-	renderForAutomattic() {
-		const { path, translate } = this.props;
+	renderSidebar() {
+		const { path, translate, teams } = this.props;
 		return (
 			<SidebarMenu>
 				<QueryReaderLists />
@@ -284,16 +186,17 @@ export class ReaderSidebar extends React.Component {
 					materialIcon="question_answer"
 					link="/read/conversations"
 				/>
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
-						'sidebar-streams__conversations': true,
-					} ) }
-					label="A8C Conversations"
-					onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-					link="/read/conversations/a8c"
-					customIcon={ <A8CConversationsIcon /> }
-				/>
+				{ isAutomatticTeamMember( teams ) && (
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
+							'sidebar-streams__conversations': true,
+						} ) }
+						label="A8C Conversations"
+						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+						link="/read/conversations/a8c"
+						customIcon={ <A8CConversationsIcon /> }
+					/>
+				) }
 
 				<SidebarItem
 					label={ translate( 'My Likes' ) }
@@ -329,14 +232,11 @@ export class ReaderSidebar extends React.Component {
 	}
 
 	render() {
-		const { teams } = this.props;
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 					<ReaderSidebarNudges />
-
-					{ isAutomatticTeamMember( teams ) && this.renderForAutomattic() }
-					{ ! isAutomatticTeamMember( teams ) && this.renderForRegularUsers() }
+					{ this.renderSidebar() }
 				</SidebarRegion>
 
 				<ReaderSidebarPromo />

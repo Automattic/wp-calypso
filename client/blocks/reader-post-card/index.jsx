@@ -1,54 +1,44 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { truncate, get } from 'lodash';
-import classnames from 'classnames';
-import ReactDom from 'react-dom';
-import closest from 'component-closest';
-
-/**
- * Internal Dependencies
- */
 import { Card } from '@automattic/components';
-import DisplayTypes from 'calypso/state/reader/posts/display-types';
-import * as stats from 'calypso/reader/stats';
-import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import PostByline from './byline';
-import GalleryPost from './gallery';
-import PhotoPost from './photo';
-import StandardPost from './standard';
-import ConversationPost from './conversation-post';
-import FollowButton from 'calypso/reader/follow-button';
+import classnames from 'classnames';
+import closest from 'component-closest';
+import { truncate, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
 import {
 	getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'calypso/reader/discover/helper';
-import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
-import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
-import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import FollowButton from 'calypso/reader/follow-button';
 import {
 	canBeMarkedAsSeen,
 	getDefaultSeenValue,
 	isEligibleForUnseen,
 } from 'calypso/reader/get-helpers';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import * as stats from 'calypso/reader/stats';
+import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
+import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import PostByline from './byline';
+import ConversationPost from './conversation-post';
+import GalleryPost from './gallery';
+import PhotoPost from './photo';
+import StandardPost from './standard';
+
+import './style.scss';
 
 const noop = () => {};
 
-class ReaderPostCard extends React.Component {
+class ReaderPostCard extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		post: PropTypes.object.isRequired,

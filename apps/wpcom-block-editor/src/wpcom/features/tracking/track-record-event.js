@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { omitBy } from 'lodash';
-import debug from 'debug';
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import debug from 'debug';
+import { omitBy } from 'lodash';
 import { isE2ETest } from '../../../utils';
 import { getEditorType } from '../utils';
 
@@ -64,7 +57,8 @@ export default ( eventName, eventProperties ) => {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
-				console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+				//eslint-disable-next-line no-console
+				console.error( errorMessage, eventProperties );
 				return;
 			}
 

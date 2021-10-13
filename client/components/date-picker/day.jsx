@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
 const noop = () => {};
 
 const handleDayMouseEnter = ( date, modifiers, onMouseEnter = noop ) => ( event ) => {

@@ -1,4 +1,3 @@
-// eslint-disable-next-line wpcalypso/import-docblock
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 export function mockDomainSuggestion(
@@ -49,7 +48,6 @@ export function isGoodDefaultDomainQuery( domainQuery: string ): boolean {
  * @param {boolean} [options.isSignup=false] Flag to indicate that we're in a signup context
  * @param {boolean} [options.isDomainOnly=false] Flag to indicate that we're in a domain-only context
  * @param {boolean} [options.isPremium=false] Flag to show premium domains.
- *
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
 interface DomainSuggestionsVendorOptions {

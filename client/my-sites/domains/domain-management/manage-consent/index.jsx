@@ -1,27 +1,19 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedDomain, requestGdprConsentManagementLink } from 'calypso/lib/domains';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
 import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
-import { getSelectedDomain, requestGdprConsentManagementLink } from 'calypso/lib/domains';
-import SectionHeader from 'calypso/components/section-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-class ManageConsent extends React.Component {
+class ManageConsent extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FC, useCallback, useMemo, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';

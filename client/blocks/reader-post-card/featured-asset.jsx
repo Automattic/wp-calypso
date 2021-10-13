@@ -1,14 +1,6 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 
 const FeaturedAsset = ( {
 	canonicalMedia,

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import HappinessSupport from 'calypso/components/happiness-support';
 
 export const HappinessSupportCard = ( {

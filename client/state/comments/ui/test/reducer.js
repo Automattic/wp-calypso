@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,

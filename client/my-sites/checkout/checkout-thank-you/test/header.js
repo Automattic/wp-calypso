@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { CheckoutThankYouHeader } from '../header';
 
 jest.unmock( '@automattic/calypso-products' );

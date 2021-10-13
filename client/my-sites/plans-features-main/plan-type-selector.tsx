@@ -1,28 +1,23 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import CSSTransition from 'react-transition-group/CSSTransition';
-import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { Primitive } from 'utility-types';
-import { omit } from 'lodash';
-import styled from '@emotion/styled';
 
-/**
- * Internal dependencies
- */
-import SegmentedControl from 'calypso/components/segmented-control';
-import Popover from 'calypso/components/popover';
-import { addQueryArgs } from 'calypso/lib/url';
 import {
 	getYearlyPlanByMonthly,
 	isWpComPlan,
 	plansLink,
 	isMonthly,
 } from '@automattic/calypso-products';
+import { Popover } from '@automattic/components';
+import styled from '@emotion/styled';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { omit } from 'lodash';
+import { useState } from 'react';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import CSSTransition from 'react-transition-group/CSSTransition';
+import { Primitive } from 'utility-types';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { addQueryArgs } from 'calypso/lib/url';
 import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 type Props = {

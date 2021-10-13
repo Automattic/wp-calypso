@@ -1,35 +1,24 @@
-/**
- * External dependencies
- */
-import { filter, find } from 'lodash';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import titleCase from 'to-title-case';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { Card } from '@automattic/components';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
+import { localize } from 'i18n-calypso';
+import { filter, find } from 'lodash';
+import { createRef, Component } from 'react';
+import titleCase from 'to-title-case';
 import ExternalLink from 'calypso/components/external-link';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PluginSections extends React.Component {
+class PluginSections extends Component {
 	static displayName = 'PluginSections';
 
 	constructor( props ) {
 		super( props );
-		this.descriptionContent = React.createRef();
+		this.descriptionContent = createRef();
 	}
 
 	state = {

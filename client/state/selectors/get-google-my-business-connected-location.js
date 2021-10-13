@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { filter, last } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 
 /**

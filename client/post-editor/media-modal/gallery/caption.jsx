@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { updateMedia } from 'calypso/state/media/thunks';
 
-class EditorMediaModalGalleryCaption extends React.Component {
+class EditorMediaModalGalleryCaption extends Component {
 	static displayName = 'EditorMediaModalGalleryCaption';
 
 	static propTypes = {

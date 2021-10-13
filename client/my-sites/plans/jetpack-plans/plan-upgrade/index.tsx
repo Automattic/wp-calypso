@@ -1,32 +1,17 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getItemSlugByDuration } from './utils';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from '../constants';
 import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
 import slugToSelectorProduct from '../slug-to-selector-product';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-/**
- * Type dependencies
- */
-import type { PlanRecommendation } from './types';
+import { getItemSlugByDuration } from './utils';
 import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
+import type { PlanRecommendation } from './types';
+import './style.scss';
 
 type Props = {
 	planRecommendation: PlanRecommendation;

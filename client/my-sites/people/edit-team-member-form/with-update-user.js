@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { useTranslate } from 'i18n-calypso';
 
 const withUpdateUser = ( Component ) => ( props ) => {
 	const { siteId, user } = props;

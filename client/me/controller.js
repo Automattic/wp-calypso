@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import SidebarComponent from 'calypso/me/sidebar';
+import page from 'page';
+import { createElement } from 'react';
 import AppsComponent from 'calypso/me/get-apps';
+import SidebarComponent from 'calypso/me/sidebar';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
 export function sidebar( context, next ) {
-	context.secondary = React.createElement( SidebarComponent, {
+	context.secondary = createElement( SidebarComponent, {
 		context: context,
 	} );
 
@@ -26,7 +19,7 @@ export function profile( context, next ) {
 
 	const ProfileComponent = require( 'calypso/me/profile' ).default;
 
-	context.primary = React.createElement( ProfileComponent, {
+	context.primary = createElement( ProfileComponent, {
 		path: context.path,
 	} );
 	next();
@@ -36,7 +29,7 @@ export function apps( context, next ) {
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) );
 
-	context.primary = React.createElement( AppsComponent, {
+	context.primary = createElement( AppsComponent, {
 		path: context.path,
 	} );
 	next();

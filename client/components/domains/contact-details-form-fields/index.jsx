@@ -1,47 +1,36 @@
-/**
- * External dependencies
- *
- */
-import PropTypes from 'prop-types';
-import React, { Component, createElement } from 'react';
-import { connect } from 'react-redux';
-import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getCountryStates } from 'calypso/state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { get, deburr, kebabCase, pick, includes, isEqual, isEmpty, camelCase } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, createElement } from 'react';
+import { connect } from 'react-redux';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormButton from 'calypso/components/forms/form-button';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
-import formState from 'calypso/lib/form-state';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
-import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
-import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
+import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-import classNames from 'classnames';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { getCountryPostalCodeSupport } from './helper';
+
+import './style.scss';
 
 const noop = () => {};
 

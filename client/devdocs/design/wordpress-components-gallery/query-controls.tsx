@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { QueryControls } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 

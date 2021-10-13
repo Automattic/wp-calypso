@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
 function OrderStep() {
 	return (
 		<div className="purchase-modal__step is-placeholder">

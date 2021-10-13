@@ -1,22 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import SiteIcon from 'calypso/blocks/site-icon';
 import { getPost } from 'calypso/state/posts/selectors';
 import { getSite, getSiteTitle } from 'calypso/state/sites/selectors';
-import SiteIcon from 'calypso/blocks/site-icon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function PostTypeSiteInfo( { site, siteTitle } ) {

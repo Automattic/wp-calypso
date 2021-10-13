@@ -1,40 +1,33 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DomainStatus from '../card/domain-status';
-import { isExpiringSoon } from 'calypso/lib/domains/utils';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
+import { isExpiringSoon } from 'calypso/lib/domains/utils';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import DomainStatus from '../card/domain-status';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
+import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
-import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
-class MappedDomainType extends React.Component {
+class MappedDomainType extends Component {
 	renderSettingUpNameserversAndARecords() {
 		const { domain, translate } = this.props;
 		if ( this.props.isJetpackSite && ! this.props.isSiteAutomatedTransfer ) {
@@ -78,7 +71,7 @@ class MappedDomainType extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<div className="mapped-domain-type__main-content">
 					<p>{ setupInstructionsMessage }</p>
 					<DomainMappingInstructions
@@ -91,7 +84,7 @@ class MappedDomainType extends React.Component {
 					/>
 				</div>
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

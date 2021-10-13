@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import SectionHeader from 'calypso/components/section-header';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import wp from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const NOTICE_ID = 'request-dpa-notice';
 
 const DPA = () => {
-	const [ isLoading, setLoading ] = React.useState( false );
+	const [ isLoading, setLoading ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

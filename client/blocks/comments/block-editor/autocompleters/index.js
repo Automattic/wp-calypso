@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import makeUserCompleter from './user';
 import makeXPostCompleter from './xpost';
 

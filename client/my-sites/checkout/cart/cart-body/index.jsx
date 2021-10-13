@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { forwardRef } from 'react';
 import CartItems from 'calypso/my-sites/checkout/cart/cart-items';
 import CartTotal from 'calypso/my-sites/checkout/cart/cart-total';
 
-const CartBody = React.forwardRef( ( props, ref ) => {
+const CartBody = forwardRef( ( props, ref ) => {
 	const { cart, selectedSite, collapse = false } = props;
 
 	return (

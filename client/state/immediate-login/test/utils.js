@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { last } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { createPathWithoutImmediateLoginInformation, createImmediateLoginMessage } from '../utils';
 import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
+import { createPathWithoutImmediateLoginInformation, createImmediateLoginMessage } from '../utils';
 
 describe( 'immediate-login/utils', () => {
 	describe( 'createPathWithoutImmediateLoginInformation', () => {

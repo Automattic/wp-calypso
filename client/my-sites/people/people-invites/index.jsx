@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import PropTypes from 'prop-types';
+import { PureComponent, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
-import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import { Card, Button, Dialog } from '@automattic/components';
-import QuerySiteInvites from 'calypso/components/data/query-site-invites';
-import InvitesListEnd from './invites-list-end';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { deleteInvites } from 'calypso/state/invites/actions';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -32,15 +21,15 @@ import {
 	getNumberOfInvitesFoundForSite,
 	isDeletingAnyInvite,
 } from 'calypso/state/invites/selectors';
-import { deleteInvites } from 'calypso/state/invites/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import InvitesListEnd from './invites-list-end';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PeopleInvites extends React.PureComponent {
+class PeopleInvites extends PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 	};
@@ -156,7 +145,7 @@ class PeopleInvites extends React.PureComponent {
 		);
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ hasPendingInvites && (
 					<div className="people-invites__pending">
 						<PeopleListSectionHeader label={ pendingLabel } site={ site } />
@@ -187,7 +176,7 @@ class PeopleInvites extends React.PureComponent {
 						found={ totalInvitesFound }
 					/>
 				) }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -204,7 +193,7 @@ class PeopleInvites extends React.PureComponent {
 		];
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
 					{ translate( 'Clear all accepted' ) }
 				</Button>
@@ -212,7 +201,7 @@ class PeopleInvites extends React.PureComponent {
 					<h1>{ translate( 'Clear All Accepted' ) }</h1>
 					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
 				</Dialog>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

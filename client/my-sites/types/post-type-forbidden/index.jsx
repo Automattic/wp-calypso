@@ -1,20 +1,7 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-
-/**
- * Image dependencies
- */
+import PropTypes from 'prop-types';
 import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
+import EmptyContent from 'calypso/components/empty-content';
 
 function PostTypeForbidden( { translate } ) {
 	return (

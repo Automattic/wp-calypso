@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { PureComponent } from 'react';
 
-class PostPlaceholder extends React.PureComponent {
+class PostPlaceholder extends PureComponent {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (

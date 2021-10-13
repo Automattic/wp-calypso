@@ -1,37 +1,31 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
+import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
+import Notice from 'calypso/components/notice';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { requestEligibility } from 'calypso/state/automated-transfer/actions';
+import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
 	getProductsList,
 	isProductsListFetching,
 	getProductDisplayCost,
 } from 'calypso/state/products-list/selectors';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
-import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchaseArea from './purchase-area';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
-import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
-import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
-import { requestEligibility } from 'calypso/state/automated-transfer/actions';
-import Notice from 'calypso/components/notice';
-import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
-import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
-import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
 
 interface MarketplacePluginDetailsInterface {
 	productGroupSlug: keyof IProductGroupCollection;
@@ -46,7 +40,8 @@ function MarketplacePluginDetails( {
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
 
 	const translate = useTranslate();
-	const { replaceProductsInCart } = useShoppingCart();
+	const cartKey = useCartKey();
+	const { replaceProductsInCart } = useShoppingCart( cartKey );
 	const products = useSelector( getProductsList );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );

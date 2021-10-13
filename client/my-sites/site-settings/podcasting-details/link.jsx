@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
-import PodcastFeedUrl from './feed-url';
-import PodcastingPrivateSiteMessage from './private-site';
-import PodcastingSupportLink from './support-link';
-import PodcastingPublishNotice from './publish-notice';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getTerm } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PodcastFeedUrl from './feed-url';
+import PodcastingPrivateSiteMessage from './private-site';
+import PodcastingPublishNotice from './publish-notice';
+import PodcastingSupportLink from './support-link';
 
 class PodcastingLink extends Component {
 	render() {

@@ -1,18 +1,13 @@
-/**
- * External dependencies
- */
-import React, { useRef, useState, useEffect } from 'react';
-import { find } from 'lodash';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import { useRef, useState, useEffect } from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import CountryFlag from 'calypso/components/phone-input/country-flag';
+import { countries } from 'calypso/components/phone-input/data';
 import {
 	formatNumber,
 	toIcannFormat,
@@ -21,12 +16,7 @@ import {
 	getUpdatedCursorPosition,
 	MIN_LENGTH_TO_FORMAT,
 } from 'calypso/components/phone-input/phone-number';
-import CountryFlag from 'calypso/components/phone-input/country-flag';
-import { countries } from 'calypso/components/phone-input/data';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:phone-input' );

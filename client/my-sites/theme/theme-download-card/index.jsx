@@ -1,23 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ThemeDownloadCard extends React.PureComponent {
+class ThemeDownloadCard extends PureComponent {
 	static propTypes = {
 		href: PropTypes.string,
 	};

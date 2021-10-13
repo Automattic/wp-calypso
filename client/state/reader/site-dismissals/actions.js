@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { READER_DISMISS_POST, READER_DISMISS_SITE } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/data-layer/wpcom/me/dismiss/sites/new';

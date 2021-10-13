@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { sample } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { sample } from 'lodash';
+import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 

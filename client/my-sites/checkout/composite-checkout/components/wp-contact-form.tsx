@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import styled from '@emotion/styled';
 import {
 	FormStatus,
 	useSelect,
 	useFormStatus,
 	useIsStepActive,
 } from '@automattic/composite-checkout';
-import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
+import styled from '@emotion/styled';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
+import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem } from '../types/country-list-item';
+import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;

@@ -1,16 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import PlanStorage from '../index';
-import PlanStorageBar from '../bar';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_BUSINESS,
@@ -18,8 +5,12 @@ import {
 	PLAN_PERSONAL,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
+import { get } from 'lodash';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import PlanStorageBar from '../bar';
+import PlanStorage from '../index';
 
 const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	const mediaStorage = {

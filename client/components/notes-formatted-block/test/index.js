@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { render, shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import FormattedBlock, { FormattedBlockRenderer } from '..';
 
 describe( 'FormattedBlock', () => {

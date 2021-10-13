@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { useState, useRef } from 'react';
+import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { useState, useRef } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 
 function LanguagePickerItemTooltip( { children } ) {

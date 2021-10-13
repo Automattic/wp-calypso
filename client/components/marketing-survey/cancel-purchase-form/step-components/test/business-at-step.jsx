@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { stub } from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { BusinessATStep } from '../business-at-step';
 
 const noop = () => {};

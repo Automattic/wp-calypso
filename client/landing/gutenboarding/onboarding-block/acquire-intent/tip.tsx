@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { SVG, Path } from '@wordpress/components';
 
 const tip = (

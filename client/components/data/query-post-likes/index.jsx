@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { Interval } from 'calypso/lib/interval';
 import { requestPostLikes } from 'calypso/state/posts/likes/actions';
 import { getPostLikeLastUpdated } from 'calypso/state/posts/selectors/get-post-like-last-updated';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
-import { Interval } from 'calypso/lib/interval';
 
 class QueryPostLikes extends Component {
 	static propTypes = {

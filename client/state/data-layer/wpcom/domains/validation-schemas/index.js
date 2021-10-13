@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { get, flatMap } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'calypso/state/action-types';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'calypso/state/action-types';
 import { addValidationSchemas } from 'calypso/state/domains/management/validation-schemas/actions';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Convert an application level request action for domain contact information

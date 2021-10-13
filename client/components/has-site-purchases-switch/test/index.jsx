@@ -2,19 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencides
- */
-import { render as rtlRender, screen } from 'config/testing-library';
-import HasSitePurchasesSwitch from '../index';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
+import { render as rtlRender, screen } from 'calypso/test-helpers/config/testing-library';
+import HasSitePurchasesSwitch from '../index';
 
+import '@testing-library/jest-dom/extend-expect';
 jest.mock( 'calypso/components/data/query-site-purchases', () => () => <p>Query</p> );
 
 const siteId = 1;

@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function MySitesSidebarNavigation( { site } ) {

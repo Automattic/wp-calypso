@@ -27,6 +27,20 @@ module.exports = {
 				step: false,
 			},
 		},
+		{
+			files: [ 'specs/**/*' ],
+			rules: {
+				// We use jest-runner-groups to run spec suites, and these involve a custom doc header tag.
+				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'group' ] } ],
+			},
+		},
+		{
+			files: [ 'specs/specs-playwright/shared-specs/**/*' ],
+			rules: {
+				// This directory is used to create shared specs that can be re-used in multiple places.
+				'jest/no-export': 'off',
+			},
+		},
 	],
 	rules: {
 		'import/no-nodejs-modules': 'off',

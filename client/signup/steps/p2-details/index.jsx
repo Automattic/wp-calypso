@@ -1,23 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
-import { login } from 'calypso/lib/paths';
-import { getStepUrl } from 'calypso/signup/utils';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
-/**
- * Style dependencies
- */
+import { login } from 'calypso/lib/paths';
+import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import './style.scss';
 
 function getRedirectToAfterLoginUrl( { flowName } ) {
@@ -25,7 +13,12 @@ function getRedirectToAfterLoginUrl( { flowName } ) {
 }
 
 function getLoginLink( { flowName, locale } ) {
-	return login( { redirectTo: getRedirectToAfterLoginUrl( { flowName } ), locale } );
+	return login( {
+		redirectTo: getRedirectToAfterLoginUrl( { flowName } ),
+		locale,
+		signupUrl: '/start/p2/user',
+		from: 'p2',
+	} );
 }
 
 function P2Details( {
@@ -47,7 +40,7 @@ function P2Details( {
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			headerText={ translate( "We're almost finished! Your P2 will be:" ) }
+			headerText={ translate( "We're almost finished! Your P2 workspace will be:" ) }
 		>
 			<div className="p2-details">
 				<div className="p2-details__site-part">

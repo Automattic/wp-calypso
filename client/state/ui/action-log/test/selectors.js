@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getActionLog, getLastAction } from '../selectors';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
+import { getActionLog, getLastAction } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( 'getActionLog', () => {

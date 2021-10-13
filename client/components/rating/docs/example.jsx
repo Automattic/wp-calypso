@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import Rating from 'calypso/components/rating';
 
-export default class RatingExample extends React.PureComponent {
+export default class RatingExample extends PureComponent {
 	static displayName = 'Rating';
 
 	render() {

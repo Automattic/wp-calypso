@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import ReactDom from 'react-dom';
-import { filter, forEach } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { loadScript } from '@automattic/load-script';
-import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
+import { filter, forEach } from 'lodash';
+import { Children, PureComponent } from 'react';
+import ReactDom from 'react-dom';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 
 const noop = () => {};
 const debug = debugFactory( 'calypso:components:embed-container' );
@@ -226,6 +218,6 @@ export default class EmbedContainer extends PureComponent {
 	}
 
 	render() {
-		return React.Children.only( this.props.children );
+		return Children.only( this.props.children );
 	}
 }

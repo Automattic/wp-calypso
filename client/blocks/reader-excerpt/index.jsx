@@ -1,18 +1,6 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ReaderExcerpt = ( { post, isDiscover } ) => {
@@ -25,12 +13,10 @@ const ReaderExcerpt = ( { post, isDiscover } ) => {
 
 	return (
 		<AutoDirection>
-			<Emojify>
-				<div
-					className="reader-excerpt__content reader-excerpt"
-					dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
-				/>
-			</Emojify>
+			<div
+				className="reader-excerpt__content reader-excerpt"
+				dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
+			/>
 		</AutoDirection>
 	);
 };

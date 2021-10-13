@@ -1,19 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleLoginButton from 'calypso/components/social-buttons/google';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { InfoNotice } from 'calypso/blocks/global-notice';
+import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { login } from 'calypso/lib/paths';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	loginSocialUser,
 	createSocialUser,
@@ -25,15 +22,7 @@ import {
 	getRedirectToOriginal,
 	isSocialAccountCreating,
 } from 'calypso/state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import { InfoNotice } from 'calypso/blocks/global-notice';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { login } from 'calypso/lib/paths';
 
-/**
- * Style dependencies
- */
 import './social.scss';
 
 class SocialLoginForm extends Component {
@@ -229,27 +218,29 @@ class SocialLoginForm extends Component {
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
-					<GoogleLoginButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( 'google' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
-					/>
+					<div className=" login__social-buttons-container">
+						<GoogleLoginButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUrl( 'google' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+							socialServiceResponse={
+								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
+							}
+						/>
 
-					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ this.getRedirectUrl( 'apple' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
-					/>
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxModeApple }
+							redirectUri={ this.getRedirectUrl( 'apple' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+							socialServiceResponse={
+								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+							}
+						/>
+					</div>
 
 					{ this.renderSocialTos() }
 				</div>

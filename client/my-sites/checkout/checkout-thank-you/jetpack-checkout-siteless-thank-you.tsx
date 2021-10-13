@@ -1,51 +1,39 @@
-/**
- * External dependencies
- */
-import React, { FC, useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
-import classNames from 'classnames';
-import { Button, Card } from '@automattic/components';
-import { openPopupWidget } from 'react-calendly';
-
-/**
- * Internal dependencies
- */
-import { resemblesUrl } from 'calypso/lib/url';
-import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import { FC, useState, useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
-import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryProducts from 'calypso/components/data/query-products-list';
+import { addQueryArgs, resemblesUrl } from 'calypso/lib/url';
+import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import {
+	isProductsListFetching as getIsProductListFetching,
+	getProductName,
+} from 'calypso/state/products-list/selectors';
+import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 
-/**
- * Type dependencies
- */
-import type { UserData } from 'calypso/lib/user/user';
 interface Props {
-	forScheduling: boolean;
 	productSlug: string | 'no_product';
 	receiptId?: number;
+	source?: string;
+	jetpackTemporarySiteId?: number;
 }
 
 const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
-	forScheduling,
 	productSlug,
 	receiptId = 0,
+	source = 'onboarding-calypso-ui',
+	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -55,9 +43,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
-
-	const calendlyUrl = getCalendlyUrl();
-	const currentUser = useSelector( ( state ) => getCurrentUser( state ) ) as UserData;
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
@@ -106,55 +91,42 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
-			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
-		},
-		[ siteInput, dispatch, translate, productSlug, receiptId ]
-	);
-
-	const onScheduleClick = useCallback( () => {
-		if ( calendlyUrl !== null ) {
 			dispatch(
-				recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
-					product_slug: productSlug,
-				} )
+				requestUpdateJetpackCheckoutSupportTicket(
+					siteUrl,
+					receiptId,
+					source,
+					jetpackTemporarySiteId
+				)
 			);
-			openPopupWidget( {
-				url: calendlyUrl,
-				pageSettings: {
-					// --studio-jetpack-green
-					primaryColor: '069e08',
-				},
-				prefill: {
-					email: currentUser?.email,
-					name: currentUser?.display_name,
-				},
-			} );
-		}
-	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
+		},
+		[ siteInput, dispatch, translate, productSlug, receiptId, source, jetpackTemporarySiteId ]
+	);
 
 	useEffect( () => {
 		if ( supportTicketStatus === 'success' ) {
-			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+			const thankYouCompletedUrl = addQueryArgs(
+				{
+					siteId: jetpackTemporarySiteId,
+					receiptId,
+				},
+				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
+			);
+			page( thankYouCompletedUrl );
 		} else if ( supportTicketStatus === 'failed' ) {
 			setError(
 				translate( 'There was a problem submitting your website address, please try again.' )
 			);
 		}
-	}, [ supportTicketStatus, productSlug, translate ] );
-
-	useEffect( () => {
-		if ( forScheduling ) {
-			onScheduleClick();
-		}
-		/* this effect is used in the the style of a `useMountEffect` */
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ jetpackTemporarySiteId, receiptId, supportTicketStatus, productSlug, translate ] );
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
 			<PageViewTracker
-				path="/checkout/jetpack/thank-you/no-site/:product"
-				title="Checkout > Jetpack Siteless Thank You"
+				options={ { useJetpackGoogleAnalytics: true } }
+				path={ '/checkout/jetpack/thank-you/no-site/:product' }
 				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Siteless Thank You"
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">
@@ -261,20 +233,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 						</div>
 					) }
 				</div>
-				{ calendlyUrl !== null && (
-					<div className="jetpack-checkout-siteless-thank-you__card-footer">
-						<div>
-							<h2>{ translate( 'Do you need help?' ) }</h2>
-							<p>{ translate( 'Setup Jetpack with the help of our Happiness Engineers.' ) }</p>
-							<Button
-								className="jetpack-checkout-siteless-thank-you__button"
-								onClick={ onScheduleClick }
-							>
-								{ translate( 'Schedule a 15 minute call now.' ) }
-							</Button>
-						</div>
-					</div>
-				) }
 			</Card>
 		</Main>
 	);

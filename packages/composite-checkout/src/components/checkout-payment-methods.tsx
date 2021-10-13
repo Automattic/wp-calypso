@@ -1,10 +1,11 @@
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import * as React from 'react';
 import joinClasses from '../lib/join-classes';
-import styled from '../lib/styled';
 import {
 	useAllPaymentMethods,
 	usePaymentMethod,

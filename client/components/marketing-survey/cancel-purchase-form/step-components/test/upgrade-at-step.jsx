@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import { stub } from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { UpgradeATStep } from '../upgrade-at-step';
-import { Button } from '@automattic/components';
 
 const noop = () => {};
 

@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Suggestions, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 import Spinner from 'calypso/components/spinner';
-import { Suggestions } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

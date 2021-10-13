@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 

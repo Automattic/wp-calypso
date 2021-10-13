@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import {
 	getPluginsToInstall,
 	getDefaultPluginInProduct,
@@ -14,7 +8,6 @@ import {
 	productGroups,
 	findProductDefinition,
 } from '../index';
-import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 
 describe( 'Constants and product related utilities test', () => {
 	test( 'getPluginsToInstall returns the relevant plugins to be installed', () => {

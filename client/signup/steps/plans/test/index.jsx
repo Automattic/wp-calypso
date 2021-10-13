@@ -1,16 +1,6 @@
 jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
 jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { PlansStep, isDotBlogDomainRegistration } from '../index';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -31,6 +21,8 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import { PlansStep, isDotBlogDomainRegistration } from '../index';
 
 const noop = () => {};
 const props = {

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, requesting } from '../reducer';
 import {
 	READER_TAG_IMAGES_RECEIVE,
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 } from 'calypso/state/reader/action-types';
+import { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

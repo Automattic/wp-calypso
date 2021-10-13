@@ -1,19 +1,6 @@
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
-import styled from '../lib/styled';
 import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
-
-export default function CheckoutOrderSummaryStep() {
-	const [ items ] = useLineItems();
-
-	return (
-		<ProductList>
-			{ items.map( ( product ) => {
-				return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
-			} ) }
-		</ProductList>
-	);
-}
 
 const ProductList = styled.ul`
 	margin: 0;
@@ -26,14 +13,15 @@ const ProductListItem = styled.li`
 	list-style-type: none;
 `;
 
-export function CheckoutOrderSummaryStepTitle() {
-	const { __ } = useI18n();
-	const total = useTotal();
+export default function CheckoutOrderSummaryStep(): JSX.Element {
+	const [ items ] = useLineItems();
+
 	return (
-		<CheckoutSummaryStepTitle>
-			<span>{ __( 'You are all set to check out' ) }</span>
-			<CheckoutSummaryStepTotal>{ total.amount.displayValue }</CheckoutSummaryStepTotal>
-		</CheckoutSummaryStepTitle>
+		<ProductList>
+			{ items.map( ( product ) => {
+				return <ProductListItem key={ product.id }>{ product.label }</ProductListItem>;
+			} ) }
+		</ProductList>
 	);
 }
 
@@ -46,27 +34,14 @@ const CheckoutSummaryStepTotal = styled.span`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
-export function CheckoutOrderSummary() {
+export function CheckoutOrderSummaryStepTitle(): JSX.Element {
 	const { __ } = useI18n();
-	const taxes = useLineItemsOfType( 'tax' );
 	const total = useTotal();
-
 	return (
-		<CheckoutSummaryCard>
-			<CheckoutSummaryTitle>{ __( 'Purchase Details' ) }</CheckoutSummaryTitle>
-			<CheckoutSummaryAmountWrapper>
-				{ taxes.map( ( tax ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<span>{ tax.label }</span>
-						<span>{ tax.amount.displayValue }</span>
-					</CheckoutSummaryLineItem>
-				) ) }
-				<CheckoutSummaryTotal>
-					<span>{ __( 'Total' ) }</span>
-					<span>{ total.amount.displayValue }</span>
-				</CheckoutSummaryTotal>
-			</CheckoutSummaryAmountWrapper>
-		</CheckoutSummaryCard>
+		<CheckoutSummaryStepTitle>
+			<span>{ __( 'You are all set to check out' ) }</span>
+			<CheckoutSummaryStepTotal>{ total.amount.displayValue }</CheckoutSummaryStepTotal>
+		</CheckoutSummaryStepTitle>
 	);
 }
 
@@ -89,3 +64,27 @@ const CheckoutSummaryLineItem = styled.div`
 const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
+
+export function CheckoutOrderSummary(): JSX.Element {
+	const { __ } = useI18n();
+	const taxes = useLineItemsOfType( 'tax' );
+	const total = useTotal();
+
+	return (
+		<CheckoutSummaryCard>
+			<CheckoutSummaryTitle>{ __( 'Purchase Details' ) }</CheckoutSummaryTitle>
+			<CheckoutSummaryAmountWrapper>
+				{ taxes.map( ( tax ) => (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
+						<span>{ tax.label }</span>
+						<span>{ tax.amount.displayValue }</span>
+					</CheckoutSummaryLineItem>
+				) ) }
+				<CheckoutSummaryTotal>
+					<span>{ __( 'Total' ) }</span>
+					<span>{ total.amount.displayValue }</span>
+				</CheckoutSummaryTotal>
+			</CheckoutSummaryAmountWrapper>
+		</CheckoutSummaryCard>
+	);
+}

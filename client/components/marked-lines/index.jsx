@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import classNames from 'classnames';
 import { map } from 'lodash';
+import { Fragment } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

@@ -1,53 +1,64 @@
-/**
- * External dependencies
- */
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-import { memoize } from 'lodash';
-import { ProgressBar } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import CurrentSite from 'calypso/my-sites/current-site';
-import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { isP2PlusPlan, isBusiness, isEcommerce } from '@automattic/calypso-products';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { ProgressBar, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { memoize } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
+import QueryScanState from 'calypso/components/data/query-jetpack-scan';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ExternalLink from 'calypso/components/external-link';
+import InfoPopover from 'calypso/components/info-popover';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import Sidebar from 'calypso/layout/sidebar';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
-import SiteMenu from './site-menu';
-import StatsSparkline from 'calypso/blocks/stats-sparkline';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QueryScanState from 'calypso/components/data/query-jetpack-scan';
-import ToolsMenu from './tools-menu';
-import { isP2PlusPlan, isBusiness, isEcommerce } from '@automattic/calypso-products';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import { getStatsPathForTab } from 'calypso/lib/route';
+import CurrentSite from 'calypso/my-sites/current-site';
+import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
+import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	collapseMySitesSidebarSection as collapseSection,
+	expandMySitesSidebarSection as expandSection,
+	toggleMySitesSidebarSection as toggleSection,
+} from 'calypso/state/my-sites/sidebar/actions';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
-import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import getScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
-import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import getScanState from 'calypso/state/selectors/get-site-scan-state';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -57,22 +68,10 @@ import {
 	canCurrentUserUseWooCommerceCoreStore,
 	getSiteWooCommerceUrl,
 } from 'calypso/state/sites/selectors';
-import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
-import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
-import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
-import { getStatsPathForTab } from 'calypso/lib/route';
-import { itemLinkMatches } from './utils';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	collapseMySitesSidebarSection as collapseSection,
-	expandMySitesSidebarSection as expandSection,
-	toggleMySitesSidebarSection as toggleSection,
-} from 'calypso/state/my-sites/sidebar/actions';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
-import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	SIDEBAR_SECTION_DESIGN,
 	SIDEBAR_SECTION_JETPACK,
@@ -81,20 +80,10 @@ import {
 	SIDEBAR_SECTION_UPGRADES,
 	SIDEBAR_SECTION_TOOLS,
 } from './constants';
-import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
-import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
-import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
-import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
-import InfoPopover from 'calypso/components/info-popover';
-import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import SiteMenu from './site-menu';
+import ToolsMenu from './tools-menu';
+import { itemLinkMatches } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class MySitesSidebar extends Component {

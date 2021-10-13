@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
+import { keyToString } from 'calypso/reader/post-key';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,
 } from 'calypso/state/reader/action-types';
-import { keyToString } from 'calypso/reader/post-key';
 
 export default ( state = {}, action ) => {
 	switch ( action.type ) {

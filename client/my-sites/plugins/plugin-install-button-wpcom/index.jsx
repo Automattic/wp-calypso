@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
 	getEligibility,
 } from 'calypso/state/automated-transfer/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export const WpcomPluginInstallButton = ( props ) => {
 	const {

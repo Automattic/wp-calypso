@@ -1,14 +1,9 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console*/
-/* eslint-disable no-process-exit*/
-/* eslint-disable import/no-nodejs-modules*/
-
+const { execSync } = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const yaml = require( 'js-yaml' );
-
-const { execSync } = require( 'child_process' );
 
 const PROJECT_DIR = path.join( __dirname, '..' );
 const BUILD_DIR = path.join( PROJECT_DIR, 'release' );

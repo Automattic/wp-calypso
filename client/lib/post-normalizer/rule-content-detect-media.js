@@ -1,17 +1,9 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-/**
- * External dependencies
- */
-
-import { map, compact, includes, some, filter } from 'lodash';
 import getEmbedMetadata from 'get-video-id';
-
-/**
- * Internal Dependencies
- */
-import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
+import { map, compact, includes, some, filter } from 'lodash';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
+import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 
 /** Checks whether or not an image is a tracking pixel
  *

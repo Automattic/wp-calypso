@@ -2,15 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { mount } from 'enzyme';
-
-/**
- * Internal dependencies
- */
 import Composer from '../composer';
 
 const noop = () => {};

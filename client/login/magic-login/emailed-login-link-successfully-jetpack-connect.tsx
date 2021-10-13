@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import checkEmailJetpackImage from 'calypso/assets/images/illustrations/check-email-jetpack.svg';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { withEnhancers } from 'calypso/state/utils';
-
-/**
- * Image dependencies
- */
-import checkEmailJetpackImage from 'calypso/assets/images/illustrations/check-email-jetpack.svg';
 
 interface Props {
 	emailAddress: string;

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FormLabel from 'calypso/components/forms/form-label';
+import PropTypes from 'prop-types';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 

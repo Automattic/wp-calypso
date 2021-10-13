@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import Notice, { RewindFlowNoticeLevel } from './index';
 
 interface Props {

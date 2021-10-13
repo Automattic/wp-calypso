@@ -1,30 +1,22 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import { Card, Button } from '@automattic/components';
-import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
-import InfiniteList from 'calypso/components/infinite-list';
-import NoResults from 'calypso/my-sites/no-results';
 import EmptyContent from 'calypso/components/empty-content';
-import accept from 'calypso/lib/accept';
+import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
+import accept from 'calypso/lib/accept';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
+import NoResults from 'calypso/my-sites/no-results';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Followers extends Component {
-	infiniteList = React.createRef();
+	infiniteList = createRef();
 
 	renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder" />;

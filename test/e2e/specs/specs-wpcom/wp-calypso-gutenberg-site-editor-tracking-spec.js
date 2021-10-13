@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import assert from 'assert';
 import config from 'config';
 import { By, Key } from 'selenium-webdriver';
+/**
+ * Internal dependencies
+ */
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
@@ -15,7 +21,10 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-const siteEditorUser = 'siteEditorSimpleSiteUser';
+const siteEditorUser =
+	process.env.GUTENBERG_EDGE === 'true'
+		? 'siteEditorSimpleSiteEdgeUser'
+		: 'siteEditorSimpleSiteUser';
 
 const navigationSidebarBackToRoot = async ( driver ) => {
 	const backButtonLocator = By.css(
@@ -113,16 +122,28 @@ const clickNthTabInGlobalStylesSidebar = async ( driver, tabIndex ) =>
 		)
 	);
 
-const clickGlobalStylesRootTab = async ( driver ) =>
-	await clickNthTabInGlobalStylesSidebar( driver, 1 );
-
 const clickGlobalStylesBlockTypeTab = async ( driver ) =>
 	await clickNthTabInGlobalStylesSidebar( driver, 2 );
 
-const getGlobalStylesTabSelectedEvents = async ( driver ) => {
+const clickGlobalStylesMenuItem = async ( driver, menuTitle ) => {
+	const locator = driverHelper.createTextLocator(
+		By.css( '.edit-site-global-styles-sidebar button' ),
+		menuTitle
+	);
+	return await driverHelper.clickWhenClickable( driver, locator );
+};
+
+const getGlobalStylesToggleEvents = async ( driver ) => {
 	const eventsStack = await getEventsStack( driver );
 	return eventsStack.filter(
-		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_tab_selected'
+		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_panel_toggle'
+	);
+};
+
+const getGlobalStylesMenuEvents = async ( driver ) => {
+	const eventsStack = await getEventsStack( driver );
+	return eventsStack.filter(
+		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_menu_selected'
 	);
 };
 
@@ -183,7 +204,12 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 
 	let updateEvents = await getGlobalStylesUpdateEvents( driver );
 
-	assert.strictEqual( updateEvents.length, 3 );
+	// Due to variation in test speed combined with the debouncing of events the step to update the
+	// fontSize input can trigger anywhere between 1 and 3 events.  Thus we expect to see between 3
+	// and 5 events total.
+	assert( updateEvents.length >= 3, 'There should be at least 3 update events' );
+	assert( updateEvents.length <= 5, 'There should be no more than 5 update events' );
+
 	assert(
 		updateEvents.some( ( event ) => {
 			const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
@@ -194,7 +220,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 				element_type === undefined &&
 				palette_slug === undefined &&
 				typeof field_value === 'string' &&
-				field_value[ 0 ] === '#'
+				( field_value[ 0 ] === '#' || field_value.startsWith( 'var' ) )
 			);
 		} )
 	);
@@ -221,7 +247,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 				element_type === 'link' &&
 				palette_slug === undefined &&
 				typeof field_value === 'string' &&
-				field_value[ 0 ] === '#'
+				( field_value[ 0 ] === '#' || field_value.startsWith( 'var' ) )
 			);
 		} )
 	);
@@ -367,23 +393,18 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 	} );
 };
 
-const GLOBAL_STYLES_ROOT_TAB_NAME = 'root';
-const GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME = 'block-type';
+const GLOBAL_STYLES_TYPOGRAPHY_MENU_NAME = 'typography';
+const GLOBAL_STYLES_COLORS_MENU_NAME = 'colors';
+const GLOBAL_STYLES_BLOCKS_MENU_NAME = 'blocks';
 
 describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	// TODO: Create an edge user with a Site Editor enabled site
-	before( async function () {
-		if ( process.env.GUTENBERG_EDGE === 'true' ) {
-			this.skip();
-		}
-	} );
-
 	describe( 'Tracking Site Editor: @parallel', function () {
 		it( 'Log in with site editor user and Site Editor opens successfully', async function () {
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
-			await loginFlow.loginAndSelectMySite();
+			const userConfig = dataHelper.getAccountConfig( siteEditorUser );
+			await loginFlow.loginAndSelectMySite( userConfig[ 2 ] );
 
 			const sidebar = await SidebarComponent.Expect( this.driver );
 			await sidebar.selectSiteEditor();
@@ -407,96 +428,74 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
-			it( 'when Global Styles sidebar is opened', async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
+		// Temporarily skip these tests until we can deploy wpcom-block-editor changes from
+		// https://github.com/Automattic/wp-calypso/pull/56551
+		describe.skip( 'Global styles panel events', function () {
+			describe( 'Tracks "wpcom_block_editor_global_styles_panel_toggle', function () {
+				it( 'when Global Styles sidebar is opened', async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
 
-				await editor.toggleGlobalStyles();
+					await editor.toggleGlobalStyles();
+					const globalStylesToggleEvents = await getGlobalStylesToggleEvents( this.driver );
+					assert.strictEqual( globalStylesToggleEvents.length, 1 );
+					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
+					assert.strictEqual( eventData.open, true );
+				} );
 
-				const eventsStack = await getEventsStack( this.driver );
-				const tabSelectedEvents = eventsStack.filter(
-					( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_tab_selected'
-				);
-				assert.strictEqual( tabSelectedEvents.length, 1 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( eventData.open, true );
+				it( 'when Global Styles sidebar is closed', async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
+
+					// Note the sidebar is already open here because of the previous test.
+					await editor.toggleGlobalStyles();
+
+					const globalStylesToggleEvents = await getGlobalStylesToggleEvents( this.driver );
+					assert.strictEqual( globalStylesToggleEvents.length, 1 );
+					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
+					assert.strictEqual( eventData.open, false );
+				} );
+
+				it( `when Global Styles sidebar is closed by opening another sidebar`, async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
+
+					// It is not possible to open multiple sidebars on mobile.
+					if ( editor.screenSize === 'mobile' ) {
+						return this.skip();
+					}
+
+					await editor.toggleGlobalStyles();
+					await clickBlockSettingsButton( this.driver );
+
+					const globalStylesToggleEvents = await getGlobalStylesToggleEvents( this.driver );
+					assert.strictEqual( globalStylesToggleEvents.length, 2 );
+					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
+					assert.strictEqual( eventData.open, false );
+				} );
 			} );
 
-			it( 'when Global Styles sidebar is closed', async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
+			describe( 'Tracks "wpcom_block_editor_global_styles_menu_selected"', function () {
+				it( 'when a menu is selected in the sidebar', async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
 
-				// Note the sidebar is already open here because of the previous test.
-				await editor.toggleGlobalStyles();
+					await editor.toggleGlobalStyles();
 
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 1 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( eventData.open, false );
-			} );
+					await clickGlobalStylesMenuItem( this.driver, 'Typography' );
+					await clickGlobalStylesMenuItem( this.driver, 'Back' );
+					await clickGlobalStylesMenuItem( this.driver, 'Colors' );
+					await clickGlobalStylesMenuItem( this.driver, 'Back' );
+					await clickGlobalStylesMenuItem( this.driver, 'Blocks' );
 
-			it( `when Global Styles sidebar is closed by opening another sidebar (tab = ${ GLOBAL_STYLES_ROOT_TAB_NAME })`, async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
-
-				// It is not possible to open multiple sidebars on mobile.
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-
-				await editor.toggleGlobalStyles();
-				await clickBlockSettingsButton( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 2 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( eventData.open, false );
-			} );
-
-			it( `when Global Styles sidebar is closed by opening another sidebar (tab = ${ GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME })`, async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
-
-				// It is not possible to open multiple sidebars on mobile.
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-
-				await editor.toggleGlobalStyles();
-				await clickGlobalStylesBlockTypeTab( this.driver );
-				await clickBlockSettingsButton( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 3 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME );
-				assert.strictEqual( eventData.open, false );
-			} );
-
-			it( 'when tab is changed in Global Styles sidebar', async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
-
-				await editor.toggleGlobalStyles();
-				await clickGlobalStylesBlockTypeTab( this.driver );
-				await clickGlobalStylesRootTab( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 3 );
-				const [ , blockTypeSelectedEventData ] = tabSelectedEvents[ 1 ];
-				assert.strictEqual( blockTypeSelectedEventData.tab, GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME );
-				assert.strictEqual( blockTypeSelectedEventData.open, true );
-				const [ , rootSelectedEventData ] = tabSelectedEvents[ 2 ];
-				assert.strictEqual( rootSelectedEventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( rootSelectedEventData.open, true );
-			} );
-
-			it( 'should not trigger the event when clicking on the already active tab', async function () {
-				await clickGlobalStylesRootTab( this.driver );
-				await clickGlobalStylesRootTab( this.driver );
-				await clickGlobalStylesRootTab( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 0 );
+					const globalStylesMenuEvents = await getGlobalStylesMenuEvents( this.driver );
+					assert.strictEqual( globalStylesMenuEvents.length, 3 );
+					const [ , typographySelectedEventData ] = globalStylesMenuEvents[ 2 ];
+					assert.strictEqual(
+						typographySelectedEventData.menu,
+						GLOBAL_STYLES_TYPOGRAPHY_MENU_NAME
+					);
+					const [ , colorsSelectedEventData ] = globalStylesMenuEvents[ 1 ];
+					assert.strictEqual( colorsSelectedEventData.menu, GLOBAL_STYLES_COLORS_MENU_NAME );
+					const [ , blocksSelectedEventData ] = globalStylesMenuEvents[ 0 ];
+					assert.strictEqual( blocksSelectedEventData.menu, GLOBAL_STYLES_BLOCKS_MENU_NAME );
+				} );
 			} );
 
 			after( async function () {
@@ -505,7 +504,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+		// Temporarily skip these tests until we can update track events / tests to handle the new
+		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
+		describe.skip( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
@@ -558,7 +559,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+		// Temporarily skip these tests until we can update track events / tests to handle the new
+		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
+		describe.skip( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
@@ -580,7 +583,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await changeGlobalStylesFontSize( this.driver, '11' );
 				await changeGlobalStylesColor( this.driver, 1, 1 );
-				await changeGlobalStylesColor( this.driver, 3, 1 );
+				await changeGlobalStylesColor( this.driver, 3, 2 );
 				await saveGlobalStyles( this.driver );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
@@ -724,8 +727,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 						'Choose'
 					);
 					await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
+				} );
+				const confirmNameAndCreateLocator = driverHelper.createTextLocator(
+					By.css( '.wp-block-template-part__placeholder-create-new__title-form button' ),
+					'Create'
+				);
+				await driverHelper.clickWhenClickable( this.driver, confirmNameAndCreateLocator );
 
-					// Wait for this template part to load its new content.
+				// Wait for this template part to load its new content.
+				await editor.runInCanvas( async () => {
 					await driverHelper.waitUntilElementLocated(
 						this.driver,
 						By.css( `#${ blockId }.block-editor-block-list__layout` )
@@ -751,9 +761,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			it( 'Tracks "wpcom_block_editor_template_part_choose_existing"', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				// Undo the template part creation to go back to the placeholder.  Use store api to
-				// trigger undo since the UI is not present in mobile viewport.
-				await this.driver.executeScript( `return window.wp.data.dispatch( 'core' ).undo()` );
+
+				await editor.addBlock( 'Header', 'template-part\\/header', 'Block: Template Part' );
 
 				await editor.runInCanvas( async () => {
 					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
@@ -765,7 +774,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( '.wp-block-template-part__selection-preview-item' )
+					By.css( '.wp-block-template-part__selection-preview-item-title' )
 				);
 
 				const eventsStack = await getEventsStack( this.driver );
@@ -828,7 +837,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Navigation sidebar', function () {
+		// Skip theses tests as nav sidebar is temporarily disabled on dotcom.
+		// Related Issue - https://github.com/Automattic/wp-calypso/issues/54460
+		// Related PR - https://github.com/Automattic/wp-calypso/pull/55471
+		describe.skip( 'Navigation sidebar', function () {
 			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
@@ -862,15 +874,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Templates'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
 
 				const templateMenuItemLocator = driverHelper.createTextLocator(
 					By.css( '.edit-site-navigation-panel__template-item-title' ),
-					'404'
+					'Index'
 				);
 				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
 
@@ -881,8 +888,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template' );
-				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//404' );
-				assert.strictEqual( editEventData.item_slug, '404' );
+				assert.strictEqual( editEventData.item_id, 'pub/blockbase//index' );
+				assert.strictEqual( editEventData.item_slug, 'index' );
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_add" when creating a new template', async function () {
@@ -955,7 +962,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template_part' );
-				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( editEventData.item_id, 'pub/blockbase//header' );
 			} );
 
 			it( 'make sure back to dashboard button exists', async function () {
@@ -991,7 +998,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'page' );
-				assert.strictEqual( editEventData.item_slug, 'home' );
+				assert(
+					editEventData.item_slug.startsWith( 'home' ),
+					'wpcom_block_editor_nav_sidebar_item_edit content event has expected itemSlug'
+				);
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a category item (type = taxonomy_category)', async function () {
@@ -1149,7 +1159,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					);
 				} );
 				const quickInserterSearchInputLocator = By.css(
-					'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+					'.block-editor-inserter__quick-inserter .components-search-control__input'
 				);
 				const blockItemLocator = By.css(
 					'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item'
@@ -1167,7 +1177,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( insertedEvents.length, 1 );
 				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
-				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/blockbase//header' );
 			} );
 
 			it( 'For "wpcom_block_moved_*" events', async function () {
@@ -1188,7 +1198,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const matchesContext = events.filter(
 					( event ) =>
 						event[ 1 ].entity_context === 'core/template-part/header' &&
-						event[ 1 ].template_part_id === 'pub/tt1-blocks//header'
+						event[ 1 ].template_part_id === 'pub/blockbase//header'
 				);
 				assert.strictEqual( matchesContext.length, 2 );
 			} );
@@ -1210,7 +1220,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( events.length, 1 );
 				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
-				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/blockbase//header' );
 			} );
 		} );
 

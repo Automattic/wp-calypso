@@ -1,19 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { FEATURE_MEMBERSHIPS } from '@automattic/calypso-products';
+import referralImage from 'calypso/assets/images/earn/referral.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
-import { FEATURE_MEMBERSHIPS } from '@automattic/calypso-products';
-
-/**
- * Image dependencies
- */
-import referralImage from 'calypso/assets/images/earn/referral.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoCardExample = () => {

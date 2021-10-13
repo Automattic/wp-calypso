@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-import wpcom from 'calypso/lib/wp';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
+import { registerServerWorker } from 'calypso/lib/service-worker';
+import wpcom from 'calypso/lib/wp';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
 	PUSH_NOTIFICATIONS_API_NOT_READY,
@@ -19,7 +13,7 @@ import {
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS,
 } from 'calypso/state/action-types';
-
+import { recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import { isApiReady, getDeviceId, getStatus, isBlocked, isEnabled } from './selectors';
 import {
 	isOpera,
@@ -30,8 +24,6 @@ import {
 	getOperaVersion,
 	urlBase64ToUint8Array,
 } from './utils';
-import { registerServerWorker } from 'calypso/lib/service-worker';
-import { recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 
 import 'calypso/state/push-notifications/init';
 

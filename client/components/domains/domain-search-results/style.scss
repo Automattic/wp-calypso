@@ -54,12 +54,31 @@
 
 body.is-section-signup.is-white-signup {
 	.domain-search-results {
-		@include break-medium {
-			margin-left: 20px;
-		}
-
 		@include break-xlarge {
 			margin-left: 0;
+		}
+	}
+}
+
+.domain-search-results__domain-available-notice {
+	display: flex;
+	.domain-search-results__domain-available-notice-icon {
+		margin-right: 8px;
+		svg {
+			display: block;
+			margin: 0 auto;
+			fill: var( --color-neutral-20 );
+			width: 20px;
+			height: 20px;
+		}
+	}
+	span {
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+		a {
+			color: var( --color-text );
+			text-decoration: underline;
+			font-weight: 600;
 		}
 	}
 }

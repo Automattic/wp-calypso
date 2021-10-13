@@ -252,6 +252,11 @@ textarea.billing-history__billing-details-editable {
 			text-transform: uppercase;
 		}
 
+		.receipt__monospace {
+			font-family: 'Courier', 'Courier New', monospace;
+			text-transform: uppercase;
+		}
+
 		.receipt__vat-vendor-details-number {
 			display: block;
 			margin-top: 8px;
@@ -437,6 +442,7 @@ textarea.billing-history__billing-details-editable {
 }
 
 @media print {
+	.is-section-me,
 	.is-section-billing,
 	.is-section-purchases {
 		// stylelint-disable-next-line selector-max-id
@@ -447,7 +453,7 @@ textarea.billing-history__billing-details-editable {
 		.inline-help,
 		.billing-history__billing-details-description,
 		.receipt__no-print {
-			display: none;
+			display: none !important;
 		}
 	}
 
@@ -459,7 +465,7 @@ textarea.billing-history__billing-details-editable {
 	}
 
 	body {
-		font-family: -apple-system, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+		font-family: $sans;
 	}
 }
 

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -19,9 +12,6 @@ interface Props {
 	disabled: boolean;
 }
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ContractorSelect: FunctionComponent< Props > = ( { key, checked, onChange, disabled } ) => {

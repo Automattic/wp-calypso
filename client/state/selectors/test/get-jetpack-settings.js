@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 

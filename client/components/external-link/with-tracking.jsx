@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from './index';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ExternalLink from './index';
 
 class ExternalLinkWithTracking extends Component {
 	handleClickEvent() {

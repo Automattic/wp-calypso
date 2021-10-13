@@ -2,18 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 
 jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
 	require( 'calypso/components/empty-component' )

@@ -1,18 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-
-/**
- * Style dependencies
- */
 import './crowdsignal.scss';
 
 class CrowdsignalOauthMasterbar extends Component {
@@ -28,9 +16,9 @@ class CrowdsignalOauthMasterbar extends Component {
 		];
 
 		if ( ! document.fonts.check( '12px Recoleta' ) ) {
-			map( crowdsignalFonts, ( font ) => {
+			for ( const font of crowdsignalFonts ) {
 				font.load().then( ( loadedFont ) => document.fonts.add( loadedFont ) );
-			} );
+			}
 		}
 	}
 

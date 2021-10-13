@@ -1,8 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
 
 export default ( suggestions ) => ( {
 	name: 'users',

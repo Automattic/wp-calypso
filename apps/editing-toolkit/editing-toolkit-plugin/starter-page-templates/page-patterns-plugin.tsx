@@ -1,6 +1,6 @@
 import { PagePatternModal, PatternDefinition } from '@automattic/page-pattern-modal';
 import { useSelect, useDispatch } from '@wordpress/data';
-import React, { useCallback } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import { addFilter, removeFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 

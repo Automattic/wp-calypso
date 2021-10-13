@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
+import { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
+import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { useThreats } from 'calypso/lib/jetpack/use-threats';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -17,8 +12,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
-import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 
 const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
 	recordTracksEvent( 'calypso_jetpack_scan_fixthreat_dialogopen', {
@@ -34,7 +27,7 @@ const ListItems = ( { items } ) => {
 	const siteName = useSelector( ( state ) => getSelectedSite( state )?.name );
 
 	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
-	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
+	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
 
 	const openDialog = useCallback(
 		( threat ) => {

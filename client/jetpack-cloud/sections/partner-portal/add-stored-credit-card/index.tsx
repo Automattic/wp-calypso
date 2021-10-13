@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useDispatch } from 'react-redux';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function AddStoredCreditCard(): ReactElement {

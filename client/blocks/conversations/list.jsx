@@ -1,15 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { map, zipObject, size, filter, get, compact, partition } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
 import PostComment from 'calypso/blocks/comments/post-comment';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
@@ -20,21 +21,10 @@ import {
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
 } from 'calypso/state/comments/selectors';
-import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
-import {
-	requestPostComments,
-	requestComment,
-	setActiveReply,
-} from 'calypso/state/comments/actions';
 import { getErrorKey } from 'calypso/state/comments/utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './list.scss';
 
 /**
@@ -59,7 +49,7 @@ import './list.scss';
 const FETCH_NEW_COMMENTS_THRESHOLD = 20;
 const noop = () => {};
 
-export class ConversationCommentList extends React.Component {
+export class ConversationCommentList extends Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired, // required by PostComment
 		commentIds: PropTypes.array.isRequired,

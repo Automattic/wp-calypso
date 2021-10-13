@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import SitePicker from 'calypso/my-sites/picker';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import SitePicker from 'calypso/my-sites/picker';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
-class MySitesNavigation extends React.Component {
+class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
 
 	preventPickerDefault = ( event ) => {

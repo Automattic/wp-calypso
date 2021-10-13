@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { createElement } from 'react';
+import { connect } from 'react-redux';
 import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -25,7 +14,7 @@ function CommentButton( props ) {
 	const { commentCount, href, onClick, showLabel, tagName, target } = props;
 	const translate = useTranslate();
 
-	return React.createElement(
+	return createElement(
 		tagName,
 		omitBy(
 			{

@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 import PurchaseDetail from 'calypso/components/purchase-detail';
+import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 
 const GuidedTransferDetails = ( { translate } ) => (
 	<PurchaseDetail

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { getUrlParts } from '@automattic/calypso-url';
 import { isEnabled } from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 
 /**
  * Iterations

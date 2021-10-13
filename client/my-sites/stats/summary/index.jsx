@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import page from 'page';
-import { merge } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
-import StatsModule from '../stats-module';
-import statsStringsFactory from '../stats-strings';
-import Countries from '../stats-countries';
-import StatsVideoSummary from '../stats-video-summary';
-import VideoPlayDetails from '../stats-video-details';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { merge } from 'lodash';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
+import HeaderCake from 'calypso/components/header-cake';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Countries from '../stats-countries';
+import StatsModule from '../stats-module';
+import statsStringsFactory from '../stats-strings';
+import VideoPlayDetails from '../stats-video-details';
+import StatsVideoSummary from '../stats-video-summary';
 
 const StatsStrings = statsStringsFactory();
 

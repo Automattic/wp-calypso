@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize, translate } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-export class CountedTextarea extends React.Component {
+export class CountedTextarea extends Component {
 	static propTypes = {
 		value: PropTypes.string,
 		placeholder: PropTypes.string,

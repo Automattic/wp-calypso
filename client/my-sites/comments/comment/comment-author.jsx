@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
-import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
-import Emojify from 'calypso/components/emojify';
+import PropTypes from 'prop-types';
+import { createRef, Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
-import Tooltip from 'calypso/components/tooltip';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Tooltip from 'calypso/components/tooltip';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { urlToDomainAndPath } from 'calypso/lib/url';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
+import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -34,7 +26,7 @@ export class CommentAuthor extends Component {
 		isLinkTooltipVisible: false,
 	};
 
-	linkIndicatorRef = React.createRef();
+	linkIndicatorRef = createRef();
 
 	hideLinkTooltip = () => this.setState( { isLinkTooltipVisible: false } );
 
@@ -96,7 +88,7 @@ export class CommentAuthor extends Component {
 							</Fragment>
 						) }
 						<strong className="comment__author-name">
-							<Emojify>{ authorDisplayName || translate( 'Anonymous' ) }</Emojify>
+							{ authorDisplayName || translate( 'Anonymous' ) }
 						</strong>
 						{ isBulkMode && ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
 					</div>
@@ -116,7 +108,7 @@ export class CommentAuthor extends Component {
 							<span className="comment__author-url">
 								<span className="comment__author-url-separator">&middot;</span>
 								<ExternalLink href={ authorUrl } tabIndex={ isBulkMode ? -1 : 0 }>
-									<Emojify>{ urlToDomainAndPath( authorUrl ) }</Emojify>
+									{ urlToDomainAndPath( authorUrl ) }
 								</ExternalLink>
 							</span>
 						) }

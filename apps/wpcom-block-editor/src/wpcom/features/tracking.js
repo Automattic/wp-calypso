@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
 import { use, select } from '@wordpress/data';
-import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { find, isEqual } from 'lodash';
+import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import tracksRecordEvent from './tracking/track-record-event';
+import { find, isEqual } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
-import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
+import tracksRecordEvent from './tracking/track-record-event';
 import {
 	buildGlobalStylesContentEvents,
 	getFlattenedBlockNames,
@@ -208,7 +200,6 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
  * If you also want to track an event for all child blocks, use `trackBlocksHandler`.
  *
  * @see {@link trackBlocksHandler} for a recursive version.
- *
  * @param {string} eventName event name
  * @returns {Function} track handler
  */
@@ -447,16 +438,22 @@ const trackEnableComplementaryArea = ( scope, id ) => {
 	// We are tracking both global styles open here and when global styles
 	// is closed by opening another sidebar in its place.
 	if ( activeArea !== 'edit-site/global-styles' && id === 'edit-site/global-styles' ) {
-		trackGlobalStylesTabSelected( { tab: 'root', open: true } );
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_panel_toggle', {
+			open: true,
+		} );
 	} else if ( activeArea === 'edit-site/global-styles' && id !== 'edit-site/global-styles' ) {
-		trackGlobalStylesTabSelected( { open: false } );
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_panel_toggle', {
+			open: false,
+		} );
 	}
 };
 
 const trackDisableComplementaryArea = ( scope ) => {
 	const activeArea = select( 'core/interface' ).getActiveComplementaryArea( scope );
 	if ( activeArea === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
-		trackGlobalStylesTabSelected( { open: false } );
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_panel_toggle', {
+			open: false,
+		} );
 	}
 };
 

@@ -1,35 +1,25 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { reject } from 'lodash';
+import { isCredits } from '@automattic/calypso-products';
+import { Popover } from '@automattic/components';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import { reject } from 'lodash';
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import Count from 'calypso/components/count';
+import HeaderButton from 'calypso/components/header-button';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
-import HeaderButton from 'calypso/components/header-button';
 import CartButtons from './cart-buttons';
-import Count from 'calypso/components/count';
-import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
-import { isCredits } from '@automattic/calypso-products';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class PopoverCart extends React.Component {
+class PopoverCart extends Component {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		shoppingCartManager: PropTypes.object.isRequired,
@@ -44,12 +34,8 @@ class PopoverCart extends React.Component {
 		compact: false,
 	};
 
-	toggleButtonRef = React.createRef();
+	toggleButtonRef = createRef();
 	hasUnmounted = false;
-
-	componentDidMount() {
-		this.props.shoppingCartManager.reloadFromServer();
-	}
 
 	componentWillUnmount() {
 		this.hasUnmounted = true;
@@ -172,4 +158,4 @@ class PopoverCart extends React.Component {
 	}
 }
 
-export default withShoppingCart( localize( PopoverCart ) );
+export default withShoppingCart( withCartKey( localize( PopoverCart ) ) );

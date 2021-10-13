@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DownloadButton = ( { disabled, rewindId, primary } ) => {

@@ -1,35 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
-import { capitalize, defer, includes, get } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Divider from './divider';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import { Button, Card, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { capitalize, defer, includes, get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import FormsButton from 'calypso/components/forms/form-button';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
-import SocialLoginForm from './social';
-import TextControl from 'calypso/extensions/woocommerce/components/text-control';
+import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { Button, Card } from '@automattic/components';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
@@ -46,15 +40,13 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
-import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import Divider from './divider';
+import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -448,6 +440,27 @@ export class LoginForm extends Component {
 		);
 	}
 
+	renderChangeUsername() {
+		return (
+			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ includes( this.state.usernameOrEmail, '@' )
+					? this.props.translate( 'Change Email Address' )
+					: this.props.translate( 'Change Username' ) }
+			</button>
+		);
+	}
+
+	renderUsernameorEmailLabel() {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Your email address or username' );
+		}
+
+		return this.isPasswordView()
+			? this.renderChangeUsername()
+			: this.props.translate( 'Email Address or Username' );
+	}
+
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
@@ -458,6 +471,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isGutenboarding,
+			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
@@ -468,14 +482,9 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
-		const signupUrl = getSignupUrl(
-			currentQuery,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
@@ -516,22 +525,7 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
-						<FormLabel htmlFor="usernameOrEmail">
-							{ this.isPasswordView() ? (
-								<button
-									type="button"
-									className="login__form-change-username"
-									onClick={ this.resetView }
-								>
-									<Gridicon icon="arrow-left" size={ 18 } />
-									{ includes( this.state.usernameOrEmail, '@' )
-										? this.props.translate( 'Change Email Address' )
-										: this.props.translate( 'Change Username' ) }
-								</button>
-							) : (
-								this.props.translate( 'Email Address or Username' )
-							) }
-						</FormLabel>
+						<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
 						<FormTextInput
 							autoCapitalize="off"
@@ -571,6 +565,8 @@ export class LoginForm extends Component {
 									) }
 							</FormInputValidation>
 						) }
+
+						{ isP2Login && this.isPasswordView() && this.renderChangeUsername() }
 
 						<div
 							className={ classNames( 'login__form-password', {

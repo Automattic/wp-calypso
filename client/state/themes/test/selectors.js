@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
+import { PLAN_FREE } from '@automattic/calypso-products';
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	getTheme,
 	getCanonicalTheme,
@@ -40,16 +35,8 @@ import {
 	isPremiumThemeAvailable,
 	getWpcomParentThemeId,
 	getRecommendedThemes,
-	getRecommendedThemesFilter,
 	areRecommendedThemesLoading,
 } from '../selectors';
-import {
-	PLAN_FREE,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-} from '@automattic/calypso-products';
-import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 
 const twentyfifteen = {
 	id: 'twentyfifteen',
@@ -2309,116 +2296,6 @@ describe( 'themes selectors', () => {
 
 			expect( isAvailable ).to.be.false;
 		} );
-
-		test( 'given a premium squared theme and a site without the premium upgrade, should return false', () => {
-			const isAvailable = isPremiumThemeAvailable(
-				{
-					sites: {
-						items: {
-							2916284: {},
-						},
-						plans: {
-							2916284: {
-								data: [
-									{
-										currentPlan: true,
-										productSlug: PLAN_FREE,
-									},
-								],
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood },
-							} ),
-						},
-					},
-					purchases: {
-						data: [],
-					},
-				},
-				'mood',
-				2916284
-			);
-
-			expect( isAvailable ).to.be.false;
-		} );
-
-		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
-			const isAvailable = isPremiumThemeAvailable(
-				{
-					sites: {
-						items: {
-							2916284: {},
-						},
-						plans: {
-							2916284: {
-								data: [
-									{
-										currentPlan: true,
-										productSlug: PLAN_PREMIUM,
-									},
-								],
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood },
-							} ),
-						},
-					},
-					purchases: {
-						data: [],
-					},
-				},
-				'mood',
-				2916284
-			);
-
-			expect( isAvailable ).to.be.true;
-		} );
-
-		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
-			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
-				const isAvailable = isPremiumThemeAvailable(
-					{
-						sites: {
-							items: {
-								2916284: {},
-							},
-							plans: {
-								2916284: {
-									data: [
-										{
-											currentPlan: true,
-											productSlug: plan,
-										},
-									],
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { mood },
-								} ),
-							},
-						},
-						purchases: {
-							data: [],
-						},
-					},
-					'mood',
-					2916284
-				);
-
-				expect( isAvailable ).to.be.true;
-			} );
-		} );
 	} );
 
 	describe( 'getWpcomParentThemeId', () => {
@@ -2489,25 +2366,6 @@ describe( '#getRecommendedThemes', () => {
 	test( 'should return empty themes list for unfetched filter', () => {
 		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
 		expect( recommended ).to.be.empty;
-	} );
-} );
-
-describe( '#getRecommendedThemesFilter', () => {
-	const state = {
-		sites: {
-			items: {
-				[ 123 ]: { is_core_site_editor_enabled: true },
-				[ 321 ]: { is_core_site_editor_enabled: false },
-			},
-		},
-	};
-
-	test( 'should return `auto-loading-homepage` for non-FSE site', () => {
-		expect( getRecommendedThemesFilter( state, 321 ) ).to.equal( 'auto-loading-homepage' );
-	} );
-
-	test( 'should return `block-templates` for FSE site', () => {
-		expect( getRecommendedThemesFilter( state, 123 ) ).to.equal( 'block-templates' );
 	} );
 } );
 

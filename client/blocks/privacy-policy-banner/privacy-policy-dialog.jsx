@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Dialog, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Dialog, Button } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './privacy-policy-dialog.scss';
 
 export default function PrivacyPolicyDialog( { title, content, onClose } ) {

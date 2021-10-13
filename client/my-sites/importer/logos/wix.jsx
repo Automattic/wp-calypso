@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
 export default () => (
 	<svg
 		/*eslint-disable wpcalypso/jsx-classname-namespace */

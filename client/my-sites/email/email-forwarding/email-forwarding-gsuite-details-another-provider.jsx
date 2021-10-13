@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
+import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { CompactCard as Card } from '@automattic/components';
 
 const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
 	return (

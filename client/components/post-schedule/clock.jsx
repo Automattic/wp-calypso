@@ -1,26 +1,14 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import 'moment-timezone'; // monkey patches the existing moment.js
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import SegmentedControl from 'calypso/components/segmented-control';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SegmentedControl from 'calypso/components/segmented-control';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
-
-/**
- * Local dependencies
- */
 import {
 	is12hr,
 	isValidGMTOffset,
@@ -28,6 +16,8 @@ import {
 	convertHoursToHHMM,
 	convertMinutesToHHMM,
 } from './utils';
+
+import 'moment-timezone'; // monkey patches the existing moment.js
 
 const noop = () => {};
 
@@ -38,9 +28,9 @@ class PostScheduleClock extends Component {
 	setAm = ( event ) => this.setAmPm( event, 'AM' );
 	setPm = ( event ) => this.setAmPm( event, 'PM' );
 
-	amPmRef = React.createRef();
-	hourRef = React.createRef();
-	minRef = React.createRef();
+	amPmRef = createRef();
+	hourRef = createRef();
+	minRef = createRef();
 
 	handleKeyDown( event, field ) {
 		const operation = event.keyCode - 39;

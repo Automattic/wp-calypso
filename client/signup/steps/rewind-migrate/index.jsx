@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ActivityLogRewindToggle from 'calypso/my-sites/activity/activity-log/activity-log-rewind-toggle';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class RewindMigrate extends Component {

@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-
-/**
- * Image dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import privateImage from 'calypso/assets/images/illustrations/private.svg';
 
 export default function PrivateSite() {

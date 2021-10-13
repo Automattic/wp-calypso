@@ -1,31 +1,22 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-/**
- * External dependencies
- */
-
+import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Card, Button, CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import User from 'calypso/components/user';
-import AuthorSelector from 'calypso/blocks/author-selector';
-import accept from 'calypso/lib/accept';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
-import { localize } from 'i18n-calypso';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import User from 'calypso/components/user';
+import accept from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	requestExternalContributors,
 	requestExternalContributorsRemoval,
@@ -33,12 +24,9 @@ import {
 import { httpData } from 'calypso/state/data-layer/http-data';
 import withDeleteUser from './with-delete-user';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class DeleteUser extends React.Component {
+class DeleteUser extends Component {
 	static displayName = 'DeleteUser';
 
 	static propTypes = {

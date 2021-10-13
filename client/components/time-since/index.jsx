@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import humanDate from 'calypso/lib/human-date';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import smartSetState from 'calypso/lib/react-smart-set-state';

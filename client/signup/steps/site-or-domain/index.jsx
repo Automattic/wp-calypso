@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
-import NewSiteImage from './new-site-image';
 import ExistingSiteImage from './existing-site-image';
-
-/**
- * Style dependencies
- */
+import NewSiteImage from './new-site-image';
 import './style.scss';
 
 class SiteOrDomain extends Component {

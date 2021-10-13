@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { shallow } from 'enzyme';
 import { SubmitStepButton } from '..';
 
 describe( 'SubmitStepButton', () => {

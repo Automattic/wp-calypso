@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { ColorPalette } from '@wordpress/components';
+import { useState } from 'react';
 
 const ColorPaletteExample = () => {
 	const colors: ColorPalette.Color[] = [

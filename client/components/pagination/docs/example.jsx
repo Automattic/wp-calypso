@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import Pagination from 'calypso/components/pagination';
 
 class PaginationExample extends Component {

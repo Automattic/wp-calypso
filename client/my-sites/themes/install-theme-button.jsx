@@ -1,27 +1,14 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-
-import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
-import { translate } from 'i18n-calypso';
-import { trackClick } from './helpers';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Button } from '@automattic/components';
+import { translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { trackClick } from './helpers';
 
-/**
- * Style dependencies
- */
 import './install-theme-button.scss';
 
 function getInstallThemeSlug( siteSlug, canUploadThemesOrPlugins ) {

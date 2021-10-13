@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
-import HappychatConnection from 'calypso/components/happychat/connection-connected';
-import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
+import { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import QuerySupportHistory from 'calypso/components/data/query-support-history';
+import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
 import { initialize as initializeDirectly } from 'calypso/state/help/directly/actions';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'calypso/state/help/ticket/selectors';
-import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 
 class QueryInlineHelpSupportTypes extends Component {
 	componentDidMount() {
@@ -59,12 +52,12 @@ class QueryInlineHelpSupportTypes extends Component {
 
 	render() {
 		return (
-			<React.Fragment>
+			<Fragment>
 				<QueryTicketSupportConfiguration />
 				<QuerySupportHistory email={ this.props.currentUserEmail } />
 				<QueryLanguageNames />
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

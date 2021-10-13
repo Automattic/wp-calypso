@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { mapKeys, mapValues, snakeCase, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	composeAnalytics,
 	recordGoogleEvent,

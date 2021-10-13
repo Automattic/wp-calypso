@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -31,8 +26,6 @@ import {
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {

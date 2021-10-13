@@ -63,6 +63,7 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 ];
 
 export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
+export const WPCOM_DIFM_LITE = 'wp_difm_lite';
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';

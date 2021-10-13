@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { setBackPath } from 'calypso/state/themes/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getProps } from './controller';
 import SingleSiteComponent from './single-site';
 import Upload from './theme-upload';

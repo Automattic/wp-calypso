@@ -1,53 +1,43 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { once } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
-import MediumImporter from 'calypso/my-sites/importer/importer-medium';
-import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
-import WixImporter from 'calypso/my-sites/importer/importer-wix';
-import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
-import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
-import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import SectionHeader from 'calypso/components/section-header';
 import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
+import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import memoizeLast from 'calypso/lib/memoize-last';
+import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
+import MediumImporter from 'calypso/my-sites/importer/importer-medium';
+import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
+import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
+import WixImporter from 'calypso/my-sites/importer/importer-wix';
+import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
+import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
-
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
-import Main from 'calypso/components/main';
-import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import EmptyContent from 'calypso/components/empty-content';
-import memoizeLast from 'calypso/lib/memoize-last';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
-/**
- * Style dependencies
- */
 import './section-import.scss';
 
 /**
@@ -298,7 +288,14 @@ class SectionImport extends Component {
 					brandFont
 					className="importer__page-heading"
 					headerText={ translate( 'Import Content' ) }
-					subHeaderText={ translate( 'Import content from another website or platform.' ) }
+					subHeaderText={ translate(
+						'Import content from another website or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="import" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 					hasScreenOptions
 				/>

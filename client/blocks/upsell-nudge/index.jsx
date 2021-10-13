@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import {
 	planMatches,
 	isBloggerPlan,
@@ -20,19 +10,18 @@ import {
 	FEATURE_NO_ADS,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const UpsellNudge = ( {

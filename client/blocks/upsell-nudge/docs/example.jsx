@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 const UpsellNudgeExample = () => (

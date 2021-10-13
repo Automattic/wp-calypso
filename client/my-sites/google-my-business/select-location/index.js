@@ -1,41 +1,30 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { Button, Card, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, Card, CompactCard } from '@automattic/components';
-import DocumentHead from 'calypso/components/data/document-head';
-import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
-import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
-import GoogleMyBusinessSelectLocationButton from './button';
-import HeaderCake from 'calypso/components/header-cake';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	connectGoogleMyBusinessLocation,
 	connectGoogleMyBusinessAccount,
 } from 'calypso/state/google-my-business/actions';
-import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
+import GoogleMyBusinessSelectLocationButton from './button';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class GoogleMyBusinessSelectLocation extends Component {

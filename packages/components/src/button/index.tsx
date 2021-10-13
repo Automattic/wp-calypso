@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import type {
 	Ref,
 	ForwardRefRenderFunction,
@@ -8,9 +8,6 @@ import type {
 } from 'react';
 import type { NonUndefined } from 'utility-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 interface OwnProps {
 	className?: string;

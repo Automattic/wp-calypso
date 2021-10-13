@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { findKey, map } from 'lodash';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { findKey, map } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Badge from 'calypso/components/badge';
 import FormRadio from 'calypso/components/forms/form-radio';
 
 import './style.scss';
-import PropTypes from 'prop-types';
 
 export default class ImportTypeChoice extends Component {
 	state = {

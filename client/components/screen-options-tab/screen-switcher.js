@@ -1,20 +1,9 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const DEFAULT_VIEW = 'default';

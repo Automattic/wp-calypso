@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component, createRef } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { partial } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import MasterbarItem from './item';
-import AsyncLoad from 'calypso/components/async-load';
+import PropTypes from 'prop-types';
+import { Component, createRef } from 'react';
+import { connect } from 'react-redux';
 import store from 'store';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
+import MasterbarItem from './item';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {
@@ -27,31 +18,26 @@ class MasterbarItemNotifications extends Component {
 		tooltip: TranslatableString,
 		//connected
 		isNotificationsOpen: PropTypes.bool,
+		hasUnseenNotifications: PropTypes.bool,
 	};
 
 	notificationLink = createRef();
+
 	state = {
 		animationState: 0,
+		newNote: this.props.hasUnseenNotifications,
 	};
 
-	UNSAFE_componentWillMount() {
-		this.setState( {
-			newNote: this.props.hasUnseenNotifications,
-		} );
-	}
-
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { isNotificationsOpen: isOpen, recordOpening } = nextProps;
-
-		if ( ! this.props.isNotificationsOpen && isOpen ) {
-			recordOpening( {
+		if ( ! this.props.isNotificationsOpen && nextProps.isNotificationsOpen ) {
+			nextProps.recordTracksEvent( 'calypso_notification_open', {
 				unread_notifications: store.get( 'wpnotes_unseen_count' ),
 			} );
 			this.setNotesIndicator( 0 );
 		}
 
 		// focus on main window if we just closed the notes panel
-		if ( this.props.isNotificationsOpen && ! isOpen ) {
+		if ( this.props.isNotificationsOpen && ! nextProps.isNotificationsOpen ) {
 			this.notificationLink.current.blur();
 			window.focus();
 		}
@@ -153,7 +139,7 @@ const mapStateToProps = ( state ) => {
 };
 const mapDispatchToProps = {
 	toggleNotificationsPanel,
-	recordOpening: partial( recordTracksEvent, 'calypso_notification_open' ),
+	recordTracksEvent,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( MasterbarItemNotifications );

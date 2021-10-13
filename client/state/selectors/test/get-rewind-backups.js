@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 
 describe( 'getRewindBackups()', () => {

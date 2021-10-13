@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
 
 const noop = () => {};
 

@@ -1,21 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { localize } from 'i18n-calypso';
-import { getTld } from 'calypso/lib/domains';
-import EmptyContent from 'calypso/components/empty-content';
-
-/**
- * Image dependencies
- */
+import moment from 'moment';
 import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
+import EmptyContent from 'calypso/components/empty-content';
+import { getTld } from 'calypso/lib/domains';
 
 const MaintenanceCard = ( { selectedDomainName, translate, tldMaintenanceEndTime } ) => {
 	const tld = getTld( selectedDomainName );

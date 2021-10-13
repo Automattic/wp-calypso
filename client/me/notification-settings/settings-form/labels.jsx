@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import StreamHeader from './stream-header';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import LabelsList from './labels-list';
+import StreamHeader from './stream-header';
 
-class NotificationSettingsFormLabels extends React.Component {
+class NotificationSettingsFormLabels extends Component {
 	static displayName = 'NotificationSettingsFormLabels';
 
 	static propTypes = {

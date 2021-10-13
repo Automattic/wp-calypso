@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import SearchCard from 'calypso/components/search-card';
 
 const noop = () => {};

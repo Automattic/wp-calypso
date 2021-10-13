@@ -1,0 +1,213 @@
+name: Happiness Bug Report
+description: Helps us improve our product!
+labels: "User Report, [Type] Bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+
+        ### Thanks for contributing!
+
+        Please write a clear title, then fill in the fields below and submit.
+        There are only ***3 required fields***, but please provide as much additional information and context as you are able to.
+
+        Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
+        Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
+
+        If you have any questions, please ask in: `slack-bug-herders`.
+
+        <br>
+
+        ---
+
+        <br>
+  - type: textarea
+    id: summary
+    attributes:
+        label: Quick summary
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start at `site-domain.com/blog`.
+        2. Click on any blog post.
+        3. Click on the 'Like' button.
+        4. ...
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected to happen
+      placeholder: |
+        e.g. The post should be liked.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      placeholder: |
+        e.g. Clicking the button does nothing visibly.
+
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: issue_context
+    attributes:
+      label: Context
+      placeholder: |
+        e.g. Customer report, details of your exploratory testing, etc.
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+
+        ---
+
+        <br>
+
+        ### Additional context
+
+        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue.
+
+        <br>
+
+        ---
+
+        <br>
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: (You may select more than one)
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Android
+        - iOS
+      multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: (You may select more than one)
+      options:
+        - Google Chrome/Chromium
+        - Mozilla Firefox
+        - Microsoft Edge
+        - Microsoft Edge (legacy)
+        - Apple Safari
+      multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: dropdown
+    id: site-type
+    attributes:
+      label: Simple, Atomic or both?
+      description: (You may select more than one)
+      options:
+        - Simple
+        - Atomic
+      multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: theme
+    attributes:
+      label: Theme-specific issue?
+      placeholder: |
+        If yes, what is the theme name?
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: other_notes
+    attributes:
+      label: Other notes
+      placeholder: |
+        e.g. Logs, CLI or console errors, notes, observations, etc.
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+
+        ---
+
+        <br>
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      options:
+        - Consistent
+        - Intermittent
+        - Once
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: dropdown
+    id: users-affected
+    attributes:
+      label: Severity
+      description: Approximately how many users are impacted?
+      options:
+        - One
+        - Some (< 50%)
+        - Most (> 50%)
+        - All
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: dropdown
+    id: workarounds
+    attributes:
+      label: Available workarounds?
+      description: Is a workaround possible? What is the impact of this issue to users?
+      options:
+        - No and the platform is unusable
+        - No but the platform is still usable
+        - Yes, difficult to implement
+        - Yes, easy to implement
+        - There is no user impact
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: textarea
+    id: workarounds-detail
+    attributes:
+      label: Workaround details
+      description: If you are aware of a workaround, please describe it below.
+      placeholder: |
+        e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.

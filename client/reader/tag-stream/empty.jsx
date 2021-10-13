@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class TagEmptyContent extends React.Component {
+class TagEmptyContent extends Component {
 	static propTypes = {
 		decodedTagSlug: PropTypes.string,
 	};

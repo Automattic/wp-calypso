@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getPlans, getPlanPath } from '@automattic/calypso-products';
+import { find } from 'lodash';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 
 const PLANS_LIST = getPlans();

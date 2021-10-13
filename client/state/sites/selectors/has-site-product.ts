@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { getSiteProducts } from 'calypso/state/sites/selectors';
-
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 export default createSelector(

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FeatureExample from '../index';
 
 describe( 'Feature Example', () => {

@@ -1,34 +1,3 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
-import page from 'page';
-import { compact, overSome } from 'lodash';
-
-/**
- * Internal dependencies
- */
-
-import wp from 'calypso/lib/wp';
-import { useTranslate } from 'i18n-calypso';
-import { SiteSlug } from 'calypso/types';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
-import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import EmptyContent from 'calypso/components/empty-content';
-import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
-import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { addQueryArgs } from '@wordpress/url';
 import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
@@ -43,15 +12,31 @@ import {
 	isSecurityRealTimePlan,
 	isCompletePlan,
 } from '@automattic/calypso-products';
-
-/**
- * Image dependencies
- */
+import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
+import { compact, overSome } from 'lodash';
+import page from 'page';
+import { FunctionComponent, Fragment, useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
+import EmptyContent from 'calypso/components/empty-content';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import wp from 'calypso/lib/wp';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import { SiteSlug } from 'calypso/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface ConnectedProps {
@@ -553,7 +538,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, {}, {} >(
+export default connect< ConnectedProps, unknown, unknown >(
 	( state ) => {
 		// Default value of 0 to appease TypeScript for selectors that don't allow a null site ID value.
 		const siteId = getSelectedSiteId( state ) ?? 0;

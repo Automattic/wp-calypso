@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { remove } from 'lodash';
-import classnames from 'classnames';
+import { Suggestions } from '@automattic/components';
+import { Verticals } from '@automattic/data-stores';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ENTER, TAB } from '@wordpress/keycodes';
-import { useViewportMatch } from '@wordpress/compose';
-import { Suggestions } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import AcquireIntentTextInput from '../acquire-intent-text-input';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
-import { Verticals } from '@automattic/data-stores';
+import classnames from 'classnames';
+import { remove } from 'lodash';
+import * as React from 'react';
 import useTyper from '../../../hooks/use-typer';
 import { recordVerticalSelection } from '../../../lib/analytics';
+import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
+import AcquireIntentTextInput from '../acquire-intent-text-input';
 import type { SiteVertical } from '../../../stores/onboard/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Suggestion = SiteVertical & { category?: string };

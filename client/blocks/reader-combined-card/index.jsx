@@ -1,40 +1,30 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { get, size, filter, isEmpty, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import { getStreamUrl } from 'calypso/reader/route';
+import { localize } from 'i18n-calypso';
+import { get, size, filter, isEmpty, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
-import ReaderCombinedCardPost from './post';
-import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { getSiteName } from 'calypso/reader/get-helpers';
-import FollowButton from 'calypso/reader/follow-button';
-import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
-import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
+import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import FollowButton from 'calypso/reader/follow-button';
+import { getSiteName } from 'calypso/reader/get-helpers';
+import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
+import { getStreamUrl } from 'calypso/reader/route';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import ReaderCombinedCardPost from './post';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ReaderCombinedCardComponent extends React.Component {
+class ReaderCombinedCardComponent extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		posts: PropTypes.array.isRequired,

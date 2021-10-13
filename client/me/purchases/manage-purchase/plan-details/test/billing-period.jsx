@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
-import moment from 'moment';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { PlanBillingPeriod } from '../billing-period';
+import moment from 'moment';
 import page from 'page';
+import { PlanBillingPeriod } from '../billing-period';
 
 const props = {
 	purchase: {

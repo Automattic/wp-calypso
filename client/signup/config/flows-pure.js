@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
 import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 
 const noop = () => {};
 
@@ -14,12 +11,13 @@ export function generateFlows( {
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
+	getDestinationFromIntent = noop,
 } = {} ) {
 	const flows = [
 		{
 			name: 'account',
 			steps: [ 'user' ],
-			destination: '/',
+			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2020-08-12',
 			pageTitle: translate( 'Create an account' ),
@@ -119,6 +117,15 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
+			showRecaptcha: true,
+		},
+		{
+			name: 'onboarding-with-email',
+			steps: [ 'user', 'domains', 'emails', 'plans' ],
+			destination: getSignupDestination,
+			description:
+				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
+			lastModified: '2021-08-11',
 			showRecaptcha: true,
 		},
 		{
@@ -261,7 +268,7 @@ export function generateFlows( {
 		{
 			name: 'p2',
 			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
 			showRecaptcha: true,
@@ -399,12 +406,26 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'with-design-picker',
-			steps: [ 'user', 'domains', 'plans', 'design' ],
+			name: 'setup-site',
+			steps: isEnabled( 'signup/hero-flow' )
+				? [ 'intent', 'design-setup-site', 'site-options' ]
+				: [ 'design-setup-site' ],
+			destination: isEnabled( 'signup/hero-flow' )
+				? getDestinationFromIntent
+				: getChecklistThemeDestination,
+			description:
+				'Sets up a site that has already been created and paid for (if purchases were made)',
+			lastModified: '2021-09-02',
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteId' ],
+			pageTitle: translate( 'Setup your site' ),
+		},
+		{
+			name: 'do-it-for-me',
+			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
-			description: 'Default onboarding experience with design picker as the last step',
-			lastModified: '2021-03-29',
-			showRecaptcha: true,
+			description: 'A flow for DIFM Lite leads',
+			lastModified: '2021-09-30',
 		},
 	];
 

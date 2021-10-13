@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	toggleDialog,
 	runThemeSetup as runThemeSetupAction,
@@ -21,13 +13,11 @@ import {
 	isThemeSetupActive,
 	getThemeSetupResult,
 } from 'calypso/state/theme-setup/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ThemeSetupDialog extends React.Component {
+class ThemeSetupDialog extends Component {
 	renderButtons( { runThemeSetup, site, isActive, result, translate } ) {
 		const keepContent = {
 			action: 'keep-content',

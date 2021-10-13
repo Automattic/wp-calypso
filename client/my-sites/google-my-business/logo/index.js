@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
 export default ( props ) => {
 	return (
 		<svg version="1.1" viewBox="0 0 512 512" { ...props }>

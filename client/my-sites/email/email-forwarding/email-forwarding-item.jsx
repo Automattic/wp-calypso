@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -22,7 +14,7 @@ import {
 	resendVerificationEmail,
 } from 'calypso/state/email-forwarding/actions';
 
-class EmailForwardingItem extends React.Component {
+class EmailForwardingItem extends Component {
 	static propTypes = {
 		emailData: PropTypes.shape( {
 			domain: PropTypes.string.isRequired,

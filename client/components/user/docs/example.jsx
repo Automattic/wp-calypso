@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import UserItem from '../index';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import UserItem from '../index';
 
 const UserItemExample = ( { currentUser } ) => {
 	return <UserItem user={ currentUser } />;

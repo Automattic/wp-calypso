@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { Fragment } from 'react';
+import Divider from '../divider';
 import PushNotificationIllustration from './push-notification-illustration';
 import TwoFactorActions from './two-factor-actions';
-import Divider from '../divider';
 
-/**
- * Style dependencies
- */
 import './waiting-notification-approval.scss';
 
 export default function WaitingTwoFactorNotificationApproval( { switchTwoFactorAuthType } ) {

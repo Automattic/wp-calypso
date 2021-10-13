@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Spinner from 'calypso/components/spinner';
 
-class CustomizerLoadingPanel extends React.Component {
+class CustomizerLoadingPanel extends Component {
 	static displayName = 'CustomizerLoadingPanel';
 
 	static propTypes = {

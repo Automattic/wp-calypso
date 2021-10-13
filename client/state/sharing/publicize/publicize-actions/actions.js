@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,

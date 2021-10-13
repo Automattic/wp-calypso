@@ -1,33 +1,22 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import SupportInfo from 'calypso/components/support-info';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import SupportInfo from 'calypso/components/support-info';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CustomContentTypes extends Component {
@@ -151,12 +140,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: (
-						<InlineSupportLink
-							supportLink={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) }
-							supportPostId={ 97757 }
-						/>
-					),
+					link: <InlineSupportLink supportContext="testimonials" />,
 				},
 			}
 		);
@@ -172,12 +156,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: (
-						<InlineSupportLink
-							supportLink={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) }
-							supportPostId={ 84808 }
-						/>
-					),
+					link: <InlineSupportLink supportContext="portfolios" />,
 				},
 			}
 		);

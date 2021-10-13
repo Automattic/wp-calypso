@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, find } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormLegend from 'calypso/components/forms/form-legend';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
-import { getTerms } from 'calypso/state/terms/selectors';
-import { addTerm, updateTerm } from 'calypso/state/terms/actions';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { addTerm, updateTerm } from 'calypso/state/terms/actions';
+import { getTerms } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

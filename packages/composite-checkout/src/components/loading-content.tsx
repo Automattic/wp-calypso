@@ -1,7 +1,6 @@
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
-import styled from '../lib/styled';
 
 const LoadingContentWrapper = styled.div`
 	display: flex;
@@ -144,7 +143,7 @@ const LoadingFooter = styled.div`
 	}
 `;
 
-export default function LoadingContent() {
+export default function LoadingContent(): JSX.Element {
 	const { __ } = useI18n();
 
 	return (

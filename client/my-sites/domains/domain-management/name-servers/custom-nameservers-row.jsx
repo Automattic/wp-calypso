@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-
+import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { Button } from '@automattic/components';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 
-class CustomNameserversRow extends React.PureComponent {
+class CustomNameserversRow extends PureComponent {
 	static propTypes = {
 		index: PropTypes.number,
 		nameserver: PropTypes.string,

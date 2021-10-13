@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Internal dependencies
- */
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 function ExpiringSoon( props ) {
 	const translate = useTranslate();

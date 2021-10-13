@@ -1,21 +1,8 @@
-/**
- * External dependencies
- */
-
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { keys } from 'lodash';
 import i18n from 'i18n-calypso';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-
-/**
- * Image assets
- */
+import { keys } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
@@ -23,6 +10,8 @@ import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
 import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
 import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
 import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
+
+import './style.scss';
 
 const LOGO_PATHS = {
 	amex: creditCardAmexImage,
@@ -61,7 +50,7 @@ const ALT_TEXT = {
 
 export const POSSIBLE_TYPES = keys( ALT_TEXT );
 
-class PaymentLogo extends React.Component {
+class PaymentLogo extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		type: PropTypes.oneOf( POSSIBLE_TYPES ),

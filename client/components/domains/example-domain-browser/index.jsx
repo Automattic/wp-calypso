@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ExampleDomainBrowser( { className } ) {

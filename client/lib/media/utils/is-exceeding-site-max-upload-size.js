@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { includes, startsWith, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
 
 /**

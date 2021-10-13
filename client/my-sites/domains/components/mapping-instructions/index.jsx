@@ -1,13 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import ExternalLink from 'calypso/components/external-link';
+import FoldableFAQ from 'calypso/components/foldable-faq';
+import { Notice } from 'calypso/components/notice';
 import { isSubdomain } from 'calypso/lib/domains';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
@@ -15,16 +11,10 @@ import {
 	MAP_SUBDOMAIN_WITH_CNAME_RECORDS,
 } from 'calypso/lib/url/support';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
-import FoldableFAQ from 'calypso/components/foldable-faq';
-import { Notice } from 'calypso/components/notice';
-import ExternalLink from 'calypso/components/external-link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class DomainMappingInstructions extends React.Component {
+class DomainMappingInstructions extends Component {
 	static propTypes = {
 		aRecordsRequiredForMapping: PropTypes.array,
 		areDomainDetailsLoaded: PropTypes.bool,
@@ -53,14 +43,14 @@ class DomainMappingInstructions extends React.Component {
 		);
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<p>{ nameServerInstructionsMessage }</p>
 				<ul>
 					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 						return <li key={ nameServer }>{ nameServer }</li>;
 					} ) }
 				</ul>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -77,7 +67,7 @@ class DomainMappingInstructions extends React.Component {
 		);
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<p>{ nameServerInstructionsMessage }</p>
 				<ul>
 					{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
@@ -90,7 +80,7 @@ class DomainMappingInstructions extends React.Component {
 						);
 					} ) }
 				</ul>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 
@@ -143,7 +133,7 @@ class DomainMappingInstructions extends React.Component {
 		];
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ isAtomic && (
 					<Notice status="is-warning" showDismiss={ false } translate={ this.props.translate }>
 						{ cnameMappingWarning }
@@ -161,7 +151,7 @@ class DomainMappingInstructions extends React.Component {
 						<li key={ i }>{ instruction }</li>
 					) ) }
 				</ul>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 

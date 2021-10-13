@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/data-layer/wpcom/sites/scan';
 
 /**

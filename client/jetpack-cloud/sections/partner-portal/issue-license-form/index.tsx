@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { APIProductFamily } from 'calypso/state/partner-portal/types';
-import { Button, Card } from '@automattic/components';
-import { addQueryArgs } from 'calypso/lib/url';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { errorNotice } from 'calypso/state/notices/actions';
+import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { APIProductFamily } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 interface ProductOption {

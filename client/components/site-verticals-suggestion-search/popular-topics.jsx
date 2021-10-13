@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 
 /*
 	These topics are taken from the most popular for each segment.

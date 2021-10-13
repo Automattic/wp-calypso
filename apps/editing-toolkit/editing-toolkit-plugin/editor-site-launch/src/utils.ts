@@ -8,7 +8,7 @@ export const getCurrentLaunchFlowUrl = (): string =>
 	window?.calypsoifyGutenberg?.currentCalypsoUrl ?? window.location.href;
 
 export const redirectParentWindow = ( url: string ): void => {
-	window.top.location.href = url;
+	( window.top as Window ).location.href = url;
 };
 
 export const redirectToWpcomPath = ( url: string ): void => {

@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import SwitcherShell from './switcher-shell';
+import { useState } from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import SwitcherShell from './switcher-shell';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const AuthorSelector = ( {
@@ -25,8 +15,8 @@ const AuthorSelector = ( {
 	siteId,
 	transformAuthor,
 } ) => {
-	const [ search, setSearch ] = React.useState( '' );
-	const [ prevSiteId, setPrevSiteId ] = React.useState( null );
+	const [ search, setSearch ] = useState( '' );
+	const [ prevSiteId, setPrevSiteId ] = useState( null );
 
 	if ( siteId && siteId !== prevSiteId ) {
 		setPrevSiteId( siteId );

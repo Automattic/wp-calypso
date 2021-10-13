@@ -1,23 +1,4 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-
-/**
- * WordPress dependencies
- */
-import warn from '@wordpress/warning';
-
-/**
- * Internal dependencies
- */
-import PlanFeatures from 'calypso/my-sites/plan-features';
-import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	findPlansKeys,
@@ -42,16 +23,28 @@ import {
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
-import WpcomFAQ from './wpcom-faq';
-import QueryPlans from 'calypso/components/data/query-plans';
-import QuerySites from 'calypso/components/data/query-sites';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { isEnabled } from '@automattic/calypso-config';
-import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { Button } from '@automattic/components';
+import warn from '@wordpress/warning';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import { getTld } from 'calypso/lib/domains';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSitePlan,
@@ -59,16 +52,9 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { getTld } from 'calypso/lib/domains';
-import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import PlanTypeSelector from './plan-type-selector';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import WpcomFAQ from './wpcom-faq';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PlansFeaturesMain extends Component {

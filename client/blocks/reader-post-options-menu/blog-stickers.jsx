@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { map, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
+import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
 
-class ReaderPostOptionsMenuBlogStickers extends React.Component {
+class ReaderPostOptionsMenuBlogStickers extends Component {
 	static propTypes = {
 		blogId: PropTypes.number.isRequired,
 	};

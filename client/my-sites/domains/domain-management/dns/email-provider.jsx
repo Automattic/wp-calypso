@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import { isEmpty, trim } from 'lodash';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { isEmpty, trim } from 'lodash';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { applyDnsTemplate } from 'calypso/state/domains/dns/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 class EmailProvider extends Component {
 	state = {

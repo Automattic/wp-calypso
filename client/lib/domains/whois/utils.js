@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { whoisType } from './constants';
 
 export function findRegistrantWhois( whoisContacts ) {

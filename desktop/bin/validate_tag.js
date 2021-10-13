@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-console, import/no-nodejs-modules */
-
 //
 // Checks whether the version value in the package.json is the same as the
 // given input.
 //
 
+const fs = require( 'fs' );
 const path = require( 'path' );
 
 if ( process.argv.length === 2 ) {
@@ -22,7 +21,6 @@ const sanitizedVersion = version.replace( /^desktop-v/, '' );
 
 console.log( `Validating package.json version matches ${ version }...` );
 
-const fs = require( 'fs' );
 const config = JSON.parse(
 	fs.readFileSync( path.resolve( __dirname, '..', 'package.json' ), 'utf8' )
 );

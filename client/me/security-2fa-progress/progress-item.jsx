@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
 
 const Security2faProgressItem = ( { icon, label, step } ) => (
 	<div

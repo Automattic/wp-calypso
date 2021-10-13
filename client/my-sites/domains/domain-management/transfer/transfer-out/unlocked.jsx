@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import {
 	cancelDomainTransferRequest,
 	requestDomainTransferCode,
 } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import TransferOutWarning from './warning.jsx';
-import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 
-class Unlocked extends React.Component {
+class Unlocked extends Component {
 	state = {
 		sent: ! this.isDomainAlwaysTransferrable(),
 	};

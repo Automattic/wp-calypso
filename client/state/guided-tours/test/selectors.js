@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { times } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 
 jest.mock( 'calypso/layout/guided-tours/config', () => {

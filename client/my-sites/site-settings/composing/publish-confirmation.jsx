@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-/**
- * Internal dependencies
- */
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { saveConfirmationSidebarPreference } from 'calypso/state/editor/actions';
+import { isConfirmationSidebarEnabled } from 'calypso/state/editor/selectors';
 import { isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isConfirmationSidebarEnabled } from 'calypso/state/editor/selectors';
-import { saveConfirmationSidebarPreference } from 'calypso/state/editor/actions';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {

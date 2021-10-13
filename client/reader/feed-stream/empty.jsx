@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class FeedEmptyContent extends React.PureComponent {
+class FeedEmptyContent extends PureComponent {
 	recordAction = () => {
 		recordAction( 'clicked_search_on_empty' );
 		recordGaEvent( 'Clicked Search on EmptyContent' );

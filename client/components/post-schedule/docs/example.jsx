@@ -1,26 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
+import { Card, Gridicon } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { PureComponent } from 'react';
+import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PostSchedule from 'calypso/components/post-schedule';
 import Timezone from 'calypso/components/timezone';
-import { Card } from '@automattic/components';
-import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 // Date Picker Demo
 const PostScheduleExample = localize(
 	withLocalizedMoment(
-		class extends React.PureComponent {
+		class extends PureComponent {
 			constructor( props ) {
 				super( props );
 				let date = new Date();
@@ -71,8 +64,7 @@ const PostScheduleExample = localize(
 			}
 
 			setDate = ( date ) => {
-				console.log( 'date: ', date.format() ); // eslint-disable-line no-console
-
+				console.log( 'date: ', date.format() );
 				this.setState( {
 					isFuture: +new Date() < +new Date( date ),
 					date: date,
@@ -80,7 +72,7 @@ const PostScheduleExample = localize(
 			};
 
 			setMonth = ( date ) => {
-				console.log( 'month: %s', date.format() ); // eslint-disable-line no-console
+				console.log( 'month: %s', date.format() );
 				this.setState( { month: date } );
 			};
 

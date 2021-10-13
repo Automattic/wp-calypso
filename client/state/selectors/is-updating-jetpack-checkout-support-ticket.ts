@@ -1,11 +1,5 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/data-layer/wpcom/jetpack-checkout/support-ticket';
 
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 /**

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-nodejs-modules
 const fs = require( 'fs' );
 
 const getScenarios = function () {

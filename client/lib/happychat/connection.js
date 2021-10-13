@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import IO from 'socket.io-client';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import IO from 'socket.io-client';
 import {
 	receiveAccept,
 	receiveConnect,
@@ -15,6 +8,7 @@ import {
 	receiveInit,
 	receiveLocalizedSupport,
 	receiveMessage,
+	receiveMessageOptimistic,
 	receiveMessageUpdate,
 	receiveReconnecting,
 	receiveStatus,
@@ -73,6 +67,9 @@ class Connection {
 						.on( 'accept', ( accept ) => dispatch( receiveAccept( accept ) ) )
 						.on( 'localized-support', ( accept ) => dispatch( receiveLocalizedSupport( accept ) ) )
 						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) )
+						.on( 'message.optimistic', ( message ) =>
+							dispatch( receiveMessageOptimistic( message ) )
+						)
 						.on( 'message.update', ( message ) => dispatch( receiveMessageUpdate( message ) ) );
 				} )
 				.catch( ( e ) => reject( e ) );

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Style dependencies
- */
 import './divider.scss';
 
 export default function Divider( { children } ) {

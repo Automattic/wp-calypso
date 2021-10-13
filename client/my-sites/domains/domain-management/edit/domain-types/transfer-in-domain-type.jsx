@@ -1,30 +1,23 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import DomainStatus from '../card/domain-status';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { resolveDomainStatus } from 'calypso/lib/domains';
+import { transferStatus } from 'calypso/lib/domains/constants';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
+import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { transferStatus } from 'calypso/lib/domains/constants';
-import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
-import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
+import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { resolveDomainStatus } from 'calypso/lib/domains';
 
-class TransferInDomainType extends React.Component {
+class TransferInDomainType extends Component {
 	startTransfer = () => {
 		const { domain, selectedSite } = this.props;
 		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );

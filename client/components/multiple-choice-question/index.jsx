@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
 import { memoize, pick, shuffle, values } from 'lodash';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import MultipleChoiceAnswer from './answer';
+import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
+import MultipleChoiceAnswer from './answer';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const shuffleAnswers = memoize(

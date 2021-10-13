@@ -1,13 +1,5 @@
-/**
- * External dependencies
- *
- */
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import { useContext } from 'react';
 import { SiteOffsetContext, contextTypeLoaded } from './context';
 
 export const withApplySiteOffset = createHigherOrderComponent( ( WrappedComponent ) => {
@@ -23,7 +15,7 @@ export const withApplySiteOffset = createHigherOrderComponent( ( WrappedComponen
 }, 'WithApplySiteOffset' );
 
 export const useApplySiteOffset = () => {
-	return React.useContext( SiteOffsetContext );
+	return useContext( SiteOffsetContext );
 };
 
 export type applySiteOffsetType = contextTypeLoaded;

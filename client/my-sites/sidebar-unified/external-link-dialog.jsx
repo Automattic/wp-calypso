@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { translate } from 'i18n-calypso';
 
 export const ExternalLinkDialog = ( { isVisible, closeModalHandler } ) => {
 	return (

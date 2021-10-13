@@ -2,17 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { AuthFormHeader } from '../auth-form-header';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { AuthFormHeader } from '../auth-form-header';
 import wooDnaConfig from '../woo-dna-config';
 
 const CLIENT_ID = 98765;

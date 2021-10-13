@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, orderBy, values } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
@@ -39,11 +31,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 			{
 				components: {
 					supportLink: (
-						<InlineSupportLink
-							supportPostId={ 67084 }
-							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="importers-wordpress" showIcon={ false }>
 							{ translate( 'Need help exporting your content?' ) }
 						</InlineSupportLink>
 					),
@@ -82,11 +70,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					supportLink: (
-						<InlineSupportLink
-							supportPostId={ 66764 }
-							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="importers-blogger" showIcon={ false }>
 							{ translate( 'Need help exporting your content?' ) }
 						</InlineSupportLink>
 					),
@@ -124,11 +108,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					supportLink: (
-						<InlineSupportLink
-							supportPostId={ 93180 }
-							supportLink="https://wordpress.com/support/import/import-from-medium/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="importers-medium" showIcon={ false }>
 							{ translate( 'Need help exporting your content?' ) }
 						</InlineSupportLink>
 					),
@@ -166,11 +146,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					supportLink: (
-						<InlineSupportLink
-							supportPostId={ 87696 } // TODO: update
-							supportLink="https://wordpress.com/support/import/import-from-substack/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="importers-substack" showIcon={ false }>
 							{ translate( 'Need help exporting your content?' ) }
 						</InlineSupportLink>
 					),
@@ -180,14 +156,11 @@ function getConfig( { siteTitle = '' } = {} ) {
 		optionalUrl: {
 			title: translate( 'Substack Newsletter URL' ),
 			description: translate(
-				'An optional Substack Newsletter URL to import comments and author information.'
+				'Recommended: A Substack Newsletter URL to import comments and author information.'
 			),
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
-				args: { exampleUrl: 'https://newsletter.substack.com/' },
+				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
-			validate: ( urlInput ) => {
-				return /^https:\/\/[\w-]+\.substack\.com\/?$/.test( urlInput.trim() );
-			},
 		},
 		weight: 0,
 	};
@@ -220,11 +193,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 				components: {
 					supportLink: (
-						<InlineSupportLink
-							supportPostId={ 87696 }
-							supportLink="https://wordpress.com/support/import/import-from-squarespace/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="importers-squarespace" showIcon={ false }>
 							{ translate( 'Need help exporting your content?' ) }
 						</InlineSupportLink>
 					),
@@ -254,11 +223,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
 			components: {
 				supportLink: (
-					<InlineSupportLink
-						supportPostId={ 147777 }
-						supportLink="https://wordpress.com/support/import/import-from-wix/"
-						showIcon={ false }
-					>
+					<InlineSupportLink supportContext="importers-wix" showIcon={ false }>
 						{ translate( 'Need help?' ) }
 					</InlineSupportLink>
 				),

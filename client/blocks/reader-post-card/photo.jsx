@@ -1,21 +1,13 @@
-/**
- * External Dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { debounce } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal Dependencies
- */
+import { debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const noop = () => {};
 
-class PostPhoto extends React.Component {
+class PostPhoto extends Component {
 	state = {
 		cardWidth: 800,
 	};
@@ -123,7 +115,7 @@ class PostPhoto extends React.Component {
 							href={ post.URL }
 							onClick={ this.props.onClick }
 						>
-							<Emojify>{ linkTitle }</Emojify>
+							{ linkTitle }
 						</a>
 					</h2>
 				</AutoDirection>

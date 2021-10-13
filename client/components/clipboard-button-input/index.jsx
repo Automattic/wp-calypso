@@ -1,33 +1,22 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { withoutHttp } from 'calypso/lib/url';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { withoutHttp } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function ClipboardButtonInput( { value = '', className, disabled, hideHttp, dispatch, ...rest } ) {
 	const translate = useTranslate();
 
-	const [ isCopied, setCopied ] = React.useState( false );
+	const [ isCopied, setCopied ] = useState( false );
 
 	// toggle the `isCopied` flag back to `false` after 4 seconds
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( isCopied ) {
 			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
 			return () => clearTimeout( confirmationTimeout );

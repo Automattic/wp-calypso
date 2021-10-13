@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { Component } from 'react';
 import SiteIcon from 'calypso/blocks/site-icon';
 
-class PagePlaceholder extends React.Component {
+class PagePlaceholder extends Component {
 	static displayName = 'PagePlaceholder';
 
 	render() {
@@ -34,7 +27,7 @@ class PagePlaceholder extends React.Component {
 	}
 }
 
-class MarkerPlaceholder extends React.Component {
+class MarkerPlaceholder extends Component {
 	static displayName = 'MarkerPlaceholder';
 
 	render() {

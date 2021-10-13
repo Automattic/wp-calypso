@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export default function getCartKey( {
@@ -11,7 +8,7 @@ export default function getCartKey( {
 	selectedSite: SiteData | undefined | null;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-} ): string | number | undefined {
+} ): string | undefined {
 	if ( ! selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
 		return 'no-user';
 	}
@@ -21,6 +18,8 @@ export default function getCartKey( {
 	if ( selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
 		return selectedSite.slug;
 	}
-
-	return selectedSite?.ID ?? 'no-site';
+	if ( selectedSite?.ID ) {
+		return String( selectedSite.ID );
+	}
+	return 'no-site';
 }

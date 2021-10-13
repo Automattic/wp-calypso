@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';

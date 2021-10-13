@@ -1,52 +1,30 @@
-/**
- * External dependencies
- */
+import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import React from 'react';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { intersection, difference, includes, flowRight as compose } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import Search from 'calypso/components/search';
-import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
+import Search from 'calypso/components/search';
 import StickyPanel from 'calypso/components/sticky-panel';
-import config from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
-import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
-import Popover from 'calypso/components/popover';
+import MagicSearchWelcome from './welcome';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
 
-class ThemesMagicSearchCard extends React.Component {
+class ThemesMagicSearchCard extends Component {
 	static propTypes = {
-		tier: PropTypes.string,
-		select: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		onSearch: PropTypes.func.isRequired,
 		search: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		showTierThemesControl: PropTypes.bool,
 		isBreakpointActive: PropTypes.bool, // comes from withMobileBreakpoint HOC
-	};
-
-	static defaultProps = {
-		tier: 'all',
-		showTierThemesControl: true,
 	};
 
 	constructor( props ) {
@@ -63,7 +41,7 @@ class ThemesMagicSearchCard extends React.Component {
 		};
 	}
 
-	popoverButtonRef = React.createRef();
+	popoverButtonRef = createRef();
 
 	setSuggestionsRefs = ( key ) => ( suggestionComponent ) => {
 		this.suggestionsRefs[ key ] = suggestionComponent;
@@ -290,15 +268,8 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	render() {
-		const { translate, filters, showTierThemesControl } = this.props;
+		const { translate, filters } = this.props;
 		const { isPopoverVisible } = this.state;
-		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-
-		const tiers = [
-			{ value: 'all', label: translate( 'All' ) },
-			{ value: 'free', label: translate( 'Free' ) },
-			{ value: 'premium', label: translate( 'Premium' ) },
-		];
 
 		const filtersKeys = [
 			...intersection( preferredOrderOfTaxonomies, Object.keys( filters ) ),
@@ -348,31 +319,29 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					</div>
 				) }
-				{ config.isEnabled( 'theme/showcase-revamp' ) && (
-					<div>
-						<Button
-							onClick={ this.togglePopover }
-							className="components-button themes-magic-search-card__advanced-toggle"
-							ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
-						>
-							<Gridicon icon="cog" size={ 18 } />
-							{ translate( 'Filters' ) }
-						</Button>
-						<Popover
-							context={ this.popoverButtonRef }
-							isVisible={ isPopoverVisible }
-							onClose={ this.closePopover }
-							position="bottom"
-						>
-							<MagicSearchWelcome
-								ref={ this.setSuggestionsRefs( 'welcome' ) }
-								taxonomies={ filtersKeys }
-								topSearches={ [] }
-								suggestionsCallback={ this.welcomeBarAddText }
-							/>
-						</Popover>
-					</div>
-				) }
+				<div>
+					<Button
+						onClick={ this.togglePopover }
+						className="components-button themes-magic-search-card__advanced-toggle"
+						ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
+					>
+						<Gridicon icon="cog" size={ 18 } />
+						{ translate( 'Filters' ) }
+					</Button>
+					<Popover
+						context={ this.popoverButtonRef }
+						isVisible={ isPopoverVisible }
+						onClose={ this.closePopover }
+						position="bottom"
+					>
+						<MagicSearchWelcome
+							ref={ this.setSuggestionsRefs( 'welcome' ) }
+							taxonomies={ filtersKeys }
+							topSearches={ [] }
+							suggestionsCallback={ this.welcomeBarAddText }
+						/>
+					</Popover>
+				</div>
 			</Search>
 		);
 
@@ -394,17 +363,6 @@ class ThemesMagicSearchCard extends React.Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
-						{ isPremiumThemesEnabled && showTierThemesControl && (
-							<SimplifiedSegmentedControl
-								key={ this.props.tier }
-								initialSelected={ this.props.tier ? this.props.tier : 'all' }
-								options={ tiers }
-								onSelect={ this.props.select }
-								className={ classNames( {
-									'showcase-revamp': config.isEnabled( 'theme/showcase-revamp' ),
-								} ) }
-							/>
-						) }
 					</div>
 				</StickyPanel>
 			</div>
@@ -412,16 +370,11 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
-let allowSomeThemeFilters = ( x ) => x;
-let allowSomeAllValidFilters = ( x ) => x;
-
-if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-	// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
-	// For simplicity and less user confusion.
-	allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
-	allowSomeAllValidFilters = ( filtersKeys ) =>
-		intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
-}
+// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+// For simplicity and less user confusion.
+const allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+const allowSomeAllValidFilters = ( filtersKeys ) =>
+	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
 
 export default compose(
 	connect( ( state ) => ( {

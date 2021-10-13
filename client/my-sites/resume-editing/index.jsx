@@ -1,37 +1,27 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryPosts from 'calypso/components/data/query-posts';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { resetEditorLastDraft } from 'calypso/state/editor/last-draft/actions';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId,
 } from 'calypso/state/editor/last-draft/selectors';
-import { isRequestingSitePost } from 'calypso/state/posts/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
+import { isRequestingSitePost } from 'calypso/state/posts/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { decodeEntities } from 'calypso/lib/formatting';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { bumpStat } from 'calypso/lib/analytics/mc';
-import QueryPosts from 'calypso/components/data/query-posts';
-import SiteIcon from 'calypso/blocks/site-icon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ResumeEditing extends React.Component {
+class ResumeEditing extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,

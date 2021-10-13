@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import { map, pickBy } from 'lodash';
 import { createSelector } from '@automattic/state-utils';
+import { map, pickBy } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/reader/init';
 
 /**

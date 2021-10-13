@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
 import {
 	SITE_PLANS_FETCH_COMPLETED,
 	PLANS_RECEIVE,

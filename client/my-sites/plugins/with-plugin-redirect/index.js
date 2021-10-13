@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { successNotice, removeNotice } from 'calypso/state/notices/actions';
 import {
 	isPluginActionCompleted,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { successNotice, removeNotice } from 'calypso/state/notices/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getRedirectPluginHandler } from './utils';
 
 const withPluginRedirect = createHigherOrderComponent(

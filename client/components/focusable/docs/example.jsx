@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DocsExample from 'calypso/devdocs/docs-example';
+import { PureComponent } from 'react';
 import Focusable from 'calypso/components/focusable';
+import DocsExample from 'calypso/devdocs/docs-example';
 
 const noop = () => {};
 
-export default class FocusableExample extends React.PureComponent {
+export default class FocusableExample extends PureComponent {
 	static displayName = 'Focusable';
 
 	render() {

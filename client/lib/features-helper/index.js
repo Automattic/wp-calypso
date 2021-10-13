@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
 import ReactDom from 'react-dom';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FeatureList from './feature-list';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

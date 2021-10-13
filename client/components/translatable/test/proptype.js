@@ -4,16 +4,7 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
 import translatableString from '../proptype';
 
 function assertPasses( validator, { props }, propName = 'translatableString' ) {

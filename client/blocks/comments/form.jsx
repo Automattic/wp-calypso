@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { isEnabled } from '@automattic/calypso-config';
-import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import Gravatar from 'calypso/components/gravatar';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import AutoresizingFormTextarea from './autoresizing-form-textarea';
 
-/**
- * Style dependencies
- */
 import './form.scss';
 
 const noop = () => {};
 
-class PostCommentForm extends React.Component {
+class PostCommentForm extends Component {
 	constructor( props ) {
 		super();
 

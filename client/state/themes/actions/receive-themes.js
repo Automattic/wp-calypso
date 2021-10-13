@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 import { isThemeMatchingQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';

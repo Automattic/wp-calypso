@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { find, get } from 'lodash';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { find, get } from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import SectionNav from 'calypso/components/section-nav';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style Dependencies
- */
 import './style.scss';
 
 export const Sharing = ( {
@@ -40,12 +30,13 @@ export const Sharing = ( {
 	showBusinessTools,
 	siteId,
 	isJetpack,
+	isP2Hub,
 	isVip,
 	siteSlug,
 	translate,
 } ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
-	const filters = [];
+	let filters = [];
 
 	filters.push( {
 		id: 'marketing-tools',
@@ -65,12 +56,13 @@ export const Sharing = ( {
 
 	// Include Connections link if all sites are selected. Otherwise,
 	// verify that the required Jetpack module is active
+	const connectionsFilter = {
+		id: 'sharing-connections',
+		route: '/marketing/connections' + pathSuffix,
+		title: translate( 'Connections' ),
+	};
 	if ( showConnections ) {
-		filters.push( {
-			id: 'sharing-connections',
-			route: '/marketing/connections' + pathSuffix,
-			title: translate( 'Connections' ),
-		} );
+		filters.push( connectionsFilter );
 	}
 
 	// Include Sharing Buttons link if a site is selected and the
@@ -93,20 +85,29 @@ export const Sharing = ( {
 		} );
 	}
 
+	// For p2 hub sites show only connections tab
+	let titleHeader = translate( 'Marketing and Integrations' );
+	let description = translate(
+		'Explore tools to build your audience, market your site, and engage your visitors.'
+	);
+	if ( isP2Hub ) {
+		filters = [ connectionsFilter ];
+		titleHeader = translate( 'Integrations' );
+		description = translate( 'Explore tools to connect to your P2.' );
+	}
+
 	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
+			<DocumentHead title={ titleHeader } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="marketing__page-heading"
-				headerText={ translate( 'Marketing and Integrations' ) }
-				subHeaderText={ translate(
-					'Explore tools to build your audience, market your site, and engage your visitors.'
-				) }
+				headerText={ titleHeader }
+				subHeaderText={ description }
 				align="left"
 			/>
 			{ filters.length > 0 && (
@@ -156,6 +157,7 @@ export default connect( ( state ) => {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 	return {
+		isP2Hub: isSiteP2Hub( state, siteId ),
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,

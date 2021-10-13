@@ -1,29 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import { connect } from 'react-redux';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import Main from 'calypso/components/main';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import EditContactInfoFormCard from './form-card';
-import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
-import PendingWhoisUpdateCard from './pending-whois-update-card';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
 import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
+import EditContactInfoFormCard from './form-card';
+import PendingWhoisUpdateCard from './pending-whois-update-card';
+import EditContactInfoPrivacyEnabledCard from './privacy-enabled-card';
 
-class EditContactInfo extends React.Component {
+class EditContactInfo extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

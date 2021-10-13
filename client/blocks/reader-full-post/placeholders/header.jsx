@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
 const ReaderFullPostHeaderPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

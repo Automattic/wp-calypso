@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
-class WpcomDomainType extends React.Component {
+class WpcomDomainType extends Component {
 	render() {
 		const {
 			domain: { name: domain_name },

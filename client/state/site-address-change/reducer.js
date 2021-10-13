@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
+import { get } from 'lodash';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -17,6 +9,7 @@ import {
 	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Returns the updated request state after an action has been dispatched. The

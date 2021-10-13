@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import MediaComponent from 'calypso/my-sites/media/main';
+import { createElement } from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
+import MediaComponent from 'calypso/my-sites/media/main';
 
 export default {
 	media: function ( context, next ) {
@@ -18,7 +11,7 @@ export default {
 
 		const mediaId = context.params.mediaId ? parseInt( context.params.mediaId ) : null;
 		// Render
-		context.primary = React.createElement( MediaComponent, {
+		context.primary = createElement( MediaComponent, {
 			filter: context.params.filter,
 			search: context.query.s,
 			mediaId,

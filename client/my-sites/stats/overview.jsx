@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import SiteOverview from './stats-site-overview';
-import SiteOverviewPlaceholder from './stats-overview-placeholder';
-import DatePicker from './stats-date-picker';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import Main from 'calypso/components/main';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import DatePicker from './stats-date-picker';
+import SiteOverviewPlaceholder from './stats-overview-placeholder';
+import SiteOverview from './stats-site-overview';
 
 class StatsOverview extends Component {
 	static propTypes = {
@@ -74,7 +67,7 @@ class StatsOverview extends Component {
 				.format( 'YYYY-MM-DD' );
 
 			return (
-				<React.Fragment key={ site.ID }>
+				<Fragment key={ site.ID }>
 					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
 						<DatePicker period={ period } date={ date } />
 					) }
@@ -86,7 +79,7 @@ class StatsOverview extends Component {
 						title={ site.title }
 						siteSlug={ site.slug }
 					/>
-				</React.Fragment>
+				</Fragment>
 			);
 		} );
 

@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useCallback, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-import { defaultRewindConfig, RewindConfig } from './types';
+import { useTranslate } from 'i18n-calypso';
+import { FunctionComponent, useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
-import CheckYourEmail from './rewind-flow-notice/check-your-email';
-import Error from './error';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequest from 'calypso/state/selectors/get-request';
+import Error from './error';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import CheckYourEmail from './rewind-flow-notice/check-your-email';
+import { defaultRewindConfig, RewindConfig } from './types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

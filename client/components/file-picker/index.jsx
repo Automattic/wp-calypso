@@ -1,14 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import pick from 'component-file-picker';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
 const noop = () => {};
 
-export default class FilePicker extends React.Component {
+export default class FilePicker extends Component {
 	constructor( props ) {
 		super( props );
 		this.showPicker = this.showPicker.bind( this );

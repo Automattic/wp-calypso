@@ -1,16 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import React from 'react';
+
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-
 import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
 const defaultProps = {

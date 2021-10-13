@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
-export const getPreferredEditorView = ( state, siteId ) => {
+export const getPreferredEditorView = ( state, siteId, postType = 'post' ) => {
 	if ( ! isNavUnificationEnabled( state ) ) {
 		return 'default';
 	}
@@ -13,7 +10,11 @@ export const getPreferredEditorView = ( state, siteId ) => {
 	if ( ! menu ) {
 		return 'default';
 	}
-	const postsMenuItem = menu.find( ( item ) => item.slug === 'edit-php' );
+	let menuSlug = 'edit-php';
+	if ( postType !== 'post' ) {
+		menuSlug += `post_type${ postType }`;
+	}
+	const postsMenuItem = menu.find( ( item ) => item.slug === menuSlug );
 	if ( ! postsMenuItem ) {
 		return 'default';
 	}

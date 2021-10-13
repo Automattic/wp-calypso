@@ -1,56 +1,46 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { map, find } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import cancellationReasons from './cancellation-reasons';
-import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
+import { isDomainRegistration } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import { clearPurchases } from 'calypso/state/purchases/actions';
-import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
+import { localize } from 'i18n-calypso';
+import { map, find } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import HeaderCake from 'calypso/components/header-cake';
-import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getName as getDomainName } from 'calypso/lib/purchases';
+import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
+import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getName as getDomainName } from 'calypso/lib/purchases';
-import { isDataLoading } from '../utils';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isDomainRegistration } from '@automattic/calypso-products';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import titles from 'calypso/me/purchases/titles';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isDataLoading } from '../utils';
+import cancellationReasons from './cancellation-reasons';
+import ConfirmCancelDomainLoadingPlaceholder from './loading-placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import FormSelect from 'calypso/components/forms/form-select';
 
-class ConfirmCancelDomain extends React.Component {
+class ConfirmCancelDomain extends Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
 		getCancelPurchaseUrlFor: PropTypes.func,
@@ -124,7 +114,7 @@ class ConfirmCancelDomain extends React.Component {
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
+		cancelAndRefundPurchase( purchase.id, data, ( error, response ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
@@ -145,21 +135,28 @@ class ConfirmCancelDomain extends React.Component {
 				return;
 			}
 
-			this.props.successNotice(
-				translate( '%(purchaseName)s was successfully cancelled and refunded.', {
+			let successMessage;
+			if ( response.status === 'completed' ) {
+				successMessage = translate( '%(purchaseName)s was successfully cancelled and refunded.', {
 					args: { purchaseName },
-				} ),
-				{ displayOnNextPage: true }
-			);
+				} );
 
-			this.props.refreshSitePlans( purchase.siteId );
-
-			this.props.clearPurchases();
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.clearPurchases();
+			} else if ( response.status === 'queued' ) {
+				successMessage = translate(
+					'We are cancelling %(purchaseName)s and processing your refund.{{br/}}' +
+						'Please give it some time for changes to take effect. ' +
+						'An email will be sent once the process is complete.',
+					{ args: { purchaseName }, components: { br: <br /> } }
+				);
+			}
 
 			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
 				product_slug: purchase.productSlug,
 			} );
 
+			this.props.successNotice( successMessage, { displayOnNextPage: true } );
 			page.redirect( this.props.purchaseListUrl );
 		} );
 	};
@@ -273,7 +270,7 @@ class ConfirmCancelDomain extends React.Component {
 		const domain = getDomainName( purchase );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -319,7 +316,7 @@ class ConfirmCancelDomain extends React.Component {
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

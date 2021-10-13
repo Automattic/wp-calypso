@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { search } from './controller';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { search } from './controller';
 
 export default function () {
 	// Old recommendations page

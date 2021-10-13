@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { newPost } from 'calypso/lib/paths';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { navigate } from 'calypso/lib/navigate';
 import * as oAuthToken from 'calypso/lib/oauth-token';
+import { newPost } from 'calypso/lib/paths';
 import { getStatsPathForTab } from 'calypso/lib/route';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET } from 'calypso/state/desktop/window-events';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
-import { navigate } from 'calypso/lib/navigate';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 
 /**
  * Module variables

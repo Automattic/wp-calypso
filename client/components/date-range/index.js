@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { has } from 'lodash';
-import { DateUtils } from 'react-day-picker';
+import { Button, Popover, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { has } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { createRef, Component } from 'react';
+import { DateUtils } from 'react-day-picker';
 import DatePicker from 'calypso/components/date-picker';
-import Popover from 'calypso/components/popover';
-import { Button } from '@automattic/components';
-import DateRangeInputs from './inputs';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateRangeHeader from './header';
+import DateRangeInputs from './inputs';
 import DateRangeTrigger from './trigger';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -122,7 +110,7 @@ export class DateRange extends Component {
 		};
 
 		// Ref to the Trigger <button> used to position the Popover component
-		this.triggerButtonRef = React.createRef();
+		this.triggerButtonRef = createRef();
 	}
 
 	/**

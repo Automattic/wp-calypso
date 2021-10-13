@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
+
 import { makeGoogleAnalyticsTrackingFunction } from '../ga';
 
 jest.mock( '@automattic/calypso-config', () => {

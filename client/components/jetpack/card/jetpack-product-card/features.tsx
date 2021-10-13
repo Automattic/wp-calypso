@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
 import classnames from 'classnames';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import FeaturesItem from './features-item';
-
-/**
- * Type dependencies
- */
 import type { ProductCardFeatures, ProductCardFeaturesItem } from './types';
 
 export interface Props {

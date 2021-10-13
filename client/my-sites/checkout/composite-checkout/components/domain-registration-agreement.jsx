@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { Component, Fragment } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import Gridicon from 'calypso/components/gridicon';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
@@ -19,7 +12,7 @@ import {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class DomainRegistrationAgreement extends React.Component {
+class DomainRegistrationAgreement extends Component {
 	recordRegistrationAgreementClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};

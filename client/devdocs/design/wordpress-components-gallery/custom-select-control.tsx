@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { CustomSelectControl } from '@wordpress/components';
 
 const defaultOptions = [

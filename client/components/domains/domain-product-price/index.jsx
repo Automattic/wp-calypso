@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class DomainProductPrice extends React.Component {
+class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
 		price: PropTypes.string,
@@ -35,31 +24,22 @@ class DomainProductPrice extends React.Component {
 	};
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, showStrikedOutPrice, translate } = this.props;
+		const { isMappingProduct, translate } = this.props;
 
 		let message;
 		switch ( this.props.rule ) {
 			case 'FREE_WITH_PLAN':
-				message = translate( 'First year free with your plan' );
 				if ( isMappingProduct ) {
 					message = translate( 'Free with your plan' );
+				} else {
+					return this.renderReskinFreeWithPlanText();
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( showStrikedOutPrice ) {
-					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
-						args: { cost: this.props.price },
-						components: {
-							del: <del />,
-							span: <span className="domain-product-price__free-price" />,
-						},
-					} );
-				} else {
-					message = translate( 'First year included in paid plans' );
-				}
-
 				if ( isMappingProduct ) {
 					message = translate( 'Included in paid plans' );
+				} else {
+					return this.renderReskinFreeWithPlanText();
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
@@ -74,17 +54,7 @@ class DomainProductPrice extends React.Component {
 		if ( this.props.isMappingProduct ) {
 			return;
 		}
-
-		const priceText = this.props.showStrikedOutPrice
-			? this.props.translate( 'Renews at %(cost)s / year', {
-					args: { cost: this.props.price },
-			  } )
-			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
-					args: { cost: this.props.price },
-					components: { small: <small /> },
-			  } );
-
-		return <div className="domain-product-price__price">{ priceText }</div>;
+		return this.renderReskinDomainPrice();
 	}
 
 	renderReskinFreeWithPlanText() {
@@ -162,17 +132,23 @@ class DomainProductPrice extends React.Component {
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
-		const className = classnames( 'domain-product-price', 'is-free-domain', {
+		const className = classnames( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
 		return (
 			<div className={ className }>
-				<div className="domain-product-price__sale-price">{ salePrice }</div>
+				<div className="domain-product-price__sale-price">
+					{ translate( '%(salePrice)s {{small}}for the first year{{/small}}', {
+						args: { salePrice },
+						components: { small: <small /> },
+					} ) }
+				</div>
 				<div className="domain-product-price__renewal-price">
-					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
+					{ translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
 						components: { small: <small /> },
+						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
 					} ) }
 				</div>
 			</div>

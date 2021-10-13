@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import { getPlan } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import { getSiteProducts, getSitePlan } from 'calypso/state/sites/selectors';
-
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 /**
@@ -48,8 +37,8 @@ export default function siteHasSubscription(
 		productsList = [
 			...productsList,
 			...[ sitePlan.product_slug ],
-			...sitePlanDetails.getHiddenFeatures(),
-			...( sitePlanDetails.getInferiorHiddenFeatures?.() ?? [] ),
+			...sitePlanDetails.getIncludedFeatures(),
+			...( sitePlanDetails.getInferiorFeatures?.() ?? [] ),
 		];
 	}
 	return productsList.some( ( product ) => subscriptionSlug.includes( product ) );

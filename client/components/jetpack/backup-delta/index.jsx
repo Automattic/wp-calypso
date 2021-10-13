@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useMemo, useState } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useMemo, useState } from 'react';
 import ActivityCard from 'calypso/components/activity-card';
 import Pagination from 'calypso/components/pagination';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const BACKUPS_PER_PAGE = 10;

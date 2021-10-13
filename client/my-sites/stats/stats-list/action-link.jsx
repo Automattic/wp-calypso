@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 class StatsActionLink extends PureComponent {

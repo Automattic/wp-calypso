@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { render } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FollowButton from '../button';
 
 describe( 'FollowButton', () => {

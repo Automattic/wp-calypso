@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { Component } from 'react';
 
 export default class SiteOrDomainChoice extends Component {
 	handleClickChoice = ( event ) => {

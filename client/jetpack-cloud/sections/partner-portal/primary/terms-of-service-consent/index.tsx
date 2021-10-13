@@ -1,36 +1,24 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { ReactElement, useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import Main from 'calypso/components/main';
+import Spinner from 'calypso/components/spinner';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
+import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import {
 	getCurrentPartner,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
-import Main from 'calypso/components/main';
-import CardHeading from 'calypso/components/card-heading';
-import Spinner from 'calypso/components/spinner';
-import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function TermsOfServiceConsent(): ReactElement | null {

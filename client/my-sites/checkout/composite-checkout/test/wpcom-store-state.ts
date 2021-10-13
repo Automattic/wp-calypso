@@ -1,16 +1,9 @@
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
 import {
 	updateManagedContactDetailsShape,
 	mapManagedContactDetailsShape,
 	flattenManagedContactDetailsShape,
 } from '../types/wpcom-store-state';
-
-/**
- *  External dependencies
- */
-import { get } from 'lodash';
 import type { ManagedContactDetailsShape } from '@automattic/wpcom-checkout';
 
 describe( 'updateManagedContactDetailsShape', function () {

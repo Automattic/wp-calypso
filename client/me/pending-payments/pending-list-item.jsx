@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { Fragment } from 'react';
+import { connect } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { paymentMethodName } from 'calypso/lib/cart-values';
+import { purchaseType as getPurchaseType, getName } from 'calypso/lib/purchases';
 import { getSite, getSiteTitle, getSiteDomain } from 'calypso/state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
-import { purchaseType as getPurchaseType, getName } from 'calypso/lib/purchases';
-import { paymentMethodName } from 'calypso/lib/cart-values';
 
 export function PendingListItem( {
 	paymentType,
@@ -44,7 +36,7 @@ export function PendingListItem( {
 	}
 
 	return (
-		<React.Fragment>
+		<Fragment>
 			<PurchaseSiteHeader siteId={ siteId } name={ siteTitle } domain={ siteDomain } />
 			<Card className={ 'pending-payments__list-item is-compact' }>
 				<span className="pending-payments__list-item-wrapper">
@@ -72,7 +64,7 @@ export function PendingListItem( {
 					</div>
 				</span>
 			</Card>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

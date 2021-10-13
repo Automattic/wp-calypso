@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { omitBy } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FollowButton from './button';
-import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import FollowButton from './button';
 
 const noop = () => {};
 

@@ -2,17 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount, shallow } from 'enzyme';
-import React from 'react';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
 import CloseOnEscape from '../';
 
 const simulateEscapeKeydown = () =>

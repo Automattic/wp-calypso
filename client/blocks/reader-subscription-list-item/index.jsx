@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classnames from 'classnames';
-import { flowRight as compose, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { flowRight as compose, isEmpty, get } from 'lodash';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
-import FollowButton from 'calypso/reader/follow-button';
-import { getStreamUrl } from 'calypso/reader/route';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
 	getSiteDescription,
@@ -20,15 +14,10 @@ import {
 	getFeedUrl,
 	getSiteUrl,
 } from 'calypso/reader/get-helpers';
-import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
-import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
-import ExternalLink from 'calypso/components/external-link';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { getStreamUrl } from 'calypso/reader/route';
+import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function ReaderSubscriptionListItem( {

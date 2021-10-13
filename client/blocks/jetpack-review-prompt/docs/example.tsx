@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
-import { PREFERENCE_NAME } from 'calypso/state/jetpack-review-prompt/constants';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
-import CardHeading from 'calypso/components/card-heading';
+import { FunctionComponent, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import CardHeading from 'calypso/components/card-heading';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
+import { PREFERENCE_NAME } from 'calypso/state/jetpack-review-prompt/constants';
+import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 const JetpackReviewPromptExample: FunctionComponent = () => {
 	const dispatch = useDispatch();

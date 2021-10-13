@@ -1,34 +1,23 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { omitBy, some, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { omitBy, some, isEqual, partial } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import HeaderCake from 'calypso/components/header-cake';
+import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
+import { isModuleActive } from 'calypso/lib/site/utils';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import getMediaItem from 'calypso/state/media/thunks/get-media-item';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import EditorMediaModalContent from '../content';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
-import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'calypso/state/editor/actions';
-import { isModuleActive } from 'calypso/lib/site/utils';
-import getMediaItem from 'calypso/state/media/thunks/get-media-item';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
 
-class EditorMediaModalGallery extends React.Component {
+class EditorMediaModalGallery extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		items: PropTypes.array,
@@ -165,6 +154,6 @@ class EditorMediaModalGallery extends React.Component {
 }
 
 export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	onReturnToList: () => setEditorMediaModalView( ModalViews.LIST ),
 	getMediaItem,
 } )( localize( EditorMediaModalGallery ) );

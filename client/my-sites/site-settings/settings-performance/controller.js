@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { createElement } from 'react';
 import SiteSettingsPerformance from './main';
 
 export function performance( context, next ) {
-	context.primary = React.createElement( SiteSettingsPerformance );
+	context.primary = createElement( SiteSettingsPerformance );
 	next();
 }

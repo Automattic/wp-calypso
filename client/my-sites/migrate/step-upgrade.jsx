@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { CompactCard, ProductIcon } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
-import HeaderCake from 'calypso/components/header-cake';
-import MigrateButton from './migrate-button.jsx';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import MigrateButton from './migrate-button.jsx';
 
-/**
- * Style dependencies
- */
 import './section-migrate.scss';
 
 class StepUpgrade extends Component {

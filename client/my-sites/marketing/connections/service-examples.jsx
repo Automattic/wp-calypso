@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ServiceExample from './service-example';
-import GooglePlusDeprication from './google-plus-deprecation';
+import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import GooglePlusDeprication from './google-plus-deprecation';
+import ServiceExample from './service-example';
 
 /**
  * Module constants
@@ -37,6 +30,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'twitter',
 	'google_photos',
 	'mailchimp',
+	'slack',
 ];
 
 class SharingServiceExamples extends Component {
@@ -281,6 +275,43 @@ class SharingServiceExamples extends Component {
 									) }
 								/>
 							),
+						},
+					}
+				),
+			},
+		];
+	}
+
+	slack() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/slack-screenshot-1.png',
+					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'Get {{strong}}Slack notifications{{/strong}} with every new P2 post.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+			{
+				image: {
+					src: '/calypso/images/sharing/slack-screenshot-2.png',
+					alt: this.props.translate( 'Preview posts and pages directly from Slack.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'{{strong}}Preview posts and pages{{/strong}} directly from Slack.',
+					{
+						components: {
+							strong: <strong />,
 						},
 					}
 				),

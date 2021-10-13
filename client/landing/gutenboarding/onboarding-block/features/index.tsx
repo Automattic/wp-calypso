@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
-import { Button } from '@wordpress/components';
-import type { WPCOMFeatures } from '@automattic/data-stores';
 import {
 	FeatureIcon,
 	Title,
@@ -15,22 +7,22 @@ import {
 	SkipButton,
 	NextButton,
 } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
+import * as React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
+import type { WPCOMFeatures } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;
+
+const identity = ( value: any ) => value;
 
 const FeaturesStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
@@ -69,8 +61,10 @@ const FeaturesStep: React.FunctionComponent = () => {
 		<div className="gutenboarding-page features">
 			<div className="features__header">
 				<div className="features__heading">
-					<Title>{ __( 'Which features will you need?' ) }</Title>
-					<SubTitle>
+					<Title data-e2e-string="Which features will you need?">
+						{ __( 'Which features will you need?' ) }
+					</Title>
+					<SubTitle data-e2e-string="Choose the features that matter to you and we'll suggest a plan to suit your needs. Don't worry, you won't be charged and can change it at any time.">
 						{ __(
 							"Choose the features that matter to you and we'll suggest a plan to suit your needs. Don't worry, you won't be charged and can change it at any time."
 						) }
@@ -101,8 +95,16 @@ const FeaturesStep: React.FunctionComponent = () => {
 								<FeatureIcon featureId={ feature.id } />
 							</div>
 							<div className="features__item-heading">
-								<div className="features__item-name">{ getFeatureText( feature.id, __ ).name }</div>
-								<div className="features__item-description">
+								<div
+									className="features__item-name"
+									data-e2e-string={ getFeatureText( feature.id, identity ).name }
+								>
+									{ getFeatureText( feature.id, __ ).name }
+								</div>
+								<div
+									className="features__item-description"
+									data-e2e-string={ getFeatureText( feature.id, identity ).description }
+								>
 									{ getFeatureText( feature.id, __ ).description }
 								</div>
 							</div>

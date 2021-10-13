@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, includes, map, without, has } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -13,9 +6,9 @@ import {
 	COMMENTS_QUERY_UPDATE,
 	COMMENTS_TREE_SITE_REQUEST,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { getFiltersKey } from 'calypso/state/comments/ui/utils';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 const deepUpdateComments = ( state, comments, query ) => {
 	const { page = 1, postId } = query;

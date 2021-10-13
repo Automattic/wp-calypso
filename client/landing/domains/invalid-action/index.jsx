@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DomainsLandingHeader from '../header';
-import DomainsLandingContentCard from '../content-card';
+import { Component, Fragment } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import DomainsLandingContentCard from '../content-card';
+import DomainsLandingHeader from '../header';
 
 class InvalidActionPage extends Component {
 	render() {

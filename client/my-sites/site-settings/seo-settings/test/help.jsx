@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { SeoSettingsHelpCard } from '../help';
 
 const props = {

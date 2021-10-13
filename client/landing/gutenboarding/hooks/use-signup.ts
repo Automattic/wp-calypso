@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-
-/**
- * Internal dependencies
- */
+import { useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { useIsAnchorFm } from '../path';
 
 /**
  * When a new user completes Gutenboarding, before creating a site we show signup dialog.
@@ -35,7 +28,7 @@ export default function useSignup() {
 		location: { pathname, search },
 	} = useHistory();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		// This handles opening the signup modal when there is a ?signup query parameter
 		// The use case is a user clicking "Create account" from login
 		// TODO: We can remove this condition when we've converted signup into it's own page
@@ -57,7 +50,7 @@ export default function useSignup() {
 
 	return {
 		showSignupDialog,
-		onSignupDialogOpen: React.useCallback( () => setShowSignupDialog( true ), [] ),
-		onSignupDialogClose: React.useCallback( () => setShowSignupDialog( false ), [] ),
+		onSignupDialogOpen: useCallback( () => setShowSignupDialog( true ), [] ),
+		onSignupDialogClose: useCallback( () => setShowSignupDialog( false ), [] ),
 	};
 }

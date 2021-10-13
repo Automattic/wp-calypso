@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
-import ExpandContent from './expand-content';
-import ActionsButton from './actions-button';
 import { Activity } from '../types';
+import ActionsButton from './actions-button';
+import ExpandContent from './expand-content';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type OwnProps = {

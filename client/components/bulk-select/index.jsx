@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import Count from 'calypso/components/count';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export class BulkSelect extends React.Component {
+export class BulkSelect extends Component {
 	static displayName = 'BulkSelect';
 
 	static propTypes = {

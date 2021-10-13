@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
+import { FunctionComponent, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import React, { FunctionComponent, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import * as HostInfo from '../host-info';
 

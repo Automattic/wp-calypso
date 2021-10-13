@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import store from 'store';
-import page from 'page';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import InviteAccept from 'calypso/my-sites/invites/invite-accept';
-import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
-import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
+import page from 'page';
+import { createElement } from 'react';
+import store from 'store';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
-import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import InviteAccept from 'calypso/my-sites/invites/invite-accept';
+import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
+import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 
 /**
  * Module variables
@@ -59,7 +52,7 @@ export function acceptInvite( context, next ) {
 		return;
 	}
 
-	context.primary = React.createElement( InviteAccept, {
+	context.primary = createElement( InviteAccept, {
 		siteId: context.params.site_id,
 		inviteKey: context.params.invitation_key,
 		activationKey: context.params.activation_key,

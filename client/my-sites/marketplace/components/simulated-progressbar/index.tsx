@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
 import { ProgressBar } from '@automattic/components';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 
 const Container = styled.div`
 	text-align: center;

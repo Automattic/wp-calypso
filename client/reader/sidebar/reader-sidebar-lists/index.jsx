@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class ReaderSidebarLists extends Component {

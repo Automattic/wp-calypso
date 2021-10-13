@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SIGNUP_STEPS_SITE_VERTICAL_SET } from 'calypso/state/action-types';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 

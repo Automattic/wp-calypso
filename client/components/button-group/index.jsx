@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
+import { memo } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ButtonGroup = ( { busy, children, className, primary } ) => {
@@ -18,4 +12,4 @@ const ButtonGroup = ( { busy, children, className, primary } ) => {
 	return <span className={ buttonGroupClasses }>{ children }</span>;
 };
 
-export default React.memo( ButtonGroup );
+export default memo( ButtonGroup );

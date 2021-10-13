@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React, {
-	FunctionComponent,
-	Fragment,
-	useState,
-	useEffect,
-	useCallback,
-	useMemo,
-} from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { Button, Dialog } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { capitalize } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getName,
 	getRenewalPrice,
@@ -23,20 +13,9 @@ import {
 	isExpired,
 	isRenewing,
 } from 'calypso/lib/purchases';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { Button, Dialog } from '@automattic/components';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from '../paths';
-
-/**
- * Type dependencies
- */
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Site {
@@ -52,7 +31,7 @@ interface Props {
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string | TranslateResult;
 	showManagePurchaseLinks?: boolean;
-	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
+	getManagePurchaseUrlFor?: ( siteSlug: string, purchaseId: number ) => string;
 }
 
 function getExpiresText(

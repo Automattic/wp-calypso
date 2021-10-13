@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
 import ActionPanelLink from 'calypso/components/action-panel/link';
+import ExternalLink from 'calypso/components/external-link';
 
 interface ExternalProps {
 	context: string | null;

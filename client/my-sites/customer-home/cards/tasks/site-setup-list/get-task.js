@@ -1,8 +1,7 @@
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
@@ -36,6 +35,8 @@ const isTaskDisabled = (
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			return isDomainUnverified;
+		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
+			return task.isCompleted;
 		default:
 			return false;
 	}
@@ -100,9 +101,9 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.BLOGNAME_SET:
 			taskData = {
 				timing: 1,
-				title: translate( 'Name your site' ),
+				title: translate( 'Give your site a name' ),
 				description: translate(
-					'Give your new site a title to let people know what your site is about. A good title introduces your brand and the primary topics of your site.'
+					'Give your new site a title to let people know what your site is about.'
 				),
 				actionText: translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
@@ -112,7 +113,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
 				timing: 3,
-				title: translate( 'Get the WordPress app' ),
+				title: translate( 'Try the WordPress app' ),
 				description: translate(
 					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
 				),
@@ -132,7 +133,9 @@ export const getTask = (
 				description: translate(
 					'Add your store details, add products, configure shipping, so you can begin to collect orders!'
 				),
-				actionText: translate( 'Finish store setup' ),
+				actionText: task.isCompleted
+					? translate( 'Go to WooCommerce Home' )
+					: translate( 'Finish store setup' ),
 				actionUrl: taskUrls?.woocommerce_setup,
 				actionDisableOnComplete: false,
 				isSkippable: true,
@@ -141,7 +144,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,
-				title: translate( 'Launch your site' ),
+				title: translate( 'Launch your site to the world' ),
 				description: translate(
 					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				),
@@ -165,7 +168,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
-				title: translate( 'Edit the site menu' ),
+				title: translate( 'Customize your site menu' ),
 				description: translate(
 					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				),
@@ -177,8 +180,7 @@ export const getTask = (
 						// The following classes are globally shared
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className="button is-primary task__action"
-						supportPostId={ 59580 }
-						supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+						supportContext="menus"
 						showIcon={ false }
 						tracksEvent="calypso_customer_home_menus_support_page_view"
 						statsGroup="calypso_customer_home"
@@ -200,6 +202,18 @@ export const getTask = (
 				actionText: translate( 'Choose a theme' ),
 				isSkippable: false,
 				actionUrl: `/themes/${ siteSlug }`,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
+			taskData = {
+				timing: 2,
+				title: translate( 'Set up your Professional Email' ),
+				description: translate(
+					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
+				),
+				actionText: translate( 'Set up mailbox' ),
+				isSkippable: false,
+				actionUrl: emailManagementTitanSetUpMailbox( siteSlug, task.domain ),
 			};
 			break;
 	}

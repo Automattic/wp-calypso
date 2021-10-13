@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { items, isFetching } from '../reducer';
 import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
@@ -15,6 +7,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { items, isFetching } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

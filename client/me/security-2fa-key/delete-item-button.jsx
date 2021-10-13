@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { Button, Dialog } from '@automattic/components';
-import { successNotice } from '../../state/notices/actions';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import Gridicon from 'calypso/components/gridicon';
+import { successNotice } from '../../state/notices/actions';
 
 class Security2faKeyDeleteButton extends Component {
 	static propTypes = {

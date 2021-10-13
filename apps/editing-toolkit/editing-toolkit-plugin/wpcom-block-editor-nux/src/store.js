@@ -108,7 +108,9 @@ const selectors = {
 	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',
 	getTourRating: ( state ) => state.tourRating,
-	getWelcomeGuideVariant: ( state ) => state.welcomeGuideVariant,
+	// the 'modal' variant previously used for mobile has been removed but its slug may still be persisted in local storage
+	getWelcomeGuideVariant: ( state ) =>
+		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
 };
 
 export function register() {

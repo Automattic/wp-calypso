@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { getChangePaymentMethodPath } from 'calypso/me/purchases/utils';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 function ExpiringCreditCard( props ) {
 	const { selectedSite, purchase, domain } = props;

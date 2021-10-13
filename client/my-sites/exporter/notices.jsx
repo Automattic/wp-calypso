@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { States } from 'calypso/state/exporter/constants';
 import { getExportingState, getDownloadUrl } from 'calypso/state/exporter/selectors';
 import { isGuidedTransferAwaitingPurchase } from 'calypso/state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { States } from 'calypso/state/exporter/constants';
+import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
 
 /**
  * Displays local notices for the Export tab of Site Settings

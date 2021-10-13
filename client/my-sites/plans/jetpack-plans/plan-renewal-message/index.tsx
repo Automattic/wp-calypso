@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
 
-type Props = {};
-
-const PlanRenewalMessage: FunctionComponent< Props > = () => {
+const PlanRenewalMessage = (): JSX.Element => {
 	const translate = useTranslate();
 
 	return (

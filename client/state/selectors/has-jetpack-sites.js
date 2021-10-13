@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
-
 import { createSelector } from '@automattic/state-utils';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Returns true if the user has one or more Jetpack sites, and false otherwise.

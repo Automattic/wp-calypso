@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { omit } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { omit } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
@@ -62,10 +55,8 @@ export function requestGuidedTransferStatus( siteId ) {
 				error,
 			} );
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.getGuidedTransferStatus()
+		return wpcom.req
+			.get( `/sites/${ siteId }/transfer`, { apiNamespace: 'wpcom/v2' } )
 			.then( success )
 			.catch( failure );
 	};
@@ -114,10 +105,8 @@ export function saveHostDetails( siteId, data ) {
 			dispatch( successNotice( translate( 'Thanks for confirming those details!' ) ) );
 		};
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.saveGuidedTransferHostDetails( data )
+		return wpcom.req
+			.post( { path: `/sites/${ siteId }/transfer`, apiNamespace: 'wpcom/v2' }, data )
 			.then( success )
 			.catch( failure );
 	};

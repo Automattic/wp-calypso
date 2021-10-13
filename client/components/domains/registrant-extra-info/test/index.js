@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import RegistrantExtraInfoCaForm from '../ca-form';
 import RegistrantExtraInfoFrForm from '../fr-form';
-import RegistrantExtraInfoUkForm from '../uk-form';
 import RegistrantExtraInfoForm from '../index';
+import RegistrantExtraInfoUkForm from '../uk-form';
 
 jest.mock( 'store', () => ( { get: () => {}, set: () => {} } ) );
 

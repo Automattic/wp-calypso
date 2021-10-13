@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-undocumented:site' );
 
@@ -15,11 +11,6 @@ const resources = [
 	[ 'statsInsights', 'stats/insights', '1.1' ],
 	[ 'statsFileDownloads', 'stats/file-downloads', '1.1' ],
 	[ 'statsAds', 'wordads/stats', '1.1' ],
-	[ 'sshCredentialsNew', 'ssh-credentials/new', '1.1', 'post' ],
-	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
-	[ 'sshCredentialsMineDelete', 'ssh-credentials/mine/delete', '1.1', 'post' ],
-	[ 'sshScanToggle', 'ssh-credentials/mine', '1.1', 'post' ],
-	[ 'getOption', 'option/' ],
 ];
 
 const list = function ( resourceOptions ) {
@@ -85,95 +76,6 @@ function UndocumentedSite( id, wpcom ) {
 	this.wpcom = wpcom;
 	this._id = id;
 }
-
-UndocumentedSite.prototype.domains = function () {
-	return this.wpcom.req.get( `/sites/${ this._id }/domains`, { apiVersion: '1.2' } );
-};
-
-UndocumentedSite.prototype.shortcodes = function ( attributes, callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
-};
-
-UndocumentedSite.prototype.setOption = function ( query, callback ) {
-	return this.wpcom.req.post(
-		'/sites/' + this._id + '/option',
-		{
-			option_name: query.option_name,
-			is_array: query.is_array,
-			site_option: query.site_option,
-		},
-		{ option_value: query.option_value },
-		callback
-	);
-};
-
-UndocumentedSite.prototype.postCounts = function ( options, callback ) {
-	const query = Object.assign(
-		{
-			type: 'post',
-			apiNamespace: 'wpcom/v2',
-		},
-		options
-	);
-
-	const type = query.type;
-	delete query.type;
-
-	return this.wpcom.req.get( '/sites/' + this._id + '/post-counts/' + type, query, callback );
-};
-
-/**
- * Requests the status of a guided transfer
- *
- * @returns {Promise} Resolves to the response containing the transfer status
- */
-UndocumentedSite.prototype.getGuidedTransferStatus = function () {
-	debug( '/sites/:site:/transfer' );
-	return this.wpcom.req.get( '/sites/' + this._id + '/transfer', {
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
-/**
- * Saves guided transfer host details
- *
- * @param {object} hostDetails  Host details
- * @returns {Promise} Resolves to the response containing the transfer status
- */
-UndocumentedSite.prototype.saveGuidedTransferHostDetails = function ( hostDetails ) {
-	debug( '/sites/:site:/transfer' );
-	return this.wpcom.req.post( {
-		path: '/sites/' + this._id + '/transfer',
-		body: hostDetails,
-		apiNamespace: 'wpcom/v2',
-	} );
-};
-
-/**
- * Returns a single site connection.
- *
- * @param  {number}  connectionId The connection ID to get.
- * @returns {Promise}              A Promise to resolve when complete.
- */
-UndocumentedSite.prototype.getConnection = function ( connectionId ) {
-	debug( '/sites/:site_id:/publicize-connections/:connection_id: query' );
-	return this.wpcom.req.get( {
-		path: '/sites/' + this._id + '/publicize-connections/' + connectionId,
-		apiVersion: '1.1',
-	} );
-};
-
-/**
- * Runs Theme Setup (Headstart).
- *
- * @returns {Promise} A Promise to resolve when complete.
- */
-UndocumentedSite.prototype.runThemeSetup = function () {
-	return this.wpcom.req.post( {
-		path: '/sites/' + this._id + '/theme-setup',
-		apiNamespace: 'wpcom/v2',
-	} );
-};
 
 /**
  * Requests Store orders stats

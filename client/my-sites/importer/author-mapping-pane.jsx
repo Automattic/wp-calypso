@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import AuthorMapping from './author-mapping-item';
-import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
-import useUsersQuery from 'calypso/data/users/use-users-query';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import AuthorMapping from './author-mapping-item';
 
-/**
- * Style dependencies
- */
 import './author-mapping-pane.scss';
 
-class AuthorMappingPane extends React.PureComponent {
+class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {

@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useTranslate } from 'i18n-calypso';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import HeaderCake from 'calypso/components/header-cake';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DomainManagementHeader = ( props ) => {
@@ -33,7 +22,7 @@ const DomainManagementHeader = ( props ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<React.Fragment>
+		<Fragment>
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
@@ -46,7 +35,7 @@ const DomainManagementHeader = ( props ) => {
 				</div>
 				<DocumentHead title={ children } />
 			</HeaderCake>
-		</React.Fragment>
+		</Fragment>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };

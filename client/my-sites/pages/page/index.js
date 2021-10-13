@@ -1,56 +1,48 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import pageRouter from 'page';
-import { connect } from 'react-redux';
-import { get, partial } from 'lodash';
+import config from '@automattic/calypso-config';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import pageRouter from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import InfoPopover from 'calypso/components/info-popover';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { statsLinkForPage } from '../helpers';
-import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
-import MenuSeparator from 'calypso/components/popover/menu-separator';
-import PageCardInfo from '../page-card-info';
-import InfoPopover from 'calypso/components/info-popover';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
+import { infoNotice } from 'calypso/state/notices/actions';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
+import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
+import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getSite,
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
-import { infoNotice } from 'calypso/state/notices/actions';
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
-import { updateSiteFrontPage } from 'calypso/state/sites/actions';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import config from '@automattic/calypso-config';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { statsLinkForPage } from '../helpers';
+import PageCardInfo from '../page-card-info';
 
-const recordEvent = partial( recordGoogleEvent, 'Pages' );
+const recordEvent = ( event ) => recordGoogleEvent( 'Pages', event );
 const noop = () => {};
 
 function sleep( ms ) {
@@ -244,7 +236,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
 				{ translate( 'Set as Homepage' ) }
@@ -272,7 +264,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			this.props.isPostsPage && (
 				<PopoverMenuItem key="item" onClick={ this.setPostsPage( 0 ) }>
 					<Gridicon icon="undo" size={ 18 } />
@@ -299,7 +291,7 @@ class Page extends Component {
 
 		if ( this.props.page.status !== 'trash' ) {
 			return [
-				<MenuSeparator key="separator" />,
+				<PopoverMenuSeparator key="separator" />,
 				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
 					<Gridicon icon="trash" size={ 18 } />
 					{ this.props.translate( 'Trash' ) }
@@ -308,7 +300,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" className="page__delete-item" onClick={ this.updateStatusDelete }>
 				<Gridicon icon="trash" size={ 18 } />
 				{ this.props.translate( 'Delete' ) }
@@ -342,7 +334,7 @@ class Page extends Component {
 
 		return (
 			<>
-				<MenuSeparator key="separator" />
+				<PopoverMenuSeparator key="separator" />
 				<PopoverMenuItem onClick={ this.exportPage }>
 					<Gridicon icon="cloud-download" size={ 18 } />
 					{ this.props.translate( 'Export page' ) }
@@ -435,7 +427,7 @@ class Page extends Component {
 
 		return (
 			<div>
-				<MenuSeparator />
+				<PopoverMenuSeparator />
 				{ status }
 				{ childPageInfo }
 				{ frontPageInfo }
@@ -771,7 +763,7 @@ const mapState = ( state, props ) => {
 		copyPagesModuleDisabled:
 			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
 			isJetpackSite( state, pageSiteId ),
-		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId ),
+		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId, 'page' ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
@@ -787,11 +779,11 @@ const mapDispatch = {
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,
-	recordMoreOptions: partial( recordEvent, 'Clicked More Options Menu' ),
-	recordPageTitle: partial( recordEvent, 'Clicked Page Title' ),
-	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
-	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
-	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
+	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
+	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
+	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
+	recordViewPage: () => recordEvent( 'Clicked View Page' ),
+	recordStatsPage: () => recordEvent( 'Clicked Stats Page' ),
 	updateSiteFrontPage,
 };
 

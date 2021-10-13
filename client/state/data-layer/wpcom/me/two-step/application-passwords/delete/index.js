@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { APPLICATION_PASSWORD_DELETE } from 'calypso/state/action-types';
 import { deleteApplicationPasswordSuccess } from 'calypso/state/application-passwords/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to delete an application password for the current user
@@ -34,6 +26,7 @@ export const removeApplicationPassword = ( action ) =>
  * Dispatches a user application password removal success action when the request succeeded.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.appPasswordId
  * @returns {object} Dispatched user application passwords add action
  */
 export const handleRemoveSuccess = ( { appPasswordId } ) =>

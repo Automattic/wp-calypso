@@ -1,27 +1,18 @@
-/**
- * External dependencies
- */
-
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isMonthly,
 	PLAN_P2_FREE,
 	getPlanClass,
 	planLevelsMatch,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const noop = () => {};
 const PlanFeaturesActions = ( props ) => {

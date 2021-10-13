@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import { DISABLE_AUTOUPDATE_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
-import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 
 const autoUpdateActions = [ ENABLE_AUTOUPDATE_PLUGIN, DISABLE_AUTOUPDATE_PLUGIN ];
 

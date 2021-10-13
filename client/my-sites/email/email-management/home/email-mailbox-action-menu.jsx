@@ -1,18 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/admin.svg';
+import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/calendar.svg';
+import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/docs.svg';
+import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/drive.svg';
+import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/gmail.svg';
+import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/sheets.svg';
+import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
+import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
+import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
+import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import MaterialIcon from 'calypso/components/material-icon';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getEmailAddress,
 	getEmailForwardAddress,
@@ -35,21 +41,9 @@ import {
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/gmail.svg';
-import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/admin.svg';
-import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/calendar.svg';
-import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/docs.svg';
-import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/drive.svg';
-import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/sheets.svg';
-import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import MaterialIcon from 'calypso/components/material-icon';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
-import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
-import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
-import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
-import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
 	recordTracksEvent( 'calypso_email_management_email_forwarding_delete_click', {
@@ -59,6 +53,26 @@ const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
 	} );
 
 	dispatch( removeEmailForward( mailbox.domain, mailbox.mailbox ) );
+};
+
+const getGoogleClickHandler = ( app ) => {
+	return () => {
+		recordEmailAppLaunchEvent( {
+			app,
+			context: 'email-management-menu',
+			provider: 'google',
+		} );
+	};
+};
+
+const getTitanClickHandler = ( app ) => {
+	return () => {
+		recordEmailAppLaunchEvent( {
+			app,
+			context: 'email-management-menu',
+			provider: 'titan',
+		} );
+	};
 };
 
 /**
@@ -81,6 +95,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
+			onClick: getTitanClickHandler( 'webmail' ),
 		},
 		{
 			href: getTitanCalendarlUrl( email ),
@@ -89,6 +104,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Calendar', {
 				comment: 'View the Calendar application for Titan',
 			} ),
+			onClick: getTitanClickHandler( 'calendar' ),
 		},
 		{
 			href: getTitanContactsUrl( email ),
@@ -97,6 +113,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			title: translate( 'View Contacts', {
 				comment: 'View the Contacts application for Titan',
 			} ),
+			onClick: getTitanClickHandler( 'contacts' ),
 		},
 		{
 			isInternalLink: true,
@@ -137,6 +154,7 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 			image: gmailIcon,
 			imageAltText: translate( 'Gmail icon' ),
 			title: translate( 'View Gmail' ),
+			onClick: getGoogleClickHandler( 'webmail' ),
 		},
 		...( isEmailUserAdmin( mailbox )
 			? [
@@ -145,6 +163,7 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 						image: googleAdminIcon,
 						imageAltText: translate( 'Google Admin icon' ),
 						title: translate( 'View Admin' ),
+						onClick: getGoogleClickHandler( 'admin' ),
 					},
 			  ]
 			: [] ),
@@ -153,30 +172,35 @@ const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 			image: googleCalendarIcon,
 			imageAltText: translate( 'Google Calendar icon' ),
 			title: translate( 'View Calendar' ),
+			onClick: getGoogleClickHandler( 'calendar' ),
 		},
 		{
 			href: getGoogleDocsUrl( email ),
 			image: googleDocsIcon,
 			imageAltText: translate( 'Google Docs icon' ),
 			title: translate( 'View Docs' ),
+			onClick: getGoogleClickHandler( 'docs' ),
 		},
 		{
 			href: getGoogleDriveUrl( email ),
 			image: googleDriveIcon,
 			imageAltText: translate( 'Google Drive icon' ),
 			title: translate( 'View Drive' ),
+			onClick: getGoogleClickHandler( 'drive' ),
 		},
 		{
 			href: getGoogleSheetsUrl( email ),
 			image: googleSheetsIcon,
 			imageAltText: translate( 'Google Sheets icon' ),
 			title: translate( 'View Sheets' ),
+			onClick: getGoogleClickHandler( 'sheets' ),
 		},
 		{
 			href: getGoogleSlidesUrl( email ),
 			image: googleSlidesIcon,
 			imageAltText: translate( 'Google Slides icon' ),
 			title: translate( 'View Slides' ),
+			onClick: getGoogleClickHandler( 'slides' ),
 		},
 	];
 };

@@ -1,18 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component, CSSProperties, FunctionComponent } from 'react';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { defer } from 'lodash';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import { defer } from 'lodash';
+import { Component, CSSProperties, FunctionComponent } from 'react';
 import pathToSection from 'calypso/lib/path-to-section';
 import { ROUTE_SET } from 'calypso/state/action-types';
+import { TimestampMS } from 'calypso/types';
+import { contextTypes } from '../context-types';
 import {
 	posToCss,
 	getStepPosition,
@@ -20,9 +15,7 @@ import {
 	query,
 	targetForSlug,
 } from '../positioning';
-import { contextTypes } from '../context-types';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
-import { TimestampMS } from 'calypso/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -43,15 +36,15 @@ interface AcceptedProps {
 	dark?: boolean;
 	keepRepositioning?: boolean;
 	next?: string;
-	onTargetDisappear?: Function;
+	onTargetDisappear?: ( callbacks: { quit?: () => void; next?: () => void } ) => void;
 	placement?: DialogPosition;
 	scrollContainer?: string;
 	shouldScrollTo?: boolean;
 	style?: CSSProperties;
 	target?: string;
-	wait?: Function;
+	wait?: ( props: Props, context: typeof contextTypes ) => Promise< void >;
 	waitForTarget?: boolean;
-	when?: Function;
+	when?: ( ...args: unknown[] ) => boolean;
 }
 
 interface DefaultProps {

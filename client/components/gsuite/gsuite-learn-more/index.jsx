@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
+import PropTypes from 'prop-types';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
@@ -15,8 +8,8 @@ import {
 import { requestCommentsList } from 'calypso/state/comments/actions';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { getSitePost } from 'calypso/state/posts/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
 
 /**
  * Creates a placeholder comment for a given text and postId
@@ -121,6 +114,10 @@ export const updatePlaceholderComment = (
  * dispatches a error notice if creating a new comment request failed
  *
  * @param {object}   action   redux action
+ * @param {number} action.siteId
+ * @param {number} action.postId
+ * @param {number} action.parentCommentId
+ * @param {number} action.placeholderId
  * @param {object} rawError plain error object
  * @returns {Function} thunk
  */

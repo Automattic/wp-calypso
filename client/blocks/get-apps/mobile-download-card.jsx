@@ -1,36 +1,28 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AppsBadge from './apps-badge';
-import ReauthRequired from 'calypso/me/reauth-required';
 import { Card, Button } from '@automattic/components';
+import i18n, { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
-import getCountries from 'calypso/state/selectors/get-countries';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import phoneValidation from 'calypso/lib/phone-validation';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import userAgent from 'calypso/lib/user-agent';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 import {
 	getAccountRecoveryPhone,
 	isAccountRecoverySettingsReady,
 } from 'calypso/state/account-recovery/settings/selectors';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import hasUserSettings from 'calypso/state/selectors/has-user-settings';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import phoneValidation from 'calypso/lib/phone-validation';
-import userAgent from 'calypso/lib/user-agent';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCountries from 'calypso/state/selectors/get-countries';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import hasUserSettings from 'calypso/state/selectors/has-user-settings';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import AppsBadge from './apps-badge';
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -53,7 +45,7 @@ function sendSMS( phone ) {
 	} );
 }
 
-class MobileDownloadCard extends React.Component {
+class MobileDownloadCard extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		countriesList: PropTypes.array.isRequired,

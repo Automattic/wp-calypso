@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { clients, initialClientsData } from '../reducer';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
+import { clients, initialClientsData } from '../reducer';
 
 describe( 'clients reducer', () => {
 	// Uses default data but reduces the size of this data set for tests

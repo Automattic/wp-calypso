@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import Debug from 'debug';
+import { translate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
-import { translate } from 'i18n-calypso';
-import Landing from './sections/landing';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
+import Landing from './sections/landing';
 
 const debug = new Debug( 'calypso:jetpack-cloud:controller' );
 

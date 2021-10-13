@@ -1,36 +1,25 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Button, ScreenReaderText } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, includes } from 'lodash';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import ExampleDomainBrowser from 'calypso/components/domains/example-domain-browser';
 import ExternalLink from 'calypso/components/external-link';
-import StepWrapper from 'calypso/signup/step-wrapper';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Notice from 'calypso/components/notice';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
+import wpcom from 'calypso/lib/wp';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	setImportOriginSiteDetails,
 	setNuxUrlInputValue,
 } from 'calypso/state/importer-nux/actions';
 import { getNuxUrlInputValue } from 'calypso/state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'calypso/lib/importer/url-validation';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import Notice from 'calypso/components/notice';
-import wpcom from 'calypso/lib/wp';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
-import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const IMPORT_HELP_LINK = 'https://wordpress.com/support/import/';

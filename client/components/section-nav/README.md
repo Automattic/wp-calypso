@@ -9,11 +9,11 @@ React component used to display a particular section's navigation bar. Or more t
 ## Example Usage
 
 ```js
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavSegmented from 'calypso/components/section-nav/segmented';
-import NavItem from 'calypso/components/section-nav/item';
 import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavSegmented from 'calypso/components/section-nav/segmented';
+import NavTabs from 'calypso/components/section-nav/tabs';
 
 export default class extends React.Component {
 	// ...

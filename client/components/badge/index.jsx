@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class Badge extends React.Component {
+export default class Badge extends Component {
 	static propTypes = {
 		type: PropTypes.oneOf( [
 			'warning',

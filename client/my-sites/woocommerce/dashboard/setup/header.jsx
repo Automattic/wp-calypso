@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
 
 const SetupHeader = ( { imageSource, imageWidth, subtitle, title, children } ) => {

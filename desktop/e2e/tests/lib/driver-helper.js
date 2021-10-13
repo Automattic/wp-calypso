@@ -1,6 +1,3 @@
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const { forEach } = require( 'lodash' );
 const webdriver = require( 'selenium-webdriver' );
 
@@ -238,7 +235,7 @@ exports.checkForConsoleErrors = function ( driver ) {
 						log.message.indexOf( "Failed to execute 'postMessage' on 'DOMWindow'" ) === -1
 					) {
 						driver.getCurrentUrl().then( ( url ) => {
-							console.log( `Found console error: "${ log.message }" on url '${ url }'` ); // eslint-disable-line no-console
+							console.log( `Found console error: "${ log.message }" on url '${ url }'` );
 						} );
 					}
 				} );

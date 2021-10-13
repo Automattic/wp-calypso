@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { get } from 'lodash';
 import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,

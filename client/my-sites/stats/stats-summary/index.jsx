@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { isEqual, find, flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEqual, find, flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import { Card } from '@automattic/components';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class StatsSummaryChart extends Component {
 	static propTypes = {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { domForHtml } from 'calypso/lib/post-normalizer/utils';
 
 export const getStateKey = ( siteId, postId ) => `${ siteId }-${ postId }`;

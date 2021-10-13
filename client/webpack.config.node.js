@@ -2,8 +2,6 @@
  * WARNING: No ES6 modules here. Not transpiled! *
  */
 
-/* eslint-disable import/no-nodejs-modules */
-
 const path = require( 'path' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
@@ -100,7 +98,13 @@ const webpackConfig = {
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
-					options: { useRequire: true, onlyIsomorphic: true },
+					options: {
+						useRequire: true,
+						onlyIsomorphic: true,
+						forceAll: ! isDevelopment,
+						activeSections: config( 'sections' ),
+						enableByDefault: config( 'enable_all_sections' ),
+					},
 				},
 			},
 			TranspileConfig.loader( {
@@ -129,7 +133,7 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'calypso:src', 'module', 'main' ],
-		modules: [ path.join( __dirname, 'extensions' ), 'node_modules' ],
+		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
 			'@automattic/calypso-config': 'calypso/server/config',
 		},

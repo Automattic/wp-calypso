@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createElement, Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getDomainsBySiteId,
 	hasLoadedSiteDomains,
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-class DomainManagementData extends React.Component {
+class DomainManagementData extends Component {
 	static propTypes = {
 		analyticsPath: PropTypes.string,
 		analyticsTitle: PropTypes.string,
@@ -61,7 +54,7 @@ class DomainManagementData extends React.Component {
 				{ needsProductsList && <QueryProductsList /> }
 
 				<CalypsoShoppingCartProvider>
-					{ React.createElement( this.props.component, {
+					{ createElement( this.props.component, {
 						context: this.props.context,
 						domains: selectedSite ? this.props.domains : null,
 						hasSiteDomainsLoaded: this.props.hasSiteDomainsLoaded,

@@ -2,17 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { MediaLibraryContent } from 'calypso/my-sites/media-library/content';
 import { ValidationErrors } from 'calypso/lib/media/constants';
+import { MediaLibraryContent } from 'calypso/my-sites/media-library/content';
 
 const noop = () => {};
 

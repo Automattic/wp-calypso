@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getSurveyVertical, getSurveyOtherText, getSurveySiteType } from '../selectors';
 
 describe( 'selectors', () => {

@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import ButtonsPreviewAction from './preview-action';
 
-class SharingButtonsPreviewPlaceholder extends React.Component {
+class SharingButtonsPreviewPlaceholder extends Component {
 	static displayName = 'SharingButtonsPreviewPlaceholder';
 
 	render() {

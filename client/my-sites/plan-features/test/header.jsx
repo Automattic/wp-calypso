@@ -6,18 +6,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
-import { PlanFeaturesHeader } from '../header';
-import PlanPill from 'calypso/components/plans/plan-pill';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -41,7 +29,11 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	getPlan,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import PlanPill from 'calypso/components/plans/plan-pill';
+import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPrice from 'calypso/my-sites/plan-price/';
+import { PlanFeaturesHeader } from '../header';
 
 const translate = ( string ) => string;
 const props = {

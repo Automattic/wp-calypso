@@ -1,36 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { concat, flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import HelpButton from '../../jetpack-connect/help-button';
+import { localize } from 'i18n-calypso';
+import { concat, flowRight } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import MainHeader from '../../jetpack-connect/main-header';
-import MainWrapper from '../../jetpack-connect/main-wrapper';
-import page from 'page';
-import SiteUrlInput from '../../jetpack-connect/site-url-input';
-import { cleanUrl } from '../../jetpack-connect/utils';
+import searchSites from 'calypso/components/search-sites';
+import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import { urlToSlug } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { persistSession, retrieveMobileRedirect } from '../../jetpack-connect/persistence-utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { urlToSlug } from 'calypso/lib/url';
-import searchSites from 'calypso/components/search-sites';
-import jetpackConnection from '../../jetpack-connect/jetpack-connection';
-import { IS_DOT_COM_GET_SEARCH } from '../../jetpack-connect/constants';
-import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
+import { IS_DOT_COM_GET_SEARCH } from '../../jetpack-connect/constants';
+import HelpButton from '../../jetpack-connect/help-button';
+import jetpackConnection from '../../jetpack-connect/jetpack-connection';
+import MainHeader from '../../jetpack-connect/main-header';
+import MainWrapper from '../../jetpack-connect/main-wrapper';
+import { persistSession, retrieveMobileRedirect } from '../../jetpack-connect/persistence-utils';
+import SiteUrlInput from '../../jetpack-connect/site-url-input';
+import { cleanUrl } from '../../jetpack-connect/utils';
 
 export class SearchPurchase extends Component {
 	static propTypes = {

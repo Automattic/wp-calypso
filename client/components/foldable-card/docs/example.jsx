@@ -1,15 +1,6 @@
-/* eslint-disable no-console */
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
 import { Button } from '@automattic/components';
+import { PureComponent } from 'react';
+import FoldableCard from 'calypso/components/foldable-card';
 
 export default class FoldableCardExample extends PureComponent {
 	static displayName = 'FoldableCardExample';

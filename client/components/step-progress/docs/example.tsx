@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { FunctionComponent, useState } from 'react';
 import StepProgress from 'calypso/components/step-progress';
 
 const StepProgressExample: FunctionComponent = () => {

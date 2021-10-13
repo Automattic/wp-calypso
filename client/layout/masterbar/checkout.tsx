@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import Masterbar from './masterbar';
-import Item from './item';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { FunctionComponent, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import Item from './item';
+import Masterbar from './masterbar';
 
 interface Props {
 	title: string;
@@ -76,7 +69,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			}
 		} catch ( error ) {
 			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
-			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
+			// eslint-disable-next-line no-console
+			console.error( 'Error getting query string in close button' );
 		}
 
 		window.location.href = closeUrl;

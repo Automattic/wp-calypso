@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { PureComponent } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 
 /**
@@ -17,7 +9,7 @@ const noop = function () {};
 
 const action = () => alert( 'i <3 cake' );
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'Headers';
 
 	render() {

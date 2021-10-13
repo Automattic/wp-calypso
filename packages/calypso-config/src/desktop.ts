@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/import-docblock */
 import type { ConfigData } from '@automattic/create-calypso-config';
 
 // TODO: Revisit whether it is useful for the Desktop app to override the following properties:
@@ -17,6 +16,8 @@ const features = {
 	desktop: true,
 	'desktop-promo': false,
 	'sign-in-with-apple': false,
+	// Note: there is also a sign-in-with-apple/redirect flag
+	// that may/may not be relevant to override for the Desktop app.
 	'signup/social': false,
 	'login/magic-login': false,
 };
@@ -25,6 +26,9 @@ export default ( data: ConfigData ): ConfigData => {
 	data = Object.assign( data, config );
 	if ( data.features ) {
 		data.features = Object.assign( data.features, features );
+	}
+	if ( window.electron && window.electron.features ) {
+		data.features = Object.assign( data.features, window.electron.features );
 	}
 
 	return data;

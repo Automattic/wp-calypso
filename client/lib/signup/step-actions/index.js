@@ -1,70 +1,56 @@
-/**
- * External dependencies
- */
+import { getUrlParts } from '@automattic/calypso-url';
+import { Site } from '@automattic/data-stores';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-
-// Libraries
-import wpcom from 'calypso/lib/wp';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from '@automattic/calypso-url';
-
-// State actions and selectors
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import wpcom from 'calypso/lib/wp';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import flows from 'calypso/signup/config/flows';
+import steps from 'calypso/signup/config/steps';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getSelectedImportEngine,
+	getNuxUrlInputValue,
+} from 'calypso/state/importer-nux/temp-selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
-import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
 	getSiteVerticalId,
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	getSelectedImportEngine,
-	getNuxUrlInputValue,
-} from 'calypso/state/importer-nux/temp-selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { Site } from '@automattic/data-stores';
+
 const Visibility = Site.Visibility;
-
-// Current directory dependencies
-import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-
-import { createCart, addToCart } from 'calypso/lib/signup/cart';
-
-// Others
-import flows from 'calypso/signup/config/flows';
-import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
-
-/**
- * Constants
- */
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
-		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore.getState() )
+		? prepareItemForAddingToCart(
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState ),
+				reduxState
+		  )
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -77,21 +63,25 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ].filter( Boolean );
-		createCart( cartKey, domainChoiceCart, ( error ) => callback( error, providedDependencies ) );
+		cartManagerClient
+			.forCartKey( cartKey )
+			.actions.replaceProductsInCart( domainChoiceCart )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => callback( error, providedDependencies ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 		};
-		const products = [
-			dependencies.domainItem,
-			dependencies.privacyItem,
-			dependencies.cartItem,
-		].filter( Boolean );
+		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
+			.filter( Boolean )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
-		createCart( siteId, products, ( error ) => {
-			callback( error, providedDependencies );
-		} );
+		cartManagerClient
+			.forCartKey( siteId )
+			.actions.replaceProductsInCart( products )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => callback( error, providedDependencies ) );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -142,9 +132,8 @@ function getNewSiteParams( {
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
 
-	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
-	const useAutoGeneratedBlogName = shouldSkipDomainStep || shouldHideFreePlan;
+	const useAutoGeneratedBlogName = shouldHideFreePlan;
 
 	// The theme can be provided in this step's dependencies,
 	// the step object itself depending on if the theme is provided in a
@@ -202,11 +191,6 @@ function getNewSiteParams( {
 		newSiteParams.blog_title = siteTitle || siteUrl;
 		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
 		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
-	}
-
-	// Provide the default business starter content for the FSE user testing flow.
-	if ( 'test-fse' === lastKnownFlow ) {
-		newSiteParams.options.site_segment = 1;
 	}
 
 	if ( selectedDesign ) {
@@ -327,15 +311,58 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
-
 		return;
 	}
 
-	wpcom
-		.undocumented()
-		.changeTheme( siteSlug, { theme: themeSlugWithRepo.split( '/' )[ 1 ] }, function ( errors ) {
-			callback( isEmpty( errors ) ? undefined : [ errors ] );
+	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
+
+	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
+}
+
+export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
+	if ( ! selectedDesign ) {
+		defer( callback );
+		return;
+	}
+
+	const { theme } = selectedDesign;
+
+	Promise.resolve()
+		.then( () =>
+			wpcom.undocumented().changeTheme( siteSlug, { theme, dont_change_homepage: true } )
+		)
+		.then( () =>
+			wpcom.req.post( {
+				path: `/sites/${ siteSlug }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
+			} )
+		)
+		.then( () => {
+			callback();
+		} )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
 		} );
+}
+
+export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
+	if ( ! siteTitle && ! tagline ) {
+		defer( callback );
+		return;
+	}
+
+	const settings = {
+		apiVersion: '1.4',
+		blogname: siteTitle,
+		blogdescription: tagline,
+	};
+
+	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
@@ -384,14 +411,17 @@ function processItemCart(
 ) {
 	const addToCartAndProceed = () => {
 		debug( 'adding cart items', newCartItems );
-		const newCartItemsToAdd = newCartItems.map( ( item ) =>
-			addPrivacyProtectionIfSupported( item, reduxStore.getState() )
-		);
+		const reduxState = reduxStore.getState();
+		const newCartItemsToAdd = newCartItems
+			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
 		if ( newCartItemsToAdd.length ) {
-			addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
-				callback( cartError, providedDependencies );
-			} );
+			cartManagerClient
+				.forCartKey( siteSlug )
+				.actions.addProductsToCart( newCartItemsToAdd )
+				.then( () => callback( undefined, providedDependencies ) )
+				.catch( ( error ) => callback( error, providedDependencies ) );
 		} else {
 			callback( undefined, providedDependencies );
 		}
@@ -412,6 +442,17 @@ function processItemCart(
 	} else {
 		addToCartAndProceed();
 	}
+}
+
+function prepareItemForAddingToCart( item, state ) {
+	const productsList = getProductsList( state );
+	return {
+		...fillInSingleCartItemAttributes( item, productsList ),
+		extra: {
+			...item.extra,
+			context: 'signup',
+		},
+	};
 }
 
 function addPrivacyProtectionIfSupported( item, state ) {

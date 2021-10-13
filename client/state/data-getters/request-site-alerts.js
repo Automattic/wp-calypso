@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const requestSiteAlerts = ( siteId ) => {
 	const id = `site-alerts-${ siteId }`;

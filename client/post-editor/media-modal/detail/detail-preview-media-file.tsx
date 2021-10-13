@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
 import { localize, LocalizeProps } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { useState } from 'react';
+import * as React from 'react';
 import { url } from 'calypso/lib/media/utils';
 import MediaFile from 'calypso/my-sites/media-library/media-file';
 

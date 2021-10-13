@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { CompactCard, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import { getSite } from 'calypso/state/sites/selectors';
-import QuerySites from 'calypso/components/data/query-sites';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import QuerySites from 'calypso/components/data/query-sites';
+import { getSite } from 'calypso/state/sites/selectors';
 import { isJetpackTemporarySitePurchase } from '../utils';
 
-/**
- * Style dependencies
- */
 import './header.scss';
 
 class PurchaseSiteHeader extends Component {

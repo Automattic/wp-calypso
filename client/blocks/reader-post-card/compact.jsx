@@ -1,16 +1,7 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
+import AutoDirection from 'calypso/components/auto-direction';
 import FeaturedAsset from './featured-asset';
 
 const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
@@ -33,7 +24,7 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
-							<Emojify>{ post.title }</Emojify>
+							{ post.title }
 						</a>
 					</h2>
 				</AutoDirection>

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class AsyncLoad extends Component {

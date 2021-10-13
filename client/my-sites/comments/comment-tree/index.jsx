@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { filter, find, get, isEqual, map, orderBy } from 'lodash';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
-
-/**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import EmptyContent from 'calypso/components/empty-content';
+import Pagination from 'calypso/components/pagination';
 import Comment from 'calypso/my-sites/comments/comment';
 import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
 import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
-import EmptyContent from 'calypso/components/empty-content';
-import Pagination from 'calypso/components/pagination';
-import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'calypso/state/comments/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'calypso/state/comments/selectors';
 import { COMMENTS_PER_PAGE } from '../constants';
 
 const CommentTransition = ( props ) => (

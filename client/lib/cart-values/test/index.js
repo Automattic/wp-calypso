@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
-
-/**
- * Internal Dependencies
- */
-import * as cartValues from '../index';
 import * as cartItems from '../cart-items';
+import * as cartValues from '../index';
 
 describe( 'index', () => {
 	const TEST_BLOG_ID = 1;

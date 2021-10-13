@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { uniqBy } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * WordPress dependencies
- */
 import isShallowEqual from '@wordpress/is-shallow-equal';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { uniqBy } from 'lodash';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -25,18 +14,18 @@ import {
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
+import { filterNotices, isSamePluginIdSlug } from 'calypso/lib/plugins/utils';
 import {
 	errorNotice,
 	infoNotice,
 	successNotice,
 	warningNotice,
 } from 'calypso/state/notices/actions';
-import { filterNotices, isSamePluginIdSlug } from 'calypso/lib/plugins/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class PluginNotices extends React.Component {
+class PluginNotices extends Component {
 	componentDidUpdate( prevProps ) {
 		const currentNotices = this.extractNoticeProps( this.props );
 		const prevNotices = this.extractNoticeProps( prevProps );

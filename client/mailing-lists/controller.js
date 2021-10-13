@@ -1,10 +1,10 @@
-import React from 'react';
+import { createElement } from 'react';
 import MainComponent from './main';
 
 export default {
 	unsubscribe( context, next ) {
 		const { email, category, hmac, ...rest } = context.query;
-		context.primary = React.createElement( MainComponent, {
+		context.primary = createElement( MainComponent, {
 			email,
 			category,
 			hmac,

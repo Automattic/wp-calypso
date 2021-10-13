@@ -9,10 +9,6 @@ jest.mock( 'calypso/lib/site/utils', () => ( {
 	userCan: jest.fn(),
 } ) );
 
-/**
- * External dependencies
- */
-import { assert } from 'chai';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -32,12 +28,8 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { assert } from 'chai';
 import { isATEnabled } from '../index';
-
 const config = require( '@automattic/calypso-config' );
 const utils = require( 'calypso/lib/site/utils' );
 

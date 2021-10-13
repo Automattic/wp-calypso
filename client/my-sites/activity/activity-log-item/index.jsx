@@ -1,32 +1,17 @@
-/**
- * External dependencies
- */
+import { Button, Gridicon } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import scrollTo from 'calypso/lib/scroll-to';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import ActivityActor from './activity-actor';
-import ActivityDescription from './activity-description';
-import ActivityMedia from './activity-media';
-import ActivityIcon from './activity-icon';
-import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import Gridicon from 'calypso/components/gridicon';
-import HappychatButton from 'calypso/components/happychat/button';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import HappychatButton from 'calypso/components/happychat/button';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import scrollTo from 'calypso/lib/scroll-to';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -42,11 +27,12 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSite } from 'calypso/state/sites/selectors';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import ActivityActor from './activity-actor';
+import ActivityDescription from './activity-description';
+import ActivityIcon from './activity-icon';
+import ActivityMedia from './activity-media';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ActivityLogItem extends Component {
@@ -158,6 +144,9 @@ class ActivityLogItem extends Component {
 				isBreakpointActive: isDesktop,
 			},
 		} = this.props;
+
+		const rewindAction = this.renderRewindAction();
+
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
@@ -175,13 +164,18 @@ class ActivityLogItem extends Component {
 					/>
 				) }
 				<div className="activity-log-item__description">
-					<div className="activity-log-item__description-content">
-						<ActivityDescription
-							activity={ this.props.activity }
-							rewindIsActive={ this.props.rewindIsActive }
-						/>
+					<div className="activity-log-item__description-text">
+						<div className="activity-log-item__description-content">
+							<ActivityDescription
+								activity={ this.props.activity }
+								rewindIsActive={ this.props.rewindIsActive }
+							/>
+						</div>
+						<div className="activity-log-item__description-summary">{ activityTitle }</div>
 					</div>
-					<div className="activity-log-item__description-summary">{ activityTitle }</div>
+					{ rewindAction && (
+						<div className="activity-log-item__description-actions">{ rewindAction }</div>
+					) }
 				</div>
 				{ activityMedia && ! isDesktop && (
 					<ActivityMedia
@@ -198,13 +192,8 @@ class ActivityLogItem extends Component {
 
 	renderItemAction() {
 		const {
-			enableClone,
-			activity: { activityIsRewindable, activityName, activityMeta },
+			activity: { activityName, activityMeta },
 		} = this.props;
-
-		if ( enableClone ) {
-			return activityIsRewindable ? this.renderCloneAction() : null;
-		}
 
 		switch ( activityName ) {
 			case 'rewind__scan_result_found':
@@ -220,30 +209,30 @@ class ActivityLogItem extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="activity-log-item__action">
-				<Button
-					className="activity-log-item__clone-action"
-					primary
-					compact
-					onClick={ this.performCloneAction }
-				>
-					{ translate( 'Clone from here' ) }
-				</Button>
-			</div>
+			<Button
+				className="activity-log-item__clone-action"
+				primary
+				compact
+				onClick={ this.performCloneAction }
+			>
+				{ translate( 'Clone from here' ) }
+			</Button>
 		);
 	};
 
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
-	renderRewindAction() {
+	showCredentialsButton = () => this.props.disableRestore && this.props.missingRewindCredentials;
+
+	renderRewindAction = () => {
 		const {
 			activity,
 			canAutoconfigure,
 			createBackup,
 			createRewind,
-			disableRestore,
 			disableBackup,
-			missingRewindCredentials,
+			disableRestore,
+			enableClone,
 			siteId,
 			siteSlug,
 			trackAddCreds,
@@ -254,40 +243,42 @@ class ActivityLogItem extends Component {
 			return null;
 		}
 
+		const showCredentialsButton = this.showCredentialsButton();
+		const isCompact = showCredentialsButton;
+
 		return (
 			<div className="activity-log-item__action">
-				<EllipsisMenu>
-					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
-						{ translate( 'Restore to this point' ) }
-					</PopoverMenuItem>
+				{ ! showCredentialsButton && ! enableClone && (
+					<Button compact={ isCompact } disabled={ disableRestore } onClick={ createRewind }>
+						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
+					</Button>
+				) }
 
-					{ disableRestore && missingRewindCredentials && (
-						<PopoverMenuItem
-							icon="plus"
-							href={
-								canAutoconfigure
-									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-									: `${ settingsPath( siteSlug ) }#credentials`
-							}
-							onClick={ trackAddCreds }
-						>
-							{ translate( 'Add server credentials to enable restoring' ) }
-						</PopoverMenuItem>
-					) }
-
-					<PopoverMenuSeparator />
-
-					<PopoverMenuItem
-						disabled={ disableBackup }
-						icon="cloud-download"
-						onClick={ createBackup }
+				{ showCredentialsButton && (
+					<Button
+						compact={ isCompact }
+						href={
+							canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+								: `${ settingsPath( siteSlug ) }#credentials`
+						}
+						onClick={ trackAddCreds }
 					>
-						{ translate( 'Download backup' ) }
-					</PopoverMenuItem>
-				</EllipsisMenu>
+						<Gridicon icon="plus" size={ 18 } />{ ' ' }
+						{ translate( 'Add server credentials to enable restoring' ) }
+					</Button>
+				) }
+
+				{ ! enableClone && (
+					<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
+						<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
+					</Button>
+				) }
+
+				{ enableClone && this.renderCloneAction() }
 			</div>
 		);
-	}
+	};
 
 	/**
 	 * Displays a button for users to get help. Tracks button click.
@@ -352,7 +343,7 @@ class ActivityLogItem extends Component {
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 
 		return (
-			<React.Fragment>
+			<Fragment>
 				{ mightRewind && (
 					<ActivityLogConfirmDialog
 						key="activity-rewind-dialog"
@@ -410,11 +401,11 @@ class ActivityLogItem extends Component {
 						className="activity-log-item__card"
 						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
-						actionButton={ this.renderRewindAction() }
+						actionButton={ null }
 						summary={ this.renderItemAction() }
 					/>
 				</div>
-			</React.Fragment>
+			</Fragment>
 		);
 	}
 }

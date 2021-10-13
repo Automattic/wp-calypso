@@ -2,19 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { JetpackSignup } from '../signup.js';
-import FormattedHeader from 'calypso/components/formatted-header';
 
 const noop = () => {};
 const CLIENT_ID = 98765;

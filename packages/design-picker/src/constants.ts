@@ -49,6 +49,3 @@ export const ANCHORFM_FONT_PAIRINGS = [
 		base: 'Cabin',
 	},
 ] as const;
-
-// Used to store and retrieve the design thumbnails used in the design picker
-export const DESIGN_IMAGE_FOLDER = 'images/design-screenshots';

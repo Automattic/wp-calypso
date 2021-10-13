@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
+import { Popover } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
-import Popover from 'calypso/components/popover';
+import PropTypes from 'prop-types';
+import { createRef, createElement, PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 
 class Month extends PureComponent {
 	static propTypes = {
@@ -28,7 +21,7 @@ class Month extends PureComponent {
 		showPopover: false,
 	};
 
-	monthRef = React.createRef();
+	monthRef = createRef();
 
 	static defaultProps = {
 		position: 'top',
@@ -51,7 +44,7 @@ class Month extends PureComponent {
 	render() {
 		const { isHeader, className, value, position, children } = this.props;
 		const tagName = isHeader ? 'th' : 'td';
-		return React.createElement(
+		return createElement(
 			tagName,
 			{
 				className: className,

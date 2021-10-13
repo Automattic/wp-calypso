@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 

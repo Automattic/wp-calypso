@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	defer,
 	difference,
@@ -17,30 +14,27 @@ import {
 } from 'lodash';
 import page from 'page';
 import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
-import wpcom from 'calypso/lib/wp';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { ProgressState } from 'calypso/state/signup/progress/schema';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import {
 	resetSignup,
 	updateDependencies,
 	removeSiteSlugDependency,
 } from 'calypso/state/signup/actions';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	completeSignupStep,
 	invalidateStep,
 	processStep,
 } from 'calypso/state/signup/progress/actions';
-import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
+import { ProgressState } from 'calypso/state/signup/progress/schema';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -49,6 +43,7 @@ interface Dependencies {
 interface Flow {
 	destination: string | ( ( dependencies: Dependencies ) => string );
 	providesDependenciesInQuery?: string[];
+	optionalDependenciesInQuery?: string[];
 	steps: string[];
 }
 
@@ -130,6 +125,22 @@ export default class SignupFlowController {
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 		this._resetSiteSlugIfUserEnteredAnotherFlow(); // reset the site slug if user entered another flow
 
+		// If we have access to the siteId, then make sure we've also loaded the siteSlug into
+		// the dependency store, because some code depends on the slug instead of the id.
+		if (
+			this._flow.providesDependenciesInQuery?.includes( 'siteId' ) &&
+			options.providedDependencies[ 'siteId' ] &&
+			! options.providedDependencies[ 'siteSlug' ]
+		) {
+			const siteSlug = getSiteSlug(
+				this._reduxStore.getState(),
+				options.providedDependencies[ 'siteId' ]
+			);
+			if ( siteSlug ) {
+				options.providedDependencies[ 'siteSlug' ] = siteSlug;
+			}
+		}
+
 		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 			this._reduxStore.dispatch( updateDependencies( options.providedDependencies ) );
@@ -197,6 +208,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedDependenciesFromConfig( providedDependencies: Dependencies ) {
 		const dependencyDiff = difference(
 			this._flow.providesDependenciesInQuery,
+			this._flow.optionalDependenciesInQuery || [],
 			keys( providedDependencies )
 		);
 		if ( dependencyDiff.length > 0 ) {
@@ -421,5 +433,11 @@ export default class SignupFlowController {
 		flows.resetExcludedSteps();
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName, userLoggedIn );
+	}
+
+	getDestination() {
+		const dependencies = getSignupDependencyStore( this._reduxStore.getState() );
+
+		return this._destination( dependencies );
 	}
 }

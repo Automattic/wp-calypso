@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { PureComponent } from 'react';
 import ClipboardButton from '../';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static displayName = 'ClipboardButtons';
 
 	state = {

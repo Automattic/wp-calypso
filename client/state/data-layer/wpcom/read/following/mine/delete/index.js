@@ -1,23 +1,15 @@
-/**
- * External Dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
-import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { follow } from 'calypso/state/reader/follows/actions';
-import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
+import { translate } from 'i18n-calypso';
 import { getSiteName } from 'calypso/reader/get-helpers';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
+import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
+import { follow } from 'calypso/state/reader/follows/actions';
+import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
 
 export const requestUnfollow = ( action ) =>
 	http( {

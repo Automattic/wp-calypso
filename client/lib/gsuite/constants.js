@@ -1,14 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from '@automattic/calypso-products';
+import PropTypes from 'prop-types';
+
 export {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
@@ -38,3 +35,4 @@ export const GOOGLE_WORKSPACE_PRODUCT_FAMILY = 'Google Workspace';
  */
 export const GOOGLE_WORKSPACE_PRODUCT_TYPE = 'google-workspace';
 export const GSUITE_PRODUCT_TYPE = 'gsuite';
+export const GOOGLE_PROVIDER_NAME = 'google';

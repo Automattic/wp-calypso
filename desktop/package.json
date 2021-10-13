@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "7.0.6",
+	"version": "7.2.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/"
@@ -21,7 +21,7 @@
 	],
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development DEBUG=1 WP_DESKTOP_DEBUG=1 electron app/index.js",
-		"dev:localhost": "cross-env WP_DESKTOP_DEBUG_LOCALHOST=1 yarn run dev",
+		"dev:localhost": "cross-env WP_DESKTOP_BASE_URL=\"http://calypso.localhost:3000\" yarn run dev",
 		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
 		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
@@ -32,6 +32,8 @@
 		"ci:github:dismiss-review": "node bin/github/dismiss-review.js"
 	},
 	"devDependencies": {
+		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"asana-phrase": "0.0.8",
 		"chai": "4.3.4",
 		"copy-webpack-plugin": "^6.2.1",
@@ -50,8 +52,8 @@
 		"mocha-steps": "1.3.0",
 		"ncp": "^2.0.0",
 		"selenium-webdriver": "4.0.0-alpha.1",
-		"webpack": "^5.46.0",
-		"webpack-cli": "^4.7.2"
+		"webpack": "^5.54.0",
+		"webpack-cli": "^4.8.0"
 	},
 	"dependencies": {
 		"archiver": "^3.1.1",

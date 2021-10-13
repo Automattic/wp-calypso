@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getGuidedTransferError } from 'calypso/state/sites/guided-transfer/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const getErrorText = ( { translate, errorCode } ) => {
 	switch ( errorCode ) {

@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { domainConnect } from 'calypso/lib/domains/constants';
+import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
+import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import DnsRecordsList from '../dns-records/list';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
-import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
-import { domainConnect } from 'calypso/lib/domains/constants';
 
-class DnsList extends React.Component {
+class DnsList extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

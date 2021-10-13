@@ -22,10 +22,6 @@ For example: `ENTRY_LIMIT=entry-login,entry-main yarn start` would start Calypso
 
 To find all available entry points, you can refer to the `entry` option in Calypso's primary `webpack.config.js` file.
 
-### Internet Explorer
-
-It's possible to debug/fix IE issues using the [fallback development workflow](./fallback-development-workflow.md).
-
 ## Tests
 
 If you want to run the tests for a specific library in `client/` use:

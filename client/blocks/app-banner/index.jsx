@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -24,7 +16,11 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	ALLOWED_SECTIONS,
 	EDITOR,
@@ -38,13 +34,7 @@ import {
 	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
-import versionCompare from 'calypso/lib/version-compare';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const IOS_REGEX = /iPad|iPod|iPhone/i;

@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { ScreenReaderText, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { bumpStat } from 'calypso/lib/analytics/mc';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { ScreenReaderText } from '@automattic/components';
-import { clearMediaItemErrors } from 'calypso/state/media/actions';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { clearMediaItemErrors } from 'calypso/state/media/actions';
 import { addMedia } from 'calypso/state/media/thunks';
 
-/**
- * Style dependencies
- */
 import './upload-url.scss';
 
 const noop = () => {};

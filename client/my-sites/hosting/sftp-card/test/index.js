@@ -2,15 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow, mount } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { SftpCard } from '..';
 
 const translate = ( x ) => x;

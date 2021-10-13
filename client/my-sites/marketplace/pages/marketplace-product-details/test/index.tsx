@@ -2,16 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { render, fireEvent } from '@testing-library/react';
 import PurchaseArea from '../purchase-area';
 
 const onNavigateToCheckoutMockFunction = jest.fn();

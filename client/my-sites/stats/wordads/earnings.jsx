@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import PropTypes from 'prop-types';
-import { Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
-import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 
 class WordAdsEarnings extends Component {
 	static propTypes = {

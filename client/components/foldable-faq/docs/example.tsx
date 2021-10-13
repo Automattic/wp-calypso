@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * internal dependencies
- */
 import FoldableFAQ from 'calypso/components/foldable-faq';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function FoldableFAQExample() {

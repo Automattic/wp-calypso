@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { GP_BASE_URL } from './constants';
 
 const debug = debugFactory( 'calypso:i18n-utils:glotpress' );

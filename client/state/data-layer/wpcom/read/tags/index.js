@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-import { map, get } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { READER_TAGS_REQUEST } from 'calypso/state/reader/action-types';
-import { receiveTags } from 'calypso/state/reader/tags/items/actions';
+import { map, get } from 'lodash';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
 import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { READER_TAGS_REQUEST } from 'calypso/state/reader/action-types';
+import { receiveTags } from 'calypso/state/reader/tags/items/actions';
 
 export function requestTags( action ) {
 	const path =
@@ -65,7 +57,8 @@ export function receiveTagsError( action, error ) {
 
 	// see: https://github.com/Automattic/wp-calypso/pull/11627/files#r104468481
 	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( errorText, error ); // eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.error( errorText, error );
 	}
 
 	return [ errorNotice( errorText ), receiveTags( { payload: [] } ) ];

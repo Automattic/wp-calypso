@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { FC, ReactElement, useCallback } from 'react';
+import { FC, ReactElement, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import type { AppState } from 'calypso/types';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import type { AppState } from 'calypso/types';
 
 const getCurrentUserCapabilities = ( state: AppState, siteId: number | null ) => {
 	if ( ! siteId ) {

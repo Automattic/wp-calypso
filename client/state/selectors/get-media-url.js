@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import safeImageUrl from 'calypso/lib/safe-image-url';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 

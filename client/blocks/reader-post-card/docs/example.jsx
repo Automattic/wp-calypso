@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ReaderPostCardBlock from 'calypso/blocks/reader-post-card';
 import { posts, site } from './fixtures';
 

@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import MainComponent from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
+import { connect } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import HeaderCake from 'calypso/components/header-cake';
+import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

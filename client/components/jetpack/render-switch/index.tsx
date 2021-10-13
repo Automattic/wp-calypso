@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import React, { ReactComponent, ReactNode } from 'react';
+import { ReactComponent, ReactNode } from 'react';
 
 /**
  * @typedef RenderSwitchArgs

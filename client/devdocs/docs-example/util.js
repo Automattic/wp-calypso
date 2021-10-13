@@ -1,11 +1,3 @@
-/**
- * /* eslint-disable no-console
- *
- */
-
-/**
- * External dependencies
- */
 import debug from 'debug';
 
 /**
@@ -23,6 +15,7 @@ const getComponentName = ( docsExample ) => {
 	}
 
 	if ( ! docsExample.type || ( ! docsExample.type.displayName && ! docsExample.type.name ) ) {
+		// eslint-disable-next-line no-console
 		return console.trace( 'Component must be defined' );
 	}
 
@@ -32,6 +25,7 @@ const getComponentName = ( docsExample ) => {
 const slugToCamelCase = ( name ) => {
 	if ( ! name ) {
 		log( 'name is not defined' );
+		// eslint-disable-next-line no-console
 		return console.trace();
 	}
 
@@ -43,6 +37,7 @@ const slugToCamelCase = ( name ) => {
 const camelCaseToSlug = ( name ) => {
 	if ( ! name ) {
 		log( 'name is not defined' );
+		// eslint-disable-next-line no-console
 		return console.trace();
 	}
 

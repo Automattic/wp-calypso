@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ReactNode } from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { FunctionComponent, ReactNode } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

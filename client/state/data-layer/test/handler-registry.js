@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getHandlers, registerHandlers, testReset } from '../handler-registry';
 
 describe( 'handler loading', () => {

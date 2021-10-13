@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	DataHelper,
 	LoginFlow,
@@ -20,13 +24,13 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( page );
-		await sidebarComponent.gotoMenu( { item: 'Tools', subitem: 'Marketing' } );
+		const sidebarComponent = new SidebarComponent( page );
+		await sidebarComponent.navigate( 'Tools', 'Marketing' );
 	} );
 
 	it( 'Click on Traffic tab', async function () {
-		marketingPage = await MarketingPage.Expect( page );
-		await marketingPage.clickTabItem( 'Traffic' );
+		marketingPage = new MarketingPage( page );
+		await marketingPage.clickTab( 'Traffic' );
 	} );
 
 	it( 'Enter SEO meta description', async function () {

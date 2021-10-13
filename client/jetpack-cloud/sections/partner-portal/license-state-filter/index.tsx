@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useContext } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-
-import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
 import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';
-import UrlSearch from 'calypso/lib/url-search';
-import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
-
-/**
- * Style dependencies
- */
+import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { internalToPublicLicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import UrlSearch from 'calypso/lib/url-search';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
 
 interface Props {

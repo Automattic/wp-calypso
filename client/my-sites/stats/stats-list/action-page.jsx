@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Gridicon } from '@automattic/components';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import Gridicon from 'calypso/components/gridicon';
 
 const debug = debugFactory( 'calypso:stats:action-page' );
 
-class StatsActionPage extends React.Component {
+class StatsActionPage extends Component {
 	static displayName = 'StatsActionPage';
 
 	clickHandler = ( event ) => {

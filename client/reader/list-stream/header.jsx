@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import { isExternal } from 'calypso/lib/url';
+import PropTypes from 'prop-types';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import { isExternal } from 'calypso/lib/url';
 
 const ListStreamHeader = ( {
 	isPlaceholder,

@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -19,11 +13,8 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-import wp from 'calypso/lib/wp';
 
 import 'calypso/state/purchases/init';
-
-const wpcom = wp.undocumented();
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
@@ -39,11 +30,8 @@ export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 		siteId,
 	} );
 
-	return new Promise( ( resolve, reject ) => {
-		wpcom.sitePurchases( siteId, ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		} );
-	} )
+	return wpcom.req
+		.get( `/sites/${ siteId }/purchases` )
 		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
@@ -64,11 +52,8 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 		type: PURCHASES_USER_FETCH,
 	} );
 
-	return new Promise( ( resolve, reject ) => {
-		wpcom.me().purchases( ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		} );
-	} )
+	return wpcom.req
+		.get( '/me/purchases' )
 		.then( ( data ) => {
 			dispatch( {
 				type: PURCHASES_USER_FETCH_COMPLETED,
@@ -85,26 +70,34 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 };
 
 export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
-	return new Promise( ( resolve, reject ) => {
-		wpcom.me().deletePurchase( purchaseId, ( error, data ) => {
-			error ? reject( error ) : resolve( data );
-		} );
-	} )
-		.then( ( data ) => {
-			dispatch( {
-				type: PURCHASE_REMOVE_COMPLETED,
-				purchases: data.purchases,
-				userId,
-			} );
+	return new Promise( ( resolve ) =>
+		wpcom.req
+			.post( {
+				path: `/purchases/${ purchaseId }/delete`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( data ) => {
+				dispatch( {
+					type: PURCHASE_REMOVE_COMPLETED,
+					purchases: data.purchases,
+					userId,
+				} );
 
-			dispatch( requestHappychatEligibility() );
-		} )
-		.catch( ( error ) => {
-			dispatch( {
-				type: PURCHASE_REMOVE_FAILED,
-				error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE,
-			} );
-		} );
+				if ( data.status === 'completed' ) {
+					dispatch( requestHappychatEligibility() );
+				}
+
+				resolve( data );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: PURCHASE_REMOVE_FAILED,
+					error: error.message || PURCHASE_REMOVE_ERROR_MESSAGE,
+				} );
+
+				resolve( error );
+			} )
+	);
 };
 
 export const resetSiteState = () => ( dispatch ) =>

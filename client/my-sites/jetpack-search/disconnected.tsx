@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-
-/**
- * Internal dependencies
- */
+import { ReactElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 export default function JetpackSearchDisconnected(): ReactElement {
 	const isCloud = isJetpackCloud();

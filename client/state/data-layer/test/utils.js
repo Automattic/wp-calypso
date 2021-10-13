@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { kebabCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { bypassDataLayer, convertKeysBy, convertToCamelCase, convertToSnakeCase } from '../utils';
 
 describe( 'Data Layer', () => {

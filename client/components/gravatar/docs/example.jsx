@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 

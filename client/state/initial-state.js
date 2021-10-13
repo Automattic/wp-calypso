@@ -1,17 +1,14 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import debugModule from 'debug';
 import { map, pick, throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
-import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import config from '@automattic/calypso-config';
+import {
+	clearPersistedState,
+	getPersistedStateItem,
+	storePersistedStateItem,
+} from './persisted-state';
 
 /**
  * Module variables
@@ -27,21 +24,12 @@ export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 // when the server data (if any) was generated.
 const bootTimestamp = Date.now();
 
-/**
- * In-memory copy of persisted state.
- *
- * We load from browser storage into this cache on boot, and initialize state
- * from it, rather than asynchronously reading from browser storage for every
- * persisted reducer.
- */
-let stateCache = {};
-
 function deserializeStored( reducer, stored ) {
 	const { _timestamp, ...state } = stored;
 	return deserialize( reducer, state );
 }
 
-function shouldPersist() {
+export function shouldPersist() {
 	return ! isSupportSession();
 }
 
@@ -88,34 +76,8 @@ function verifyStateTimestamp( state ) {
 	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
 }
 
-export async function loadAllState() {
-	try {
-		const storedState = await getAllStoredItems( /^redux-state-/ );
-		debug( 'fetched stored Redux state from persistent storage', storedState );
-		stateCache = storedState ?? {};
-	} catch ( error ) {
-		debug( 'error while loading persisted Redux state:', error );
-	}
-}
-
-export async function clearAllState() {
-	stateCache = {};
-	await clearStorage();
-}
-
-function getPersistenceKey( subkey, currentUserId ) {
-	return getReduxStateKey( currentUserId ) + ( subkey ? ':' + subkey : '' );
-}
-
-function getReduxStateKey( currentUserId = null ) {
-	return getReduxStateKeyForUserId( currentUserId );
-}
-
-function getReduxStateKeyForUserId( userId ) {
-	if ( ! userId ) {
-		return 'redux-state-logged-out';
-	}
-	return 'redux-state-' + userId;
+function getPersistenceKey( userId, subkey ) {
+	return 'redux-state-' + ( userId ?? 'logged-out' ) + ( subkey ? ':' + subkey : '' );
 }
 
 async function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
@@ -124,9 +86,7 @@ async function persistentStoreState( reduxStateKey, storageKey, state, _timestam
 	}
 
 	const newState = { ...state, _timestamp };
-	const result = await setStoredItem( reduxStateKey, newState );
-	stateCache[ reduxStateKey ] = newState;
-	return result;
+	await storePersistedStateItem( reduxStateKey, newState );
 }
 
 export function persistOnChange( reduxStore, currentUserId ) {
@@ -147,7 +107,7 @@ export function persistOnChange( reduxStore, currentUserId ) {
 
 			const serializedState = serialize( reduxStore.getCurrentReducer(), state );
 			const _timestamp = Date.now();
-			const reduxStateKey = getReduxStateKey( currentUserId );
+			const reduxStateKey = getPersistenceKey( currentUserId );
 
 			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
@@ -180,7 +140,7 @@ export function persistOnChange( reduxStore, currentUserId ) {
 // Retrieve the initial state for the application, combining it from server and
 // local persistence (server data gets priority).
 // This function only handles legacy Redux state for the monolithic root reducer
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 export function getInitialState( initialReducer, currentUserId ) {
 	const storedState = getInitialPersistedState( initialReducer, currentUserId );
 	const serverState = getInitialServerState( initialReducer );
@@ -200,14 +160,14 @@ function getInitialServerState( initialReducer ) {
 
 // Retrieve the initial persisted state from the cached local client data.
 // This function only handles legacy Redux state for the monolithic root reducer
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 function getInitialPersistedState( initialReducer, currentUserId ) {
 	if ( ! shouldPersist() ) {
 		return null;
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		window.resetState = () => clearAllState().then( () => window.location.reload( true ) );
+		window.resetState = () => clearPersistedState().then( () => window.location.reload( true ) );
 
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
@@ -216,7 +176,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 				'font-size: 14px; color: red;'
 			);
 
-			clearAllState();
+			clearPersistedState();
 			return null;
 		}
 	}
@@ -245,33 +205,29 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 
 // Retrieve the initial state for a portion of state, from persisted data alone.
 // This function handles both legacy and modularized Redux state.
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 function getStateFromPersistence( reducer, subkey, currentUserId ) {
-	const reduxStateKey = getPersistenceKey( subkey, currentUserId );
-
-	const state = stateCache[ reduxStateKey ] ?? null;
+	const reduxStateKey = getPersistenceKey( currentUserId, subkey );
+	const state = getPersistedStateItem( reduxStateKey );
 	return deserializeState( subkey, state, reducer, false );
 }
 
 // Retrieve the initial state for a portion of state, choosing the freshest
 // between server and local persisted data.
 // This function handles both legacy and modularized Redux state.
-// `loadAllState` must have completed first.
+// `loadPersistedState` must have completed first.
 export function getStateFromCache( reducer, subkey, currentUserId ) {
-	let reduxStateKey = getPersistenceKey( subkey, currentUserId );
-
 	let serverState = null;
 
 	if ( subkey && typeof window !== 'undefined' ) {
 		serverState = window.initialReduxState?.[ subkey ] ?? null;
 	}
 
-	let persistedState = stateCache[ reduxStateKey ] ?? null;
+	let persistedState = getPersistedStateItem( getPersistenceKey( currentUserId, subkey ) );
 
 	// Special case for handling signup flows where the user logs in halfway through.
 	if ( ! persistedState && subkey === 'signup' ) {
-		reduxStateKey = getPersistenceKey( subkey, null );
-		persistedState = stateCache[ reduxStateKey ] ?? null;
+		persistedState = getPersistedStateItem( getPersistenceKey( null, subkey ) );
 
 		// If we are logged in, we no longer need the 'user' step in signup progress tree.
 		if ( persistedState && persistedState.progress && persistedState.progress.user ) {

@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const PurchaseButton = ( {

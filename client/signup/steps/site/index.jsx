@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { login } from 'calypso/lib/paths';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormButton from 'calypso/components/forms/form-button';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import wpcom from 'calypso/lib/wp';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import LoggedOutForm from 'calypso/components/logged-out-form';
-import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:steps:site' );
@@ -41,7 +30,7 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 let siteUrlsSearched = [];
 let timesValidationFailed = 0;
 
-class Site extends React.Component {
+class Site extends Component {
 	static displayName = 'Site';
 
 	state = {

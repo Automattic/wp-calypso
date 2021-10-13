@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Button, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import { errorNotice } from 'calypso/state/notices/actions';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
 } from 'calypso/blocks/reader-export-button/constants';
 import wp from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-class ReaderExportButton extends React.Component {
+class ReaderExportButton extends Component {
 	static propTypes = {
 		borderless: PropTypes.bool,
 		disabled: PropTypes.bool,

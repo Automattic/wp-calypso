@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-export default class extends React.PureComponent {
+export default class extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 	};

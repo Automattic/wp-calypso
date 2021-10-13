@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackHeader from 'calypso/components/jetpack-header';
-import DocumentHead from 'calypso/components/data/document-head';
-import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 
 import './style.scss';
 

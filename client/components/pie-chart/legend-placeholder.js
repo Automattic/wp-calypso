@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { get, maxBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
 import { LegendItemPlaceholder } from 'calypso/components/legend-item';
 
 function getLongestName( dataSeriesInfo ) {

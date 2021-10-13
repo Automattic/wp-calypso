@@ -1,21 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-
-/**
- * Style dependencies
- */
-
 import './style.scss';
 
 export default class SignupHeader extends Component {

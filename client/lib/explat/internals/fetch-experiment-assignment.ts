@@ -1,6 +1,3 @@
-/**
- * WordPress dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 // SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check

@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class SharingButtonsStyle extends React.Component {
+class SharingButtonsStyle extends Component {
 	static displayName = 'SharingButtonsStyle';
 
 	static propTypes = {
