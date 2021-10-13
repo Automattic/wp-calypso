@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -158,6 +159,10 @@ class MasterbarLoggedIn extends Component {
 		preload( 'me' );
 	};
 
+	goToCheckout = ( siteId ) => {
+		page( `/checkout/${ siteId }` );
+	};
+
 	isActive = ( section ) => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
@@ -289,6 +294,7 @@ class MasterbarLoggedIn extends Component {
 							placeholder={ null }
 							className="masterbar__item-cart"
 							tooltip={ translate( 'View my Shopping Cart' ) }
+							goToCheckout={ this.goToCheckout }
 						/>
 					) }
 					<Item

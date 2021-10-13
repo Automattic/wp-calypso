@@ -28,11 +28,15 @@ function App( { siteId, wpcom }: { siteId: string; wpcom: any } ) {
 		[ wpcomGetCart, wpcomSetCart ]
 	);
 
+	const goToCheckout = ( siteSlug: string ) => {
+		window.location.href = `/checkout/${ siteSlug }`;
+	};
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
 			<header id="masterbar" className="masterbar masterbar-cart-standalone">
-				<MasterbarCart selectedSiteSlug={ siteId } />
+				<MasterbarCart selectedSiteSlug={ siteId } goToCheckout={ goToCheckout } />
 			</header>
 		</ShoppingCartProvider>
 	);

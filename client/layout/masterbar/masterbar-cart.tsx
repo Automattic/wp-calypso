@@ -2,7 +2,6 @@ import { Popover } from '@automattic/components';
 import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useRef, useState } from 'react';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import MasterbarItem from './item';
@@ -11,9 +10,15 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 import './masterbar-cart-style.scss';
 
-type MasterbarCartProps = { selectedSiteSlug: string | undefined };
+type MasterbarCartProps = {
+	selectedSiteSlug: string | undefined;
+	goToCheckout: ( siteSlug: string ) => void;
+};
 
-export function MasterbarCart( { selectedSiteSlug }: MasterbarCartProps ): JSX.Element | null {
+export function MasterbarCart( {
+	selectedSiteSlug,
+	goToCheckout,
+}: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart( selectedSiteSlug );
 	const masterbarButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
@@ -45,7 +50,10 @@ export function MasterbarCart( { selectedSiteSlug }: MasterbarCartProps ): JSX.E
 					context={ masterbarButtonRef.current }
 					position="bottom left"
 				>
-					<MasterbarCartContents selectedSiteSlug={ selectedSiteSlug } />
+					<MasterbarCartContents
+						selectedSiteSlug={ selectedSiteSlug }
+						goToCheckout={ goToCheckout }
+					/>
 				</Popover>
 			</CheckoutErrorBoundary>
 		</div>
@@ -70,7 +78,13 @@ function MasterbarCartTotal( { responseCart }: { responseCart: ResponseCart } ) 
 	);
 }
 
-function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string } ) {
+function MasterbarCartContents( {
+	selectedSiteSlug,
+	goToCheckout,
+}: {
+	selectedSiteSlug: string;
+	goToCheckout: ( siteSlug: string ) => void;
+} ) {
 	const {
 		responseCart,
 		removeCoupon,
@@ -79,10 +93,6 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		isPendingUpdate,
 	} = useShoppingCart( selectedSiteSlug );
 	const translate = useTranslate();
-	const goToCheckout = () => {
-		const checkoutUrl = `/checkout/${ selectedSiteSlug }`;
-		page( checkoutUrl );
-	};
 	const isDisabled = isLoading || isPendingUpdate;
 	const isPwpoUser = false; // TODO: deal with this properly
 
@@ -111,7 +121,7 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 						fullWidth
 						disabled={ isDisabled }
 						isBusy={ isDisabled }
-						onClick={ goToCheckout }
+						onClick={ () => goToCheckout( selectedSiteSlug ) }
 					>
 						{ translate( 'Checkout' ) }
 					</Button>
