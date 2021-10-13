@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Component, Fragment } from 'react';
-// import { recordEvent } from 'src/lib/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 
 import './image-file.scss';
@@ -30,11 +30,11 @@ class ImageFile extends Component {
 	};
 
 	handleClick = () => {
-		// recordEvent( 'happychatclient_file_opened', {
-		// 	file_type: 'image',
-		// 	file_id: this.props.file.id,
-		// 	session_id: this.props.file.session_id,
-		// } );
+		recordTracksEvent( 'calypso_happychat_file_opened', {
+			file_type: 'image',
+			file_id: this.props.file.id,
+			session_id: this.props.file.session_id,
+		} );
 	};
 
 	componentDidMount() {
