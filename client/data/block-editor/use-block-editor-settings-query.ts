@@ -10,10 +10,14 @@ export const useBlockEditorSettingsQuery = (
 ): UseQueryResult< BlockEditorSettings > => {
 	const queryKey = [ 'blockEditorSettings', siteId ];
 
-	return useQuery< BlockEditorSettings >( queryKey, () => {
-		return wpcom.req.get( {
-			path: `/sites/${ siteId }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-		} );
-	} );
+	return useQuery< BlockEditorSettings >(
+		queryKey,
+		() => {
+			return wpcom.req.get( {
+				path: `/sites/${ siteId }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} );
+		},
+		{ enabled: !! siteId }
+	);
 };
