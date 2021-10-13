@@ -15,7 +15,7 @@ const ImportSite: React.FunctionComponent = () => {
 
 	// Temp mock
 	const data = {
-		website: 'https://openweb.com/',
+		website: 'https://openweb.com',
 		platform: 'Wix',
 	};
 

@@ -30,7 +30,8 @@
 		}
 
 		strong {
-			font-weight: bold;
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --studio-gray-100 );
 		}
 
 		.onboarding-title {
@@ -48,6 +49,11 @@
 
 		.action-buttons__back {
 			color: var( --studio-gray-100 );
+			font-weight: 500; /* stylelint-disable-line */
+
+			&:hover {
+				text-decoration: none;
+			}
 		}
 	}
 

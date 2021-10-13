@@ -18,6 +18,10 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
+	const convertToFrendlyWebsiteName = ( website: string ): string => {
+		return website.replace( 'https://', '' ).replace( 'http://', '' ).replace( 'www.', '' );
+	};
+
 	return (
 		<>
 			<div className="import__header">
@@ -31,7 +35,7 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 									'It looks like <strong>%(website)s</strong> is hosted by %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 								),
 								{
-									website,
+									website: convertToFrendlyWebsiteName( website ),
 									platform,
 								}
 							),

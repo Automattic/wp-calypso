@@ -16,8 +16,8 @@
 
 		.import__preview-wrapper {
 			background: var( --studio-white );
-			box-shadow: 0 0 0 1px var( --studio-gray-5 );
-			border-radius: 2px;
+			border: 1px solid rgba( 0, 0, 0, 0.12 );
+			border-radius: 6px; /* stylelint-disable-line */
 			overflow: hidden;
 			position: relative;
 
@@ -31,10 +31,6 @@
 
 			@include break-wide {
 				min-height: 600px;
-			}
-
-			@include break-small {
-				box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.1 );
 			}
 		}
 
@@ -94,6 +90,7 @@
 		}
 
 		.import__screenshot {
+			width: 100%;
 			margin-top: 15px;
 
 			@include break-small {
@@ -110,6 +107,10 @@
 		font-size: 1.125em; /* stylelint-disable-line */
 		color: var( --studio-gray-100 ) !important;
 		margin-bottom: 2em;
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 
 	.import__details-features {
