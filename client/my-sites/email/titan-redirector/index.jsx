@@ -34,8 +34,14 @@ class TitanRedirector extends Component {
 			return;
 		}
 
-		wp.undocumented()
-			.getTitanDetailsForIncomingRedirect( mode, jwt )
+		wp.req
+			.get(
+				{
+					path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{ jwt }
+			)
 			.then(
 				( data ) => {
 					this.setState( {
