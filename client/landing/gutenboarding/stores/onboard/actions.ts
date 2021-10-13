@@ -59,7 +59,7 @@ export function* createSite( {
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = shouldEnrollInFseBeta ? 'seedlet-blocks' : 'twentytwenty';
+	const defaultTheme = 'quadrat';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
