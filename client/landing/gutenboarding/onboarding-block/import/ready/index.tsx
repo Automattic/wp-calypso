@@ -67,7 +67,7 @@ const ReadyNotStep: React.FunctionComponent< Props > = () => {
 	const { __ } = useI18n();
 
 	return (
-		<>
+		<div className="import-layout__center">
 			<div className="import__header">
 				<div className="import__heading  import__heading-center">
 					<Title>{ __( "Your existing content can't be imported" ) }</Title>
@@ -85,7 +85,7 @@ const ReadyNotStep: React.FunctionComponent< Props > = () => {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
@@ -93,7 +93,7 @@ const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
 	const { __ } = useI18n();
 
 	return (
-		<>
+		<div className="import-layout__center">
 			<div className="import__header">
 				<div className="import__heading  import__heading-center">
 					<Title>{ __( 'Your content is ready for its new home' ) }</Title>
@@ -117,7 +117,7 @@ const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

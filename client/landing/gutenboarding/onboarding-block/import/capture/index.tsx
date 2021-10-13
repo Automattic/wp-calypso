@@ -2,11 +2,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import './style.scss';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 const CaptureStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 
 	return (
-		<div className="capture__content">
+		<div className="import-layout__center">
 			<input
 				className="capture__input"
 				autoComplete="off"

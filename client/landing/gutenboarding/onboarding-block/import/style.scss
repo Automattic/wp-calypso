@@ -69,6 +69,16 @@
 		flex-direction: column;
 		flex-basis: 100%;
 	}
+
+	.import-layout__center {
+		background-color: var( --contrastColor );
+		tab-size: 4;
+		min-height: calc( 100vh - 2 * #{$onboarding-header-height} );
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
 }
 
 /**
