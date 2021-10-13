@@ -1,7 +1,7 @@
 name: Tooling Request
 description: Bug or feature request related to scripts, tooling, DevX, etc.
-title: "Tooling:"
-labels: "[Type] Tooling"
+title: 'Tooling:'
+labels: '[Type] Tooling'
 body:
   - type: markdown
     attributes:
@@ -20,5 +20,5 @@ body:
       label: Context
       description: Provide more context as applicable.
       placeholder: |
-        eg. nodeJS: 16.7.0
+        eg. nodeJS: 16.11.1
             browser: Firefox Nightly 92.0a1
