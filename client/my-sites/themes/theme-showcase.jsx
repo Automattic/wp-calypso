@@ -118,11 +118,9 @@ class ThemeShowcase extends Component {
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		isSiteEditorActive: PropTypes.bool,
-		blockEditorSettings: PropTypes.objectOf(
-			PropTypes.shape( {
-				is_fse_eligible: PropTypes.bool,
-			} )
-		),
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {

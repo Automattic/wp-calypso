@@ -103,11 +103,9 @@ class ThemeSheet extends Component {
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
 		} ),
-		blockEditorSettings: PropTypes.objectOf(
-			PropTypes.shape( {
-				is_fse_eligible: PropTypes.bool,
-			} )
-		),
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {
