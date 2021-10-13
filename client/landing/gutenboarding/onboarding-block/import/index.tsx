@@ -21,8 +21,8 @@ const ImportSite: React.FunctionComponent = () => {
 
 	return (
 		<div className="gutenboarding-page import">
-			{ query.get( 'step' ) === 'capture' || ( ! query.get( 'step' ) && <CaptureStep /> ) }
-			{ query.get( 'step' ) === 'list' && <ListStep /> }
+			{ ( query.get( 'step' ) === 'list' || ! query.get( 'step' ) ) && <ListStep /> }
+			{ query.get( 'step' ) === 'capture' && <CaptureStep /> }
 			{ query.get( 'step' ) === 'scanning' && <ScanningStep /> }
 			{ query.get( 'step' ) === 'ready' && (
 				<ReadyStep platform={ data.platform } website={ data.website } />

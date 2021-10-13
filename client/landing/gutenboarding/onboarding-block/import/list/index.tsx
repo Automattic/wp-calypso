@@ -1,6 +1,7 @@
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import './style.scss';
@@ -9,6 +10,7 @@ import './style.scss';
 
 const ListStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+	const history = useHistory();
 
 	return (
 		<>
@@ -56,6 +58,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Wix' }
 							mainText={ 'www.wix.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => history.push( '/import?step=capture' ) }
 						/>
 					</div>
 

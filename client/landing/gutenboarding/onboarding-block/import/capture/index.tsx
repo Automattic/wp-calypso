@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -13,12 +14,14 @@ const validateUrl = ( url: string ): boolean => {
 
 const CaptureStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+	const history = useHistory();
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
 	const [ isValid, setIsValid ] = React.useState( true );
 
 	const runProcess = (): void => {
 		// Redirect to the next step!
+		history.push( '/import?step=scanning' );
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
