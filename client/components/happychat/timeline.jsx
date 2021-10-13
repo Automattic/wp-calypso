@@ -8,6 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { sendEvent } from 'calypso/state/happychat/connection/actions';
 import { useAutoscroll } from './autoscroll';
+import ImageFile from './image-file';
 import { useScrollbleed } from './scrollbleed';
 import { addSchemeIfMissing, setUrlScheme } from './url';
 
@@ -61,6 +62,22 @@ const MessageLinkConnected = connect( ( state ) => ( { userId: getCurrentUserId(
 	sendEventMessage: sendEvent,
 } )( MessageLink );
 
+const MessageFiles = ( { files } ) => {
+	if ( ! files || files.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<div className="happychat__message-files">
+			{ files.map( ( file ) => (
+				<span key={ file.id } className="happychat__message-files-file">
+					<ImageFile file={ file } />
+				</span>
+			) ) }
+		</div>
+	);
+};
+
 const FormattedMessageText = ( { message, messageId, links = [], isExternalUrl } ) => {
 	const children = [];
 	let lastIndex = 0;
@@ -102,17 +119,28 @@ const FormattedMessageText = ( { message, messageId, links = [], isExternalUrl }
 /*
  * Render a formatted message.
  */
-const Message = ( { message, messageId, isEdited, isOptimistic, links = [], isExternalUrl } ) => {
+const Message = ( {
+	message,
+	messageId,
+	isEdited,
+	isOptimistic,
+	links = [],
+	files,
+	isExternalUrl,
+} ) => {
 	return (
-		<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
-			<FormattedMessageText
-				message={ message }
-				messageId={ messageId }
-				links={ links }
-				isExternalUrl={ isExternalUrl }
-			/>
-			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
-		</p>
+		<>
+			<p className={ classnames( { 'is-optimistic': isOptimistic } ) }>
+				<FormattedMessageText
+					message={ message }
+					messageId={ messageId }
+					links={ links }
+					isExternalUrl={ isExternalUrl }
+				/>
+				{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
+			</p>
+			<MessageFiles files={ files } />
+		</>
 	);
 };
 
@@ -129,7 +157,7 @@ const renderGroupedMessages = ( { messages, isCurrentUser, isExternalUrl }, inde
 			key={ messages[ 0 ].id || index }
 		>
 			<div className="happychat__message-text">
-				{ messages.map( ( { message, id, isEdited, isOptimistic, links } ) => (
+				{ messages.map( ( { message, id, isEdited, isOptimistic, links, files } ) => (
 					<Message
 						key={ id }
 						message={ message }
@@ -137,6 +165,7 @@ const renderGroupedMessages = ( { messages, isCurrentUser, isExternalUrl }, inde
 						isEdited={ isEdited }
 						isOptimistic={ isOptimistic }
 						links={ links }
+						files={ files }
 						isExternalUrl={ isExternalUrl }
 					/>
 				) ) }
