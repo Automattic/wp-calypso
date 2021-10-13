@@ -194,8 +194,9 @@ export function createCreditCardMethod( {
 	stripe,
 	stripeConfiguration,
 	shouldUseEbanx,
-	shouldShowTaxFields = false,
-	activePayButtonText = undefined,
+	shouldShowTaxFields,
+	activePayButtonText,
+	allowUseForAllSubscriptions,
 } ) {
 	return {
 		id: 'card',
@@ -206,6 +207,7 @@ export function createCreditCardMethod( {
 				stripeConfiguration={ stripeConfiguration }
 				shouldUseEbanx={ shouldUseEbanx }
 				shouldShowTaxFields={ shouldShowTaxFields }
+				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
 			/>
 		),
 		submitButton: (

@@ -22,7 +22,11 @@ import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 
-export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields } ) {
+export default function CreditCardFields( {
+	shouldUseEbanx,
+	shouldShowTaxFields,
+	allowUseForAllSubscriptions,
+} ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
@@ -106,8 +110,6 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 
 	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
 
-	const shouldShowAssignAllCheckbox = ! shouldUseEbanx;
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<StripeFields className="credit-card-form-fields">
@@ -174,7 +176,7 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 						/>
 					) }
 
-					{ shouldShowAssignAllCheckbox && (
+					{ allowUseForAllSubscriptions && (
 						<AssignToAllPaymentMethods
 							isChecked={ useForAllSubscriptions }
 							onChange={ setUseForAllSubscriptions }

@@ -92,6 +92,7 @@ export function useCreateCreditCard( {
 						shouldUseEbanx,
 						shouldShowTaxFields,
 						activePayButtonText,
+						allowUseForAllSubscriptions,
 				  } )
 				: null,
 		[
@@ -102,6 +103,7 @@ export function useCreateCreditCard( {
 			shouldUseEbanx,
 			shouldShowTaxFields,
 			activePayButtonText,
+			allowUseForAllSubscriptions,
 		]
 	);
 	return stripeMethod;
