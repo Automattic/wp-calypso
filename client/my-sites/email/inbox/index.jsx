@@ -10,6 +10,7 @@ import { getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getConfiguredTitanMailboxCount } from 'calypso/lib/titan';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -17,8 +18,6 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
-
-export const INBOX = 'inbox';
 
 const NoAccessCard = () => {
 	const translate = useTranslate();
@@ -107,7 +106,7 @@ const InboxManagement = () => {
 				emailListInactiveHeader={ <MainHeader /> }
 				sectionHeaderLabel={ translate( 'Domains' ) }
 				showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-				source={ INBOX }
+				source={ INBOX_SOURCE }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
