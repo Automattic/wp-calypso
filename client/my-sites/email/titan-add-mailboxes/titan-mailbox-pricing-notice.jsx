@@ -23,7 +23,9 @@ const doesAdditionalPriceMatchStandardPrice = ( domain, titanMonthlyProduct ) =>
 	);
 };
 
-function getPriceMessage( purchaseCost, expiryDate, translate ) {
+function getPriceMessage( props ) {
+	const { purchaseCost, translate } = props;
+
 	return purchaseCost.amount === 0
 		? translate(
 				'You are still in your Professional Email trial period, so this mailbox is free for the remainder of your trial.'
@@ -43,7 +45,10 @@ function getPriceMessage( purchaseCost, expiryDate, translate ) {
 		  );
 }
 
-function getPriceMessageExplanation( purchaseCost, renewalCost, translate ) {
+function getPriceMessageExplanation( props ) {
+	const { purchaseCost, renewalCost, translate } = props;
+
+	//We don't need any explanation of the price at this point, because we have already handled it previusly.
 	if ( purchaseCost.amount === 0 ) {
 		return '';
 	}
@@ -56,7 +61,9 @@ function getPriceMessageExplanation( purchaseCost, renewalCost, translate ) {
 		  );
 }
 
-function getPriceMessageRenewal( renewalCost, expiryDate, translate ) {
+function getPriceMessageRenewal( props ) {
+	const { renewalCost, expiryDate, translate } = props;
+
 	return translate(
 		'All of your mailboxes are due to renew at the regular price of {{strong}}%(fullPrice)s{{/strong}} per mailbox when your subscription renews on {{strong}}%(expiryDate)s{{/strong}}.',
 		{
@@ -106,13 +113,17 @@ const TitanMailboxPricingNotice = ( { domain, titanMonthlyProduct } ) => {
 	const renewalCost = getTitanMailboxRenewalCost( domain );
 	const expiryDate = getTitanExpiryDate( domain );
 	const expiryDateString = moment( expiryDate ).format( 'LL' );
-	const priceMessage = getPriceMessage( purchaseCost, expiryDateString, translate );
-	const priceMessageExplanation = getPriceMessageExplanation(
+	const priceMessage = getPriceMessage( { purchaseCost, translate } );
+	const priceMessageExplanation = getPriceMessageExplanation( {
 		purchaseCost,
 		renewalCost,
-		translate
-	);
-	const priceMessageRenewal = getPriceMessageRenewal( renewalCost, expiryDateString, translate );
+		translate,
+	} );
+	const priceMessageRenewal = getPriceMessageRenewal( {
+		renewalCost,
+		expiryDateString,
+		translate,
+	} );
 
 	return (
 		<Notice icon="info-outline" showDismiss={ false } status="is-success">
