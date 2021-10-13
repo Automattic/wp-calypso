@@ -345,6 +345,17 @@ object CheckCodeStyleBranch : BuildType({
 	name = "Code style"
 	description = "Check code style"
 
+	params {
+		checkbox(
+			name = "run_full_eslint",
+			value = "false",
+			label = "Run full eslint",
+			description = "Run ESLint for all files in the repo, not only for changed files",
+			checked = "true",
+			unchecked = "false"
+		)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
@@ -370,7 +381,7 @@ object CheckCodeStyleBranch : BuildType({
 				export NODE_ENV="test"
 
 				# Find files to lint
-				if [ "%calypso.run_full_eslint%" = "true" ]; then
+				if [ "%run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
 					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
