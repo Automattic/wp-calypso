@@ -615,6 +615,7 @@ __metadata:
   resolution: "@automattic/masterbar-cart@workspace:apps/masterbar-cart"
   dependencies:
     "@automattic/calypso-build": ^9.0.0
+    "@automattic/webpack-extensive-lodash-replacement-plugin": ^0.0.2
     autoprefixer: ^10.2.5
     calypso: ^0.17.0
     enzyme: ^3.11.0

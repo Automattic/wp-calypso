@@ -35,6 +35,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/webpack-extensive-lodash-replacement-plugin": "^0.0.2",
 		"autoprefixer": "^10.2.5",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
