@@ -22,7 +22,6 @@ import 'calypso/state/sharing/init';
  * Triggers a network request for a user's connected services.
  *
  * @param {boolean} forceExternalUsersRefetch Whether to force refetching of external users
- *
  * @returns {Function} Action thunk
  */
 export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
@@ -31,9 +30,11 @@ export function requestKeyringConnections( forceExternalUsersRefetch = false ) {
 			type: KEYRING_CONNECTIONS_REQUEST,
 		} );
 
-		return wpcom
-			.undocumented()
-			.mekeyringConnections( forceExternalUsersRefetch )
+		return wpcom.req
+			.get(
+				{ path: '/me/connections', apiNamespace: 'wpcom/v2' },
+				forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {}
+			)
 			.then( ( { connections } ) => {
 				dispatch( {
 					type: KEYRING_CONNECTIONS_RECEIVE,
@@ -91,9 +92,12 @@ function deleteKeyringConnectionSuccess( connection ) {
  */
 export function deleteStoredKeyringConnection( connection ) {
 	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.deletekeyringConnection( connection.ID )
+		wpcom.req
+			.get( {
+				path: `/me/connections/${ connection.ID }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'DELETE',
+			} )
 			.then( () => {
 				dispatch( deleteKeyringConnection( connection ) );
 				dispatch( deleteKeyringConnectionSuccess( connection ) );
@@ -127,7 +131,6 @@ export function deleteStoredKeyringConnection( connection ) {
  * Triggers a network request for a P2's connected services.
  *
  * @param {number} hubId P2 hub identifier
- *
  * @returns {Function} Action thunk
  */
 export function requestP2KeyringConnections( hubId ) {
@@ -136,9 +139,8 @@ export function requestP2KeyringConnections( hubId ) {
 			type: P2_CONNECTIONS_REQUEST,
 		} );
 
-		return wpcom
-			.undocumented()
-			.p2KeyringConnections( hubId )
+		return wpcom.req
+			.get( { path: '/p2/connections/items', apiNamespace: 'wpcom/v2' }, { hub_id: hubId } )
 			.then( ( { connections } ) => {
 				dispatch( {
 					type: P2_CONNECTIONS_RECEIVE,
@@ -168,9 +170,15 @@ export function requestP2KeyringConnections( hubId ) {
  */
 export function deleteP2KeyringConnection( connection, siteId ) {
 	return ( dispatch ) =>
-		wpcom
-			.undocumented()
-			.deleteP2KeyringConnection( connection.ID, siteId )
+		wpcom.req
+			.get(
+				{
+					path: `/p2/connections/items/${ connection.ID }`,
+					apiNamespace: 'wpcom/v2',
+					method: 'DELETE',
+				},
+				{ hub_id: siteId }
+			)
 			.then( () => {
 				dispatch( {
 					type: P2_CONNECTION_DELETE,
