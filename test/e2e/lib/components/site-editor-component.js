@@ -171,7 +171,7 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		}
 
 		const pressedGlobalStylesButtonLocator = By.css(
-			'button[aria-label="Global Styles"][aria-expanded="true"]'
+			'button[aria-label="Styles"][aria-expanded="true"]'
 		);
 		return !! ( await driverHelper.clickIfPresent(
 			this.driver,
@@ -194,17 +194,11 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					driverHelper.createTextLocator(
-						By.css( 'button[role="menuitemcheckbox"]' ),
-						'Global Styles'
-					)
+					driverHelper.createTextLocator( By.css( 'button[role="menuitemcheckbox"]' ), 'Styles' )
 				);
 			}
 		} else {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( 'button[aria-label="Global Styles"]' )
-			);
+			await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Styles"]' ) );
 		}
 	}
 
