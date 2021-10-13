@@ -1,12 +1,11 @@
 import { Modal, Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { doAction } from '@wordpress/hooks';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import draftPostImage from './images/draft-post.svg';
 import './style.scss';
 
 const DraftPostModal = () => {
-	const { __ } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
 	const closeEditor = () => doAction( 'a8c.wpcom-block-editor.closeEditor' );
