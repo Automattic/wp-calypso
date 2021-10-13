@@ -121,6 +121,7 @@ export class FullPostView extends Component {
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 
+		// Disable the App Banner on load.
 		this.props.disableAppBanner();
 	}
 
@@ -147,13 +148,9 @@ export class FullPostView extends Component {
 			this.scrollToComments();
 		}
 
-		const is_post_error = this.props?.post?.is_error;
-		const is_post_error_prev = prevProps?.post?.is_error;
-		if ( is_post_error !== is_post_error_prev ) {
-			// Only attempt to show the AppBanner if we had loaded the Post and Post is not an error.
-			typeof is_post_error || ! this.hasLoaded
-				? this.props.disableAppBanner()
-				: this.props.enableAppBanner();
+		// Check if we are loading the post and when we are done we load the new
+		if ( this.props?.post?._state !== prevProps?.post?._state ) {
+			this.props?.post?.is_error ? this.props.disableAppBanner() : this.props.enableAppBanner();
 		}
 	}
 
