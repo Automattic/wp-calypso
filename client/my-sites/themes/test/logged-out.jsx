@@ -1,4 +1,5 @@
 import { renderToString } from 'react-dom/server';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
@@ -87,9 +88,13 @@ describe( 'logged-out', () => {
 		beforeEach( () => {
 			// Ensure initial theme state at the beginning of every test.
 			store.getState().themes = initialState;
+
+			const queryClient = new QueryClient();
 			layout = (
 				<ReduxProvider store={ store }>
-					<LoggedOutShowcase />
+					<QueryClientProvider client={ queryClient }>
+						<LoggedOutShowcase />
+					</QueryClientProvider>
 				</ReduxProvider>
 			);
 		} );
