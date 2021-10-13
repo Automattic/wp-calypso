@@ -72,6 +72,7 @@ interface Props {
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
+	showDraftPostModal: boolean;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -833,6 +834,7 @@ const mapStateToProps = (
 		editorType = 'post',
 		stripeConnectSuccess,
 		anchorFmData,
+		showDraftPostModal,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -857,6 +859,7 @@ const mapStateToProps = (
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 		...anchorFmData,
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
+		showDraftPostModal,
 	} );
 
 	// needed for loading the editor in SU sessions
