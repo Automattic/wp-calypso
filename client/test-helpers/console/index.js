@@ -1,18 +1,16 @@
-/* eslint-disable no-global-assign */
-
 export const captureConsole = ( testFn ) => ( callback = () => {} ) => {
-	const original = console;
+	const original = globalThis.console;
 	const replacement = {
 		log: jest.fn(),
 		warn: jest.fn(),
 		error: jest.fn(),
 	};
-	console = replacement;
+	globalThis.console = replacement;
 	let val;
 	try {
 		val = testFn();
 	} finally {
-		console = original;
+		globalThis.console = original;
 	}
 	callback( replacement );
 	return val;
