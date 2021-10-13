@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const CheckboxWrapper = styled.div`
@@ -39,9 +39,9 @@ export default function AssignToAllPaymentMethods( {
 					{
 						components: {
 							link: (
-								<ExternalLink
-									icon
-									href="https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions"
+								<InlineSupportLink
+									supportContext="payment_method_all_subscriptions"
+									showIcon={ false }
 								/>
 							),
 						},
