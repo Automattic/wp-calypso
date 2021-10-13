@@ -93,13 +93,28 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		item?.monthlyProductSlug || ''
 	);
 
-	// If item is a plan feature, use the plan purchase object.
 	const isItemPlanFeature = !! (
 		sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug )
 	);
-	const purchase = isItemPlanFeature
-		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
-		: getPurchaseByProductSlug( purchases, item.productSlug );
+	const isDeprecated = Boolean( item.legacy );
+	const isIncludedInPlan = ! isOwned && isItemPlanFeature;
+	const isSuperseded = !! (
+		! isDeprecated &&
+		! isOwned &&
+		! isIncludedInPlan &&
+		sitePlan &&
+		item &&
+		isSupersedingJetpackItem(
+			sitePlan.product_slug as JetpackPurchasableItemSlug,
+			item.productSlug as JetpackPurchasableItemSlug
+		)
+	);
+
+	// If item is a plan feature, use the plan purchase object.
+	const purchase =
+		isItemPlanFeature || isSuperseded
+			? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
+			: getPurchaseByProductSlug( purchases, item.productSlug );
 
 	// Handles expiry.
 	const isExpiring = purchase && isCloseToExpiration( purchase );
@@ -125,20 +140,6 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			...JETPACK_SCAN_PRODUCTS,
 		] as ReadonlyArray< string > ).includes( item.productSlug );
 	}, [ item.productSlug ] );
-
-	const isDeprecated = Boolean( item.legacy );
-	const isIncludedInPlan = ! isOwned && isItemPlanFeature;
-	const isSuperseded = !! (
-		! isDeprecated &&
-		! isOwned &&
-		! isIncludedInPlan &&
-		sitePlan &&
-		item &&
-		isSupersedingJetpackItem(
-			sitePlan.product_slug as JetpackPurchasableItemSlug,
-			item.productSlug as JetpackPurchasableItemSlug
-		)
-	);
 
 	// Disable the product card if it's an incompatible multisite product or CRM monthly product
 	// (CRM is not offered with "Monthly" billing. Only Yearly.)
