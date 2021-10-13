@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
@@ -28,6 +29,9 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
+		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
+			// TODO: set different component for the new domain list
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementList( ':site' ) }
@@ -44,6 +48,9 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
+		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
+			// TODO: set different component for the new domain list
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
@@ -70,6 +77,9 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
+		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
+			// TODO: set different component for the new domain settings page
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
@@ -176,6 +186,9 @@ export default {
 	},
 
 	domainManagementDns( pageContext, next ) {
+		if ( config.isEnabled( 'domains/dns-records-redesign' ) ) {
+			// TODO: set different component for the new dns records list (and there'll be a separate page for the add/edit form)
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementDns( ':site', ':domain' ) }
@@ -251,6 +264,9 @@ export default {
 	},
 
 	domainManagementTransfer( pageContext, next ) {
+		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
+			// TODO: set different component for the new transfer page
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransfer( ':site', ':domain' ) }
@@ -265,6 +281,9 @@ export default {
 	},
 
 	domainManagementTransferToOtherSite( pageContext, next ) {
+		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
+			// TODO: set different component for the new transfer page
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToOtherSite( ':site', ':domain' ) }
@@ -279,6 +298,9 @@ export default {
 	},
 
 	domainManagementTransferToOtherUser( pageContext, next ) {
+		if ( config.isEnabled( 'domains/transfers-redesign' ) ) {
+			// TODO: set different component for the new transfer page
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferToAnotherUser( ':site', ':domain' ) }
