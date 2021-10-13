@@ -37675,7 +37675,6 @@ typescript@^4.4.3:
   version: 0.0.0-use.local
   resolution: "wp-e2e-tests@workspace:test/e2e"
   dependencies:
-    "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-e2e": ^0.1.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/mocha-debug-reporter": ^0.1.0
