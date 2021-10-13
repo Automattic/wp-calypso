@@ -3,14 +3,13 @@ import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/com
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import MasterbarItem from './item';
 import { MasterbarCartLineItems } from './masterbar-cart-line-items';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 import './masterbar-cart-style.scss';
 
-type MasterbarCartProps = {
+export type MasterbarCartProps = {
 	selectedSiteSlug: string | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 };
@@ -128,13 +127,5 @@ function MasterbarCartContents( {
 				</div>
 			</div>
 		</CheckoutProvider>
-	);
-}
-
-export default function MasterbarCartWrapper( props: MasterbarCartProps ): JSX.Element {
-	return (
-		<CalypsoShoppingCartProvider>
-			<MasterbarCart { ...props } />
-		</CalypsoShoppingCartProvider>
 	);
 }

@@ -290,7 +290,7 @@ class MasterbarLoggedIn extends Component {
 					) }
 					{ shouldShowCartIcon && (
 						<AsyncLoad
-							require="./masterbar-cart"
+							require="./masterbar-cart-wrapper"
 							placeholder={ null }
 							className="masterbar__item-cart"
 							tooltip={ translate( 'View my Shopping Cart' ) }
