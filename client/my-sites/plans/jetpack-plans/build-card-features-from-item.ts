@@ -47,8 +47,7 @@ function buildCardFeatureItemFromFeatureKey(
 						.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options, variation ) )
 						.filter( Boolean )
 				: undefined,
-			isHighlighted:
-				feature.isHighlighted?.() ?? feature.isProduct?.( variation ) ?? feature.isPlan,
+			isHighlighted: feature.isHighlighted?.() ?? false,
 		};
 	}
 }
