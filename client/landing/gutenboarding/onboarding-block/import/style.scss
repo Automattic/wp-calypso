@@ -26,14 +26,8 @@
 		}
 
 		.onboarding-title {
-			font-size: 2.25rem;
-			line-height: 1.0833em;
+			@include onboarding-import-heading-text;
 			margin-bottom: 20px;
-			color: var( --studio-gray-100 );
-
-			@include break-small {
-				font-size: 3rem;
-			}
 		}
 
 		.import__buttons-group {
