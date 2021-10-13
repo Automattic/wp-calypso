@@ -5,6 +5,10 @@
 $placeholder-color: #909398;
 
 .gutenboarding-page.import {
+	.capture__content {
+		min-height: 80px;
+	}
+
 	.capture__input {
 		width: 100%;
 
@@ -19,6 +23,7 @@ $placeholder-color: #909398;
 		background: transparent;
 		border: none;
 		padding: 0;
+		margin-bottom: 8px;
 		color: var( --studio-gray-100 );
 
 		&:focus {
@@ -42,5 +47,12 @@ $placeholder-color: #909398;
 		&::-ms-clear {
 			display: none;
 		}
+	}
+
+	.capture__input-error-msg {
+		color: var( --studio-red-60 );
+		text-align: center;
+		font-size: 0.875rem;
+		line-height: 1.4286em;
 	}
 }
