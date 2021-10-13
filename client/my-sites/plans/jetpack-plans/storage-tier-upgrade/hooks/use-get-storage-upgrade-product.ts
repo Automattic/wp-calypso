@@ -7,9 +7,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { TIER_1_SLUGS, TIER_2_SLUGS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-const useGetTier1UpgradeProduct = () => {
+type StorageUpgradeGetter = ( slug: string ) => SelectorProduct;
+
+export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
 
 	// Security and Backup share the same per-tier storage limits
@@ -50,7 +52,7 @@ const useGetTier1UpgradeProduct = () => {
 	);
 };
 
-const useGetTier2UpgradeProduct = () => {
+export const useGetTier2UpgradeProduct = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
 
 	// Security and Backup share the same per-tier storage limits
