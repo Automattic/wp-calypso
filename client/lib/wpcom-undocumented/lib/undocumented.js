@@ -2167,20 +2167,4 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 	);
 };
 
-Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, scrollId ) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteIdOrSlug }/hosting/logs`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		{
-			start,
-			end,
-			page_size: 10000,
-			scroll_id: scrollId,
-		}
-	);
-};
-
 export default Undocumented;
