@@ -21,10 +21,10 @@ import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
 class TransferInDomainType extends Component {
 	startTransfer = () => {
-		this.setState( { isTransferring: true }, this.inboundTransfer );
+		this.setState( { isTransferring: true }, this.goToInboundTransferPage );
 	};
 
-	inboundTransfer() {
+	goToInboundTransferPage() {
 		const { domain, selectedSite } = this.props;
 		page(
 			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.transferDomain )
