@@ -49,7 +49,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
 				isRedirecting: onboardSelect.getIsRedirecting(),
-				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta(),
+				isEnrollingInFse: onboardSelect.isEnrollingInFseBeta(),
 			};
 		},
 		[ STORE_KEY ]

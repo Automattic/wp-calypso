@@ -229,7 +229,7 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const shouldEnrollInFseBeta: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+const isEnrollingInFseBeta: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_ENROLL_IN_FSE_BETA' ) {
 		return action.enrollInFseBeta;
 	}
@@ -256,7 +256,7 @@ const reducer = combineReducers( {
 	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,
-	shouldEnrollInFseBeta,
+	isEnrollingInFseBeta,
 } );
 
 export type State = ReturnType< typeof reducer >;

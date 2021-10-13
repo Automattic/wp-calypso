@@ -27,12 +27,12 @@ const Designs: React.FunctionComponent = () => {
 		getSelectedDesign,
 		hasPaidDesign,
 		getRandomizedDesigns,
-		shouldEnrollInFseBeta,
+		isEnrollingInFseBeta,
 	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const selectedDesign = getSelectedDesign();
-	const isEnrollingInFseBeta = shouldEnrollInFseBeta();
+	const isEnrollingInFseBeta = isEnrollingInFseBeta();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: selectedDesign?.slug,
