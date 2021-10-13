@@ -1,5 +1,3 @@
-/* eslint-disable no-global-assign */
-
 export const captureConsole = ( testFn ) => ( callback = () => {} ) => {
 	const original = globalThis.console;
 	const replacement = {
