@@ -23,6 +23,7 @@ const ImportSite: React.FunctionComponent = () => {
 		<div className="gutenboarding-page import">
 			{ query.get( 'step' ) === 'list' && <ListStep /> }
 			{ query.get( 'step' ) === 'capture' && <CaptureStep /> }
+			{ query.get( 'step' ) === 'scanning' && <ScanningStep /> }
 			{ query.get( 'step' ) === 'ready' && (
 				<ReadyStep platform={ data.platform } website={ data.website } />
 			) }
@@ -32,7 +33,6 @@ const ImportSite: React.FunctionComponent = () => {
 			{ query.get( 'step' ) === 'ready-not' && (
 				<ReadyNotStep platform={ data.platform } website={ data.website } />
 			) }
-			{ query.get( 'step' ) === 'scanning' && <ScanningStep /> }
 		</div>
 	);
 };
