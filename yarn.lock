@@ -490,6 +490,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/interpolate-components@^1.1.2, @automattic/interpolate-components@workspace:packages/interpolate-components":
+  version: 0.0.0-use.local
+  resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
+  dependencies:
+    "@automattic/calypso-typescript-config": ^1.0.0
+    react-dom: ^17.0.2
+  peerDependencies:
+    react: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/isolated-block-editor@npm:^2.3.0":
   version: 2.4.1
   resolution: "@automattic/isolated-block-editor@npm:2.4.1"
@@ -19834,13 +19845,13 @@ fsevents@~2.1.2:
   resolution: "i18n-calypso@workspace:packages/i18n-calypso"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
+    "@automattic/interpolate-components": ^1.1.2
     "@babel/runtime": ^7.15.3
     "@tannin/sprintf": ^1.1.0
     "@wordpress/compose": ^5.0.2
     debug: ^4.0.0
     events: ^3.0.0
     hash.js: ^1.1.5
-    interpolate-components: ^1.1.2
     lodash: ^4.17.21
     lru: ^3.1.0
     react: ^17.0.2
@@ -20208,17 +20219,6 @@ fsevents@~2.1.2:
   checksum: bb41342a474c1b607458b0c716c742d779a6ed9dfaf7986e5d20d1e7f55b7f3676e4d9f416bc253af4fd78d367e1f83e586f74840302bcf2e60c424f9284dde5
   languageName: node
   linkType: hard
-
-"interpolate-components@^1.1.2, interpolate-components@workspace:packages/interpolate-components":
-  version: 0.0.0-use.local
-  resolution: "interpolate-components@workspace:packages/interpolate-components"
-  dependencies:
-    "@automattic/calypso-typescript-config": ^1.0.0
-    react-dom: ^17.0.2
-  peerDependencies:
-    react: ^17.0.2
-  languageName: unknown
-  linkType: soft
 
 "interpret@npm:^2.2.0":
   version: 2.2.0
