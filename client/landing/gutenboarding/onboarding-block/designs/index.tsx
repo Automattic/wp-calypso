@@ -32,7 +32,7 @@ const Designs: React.FunctionComponent = () => {
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const selectedDesign = getSelectedDesign();
-	const isEnrollingInFseBeta = isEnrollingInFseBeta();
+	const isFse = isEnrollingInFseBeta();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: selectedDesign?.slug,
@@ -55,11 +55,11 @@ const Designs: React.FunctionComponent = () => {
 		// Make sure we're using the right designs since we can't rely on config variables
 		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
 		const availableDesigns = getAvailableDesigns( {
-			useFseDesigns: isEnrollingInFseBeta,
+			useFseDesigns: isFse,
 			randomize: true,
 		} );
 		setRandomizedDesigns( availableDesigns );
-	}, [ isEnrollingInFseBeta, setRandomizedDesigns ] );
+	}, [ isFse, setRandomizedDesigns ] );
 
 	return (
 		<div className="gutenboarding-page designs">
