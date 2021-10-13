@@ -1,20 +1,21 @@
 {
 	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
 	"compilerOptions": {
+		"jsx": "react",
+		// Disallow features that require cross-file information for emit.
+		// Must be used with babel typescript
+		"isolatedModules": true,
+		"resolveJsonModule": true,
+
+		"baseUrl": ".",
 		"rootDir": ".",
 		"noEmit": true,
 		"types": [ "node" ],
 		"paths": {
 			"calypso/*": [ "./*" ]
-		},
+		}
 	},
-	"references": [
-		{ "path": "../packages" },
-		{ "path": "../build-tools" }
-	],
-	"exclude": [
-		"./**/node_modules/**/*",
-		"./**/test/**/*",
-		"./server/devdocs/search-index.js"
-	]
+	"references": [ { "path": "../packages" }, { "path": "../build-tools" } ],
+	"include": [ "**/*" ],
+	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*", "./server/devdocs/search-index.js" ]
 }

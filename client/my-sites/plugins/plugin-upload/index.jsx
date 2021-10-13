@@ -52,8 +52,8 @@ class PluginUpload extends Component {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 
-		if ( nextProps.complete ) {
-			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+		if ( nextProps.inProgress ) {
+			page( `/marketplace/product/install/${ nextProps.siteSlug }` );
 		}
 
 		const { COMPLETE } = transferStates;
