@@ -109,6 +109,7 @@ export class FullPostView extends Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
+		this.maybeDisableAppBanner();
 
 		this.checkForCommentAnchor();
 
@@ -120,9 +121,6 @@ export class FullPostView extends Component {
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
-
-		// Disable the App Banner on load.
-		this.props.disableAppBanner();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -135,6 +133,7 @@ export class FullPostView extends Component {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
+			this.maybeDisableAppBanner();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -304,6 +303,15 @@ export class FullPostView extends Component {
 				}
 			);
 			this.hasLoaded = true;
+		}
+	};
+
+	maybeDisableAppBanner = () => {
+		const { post, site } = this.props;
+		if ( post && post._state !== 'pending' ) {
+			post?.is_error || site?.is_error
+				? this.props.disableAppBanner()
+				: this.props.enableAppBanner();
 		}
 	};
 
