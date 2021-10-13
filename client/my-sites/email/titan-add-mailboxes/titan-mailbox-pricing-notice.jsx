@@ -27,9 +27,7 @@ function getPriceMessage( props ) {
 	const { purchaseCost, translate } = props;
 
 	return purchaseCost.amount === 0
-		? translate(
-				'You are still in your Professional Email trial period, so this mailbox is free for the remainder of your trial.'
-		  )
+		? translate( 'You can add new mailboxes for free until the end of your trial period.' )
 		: translate(
 				'You can purchase new mailboxes at the prorated price of {{strong}}%(proratedPrice)s{{/strong}} per mailbox.',
 				{
