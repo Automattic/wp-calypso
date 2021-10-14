@@ -7,6 +7,8 @@ import type { CountryListItem } from '../types/country-list-item';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
 
+const emptyList: CountryListItem[] = [];
+
 export default function useCountryList(
 	overrideCountryList: CountryListItem[]
 ): CountryListItem[] {
@@ -16,7 +18,8 @@ export default function useCountryList(
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
 
 	const reduxDispatch = useDispatch();
-	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
+	const globalCountryList =
+		useSelector( ( state ) => getCountries( state, 'payments' ) ) || emptyList;
 
 	// Has the global list been populated?
 	const isListFetched = globalCountryList.length > 0;
