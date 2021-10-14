@@ -49,7 +49,7 @@ function render_fallback_coming_soon_page() {
 	remove_action( 'wp_footer', 'stats_footer', 101 );
 	add_filter( 'infinite_scroll_archive_supported', '__return_false', 99 ); // Disable infinite scroll feature.
 	add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1 );
-	add_filter( 'jetpack_enable_opengraph', '__return_false', 1 );
+	add_filter( 'jetpack_enable_open_graph', '__return_false', 1 );
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 	add_filter( 'jetpack_implode_frontend_css', '__return_false', 99 ); // Jetpack "implodes" all registered CSS files into one file.
