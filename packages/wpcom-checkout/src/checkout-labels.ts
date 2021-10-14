@@ -7,6 +7,7 @@ import {
 	isTitanMail,
 	isP2Plus,
 	isJetpackSearch,
+	isJetpackProductSlug,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
@@ -14,7 +15,7 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 	const isRenewalItem = isRenewal( serverCartItem );
-	const { meta, product_name: productName } = serverCartItem;
+	const { meta, product_name: productName, product_slug: productSlug } = serverCartItem;
 
 	// Jetpack Search has its own special sublabel
 	if ( ! isRenewalItem && isJetpackSearch( serverCartItem ) ) {
@@ -27,7 +28,7 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 		}
 	}
 
-	if ( isPlan( serverCartItem ) ) {
+	if ( isPlan( serverCartItem ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( serverCartItem ) ) {
 			return String( translate( 'Monthly subscription' ) );
 		}
