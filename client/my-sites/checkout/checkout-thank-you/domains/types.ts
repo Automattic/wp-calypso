@@ -1,6 +1,6 @@
 import { ThankYouProps } from 'calypso/components/thank-you/types';
 
-export type DomainThankYouType = 'MAPPING' | 'TRANSFER';
+export type DomainThankYouType = 'MAPPING' | 'TRANSFER' | 'MAPPING_WITH_EMAIL';
 
 export type DomainThankYouProps = Required<
 	Pick< ThankYouProps, 'thankYouTitle' | 'thankYouSubtitle' | 'sections' | 'thankYouImage' >

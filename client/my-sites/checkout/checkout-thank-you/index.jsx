@@ -492,23 +492,23 @@ export class CheckoutThankYou extends Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainMappingAndRegistrationWithTitanProduct ) {
-			return (
-				<TitanSetUpThankYou
-					domainName={ purchases[ 0 ].meta }
-					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-					title={ translate( 'Congratulations on your purchase!' ) }
-				/>
-			);
-		} else if ( wasDomainMappingOrTransferProduct ) {
+		} else if (
+			wasDomainMappingOrTransferProduct ||
+			wasDomainMappingAndRegistrationWithTitanProduct
+		) {
 			const [ purchaseType, predicate ] = purchases.some( isDomainMapping )
 				? [ 'MAPPING', isDomainMapping ]
 				: [ 'TRANSFER', isDomainTransfer ];
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
+
+			const inboxPurchase = wasDomainMappingAndRegistrationWithTitanProduct
+				? purchases.filter( isTitanMail )[ 0 ]
+				: null;
+
 			return (
 				<DomainThankYou
-					email={ this.props.user?.email }
-					type={ purchaseType }
+					email={ inboxPurchase ? inboxPurchase.meta : this.props.user?.email }
+					type={ inboxPurchase ? 'MAPPING_WITH_EMAIL' : purchaseType }
 					domain={ domainName }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 				/>
@@ -733,11 +733,11 @@ export default connect(
 		};
 	},
 	{
-		themeActivated,
+		fetchAtomicTransfer,
 		fetchReceipt,
 		fetchSitePlans,
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
-		fetchAtomicTransfer,
+		themeActivated,
 	}
 )( localize( CheckoutThankYou ) );

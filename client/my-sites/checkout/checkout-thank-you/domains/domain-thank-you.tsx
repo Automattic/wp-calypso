@@ -3,10 +3,13 @@ import * as React from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
 import domainThankYouContent from './thank-you-content';
 import { DomainThankYouProps, DomainThankYouType } from './types';
+
 import './style.scss';
+
 interface DomainThankYouContainerProps {
 	type: DomainThankYouType;
 	domain: string;
+	includeInbox: string,
 	email: string;
 	selectedSiteSlug: string;
 }
