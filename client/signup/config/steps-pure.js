@@ -189,6 +189,7 @@ export function generateSteps( {
 
 		'starting-point': {
 			stepName: 'starting-point',
+			providesDependencies: [ 'startingPoint' ],
 			optionalDependencies: [ 'startingPoint' ],
 		},
 
