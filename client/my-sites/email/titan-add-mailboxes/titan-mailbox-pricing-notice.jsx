@@ -110,7 +110,6 @@ const TitanMailboxPricingNotice = ( { domain, titanMonthlyProduct } ) => {
 	}
 	const renewalCost = getTitanMailboxRenewalCost( domain );
 	const expiryDate = getTitanExpiryDate( domain );
-	const expiryDateString = moment( expiryDate ).format( 'LL' );
 	const priceMessage = getPriceMessage( { purchaseCost, translate } );
 	const priceMessageExplanation = getPriceMessageExplanation( {
 		purchaseCost,
@@ -119,7 +118,7 @@ const TitanMailboxPricingNotice = ( { domain, titanMonthlyProduct } ) => {
 	} );
 	const priceMessageRenewal = getPriceMessageRenewal( {
 		renewalCost,
-		expiryDateString,
+		expiryDate: moment( expiryDate ).format( 'LL' ),
 		translate,
 	} );
 
