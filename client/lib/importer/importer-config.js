@@ -76,7 +76,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 66764 }
+							supportPostId={ 123 }
 							supportLink="https://wordpress.com/support/import/coming-from-blogger/"
 							showIcon={ false }
 						>
