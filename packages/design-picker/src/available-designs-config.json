@@ -58,6 +58,25 @@
 			"features": []
 		},
 		{
+			"title": "Blockbase",
+			"slug": "blockbase",
+			"template": "blockbase",
+			"theme": "blockbase",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Blockbase",
+			"slug": "blockbase",
+			"template": "blockbase",
+			"theme": "blockbase",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
 			"title": "Cassel",
 			"slug": "cassel",
 			"template": "cassel",
@@ -491,16 +510,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
-			"features": []
-		},
-		{
-			"title": "Blockbase",
-			"slug": "blockbase",
-			"template": "blockbase",
-			"theme": "blockbase",
-			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
-			"is_fse": true,
 			"features": []
 		}
 	]
