@@ -44,6 +44,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 			}
 			align={ 'left' }
 			skipButtonAlign={ 'top' }
+			skipLabelText={ translate( 'Skip this step' ) }
 			isHorizontalLayout={ true }
 			{ ...props }
 		/>
