@@ -29,7 +29,7 @@ const TitanNewMailbox = ( {
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
-  	selectedDomainName,
+	selectedDomainName,
 	showAllErrors = false,
 	showLabels = true,
 } ) => {
