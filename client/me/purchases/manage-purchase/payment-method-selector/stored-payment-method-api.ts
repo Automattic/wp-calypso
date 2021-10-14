@@ -9,15 +9,18 @@ export async function saveCreditCard( {
 	token,
 	stripeConfiguration,
 	useForAllSubscriptions,
+	eventSource,
 }: {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
+	eventSource?: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		useForAllSubscriptions,
+		eventSource,
 	} );
 	const response = await wp.req.post(
 		{
@@ -72,11 +75,13 @@ function getParamsForApi( {
 	stripeConfiguration,
 	purchase,
 	useForAllSubscriptions,
+	eventSource,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
 	purchase?: Purchase | undefined;
 	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 } ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
@@ -84,5 +89,6 @@ function getParamsForApi( {
 		...( useForAllSubscriptions === true ? { use_for_existing: true } : {} ),
 		...( useForAllSubscriptions === false ? { use_for_existing: false } : {} ), // if undefined, we do not add this property
 		...( purchase ? { purchaseId: purchase.id } : {} ),
+		...( eventSource ? { event_source: eventSource } : {} ),
 	};
 }
