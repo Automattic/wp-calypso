@@ -17,13 +17,9 @@ const Breadcrumbs = ( { items, buttons, className } ) => {
 		if ( index === items.length - 1 ) {
 			return null;
 		}
-		return (
-			<Gridicon
-				className="breadcrumbs__separator"
-				icon="chevron-right"
-				size={ 14 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
-			/>
-		);
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
+		return <Gridicon className="breadcrumbs__separator" icon="chevron-right" size={ 14 } />;
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	};
 
 	const renderItem = ( item, index ) => (
