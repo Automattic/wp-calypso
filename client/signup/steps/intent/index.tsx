@@ -18,7 +18,7 @@ interface Props {
 
 const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'design-setup-site' ],
-	build: [ 'site-options' ],
+	build: [ 'site-options', 'starting-point' ],
 };
 
 export default function IntentStep( props: Props ): React.ReactNode {
