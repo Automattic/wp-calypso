@@ -203,6 +203,7 @@
 	white-space: pre;
 	text-overflow: clip;
 	overflow: hidden;
+	position: relative;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		font-size: $font-title-small;
