@@ -25,8 +25,6 @@ import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
 
-// import { getProductsList } from 'calyspo/state/products-list/get-products-list';
-
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
 export interface AvailableProductVariant {
@@ -74,30 +72,12 @@ const DoNotPayThis = styled.del`
 	}
 `;
 
-function computeProductProductWithPrices( state, siteId, variantProductSlugs ) {
-	const products = state.productsList.items;
-
-	return variantProductSlugs.map( ( variantProductSlug: string ) => ( {
-		plan: getProductFromSlug( variantProductSlug ),
-		product: products[ variantProductSlug ],
-		...getProductFromSlug( variantProductSlug ),
-	} ) );
-}
-
-function computeProductOrPlanWithPrices( state, productSlug, siteId, variantProductSlugs ) {
-	return objectIsProduct( getProductFromSlug( productSlug ) )
-		? computeProductProductWithPrices( state, siteId, variantProductSlugs )
-		: computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
-}
-
 export function useGetProductVariants(
 	siteId: number | undefined,
 	productSlug: string
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-
-	debug( 'productSlug', productSlug );
 
 	const sitePlans: SitesPlansResult | null = useSelector( ( state ) =>
 		siteId ? getPlansBySiteId( state, siteId ) : null
@@ -113,8 +93,6 @@ export function useGetProductVariants(
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
 		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
 	} );
-
-	debug( 'variantsWithPrices', variantsWithPrices );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
 	const shouldFetchProducts = ! variantsWithPrices;
@@ -134,7 +112,7 @@ export function useGetProductVariants(
 				variantLabel: getTermText( variant.plan.term, translate ),
 				variantDetails: <VariantPrice variant={ variant } />,
 				productSlug: variant.planSlug,
-				productId: variant?.product?.product_id,
+				productId: variant.product.product_id,
 			};
 		},
 		[ translate ]
@@ -145,8 +123,6 @@ export function useGetProductVariants(
 			isVariantAllowed( product, activePlan?.interval )
 		);
 	}, [ activePlan?.interval, variantsWithPrices ] );
-
-	debug( 'filteredVariants', filteredVariants );
 
 	const variantsWithComparativeDiscounts = useMemo(
 		() => addComparativeDiscountsToVariants( filteredVariants ),
@@ -186,9 +162,6 @@ function getLowestPriceTimesVariantInterval(
 		return variantAInterval - variantBInterval;
 	} );
 	const lowestVariant = allVariants[ 0 ];
-
-	debug( 'lowestVariant', lowestVariant );
-	debug( 'allVariants', allVariants );
 
 	const monthsInVariant = getBillingMonthsForTerm( variant.plan.term );
 	const monthsInLowestVariant = getBillingMonthsForTerm( lowestVariant.plan.term );
@@ -258,8 +231,6 @@ function getVariantPlanProductSlugs( productSlug: string | undefined ): string[]
 	const chosenPlan = getPlan( productSlug )
 		? getPlan( productSlug )
 		: getProductFromSlug( productSlug );
-
-	debug( 'chosenPlan', chosenPlan );
 
 	if ( ! chosenPlan ) {
 		return [];
