@@ -56,15 +56,17 @@ class PluginsBrowserList extends Component {
 
 	renderViews() {
 		const { plugins, showPlaceholders, paginated } = this.props;
-		if ( showPlaceholders ) {
+		if ( plugins.length && showPlaceholders ) {
 			if ( ! paginated ) {
 				// this case is needed to handle infinite scroll
 				return this.renderPluginsViewList().concat( this.renderPlaceholdersViews() );
 			}
 			return this.renderPlaceholdersViews();
-		} else if ( plugins.length ) {
+		}
+		if ( plugins.length ) {
 			return this.renderPluginsViewList();
 		}
+
 		return this.renderPlaceholdersViews();
 	}
 
