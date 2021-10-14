@@ -11,6 +11,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { fetchCurrentUser } from '../../../state/current-user/actions';
 
 import './style.scss';
 
@@ -51,6 +52,7 @@ function SiteInformationCollection( {
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
+		dispatch( fetchCurrentUser() );
 	}, [ dispatch, stepName ] );
 
 	const nextStep = () => {
