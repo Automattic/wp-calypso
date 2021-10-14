@@ -1,7 +1,7 @@
 import { getProductFromSlug } from './get-product-from-slug';
 import type { JetpackProductSlug } from './types';
 
-interface Query {
+export interface Query {
 	term?: string;
 	type?: string;
 }

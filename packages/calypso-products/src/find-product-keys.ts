@@ -1,5 +1,6 @@
 import { productMatches } from './product-matches';
-import { JETPACK_SITE_PRODUCTS_WITH_FEATURES } from './products-list';
+import { PRODUCTS_LIST } from './products-list';
+import type { Query } from './product-matches';
 import type { JetpackProductSlug } from './types';
 
 /**
@@ -9,12 +10,9 @@ import type { JetpackProductSlug } from './types';
  *
  * > findProductsKeys( { type: PRODUCT_JETPACK_BACKUP_DAILY } );
  * [PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY]
- *
- * @param {object} query @see productMatches
- * @returns {string[]} Matched product keys
  */
-export function findProductKeys( query = {} ) {
-	return Object.keys( JETPACK_SITE_PRODUCTS_WITH_FEATURES ).filter( ( k ) =>
-		productMatches( JETPACK_SITE_PRODUCTS_WITH_FEATURES[ k as JetpackProductSlug ], query )
-	);
+export function findProductKeys( query: Query = {} ): JetpackProductSlug[] {
+	return Object.values( PRODUCTS_LIST )
+		.map( ( { product_slug } ) => product_slug )
+		.filter( ( productSlug ) => productMatches( productSlug, query ) );
 }
