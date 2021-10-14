@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import * as React from 'react';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { cartManagerClient } from './cart-manager-client';
-import useCartKey from './use-cart-key';
 
 // A convenience wrapper around ShoppingCartProvider to set the necessary props
 // for calypso and to display error and success messages returned from calls to
@@ -13,14 +12,11 @@ export default function CalypsoShoppingCartProvider( {
 }: {
 	children: React.ReactNode;
 } ): JSX.Element {
-	const defaultCartKey = useCartKey();
-
 	const options = useMemo(
 		() => ( {
 			refetchOnWindowFocus: true,
-			defaultCartKey,
 		} ),
-		[ defaultCartKey ]
+		[]
 	);
 
 	return (
