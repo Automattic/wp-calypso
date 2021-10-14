@@ -110,3 +110,35 @@
 .tabbed-plans__feature-tip-info {
 	color: #a7aaad;
 }
+
+.features__items > button.features__item.components-button.is-tertiary {
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 2px;
+	width: calc( 100% - 24px );
+	height: auto;
+	min-height: 96px;
+	margin: 12px;
+	text-align: left;
+	position: relative;
+	padding: 16px;
+	align-items: start;
+	white-space: normal;
+	color: var( --studio-gray-100 );
+	transition: all 0.1s ease-in-out;
+
+	&:hover:not( :disabled ) {
+		box-shadow: none;
+		border-color: var( --studio-gray-100 );
+		color: var( --studio-gray-100 );
+	}
+
+	&.is-selected,
+	&.is-selected:hover:not( :disabled ) {
+		border-color: blue;
+		color: blue;
+
+		.features__item-description {
+			color: blue;
+		}
+	}
+}

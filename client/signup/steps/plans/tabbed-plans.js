@@ -17,6 +17,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlan, getPlanRawPrice } from 'calypso/state/plans/selectors';
+import PlanPicker from './plan-picker';
 import './tabbed-plans-style.scss';
 
 function SharedFeatures( {
@@ -106,6 +107,7 @@ function TabbedPlans( {
 	const [ planDetails, setPlanDetails ] = useState();
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isMobile, setIsMobile ] = useState( false );
+	const [ showPlanPicker, setShowPlanPicker ] = useState( false );
 	const [ primaryPlan, setPrimaryPlan ] = useState( 'Business' );
 	const dispatch = useDispatch();
 
@@ -128,6 +130,10 @@ function TabbedPlans( {
 		);
 
 		onUpgradeClick( args );
+	};
+
+	const closePlanPicker = () => {
+		setShowPlanPicker( false );
 	};
 
 	const setPlanOrderForDisplaySize = () => {
@@ -360,22 +366,11 @@ function TabbedPlans( {
 				{ ! isMobile && (
 					<>
 						<FreeBanner>
-							{ selectedTab === 'Professional' && (
-								<>
-									Need something simple to start?{ ' ' }
-									<button href="#" onClick={ () => toggleTab() }>
-										Explore our Starter plans
-									</button>
-								</>
-							) }
-							{ selectedTab === 'Starter' && (
-								<>
-									Need eCommerce or professional features?{ ' ' }
-									<button href="#" onClick={ () => toggleTab() }>
-										Explore our Professional plans
-									</button>
-								</>
-							) }
+							Not sure where to start? Check out our{ ' ' }
+							<button href="#" onClick={ () => setShowPlanPicker( true ) }>
+								Plans wizard
+							</button>{ ' ' }
+							to find the right one for you.
 						</FreeBanner>
 
 						<SharedFeatures
@@ -389,6 +384,7 @@ function TabbedPlans( {
 					</>
 				) }
 			</Grid>
+			<PlanPicker isShowing={ showPlanPicker } closePlanPicker={ closePlanPicker } />
 		</>
 	);
 }
