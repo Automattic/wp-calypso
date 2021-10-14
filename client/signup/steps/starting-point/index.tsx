@@ -35,17 +35,25 @@ export default function IntentStep( props: Props ): React.ReactNode {
 
 	const submitStartingPoint = ( startingPoint: StartingPointFlag ) => {
 		branchSteps( EXCLUDE_STEPS[ startingPoint ] );
-
-		// TODO: submit default theme for “write” and “skip” starting point
-
 		recordTracksEvent( 'calypso_signup_select_starting_point', { starting_point: startingPoint } );
 		dispatch( submitSignupStep( { stepName }, { startingPoint } ) );
+
+		if ( startingPoint !== 'design' ) {
+			dispatch(
+				submitSignupStep(
+					{ stepName: 'design-setup-site' },
+					{ selectedDesign: { theme: 'zoologist' } }
+				)
+			);
+		}
+
 		goToNextStep();
 	};
 
 	// Only do following things when mounted
 	React.useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
+		dispatch( saveSignupStep( { stepName: 'design-setup-site' } ) );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
