@@ -39,6 +39,25 @@
 			"features": []
 		},
 		{
+			"title": "Zoologist",
+			"slug": "zoologist",
+			"template": "zoologist",
+			"theme": "zoologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Zoologist",
+			"slug": "zoologist",
+			"template": "zoologist",
+			"theme": "zoologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
 			"title": "Cassel",
 			"slug": "cassel",
 			"template": "cassel",
