@@ -9,7 +9,7 @@ import './style.scss';
 interface DomainThankYouContainerProps {
 	type: DomainThankYouType;
 	domain: string;
-	includeInbox: string,
+	includeInbox: string;
 	email: string;
 	selectedSiteSlug: string;
 }
