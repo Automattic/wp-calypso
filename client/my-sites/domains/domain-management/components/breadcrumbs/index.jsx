@@ -5,6 +5,24 @@ import React from 'react';
 
 import './style.scss';
 
+/**
+ * The required `items` property is an array of strings or objects that correspond to each item in the
+ * Breadcrumb component. If an item is a string, it'll be rendered as text. If it's an object, it must
+ * follow the structure:
+ *
+ * {
+ *   label (required): string,
+ *   href (optional): string,
+ *   helpText (optional): string,
+ * }
+ *
+ * `label` is the text that will be rendered for that item. If `href` is present, it will render the
+ * label as a link. If `helpText` is present, a help bubble with the informed text will be rendered
+ * besides that item's label.
+ *
+ * The `buttons` property is optional and can contain an array of Buttons that will be rendered on the
+ * right end of the breadcrumbs section.
+ */
 const Breadcrumbs = ( { items, buttons, className } ) => {
 	const renderItemLabel = ( item ) => {
 		if ( item.href ) {
