@@ -1,21 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.thank-you__container {
-
-	margin-left: -33px;
-	margin-right: -32px;
-
-	@include break-medium {
-		margin: calc( -74px + var( --masterbar-height ) ) 0 33px 0;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		margin: calc( -79px + var( --masterbar-height ) ) 0 33px 0;
-	}
-}
-
-
 .thank-you__container-header img {
 	max-width: 200px;
 
@@ -28,6 +13,7 @@
 	flex-direction: column;
 	text-align: center;
 	align-items: center;
+	padding-top: calc( -33px + var( --masterbar-height ) );
 }
 
 .thank-you__step-cta {
