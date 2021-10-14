@@ -1,9 +1,9 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { Icon, wordpress } from '@wordpress/icons';
+import { Icon, wordpress, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
+import { useCurrentStep, useCurrentImportStep, useIsAnchorFm, usePath, Step } from '../../path';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import Link from '../link';
@@ -16,6 +16,7 @@ const Header: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const currentStep = useCurrentStep();
+	const currentImportState = useCurrentImportStep();
 	const isAnchorFmSignup = useIsAnchorFm();
 	const makePath = usePath();
 
@@ -30,9 +31,9 @@ const Header: FunctionComponent = () => {
 	const showPlansButton =
 		[ 'DesignSelection', 'Style', 'Features' ].includes( currentStep ) && ! isAnchorFmSignup;
 
-	// locale button is hidden on DomainsModal, PlansModal, and AnchorFM flavored gutenboarding
+	// locale button is hidden on DomainsModal, PlansModal, Import, and AnchorFM flavored gutenboarding
 	const showLocaleButton =
-		! [ 'DomainsModal', 'PlansModal' ].includes( currentStep ) && ! isAnchorFmSignup;
+		! [ 'DomainsModal', 'PlansModal', 'Import' ].includes( currentStep ) && ! isAnchorFmSignup;
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
@@ -42,6 +43,8 @@ const Header: FunctionComponent = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 	const changeLocaleButton = () => {
+		if ( ! showLocaleButton ) return;
+
 		return (
 			<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right gutenboarding__header-language-section">
 				<Link to={ makePath( Step.LanguageModal ) }>
@@ -57,6 +60,80 @@ const Header: FunctionComponent = () => {
 		);
 	};
 
+	const wordpressHomeButton = () => {
+		return (
+			<div className="gutenboarding__header-section-item gutenboarding__header-section-item--wp-logo">
+				<Button href={ homeLink }>
+					<div className="gutenboarding__header-wp-logo">
+						<Icon icon={ wordpress } size={ 28 } />
+					</div>
+				</Button>
+			</div>
+		);
+	};
+
+	const sectionTitle = () => {
+		return (
+			<div
+				className="gutenboarding__header-section-item gutenboarding__header-site-title-section"
+				data-e2e-string={ ! siteTitle && siteTitleDefault ? 'Start your website' : null }
+			>
+				<div className="gutenboarding__header-site-title">
+					{ siteTitle ? siteTitle : siteTitleDefault }
+				</div>
+			</div>
+		);
+	};
+
+	const domainPickerButton = () => {
+		return (
+			<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
+				{ showDomainsButton && <DomainPickerButton /> }
+			</div>
+		);
+	};
+
+	const plansButton = () => {
+		if ( ! showPlansButton ) return;
+
+		return (
+			<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+				<PlansButton />
+			</div>
+		);
+	};
+
+	const importStepHeaderButtons = () => {
+		const showBackBtn = [ 'List', 'Capture', 'Ready', 'ReadyNoUrl', 'ReadyNot' ].includes(
+			currentImportState
+		);
+		const showNextBtn = [ 'Capture' ].includes( currentImportState );
+
+		return (
+			<>
+				{ showBackBtn && (
+					<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
+						<Button
+							className={ 'gutenboarding__import-back-button' }
+							href={ '#temp-link' }
+							icon={ chevronLeft }
+						>
+							{ __( 'Back' ) }
+						</Button>
+					</div>
+				) }
+
+				{ showNextBtn && (
+					<div className="gutenboarding__header-section-item gutenboarding__header-section-item--right">
+						<Button className={ 'gutenboarding__import-next-button' } href={ '#temp-link' }>
+							{ __( "I don't have a site address" ) }
+						</Button>
+					</div>
+				) }
+			</>
+		);
+	};
+
 	return (
 		<div
 			className="gutenboarding__header"
@@ -65,30 +142,16 @@ const Header: FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--wp-logo">
-					<Button href={ homeLink }>
-						<div className="gutenboarding__header-wp-logo">
-							<Icon icon={ wordpress } size={ 28 } />
-						</div>
-					</Button>
-				</div>
-				<div
-					className="gutenboarding__header-section-item gutenboarding__header-site-title-section"
-					data-e2e-string={ ! siteTitle && siteTitleDefault ? 'Start your website' : null }
-				>
-					<div className="gutenboarding__header-site-title">
-						{ siteTitle ? siteTitle : siteTitleDefault }
-					</div>
-				</div>
-				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
-					{ showDomainsButton && <DomainPickerButton /> }
-				</div>
-				{ showLocaleButton && changeLocaleButton() }
-				{ showPlansButton && (
-					<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
-						<PlansButton />
-					</div>
+				{ wordpressHomeButton() }
+				{ currentStep !== 'Import' && (
+					<>
+						{ sectionTitle() }
+						{ domainPickerButton() }
+						{ changeLocaleButton() }
+						{ plansButton() }
+					</>
 				) }
+				{ currentStep === 'Import' && importStepHeaderButtons() }
 			</section>
 		</div>
 	);

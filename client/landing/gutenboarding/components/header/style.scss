@@ -117,3 +117,20 @@ $padding--gutenboarding__header: $grid-unit-10;
 	// has a flex-grow: 1 so give domain the priority.
 	max-width: 40vw;
 }
+
+.gutenboarding__import-back-button {
+	&.components-button.has-icon.has-text {
+		font-weight: 500; /* stylelint-disable-line */
+
+		svg {
+			margin-right: 0;
+		}
+	}
+}
+
+.gutenboarding__import-next-button {
+	&.components-button {
+		font-weight: 500; /* stylelint-disable-line */
+		text-decoration: underline;
+	}
+}

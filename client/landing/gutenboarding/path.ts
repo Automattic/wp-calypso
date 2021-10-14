@@ -30,6 +30,15 @@ export const Step = {
 	LanguageModal: 'language-modal',
 } as const;
 
+export const ImportStep = {
+	List: 'list',
+	Capture: 'capture',
+	Scanning: 'scanning',
+	Ready: 'ready',
+	ReadyNoUrl: 'ready-no-url',
+	ReadyNot: 'ready-not',
+};
+
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
 export const steps = Object.values( Step ).filter( Boolean );
 
@@ -44,6 +53,8 @@ export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
 
 export type StepType = ValuesType< typeof Step >;
 export type StepNameType = keyof typeof Step;
+export type StepImportType = ValuesType< typeof ImportStep >;
+export type StepImportNameType = keyof typeof ImportStep;
 
 export interface GutenLocationStateType {
 	anchorFmPodcastId?: string;
@@ -100,6 +111,12 @@ export function usePlanRouteParam() {
 export function useCurrentStep(): StepNameType {
 	const stepRouteParam = useStepRouteParam();
 	return findKey( Step, ( step ) => step === stepRouteParam ) as StepNameType;
+}
+
+export function useCurrentImportStep(): StepImportNameType {
+	const params = new URLSearchParams( useLocation().search );
+
+	return findKey( ImportStep, ( step ) => step === params.get( 'step' ) ) as StepImportNameType;
 }
 
 // Returns true if the url has a `?new`, which is used by the
