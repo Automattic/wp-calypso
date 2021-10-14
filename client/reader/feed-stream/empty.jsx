@@ -16,7 +16,7 @@ class FeedEmptyContent extends PureComponent {
 		const { translate } = this.props;
 		const action = (
 			<a
-				className="empty-content__action button is-primary" //eslint-disable-line
+				className="empty-content__action button is-primary" // eslint-disable-line
 				onClick={ this.recordAction }
 				href="/read/search"
 			>
