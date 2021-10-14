@@ -1,5 +1,5 @@
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useRtl } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, useState, useEffect, Component } from 'react';
@@ -356,7 +356,7 @@ class PopoverInner extends Component {
 // is created on show and destroyed on hide, making sure that the last shown popover will be
 // also the last DOM element inside `document.body`, ensuring that it has a higher z-index.
 function Popover( { isVisible = false, showDelay = 0, ...props } ) {
-	const isRtl = useRtl();
+	const { isRTL } = useI18n();
 	const [ show, setShow ] = useState( isVisible );
 
 	// If `showDelay` is non-zero, the hide -> show transition will be delayed and will not
@@ -386,7 +386,7 @@ function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 
 	return (
 		<RootChild>
-			<PopoverInner { ...props } isRtl={ isRtl } />
+			<PopoverInner { ...props } isRtl={ isRTL() } />
 		</RootChild>
 	);
 }

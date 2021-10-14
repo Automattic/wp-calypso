@@ -258,11 +258,11 @@ __metadata:
     "@babel/runtime": ^7.15.3
     "@storybook/addon-actions": ^6.3.11
     "@storybook/preset-scss": ^1.0.3
+    "@wordpress/react-i18n": ^3.0.1
     classnames: ^2.3.1
     css-loader: ^3.4.2
     enzyme: ^3.11.0
     gridicons: ^3.4.0
-    i18n-calypso: ^5.0.0
     lodash: ^4.17.21
     prop-types: ^15.7.2
     react-modal: ^3.14.3
