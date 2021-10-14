@@ -170,7 +170,9 @@ class StepWrapper extends Component {
 
 		const backButton = ! hideBack && this.renderBack();
 		const skipButton =
-			! hideSkip && skipButtonAlign === 'top' && this.renderSkip( { borderless: true } );
+			! hideSkip &&
+			skipButtonAlign === 'top' &&
+			this.renderSkip( { borderless: true, forwardIcon: null } );
 		const nextButton = ! hideNext && this.renderNext();
 		const hasNavigation = backButton || skipButton || nextButton;
 		const classes = classNames( 'step-wrapper', this.props.className, {
