@@ -1,27 +1,32 @@
 import { getProductFromSlug } from '.';
 
+interface Query {
+	term?: string;
+	type?: string;
+}
+
 /**
- * Matches plan specified by `planKey` against `query`.
- * Only compares `type`, `group`, and `term` properties.
+ * Matches plan specified by `productSlug` against `query`.
+ * Only compares `type` and `term` properties.
  *
  * For example:
  *
- * > planMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+ * > productMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, type: TYPE_BUSINESS } );
  * true
  *
- * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * > productMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
  * false
  *
- * @param {string|object} planKey Plan to match
+ * @param {string} productSlug product to match
  * @param {object} query Properties that should match
- * @returns {boolean} Does `planKey` match?
+ * @returns {boolean} Does `productSlug` match?
  */
-export function productMatches( productSlug, query = {} ) {
-	const acceptedKeys = [ 'type', 'group', 'term' ];
+export function productMatches( productSlug: string, query: Query = {} ): boolean {
+	const acceptedKeys = [ 'type', 'term' ];
 	const unknownKeys = Object.keys( query ).filter( ( key ) => ! acceptedKeys.includes( key ) );
 	if ( unknownKeys.length ) {
 		throw new Error(
-			`planMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +
+			`productMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +
 				`but unknown keys ${ unknownKeys.join( ',' ) } were passed.`
 		);
 	}
@@ -29,5 +34,5 @@ export function productMatches( productSlug, query = {} ) {
 	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getProductFromSlug( productSlug ) || {};
 	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
-	return match( 'type' ) && match( 'group' ) && match( 'term' );
+	return match( 'type' ) && match( 'term' );
 }
