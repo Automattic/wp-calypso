@@ -147,9 +147,11 @@ export class FullPostView extends Component {
 			this.scrollToComments();
 		}
 
-		// Check if we are loading the post and when we are done we load the new
-		if ( this.props?.post?._state !== prevProps?.post?._state ) {
-			this.props?.post?.is_error ? this.props.disableAppBanner() : this.props.enableAppBanner();
+		// Check if we just finished loading the post and enable the app banner when there's no error
+		const finishedLoading = prevProps.post?._state === 'pending' && ! this.props.post?._state;
+		const isError = this.props.post?.is_error;
+		if ( finishedLoading && ! isError ) {
+			this.props.enableAppBanner();
 		}
 	}
 
@@ -308,10 +310,12 @@ export class FullPostView extends Component {
 
 	maybeDisableAppBanner = () => {
 		const { post, site } = this.props;
-		if ( post && post._state !== 'pending' ) {
-			post?.is_error || site?.is_error
-				? this.props.disableAppBanner()
-				: this.props.enableAppBanner();
+
+		// disable the banner while the post is loading and when it failed to load
+		const isLoading = post?._state === 'pending';
+		const isError = post?.is_error || site?.is_error;
+		if ( isLoading || isError ) {
+			this.props.disableAppBanner();
 		}
 	};
 
