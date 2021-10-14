@@ -11,15 +11,11 @@ interface Query {
  *
  * For example:
  *
- * > productMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, type: TYPE_BUSINESS } );
+ * > productMatches( PRODUCT_JETPACK_BACKUP_DAILY, { term: TERM_ANNUALLY, type: PRODUCT_JETPACK_BACKUP_DAILY } );
  * true
  *
- * > productMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * > productMatches( PRODUCT_JETPACK_BACKUP_DAILY, { term: TERM_BIENNIALLY } );
  * false
- *
- * @param {string} productSlug product to match
- * @param {object} query Properties that should match
- * @returns {boolean} Does `productSlug` match?
  */
 export function productMatches( productSlug: string, query: Query = {} ): boolean {
 	const acceptedKeys = [ 'type', 'term' ];
