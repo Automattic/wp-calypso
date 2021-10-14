@@ -6,7 +6,8 @@ export type BlockEditorSettings = {
 };
 
 export const useBlockEditorSettingsQuery = (
-	siteId: string
+	siteId: string,
+	userLoggedIn = false
 ): UseQueryResult< BlockEditorSettings > => {
 	const queryKey = [ 'blockEditorSettings', siteId ];
 
@@ -18,6 +19,6 @@ export const useBlockEditorSettingsQuery = (
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{ enabled: !! siteId }
+		{ enabled: userLoggedIn && !! siteId }
 	);
 };
