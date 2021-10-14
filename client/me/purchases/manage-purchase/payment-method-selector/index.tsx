@@ -36,10 +36,12 @@ export default function PaymentMethodSelector( {
 	purchase,
 	paymentMethods,
 	successCallback,
+	eventContext,
 }: {
 	purchase?: Purchase;
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
+	eventContext?: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
@@ -112,6 +114,7 @@ export default function PaymentMethodSelector( {
 							stripeConfiguration,
 							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
+							eventSource: eventContext,
 						},
 						data
 					),
