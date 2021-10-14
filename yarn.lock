@@ -6544,6 +6544,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/store@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@types/store@npm:2.0.2"
+  checksum: d40224bd8bf728b86b9bd3a2413d29484712b6ec22b690c08350f9a2c1b57295861e96169307f7096c1cbba5316afc2165a41f9122493d3e312382f28722182d
+  languageName: node
+  linkType: hard
+
 "@types/tapable@npm:^1, @types/tapable@npm:^1.0.5":
   version: 1.0.8
   resolution: "@types/tapable@npm:1.0.8"
@@ -37520,6 +37527,7 @@ typescript@^4.4.3:
     "@types/react-redux": ^7.1.18
     "@types/react-router-dom": ^5.3.0
     "@types/react-transition-group": ^4.4.3
+    "@types/store": ^2.0.2
     "@types/uuid": ^8.3.1
     "@types/validator": ^13.6.3
     "@types/webpack-env": ^1.16.2
