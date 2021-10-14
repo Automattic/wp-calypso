@@ -1,7 +1,8 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, localize } from 'i18n-calypso';
 import { ChangeEvent, FunctionComponent, useState } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -9,6 +10,8 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
+import { getSelectedDomain } from '../../../lib/domains';
+import { getDomainsBySiteId } from '../../../state/sites/domains/selectors';
 import GSuiteDomainsSelect from './domains-select';
 
 interface LabelWrapperProps {
@@ -30,7 +33,9 @@ interface Props {
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
+	selectedDomainName: string;
 	showTrashButton: boolean;
+	siteId: number;
 	user: NewUser;
 }
 
@@ -44,9 +49,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		firstName: { value: firstName, error: firstNameError },
 		lastName: { value: lastName, error: lastNameError },
 		mailBox: { value: mailBox, error: mailBoxError },
-		domain: { value: domain, error: domainError },
+		domain: { error: domainError },
 		password: { value: password, error: passwordError },
 	},
+	selectedDomainName,
 	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
@@ -86,7 +92,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
-					suffix={ `@${ domain }` }
+					suffix={ `@${ selectedDomainName }` }
 				/>
 			</LabelWrapper>
 		);
@@ -113,7 +119,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					onChange={ ( event ) => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
-					value={ domain }
+					value={ selectedDomainName }
 				/>
 			</LabelWrapper>
 		);
@@ -209,4 +215,13 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	);
 };
 
-export default GSuiteNewUser;
+export default connect( ( state, ownProps: Props ) => {
+	const domains = getDomainsBySiteId( state, ownProps.siteId );
+	const selectedDomain = getSelectedDomain( {
+		domains,
+		selectedDomainName: ownProps.selectedDomainName,
+	} );
+	return {
+		selectedDomainName: selectedDomain?.name,
+	};
+} )( localize( GSuiteNewUser ) );

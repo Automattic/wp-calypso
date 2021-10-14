@@ -1,15 +1,18 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 import './style.scss';
 
@@ -20,12 +23,13 @@ const TitanNewMailbox = ( {
 	onReturnKeyPress = noop,
 	mailbox: {
 		alternativeEmail: { value: alternativeEmail, error: alternativeEmailError },
-		domain: { value: domain, error: domainError },
+		domain: { error: domainError },
 		isAdmin: { value: isAdmin, error: isAdminError },
 		mailbox: { value: mailbox, error: mailboxError },
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
+  	selectedDomainName,
 	showAllErrors = false,
 	showLabels = true,
 } ) => {
@@ -78,7 +82,7 @@ const TitanNewMailbox = ( {
 									setNameFieldTouched( hasBeenValidated );
 								} }
 								onKeyUp={ onReturnKeyPress }
-								suffix={ `@${ domain }` }
+								suffix={ `@${ selectedDomainName }` }
 							/>
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
@@ -98,7 +102,7 @@ const TitanNewMailbox = ( {
 								setMailboxFieldTouched( hasBeenValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
-							suffix={ `@${ domain }` }
+							suffix={ `@${ selectedDomainName }` }
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
@@ -180,4 +184,13 @@ TitanNewMailbox.propTypes = {
 	showLabels: PropTypes.bool.isRequired,
 };
 
-export default TitanNewMailbox;
+export default connect( ( state, ownProps ) => {
+	const domains = getDomainsBySiteId( state, ownProps.siteId );
+	const selectedDomain = getSelectedDomain( {
+		domains,
+		selectedDomainName: ownProps.selectedDomainName,
+	} );
+	return {
+		selectedDomainName: selectedDomain?.name,
+	};
+} )( localize( TitanNewMailbox ) );
