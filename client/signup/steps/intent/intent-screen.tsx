@@ -1,17 +1,17 @@
 import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import React from 'react';
-import { build, write } from './icons';
+import { build, write } from '../../icons';
 import type { IntentFlag } from './types';
 import './intent-screen.scss';
 
 interface Intent {
-	title: string;
-	description: string;
+	title: TranslateResult;
+	description: TranslateResult;
 	icon: React.ReactElement;
 	intent: IntentFlag;
-	actionText: string;
+	actionText: TranslateResult;
 }
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 	translate: LocalizeProps[ 'translate' ];
 }
 
-const useIntents = ( { translate } ): Intent[] => {
+const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 	return [
 		{
 			title: translate( 'Write' ),
