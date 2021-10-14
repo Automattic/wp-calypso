@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';

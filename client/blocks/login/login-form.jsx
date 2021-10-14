@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { capitalize, defer, includes, get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
@@ -440,6 +440,27 @@ export class LoginForm extends Component {
 		);
 	}
 
+	renderChangeUsername() {
+		return (
+			<button type="button" className="login__form-change-username" onClick={ this.resetView }>
+				<Gridicon icon="arrow-left" size={ 18 } />
+				{ includes( this.state.usernameOrEmail, '@' )
+					? this.props.translate( 'Change Email Address' )
+					: this.props.translate( 'Change Username' ) }
+			</button>
+		);
+	}
+
+	renderUsernameorEmailLabel() {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Your email address or username' );
+		}
+
+		return this.isPasswordView()
+			? this.renderChangeUsername()
+			: this.props.translate( 'Email Address or Username' );
+	}
+
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
@@ -450,6 +471,7 @@ export class LoginForm extends Component {
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
 			isGutenboarding,
+			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
@@ -503,22 +525,7 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
-						<FormLabel htmlFor="usernameOrEmail">
-							{ this.isPasswordView() ? (
-								<button
-									type="button"
-									className="login__form-change-username"
-									onClick={ this.resetView }
-								>
-									<Gridicon icon="arrow-left" size={ 18 } />
-									{ includes( this.state.usernameOrEmail, '@' )
-										? this.props.translate( 'Change Email Address' )
-										: this.props.translate( 'Change Username' ) }
-								</button>
-							) : (
-								this.props.translate( 'Email Address or Username' )
-							) }
-						</FormLabel>
+						<FormLabel htmlFor="usernameOrEmail">{ this.renderUsernameorEmailLabel() }</FormLabel>
 
 						<FormTextInput
 							autoCapitalize="off"
@@ -558,6 +565,8 @@ export class LoginForm extends Component {
 									) }
 							</FormInputValidation>
 						) }
+
+						{ isP2Login && this.isPasswordView() && this.renderChangeUsername() }
 
 						<div
 							className={ classNames( 'login__form-password', {

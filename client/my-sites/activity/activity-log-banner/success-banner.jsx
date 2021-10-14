@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import HappychatButton from 'calypso/components/happychat/button';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';

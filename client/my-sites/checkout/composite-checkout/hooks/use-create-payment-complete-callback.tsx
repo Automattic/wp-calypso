@@ -3,7 +3,7 @@ import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
@@ -141,7 +141,8 @@ export default function useCreatePaymentCompleteCallback( {
 					reduxDispatch,
 				} );
 			} catch ( err ) {
-				console.error( err ); // eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( err );
 				recordCompositeCheckoutErrorDuringAnalytics( {
 					reduxDispatch,
 					errorObject: err,

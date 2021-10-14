@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import readerBackground from 'calypso/assets/images/reader/reader-intro-background.svg';
 import readerImage from 'calypso/assets/images/reader/reader-intro-character.svg';
@@ -11,7 +11,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-class FollowingIntro extends React.Component {
+class FollowingIntro extends Component {
 	componentDidMount() {
 		this.recordRenderTrack();
 	}

@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { compact, omit, reduce, get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent, Fragment } from 'react';
+import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';

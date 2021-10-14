@@ -3,17 +3,20 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
-import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { FootnotesList } from '../footnotes-list';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
@@ -99,9 +102,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_jetpack_pricing_page_without_monthly'
-	);
 
 	// Retrieve and cache the plans array, which might be already translated.
 	useEffect( () => {
@@ -141,10 +141,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
 
 	const showFreeCard = useSelector( getShowFreeCard );
-	const showCrmFreeCard =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: true,
-		} ) ?? false;
 
 	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const scrollToComparison = () => {
@@ -155,20 +151,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		}
 	};
 
-	const filterBar = useMemo( () => {
-		if ( isLoadingExperimentAssignment ) {
-			return (
-				<div className="product-grid__filter-bar-placeholder">
-					<div></div>
-				</div>
-			);
-		}
-
-		if ( experimentAssignment?.variationName === 'treatment' ) {
-			return null;
-		}
-
-		return (
+	const filterBar = useMemo(
+		() => (
 			<div className="product-grid__filter-bar">
 				<PlansFilterBar
 					showDiscountMessage
@@ -176,18 +160,16 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					duration={ duration }
 				/>
 			</div>
-		);
-	}, [
-		onDurationChange,
-		duration,
-		isLoadingExperimentAssignment,
-		experimentAssignment?.variationName,
-	] );
+		),
+		[ onDurationChange, duration ]
+	);
 
 	const featuredPlans = getForCurrentCROIteration( {
 		[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+			PLAN_JETPACK_SECURITY_T2_YEARLY,
+			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		],
 	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
@@ -236,17 +218,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						onButtonClick={ scrollToComparison }
 					/>
 				</div>
-				<ul className="product-grid__asterisk-list">
-					<li className="product-grid__asterisk-item">
-						{ translate( 'Special introductory pricing, all renewals are at full price.' ) }
-					</li>
-					<li className="product-grid__asterisk-item">
-						{ translate( 'Monthly plans are 7-day money back guarantee.' ) }
-					</li>
-					<li className="product-grid__asterisk-item">
-						{ translate( 'All paid products and plans include priority support.' ) }
-					</li>
-				</ul>
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
@@ -265,23 +236,16 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
-					{ showCrmFreeCard && (
-						<JetpackCrmFreeCard
-							fullWidth={ ! showFreeCard }
-							siteId={ siteId }
-							duration={ duration }
-						/>
-					) }
-					{ showFreeCard && (
-						<JetpackFreeCard
-							fullWidth={ ! showCrmFreeCard }
-							siteId={ siteId }
-							urlQueryArgs={ urlQueryArgs }
-						/>
-					) }
+					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+					<JetpackCrmFreeCard
+						fullWidth={ ! showFreeCard }
+						siteId={ siteId }
+						duration={ duration }
+					/>
 				</div>
 			</ProductGridSection>
 			<StoreFooter />
+			<FootnotesList />
 		</>
 	);
 };

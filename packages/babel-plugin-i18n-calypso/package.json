@@ -7,6 +7,9 @@
 		"gettext-parser": "^4.0.3",
 		"lodash": "^4.17.21"
 	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
+	},
 	"peerDependencies": {
 		"@babel/core": "^7.15.0"
 	},

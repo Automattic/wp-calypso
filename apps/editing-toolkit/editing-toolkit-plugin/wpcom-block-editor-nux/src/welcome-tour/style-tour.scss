@@ -35,15 +35,30 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour__resume-btn {
+.wpcom-editor-welcome-tour__minimized {
 	border-radius: 2px;
 	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
 		0 1px 1px rgba( 0, 0, 0, 0.08 );
 	background-color: $white;
 	color: $black;
 
-	&.components-button {
+	.components-button {
 		height: 44px;
+
+		.wpcom-editor-welcome-tour__minimized-tour-index {
+			color: $gray-600;
+		}
+
+		svg {
+			color: #50575e;
+		}
+
+		&:hover {
+			.wpcom-editor-welcome-tour__minimized-tour-index,
+			svg {
+				color: inherit;
+			}
+		}
 	}
 }
 

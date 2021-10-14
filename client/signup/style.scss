@@ -23,6 +23,7 @@ body.is-section-signup {
 	&.is-p2-signup {
 		background: var( --p2-color-white );
 		color: var( --p2-color-text );
+		letter-spacing: -0.01em;
 
 		&.has-loading-screen-signup {
 			background: var( --p2-color-text );
@@ -149,48 +150,10 @@ body.is-section-signup .layout.gravatar {
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		button:not( .is-compact ) {
+		.layout:not( .is-horizontal-layout ) button:not( .is-compact ):not( .is-primary ) {
 			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
-		}
-	}
-
-	// Back button
-	.navigation-link.button.back {
-		position: absolute;
-		top: 6px;
-		left: 11px;
-	}
-}
-
-// The container wrapped around every
-// step in signup
-body.is-section-signup .layout:not( .dops ) .step-wrapper {
-	max-width: 960px;
-	margin: 0 auto;
-
-	// Some steps (like plans) need a larger
-	// width column.
-	&.is-wide-layout {
-		max-width: 1040px;
-	}
-
-	// pressable-nux has no title or subtitle so
-	// needs to not hide the (W) logo
-	.is-pressable-nux & {
-		margin-top: 30px;
-	}
-
-	// On small screens remove the margin from the
-	// bottom of the cards.
-	@include breakpoint-deprecated( '<660px' ) {
-		.card {
-			margin-bottom: 0;
-		}
-
-		&.has-header-buttons {
-			padding-bottom: 60px;
 		}
 	}
 }
@@ -220,12 +183,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			color: var( --color-text-inverted );
 		}
 	}
-}
-
-// Skip button
-.step-wrapper__buttons {
-	text-align: center;
-	margin-bottom: 20px;
 }
 
 .is-section-signup .layout__content,
@@ -404,24 +361,39 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.navigation-link.button.back {
-		svg {
-			display: none;
+	.step-wrapper__navigation {
+		.navigation-link.button.is-borderless {
+			color: $gray-100;
+
+			svg {
+				width: 20px;
+				height: 20px;
+				top: 5px;
+				margin-right: 2px;
+				fill: $gray-100;
+			}
 		}
 
-		color: $gray-50;
-		top: 23px;
-		left: 72px;
-		text-decoration: underline;
-		font-weight: normal;
+		@include break-small {
+			left: 72px;
+			right: 24px;
+		}
 	}
 
-	.step-wrapper__header {
-		margin-top: 48px;
-		margin-bottom: 40px;
+	.step-wrapper:not( .is-horizontal-layout ) {
+		.step-wrapper__header {
+			margin: 24px 20px;
 
+			@include break-large {
+				margin: 48px 0 40px;
+			}
+		}
+	}
+
+	.step-wrapper__header-button {
 		@include breakpoint-deprecated( '<660px' ) {
-			margin-top: 24px;
+			margin-top: 16px;
+			margin-bottom: -16px;
 		}
 	}
 
@@ -432,10 +404,10 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.25rem; /* stylelint-disable-line */
+			font-size: 2.15rem; /* stylelint-disable-line */
 
 			@include break-xlarge {
-				font-size: 2.6rem; /* stylelint-disable-line */
+				font-size: 2.75rem; /* stylelint-disable-line */
 			}
 		}
 
@@ -797,8 +769,35 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
+	.signup__step.is-design-setup-site {
+		.step-wrapper__header {
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-left: 0;
+				margin-right: 0;
+			}
+		}
+
+		.design-picker__preview .step-wrapper__header {
+			margin-top: 40px;
+
+			@include break-mobile {
+				margin-top: 11px;
+			}
+
+			@include break-xlarge {
+				margin-top: 6px;
+			}
+		}
+	}
+
 	button.is-primary {
 		box-shadow: none;
 		border: 0;
+	}
+
+	.inline-help {
+		@include breakpoint-deprecated( '<660px' ) {
+			bottom: 74px;
+		}
 	}
 }

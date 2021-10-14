@@ -1,9 +1,9 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { shouldShowTax } from 'calypso/lib/cart-values';
 
-class CartTotal extends React.Component {
+class CartTotal extends Component {
 	static propTypes = {
 		cart: PropTypes.shape( {
 			tax: PropTypes.shape( {

@@ -1,7 +1,7 @@
 import { withRtl } from 'i18n-calypso';
 import { clone, filter, findIndex } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createElement, Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -17,7 +17,7 @@ import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 
 const noop = () => {};
 
-export class MediaLibraryList extends React.Component {
+export class MediaLibraryList extends Component {
 	static displayName = 'MediaLibraryList';
 
 	static propTypes = {
@@ -36,6 +36,8 @@ export class MediaLibraryList extends React.Component {
 		mediaOnFetchNextPage: PropTypes.func,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
+		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -209,11 +211,12 @@ export class MediaLibraryList extends React.Component {
 		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
-			return React.createElement( this.props.search ? ListNoResults : ListNoContent, {
+			return createElement( this.props.search ? ListNoResults : ListNoContent, {
 				site: this.props.site,
 				filter: this.props.filter,
 				search: this.props.search,
 				source: this.props.source,
+				onSourceChange: this.props.onSourceChange,
 			} );
 		}
 

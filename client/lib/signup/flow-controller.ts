@@ -34,6 +34,7 @@ import {
 } from 'calypso/state/signup/progress/actions';
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -42,6 +43,7 @@ interface Dependencies {
 interface Flow {
 	destination: string | ( ( dependencies: Dependencies ) => string );
 	providesDependenciesInQuery?: string[];
+	optionalDependenciesInQuery?: string[];
 	steps: string[];
 }
 
@@ -123,6 +125,22 @@ export default class SignupFlowController {
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 		this._resetSiteSlugIfUserEnteredAnotherFlow(); // reset the site slug if user entered another flow
 
+		// If we have access to the siteId, then make sure we've also loaded the siteSlug into
+		// the dependency store, because some code depends on the slug instead of the id.
+		if (
+			this._flow.providesDependenciesInQuery?.includes( 'siteId' ) &&
+			options.providedDependencies[ 'siteId' ] &&
+			! options.providedDependencies[ 'siteSlug' ]
+		) {
+			const siteSlug = getSiteSlug(
+				this._reduxStore.getState(),
+				options.providedDependencies[ 'siteId' ]
+			);
+			if ( siteSlug ) {
+				options.providedDependencies[ 'siteSlug' ] = siteSlug;
+			}
+		}
+
 		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 			this._reduxStore.dispatch( updateDependencies( options.providedDependencies ) );
@@ -190,6 +208,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedDependenciesFromConfig( providedDependencies: Dependencies ) {
 		const dependencyDiff = difference(
 			this._flow.providesDependenciesInQuery,
+			this._flow.optionalDependenciesInQuery || [],
 			keys( providedDependencies )
 		);
 		if ( dependencyDiff.length > 0 ) {

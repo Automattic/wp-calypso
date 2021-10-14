@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import webinarsIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 import { TASK_WEBINARS } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';

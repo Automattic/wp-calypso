@@ -1,11 +1,11 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
-class ReaderPostOptionsMenuBlogStickerMenuItem extends React.Component {
+class ReaderPostOptionsMenuBlogStickerMenuItem extends Component {
 	static propTypes = {
 		blogId: PropTypes.number,
 		blogStickerName: PropTypes.string,

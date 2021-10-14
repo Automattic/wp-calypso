@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
@@ -67,7 +67,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				hasScreenOptions
 			/>
 			<div className="customer-home__view-site-button">
-				<Button href={ site.URL } onClick={ trackViewSiteAction }>
+				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
 				</Button>
 			</div>

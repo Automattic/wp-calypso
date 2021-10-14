@@ -78,6 +78,7 @@ export type SelectorProductFeaturesItem = {
 	description?: TranslateResult;
 	subitems?: SelectorProductFeaturesItem[];
 	isHighlighted?: boolean;
+	isDifferentiator?: boolean;
 };
 
 export type SelectorProductFeaturesSection = {
@@ -99,6 +100,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	monthlyProductSlug?: string;
 	displayName: TranslateResult;
 	shortName: TranslateResult;
+	subheader?: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
 	children?: ReactNode;

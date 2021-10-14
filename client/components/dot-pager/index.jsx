@@ -3,7 +3,7 @@ import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
-import React, { Children, useState, useEffect, useRef } from 'react';
+import { Children, useState, useEffect, useRef } from 'react';
 
 import './style.scss';
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { bumpStat } from '../rest-client/bump-stat';
 
 // from $wpnc__title-bar-height in boot/sizes.scss

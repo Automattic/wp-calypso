@@ -15,7 +15,7 @@ import {
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';

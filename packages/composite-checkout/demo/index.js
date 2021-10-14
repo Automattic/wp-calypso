@@ -20,7 +20,7 @@ import {
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createPayPalMethod } from './pay-pal';
 
 const initialItems = [

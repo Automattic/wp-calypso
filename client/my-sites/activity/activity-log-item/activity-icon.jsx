@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 
 export default class ActivityIcon extends PureComponent {
 	static propTypes = {

@@ -3,7 +3,6 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { stepType, modeType, stepSlug } from './constants';
 
 import './style.scss';

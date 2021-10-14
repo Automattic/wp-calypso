@@ -1,10 +1,10 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import './style.scss';
 
-class DomainSkipSuggestion extends React.Component {
+class DomainSkipSuggestion extends Component {
 	static propTypes = {
 		onButtonClick: PropTypes.func.isRequired,
 	};

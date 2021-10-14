@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
 import Badge from 'calypso/components/badge';
@@ -20,6 +19,7 @@ import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getActiveTheme,
@@ -61,11 +61,11 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-class ThemeShowcase extends React.Component {
+class ThemeShowcase extends Component {
 	constructor( props ) {
 		super( props );
-		this.scrollRef = React.createRef();
-		this.bookmarkRef = React.createRef();
+		this.scrollRef = createRef();
+		this.bookmarkRef = createRef();
 		this.tabFilters = {
 			RECOMMENDED: {
 				key: 'recommended',
@@ -116,6 +116,7 @@ class ThemeShowcase extends React.Component {
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
+		isSiteEditorActive: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -267,13 +268,8 @@ class ThemeShowcase extends React.Component {
 			case this.tabFilters.MYTHEMES.key:
 				return this.props.isJetpackSite;
 			case this.tabFilters.FSE.key:
-				// Display FSE tab if feature flag is enabled or if current theme is already FSE-enabled.
-				return (
-					config.isEnabled( 'gutenboarding/site-editor' ) ||
-					this.props.currentTheme?.taxonomies?.theme_feature?.some(
-						( f ) => f.slug === 'block-templates'
-					)
-				);
+				// Display FSE tab if the Site Editor is active for the site.
+				return this.props.isSiteEditorActive;
 		}
 	};
 
@@ -438,6 +434,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
+		isSiteEditorActive: isSiteUsingCoreSiteEditor( state, siteId ),
 	};
 };
 

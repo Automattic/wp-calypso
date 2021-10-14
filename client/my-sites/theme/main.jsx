@@ -7,11 +7,12 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { cloneElement, Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -30,6 +31,7 @@ import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -61,7 +63,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
-class ThemeSheet extends React.Component {
+class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
 	static propTypes = {
@@ -176,15 +178,22 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderBar = () => {
+		const { author, name, taxonomies, translate } = this.props;
+
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
-		const tag = this.props.author
-			? this.props.translate( 'by %(author)s', { args: { author: this.props.author } } )
-			: placeholder;
+		const title = name || placeholder;
+		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ isFullSiteEditingTheme( { taxonomies } ) && (
+						<Badge type="warning-clear" className="theme__sheet-badge-beta">
+							{ translate( 'Beta' ) }
+						</Badge>
+					) }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -501,13 +510,7 @@ class ThemeSheet extends React.Component {
 								{
 									components: {
 										InlineSupportLink: (
-											<InlineSupportLink
-												showIcon={ false }
-												supportPostId={ 174865 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
-												) }
-											/>
+											<InlineSupportLink supportContext="themes-unsupported" showIcon={ false } />
 										),
 									},
 								}
@@ -605,6 +608,7 @@ class ThemeSheet extends React.Component {
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
+		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive } = this.props;
 
@@ -613,11 +617,15 @@ class ThemeSheet extends React.Component {
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
-				primary={ isActive }
+				primary
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.props.isWpcomTheme && this.renderPrice() }
+				{ price && this.props.isWpcomTheme && (
+					<Badge type="info" className="theme__sheet-badge-beta">
+						{ price }
+					</Badge>
+				) }
 			</Button>
 		);
 	};
@@ -733,7 +741,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		if ( hasUpsellBanner ) {
-			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
+			previewUpsellBanner = cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}

@@ -1,27 +1,35 @@
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { transferStatus } from 'calypso/lib/domains/constants';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
-import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getByPurchaseId,
-	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
-class TransferInDomainType extends React.Component {
+class TransferInDomainType extends Component {
 	startTransfer = () => {
-		const { domain, selectedSite } = this.props;
-		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
+		this.setState( { isTransferring: true }, this.goToInboundTransferPage );
 	};
+
+	goToInboundTransferPage() {
+		const { domain, selectedSite } = this.props;
+		page(
+			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.transferDomain )
+		);
+	}
 
 	renderPendingStart() {
 		const { domain, translate } = this.props;
@@ -133,11 +141,16 @@ class TransferInDomainType extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { subscriptionId } = ownProps.domain;
-	return {
-		purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
-	};
-} )( withLocalizedMoment( localize( TransferInDomainType ) ) );
+export default connect(
+	( state, ownProps ) => {
+		const { subscriptionId } = ownProps.domain;
+		return {
+			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+		};
+	},
+	{
+		errorNotice,
+	}
+)( withLocalizedMoment( localize( TransferInDomainType ) ) );

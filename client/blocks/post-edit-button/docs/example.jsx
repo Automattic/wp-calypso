@@ -1,7 +1,7 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 
-export default class PostEditButtonExample extends React.PureComponent {
+export default class PostEditButtonExample extends PureComponent {
 	static displayName = 'PostEditButtonExample';
 
 	render() {

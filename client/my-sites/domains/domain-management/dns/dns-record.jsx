@@ -1,10 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import DnsRecordsListItem from '../dns-records/item';
 
-class DnsRecord extends React.Component {
+class DnsRecord extends Component {
 	static propTypes = {
 		onDeleteDns: PropTypes.func.isRequired,
 		dnsRecord: PropTypes.object.isRequired,

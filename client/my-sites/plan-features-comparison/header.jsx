@@ -3,7 +3,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
 

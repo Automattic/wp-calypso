@@ -3,12 +3,14 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
+import isSiteUsingCoreSiteEditorSelector from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { trackClick } from '../helpers';
 import { connectOptions } from '../theme-options';
@@ -36,7 +38,13 @@ class CurrentTheme extends Component {
 	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, translate } = this.props;
+		const {
+			currentTheme,
+			currentThemeId,
+			isSiteUsingCoreSiteEditor,
+			siteId,
+			translate,
+		} = this.props;
 		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
 		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
 
@@ -49,6 +57,7 @@ class CurrentTheme extends Component {
 		const showScreenshot = currentTheme && currentTheme.screenshot;
 		// Some themes have no screenshot, so only show placeholder until details loaded
 		const showScreenshotPlaceholder = ! currentTheme;
+		const showBetaBadge = isFullSiteEditingTheme( currentTheme ) && isSiteUsingCoreSiteEditor;
 
 		return (
 			<Card className="current-theme">
@@ -67,6 +76,11 @@ class CurrentTheme extends Component {
 							) }
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
+									{ showBetaBadge && (
+										<Badge type="warning-clear" className="current-theme__badge-beta">
+											{ translate( 'Beta' ) }
+										</Badge>
+									) }
 									<span className="current-theme__label">
 										{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
 									</span>
@@ -74,10 +88,7 @@ class CurrentTheme extends Component {
 								</div>
 								<p>
 									{ translate( 'This is the active theme on your site.' ) }{ ' ' }
-									<InlineSupportLink
-										supportPostId={ 184023 }
-										supportLink={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									>
+									<InlineSupportLink supportContext="themes-switch">
 										{ translate( 'Learn more.' ) }
 									</InlineSupportLink>
 								</p>
@@ -112,10 +123,16 @@ class CurrentTheme extends Component {
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 
-const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => (
+const CurrentThemeWithOptions = ( {
+	siteId,
+	currentTheme,
+	currentThemeId,
+	isSiteUsingCoreSiteEditor,
+} ) => (
 	<ConnectedCurrentTheme
 		currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
+		isSiteUsingCoreSiteEditor={ isSiteUsingCoreSiteEditor }
 		siteId={ siteId }
 		source="current theme"
 	/>
@@ -126,5 +143,6 @@ export default connect( ( state, { siteId } ) => {
 	return {
 		currentThemeId,
 		currentTheme: getCanonicalTheme( state, siteId, currentThemeId ),
+		isSiteUsingCoreSiteEditor: isSiteUsingCoreSiteEditorSelector( state, siteId ),
 	};
 } )( CurrentThemeWithOptions );

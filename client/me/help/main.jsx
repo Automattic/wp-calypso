@@ -3,7 +3,7 @@ import { Button, CompactCard, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
@@ -38,7 +38,7 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:help-search' );
 
-class Help extends React.PureComponent {
+class Help extends PureComponent {
 	static displayName = 'Help';
 
 	state = {

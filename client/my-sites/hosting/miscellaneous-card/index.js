@@ -1,6 +1,6 @@
 import { Button, Card, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormLabel from 'calypso/components/forms/form-label';

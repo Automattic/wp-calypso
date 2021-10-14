@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
@@ -26,6 +25,7 @@ const LayoutLoggedOut = ( {
 	isPopup,
 	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
+	isP2Login,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -58,6 +58,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
+		'is-p2-login': isP2Login,
 	};
 
 	let masterbar = null;
@@ -131,7 +132,8 @@ export default withCurrentRoute(
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow;
+		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
@@ -143,6 +145,7 @@ export default withCurrentRoute(
 			isPopup,
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
+			isP2Login,
 			wccomFrom,
 			masterbarIsHidden:
 				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,

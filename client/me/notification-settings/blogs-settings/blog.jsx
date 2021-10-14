@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SettingsForm from 'calypso/me/notification-settings/settings-form';
 import { getSite } from 'calypso/state/sites/selectors';

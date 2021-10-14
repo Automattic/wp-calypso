@@ -1,7 +1,6 @@
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import React from 'react';
 import { ProductExpiration } from '../index';
 
 describe( 'ProductExpiration', () => {

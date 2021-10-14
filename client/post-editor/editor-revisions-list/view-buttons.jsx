@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import SegmentedControl from 'calypso/components/segmented-control';
 import {

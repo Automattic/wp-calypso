@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

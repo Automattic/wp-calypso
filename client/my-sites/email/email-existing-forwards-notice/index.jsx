@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import Notice from 'calypso/components/notice';
 
 const EmailExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName } ) => {

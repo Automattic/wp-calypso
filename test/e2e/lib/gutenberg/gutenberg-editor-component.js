@@ -522,7 +522,7 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 
 	async ensureSaved() {
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-save-draft' ) );
-		const savedLocator = By.css( 'span.is-saved' );
+		const savedLocator = By.css( 'button.is-saved' );
 
 		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, savedLocator );
 	}

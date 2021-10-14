@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import { memo } from 'react';
 
 import './style.scss';
 
@@ -12,4 +12,4 @@ const ButtonGroup = ( { busy, children, className, primary } ) => {
 	return <span className={ buttonGroupClasses }>{ children }</span>;
 };
 
-export default React.memo( ButtonGroup );
+export default memo( ButtonGroup );

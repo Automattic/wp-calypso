@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map } from 'lodash';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -30,7 +30,7 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 let siteUrlsSearched = [];
 let timesValidationFailed = 0;
 
-class Site extends React.Component {
+class Site extends Component {
 	static displayName = 'Site';
 
 	state = {

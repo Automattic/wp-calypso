@@ -8,7 +8,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Spinner from 'calypso/components/spinner';

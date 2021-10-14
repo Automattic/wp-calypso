@@ -161,6 +161,15 @@ export default function () {
 	}
 
 	page(
+		'/checkout/offer-professional-email/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/:domainOrProduct',
 		redirectLoggedOut,
 		siteSelection,

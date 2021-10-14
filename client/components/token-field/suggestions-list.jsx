@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { createRef, PureComponent } from 'react';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import isSuggestionLabel from './helpers';
 
-class SuggestionsList extends React.PureComponent {
+class SuggestionsList extends PureComponent {
 	static propTypes = {
 		isExpanded: PropTypes.bool,
 		match: PropTypes.string,
@@ -22,7 +22,7 @@ class SuggestionsList extends React.PureComponent {
 		suggestions: Object.freeze( [] ),
 	};
 
-	listRef = React.createRef();
+	listRef = createRef();
 
 	componentDidUpdate( prevProps ) {
 		// only have to worry about scrolling selected suggestion into view

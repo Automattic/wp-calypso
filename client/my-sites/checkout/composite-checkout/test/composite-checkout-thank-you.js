@@ -635,18 +635,16 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie/:receiptId' );
 	} );
 
-	// Note: This just verifies the existing behavior; I suspect this is a bug
-	it( 'redirects to thank-you page followed by placeholder receiptId twice if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
+	it( 'redirects to thank-you page followed by placeholder receiptId if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
 		const cart = {
 			create_new_blog: true,
 			products: [ { id: '123' } ],
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId/:receiptId' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	// Note: This just verifies the existing behavior; I suspect this is a bug
-	it( 'redirects to thank-you page followed by purchase id twice if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
+	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
 		const cart = {
 			create_new_blog: true,
 			products: [ { id: '123' } ],
@@ -657,7 +655,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: '1234abcd',
 			cart,
 		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd/1234abcd' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to thank-you page for a new site with a domain and some failed purchases', () => {

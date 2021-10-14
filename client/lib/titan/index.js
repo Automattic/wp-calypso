@@ -8,3 +8,4 @@ export { getTitanProductName } from './get-titan-product-name';
 export { getTitanSubscriptionId } from './get-titan-subscription-id';
 export { getTitanCalendarlUrl, getTitanContactsUrl, getTitanEmailUrl } from './get-titan-urls';
 export { hasTitanMailWithUs } from './has-titan-mail-with-us';
+export { isDomainEligibleForTitanFreeTrial } from './is-domain-eligible-for-titan-free-trial';

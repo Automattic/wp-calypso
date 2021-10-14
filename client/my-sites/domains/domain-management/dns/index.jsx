@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -26,7 +26,7 @@ import DomainConnectRecord from './domain-connect-record';
 
 import './style.scss';
 
-class Dns extends React.Component {
+class Dns extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		dns: PropTypes.object.isRequired,

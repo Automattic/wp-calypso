@@ -36,7 +36,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { shallow } from 'enzyme';
 import '@testing-library/jest-dom/extend-expect';
 import moment from 'moment';
-import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -64,12 +64,18 @@ const initialReduxState = {
 };
 
 function renderWithRedux( ui ) {
+	const queryClient = new QueryClient();
 	const store = createStore(
 		( state ) => state,
 		initialReduxState,
 		applyMiddleware( thunkMiddleware )
 	);
-	return render( <Provider store={ store }>{ ui }</Provider> );
+
+	return render(
+		<QueryClientProvider client={ queryClient }>
+			<Provider store={ store }>{ ui }</Provider>
+		</QueryClientProvider>
+	);
 }
 
 const props = {

@@ -1,7 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
-/* eslint-disable jsdoc/check-tag-names */
-/** @format */
-
 const child_process = require( 'child_process' );
 const fs = require( 'fs' );
 const path = require( 'path' );

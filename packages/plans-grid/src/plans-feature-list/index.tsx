@@ -3,7 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Icon, check, close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import * as React from 'react';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 import '../types-patch';

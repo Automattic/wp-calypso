@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import languages from '@automattic/languages';
-import React, { Fragment, useReducer } from 'react';
+import { Fragment, useReducer } from 'react';
 import { connect } from 'react-redux';
 import LanguagePickerModal from 'calypso/components/language-picker/modal';
 import {

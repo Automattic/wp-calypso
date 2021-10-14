@@ -1,6 +1,5 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';

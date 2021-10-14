@@ -3,7 +3,8 @@ import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -105,7 +106,9 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
+		activePayButtonText: String( translate( 'Save card' ) ),
+		allowUseForAllSubscriptions: true,
+		initialUseForAllSubscriptions: true,
 	} );
 	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
 		stripeMethod,

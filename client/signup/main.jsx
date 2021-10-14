@@ -21,7 +21,7 @@ import {
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -116,7 +116,13 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
-class Signup extends React.Component {
+function showProgressIndicator( flowName ) {
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site' ];
+
+	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+}
+
+class Signup extends Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool,
@@ -697,8 +703,6 @@ class Signup extends React.Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 
 		return (
@@ -709,7 +713,7 @@ class Signup extends React.Component {
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
 						rightComponent={
-							showProgressIndicator && (
+							showProgressIndicator( this.props.flowName ) && (
 								<FlowProgressIndicator
 									positionInFlow={ this.getPositionInFlow() }
 									flowLength={ this.getInteractiveStepsCount() }

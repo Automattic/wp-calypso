@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -17,7 +17,7 @@ import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 
 import './style.scss';
 
-class TitanControlPanelRedirect extends React.Component {
+class TitanControlPanelRedirect extends Component {
 	static propTypes = {
 		// Props
 		context: PropTypes.string,

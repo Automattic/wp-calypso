@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 

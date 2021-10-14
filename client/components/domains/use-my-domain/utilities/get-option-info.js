@@ -7,16 +7,37 @@ import {
 	getMappingPriceText,
 	getTransferFreeText,
 	getTransferPriceText,
+	getTransferRestrictionMessage,
 	getTransferSalePriceText,
 	isFreeTransfer,
 	optionInfo,
 } from './index';
+
+export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
+	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
+
+	const result = {
+		transferrable: ! inRedemption && null === transferEligibleDate,
+	};
+
+	if ( ! result.transferrable ) {
+		result.domainTransferContent = {
+			...optionInfo.transferNotSupported,
+			topText:
+				getTransferRestrictionMessage( domainInboundTransferStatusInfo ) ??
+				optionInfo.transferNotSupported.topText,
+		};
+	}
+
+	return result;
+};
 
 export function getOptionInfo( {
 	availability,
 	cart,
 	currencyCode,
 	domain,
+	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
 	onTransfer,
@@ -73,6 +94,11 @@ export function getOptionInfo( {
 		text: mappingFreeText,
 	};
 
+	const {
+		transferrable: isDomainTransferrable,
+		domainTransferContent,
+	} = getDomainTransferrability( { ...domainInboundTransferStatusInfo, domain } );
+
 	let transferContent;
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
@@ -101,6 +127,10 @@ export function getOptionInfo( {
 			break;
 		default:
 			transferContent = optionInfo.transferNotSupported;
+	}
+
+	if ( ! isDomainTransferrable ) {
+		transferContent = domainTransferContent;
 	}
 
 	let connectContent;

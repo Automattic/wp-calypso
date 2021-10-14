@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React, { useRef, useState } from 'react';
+import { createElement, useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -39,7 +39,7 @@ export default function WpcomDomainItem( {
 						__( 'Your free WordPress.com address is <strong>%s</strong>' ),
 						domain.domain
 					),
-					{ strong: React.createElement( 'strong', null ) }
+					{ strong: createElement( 'strong', null ) }
 				) }
 			</span>
 			{ domain.isPrimary && (

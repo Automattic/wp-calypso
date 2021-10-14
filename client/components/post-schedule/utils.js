@@ -9,7 +9,6 @@ import moment from 'moment-timezone';
  * A - Uppercase Ante meridiem and Post meridiem.
  *
  * @see https://wikipedia.org/wiki/12-hour_clock
- *
  * @param  {string}  timeFormat Time format.
  * @returns {boolean}            Whether it's a 12-hour time format.
  */
@@ -28,10 +27,10 @@ export const isValidGMTOffset = ( gmtOffset ) => 'number' === typeof gmtOffset;
  * Return localized date depending of given timezone or gmtOffset
  * parameters.
  *
- * @param {Moment} date - date instance
+ * @param {Date} date - date instance
  * @param {string} tz - timezone
  * @param {number} gmt - gmt offset in minutes
- * @returns {Moment} localized date
+ * @returns {Date} localized date
  */
 export const getLocalizedDate = ( date, tz, gmt ) => {
 	date = moment( date );

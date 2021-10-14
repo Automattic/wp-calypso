@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
-import React from 'react';
+import { Component } from 'react';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 
-export default class AuthorCompactProfileExample extends React.Component {
+export default class AuthorCompactProfileExample extends Component {
 	static displayName = 'AuthorCompactProfileExample';
 
 	render() {

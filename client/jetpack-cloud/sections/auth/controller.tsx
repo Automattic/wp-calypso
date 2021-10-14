@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import React from 'react';
 import store from 'store';
 import Connect from './connect';
 

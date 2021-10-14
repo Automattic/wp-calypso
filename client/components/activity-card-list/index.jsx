@@ -3,7 +3,7 @@ import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';

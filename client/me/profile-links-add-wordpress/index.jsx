@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { find, map, pickBy } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

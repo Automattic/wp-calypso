@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { without } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

@@ -33,6 +33,7 @@ function WelcomeTourCard( {
 	onNextCardProgression,
 	onPreviousCardProgression,
 	isGutenboarding,
+	focusedOnLaunchRef,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastCard = currentCardIndex === lastCardIndex;
@@ -85,6 +86,7 @@ function WelcomeTourCard( {
 						setCurrentCardIndex={ setCurrentCardIndex }
 						onNextCardProgression={ onNextCardProgression }
 						onPreviousCardProgression={ onPreviousCardProgression }
+						focusedOnLaunchRef={ focusedOnLaunchRef }
 					></CardNavigation>
 				) }
 			</CardFooter>
@@ -99,6 +101,7 @@ function CardNavigation( {
 	setCurrentCardIndex,
 	onNextCardProgression,
 	onPreviousCardProgression,
+	focusedOnLaunchRef,
 } ) {
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
@@ -114,7 +117,7 @@ function CardNavigation( {
 			/>
 			<div>
 				{ currentCardIndex === 0 ? (
-					<Button isTertiary={ true } onClick={ () => onDismiss( 'no-thanks-btn' ) }>
+					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
 						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
@@ -127,6 +130,7 @@ function CardNavigation( {
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
 					onClick={ onNextCardProgression }
+					ref={ focusedOnLaunchRef }
 				>
 					{ currentCardIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
@@ -154,7 +158,7 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
-					onClick={ () => onDismiss( 'close-btn' ) }
+					onClick={ onDismiss( 'close-btn' ) }
 				></Button>
 			</Flex>
 		</div>

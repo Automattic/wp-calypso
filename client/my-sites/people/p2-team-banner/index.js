@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';

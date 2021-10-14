@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -13,7 +13,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import Item from './item';
 import Masterbar from './masterbar';
 
-class MasterbarLoggedOut extends React.Component {
+class MasterbarLoggedOut extends Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
 		sectionName: PropTypes.string,

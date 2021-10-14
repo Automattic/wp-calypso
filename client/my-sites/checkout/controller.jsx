@@ -3,7 +3,6 @@ import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
-import React from 'react';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
@@ -34,6 +33,7 @@ import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
+	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
 import { getDomainOrProductFromContext } from './utils';
 
@@ -252,6 +252,9 @@ export function upsellNudge( context, next ) {
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
+	} else if ( context.path.includes( 'offer-professional-email' ) ) {
+		upsellType = PROFESSIONAL_EMAIL_UPSELL;
+		upgradeItem = null;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -281,12 +284,8 @@ export function redirectToSupportSession( context ) {
 }
 
 export function jetpackCheckoutThankYou( context, next ) {
-	const forSitelessScheduling = context.path.includes(
-		'/checkout/jetpack/schedule-happiness-appointment'
-	);
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
-	const isSitelessCheckoutFlow =
-		context.path.includes( '/checkout/jetpack/thank-you/no-site' ) || forSitelessScheduling;
+	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
 	const { receiptId, source, siteId } = context.query;
 
@@ -294,7 +293,6 @@ export function jetpackCheckoutThankYou( context, next ) {
 		<JetpackCheckoutSitelessThankYou
 			productSlug={ context.params.product }
 			receiptId={ receiptId }
-			forScheduling={ forSitelessScheduling }
 			source={ source }
 			jetpackTemporarySiteId={ siteId }
 		/>

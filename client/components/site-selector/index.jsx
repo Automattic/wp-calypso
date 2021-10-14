@@ -5,7 +5,7 @@ import { localize } from 'i18n-calypso';
 import { filter, find, flow, get, includes, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
@@ -515,9 +515,7 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			path = '/domains/manage';
 		}
 
-		if ( path.match( /^\/email\/inbox\/?/ ) ) {
-			path = '/email/inbox';
-		} else if ( path.match( /^\/email\// ) ) {
+		if ( path.match( /^\/email\// ) ) {
 			path = '/email';
 		}
 

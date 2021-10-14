@@ -77,16 +77,21 @@ function receivePluginsList( category, page, searchTerm, data, error, pagination
  * Retrieve a list of pliugins, identified by category and page number, or a search term.
  *
  * WP.org plugins can be filtered either by category or search term.
- * Pagination is supported only for category queries.
  * Category can be one of "featured", "popular", "new", "beta" or "recommended".
  * Search term is an open text field.
  *
- * @param {string} category   Plugin category
- * @param {number} page       Page (1-based)
- * @param {string} searchTerm Search term
- * @returns {Function} Action thunk
+ * @param {string} category   	Plugin category
+ * @param {number} page       	Page (1-based)
+ * @param {string} searchTerm 	Search term
+ * @param {number} pageSize		Page size
+ * @returns {Function} 			Action thunk
  */
-export function fetchPluginsList( category, page, searchTerm ) {
+export function fetchPluginsList(
+	category,
+	page,
+	searchTerm,
+	pageSize = PLUGINS_LIST_DEFAULT_SIZE
+) {
 	return ( dispatch, getState ) => {
 		// Bail if we are currently fetching this plugins list
 		if ( isFetchingPluginsList( getState(), category, searchTerm ) ) {
@@ -116,7 +121,7 @@ export function fetchPluginsList( category, page, searchTerm ) {
 
 		fetchWporgPluginsList(
 			{
-				pageSize: PLUGINS_LIST_DEFAULT_SIZE,
+				pageSize,
 				page,
 				category,
 				search: searchTerm,

@@ -7,7 +7,6 @@ const selectors = {
 	// iframe and editor
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
-	editorBody: '.edit-post-visual-editor',
 
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
@@ -25,7 +24,6 @@ const selectors = {
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
 	// there's a hidden button also with the "Preview" text, so using unique class name instead of text selector
-	previewButton: '.edit-post-header .editor-post-preview',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
@@ -68,8 +66,10 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		const frame = await this.getEditorFrame();
-		await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
-		await frame.waitForSelector( selectors.editorBody );
+		await this.page.waitForLoadState( 'load' );
+		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
+		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		await frame.waitForSelector( selectors.editorTitle );
 		return frame;
 	}
 
@@ -315,16 +315,6 @@ export class GutenbergEditorPage {
 		// are disabled while the post is saved. Wait for the state of
 		// Publish button to return to 'enabled' before proceeding.
 		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
-	}
-
-	/**
-	 * Launches editor preview by clicking toolbar preview button.
-	 *
-	 * @returns {Promise<void} No return value.
-	 */
-	async preview(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		await frame.click( selectors.previewButton );
 	}
 
 	/**

@@ -19,7 +19,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPill from 'calypso/components/plans/plan-pill';

@@ -1,5 +1,4 @@
 import { screen, render, waitFor, fireEvent } from '@testing-library/react';
-import React from 'react';
 import { withShoppingCart } from '../src/index';
 import { planOne, mainCartKey } from './utils/mock-cart-api';
 import { MockProvider, ProductListWithoutHook } from './utils/mock-components';

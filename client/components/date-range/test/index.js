@@ -7,7 +7,6 @@ import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
-import React from 'react';
 import DatePicker from 'calypso/components/date-picker';
 import DateRangeHeader from 'calypso/components/date-range/header';
 import DateRangeInputs from 'calypso/components/date-range/inputs';

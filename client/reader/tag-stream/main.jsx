@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
@@ -17,7 +17,7 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
 
-class TagStream extends React.Component {
+class TagStream extends Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,
 		decodedTagSlug: PropTypes.string,

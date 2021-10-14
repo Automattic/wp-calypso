@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -51,17 +51,9 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 
 	const title = useMemo( () => {
 		return automaticTransferSucceeded
-			? translate( 'Your %(productName)s subscription has been activated and is ready to go!', {
-					args: {
-						productName,
-					},
-			  } )
-			: translate( 'Your %(productName)s subscription will be activated soon', {
-					args: {
-						productName,
-					},
-			  } );
-	}, [ automaticTransferSucceeded, productName, translate ] );
+			? translate( 'Your subscription has been activated and is ready to go!' )
+			: translate( 'Your subscription will be activated soon' );
+	}, [ automaticTransferSucceeded, translate ] );
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
@@ -87,9 +79,17 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 					</h1>
 					{ ! automaticTransferSucceeded && (
 						<p>
-							{ translate(
-								'As soon as your subscription is activated you will receive a confirmation email from our Happiness Engineers.'
-							) }
+							{ productName &&
+								translate(
+									'As soon as your %(productName)s subscription is activated you will receive a confirmation email from our Happiness Engineers.',
+									{
+										args: { productName },
+									}
+								) }
+							{ ! productName &&
+								translate(
+									'As soon as your subscription is activated you will receive a confirmation email from our Happiness Engineers.'
+								) }
 						</p>
 					) }
 					{ automaticTransferSucceeded && (

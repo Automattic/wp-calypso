@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { connect } from 'react-redux';
 import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';

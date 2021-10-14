@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -37,7 +37,7 @@ import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
-class RegisteredDomainType extends React.Component {
+class RegisteredDomainType extends Component {
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
 		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
@@ -201,6 +201,10 @@ class RegisteredDomainType extends React.Component {
 
 	renderDefaultRenewButton() {
 		const { domain, purchase, isLoadingPurchase } = this.props;
+
+		if ( domain.isPendingRenewal ) {
+			return null;
+		}
 
 		if ( ! domain.currentUserCanManage ) {
 			return null;

@@ -8,10 +8,15 @@ export interface FontPair {
 	base: Font;
 }
 
+export interface Category {
+	slug: string;
+	name: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 export interface Design {
-	categories: Array< string >;
+	categories: Array< Category >;
 	fonts?: FontPair;
 	is_alpha?: boolean;
 	is_fse?: boolean;
@@ -29,4 +34,8 @@ export interface Design {
 	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
+}
+
+export interface DesignUrlOptions {
+	iframe?: boolean;
 }

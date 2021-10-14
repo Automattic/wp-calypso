@@ -1,8 +1,3 @@
-import React from 'react';
-
-/**
- * Module variables
- */
 const lightColorSchemeLogo = (
 	<g fillRule="nonzero" transform="translate(372 12)">
 		<g>

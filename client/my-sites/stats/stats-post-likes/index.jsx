@@ -2,7 +2,6 @@ import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import PostLikes from 'calypso/blocks/post-likes';
 import Count from 'calypso/components/count';

@@ -5,9 +5,10 @@ import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domai
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 
+const noop = () => null;
 export const connectDomainAction = (
 	{ domain, selectedSite, verificationData },
-	onDone = () => {}
+	onDone = noop
 ) => ( dispatch, getState ) => {
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 

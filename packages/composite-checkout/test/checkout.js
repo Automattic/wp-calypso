@@ -6,7 +6,7 @@ import {
 	fireEvent,
 	act,
 } from '@testing-library/react';
-import React, { useState, useContext } from 'react';
+import { createContext, Fragment, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
 	Checkout,
@@ -24,7 +24,7 @@ import {
 	usePaymentProcessor,
 } from '../src/public-api';
 
-const myContext = React.createContext();
+const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
 
 describe( 'Checkout', () => {
@@ -633,12 +633,12 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 		( stepObject ) => stepObject.hasStepNumber
 	);
 	return (
-		<React.Fragment>
+		<Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 			<CheckoutStepArea>
 				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
 			</CheckoutStepArea>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 

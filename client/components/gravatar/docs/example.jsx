@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

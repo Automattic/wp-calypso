@@ -1,10 +1,8 @@
 /**
  * Are two strings equal, when ignoring whitespace and case?
  *
- * @export
  * @param {string} a the first string
  * @param {string} b the second string
- * @returns
  */
 export function areEqualIgnoringWhitespaceAndCase( a, b ) {
 	// Are they equal without any manipulation?

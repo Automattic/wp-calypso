@@ -1,6 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { connect } from 'react-redux';
 import { RESULT_ARTICLE } from 'calypso/blocks/inline-help/constants';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';

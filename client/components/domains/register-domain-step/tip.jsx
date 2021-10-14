@@ -1,5 +1,4 @@
 import { SVG, Path } from '@wordpress/components';
-import React from 'react';
 
 const tip = (
 	<SVG viewBox="0 0 24 24">

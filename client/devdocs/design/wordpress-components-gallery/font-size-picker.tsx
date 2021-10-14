@@ -1,5 +1,5 @@
 import { FontSizePicker } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const FontSizePickerExample = () => {
 	const [ fontSize, setFontSize ] = useState< number | undefined >( 16 );

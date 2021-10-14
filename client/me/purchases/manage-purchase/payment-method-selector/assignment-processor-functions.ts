@@ -38,7 +38,6 @@ const wpcomCreatePayPalAgreement = (
 export async function assignNewCardProcessor(
 	{
 		purchase,
-		useForAllSubscriptions,
 		translate,
 		stripe,
 		stripeConfiguration,
@@ -46,7 +45,6 @@ export async function assignNewCardProcessor(
 		reduxDispatch,
 	}: {
 		purchase: Purchase | undefined;
-		useForAllSubscriptions?: boolean;
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
@@ -55,8 +53,6 @@ export async function assignNewCardProcessor(
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
-
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is missing name, country, or postal code' );
@@ -68,7 +64,13 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode } = submitData;
+		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+
+		recordFormSubmitEvent( {
+			reduxDispatch,
+			purchase,
+			useForAllSubscriptions,
+		} );
 
 		const formFieldValues = {
 			country: countryCode,
@@ -91,6 +93,7 @@ export async function assignNewCardProcessor(
 				purchase,
 				token,
 				stripeConfiguration,
+				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 			} );
 
 			return makeSuccessResponse( result );
@@ -146,6 +149,7 @@ interface NewCardSubmitData {
 	name: string;
 	countryCode: string;
 	postalCode: string;
+	useForAllSubscriptions: boolean;
 }
 
 export async function assignExistingCardProcessor(
@@ -201,15 +205,20 @@ export async function assignPayPalProcessor(
 function recordFormSubmitEvent( {
 	reduxDispatch,
 	purchase,
+	useForAllSubscriptions,
 }: {
 	reduxDispatch: ReturnType< typeof useDispatch >;
 	purchase?: Purchase | undefined;
+	useForAllSubscriptions?: boolean;
 } ) {
 	reduxDispatch(
 		purchase?.productSlug
 			? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
 					product_slug: purchase.productSlug,
+					use_for_all_subs: String( useForAllSubscriptions ),
 			  } )
-			: recordTracksEvent( 'calypso_add_credit_card_form_submit' )
+			: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
+					use_for_all_subs: String( useForAllSubscriptions ),
+			  } )
 	);
 }

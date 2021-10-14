@@ -1,6 +1,5 @@
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import EmptyContent from 'calypso/components/empty-content';

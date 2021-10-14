@@ -2,7 +2,7 @@ import { Button, Card, ProgressBar, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';

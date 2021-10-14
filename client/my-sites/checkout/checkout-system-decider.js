@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import Recaptcha from 'calypso/signup/recaptcha';

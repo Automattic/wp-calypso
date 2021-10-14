@@ -1,6 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
 import joinClasses from '../lib/join-classes';
 import { useLineItems } from '../public-api';
 import {

@@ -1,7 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { get, includes, map } from 'lodash';
 import page from 'page';
-import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
@@ -184,6 +183,10 @@ const useMyDomain = ( context, next ) => {
 		let path = `/domains/add/${ context.params.site }`;
 		if ( context.query.initialQuery ) {
 			path += `?suggestion=${ context.query.initialQuery }`;
+
+			if ( context.query.initialMode ) {
+				path = `/domains/manage/${ context.params.site }`;
+			}
 		}
 
 		page( path );
@@ -199,6 +202,7 @@ const useMyDomain = ( context, next ) => {
 				<UseMyDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					initialMode={ context.query.initialMode }
 					goBack={ handleGoBack }
 				/>
 			</CalypsoShoppingCartProvider>

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

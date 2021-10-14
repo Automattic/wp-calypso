@@ -3,7 +3,7 @@ import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useState, useCallback } from 'react';
+import { Component, useState, useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
@@ -35,7 +35,7 @@ import {
 
 import './style.scss';
 
-class BillingReceipt extends React.Component {
+class BillingReceipt extends Component {
 	componentDidMount() {
 		this.redirectIfInvalidTransaction();
 	}
@@ -128,7 +128,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 				<ul className="billing-history__receipt-details group">
 					<li>
 						<strong>{ translate( 'Receipt ID' ) }</strong>
-						<span>{ transaction.id }</span>
+						<span className="receipt__monospace">{ transaction.id }</span>
 					</li>
 					<ReceiptTransactionId transaction={ transaction } />
 					<ReceiptPaymentMethod transaction={ transaction } />
@@ -160,7 +160,7 @@ function ReceiptTransactionId( { transaction } ) {
 	return (
 		<li>
 			<strong>{ translate( 'Transaction ID' ) }</strong>
-			<span>{ transaction.pay_ref }</span>
+			<span className="receipt__monospace">{ transaction.pay_ref }</span>
 		</li>
 	);
 }

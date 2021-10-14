@@ -1,68 +1,39 @@
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestSiteTerms } from 'calypso/state/terms/actions';
 import { isRequestingTermsForQuery } from 'calypso/state/terms/selectors';
 
-class QueryTerms extends Component {
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId, taxonomy, query ) => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingTermsForQuery( getState(), siteId, taxonomy, query ) ) {
+		dispatch( requestSiteTerms( siteId, taxonomy, query ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.taxonomy === nextProps.taxonomy &&
-			isShallowEqual( this.props.query, nextProps.query )
-		) {
-			return;
-		}
-
-		this.request( nextProps );
+function useMemoized( obj ) {
+	const memoObj = useRef();
+	if ( ! isShallowEqual( obj, memoObj.current ) ) {
+		memoObj.current = obj;
 	}
+	return memoObj.current;
+}
 
-	request( props ) {
-		if ( props.requesting || ! props.siteId ) {
-			return;
-		}
+function QueryTerms( { siteId, taxonomy, query = {} } ) {
+	const dispatch = useDispatch();
+	const memoizedQuery = useMemoized( query );
 
-		props.requestSiteTerms( props.siteId, props.taxonomy, props.query );
-	}
+	useEffect( () => {
+		dispatch( request( siteId, taxonomy, memoizedQuery ) );
+	}, [ dispatch, siteId, taxonomy, memoizedQuery ] );
 
-	shouldComponentUpdate() {
-		return false;
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryTerms.propTypes = {
-	siteId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
 	taxonomy: PropTypes.string.isRequired,
 	query: PropTypes.object,
-	requesting: PropTypes.bool.isRequired,
-	requestSiteTerms: PropTypes.func.isRequired,
 };
 
-QueryTerms.defaultProps = {
-	query: {},
-};
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			requesting: isRequestingTermsForQuery(
-				state,
-				ownProps.siteId,
-				ownProps.taxonomy,
-				ownProps.query
-			),
-		};
-	},
-	{
-		requestSiteTerms,
-	}
-)( QueryTerms );
+export default QueryTerms;

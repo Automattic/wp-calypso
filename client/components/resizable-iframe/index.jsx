@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 
 /**
@@ -10,7 +10,7 @@ import ReactDom from 'react-dom';
 const debug = debugFactory( 'calypso:resizable-iframe' );
 const noop = () => {};
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'ResizableIframe';
 
 	static propTypes = {

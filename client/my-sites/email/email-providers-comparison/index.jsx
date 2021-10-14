@@ -4,7 +4,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
@@ -38,16 +38,20 @@ import {
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+} from 'calypso/lib/gsuite/constants';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
-import { getTitanProductName } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
 	transformMailboxForCart,
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
@@ -71,7 +75,7 @@ import './style.scss';
 
 const identityMap = ( item ) => item;
 
-class EmailProvidersComparison extends React.Component {
+class EmailProvidersComparison extends Component {
 	static propTypes = {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,
@@ -84,6 +88,7 @@ class EmailProvidersComparison extends React.Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		showSkipButton: PropTypes.bool,
 		skipButtonLabel: PropTypes.string,
+		source: PropTypes.string,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
@@ -147,9 +152,12 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSite } = this.props;
+		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
 
-		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
+		recordTracksEvent( 'calypso_email_providers_add_click', {
+			provider: 'email-forwarding',
+			source,
+		} );
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -171,7 +179,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain } = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain, source } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -186,7 +194,8 @@ class EmailProvidersComparison extends React.Component {
 			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
-			provider: 'titan',
+			provider: TITAN_PROVIDER_NAME,
+			source,
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 		} );
@@ -226,6 +235,7 @@ class EmailProvidersComparison extends React.Component {
 					// Stay on the page to show the relevant error(s)
 					return;
 				}
+
 				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
@@ -242,7 +252,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { comparisonContext, domain, gSuiteProduct, hasCartDomain } = this.props;
+		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, source } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -252,7 +262,8 @@ class EmailProvidersComparison extends React.Component {
 			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
-			provider: 'google',
+			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_can_add_email: userCanAddEmail ? 1 : 0,
 		} );
 
@@ -451,8 +462,7 @@ class EmailProvidersComparison extends React.Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial =
-			hasCartDomain || domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
@@ -751,4 +761,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( withShoppingCart( localize( EmailProvidersComparison ) ) );
+)( withShoppingCart( withCartKey( localize( EmailProvidersComparison ) ) ) );

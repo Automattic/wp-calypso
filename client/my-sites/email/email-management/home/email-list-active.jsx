@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
 import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
@@ -42,9 +42,16 @@ EmailListActiveWarning.propTypes = {
 	selectedSiteId: PropTypes.number.isRequired,
 };
 
-class EmailListActive extends React.Component {
+class EmailListActive extends Component {
 	render() {
-		const { currentRoute, domains, selectedSiteSlug, translate, selectedSiteId } = this.props;
+		const {
+			currentRoute,
+			domains,
+			selectedSiteSlug,
+			translate,
+			selectedSiteId,
+			source,
+		} = this.props;
 
 		if ( domains.length < 1 ) {
 			return null;
@@ -53,7 +60,7 @@ class EmailListActive extends React.Component {
 		const emailListItems = domains.map( ( domain ) => {
 			return (
 				<CompactCard
-					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute ) }
+					href={ emailManagement( selectedSiteSlug, domain.name, currentRoute, { source } ) }
 					key={ domain.name }
 				>
 					<span className="email-list-active__item-icon">
@@ -86,6 +93,7 @@ EmailListActive.propTypes = {
 	currentRoute: PropTypes.string.isRequired,
 	domains: PropTypes.array.isRequired,
 	selectedSiteSlug: PropTypes.string.isRequired,
+	source: PropTypes.string,
 
 	// Props injected via connect()
 	translate: PropTypes.func.isRequired,

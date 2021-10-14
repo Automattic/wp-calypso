@@ -8,7 +8,7 @@ import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	prepareDomainContactDetails,
@@ -70,7 +70,7 @@ export default function ContactDetailsContainer( {
 	switch ( contactDetailsType ) {
 		case 'domain':
 			return (
-				<React.Fragment>
+				<Fragment>
 					<ContactDetailsFormDescription>
 						{ translate(
 							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
@@ -87,7 +87,7 @@ export default function ContactDetailsContainer( {
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }
 					/>
-				</React.Fragment>
+				</Fragment>
 			);
 
 		case 'gsuite':
@@ -105,7 +105,7 @@ export default function ContactDetailsContainer( {
 
 		default:
 			return (
-				<React.Fragment>
+				<Fragment>
 					<ContactDetailsFormDescription>
 						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
 					</ContactDetailsFormDescription>
@@ -136,7 +136,7 @@ export default function ContactDetailsContainer( {
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
 					/>
-				</React.Fragment>
+				</Fragment>
 			);
 	}
 }

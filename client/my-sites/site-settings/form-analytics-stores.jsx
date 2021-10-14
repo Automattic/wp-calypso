@@ -1,7 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';

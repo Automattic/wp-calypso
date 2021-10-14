@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import { keys } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
@@ -50,7 +50,7 @@ const ALT_TEXT = {
 
 export const POSSIBLE_TYPES = keys( ALT_TEXT );
 
-class PaymentLogo extends React.Component {
+class PaymentLogo extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		type: PropTypes.oneOf( POSSIBLE_TYPES ),

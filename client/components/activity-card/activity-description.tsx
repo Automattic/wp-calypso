@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import FormattedBlock from 'calypso/components/notes-formatted-block';
 import { Activity } from 'calypso/state/activity-log/types';
 

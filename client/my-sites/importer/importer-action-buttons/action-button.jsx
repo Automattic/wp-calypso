@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import React from 'react';
 
 import './action-button.scss';
 

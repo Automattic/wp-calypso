@@ -1,11 +1,11 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { requestReaderListItems } from 'calypso/state/reader/lists/actions';
 
 export default function QueryReaderListItems( { owner, slug } ) {
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		dispatch( requestReaderListItems( owner, slug ) );
 	}, [ dispatch, owner, slug ] );
 

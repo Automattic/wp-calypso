@@ -3,7 +3,6 @@ import { translate } from 'i18n-calypso';
 import { includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import React from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';

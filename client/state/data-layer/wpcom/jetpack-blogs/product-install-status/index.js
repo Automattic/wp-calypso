@@ -28,6 +28,7 @@ export const requestJetpackProductInstallStatus = ( action ) =>
  * Dispatches a product install status receive action when the request succeeded.
  *
  * @param   {object} action Redux action
+ * @param   {number} action.siteId
  * @param   {object} status Status as returned from the endpoint
  * @returns {object} Dispatched product install status receive action
  */

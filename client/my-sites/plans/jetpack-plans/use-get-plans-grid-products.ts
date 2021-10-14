@@ -13,12 +13,11 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_CRM_FREE_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import {
-	getForCurrentCROIteration,
 	doForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
@@ -34,7 +33,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 	const includedInPlanProducts: string[] =
-		( currentPlan && getPlan( currentPlan )?.getHiddenFeatures() ) || [];
+		( currentPlan && getPlan( currentPlan )?.getIncludedFeatures() ) || [];
 
 	// Owned products from direct purchases
 	const purchasedProducts =
@@ -52,18 +51,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
 	}
 
-	// Include Jetpack CRM
-	const includeCrmFree =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: false,
-		} ) ?? true;
-	if (
-		includeCrmFree &&
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
-	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
-	}
-
 	const backupProductsToShow: string[] = [];
 
 	doForCurrentCROIteration( ( key ) => {
@@ -75,17 +62,12 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
 
-			if ( ! ownsBackupT1 ) {
+			// If neither T1 or T2 backups are owned, then show T1 backups.
+			// Otherwise the one owned will be displayed via purchasedProducts.
+			if ( ! ownsBackupT1 && ! ownsBackupT2 ) {
 				backupProductsToShow.push(
 					PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 					PRODUCT_JETPACK_BACKUP_T1_MONTHLY
-				);
-			}
-
-			if ( ! ownsBackupT2 ) {
-				backupProductsToShow.push(
-					PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-					PRODUCT_JETPACK_BACKUP_T2_MONTHLY
 				);
 			}
 		} else {
@@ -134,6 +116,13 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_ANTI_SPAM_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
+	}
+
+	// If Jetpack VideoPress is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_VIDEOPRESS_PRODUCTS.includes( ownedProduct ) )
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
 	}
 
 	return {

@@ -1,5 +1,5 @@
 import { TreeSelect } from '@wordpress/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const TreeSelectExample = () => {
 	const [ selection, setSelection ] = useState( '' );

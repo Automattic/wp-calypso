@@ -2,7 +2,7 @@ import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -13,7 +13,7 @@ import Header from 'calypso/my-sites/domains/domain-management/components/header
 import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-class ManageConsent extends React.Component {
+class ManageConsent extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,

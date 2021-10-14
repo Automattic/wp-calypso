@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import humanDate from 'calypso/lib/human-date';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import smartSetState from 'calypso/lib/react-smart-set-state';

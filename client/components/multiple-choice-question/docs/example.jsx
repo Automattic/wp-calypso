@@ -1,5 +1,5 @@
 import { Button, CompactCard as Card } from '@automattic/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { successNotice } from 'calypso/state/notices/actions';

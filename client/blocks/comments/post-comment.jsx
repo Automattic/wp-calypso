@@ -4,10 +4,9 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
-import Emojify from 'calypso/components/emojify';
 import Gravatar from 'calypso/components/gravatar';
 import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -46,7 +45,7 @@ const noop = () => {};
  *   conversations tool uses a mix depending on the situation.
  */
 
-class PostComment extends React.PureComponent {
+class PostComment extends PureComponent {
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -293,11 +292,11 @@ class PostComment extends React.PureComponent {
 				onClick={ this.handleAuthorClick }
 				id={ `comment-${ commentId }` }
 			>
-				<Emojify>{ authorName }</Emojify>
+				{ authorName }
 			</a>
 		) : (
 			<strong className={ className } id={ `comment-${ commentId }` }>
-				<Emojify>{ authorName }</Emojify>
+				{ authorName }
 			</strong>
 		);
 	};

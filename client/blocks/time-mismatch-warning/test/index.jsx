@@ -2,7 +2,6 @@
 
 import { shallow } from 'enzyme';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';

@@ -19,7 +19,7 @@ export function requestUnfollow( action ) {
 /**
  * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
  *
- * @param  {RemovedTag} apiResponse api response from the unfollow
+ * @param  {object} apiResponse api response from the unfollow
  * @returns {number} the ID of the tag that was removed
  */
 export const fromApi = ( apiResponse ) => {
@@ -44,7 +44,8 @@ export function receiveError( action, error ) {
 	} );
 
 	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( errorText, error ); // eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.error( errorText, error );
 	}
 	return errorNotice( errorText );
 }

@@ -154,6 +154,9 @@
 
 	p {
 		color: var( --color-text-subtle );
+		@include breakpoint-deprecated( '>960px' ) {
+			margin-bottom: 0;
+		}
 	}
 
 	.button {

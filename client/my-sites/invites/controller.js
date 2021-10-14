@@ -1,7 +1,7 @@
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { createElement } from 'react';
 import store from 'store';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
@@ -52,7 +52,7 @@ export function acceptInvite( context, next ) {
 		return;
 	}
 
-	context.primary = React.createElement( InviteAccept, {
+	context.primary = createElement( InviteAccept, {
 		siteId: context.params.site_id,
 		inviteKey: context.params.invitation_key,
 		activationKey: context.params.activation_key,

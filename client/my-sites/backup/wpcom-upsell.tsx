@@ -1,7 +1,7 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';

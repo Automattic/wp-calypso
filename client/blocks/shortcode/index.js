@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import ShortcodeFrame from './frame';
 

@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import JetpackComMasterbar from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';

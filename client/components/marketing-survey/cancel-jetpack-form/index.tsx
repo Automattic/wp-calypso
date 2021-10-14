@@ -1,8 +1,9 @@
 import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
@@ -33,6 +34,7 @@ interface Props {
 
 const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ...props } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
@@ -55,13 +57,15 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	const recordEvent = ( name: string, properties = {} ) => {
 		const { flowType } = props;
 
-		recordTracksEvent( name, {
-			cancellation_flow: flowType,
-			product_slug: purchase.productSlug,
-			is_atomic: isAtomicSite,
+		dispatch(
+			recordTracksEvent( name, {
+				cancellation_flow: flowType,
+				product_slug: purchase.productSlug,
+				is_atomic: isAtomicSite,
 
-			...properties,
-		} );
+				...properties,
+			} )
+		);
 	};
 
 	// run on mount

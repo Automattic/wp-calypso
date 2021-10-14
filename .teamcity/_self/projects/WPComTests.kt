@@ -1,15 +1,17 @@
 package _self.projects
 
+import Settings
 import _self.bashNodeScript
+import _self.lib.playwright.prepareEnvironment
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WPComTests : Project({
@@ -253,19 +255,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 		}
 
 		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					export NODE_ENV="test"
-					export PLAYWRIGHT_BROWSERS_PATH=0
-
-					# Install modules
-					${_self.yarn_install_cmd}
-
-					# Build packages
-					yarn workspace @automattic/calypso-e2e build
-				"""
-			}
+			prepareEnvironment()
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
@@ -292,7 +282,6 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 					# Run the test
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
 				""".trimIndent()
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 			}
 			bashNodeScript {
 				name = "Collect results"

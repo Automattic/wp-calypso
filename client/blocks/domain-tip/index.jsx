@@ -1,7 +1,7 @@
 import { FEATURE_CUSTOM_DOMAIN, isFreePlanProduct } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
@@ -24,7 +24,7 @@ function getQueryObject( site, siteSlug, vendor ) {
 	};
 }
 
-class DomainTip extends React.Component {
+class DomainTip extends Component {
 	static propTypes = {
 		event: PropTypes.string.isRequired,
 		hasDomainCredit: PropTypes.bool,

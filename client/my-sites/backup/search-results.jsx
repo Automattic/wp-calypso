@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';

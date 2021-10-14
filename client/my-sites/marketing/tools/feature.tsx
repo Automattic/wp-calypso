@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import React, { ReactNode, FunctionComponent } from 'react';
+import { ReactNode, FunctionComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
 interface Props {

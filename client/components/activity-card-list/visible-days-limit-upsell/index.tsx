@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
@@ -91,7 +91,9 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 					ref={ upsellRef }
 					className="visible-days-limit-upsell__call-to-action-button"
 					onClick={ trackUpgradeClick }
-					href={ isJetpackCloud() ? `/pricing/${ siteSlug }` : `/plans/${ siteSlug }` }
+					href={
+						isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }`
+					}
 				>
 					{ translate( 'Upgrade storage' ) }
 				</Button>

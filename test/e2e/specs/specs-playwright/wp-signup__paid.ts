@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 	} );
 
 	describe( 'Signup via /start', function () {
-		const targetDomain = `${ blogName }.com`;
+		const targetDomain = `${ blogName }.live`;
 
 		let cartCheckoutPage: CartCheckoutPage;
 
@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await userSignupPage.signup( email, username, signupPassword );
 		} );
 
-		it( 'Select a .com domain', async function () {
+		it( 'Select a .live domain', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
 			await domainSearchComponent.selectDomain( targetDomain );
@@ -74,16 +74,18 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await cartCheckoutPage.validateCartItem( targetDomain );
 		} );
 
-		it( 'Prices are shown with expected currency symbol for GBP', async function () {
-			const buttonText = await cartCheckoutPage.getPaymentButtonText();
-			await buttonText.startsWith( '£' );
+		it( 'Prices are shown in GBP', async function () {
+			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
+				rawString: true,
+			} ) ) as string;
+			expect( cartAmount.startsWith( '£' ) ).toBe( true );
 		} );
 
 		it( 'Remove domain purchase from cart', async function () {
 			await cartCheckoutPage.removeCartItem( targetDomain );
 		} );
 
-		it( 'Apply coupon and validate resulting purchase amount', async function () {
+		it( 'Apply coupon and validate purchase amount', async function () {
 			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
 			await cartCheckoutPage.enterCouponCode( DataHelper.config.get( 'testCouponCode' ) );
 			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
@@ -96,6 +98,13 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			// In JPY or TWD there will be no decimal digits.
 			// Drop decimals so that the result won't be affected by the currency variation.
 			expect( newAmount ).toStrictEqual( expectedAmount );
+		} );
+
+		it( 'Remove coupon code and validate purchase amount', async function () {
+			const originalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			await cartCheckoutPage.removeCouponCode( DataHelper.config.get( 'testCouponCode' ) );
+			const newAmount = await cartCheckoutPage.getCheckoutTotalAmount();
+			expect( newAmount ).toBeGreaterThan( originalAmount );
 		} );
 
 		it( 'Enter billing and payment details', async function () {
@@ -116,13 +125,16 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		} );
 
 		it( 'Verify site is not yet launched', async function () {
-			const testContext = await BrowserManager.browser.newContext();
-			const testPage = await testContext.newPage();
+			// Obtain a new Page in a separate BrowserContext.
+			const testContext = await BrowserManager.newBrowserContext();
+			const testPage = await BrowserManager.newPage( { context: testContext } );
 			// TODO: make a utility to obtain the blog URL.
 			await testPage.goto( `https://${ blogName }.wordpress.com` );
+			// View site without logging in.
 			const comingSoonPage = new ComingSoonPage( testPage );
 			await comingSoonPage.validateComingSoonState();
-			await testContext.close();
+			// Dispose the test page and context.
+			await BrowserManager.closePage( testPage, { closeContext: true } );
 		} );
 
 		it( 'Start site launch', async function () {

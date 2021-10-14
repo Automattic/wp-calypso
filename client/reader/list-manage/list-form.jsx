@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
+import { useState } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -23,7 +23,7 @@ const INITIAL_CREATE_FORM_STATE = {
 
 export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {}, onSubmit } ) {
 	const translate = useTranslate();
-	const [ formList, updateFormList ] = React.useState(
+	const [ formList, updateFormList ] = useState(
 		isCreateForm ? INITIAL_CREATE_FORM_STATE : { ...INITIAL_UPDATE_FORM_STATE, ...list }
 	);
 	const onChange = ( event ) => {

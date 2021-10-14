@@ -3,7 +3,7 @@ import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import { has } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
@@ -13,7 +13,6 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import Emojify from 'calypso/components/emojify';
 import TimeSince from 'calypso/components/time-since';
 import {
 	canBeMarkedAsSeen,
@@ -23,7 +22,7 @@ import {
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 
-class ReaderCombinedCardPost extends React.Component {
+class ReaderCombinedCardPost extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
@@ -144,7 +143,7 @@ class ReaderCombinedCardPost extends React.Component {
 					<AutoDirection>
 						<h1 className="reader-combined-card__post-title">
 							<a className="reader-combined-card__post-title-link" href={ post.URL }>
-								<Emojify>{ post.title }</Emojify>
+								{ post.title }
 							</a>
 						</h1>
 					</AutoDirection>

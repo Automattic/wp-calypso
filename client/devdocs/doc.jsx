@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import highlight from 'calypso/lib/highlight';
 import Error from './error';
 import DocService from './service';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'SingleDocument';
 
 	static propTypes = {

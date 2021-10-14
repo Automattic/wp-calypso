@@ -22,7 +22,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -219,13 +219,17 @@ export default function WPCheckout( {
 				subdivisionCode: '',
 			} );
 		} else {
+			// The tax form does not include a subdivisionCode field but the server
+			// will sometimes fill in the value on the cart itself so we should not
+			// try to update it when the field does not exist.
+			const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
 			updateLocation( {
-				countryCode: contactInfo.countryCode?.value ?? '',
-				postalCode: contactInfo.postalCode?.value ?? '',
-				subdivisionCode: contactInfo.state?.value ?? '',
+				countryCode: contactInfo.countryCode?.value,
+				postalCode: contactInfo.postalCode?.value,
+				subdivisionCode,
 			} );
 		}
-	}, [ activePaymentMethod, updateLocation, contactInfo ] );
+	}, [ activePaymentMethod, updateLocation, contactInfo, contactDetailsType ] );
 
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 

@@ -1,7 +1,6 @@
 import { useRtl } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
-import Emojify from 'calypso/components/emojify';
+import { cloneElement, Children } from 'react';
 import { stripHTML } from 'calypso/lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 
@@ -16,13 +15,15 @@ const SPACE_CHARACTERS = {
 
 /**
  * Checks whether a character is a space character
+ *
  * @param {string} character character to examine
- * @returns {bool} true if character is a space character, false otherwise
+ * @returns {boolean} true if character is a space character, false otherwise
  */
 const isSpaceCharacter = ( character ) => !! SPACE_CHARACTERS[ character ];
 
 /**
  * Get index of the first character that is not within a tag
+ *
  * @param {string} text text to examine
  * @returns {number} index not within a tag
  */
@@ -49,7 +50,8 @@ const getTaglessIndex = ( text ) => {
 
 /**
  * Gets text content from react element in case that's a leaf element
- * @param {React.Element} reactElement react element
+ *
+ * @param {Element} reactElement react element
  * @returns {string|null} returns a text content of the react element or null if it's not a leaf element
  */
 const getContent = ( reactElement ) => {
@@ -144,31 +146,26 @@ const getChildDirection = ( child, isRtl ) => {
 	return null;
 };
 
-const inlineComponents = [ Emojify ];
 /**
  * Sets a react component child directionality according to it's text content
  * That function intended to be used recursively with React.Children.map
  * It will set directionality only to the leaf components - because it does so according
  * to text content and only leaf components have those.
  *
- * @param {React.Element} child element to transform
+ * @param {Element} child element to transform
  * @param {boolean}       isRtl whether current language is RTL
- * @returns {React.Element} transformed child
+ * @returns {Element} transformed child
  */
 const setChildDirection = ( child, isRtl ) => {
 	const childDirection = getChildDirection( child, isRtl );
 
 	if ( childDirection ) {
-		return React.cloneElement( child, getDirectionProps( child, childDirection ) );
+		return cloneElement( child, getDirectionProps( child, childDirection ) );
 	}
 
-	if ( child && child.props.children ) {
-		let innerChildDirection = null;
-		const children = React.Children.map( child.props.children, ( innerChild ) => {
+	if ( child?.props?.children ) {
+		const children = Children.map( child.props.children, ( innerChild ) => {
 			if ( ! innerChild ) {
-				return innerChild;
-			}
-			if ( innerChildDirection ) {
 				return innerChild;
 			}
 
@@ -176,19 +173,10 @@ const setChildDirection = ( child, isRtl ) => {
 				return innerChild;
 			}
 
-			if ( inlineComponents.some( ( inlineComponent ) => innerChild.type === inlineComponent ) ) {
-				innerChildDirection = getChildDirection( innerChild, isRtl );
-				return innerChild;
-			}
-
 			return setChildDirection( innerChild, isRtl );
 		} );
 
-		return React.cloneElement(
-			child,
-			innerChildDirection ? getDirectionProps( child, innerChildDirection ) : null,
-			children
-		);
+		return cloneElement( child, null, children );
 	}
 
 	return child;
@@ -196,8 +184,9 @@ const setChildDirection = ( child, isRtl ) => {
 
 /**
  * Auto direction component that will set direction to child components according to their text content
+ *
  * @param {object.children} props react element props that must contain some children
- * @returns {React.Element} returns a react element with adjusted children
+ * @returns {Element} returns a react element with adjusted children
  */
 export default function AutoDirection( { children } ) {
 	const isRtl = useRtl();

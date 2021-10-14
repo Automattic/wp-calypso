@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { modeType } from 'calypso/components/domains/connect-domain-step/constants';
 import Notice from 'calypso/components/notice';
 import { getMappingVerificationErrorMessage } from './connect-domain-step-verification-status-parsing.js';

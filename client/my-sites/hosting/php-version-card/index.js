@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
@@ -58,6 +58,12 @@ const PhpVersionCard = ( {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
+			},
+			{
+				label: translate( '8.0', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '8.0',
 			},
 		];
 	};

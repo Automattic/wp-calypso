@@ -1,11 +1,11 @@
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const noop = () => {};
 
-class TokenInput extends React.PureComponent {
+class TokenInput extends PureComponent {
 	static propTypes = {
 		disabled: PropTypes.bool,
 		hasFocus: PropTypes.bool,

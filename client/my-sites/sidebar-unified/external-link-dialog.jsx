@@ -1,6 +1,5 @@
 import { Dialog } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 
 export const ExternalLinkDialog = ( { isVisible, closeModalHandler } ) => {
 	return (

@@ -3,7 +3,7 @@
  */
 
 import { expect } from 'chai';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';

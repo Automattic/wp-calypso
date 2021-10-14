@@ -1,13 +1,13 @@
 import { Button, Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ActionButtons from './actions';
 
-class ActionHeader extends React.Component {
+class ActionHeader extends Component {
 	static propTypes = {
 		breadcrumbs: PropTypes.node,
 		primaryLabel: PropTypes.string,

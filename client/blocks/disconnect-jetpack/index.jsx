@@ -3,7 +3,7 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import HappychatButton from 'calypso/components/happychat/button';

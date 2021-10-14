@@ -2,7 +2,7 @@ import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { filter, get, range } from 'lodash';
 import page from 'page';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
@@ -48,7 +48,7 @@ const helpLinks = {
 	akismet: JETPACK_SERVICE_AKISMET,
 };
 
-class PlansSetup extends React.Component {
+class PlansSetup extends Component {
 	static displayName = 'PlanSetup';
 	sentTracks = false;
 

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -250,14 +250,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-// Used to preserve backslash in some known settings fields like custom time and date formats.
-function encode_backslash( value ) {
-	if ( typeof value !== 'string' || value.indexOf( '\\' ) === -1 ) {
-		return value;
-	}
-	return value.replace( /\\/g, '\\\\' );
-}
-
 /**
  * GET/POST site settings
  *
@@ -281,14 +273,6 @@ Undocumented.prototype.settings = function ( siteId, method = 'get', data = {}, 
 
 	if ( 'get' === method ) {
 		return this.wpcom.req.get( path, { apiVersion }, fn );
-	}
-
-	// special treatment to preserve backslash in date_format
-	if ( body.date_format ) {
-		body.date_format = encode_backslash( body.date_format );
-	}
-	if ( body.time_format ) {
-		body.time_format = encode_backslash( body.time_format );
 	}
 
 	return this.wpcom.req.post( { path }, { apiVersion }, body, fn );
@@ -820,43 +804,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 };
 
 /**
- * Return a list of sharing buttons for the specified site, with optional
- * query parameters
- *
- * @param {number|string} siteId The site ID or domain
- * @param {object} query Optional query parameters
- * @param {Function} fn Method to invoke when request is complete
- */
-Undocumented.prototype.sharingButtons = function ( siteId, query, fn ) {
-	if ( 'undefined' === typeof fn && 'function' === typeof query ) {
-		fn = query;
-		query = {};
-	}
-
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/sharing-buttons', query, fn );
-};
-
-/**
- * Saves the set of sharing buttons for the specified site
- *
- * @param {number|string} siteId The site ID or domain
- * @param {Array} buttons An array of sharing button objects
- * @param {Function} fn Method to invoke when request is complete
- */
-Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteId + '/sharing-buttons',
-			body: { sharing_buttons: buttons },
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Return a list of P2's connected services
  *
  * @param {number} hubId hub identifier
@@ -1103,11 +1050,6 @@ Undocumented.prototype.updateConnection = function ( siteId, connectionId, data,
  */
 Undocumented.prototype.transactions = function ( data, fn ) {
 	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
-};
-
-Undocumented.prototype.updateCreditCard = function ( params, fn ) {
-	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
-	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
 };
 
 /**
@@ -2234,6 +2176,13 @@ Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, 
 			scroll_id: scrollId,
 		}
 	);
+};
+
+Undocumented.prototype.restoreAtomicPlanSoftware = function ( siteIdOrSlug ) {
+	return this.wpcom.req.post( {
+		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 export default Undocumented;

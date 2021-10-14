@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { settingsPath } from 'calypso/lib/jetpack/paths';

@@ -184,7 +184,7 @@ jobs:
           name: Extract strings
           command: |
             yarn run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+            mv public/calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
@@ -260,7 +260,7 @@ jobs:
           environment:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
-            USE_HARD_LINKS: "false"
+            USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -339,7 +339,7 @@ jobs:
           name: Build Desktop Linux
           environment:
             CSC_LINK: resource/certificates/win.p12
-            USE_HARD_LINKS: "false"
+            USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -548,9 +548,9 @@ workflows:
           filters:
             branches:
               only:
-              - trunk
-              - /release\/.*/
-              - /desktop\/.*/
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-assets

@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { ReactNode } from 'react';
+import { PureComponent, ReactNode } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FoldableCard from 'calypso/components/foldable-card';
 
@@ -15,10 +15,10 @@ export interface Props {
 	summary?: string | ReactNode;
 	expandedSummary?: string | ReactNode;
 	clickableHeader?: boolean;
-	onClick?: Function;
+	onClick?: () => void;
 }
 
-class LogItem extends React.PureComponent< Props > {
+class LogItem extends PureComponent< Props > {
 	renderHeader() {
 		const { header, subheader, tag } = this.props;
 

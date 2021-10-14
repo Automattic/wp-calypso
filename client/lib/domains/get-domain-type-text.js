@@ -26,7 +26,7 @@ export function getDomainTypeText(
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( context === domainInfoContext.PAGE_TITLE ) {
-				return __( 'Connected domain' );
+				return __( 'Connected Domain' );
 			}
 
 			return __( 'Managed by external provider' );

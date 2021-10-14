@@ -11,6 +11,7 @@ export function generateFlows( {
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
 	getImportDestination = noop,
+	getDestinationFromIntent = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -267,7 +268,7 @@ export function generateFlows( {
 		{
 			name: 'p2',
 			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
 			showRecaptcha: true,
@@ -405,22 +406,26 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'with-design-picker',
-			steps: [ 'user', 'domains', 'plans', 'design' ],
-			destination: getSignupDestination,
-			description: 'Default onboarding experience with design picker as the last step',
-			lastModified: '2021-03-29',
-			showRecaptcha: true,
-		},
-		{
 			name: 'setup-site',
-			steps: [ 'design-setup-site' ],
-			destination: getChecklistThemeDestination,
+			steps: isEnabled( 'signup/hero-flow' )
+				? [ 'intent', 'design-setup-site', 'site-options' ]
+				: [ 'design-setup-site' ],
+			destination: isEnabled( 'signup/hero-flow' )
+				? getDestinationFromIntent
+				: getChecklistThemeDestination,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-09-02',
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteId' ],
 			pageTitle: translate( 'Setup your site' ),
+		},
+		{
+			name: 'do-it-for-me',
+			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
+			destination: getSignupDestination,
+			description: 'A flow for DIFM Lite leads',
+			lastModified: '2021-09-30',
 		},
 	];
 

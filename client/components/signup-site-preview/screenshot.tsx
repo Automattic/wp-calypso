@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import photon from 'photon';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 import Spinner from 'calypso/components/spinner';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

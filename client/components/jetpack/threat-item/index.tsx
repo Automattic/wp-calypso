@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import React from 'react';
+import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';

@@ -1,0 +1,14 @@
+.footnotes-list {
+	margin: 76px;
+	padding: 0;
+
+	list-style-type: none;
+}
+
+.footnotes-list__item {
+	color: var( --color-neutral-light );
+
+	font-size: $font-body;
+	line-height: 2;
+	text-align: center;
+}

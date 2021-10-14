@@ -1,5 +1,5 @@
 import { escapeRegExp, findIndex, get, throttle, pick } from 'lodash';
-import React, { Fragment } from 'react';
+import { createRef, Component, Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
 import UserMentionSuggestionList from './suggestion-list';
 
@@ -16,7 +16,7 @@ const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow:
  * @returns {object} the enhanced component
  */
 export default ( WrappedComponent ) =>
-	class AddUserMentions extends React.Component {
+	class AddUserMentions extends Component {
 		matchingSuggestions = [];
 
 		static displayName = `withUserMentions( ${
@@ -34,7 +34,7 @@ export default ( WrappedComponent ) =>
 		constructor( props ) {
 			super( props );
 			// create a ref to store the textarea DOM element
-			this.textInput = React.createRef();
+			this.textInput = createRef();
 		}
 
 		componentDidMount() {

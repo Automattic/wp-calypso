@@ -252,6 +252,11 @@ textarea.billing-history__billing-details-editable {
 			text-transform: uppercase;
 		}
 
+		.receipt__monospace {
+			font-family: 'Courier', 'Courier New', monospace;
+			text-transform: uppercase;
+		}
+
 		.receipt__vat-vendor-details-number {
 			display: block;
 			margin-top: 8px;

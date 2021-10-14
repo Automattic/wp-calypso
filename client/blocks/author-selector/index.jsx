@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import { useState } from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import SwitcherShell from './switcher-shell';
 
@@ -15,8 +15,8 @@ const AuthorSelector = ( {
 	siteId,
 	transformAuthor,
 } ) => {
-	const [ search, setSearch ] = React.useState( '' );
-	const [ prevSiteId, setPrevSiteId ] = React.useState( null );
+	const [ search, setSearch ] = useState( '' );
+	const [ prevSiteId, setPrevSiteId ] = useState( null );
 
 	if ( siteId && siteId !== prevSiteId ) {
 		setPrevSiteId( siteId );

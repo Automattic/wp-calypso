@@ -12,7 +12,6 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackSearch,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
@@ -30,7 +29,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
@@ -87,7 +86,9 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
+	isPurchaseManagementLocked,
 	getRenewableSitePurchases,
+	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -432,7 +433,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, translate } = this.props;
+		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
 		const { id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
@@ -442,13 +443,7 @@ class ManagePurchase extends Component {
 		let text;
 		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if (
-			isAtomicSite &&
-			isSubscription( purchase ) &&
-			! isGSuiteOrGoogleWorkspace( purchase ) &&
-			! isTitanMail( purchase ) &&
-			! isJetpackSearch( purchase )
-		) {
+		if ( shouldRevertAtomicSiteBeforeCancel && ! config.isEnabled( 'atomic/automated-revert' ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
 		} else if ( hasAmountAvailableToRefund( purchase ) ) {
@@ -710,6 +705,7 @@ class ManagePurchase extends Component {
 			siteSlug,
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
+			canManagePurchase,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -764,34 +760,30 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
-					{ isProductOwner && ! preventRenewal && this.renderRenewButton() }
+					{ isProductOwner && canManagePurchase && (
+						<>
+							{ preventRenewal && this.renderSelectNewButton() }
+							{ ! preventRenewal && this.renderRenewButton() }
+						</>
+					) }
 				</Card>
 				<PurchasePlanDetails
 					purchaseId={ this.props.purchaseId }
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					! renderMonthlyRenewalOption &&
-					this.renderRenewNowNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					renderMonthlyRenewalOption &&
-					this.renderRenewAnnuallyNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					renderMonthlyRenewalOption &&
-					this.renderRenewMonthlyNavItem() }
-				{ isProductOwner &&
-					! preventRenewal &&
-					! isJetpackTemporarySite &&
-					this.renderUpgradeNavItem() }
-				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
-				{ isProductOwner && this.renderCancelPurchaseNavItem() }
-				{ isProductOwner && ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+				{ isProductOwner && canManagePurchase && (
+					<>
+						{ preventRenewal && this.renderSelectNewNavItem() }
+						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
+						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
+						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
+						{ ! preventRenewal && ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ this.renderEditPaymentMethodNavItem() }
+						{ this.renderCancelPurchaseNavItem() }
+						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+					</>
+				) }
 			</Fragment>
 		);
 	}
@@ -934,5 +926,10 @@ export default connect( ( state, props ) => {
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+		shouldRevertAtomicSiteBeforeCancel: shouldRevertAtomicSiteBeforeDeactivation(
+			state,
+			purchase?.id
+		),
+		canManagePurchase: ! isPurchaseManagementLocked( state, purchase?.id ),
 	};
 } )( localize( ManagePurchase ) );

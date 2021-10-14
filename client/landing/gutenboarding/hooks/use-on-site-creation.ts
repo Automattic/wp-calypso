@@ -1,7 +1,7 @@
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useDispatch, useSelect } from '@wordpress/data';
-import * as React from 'react';
+import { useMemo, useEffect } from 'react';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
@@ -38,7 +38,7 @@ export default function useOnSiteCreation(): void {
 	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const flowCompleteTrackingParams = React.useMemo(
+	const flowCompleteTrackingParams = useMemo(
 		() => ( {
 			isNewSite: !! newSite,
 			isNewUser: !! newUser,
@@ -48,7 +48,7 @@ export default function useOnSiteCreation(): void {
 		[ newSite, newUser ]
 	);
 
-	React.useEffect( () => {
+	useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
@@ -110,13 +110,7 @@ export default function useOnSiteCreation(): void {
 			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			let destination;
-			if ( design?.is_fse ) {
-				destination = `/site-editor/${ newSite.site_slug }/`;
-			} else {
-				destination = `/page/${ newSite.site_slug }/home`;
-			}
-			window.location.href = destination;
+			window.location.href = `/home/${ newSite.site_slug }/`;
 		}
 	}, [
 		flow,

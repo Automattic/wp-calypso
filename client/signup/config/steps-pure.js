@@ -28,6 +28,7 @@ export function generateSteps( {
 	currentPage = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
+	setOptionsOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -175,6 +176,13 @@ export function generateSteps( {
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
+		},
+
+		'site-options': {
+			stepName: 'site-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
 		},
 
 		test: {
@@ -707,23 +715,33 @@ export function generateSteps( {
 			},
 		},
 
-		design: {
-			stepName: 'design-picker',
+		intent: {
+			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'intent', 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 		},
 
 		'design-setup-site': {
 			stepName: 'design-setup-site',
-			props: {
-				largeThumbnails: true,
-				showOnlyThemes: true,
-			},
 			apiRequestFunction: setDesignOnSite,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
+		},
+		'difm-design': {
+			stepName: 'difm-design',
+			providesDependencies: [ 'username', 'selectedDesign', 'selectedVertical' ],
+		},
+		'site-info-collection': {
+			stepName: 'site-info-collection',
+			dependencies: [ 'siteSlug', 'username', 'selectedDesign', 'selectedVertical' ],
+			providesDependencies: [ 'cartItem' ],
+			apiRequestFunction: addPlanToCart,
+		},
+		'intent-screen': {
+			stepName: 'intent-screen',
+			dependencies: [ 'siteSlug' ],
 		},
 	};
 }

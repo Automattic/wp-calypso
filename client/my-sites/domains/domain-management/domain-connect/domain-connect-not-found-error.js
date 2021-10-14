@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 

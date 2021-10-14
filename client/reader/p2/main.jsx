@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { connect, useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import Stream from 'calypso/reader/stream';

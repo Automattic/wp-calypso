@@ -3,7 +3,9 @@
 import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
+import * as React from 'react';
+import { useGetProductVariants } from '../hooks/product-variants';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMProductSlug = string;
@@ -19,7 +21,8 @@ export type ItemVariationPickerProps = {
 	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
-	variants: WPCOMProductVariant[];
+	siteId: number | undefined;
+	productSlug: string;
 };
 
 export type OnChangeItemVariant = (
@@ -32,8 +35,11 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	selectedItem,
 	onChangeItemVariant,
 	isDisabled,
-	variants,
+	siteId,
+	productSlug,
 } ) => {
+	const variants = useGetProductVariants( siteId, productSlug );
+
 	if ( variants.length < 2 ) {
 		return null;
 	}

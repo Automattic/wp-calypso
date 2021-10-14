@@ -28,11 +28,12 @@ import { localize } from 'i18n-calypso';
 import { compact, get, findIndex, last, map, reduce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
+import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
@@ -42,6 +43,7 @@ import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -155,7 +157,10 @@ export class PlanFeatures extends Component {
 
 	renderNotice() {
 		return (
-			this.renderUpgradeDisabledNotice() || this.renderDiscountNotice() || this.renderCreditNotice()
+			this.renderUpgradeDisabledNotice() ||
+			this.renderDiscountNotice() ||
+			this.renderCreditNotice() ||
+			this.renderMarketingMessage()
 		);
 	}
 
@@ -277,6 +282,21 @@ export class PlanFeatures extends Component {
 			</Notice>,
 			bannerContainer
 		);
+	}
+
+	renderMarketingMessage() {
+		const { siteId, hasPlaceholders, isInSignup } = this.props;
+
+		if ( hasPlaceholders || isInSignup ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal( <MarketingMessage siteId={ siteId } />, bannerContainer );
 	}
 
 	renderMobileView() {
@@ -1021,7 +1041,7 @@ const ConnectedPlanFeatures = connect(
 	{
 		recordTracksEvent,
 	}
-)( withShoppingCart( localize( PlanFeatures ) ) );
+)( withShoppingCart( withCartKey( localize( PlanFeatures ) ) ) );
 
 /* eslint-enable */
 

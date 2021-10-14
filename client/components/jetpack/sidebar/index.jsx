@@ -1,7 +1,7 @@
 import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';

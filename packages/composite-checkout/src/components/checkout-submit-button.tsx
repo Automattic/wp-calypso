@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import { cloneElement } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useFormStatus, FormStatus, usePaymentMethod, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
@@ -28,7 +28,7 @@ export default function CheckoutSubmitButton( {
 	}
 
 	// We clone the element to add props
-	const clonedSubmitButton = React.cloneElement( submitButton, { disabled: isDisabled, onClick } );
+	const clonedSubmitButton = cloneElement( submitButton, { disabled: isDisabled, onClick } );
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ __( 'There was a problem with the submit button.' ) }

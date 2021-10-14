@@ -4,7 +4,6 @@ import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import themeGrid from 'calypso/assets/images/difm/theme-grid.png';
 import verticalCreative from 'calypso/assets/images/difm/vertical-creative.png';

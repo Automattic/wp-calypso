@@ -1,10 +1,10 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import DocsExample from 'calypso/devdocs/docs-example';
 import Button from '..';
 import Card from '../../card';
 import Gridicon from '../../gridicon';
 
-export default class ButtonExample extends React.PureComponent {
+export default class ButtonExample extends PureComponent {
 	static displayName = 'ButtonExample';
 
 	static defaultProps = {

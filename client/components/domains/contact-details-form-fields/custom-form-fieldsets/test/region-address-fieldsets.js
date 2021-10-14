@@ -4,7 +4,6 @@
 
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,

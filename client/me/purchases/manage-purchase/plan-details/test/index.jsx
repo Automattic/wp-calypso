@@ -1,6 +1,5 @@
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import PlanBillingPeriod from '../billing-period';
 import { PurchasePlanDetails } from '../index';
 

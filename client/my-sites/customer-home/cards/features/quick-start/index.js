@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';

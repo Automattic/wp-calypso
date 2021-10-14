@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -168,11 +168,9 @@ export function PurchaseCancel( {
 export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
-	cardId,
 }: {
 	purchaseId: number;
 	siteSlug: string;
-	cardId: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError(
@@ -194,12 +192,10 @@ export function PurchaseChangePaymentMethod( {
 				onError={ logPurchasesError }
 			>
 				<ChangePaymentMethod
-					cardId={ cardId }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					isFullWidth={ true }
 				/>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>

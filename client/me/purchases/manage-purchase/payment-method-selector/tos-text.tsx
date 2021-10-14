@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,

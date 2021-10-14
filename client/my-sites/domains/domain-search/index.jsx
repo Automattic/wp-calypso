@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -25,6 +25,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -300,4 +301,4 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( withShoppingCart( localize( DomainSearch ) ) );
+)( withShoppingCart( withCartKey( localize( DomainSearch ) ) ) );

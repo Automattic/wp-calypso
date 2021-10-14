@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';

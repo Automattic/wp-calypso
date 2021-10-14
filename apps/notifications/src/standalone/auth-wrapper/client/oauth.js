@@ -1,7 +1,7 @@
 import wpcom from 'wpcom';
 import wpcomXhrRequest from 'wpcom-xhr-request';
 
-const OAUTH_CLIENT_ID = 56641;
+const OAUTH_CLIENT_ID = 39911; // Calypso OAuth app
 const OAUTH_REDIRECT_PATH = '/';
 
 const getStoredToken = () => {

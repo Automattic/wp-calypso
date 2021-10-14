@@ -21,10 +21,14 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 	}
 
 	async waitForTemplatePartsToLoad() {
-		await this.runInCanvas( async () => {
+		return await this.runInCanvas( async () => {
 			await driverHelper.waitUntilElementNotLocated(
 				this.driver,
-				By.css( '.wp-block-template-part .components-spinner' )
+				By.css( '.wp-block-template-part > .components-spinner' )
+			);
+			await driverHelper.waitUntilElementNotLocated(
+				this.driver,
+				By.css( '.wp-block-template-part > .block-editor-warning' )
 			);
 		} );
 	}

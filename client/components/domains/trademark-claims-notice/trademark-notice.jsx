@@ -1,11 +1,11 @@
 import { Button, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import { Component, Fragment } from 'react';
 import TrademarkClaim from './trademark-claim';
 import { trademarkNoticeText } from './trademark-constants';
 
-class TrademarkNotice extends React.Component {
+class TrademarkNotice extends Component {
 	static propTypes = {
 		buttonsEnabled: PropTypes.bool.isRequired,
 		onAccept: PropTypes.func.isRequired,

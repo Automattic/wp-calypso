@@ -1,6 +1,5 @@
-/* eslint-disable import/no-nodejs-modules */
+// eslint-disable-next-line import/no-nodejs-modules
 import { readFile } from 'fs/promises';
-/* eslint-enable import/no-nodejs-modules */
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import config from 'calypso/server/config';
@@ -39,10 +38,7 @@ export function ssrSetupLocaleMiddleware() {
 			context.store.dispatch( setLocaleRawData( cachedTranslations ) );
 			next();
 		} else {
-			readFile(
-				getAssetFilePath( context.target, `languages/${ context.lang }-v1.1.json` ),
-				'utf-8'
-			)
+			readFile( getAssetFilePath( `languages/${ context.lang }-v1.1.json` ), 'utf-8' )
 				.then( ( data ) => {
 					const translations = JSON.parse( data );
 

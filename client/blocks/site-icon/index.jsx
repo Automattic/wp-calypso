@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
 import Image from 'calypso/components/image';

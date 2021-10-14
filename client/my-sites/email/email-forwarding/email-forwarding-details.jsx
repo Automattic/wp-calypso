@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
 import {
@@ -9,7 +9,7 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 
-class EmailForwardingDetails extends React.Component {
+class EmailForwardingDetails extends Component {
 	static propTypes = {
 		selectedDomainName: PropTypes.string.isRequired,
 		trackLearnMoreClick: PropTypes.func.isRequired,

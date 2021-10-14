@@ -1,7 +1,7 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import ExternalLink from 'calypso/components/external-link';

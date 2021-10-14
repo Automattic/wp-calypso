@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	hasDomainBeingUsedForPlan,
@@ -12,7 +12,7 @@ import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class DomainRefundPolicy extends React.Component {
+class DomainRefundPolicy extends Component {
 	recordCancelDomainSupportClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Cancel Domain Support Link' );
 	};

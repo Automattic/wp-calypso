@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
 import { useDispatch } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import Gravatar from 'calypso/components/gravatar';

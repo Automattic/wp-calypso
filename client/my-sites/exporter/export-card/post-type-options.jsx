@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Label from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -38,7 +38,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => ( {
  * legend.
  */
 
-class PostTypeOptions extends React.PureComponent {
+class PostTypeOptions extends PureComponent {
 	static displayName = 'PostTypeOptions';
 
 	static propTypes = {

@@ -337,6 +337,7 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
 			} )
 		)
 		.then( () => {
@@ -345,6 +346,23 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 		.catch( ( errors ) => {
 			callback( [ errors ] );
 		} );
+}
+
+export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
+	if ( ! siteTitle && ! tagline ) {
+		defer( callback );
+		return;
+	}
+
+	const settings = {
+		apiVersion: '1.4',
+		blogname: siteTitle,
+		blogdescription: tagline,
+	};
+
+	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
