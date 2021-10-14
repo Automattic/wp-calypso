@@ -245,23 +245,14 @@ function getVariantPlanProductSlugs( productSlug: string | undefined ): string[]
 		return [];
 	}
 
-	if ( objectIsProduct( chosenPlan ) ) {
-		debug(
-			'productKeys',
-			findProductKeys( {
+	return objectIsProduct( chosenPlan )
+		? findProductKeys( {
 				type: chosenPlan.type,
-			} )
-		);
-		return findProductKeys( {
-			type: chosenPlan.type,
-		} );
-	}
-
-	// : WPCOMProductSlug[]
-	return findPlansKeys( {
-		group: chosenPlan.group,
-		type: chosenPlan.type,
-	} );
+		  } )
+		: findPlansKeys( {
+				group: chosenPlan.group,
+				type: chosenPlan.type,
+		  } );
 }
 
 function isVariantOfActivePlan(
