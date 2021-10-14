@@ -1,4 +1,4 @@
-import { getProductFromSlug } from '.';
+import { getProductFromSlug } from './get-product-from-slug';
 
 interface Query {
 	term?: string;
