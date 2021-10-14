@@ -173,7 +173,7 @@
 
 body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
-	border-radius: 4px; /* stylelint-disable-line */
+	border-radius: 0; /* stylelint-disable-line */
 	margin: 0;
 	align-items: center;
 	background: #ffffff;
@@ -181,6 +181,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	padding: 16px;
 
 	@include break-mobile {
+		border-radius: 0;
 		margin-bottom: 12px;
 		box-sizing: border-box;
 		border: 1px solid #e2e4e7;
@@ -244,15 +245,18 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	&.featured-domain-suggestion--is-placeholder {
 		margin-bottom: 12px;
 		margin-top: 0;
-		border-radius: 4px; /* stylelint-disable-line */
+		border-radius: 0; /* stylelint-disable-line */
+		border-bottom: none;
 	}
 }
 
 body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
+	border-top: 1px solid rgba( 220, 220, 222, 0.64 );
 	
-	@include breakpoint-deprecated( '<960px' ) {
+	@include break-mobile {
 		margin: 0 20px;
+		border-top: none;
 	}
 }
 
