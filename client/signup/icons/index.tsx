@@ -54,21 +54,21 @@ export const write: ReactElement = (
 	</SVG>
 );
 
-export const design: React.ReactElement = (
+export const design: ReactElement = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path
 			d="M3 9H21"
 			stroke="#8C8F94"
-			stroke-width="1.6"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 		<Path
 			d="M9 21V9"
 			stroke="#8C8F94"
-			stroke-width="1.6"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 		<Rect x="3" y="3" width="18" height="18" rx="1" stroke="#8C8F94" stroke-width="1.6" />
 	</SVG>
