@@ -19,7 +19,7 @@ export const planSlugToPlanProduct = ( products, planOrProductSlug ) => {
 		? applyTestFiltersToProductsList( plan )
 		: applyTestFiltersToPlansList( plan, undefined );
 	return {
-		planOrProductSlug,
+		planSlug: planOrProductSlug,
 		plan: constantObj,
 		product: products[ planOrProductSlug ],
 	};
