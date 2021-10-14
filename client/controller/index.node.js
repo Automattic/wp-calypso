@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
@@ -18,6 +19,7 @@ export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 
 const ProviderWrappedLoggedOutLayout = ( {
 	store,
+	queryClient = new QueryClient(),
 	currentSection,
 	currentRoute,
 	currentQuery,
@@ -31,9 +33,15 @@ const ProviderWrappedLoggedOutLayout = ( {
 			currentRoute={ currentRoute }
 			currentQuery={ currentQuery }
 		>
-			<ReduxProvider store={ store }>
-				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<LayoutLoggedOut
+						primary={ primary }
+						secondary={ secondary }
+						redirectUri={ redirectUri }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		</RouteProvider>
 	</CalypsoI18nProvider>
 );
