@@ -75,7 +75,6 @@ function load_core_fse() {
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
-	remove_filter( 'block_editor_settings', __NAMESPACE__ . '\hide_template_editing', 11 );
 }
 
 /**
@@ -99,7 +98,6 @@ function unload_core_fse() {
 	}
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
-	add_filter( 'block_editor_settings', __NAMESPACE__ . '\hide_template_editing', 11 );
 }
 
 /**
