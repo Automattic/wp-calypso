@@ -5,8 +5,7 @@ import { getCountryPostalCodeSupport } from 'calypso/components/domains/contact-
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import type { CountryListItem } from '../types/country-list-item';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { ChangeEvent } from 'react';
 
 const GridRow = styled.div`

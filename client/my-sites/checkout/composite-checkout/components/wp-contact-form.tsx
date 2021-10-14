@@ -8,8 +8,11 @@ import styled from '@emotion/styled';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import ContactDetailsContainer from './contact-details-container';
-import type { CountryListItem } from '../types/country-list-item';
-import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ContactDetailsType,
+	ManagedContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;

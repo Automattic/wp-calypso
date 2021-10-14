@@ -17,9 +17,12 @@ import {
 } from '../types/wpcom-store-state';
 import DomainContactDetails from './domain-contact-details';
 import TaxFields from './tax-fields';
-import type { CountryListItem } from '../types/country-list-item';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type { ContactDetailsType, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ContactDetailsType,
+	ManagedContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const ContactDetailsFormDescription = styled.p`
 	font-size: 14px;

@@ -1,4 +1,4 @@
-import type { CountryListItem } from 'calypso/my-sites/checkout/composite-checkout/types/country-list-item';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 /**
  * Returns true if postal codes are supported on the specified country code,

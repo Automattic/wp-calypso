@@ -47,9 +47,8 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
-import type { CountryListItem } from '../types/country-list-item';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
