@@ -64,20 +64,9 @@ export const SftpCard = ( {
 		}
 	};
 
-	const onCopyPassword = () => {
-		setIsCopied( { password: true, url: false, port: false, username: false } );
-	};
-
-	const onCopyUrl = () => {
-		setIsCopied( { password: false, url: true, port: false, username: false } );
-	};
-
-	const onCopyPort = () => {
-		setIsCopied( { password: false, url: false, port: true, username: false } );
-	};
-
-	const onCopyUsername = () => {
-		setIsCopied( { password: false, url: false, port: false, username: true } );
+	const onCopy = ( field ) => {
+		setIsCopied( { password: false, url: false, port: false, username: false } );
+		setIsCopied( { [ field ]: true } );
 	};
 
 	const resetPassword = () => {
@@ -118,7 +107,7 @@ export const SftpCard = ( {
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ password }
-							onCopy={ onCopyPassword }
+							onCopy={ () => onCopy( 'password' ) }
 							compact
 						>
 							{ isCopied.password && <Gridicon icon="checkmark" /> }
@@ -228,7 +217,7 @@ export const SftpCard = ( {
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ SFTP_URL }
-							onCopy={ onCopyUrl }
+							onCopy={ () => onCopy( 'url' ) }
 							compact
 						>
 							{ isCopied.url && <Gridicon icon="checkmark" /> }
@@ -245,7 +234,7 @@ export const SftpCard = ( {
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ SFTP_PORT.toString() }
-							onCopy={ onCopyPort }
+							onCopy={ () => onCopy( 'port' ) }
 							compact
 						>
 							{ isCopied.port && <Gridicon icon="checkmark" /> }
@@ -258,7 +247,7 @@ export const SftpCard = ( {
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ username }
-							onCopy={ onCopyUsername }
+							onCopy={ () => onCopy( 'username' ) }
 							compact
 						>
 							{ isCopied.username && <Gridicon icon="checkmark" /> }
