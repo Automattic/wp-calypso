@@ -1,4 +1,5 @@
 import { getProductFromSlug } from './get-product-from-slug';
+import type { JetpackProductSlug } from './types';
 
 interface Query {
 	term?: string;
@@ -17,7 +18,7 @@ interface Query {
  * > productMatches( PRODUCT_JETPACK_BACKUP_DAILY, { term: TERM_BIENNIALLY } );
  * false
  */
-export function productMatches( productSlug: string, query: Query = {} ): boolean {
+export function productMatches( productSlug: JetpackProductSlug, query: Query = {} ): boolean {
 	const acceptedKeys = [ 'type', 'term' ];
 	const unknownKeys = Object.keys( query ).filter( ( key ) => ! acceptedKeys.includes( key ) );
 	if ( unknownKeys.length ) {
@@ -27,8 +28,9 @@ export function productMatches( productSlug: string, query: Query = {} ): boolea
 		);
 	}
 
-	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
 	const plan = getProductFromSlug( productSlug ) || {};
-	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
-	return match( 'type' ) && match( 'term' );
+	return (
+		( query.term ? plan.term === query.term : true ) &&
+		( query.type ? plan.type === query.type : true )
+	);
 }
