@@ -67,7 +67,7 @@ const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) =>
 	);
 };
 
-const ReadyNotStep: React.FunctionComponent< Props > = () => {
+const ReadyNotStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 
 	return (
@@ -93,7 +93,10 @@ const ReadyNotStep: React.FunctionComponent< Props > = () => {
 	);
 };
 
-const ReadyNoUrlStep: React.FunctionComponent< Props > = ( { platform } ) => {
+interface PropsWithoutUrl {
+	platform: string;
+}
+const ReadyNoUrlStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
 	const { __ } = useI18n();
 
 	return (

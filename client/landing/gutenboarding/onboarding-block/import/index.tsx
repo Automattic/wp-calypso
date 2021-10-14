@@ -27,12 +27,8 @@ const ImportSite: React.FunctionComponent = () => {
 			{ query.get( 'step' ) === 'ready' && (
 				<ReadyStep platform={ data.platform } website={ data.website } />
 			) }
-			{ query.get( 'step' ) === 'ready-no-url' && (
-				<ReadyNoUrlStep platform={ data.platform } website={ data.website } />
-			) }
-			{ query.get( 'step' ) === 'ready-not' && (
-				<ReadyNotStep platform={ data.platform } website={ data.website } />
-			) }
+			{ query.get( 'step' ) === 'ready-no-url' && <ReadyNoUrlStep platform={ data.platform } /> }
+			{ query.get( 'step' ) === 'ready-not' && <ReadyNotStep /> }
 		</div>
 	);
 };
