@@ -3,7 +3,8 @@
 
 .thank-you__container {
 
-	margin: calc( -60px + var( --masterbar-height ) ) 0 33px 0;
+	margin-left: -33px;
+	margin-right: -32px;
 
 	@include break-medium {
 		margin: calc( -74px + var( --masterbar-height ) ) 0 33px 0;
