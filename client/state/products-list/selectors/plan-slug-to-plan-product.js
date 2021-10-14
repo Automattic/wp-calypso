@@ -20,7 +20,7 @@ export const planSlugToPlanProduct = ( products, planOrProductSlug ) => {
 		: applyTestFiltersToPlansList( plan, undefined );
 	return {
 		planSlug: planOrProductSlug,
-		plan: constantObj,
+		plan: plan === planOrProductSlug ? null : constantObj,
 		product: products[ planOrProductSlug ],
 	};
 };
