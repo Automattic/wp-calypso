@@ -1,27 +1,58 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .breadcrumbs {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	padding: 0 16px 16px;
 	padding-bottom: 16px;
 	border-bottom: 1px solid #dcdcde;
-	margin-bottom: 32px;
+	margin: 12px 0 32px;
+
+	@include break-mobile {
+		margin-top: 0;
+		padding: 0 0 16px;
+	}
 }
 
 .breadcrumbs__items {
+	display: none;
+
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		font-size: 13px; /* stylelint-disable-line */
+		font-weight: 500; /* stylelint-disable-line */
+		color: var( --color-neutral-50 );
+
+		& a {
+			color: var( --color-neutral-50 );
+		}
+		& span:first-child {
+			font-size: $font-body;
+			font-weight: 600;
+			color: var( --color-neutral-80 );
+		}
+	}
+}
+
+.breadcrumbs__items-mobile {
 	display: flex;
 	align-items: center;
-	font-size: 13px; /* stylelint-disable-line */
-	font-weight: 500; /* stylelint-disable-line */
-	color: var( --color-neutral-50 );
 
 	& a {
 		color: var( --color-neutral-50 );
 	}
-	& span:first-child {
-		font-size: $font-body;
-		font-weight: 600;
-		color: var( --color-neutral-80 );
+
+	@include break-mobile {
+		display: none;
 	}
+}
+
+.breadcrumbs__back-arrow {
+	margin-right: 4px;
+	color: var( --color-neutral-80 );
 }
 
 .breadcrumbs__help-bubble {
@@ -34,7 +65,23 @@
 	color: var( --color-neutral-20 );
 }
 
-.breadcrumbs__buttons {
+.breadcrumbs__buttons,
+.breadcrumbs__buttons-mobile {
+	display: none;
+
+	@include break-mobile {
+		display: block;
+
+		& button {
+			margin-right: 16px;
+		}
+		& button:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.breadcrumbs__buttons-mobile {
 	display: block;
 
 	& button {
@@ -42,5 +89,9 @@
 	}
 	& button:last-child {
 		margin-right: 0;
+	}
+
+	@include break-mobile {
+		display: none;
 	}
 }

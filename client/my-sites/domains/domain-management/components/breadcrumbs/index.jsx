@@ -21,10 +21,15 @@ import './style.scss';
  * label as a link. If `helpBubble` is present, a help bubble with a popover containing the informed
  * text or element will be rendered besides that item's label.
  *
+ * `mobileItem` is a required object and follows the same structure as an item of the `items` array
+ * described earlier. It can also have a "showBackArrow" boolean property which, if true, will render
+ * a back arrow before the item label when in a mobile view.
+ *
  * The `buttons` property is optional and can contain an array of Buttons that will be rendered on the
- * right end of the breadcrumbs section.
+ * right end of the breadcrumbs section. `mobileButtons` is also optional and contains an array of
+ * components that will be shown on the right end of the breadcrumbs section in mobile view.
  */
-const Breadcrumbs = ( { items, buttons, className } ) => {
+const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } ) => {
 	const renderItemLabel = ( item ) => {
 		if ( item.href ) {
 			return <a href={ item.href }>{ item.label }</a>;
@@ -65,25 +70,66 @@ const Breadcrumbs = ( { items, buttons, className } ) => {
 		</React.Fragment>
 	);
 
-	const renderItems = () => (
-		<div className="breadcrumbs__items">{ items.map( ( item, i ) => renderItem( item, i ) ) }</div>
-	);
+	const renderBackArrow = () => {
+		if ( mobileItem.showBackArrow && mobileItem.href ) {
+			/* eslint-disable wpcalypso/jsx-gridicon-size */
+			return (
+				<a href={ mobileItem.href }>
+					<Gridicon className="breadcrumbs__back-arrow" icon="chevron-left" size={ 14 } />
+				</a>
+			);
+			/* eslint-enable wpcalypso/jsx-gridicon-size */
+		}
+		return null;
+	};
+
+	const renderMobileItem = () => {
+		return (
+			<>
+				{ renderBackArrow() }
+				<span>{ renderItemLabel( mobileItem ) }</span>
+				{ renderHelpBubble( mobileItem ) }
+			</>
+		);
+	};
+
+	const renderItems = () => {
+		return (
+			<>
+				<div className="breadcrumbs__items">
+					{ items.map( ( item, i ) => renderItem( item, i ) ) }
+				</div>
+				<div className="breadcrumbs__items-mobile">{ renderMobileItem() }</div>
+			</>
+		);
+	};
 
 	const renderButtons = () => (
-		<div className="breadcrumbs__buttons">{ buttons.map( ( button ) => button ) }</div>
+		<>
+			{ buttons && (
+				<div className="breadcrumbs__buttons">{ buttons.map( ( button ) => button ) }</div>
+			) }
+			{ mobileButtons && (
+				<div className="breadcrumbs__buttons-mobile">
+					{ mobileButtons.map( ( button ) => button ) }
+				</div>
+			) }
+		</>
 	);
 
 	return (
 		<div className={ classNames( 'breadcrumbs', className ) }>
 			{ renderItems() }
-			{ buttons && renderButtons() }
+			{ renderButtons() }
 		</div>
 	);
 };
 
 Breadcrumbs.propTypes = {
 	items: PropTypes.array.isRequired,
+	mobileItem: PropTypes.object.isRequired,
 	buttons: PropTypes.array,
+	mobileButtons: PropTypes.array,
 	className: PropTypes.string,
 };
 
