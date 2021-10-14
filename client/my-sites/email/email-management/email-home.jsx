@@ -20,6 +20,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -167,6 +168,11 @@ class EmailManagementHome extends Component {
 	}
 
 	renderLoadingPlaceholder() {
+		const { source } = this.props;
+		//Inbox has it's own loader, don't show any placeholder
+		if ( source === INBOX_SOURCE ) {
+			return null;
+		}
 		return this.renderContentWithHeader(
 			<>
 				<SectionHeader className="email-home__section-placeholder is-placeholder" />
