@@ -134,9 +134,11 @@ const Header: FunctionComponent = () => {
 		);
 	};
 
+	const additonalHeaderClassNames = currentImportState ? 'gutenboarding__header-import' : '';
+
 	return (
 		<div
-			className="gutenboarding__header"
+			className={ `gutenboarding__header ${ additonalHeaderClassNames }` }
 			role="region"
 			aria-label={ __( 'Top bar' ) }
 			tabIndex={ -1 }

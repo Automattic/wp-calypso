@@ -25,6 +25,10 @@ $padding--gutenboarding__header: $grid-unit-10;
 	@include break-small {
 		position: fixed;
 	}
+
+	&.gutenboarding__header-import {
+		border: none;
+	}
 }
 
 .gutenboarding__header-language-section {
