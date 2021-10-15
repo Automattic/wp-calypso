@@ -46,7 +46,7 @@ function getPriceMessage( props ) {
 function getPriceMessageExplanation( props ) {
 	const { purchaseCost, renewalCost, translate } = props;
 
-	//We don't need any explanation of the price at this point, because we have already handled it previusly.
+	// We don't need any explanation of the price at this point, because we have already handled it previously.
 	if ( purchaseCost.amount === 0 ) {
 		return '';
 	}
