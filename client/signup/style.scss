@@ -510,7 +510,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			padding-bottom: 0;
 			border: 0;
 			box-shadow: none;
-			background-color: #fdfdfd;
+			background-color: transparent;
 
 			@include break-small {
 				text-align: center;
