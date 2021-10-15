@@ -23,11 +23,11 @@ import './style.scss';
  *
  * `mobileItem` is a required object and follows the same structure as an item of the `items` array
  * described earlier. It can also have a "showBackArrow" boolean property which, if true, will render
- * a back arrow before the item label when in a mobile view.
+ * a back arrow before the item label when in mobile view.
  *
  * The `buttons` property is optional and can contain an array of Buttons that will be rendered on the
- * right end of the breadcrumbs section. `mobileButtons` is also optional and contains an array of
- * components that will be shown on the right end of the breadcrumbs section in mobile view.
+ * right end of the breadcrumbs. `mobileButtons` is also optional and contains an array of components
+ * that will be shown on the right end of the breadcrumbs section in mobile view.
  */
 const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } ) => {
 	const renderItemLabel = ( item ) => {
