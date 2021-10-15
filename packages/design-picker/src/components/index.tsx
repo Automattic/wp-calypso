@@ -71,6 +71,15 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 			onClick={ () => onSelect( design ) }
 		>
+			<span className="design-picker__design-option-header">
+				<svg width="28" height="6">
+					<g>
+						<rect width="6" height="6" rx="3" />
+						<rect x="11" width="6" height="6" rx="3" />
+						<rect x="22" width="6" height="6" rx="3" />
+					</g>
+				</svg>
+			</span>
 			<span
 				className={ classnames(
 					'design-picker__image-frame',
