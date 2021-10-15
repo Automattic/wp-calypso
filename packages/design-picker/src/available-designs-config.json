@@ -1,17 +1,79 @@
 {
 	"featured": [
 		{
-			"title": "Seedlet",
-			"slug": "seedlet-blocks",
-			"template": "seedlet-blocks",
-			"theme": "seedlet-blocks",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
+			"title": "Quadrat",
+			"slug": "quadrat",
+			"template": "quadrat",
+			"theme": "quadrat",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat",
+			"slug": "quadrat",
+			"template": "quadrat",
+			"theme": "quadrat",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist",
+			"slug": "geologist",
+			"template": "geologist",
+			"theme": "geologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist",
+			"slug": "geologist",
+			"template": "geologist",
+			"theme": "geologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Zoologist",
+			"slug": "zoologist",
+			"template": "zoologist",
+			"theme": "zoologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Zoologist",
+			"slug": "zoologist",
+			"template": "zoologist",
+			"theme": "zoologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Blockbase",
+			"slug": "blockbase",
+			"template": "blockbase",
+			"theme": "blockbase",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Blockbase",
+			"slug": "blockbase",
+			"template": "blockbase",
+			"theme": "blockbase",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
 			"features": []
 		},
 		{
@@ -441,20 +503,6 @@
 			"features": [ "anchorfm" ]
 		},
 		{
-			"title": "Mayland",
-			"slug": "mayland-blocks",
-			"template": "mayland-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Raleway",
-				"base": "Cabin"
-			},
-			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
 			"title": "Start with an empty page",
 			"slug": "blank-canvas",
 			"template": "blank-canvas",
@@ -462,16 +510,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
-			"features": []
-		},
-		{
-			"title": "Start with an empty page",
-			"slug": "blockbase",
-			"template": "blockbase",
-			"theme": "blockbase",
-			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
-			"is_fse": true,
 			"features": []
 		}
 	]

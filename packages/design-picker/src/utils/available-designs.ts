@@ -45,9 +45,15 @@ interface AvailableDesignsOptions {
 	useFseDesigns?: boolean;
 	randomize?: boolean;
 }
+
+/**
+ * To prevent the accumulation of tech debt, make duplicate entries for all Universal
+ * themes, one with `is_fse: true`, the other not. This tech debt can be eliminated
+ * by using the REST API for themes rather than a hardcoded list.
+ */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	useFseDesigns = false,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -62,8 +68,7 @@ export function getAvailableDesigns( {
 		};
 	}
 
-	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
-	// the FSE designs.
+	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
 		featured: designs.featured.filter( ( design ) =>
