@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import PostSchedule from 'calypso/components/post-schedule';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -101,6 +102,7 @@ class CalendarPopover extends Component {
 }
 
 export default connect( ( state, { siteId } ) => ( {
+	site: getSite( state, siteId ),
 	gmtOffset: getSiteGmtOffset( state, siteId ),
 	timezoneValue: getSiteTimezoneValue( state, siteId ),
 } ) )( CalendarPopover );
