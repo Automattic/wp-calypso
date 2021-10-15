@@ -46,34 +46,38 @@ const FseBetaOptIn: FunctionComponent = () => {
 					<SkipButton onClick={ () => pickBeta( false ) } />
 				</ActionButtons>
 			</div>
-			<ol className="fse-beta-opt-in__content">
-				<li className="fse-beta-opt-in__item">
-					<Icon icon={ siteLogo } />
-					<h3>{ __( 'Edit Your Logo' ) }</h3>
-					<p>
-						{ __(
-							'Change and update your logo and other header elements without leaving the editor'
-						) }
-					</p>
-				</li>
-				<li className="fse-beta-opt-in__item">
-					<Icon icon={ header } />
-					<h3>{ __( 'Update Your Header and Footer' ) }</h3>
-					<p>
-						{ __( 'Full Site Editing allows you to make changes on your site header and footer.' ) }
-					</p>
-				</li>
-				<li className="fse-beta-opt-in__item">
-					<Icon icon={ navigation } />
-					<h3>{ __( 'Build Your Navigation' ) }</h3>
-					<p>{ __( 'Take your site menus to the next level by adding blocks to it.' ) }</p>
-				</li>
-			</ol>
+			<div className="fse-beta-opt-in__content">
+				<ol>
+					<li>
+						<Icon icon={ siteLogo } />
+						<h3>{ __( 'Edit Your Logo' ) }</h3>
+						<p>
+							{ __(
+								'Change and update your logo and other header elements without leaving the editor'
+							) }
+						</p>
+					</li>
+					<li>
+						<Icon icon={ header } />
+						<h3>{ __( 'Update Your Header and Footer' ) }</h3>
+						<p>
+							{ __(
+								'Full Site Editing allows you to make changes on your site header and footer.'
+							) }
+						</p>
+					</li>
+					<li>
+						<Icon icon={ navigation } />
+						<h3>{ __( 'Build Your Navigation' ) }</h3>
+						<p>{ __( 'Take your site menus to the next level by adding blocks to it.' ) }</p>
+					</li>
+				</ol>
 
-			<NextButton className="fse-beta-opt-in__submit" onClick={ () => pickBeta( true ) }>
-				{ __( 'Enroll in Beta' ) }
-				<Icon icon={ arrowRight } />
-			</NextButton>
+				<NextButton className="fse-beta-opt-in__submit" onClick={ () => pickBeta( true ) }>
+					{ __( 'Enroll in Beta' ) }
+					<Icon icon={ arrowRight } />
+				</NextButton>
+			</div>
 		</div>
 	);
 };
