@@ -12,7 +12,7 @@ const selectors = {
 	changeAccountButton: '#loginAsAnotherUser',
 
 	// Signup
-	createAccountLnk: ':text("Create a new account")',
+	createAccountLink: ':text("Create a new account")',
 
 	// Magic login
 	requestMagicLoginLink: 'a[data-e2e-link="magic-login-link"]',
@@ -31,6 +31,10 @@ interface LoginCredentials {
 }
 interface TestAccount {
 	account: string;
+}
+
+interface LoginOptions {
+	landingUrl?: string;
 }
 
 /**
@@ -114,6 +118,26 @@ export class LoginPage {
 		}
 	}
 
+	/**
+	 *
+	 */
+	private async resolveUserCredentials(
+		requestedCredentials: LoginCredentials | TestAccount
+	): Promise< { [ key: string ]: string } > {
+		let username;
+		let password;
+
+		if ( 'account' in requestedCredentials ) {
+			// Test Account specified. Look for the corresponding username/password
+			// combination from the configuration file.
+			[ username, password ] = getAccountCredential( requestedCredentials.account );
+		} else {
+			// Regular username/password pair specified - destructure it.
+			( { username, password } = requestedCredentials );
+		}
+		return { username: username, password: password };
+	}
+
 	/* Log in methods */
 
 	/**
@@ -122,22 +146,37 @@ export class LoginPage {
 	 * This is the 'normal' or 'standard' way of performing log ins.
 	 *
 	 * @param {LoginCredentials | TestAccount} credentials Credentials of the user. Specify either an username/password pair or name of a test account in the configuration.
+	 * @param {LoginOptions} options Options for the login method.
 	 */
-	async login( credentials: LoginCredentials | TestAccount ): Promise< void > {
+	async login(
+		credentials: LoginCredentials | TestAccount,
+		options?: LoginOptions
+	): Promise< void > {
 		await this.visit();
 		await this.switchAccount();
 
-		let username;
-		let password;
+		// Obtain sanitized username/password combination.
+		const { username, password } = await this.resolveUserCredentials( credentials );
 
-		if ( 'account' in credentials ) {
-			// Test Account specified. Look for the corresponding username/password
-			// combination from the configuration file.
-			[ username, password ] = getAccountCredential( credentials.account );
-		} else {
-			// Regular username/password pair specified - destructure it.
-			( { username, password } = credentials );
-		}
+		// The `waitForNavigation` method triggered after clicking on the Log In button will wait for a
+		// customn URL if `options.landingUrl` is specified.
+		// This is useful if after logging into Calypso the redirect takes user away from the default
+		// redirect of `<host>/home/<blogUrl>.
+		const landingUrl = options?.landingUrl ? options.landingUrl : `**/home/**`;
+
+		await Promise.all( [
+			this.page.waitForNavigation( { url: landingUrl, waitUntil: 'load' } ),
+			this.baseflow( { username, password } ),
+		] );
+	}
+
+	/**
+	 * Log in to WordPress.com from a popup window, triggered by interaction on a published WordPress.com page.
+	 *
+	 * @param {LoginCredentials | TestAccount} credentials Credentials of the user. Specify either an username/password pair or name of a test account in the configuration.
+	 */
+	async loginFromPopup( credentials: LoginCredentials | TestAccount ): Promise< void > {
+		const { username, password } = await this.resolveUserCredentials( credentials );
 
 		await Promise.all( [
 			this.page.waitForNavigation( { waitUntil: 'load' } ),
@@ -156,7 +195,7 @@ export class LoginPage {
 
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( selectors.createAccountLnk ),
+			this.page.click( selectors.createAccountLink ),
 		] );
 	}
 

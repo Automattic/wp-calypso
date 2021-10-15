@@ -18,13 +18,13 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let notificationsComponent: NotificationsComponent;
 	const comment = DataHelper.getRandomPhrase();
 
-	setupHooks( ( args ) => {
+	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'commentingUser' } );
+		await loginPage.login( { account: 'commentingUser' }, { landingUrl: '**/read' } );
 	} );
 
 	it( 'View the Reader stream', async function () {
