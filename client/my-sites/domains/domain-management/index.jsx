@@ -8,6 +8,7 @@ import EditContactInfo from './edit-contact-info';
 import SiteRedirect from './edit/site-redirect';
 import TransferIn from './edit/transfer-in';
 import List from './list';
+import ListNew from './list-new';
 import ListAll from './list/list-all';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
