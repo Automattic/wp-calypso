@@ -29,8 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		it( `Log in as ${ commentingUser }`, async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: commentingUser } );
-			await page.waitForURL( DataHelper.getCalypsoURL( 'read' ) );
+			await loginPage.login( { account: commentingUser }, { landingUrl: '**/read' } );
 		} );
 
 		it( 'View site', async function () {
