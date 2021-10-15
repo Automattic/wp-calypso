@@ -44,9 +44,7 @@ function SiteInformationCollection( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedDIFMDesign, username: signupUserName, selectedVertical } = useSelector(
-		getSignupDependencyStore
-	);
+	const { selectedDIFMDesign, selectedVertical } = useSelector( getSignupDependencyStore );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
 
@@ -81,7 +79,7 @@ function SiteInformationCollection( {
 			) : (
 				<Widget
 					hidden={ {
-						username: username ? username : signupUserName,
+						username,
 						design: selectedDIFMDesign,
 						vertical: selectedVertical,
 					} }
