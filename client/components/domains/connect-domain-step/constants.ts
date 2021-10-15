@@ -52,10 +52,19 @@ export const domainLockStatusType = {
 	UNKNOWN: 'unknown',
 } as const;
 
-export const stepsHeadingSuggested = __( 'Suggested setup' );
-export const stepsHeadingAdvanced = __( 'Advanced setup' );
-export const stepsHeadingOwnershipVerification = __( 'Verify domain ownership' );
-export const stepsHeadingTransfer = __( 'Initial setup' );
+const stepsHeadingLabels = {
+	SUGGESTED: () => __( 'Suggested setup' ),
+	ADVANCED: () => __( 'Advanced setup' ),
+	OWNERSHIP_VERIFICATION: () => __( 'Verify domain ownership' ),
+	TRANSFER: () => __( 'Initial setup' ),
+};
+
+export const stepsHeading = {
+	SUGGESTED: stepsHeadingLabels.SUGGESTED(),
+	ADVANCED: stepsHeadingLabels.ADVANCED(),
+	OWNERSHIP_VERIFICATION: stepsHeadingLabels.OWNERSHIP_VERIFICATION(),
+	TRANSFER: stepsHeadingLabels.TRANSFER(),
+} as const;
 
 export const authCodeStepDefaultDescription = __(
 	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
@@ -68,8 +77,44 @@ export const useMyDomainInputMode = {
 	transferDomain: 'transfer-domain',
 } as const;
 
-export const transferDomainError = {
-	AUTH_CODE: __( 'Invalid auth code. Please check the specified code and try again.' ),
-	NO_SELECTED_SITE: __( 'Please specify a site.' ),
-	GENERIC_ERROR: __( 'We were unable to start the transfer.' ),
+const transferDomainErrorLabels = {
+	AUTH_CODE: () => __( 'Invalid auth code. Please check the specified code and try again.' ),
+	NO_SELECTED_SITE: () => __( 'Please specify a site.' ),
+	GENERIC_ERROR: () => __( 'We were unable to start the transfer.' ),
 };
+
+export const transferDomainError = {
+	AUTH_CODE: transferDomainErrorLabels.AUTH_CODE(),
+	NO_SELECTED_SITE: transferDomainErrorLabels.NO_SELECTED_SITE(),
+	GENERIC_ERROR: transferDomainErrorLabels.GENERIC_ERROR(),
+} as const;
+
+/**
+ * Define properties with translatable strings getters.
+ */
+Object.defineProperties( stepsHeading, {
+	SUGGESTED: {
+		get: () => stepsHeadingLabels.SUGGESTED(),
+	},
+	ADVANCED: {
+		get: () => stepsHeadingLabels.ADVANCED(),
+	},
+	OWNERSHIP_VERIFICATION: {
+		get: () => stepsHeadingLabels.OWNERSHIP_VERIFICATION(),
+	},
+	TRANSFER: {
+		get: () => stepsHeadingLabels.TRANSFER(),
+	},
+} );
+
+Object.defineProperties( transferDomainError, {
+	AUTH_CODE: {
+		get: () => transferDomainErrorLabels.AUTH_CODE(),
+	},
+	NO_SELECTED_SITE: {
+		get: () => transferDomainErrorLabels.NO_SELECTED_SITE(),
+	},
+	GENERIC_ERROR: {
+		get: () => transferDomainErrorLabels.GENERIC_ERROR(),
+	},
+} );
