@@ -66,9 +66,14 @@ export const stepsHeading = {
 	TRANSFER: stepsHeadingLabels.TRANSFER(),
 } as const;
 
-export const authCodeStepDefaultDescription = __(
-	'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
-);
+const authCodeStepDefaultDescriptionLabel = () =>
+	__(
+		'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
+	);
+
+export const authCodeStepDefaultDescription = {
+	label: authCodeStepDefaultDescriptionLabel(),
+} as const;
 
 export const useMyDomainInputMode = {
 	domainInput: 'domain-input',
@@ -116,5 +121,11 @@ Object.defineProperties( transferDomainError, {
 	},
 	GENERIC_ERROR: {
 		get: () => transferDomainErrorLabels.GENERIC_ERROR(),
+	},
+} );
+
+Object.defineProperties( authCodeStepDefaultDescription, {
+	label: {
+		get: () => authCodeStepDefaultDescriptionLabel(),
 	},
 } );

@@ -24,7 +24,7 @@ const TransferDomainStepAuthCode = ( {
 		[ domain ]
 	);
 	const authCodeDescription = (
-		<p className={ 'connect-domain-step__text' }>{ authCodeStepDefaultDescription }</p>
+		<p className={ 'connect-domain-step__text' }>{ authCodeStepDefaultDescription.label }</p>
 	);
 	return (
 		<DomainStepAuthCode
