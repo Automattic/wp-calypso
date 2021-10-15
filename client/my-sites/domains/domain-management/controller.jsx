@@ -31,6 +31,20 @@ export default {
 	domainManagementList( pageContext, next ) {
 		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
 			// TODO: set different component for the new domain list
+			pageContext.primary = (
+				<DomainManagementData
+					analyticsPath={ domainManagementList( ':site' ) }
+					analyticsTitle="Domain Management"
+					component={ DomainManagement.ListNew }
+					context={ pageContext }
+					needsContactDetails
+					needsDomains
+					needsPlans
+					needsProductsList
+				/>
+			);
+			next();
+			return;
 		}
 		pageContext.primary = (
 			<DomainManagementData
