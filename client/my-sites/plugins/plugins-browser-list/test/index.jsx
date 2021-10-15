@@ -46,7 +46,7 @@ describe( 'PluginsBrowserList basic tests', () => {
 	} );
 } );
 
-describe( 'infinite scroll variant', () => {
+describe( 'InfiniteScroll variant', () => {
 	const infiniteScrollProps = {
 		...props,
 		variant: PluginsBrowserListVariant.InfiniteScroll,
@@ -62,9 +62,15 @@ describe( 'infinite scroll variant', () => {
 		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 9 );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
 	} );
+
+	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
+		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } /> );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 3 );
+		expect( comp.find( '.plugins-browser-item.is-empty' ).length ).toBe( 3 );
+	} );
 } );
 
-describe( 'paginated variant', () => {
+describe( 'Paginated variant', () => {
 	const paginatedProps = {
 		...props,
 		variant: PluginsBrowserListVariant.Paginated,
@@ -79,9 +85,15 @@ describe( 'paginated variant', () => {
 		const comp = shallow( <PluginsBrowserList { ...paginatedProps } showPlaceholders /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
 	} );
+
+	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
+		const comp = shallow( <PluginsBrowserList { ...paginatedProps } /> );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 3 );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
+	} );
 } );
 
-describe( 'fixed variant', () => {
+describe( 'Fixed variant', () => {
 	const fixedProps = {
 		...props,
 		variant: PluginsBrowserListVariant.Fixed,
@@ -100,6 +112,3 @@ describe( 'fixed variant', () => {
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
 	} );
 } );
-
-test.todo( 'paginated prop' );
-test.todo( 'showPlaceholders prop' );
