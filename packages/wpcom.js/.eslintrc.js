@@ -1,3 +1,5 @@
+const nodeConfig = require( '@automattic/calypso-eslint-overrides/node' );
+
 module.exports = {
 	env: {
 		browser: true,
@@ -5,13 +7,7 @@ module.exports = {
 	overrides: [
 		{
 			files: './examples/server/**/*',
-			env: {
-				node: true,
-			},
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'no-console': 'off',
-			},
+			...nodeConfig,
 		},
 		{
 			files: './test/**/*',

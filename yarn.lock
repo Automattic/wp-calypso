@@ -78,6 +78,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-build@workspace:packages/calypso-build"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/webpack-rtl-plugin": ^5.0.0
     "@babel/cli": ^7.14.8
@@ -134,6 +135,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-color-schemes@workspace:packages/calypso-color-schemes"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     postcss: ^8.2.15
     postcss-custom-properties: ^11.0.0
@@ -157,6 +159,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-doctor@workspace:packages/calypso-doctor"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     chalk: ^4.1.0
     yargs: ^17.0.1
@@ -169,6 +172,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-e2e@workspace:packages/calypso-e2e"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@types/config": ^0.0.39
     "@types/jest": ^27.0.2
@@ -423,6 +427,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/effective-module-tree@workspace:packages/effective-module-tree"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     debug: ^4.1.1
     object-treeify: ^1.1.23
@@ -602,6 +607,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/languages@workspace:packages/languages"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     tslib: ^2.3.0
     typescript: ^4.4.3
@@ -1090,6 +1096,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/webpack-inline-constant-exports-plugin@workspace:packages/webpack-inline-constant-exports-plugin"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     rimraf: ^3.0.0
     webpack: ^5.54.0
@@ -1140,6 +1147,7 @@ __metadata:
   resolution: "@automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot"
   dependencies:
     "@automattic/babel-plugin-i18n-calypso": ^1.2.0
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/cli": ^7.14.8
     "@babel/core": ^7.15.0
@@ -11457,6 +11465,7 @@ __metadata:
   resolution: "calypso-codemods@workspace:packages/calypso-codemods"
   dependencies:
     5to6-codemod: ^1.8.0
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/core": ^7.15.0
     "@babel/preset-env": ^7.15.0
@@ -19837,6 +19846,7 @@ fsevents@~2.1.2:
   version: 0.0.0-use.local
   resolution: "i18n-calypso-cli@workspace:packages/i18n-calypso-cli"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     commander: ^5.0.0
     debug: ^4.0.0
@@ -37674,6 +37684,7 @@ typescript@^4.4.3:
   dependencies:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-e2e": ^0.1.0
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/mocha-debug-reporter": ^0.1.0
     "@automattic/testarmada-magellan-mocha-plugin": ^10.0.0
@@ -37762,6 +37773,7 @@ typescript@^4.4.3:
   version: 0.0.0-use.local
   resolution: "wpcom-proxy-request@workspace:packages/wpcom-proxy-request"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/runtime": ^7.15.3
     chai: ^4.3.4
@@ -37788,6 +37800,7 @@ typescript@^4.4.3:
   version: 0.0.0-use.local
   resolution: "wpcom@workspace:packages/wpcom.js"
   dependencies:
+    "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/runtime": ^7.15.3
     debug: ^4.1.1

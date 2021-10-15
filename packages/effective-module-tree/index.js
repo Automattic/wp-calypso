@@ -76,7 +76,6 @@ const findTree = ( packageJson, packagePath, parents, cache ) => {
 			}
 
 			if ( ! dependencyJson ) {
-				// eslint-disable-next-line no-console
 				console.warn( `Can't find a candidate for ${ dependency } in ${ packagePath }` );
 				return accumulated;
 			}

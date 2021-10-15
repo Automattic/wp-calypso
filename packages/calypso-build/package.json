@@ -74,6 +74,7 @@
 		"webpack-cli": "^4.8.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@automattic/calypso-typescript-config": "^1.0.0"
 	},
 	"peerDependencies": {
