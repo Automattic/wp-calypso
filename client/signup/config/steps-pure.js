@@ -731,11 +731,11 @@ export function generateSteps( {
 		},
 		'difm-design': {
 			stepName: 'difm-design',
-			providesDependencies: [ 'username', 'selectedDesign', 'selectedVertical' ],
+			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'username', 'selectedDesign', 'selectedVertical' ],
+			dependencies: [ 'siteSlug', 'selectedDIFMDesign', 'selectedVertical' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},
