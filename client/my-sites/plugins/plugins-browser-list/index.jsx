@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
-
+import { PluginsBrowserListVariant } from './types';
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -15,6 +15,11 @@ class PluginsBrowserList extends Component {
 
 	static propTypes = {
 		plugins: PropTypes.array.isRequired,
+		variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
+	};
+
+	static defaultProps = {
+		variant: PluginsBrowserListVariant.Fixed,
 	};
 
 	renderPluginsViewList() {
@@ -55,19 +60,27 @@ class PluginsBrowserList extends Component {
 	}
 
 	renderViews() {
-		const { plugins, showPlaceholders, paginated } = this.props;
-		if ( plugins.length && showPlaceholders ) {
-			if ( ! paginated ) {
-				// this case is needed to handle infinite scroll
-				return this.renderPluginsViewList().concat( this.renderPlaceholdersViews() );
-			}
+		const { plugins, showPlaceholders, variant } = this.props;
+
+		if ( ! plugins.length ) {
 			return this.renderPlaceholdersViews();
 		}
-		if ( plugins.length ) {
-			return this.renderPluginsViewList();
-		}
 
-		return this.renderPlaceholdersViews();
+		switch ( variant ) {
+			case PluginsBrowserListVariant.InfiniteScroll:
+				if ( showPlaceholders ) {
+					return this.renderPluginsViewList().concat( this.renderPlaceholdersViews() );
+				}
+				return this.renderPluginsViewList();
+			case PluginsBrowserListVariant.Paginated:
+				if ( showPlaceholders ) {
+					return this.renderPlaceholdersViews();
+				}
+				return this.renderPluginsViewList();
+			case PluginsBrowserListVariant.Fixed:
+			default:
+				return this.renderPluginsViewList();
+		}
 	}
 
 	renderLink() {

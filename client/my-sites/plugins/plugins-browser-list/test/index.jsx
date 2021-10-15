@@ -10,6 +10,7 @@ jest.mock( 'i18n-calypso', () => ( {
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import PluginsBrowserList from '../';
+import { PluginsBrowserListVariant } from '../types';
 
 const plugins = [
 	{ name: 'woocommerce', slug: 'woocommerce' },
@@ -46,27 +47,57 @@ describe( 'PluginsBrowserList basic tests', () => {
 } );
 
 describe( 'infinite scroll variant', () => {
+	const infiniteScrollProps = {
+		...props,
+		variant: PluginsBrowserListVariant.InfiniteScroll,
+	};
+
 	test( 'should show placeholders if there are no plugins', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } plugins={ [] } /> );
+		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } plugins={ [] } /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should append placeholders if there are plugins and `showPlaceholders` is set', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } showPlaceholders /> );
+		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } showPlaceholders /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)' ).length ).toBe( 9 );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 } );
 
 describe( 'paginated variant', () => {
+	const paginatedProps = {
+		...props,
+		variant: PluginsBrowserListVariant.Paginated,
+	};
+
 	test( 'should show placeholders if there are no plugins', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } paginated plugins={ [] } /> );
+		const comp = shallow( <PluginsBrowserList { ...paginatedProps } plugins={ [] } /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
 	} );
 
 	test( 'should show placeholders if there are plugins and `showPlaceholders` is set', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } paginated showPlaceholders /> );
+		const comp = shallow( <PluginsBrowserList { ...paginatedProps } showPlaceholders /> );
 		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+	} );
+} );
+
+describe( 'fixed variant', () => {
+	const fixedProps = {
+		...props,
+		variant: PluginsBrowserListVariant.Fixed,
+	};
+
+	test( 'should show placeholders if there are no plugins', () => {
+		const comp = shallow( <PluginsBrowserList { ...fixedProps } plugins={ [] } /> );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 6 );
+	} );
+
+	test( 'should not show placeholders regardless of the `showPlaceholders` prop', () => {
+		let comp = shallow( <PluginsBrowserList { ...fixedProps } showPlaceholders /> );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
+
+		comp = shallow( <PluginsBrowserList { ...fixedProps } /> );
+		expect( comp.find( 'Connect(PluginsBrowserListElement)[isPlaceholder]' ).length ).toBe( 0 );
 	} );
 } );
 
