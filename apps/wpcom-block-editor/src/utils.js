@@ -68,5 +68,7 @@ export const getPages = async () =>
 const E2E_USER_AGENT = 'wp-e2e-tests';
 
 export const isE2ETest = () => {
-	return typeof navigator !== 'undefined' && navigator.userAgent.includes( E2E_USER_AGENT ); // eslint-disable-line no-undef
+	return (
+		typeof window.navigator !== 'undefined' && window.navigator.userAgent.includes( E2E_USER_AGENT )
+	);
 };

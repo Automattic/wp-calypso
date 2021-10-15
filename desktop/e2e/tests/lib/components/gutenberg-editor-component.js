@@ -85,7 +85,6 @@ class GutenbergEditorComponent extends AsyncBaseContainer {
 				this.explicitWaitMS / 5
 			)
 		) {
-			// eslint-disable-next-line no-undef
 			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
 		}
 	}
