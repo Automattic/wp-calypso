@@ -57,7 +57,7 @@ class PluginUpload extends Component {
 			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
 		}
 
-		if ( config.isEnabled( 'marketplace-test' ) && nextProps.inProgress ) {
+		if ( config.isEnabled( 'marketplace' ) && nextProps.inProgress ) {
 			page( `/marketplace/product/install/${ nextProps.siteSlug }` );
 		}
 
@@ -94,7 +94,7 @@ class PluginUpload extends Component {
 		return (
 			<Card>
 				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
-				{ inProgress && ! config.isEnabled( 'marketplace-test' ) && this.renderProgressBar() }
+				{ inProgress && ! config.isEnabled( 'marketplace' ) && this.renderProgressBar() }
 			</Card>
 		);
 	}

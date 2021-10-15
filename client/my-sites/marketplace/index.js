@@ -24,7 +24,7 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'marketplace-yoast' ) ) {
+	if ( config.isEnabled( 'marketplace' ) ) {
 		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 		page(
 			'/marketplace/product/setup/:site?',
