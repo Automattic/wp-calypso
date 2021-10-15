@@ -254,4 +254,4 @@ export default connect(
 	{
 		successNotice,
 	}
-)( withShoppingCart( withCartKey( localize( MapDomain ) ) ) );
+)( withCartKey( withShoppingCart( localize( MapDomain ) ) ) );

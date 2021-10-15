@@ -123,4 +123,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( withShoppingCart( withCartKey( DomainTransferOrConnect ) ) );
+)( withCartKey( withShoppingCart( DomainTransferOrConnect ) ) );

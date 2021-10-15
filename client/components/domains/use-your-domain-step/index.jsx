@@ -448,4 +448,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( withShoppingCart( withCartKey( localize( UseYourDomainStep ) ) ) );
+)( withCartKey( withShoppingCart( localize( UseYourDomainStep ) ) ) );

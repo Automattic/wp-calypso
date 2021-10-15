@@ -310,4 +310,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withCartKey( localize( GSuiteAddUsers ) ) ) );
+)( withCartKey( withShoppingCart( localize( GSuiteAddUsers ) ) ) );

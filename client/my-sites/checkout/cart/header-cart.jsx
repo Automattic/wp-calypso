@@ -43,4 +43,4 @@ class HeaderCart extends Component {
 	}
 }
 
-export default withShoppingCart( withCartKey( HeaderCart ) );
+export default withCartKey( withShoppingCart( HeaderCart ) );

@@ -325,4 +325,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withCartKey( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );
+)( withCartKey( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );

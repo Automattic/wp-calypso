@@ -277,4 +277,4 @@ export default connect(
 		recordInputFocusInMapDomain,
 		recordGoButtonClickInMapDomain,
 	}
-)( withShoppingCart( withCartKey( localize( MapDomainStep ) ) ) );
+)( withCartKey( withShoppingCart( localize( MapDomainStep ) ) ) );

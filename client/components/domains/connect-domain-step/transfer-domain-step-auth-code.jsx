@@ -42,4 +42,4 @@ const TransferDomainStepAuthCode = ( {
 
 export default connect( null, {
 	transferDomainActionHandler: transferDomainAction,
-} )( withShoppingCart( withCartKey( TransferDomainStepAuthCode ) ) );
+} )( withCartKey( withShoppingCart( TransferDomainStepAuthCode ) ) );

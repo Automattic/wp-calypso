@@ -538,4 +538,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withShoppingCart( withCartKey( localize( UpsellNudge ) ) ) );
+)( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) );

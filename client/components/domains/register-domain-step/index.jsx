@@ -1633,4 +1633,4 @@ export default connect(
 		hideSitePreview,
 		showSitePreview,
 	}
-)( withShoppingCart( withCartKey( localize( RegisterDomainStep ) ) ) );
+)( withCartKey( withShoppingCart( localize( RegisterDomainStep ) ) ) );

@@ -158,4 +158,4 @@ class PopoverCart extends Component {
 	}
 }
 
-export default withShoppingCart( withCartKey( localize( PopoverCart ) ) );
+export default withCartKey( withShoppingCart( localize( PopoverCart ) ) );

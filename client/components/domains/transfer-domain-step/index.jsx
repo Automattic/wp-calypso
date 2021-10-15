@@ -721,4 +721,4 @@ export default connect(
 		recordGoButtonClickInTransferDomain,
 		recordMapDomainButtonClick,
 	}
-)( withShoppingCart( withCartKey( localize( TransferDomainStep ) ) ) );
+)( withCartKey( withShoppingCart( localize( TransferDomainStep ) ) ) );
