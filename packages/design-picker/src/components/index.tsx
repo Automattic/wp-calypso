@@ -132,6 +132,12 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 
 	return (
 		<div className="design-button-cover">
+			{ /* Make all of design button clickable and default behavior is preview  */ }
+			<button
+				className="design-button-cover__button-overlay"
+				tabIndex={ -1 }
+				onClick={ () => onPreview( design ) }
+			/>
 			<div className="design-button-cover__button-groups">
 				<Button
 					className="design-button-cover__button"

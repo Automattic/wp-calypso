@@ -326,6 +326,14 @@
 		}
 	}
 
+	.design-button-cover__button-overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+		z-index: -1;
+	}
+
 	.design-button-cover__button-groups {
 		display: flex;
 		flex-direction: column;
