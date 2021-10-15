@@ -319,7 +319,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:16.11.1-browsers
+      - image: circleci/node:16.10.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
