@@ -319,6 +319,8 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
+
+		// move any popular plan to the first place in the mobile view.
 		let popularPlanProperties;
 		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
