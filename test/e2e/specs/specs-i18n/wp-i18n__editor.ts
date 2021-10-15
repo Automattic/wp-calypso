@@ -15,6 +15,35 @@ import { Page } from 'playwright';
 const translations = {
 	en: {
 		blocks: [
+			// Core
+			{
+				blockName: 'Image',
+				blockEditorSelector: '[data-type="core/image"]',
+				blockEditorContent: [
+					'.components-placeholder__label:has-text("Image")',
+					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+				],
+				blockPanelTitle: 'Image',
+			},
+
+			// Jetpack
+			{
+				blockName: 'Contact Form',
+				blockEditorSelector: '[data-type="jetpack/contact-form"]',
+				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
+				blockPanelTitle: 'Form',
+			},
+			{
+				blockName: 'Business Hours',
+				blockEditorSelector: '[data-type="jetpack/business-hours"]',
+				blockEditorContent: [
+					'.business-hours__day-name:text("Monday")',
+					'.business-hours__hours:has-text("Add Hours")',
+				],
+				blockPanelTitle: 'Business Hours',
+			},
+
+			// Crowdsignal Forms
 			{
 				blockName: 'Applause',
 				blockEditorSelector: '[data-type="crowdsignal-forms/applause"]',
