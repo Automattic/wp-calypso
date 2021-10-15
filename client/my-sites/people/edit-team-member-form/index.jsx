@@ -60,6 +60,7 @@ export const EditTeamMemberForm = ( {
 						isJetpack={ isJetpack }
 						markChanged={ markChanged }
 						markSaved={ markSaved }
+						forceSync
 					/>
 				) }
 			</Card>

@@ -11,14 +11,10 @@ import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	requestExternalContributors,
-	requestExternalContributorsAddition,
-	requestExternalContributorsRemoval,
-} from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSite } from 'calypso/state/sites/selectors';
+import withExternalContributors from './with-external-contributors';
 import withUpdateUser from './with-update-user';
 
 import './style.scss';
@@ -141,7 +137,7 @@ class EditUserForm extends Component {
 	updateUser = ( event ) => {
 		event.preventDefault();
 
-		const { siteId, user, markSaved } = this.props;
+		const { user, markSaved } = this.props;
 		const changedSettings = this.getChangedSettings();
 		debug( 'Changed settings: ' + JSON.stringify( changedSettings ) );
 
@@ -157,15 +153,9 @@ class EditUserForm extends Component {
 		this.props.updateUser( user.ID, changedAttributes );
 
 		if ( true === changedSettings.isExternalContributor ) {
-			requestExternalContributorsAddition(
-				siteId,
-				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
-			);
+			this.props.doAddExternalContributor( user?.linked_user_ID ?? user?.ID );
 		} else if ( false === changedSettings.isExternalContributor ) {
-			requestExternalContributorsRemoval(
-				siteId,
-				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
-			);
+			this.props.doRemoveExternalContributor( user?.linked_user_ID ?? user?.ID );
 		}
 
 		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
@@ -209,7 +199,7 @@ class EditUserForm extends Component {
 						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
 						checked={ this.state.isExternalContributor }
-						disabled={ isDisabled }
+						disabled={ isDisabled || this.props.isExternalContributorsLoading }
 					/>
 				);
 				break;
@@ -316,23 +306,27 @@ class EditUserForm extends Component {
 }
 
 export default localize(
-	connect(
-		( state, { siteId, user } ) => {
-			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
-			const userId = user.linked_user_ID || user.ID;
-			const site = getSite( state, siteId );
+	withExternalContributors(
+		connect(
+			( state, { siteId, user, externalContributors } ) => {
+				const userId = user.linked_user_ID || user.ID;
+				const site = getSite( state, siteId );
 
-			return {
-				siteOwner: site?.site_owner,
-				currentUser: getCurrentUser( state ),
-				isExternalContributor: userId && externalContributors.includes( userId ),
-				isVip: isVipSite( state, siteId ),
-				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-				hasWPCOMAccountLinked: false !== user?.linked_user_ID,
-			};
-		},
-		{
-			recordGoogleEvent,
-		}
-	)( withUpdateUser( EditUserForm ) )
+				return {
+					siteOwner: site?.site_owner,
+					currentUser: getCurrentUser( state ),
+					isExternalContributor:
+						Array.isArray( externalContributors ) &&
+						userId &&
+						externalContributors.includes( userId ),
+					isVip: isVipSite( state, siteId ),
+					isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+					hasWPCOMAccountLinked: false !== user?.linked_user_ID,
+				};
+			},
+			{
+				recordGoogleEvent,
+			}
+		)( withUpdateUser( EditUserForm ) )
+	)
 );
