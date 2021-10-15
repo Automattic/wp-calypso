@@ -29,6 +29,13 @@ $progress-duration: 800ms;
 		}
 	}
 
+	&__progress-numbered-steps {
+		margin-top: 0.7em;
+		padding: 1em;
+		text-align: center;
+		color: var( --studio-gray-40 );
+	}
+	
 	&__progress-step {
 		@include onboarding-font-recoleta;
 		/* stylelint-disable-next-line scales/font-sizes */
