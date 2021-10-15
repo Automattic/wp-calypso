@@ -61,6 +61,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
+		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,
 		"jetpack/user-licensing-m1": true,
 		"jetpack/userless-checkout": true,
