@@ -83,10 +83,19 @@ class EditUserForm extends Component {
 			hasWPCOMAccountLinked,
 			isVip,
 			isWPForTeamsSite,
+			siteOwner,
 		} = this.props;
 		const allowedSettings = new Set();
 
 		if ( ! user.ID ) {
+			return [];
+		}
+
+		/*
+		 * If this is not a Jetpack site and the current user is not viewing their own profile,
+		 * the user should not be able to edit the site owner's details.
+		 */
+		if ( ! isJetpack && user.ID === siteOwner && user.ID !== currentUser.ID ) {
 			return [];
 		}
 
@@ -175,20 +184,6 @@ class EditUserForm extends Component {
 
 	isExternalRole = ( role ) =>
 		[ 'administrator', 'editor', 'author', 'contributor' ].includes( role );
-
-	canEditUser = () => {
-		const { user, isJetpack, siteOwner, currentUser } = this.props;
-
-		/*
-		 * If this is not a Jetpack site and the current user is not viewing their own profile,
-		 * the user should not be able to edit the site owner's details.
-		 */
-		if ( ! isJetpack && user.ID === siteOwner && user.ID !== currentUser.ID ) {
-			return false;
-		}
-
-		return true;
-	};
 
 	renderField = ( fieldId, isDisabled ) => {
 		let returnField = null;
@@ -285,9 +280,8 @@ class EditUserForm extends Component {
 		}
 
 		const editableFields = this.getAllowedSettingsToChange();
-		const canEditUser = this.canEditUser();
 
-		if ( ! editableFields.length || ! canEditUser ) {
+		if ( ! editableFields.length ) {
 			return null;
 		}
 
