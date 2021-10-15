@@ -5,8 +5,13 @@
 		margin-left: auto !important;
 		margin-right: auto !important;
 
-		.import__heading .onboarding-title {
-			margin-bottom: 40px;
+		.import__heading {
+			max-width: 420px;
+
+			.onboarding-title {
+				margin-bottom: 40px;
+				width: 100%;
+			}
 		}
 
 		@include break-wide {
