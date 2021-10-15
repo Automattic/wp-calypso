@@ -4,7 +4,7 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
 <div
   className="themes-list"
 >
-  <Connect(Localized(Theme))
+  <Connect(Localized(WithBlockEditorSettings(Theme)))
     actionLabel=""
     active={false}
     bookmarkRef={null}
@@ -21,7 +21,7 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
       }
     }
   />
-  <Connect(Localized(Theme))
+  <Connect(Localized(WithBlockEditorSettings(Theme)))
     actionLabel=""
     active={false}
     bookmarkRef={null}
