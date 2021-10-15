@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyStep, ReadyNotStep, ReadyNoUrlStep } from './ready';
 import ScanningStep from './scanning';
+import type * as React from 'react';
 import './style.scss';
 
 function useQuery() {

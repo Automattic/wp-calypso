@@ -1,7 +1,7 @@
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import * as React from 'react';
 import Spinner from './spinner';
+import type * as React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

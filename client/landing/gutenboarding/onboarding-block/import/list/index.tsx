@@ -1,9 +1,9 @@
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import type * as React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
