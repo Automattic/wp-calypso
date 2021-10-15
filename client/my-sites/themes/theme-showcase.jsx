@@ -20,7 +20,6 @@ import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getActiveTheme,
@@ -117,7 +116,6 @@ class ThemeShowcase extends Component {
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
-		isSiteEditorActive: PropTypes.bool,
 		blockEditorSettings: PropTypes.shape( {
 			is_fse_eligible: PropTypes.bool,
 		} ),
@@ -438,7 +436,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
-		isSiteEditorActive: isSiteUsingCoreSiteEditor( state, siteId ),
 	};
 };
 
