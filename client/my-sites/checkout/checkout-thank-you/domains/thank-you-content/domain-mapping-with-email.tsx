@@ -25,7 +25,7 @@ const DomainMappingWithEmailThankYouProps = ( {
 					stepCta: (
 						<Button
 							href={ domainMappingSetup( selectedSiteSlug, domain ) }
-							className={ 'domain-mapping__thank-you-button domain-thank-you__button' }
+							className={ 'domain-mapping-with-email__thank-you-button domain-thank-you__button' }
 							primary
 							busy={ false }
 							disabled={ false }
@@ -51,7 +51,7 @@ const DomainMappingWithEmailThankYouProps = ( {
 							} }
 						>
 							{ translate( 'Go to Inbox' ) }
-							<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
+							<Gridicon className="domain-mapping-with-email__icon-external" icon="external" />
 						</FullWidthButton>
 					),
 				},
