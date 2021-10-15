@@ -2,18 +2,26 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
+	margin: 0;
+
+	@include break-mobile {
+		/* hack to make the breadcrumbs closer to the top of the content area */
+		margin-top: -44px;
+	}
+}
+
+.breadcrumbs__content {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 16px 16px;
-	padding-bottom: 16px;
-	border-bottom: 1px solid #dcdcde;
-	margin: 12px 0 32px;
+	padding: 16px;
+}
 
-	@include break-mobile {
-		margin-top: 0;
-		padding: 0 0 16px;
-	}
+.breadcrumbs__bottom-border {
+	height: 0;
+	/* hack to make the border line cover the entire width of the content area */
+	margin: 0 -1000px 32px;
+	border-bottom: 1px solid #dcdcde;
 }
 
 .breadcrumbs__items {

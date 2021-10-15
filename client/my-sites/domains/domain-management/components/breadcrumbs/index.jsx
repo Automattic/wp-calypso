@@ -119,8 +119,11 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 
 	return (
 		<div className={ classNames( 'breadcrumbs', className ) }>
-			{ renderItems() }
-			{ renderButtons() }
+			<div className="breadcrumbs__content">
+				{ renderItems() }
+				{ renderButtons() }
+			</div>
+			<div className="breadcrumbs__bottom-border"></div>
 		</div>
 	);
 };
