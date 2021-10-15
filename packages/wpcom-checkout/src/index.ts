@@ -25,3 +25,4 @@ export * from './checkout-labels';
 export * from './get-introductory-offer-interval-display';
 export * from './join-classes';
 export * from './checkout-line-items';
+export * from './get-country-postal-code-support';

@@ -1,4 +1,4 @@
-import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { CountryListItem } from './types';
 
 /**
  * Returns true if postal codes are supported on the specified country code,

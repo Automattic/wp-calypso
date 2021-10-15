@@ -1,7 +1,10 @@
-import { Field, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	Field,
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { getCountryPostalCodeSupport } from 'calypso/components/domains/contact-details-form-fields/helper';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
