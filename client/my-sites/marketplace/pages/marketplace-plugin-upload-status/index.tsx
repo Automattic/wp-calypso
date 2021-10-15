@@ -58,7 +58,7 @@ const MarketplacePluginUpload = (): JSX.Element => {
 			{ selectedSiteId ? <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> : '' }
 			<Masterbar></Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
-				<MarketplaceProgressBar steps={ steps } curStep={ 1 } accelerateCompletion={ true } />
+				<MarketplaceProgressBar steps={ steps } currentStep={ 1 } accelerateCompletion={ true } />
 			</div>
 		</ThemeProvider>
 	);

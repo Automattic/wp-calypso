@@ -7,28 +7,12 @@ const Container = styled.div`
 	text-align: center;
 `;
 const StyledProgressBar = styled( ProgressBar )`
-	margin: 20px 0px;
+	margin: 20px 0;
 `;
 
 const Title = styled.h1`
 	font-size: 2rem;
 `;
-
-export function resolveStep(
-	steps: TranslateResult[],
-	currentPercentage: number
-): TranslateResult {
-	const totalSteps = steps.length;
-	const perStepPercentage = 100 / totalSteps;
-	const quotient = Math.floor( currentPercentage / perStepPercentage );
-
-	if ( currentPercentage <= perStepPercentage ) {
-		return steps[ 0 ];
-	} else if ( currentPercentage >= perStepPercentage * totalSteps ) {
-		return steps[ steps.length - 1 ];
-	}
-	return steps[ quotient ];
-}
 
 const SIMULATION_REFRESH_INTERVAL = 2000;
 const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 2;
@@ -42,15 +26,14 @@ const ACCELERATED_INCREMENT = 5;
 
 export default function MarketplaceProgressBar( {
 	steps,
-	curStep,
+	currentStep,
 	accelerateCompletion,
 }: {
 	steps: TranslateResult[];
-	curStep: number;
+	currentStep: number;
 	accelerateCompletion: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const [ currentStep, setCurrentStep ] = useState( steps[ curStep ] );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 	console.log( currentStep );
 	useEffect( () => {
@@ -72,21 +55,14 @@ export default function MarketplaceProgressBar( {
 		return () => clearTimeout( timeOutReference );
 	}, [ accelerateCompletion, simulatedProgressPercentage ] );
 
-	const newStep = resolveStep( steps, simulatedProgressPercentage );
-	if ( newStep !== currentStep ) {
-		setCurrentStep( newStep );
-	}
-
-	const currentNumericStep = steps.indexOf( currentStep ) + 1;
-
 	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total number of steps, Eg: Step 1 of 3  */
 	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
-		args: { currentStep: currentNumericStep, stepCount: steps.length },
+		args: { currentStep: currentStep + 1, stepCount: steps.length },
 	} );
 
 	return (
 		<Container>
-			<Title className="simulated-progressbar__title wp-brand-font">{ currentStep }</Title>
+			<Title className="simulated-progressbar__title wp-brand-font">{ steps[ currentStep ] }</Title>
 			<StyledProgressBar value={ simulatedProgressPercentage } color="#C9356E" compact />
 			<div>{ stepIndication }</div>
 		</Container>
