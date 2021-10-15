@@ -11,6 +11,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -27,10 +28,14 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	const siteId: number = useSelector( getSelectedSiteId );
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
-	const uploadedPluginId = useSelector( ( state ) => getUploadedPluginId( state, siteId ) );
+	const uploadedPluginSlug = useSelector( ( state ) => getUploadedPluginId( state, siteId ) );
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
+	const uploadedPlugin = useSelector( ( state ) =>
+		getPluginOnSite( state, siteId, uploadedPluginSlug )
+	);
+
 	const pluginActive = useSelector( ( state ) =>
-		isPluginActive( state, siteId, uploadedPluginId )
+		isPluginActive( state, siteId, uploadedPluginSlug )
 	);
 
 	useEffect( () => {
@@ -51,22 +56,22 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	}, [ pluginUploadProgress ] );
 
 	useEffect( () => {
-		if ( pluginUploadComplete && uploadedPluginId ) {
+		if ( pluginUploadComplete && uploadedPlugin ) {
 			dispatch(
 				togglePluginActivation( siteId, {
-					slug: uploadedPluginId,
-					id: `${ uploadedPluginId }/${ uploadedPluginId }`,
+					slug: uploadedPlugin?.slug,
+					id: uploadedPlugin?.id,
 				} )
 			);
 			setCurrentStep( 2 );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadComplete ] );
+	}, [ pluginUploadComplete, uploadedPlugin ] );
 
 	useEffect( () => {
 		if ( pluginActive ) {
 			waitFor( 1 ).then( () =>
-				page( `/marketplace/thank-you/${ uploadedPluginId }/${ selectedSiteSlug }` )
+				page( `/marketplace/thank-you/${ uploadedPlugin?.slug }/${ selectedSiteSlug }` )
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
