@@ -11,6 +11,7 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
+	isJetpackProductSlug,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -500,7 +501,7 @@ function LineItemSublabelAndPrice( {
 	// This is the price for one item for products with a quantity (eg. seats in a license).
 	const itemPrice = product.item_original_cost_for_quantity_one_display;
 
-	if ( isPlan( product ) ) {
+	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
 			const members = product?.current_quantity || 1;
 			const p2Options = {
@@ -578,7 +579,12 @@ function FirstTermDiscountCallout( {
 	const cost = product.product_cost_integer;
 	const isRenewal = product.is_renewal;
 
-	if ( ! isWpComPlan( planSlug ) || origCost <= cost || isRenewal || isCouponApplied( product ) ) {
+	if (
+		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
+		origCost <= cost ||
+		isRenewal ||
+		isCouponApplied( product )
+	) {
 		return null;
 	}
 
