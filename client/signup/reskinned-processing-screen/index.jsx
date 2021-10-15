@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
@@ -47,10 +48,13 @@ const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
 // to work with the onboarding signup flow.
 export default function ReskinnedProcessingScreen( props ) {
 	const { __ } = useI18n();
+	const setupSiteFeatureEnabled = isEnabled( 'signup/setup-site-after-checkout' );
 
 	const steps = useSteps( props );
 	const totalSteps = steps.current.length;
-	const isSetupSite = props.flowName === 'setup-site';
+	const isSetupSite =
+		props.flowName === 'setup-site' ||
+		( props.flowName === 'onboarding' && setupSiteFeatureEnabled );
 	const duration = isSetupSite ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
