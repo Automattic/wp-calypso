@@ -73,7 +73,7 @@ export class LoginPage {
 	/**
 	 * Switch account if an user is already logged in.
 	 */
-	private async switchAccount(): Promise< void > {
+	private async revealLoginForm(): Promise< void > {
 		await this.pageSettled();
 
 		// Change account button takes some time to fade into view if an account
@@ -153,7 +153,7 @@ export class LoginPage {
 		options?: LoginOptions
 	): Promise< void > {
 		await this.visit();
-		await this.switchAccount();
+		await this.revealLoginForm();
 
 		// Obtain sanitized username/password combination.
 		const { username, password } = await this.resolveUserCredentials( credentials );
@@ -191,7 +191,7 @@ export class LoginPage {
 	 */
 	async signup(): Promise< void > {
 		await this.visit();
-		await this.switchAccount();
+		await this.revealLoginForm();
 
 		await Promise.all( [
 			this.page.waitForNavigation(),
@@ -210,7 +210,7 @@ export class LoginPage {
 	 */
 	async requestMagicLink( user: string ): Promise< void > {
 		await this.visit();
-		await this.switchAccount();
+		await this.revealLoginForm();
 
 		await this.page.click( selectors.requestMagicLoginLink );
 		await this.page.fill( selectors.magicLinkUserInput, user );
