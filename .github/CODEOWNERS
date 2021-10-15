@@ -120,7 +120,7 @@
 
 # E2E specs
 /test/e2e @WunderBart @scinos @Automattic/quality-squad
-/packages/calypso-e2e @worldomonation
+/packages/calypso-e2e @Automattic/quality-squad
 
 # Node updates
 /.nvmrc @Automattic/ground-control
