@@ -319,13 +319,23 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
+		let popularPlanProperties;
 		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
 				freePlanProperties = properties;
 				return false;
 			}
+			// remove the popular plan.
+			if ( properties.popular && ! popularPlanProperties ) {
+				popularPlanProperties = properties;
+				return false;
+			}
 			return true;
 		} );
+
+		if ( popularPlanProperties ) {
+			reorderedPlans.unshift( popularPlanProperties );
+		}
 
 		if ( freePlanProperties ) {
 			reorderedPlans.push( freePlanProperties );
