@@ -200,7 +200,7 @@ function hide_fse_blocks( $editor_settings ) {
 /**
  * Filter for `block_editor_settings_all` in order to prevent template
  * editing from showing up in the post editor when FSE is inactive.
- *∂
+ *
  * @param [array] $editor_settings Editor settings.
  * @return array Possibly modified editor settings.
  */
