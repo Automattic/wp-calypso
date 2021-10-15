@@ -148,6 +148,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			config.isEnabled( 'use-translation-chunks' ) ||
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
+		useLoadingEllipsis: !! request.query[ 'loading-ellipsis' ],
 	} );
 
 	context.app = {
