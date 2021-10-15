@@ -5,7 +5,7 @@ export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 
 /**
- * Retrieves the query string from an object
+ * Builds a URL query string from an object. Handles null values.
  *
  * @param {Object} parameters - optional path prefix
  * @returns {string} the corresponding query string

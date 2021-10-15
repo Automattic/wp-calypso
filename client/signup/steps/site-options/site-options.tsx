@@ -59,7 +59,7 @@ const SiteOptions: React.FC< Props > = ( {
 				</FormLabel>
 				<FormInput name="tagline" id="tagline" value={ formValues.tagline } onChange={ onChange } />
 				<FormSettingExplanation>
-					<Icon icon={ tip } size={ 20 } />
+					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
 					{ translate( 'In a few words, explain what your blog is about.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>

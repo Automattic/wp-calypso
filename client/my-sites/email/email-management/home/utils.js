@@ -183,6 +183,14 @@ export function recordEmailAppLaunchEvent( { app, context, provider } ) {
 }
 
 /**
+ * Tracks an event for the key 'calypso_inbox_new_mailbox_upsell_click'.
+ *
+ */
+export function recordInboxNewMailboxUpsellClickEvent() {
+	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {} );
+}
+
+/**
  * Tracks an event for the key 'calypso_inbox_upsell'.
  *
  * @param context context, where this event was logged.

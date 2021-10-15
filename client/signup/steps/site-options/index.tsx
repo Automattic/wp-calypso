@@ -23,7 +23,10 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
-		recordTracksEvent( 'calypso_signup_submit_site_options', { siteTitle, tagline } );
+		recordTracksEvent( 'calypso_signup_submit_site_options', {
+			has_site_title: !! siteTitle,
+			has_tagline: !! tagline,
+		} );
 		dispatch( submitSignupStep( { stepName }, { siteTitle, tagline } ) );
 		goToNextStep();
 	};
@@ -44,6 +47,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 			}
 			align={ 'left' }
 			skipButtonAlign={ 'top' }
+			skipLabelText={ translate( 'Skip this step' ) }
 			isHorizontalLayout={ true }
 			{ ...props }
 		/>

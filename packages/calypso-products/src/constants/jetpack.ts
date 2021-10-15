@@ -169,6 +169,11 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 		ratio: 12,
 	},
 };
+// Key/value: Superseding product/Products superseded (yearly terms)
+export const JETPACK_PRODUCT_UPGRADE_MAP: Record< string, string[] > = {
+	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: [ PRODUCT_JETPACK_BACKUP_T1_YEARLY ],
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: [ PRODUCT_JETPACK_BACKUP_DAILY ],
+};
 
 // Plans
 export const PLAN_JETPACK_FREE = 'jetpack_free';
@@ -274,6 +279,17 @@ export const JETPACK_PLANS_BY_TERM = <const>[
 	...JETPACK_RESET_PLANS_BY_TERM,
 ];
 export const BEST_VALUE_PLANS = <const>[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+// Key/value: Superseding plan/Plans superseded (yearly terms)
+export const JETPACK_PLAN_UPGRADE_MAP: Record< string, string[] > = {
+	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [ PLAN_JETPACK_SECURITY_T1_YEARLY ],
+	[ PLAN_JETPACK_SECURITY_REALTIME ]: [ PLAN_JETPACK_SECURITY_DAILY ],
+	[ PLAN_JETPACK_COMPLETE ]: [
+		PLAN_JETPACK_SECURITY_REALTIME,
+		PLAN_JETPACK_SECURITY_DAILY,
+		PLAN_JETPACK_SECURITY_T2_YEARLY,
+		PLAN_JETPACK_SECURITY_T1_YEARLY,
+	],
+};
 
 // URL
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';

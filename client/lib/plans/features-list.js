@@ -1376,7 +1376,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,
 		getTitle: () => i18n.translate( 'All Backup features' ),
-		isHighlighted: () => true,
 	},
 	[ FEATURE_JETPACK_PRODUCT_VIDEOPRESS ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
@@ -1393,7 +1392,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING ]: {
 		getSlug: () => FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
-		isHighlighted: () => true,
 	},
 	/* END - Jetpack tiered product-specific features */
 };

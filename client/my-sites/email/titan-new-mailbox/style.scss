@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.titan-new-mailbox .form-label .form-text-input-with-affixes__suffix {
+.titan-new-mailbox .form-label .form-text-input-with-affixes__suffix,
+.titan-new-mailbox .form-label .form-text-input-with-affixes__prefix {
 	font-weight: normal;
 }
 

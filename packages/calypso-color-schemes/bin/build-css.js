@@ -30,6 +30,5 @@ postcss( [
 ] )
 	.process( output.css, { from: INPUT_FILE } )
 	.catch( ( e ) => {
-		// eslint-disable-next-line no-console
 		console.error( 'calypso-color-schemes', e );
 	} );

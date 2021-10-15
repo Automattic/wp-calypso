@@ -15,6 +15,7 @@ const TransferDomainStepAuthCode = ( {
 	pageSlug,
 	transferDomainActionHandler,
 	progressStepList,
+	...props
 } ) => {
 	const { __ } = useI18n();
 	const recordTransferButtonClickInUseYourDomain = useCallback(
@@ -26,6 +27,7 @@ const TransferDomainStepAuthCode = ( {
 	);
 	return (
 		<DomainStepAuthCode
+			{ ...props }
 			buttonMessage={ __( 'Check readiness for transfer' ) }
 			customHeading={ stepsHeadingTransfer }
 			authCodeDescription={ authCodeDescription }

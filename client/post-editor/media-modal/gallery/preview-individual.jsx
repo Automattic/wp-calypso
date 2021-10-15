@@ -20,7 +20,7 @@ class EditorMediaModalGalleryPreviewIndividual extends Component {
 						key={ item.ID }
 						dangerouslySetInnerHTML={ { __html: markup.get( this.props.site, item ) } }
 					/>
-				); //eslint-disable-line react/no-danger
+				); // eslint-disable-line react/no-danger
 			}
 
 			return cloneElement( caption, { key: item.ID } );

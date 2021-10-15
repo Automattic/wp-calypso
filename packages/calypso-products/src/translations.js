@@ -52,8 +52,8 @@ export const getJetpackProductsShortNames = () => {
 		} ),
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'Backup' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup Pro' ),
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup Pro' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup' ),
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
@@ -248,15 +248,7 @@ export const getJetpackProductsDescriptions = () => {
 		'Save every change with real-time backups and get back online quickly with one-click restores.'
 	);
 	const backupT2Description = translate(
-		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
-		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
-		{
-			comment: 'Plural string used in case TB needs to be pluralized',
-			count: 1,
-			args: {
-				storageAmount: 1,
-			},
-		}
+		'Save every change with real-time backups and get back online quickly with one-click restores.'
 	);
 	const searchDescription = translate(
 		'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'

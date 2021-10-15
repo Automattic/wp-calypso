@@ -36,6 +36,7 @@
 		"lodash.mergewith": "^4.6.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@automattic/calypso-typescript-config": "^1.0.0",
 		"i18n-calypso": "^5.0.0",
 		"jest": "^27.2.4",

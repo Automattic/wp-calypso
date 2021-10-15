@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable import/no-nodejs-modules,no-console */
-
 // find all the packages
 const { execSync } = require( 'child_process' );
 const path = require( 'path' );

@@ -31,7 +31,6 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
-import { INBOX } from 'calypso/my-sites/email/inbox';
 import {
 	emailManagement,
 	emailManagementNewTitanAccount,
@@ -69,10 +68,12 @@ class TitanAddMailboxes extends Component {
 	}
 
 	recordClickEvent = ( eventName, eventProps ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
+			provider: TITAN_PROVIDER_NAME,
+			source,
 		} );
 	};
 
@@ -118,7 +119,7 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleContinue = async () => {
-		const { selectedSite, source } = this.props;
+		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
 
 		const validatedMailboxes = validateMailboxes( mailboxes );
@@ -146,21 +147,10 @@ class TitanAddMailboxes extends Component {
 			validatedMailboxUuids,
 		} );
 
-		const eventProps = {
+		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
-		};
-
-		if ( source === INBOX ) {
-			eventProps.product = 'inbox';
-			eventProps.provider = TITAN_PROVIDER_NAME;
-			eventProps.source = INBOX;
-		}
-
-		this.recordClickEvent(
-			'calypso_email_management_titan_add_mailboxes_continue_button_click',
-			eventProps
-		);
+		} );
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );

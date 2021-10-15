@@ -92,7 +92,7 @@ export class CommentContent extends Component {
 						<AutoDirection>
 							<div
 								className="comment__content-body"
-								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } //eslint-disable-line react/no-danger
+								dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } // eslint-disable-line react/no-danger
 							/>
 						</AutoDirection>
 					</div>

@@ -2,12 +2,14 @@
 
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import WebPreview from 'calypso/components/web-preview';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import DemoTile from 'calypso/signup/steps/difm-design-picker/demo-tile';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import VerticalTemplateMapping from './vertical-template-mapping';
 
 const Container = styled.div`
@@ -33,9 +35,14 @@ const VerticalsGrid = styled.div`
 
 export default function DIFMDesignPickerStep( props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ sitePreviewURL, setSitePreviewURL ] = useState( null );
 	const [ selectedVertical, setSelectedVertical ] = useState( 'Local Services' );
 	const { templates } = VerticalTemplateMapping[ selectedVertical ] ?? [];
+
+	useEffect( () => {
+		dispatch( saveSignupStep( { stepName: props.stepName } ) );
+	}, [ dispatch, props.stepName ] );
 
 	const pickDesign = ( selectedDesign ) => {
 		props.submitSignupStep(
@@ -43,8 +50,8 @@ export default function DIFMDesignPickerStep( props ) {
 				stepName: props.stepName,
 			},
 			{
-				selectedDesign,
-				selectedVertical,
+				selectedDIFMDesign: selectedDesign,
+				selectedVertical: selectedVertical,
 			}
 		);
 

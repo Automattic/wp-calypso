@@ -42,7 +42,6 @@ const PREMIUM = 'PREMIUM_PLAN';
 
 
 
-/* eslint-disable no-console */
 console.log( /* inline */ 'PLANS_REQUEST', /* inline */ 'PLANS_RECEIVE' );
 console.log( /* inline */ 'BLOGGER_PLAN', /* inline */ 'PREMIUM_PLAN', plans );
 console.log( /* inline */ 42, /* inline */ 3.14159, /* inline */ true, /* inline */ false, /* inline */ null );

@@ -75,6 +75,10 @@
 	flex: 0 0 auto;
 	margin: 4px;
 	text-transform: none;
+
+	.gridicons-checkmark {
+		margin-right: 2px;
+	}
 }
 
 input[type='text'].sftp-card__copy-input {

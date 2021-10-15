@@ -1,3 +1,4 @@
+import debugModule from 'debug';
 import {
 	defer,
 	difference,
@@ -35,6 +36,8 @@ import {
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+
+const debug = debugModule( 'calypso:signup' );
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -109,6 +112,7 @@ export default class SignupFlowController {
 		try {
 			this._assertFlowHasValidDependencies();
 		} catch ( ex ) {
+			debug( 'Invalid dependencies in flow : ' + ex.message );
 			if ( this._flowName !== flows.defaultFlowName ) {
 				// redirect to the default signup flow, hopefully it will be valid
 				page( getStepUrl() );

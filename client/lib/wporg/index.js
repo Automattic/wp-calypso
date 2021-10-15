@@ -16,6 +16,7 @@ const DEFAULT_CATEGORY = 'all';
 const DEFAULT_FIRST_PAGE = 1;
 
 const WPORG_THEMES_ENDPOINT = 'https://api.wordpress.org/themes/info/1.1/';
+const WPORG_CORE_TRANSLATIONS_ENDPOINT = 'https://api.wordpress.org/translations/core/1.0/';
 
 function getWporgLocaleCode() {
 	const currentLocaleCode = i18n.getLocaleSlug();
@@ -45,7 +46,7 @@ async function pluginRequest( url, body ) {
 	}
 }
 
-async function themeRequest( url, query ) {
+async function getRequest( url, query ) {
 	const response = await fetch( `${ url }?${ stringifyQs( query ) }`, {
 		method: 'GET',
 		headers: { Accept: 'application/json' },
@@ -137,7 +138,7 @@ export function fetchThemeInformation( themeId ) {
 		'request[slug]': themeId,
 	};
 
-	return themeRequest( WPORG_THEMES_ENDPOINT, query );
+	return getRequest( WPORG_THEMES_ENDPOINT, query );
 }
 
 /**
@@ -161,5 +162,17 @@ export function fetchThemesList( options = {} ) {
 		'request[per_page]:': number,
 	};
 
-	return themeRequest( WPORG_THEMES_ENDPOINT, query );
+	return getRequest( WPORG_THEMES_ENDPOINT, query );
+}
+
+/**
+ * Get available WP.org translations.
+ * See: https://codex.wordpress.org/WordPress.org_API
+ *
+ * @param  {string}        wpVersion       The WordPress.org version, like "5.8.1".
+ * @returns {Promise.<object>}             A promise that returns an object containing a `translations` array.
+ */
+export function fetchTranslationsList( wpVersion ) {
+	const query = { version: wpVersion };
+	return getRequest( WPORG_CORE_TRANSLATIONS_ENDPOINT, query );
 }

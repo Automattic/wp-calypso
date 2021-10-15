@@ -19,12 +19,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'beta-testing',
-		paths: [ '/beta-testing' ],
-		module: 'calypso/my-sites/beta-testing',
-		group: 'sites',
-	},
-	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',

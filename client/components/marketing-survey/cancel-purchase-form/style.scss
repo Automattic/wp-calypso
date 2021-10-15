@@ -134,6 +134,14 @@
 	}
 }
 
+.info-popover.cancel-purchase-form__atomic-revert-more-info {
+	vertical-align: middle;
+}
+
+.info-popover__tooltip.cancel-purchase-form__atomic-revert-more-info .popover__inner {
+	max-width: 400px;
+}
+
 .cancel-purchase-form__backups {
 	background-color: var( --studio-blue-0 );
 	border: 1px solid var( --studio-blue-5 );

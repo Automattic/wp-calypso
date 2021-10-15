@@ -43,7 +43,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from 'calypso/lib/gsuite/constants';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
-import { getTitanProductName } from 'calypso/lib/titan';
+import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
@@ -59,7 +59,6 @@ import {
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
-import { INBOX } from 'calypso/my-sites/email/inbox';
 import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -155,14 +154,10 @@ class EmailProvidersComparison extends Component {
 	goToEmailForwarding = () => {
 		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
 
-		const eventProperties = {
+		recordTracksEvent( 'calypso_email_providers_add_click', {
 			provider: 'email-forwarding',
-		};
-
-		if ( source === INBOX ) {
-			eventProperties.source = source;
-		}
-		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
+			source,
+		} );
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -195,20 +190,15 @@ class EmailProvidersComparison extends Component {
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
 
-		const eventProperties = {
+		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
 			provider: TITAN_PROVIDER_NAME,
+			source,
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
-		};
-
-		if ( source === INBOX ) {
-			eventProperties.source = INBOX;
-		}
-
-		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
+		} );
 
 		const validatedTitanMailboxUuids = validatedTitanMailboxes.map( ( mailbox ) => mailbox.uuid );
 
@@ -268,19 +258,14 @@ class EmailProvidersComparison extends Component {
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
-		const eventProperties = {
+		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
 			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_can_add_email: userCanAddEmail ? 1 : 0,
-		};
-
-		if ( source === INBOX ) {
-			eventProperties.source = INBOX;
-		}
-
-		recordTracksEvent( 'calypso_email_providers_add_click', eventProperties );
+		} );
 
 		if ( ! usersAreValid || ! userCanAddEmail ) {
 			return;
@@ -477,8 +462,7 @@ class EmailProvidersComparison extends Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial =
-			hasCartDomain || domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (

@@ -194,6 +194,7 @@ export function createTransactionEndpointRequestPayload( {
 	pan,
 	gstin,
 	nik,
+	useForAllSubscriptions,
 }: TransactionRequest ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart,
@@ -223,6 +224,7 @@ export function createTransactionEndpointRequestPayload( {
 			pan,
 			gstin,
 			nik,
+			useForAllSubscriptions,
 		},
 	};
 }

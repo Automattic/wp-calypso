@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, useRtl } from 'i18n-calypso';
 import { ChangeEvent, FunctionComponent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -50,6 +50,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
@@ -86,7 +87,8 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
-					suffix={ `@${ domain }` }
+					prefix={ isRtl ? `\u200e@${ domain }\u202c` : null }
+					suffix={ isRtl ? null : `\u200e@${ domain }\u202c` }
 				/>
 			</LabelWrapper>
 		);

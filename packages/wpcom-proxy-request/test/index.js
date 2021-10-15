@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 import { expect } from 'chai';
 import proxy, { reloadProxy } from '../';
 

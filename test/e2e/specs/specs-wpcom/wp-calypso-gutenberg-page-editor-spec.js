@@ -1,6 +1,5 @@
 import assert from 'assert';
 import config from 'config';
-import PagePreviewComponent from '../../lib/components/page-preview-component';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper';
 import * as driverManager from '../../lib/driver-manager.js';
@@ -62,51 +61,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await gEditorSidebarComponent.setSharingButtons( false );
 			await gEditorSidebarComponent.closeSharingSection();
 		} );*/
-
-		it( 'Can launch page preview', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.ensureSaved();
-			await gEditorComponent.launchPreview();
-		} );
-
-		it( 'Can see correct page title in preview', async function () {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( this.driver );
-			const actualPageTitle = await pagePreviewComponent.pageTitle();
-			assert.strictEqual(
-				actualPageTitle.toUpperCase(),
-				pageTitle.toUpperCase(),
-				'The page preview title is not correct'
-			);
-		} );
-
-		it( 'Can see correct page content in preview', async function () {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( this.driver );
-			const content = await pagePreviewComponent.pageContent();
-			assert.strictEqual(
-				content.indexOf( pageQuote ) > -1,
-				true,
-				'The page preview content (' +
-					content +
-					') does not include the expected content (' +
-					pageQuote +
-					')'
-			);
-		} );
-
-		it( 'Can see the image uploaded in the preview', async function () {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( this.driver );
-			const imageDisplayed = await pagePreviewComponent.imageDisplayed( fileDetails );
-			return assert.strictEqual(
-				imageDisplayed,
-				true,
-				'Could not see the image in the web preview'
-			);
-		} );
-
-		it( 'Can close page preview', async function () {
-			const pagePreviewComponent = await PagePreviewComponent.Expect( this.driver );
-			await pagePreviewComponent.close();
-		} );
 
 		it( 'Can publish and preview published content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
