@@ -18,9 +18,9 @@ interface Props {
 
 // TODO: Adding take the masterclass
 const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
-	write: [],
+	write: [ 'design-setup-site' ],
 	design: [],
-	skip: [],
+	skip: [ 'design-setup-site' ],
 };
 
 export default function IntentStep( props: Props ): React.ReactNode {
@@ -37,23 +37,12 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		branchSteps( EXCLUDE_STEPS[ startingPoint ] );
 		recordTracksEvent( 'calypso_signup_select_starting_point', { starting_point: startingPoint } );
 		dispatch( submitSignupStep( { stepName }, { startingPoint } ) );
-
-		if ( startingPoint !== 'design' ) {
-			dispatch(
-				submitSignupStep(
-					{ stepName: 'design-setup-site' },
-					{ selectedDesign: { theme: 'zoologist' } }
-				)
-			);
-		}
-
 		goToNextStep();
 	};
 
 	// Only do following things when mounted
 	React.useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
-		dispatch( saveSignupStep( { stepName: 'design-setup-site' } ) );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
