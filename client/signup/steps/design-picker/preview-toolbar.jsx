@@ -36,7 +36,10 @@ const DesignPickerPreviewToolbar = ( {
 							} ) }
 							onClick={ () => setDeviceViewport( device ) }
 						>
-							<Icon size={ 24 } icon={ devices.current[ device ].icon } />
+							<Icon
+								size={ device === 'computer' ? 36 : 24 }
+								icon={ devices.current[ device ].icon }
+							/>
 						</Button>
 					) ) }
 				</div>
