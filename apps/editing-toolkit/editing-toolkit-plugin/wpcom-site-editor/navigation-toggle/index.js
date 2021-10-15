@@ -1,5 +1,4 @@
 import domReady from '@wordpress/dom-ready';
-import './style.scss';
 
 function injectNavigationToggleOnClickHandler() {
 	// Prevent adding the event listener multiple times
