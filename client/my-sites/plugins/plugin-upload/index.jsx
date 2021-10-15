@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
@@ -52,7 +53,11 @@ class PluginUpload extends Component {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
 
-		if ( nextProps.inProgress ) {
+		if ( nextProps.complete ) {
+			page( `/plugins/${ nextProps.pluginId }/${ nextProps.siteSlug }` );
+		}
+
+		if ( config.isEnabled( 'marketplace-test' ) && nextProps.inProgress ) {
 			page( `/marketplace/product/install/${ nextProps.siteSlug }` );
 		}
 
@@ -89,7 +94,7 @@ class PluginUpload extends Component {
 		return (
 			<Card>
 				{ ! inProgress && ! complete && <UploadDropZone doUpload={ uploadAction } /> }
-				{ inProgress && this.renderProgressBar() }
+				{ inProgress && ! config.isEnabled( 'marketplace-test' ) && this.renderProgressBar() }
 			</Card>
 		);
 	}

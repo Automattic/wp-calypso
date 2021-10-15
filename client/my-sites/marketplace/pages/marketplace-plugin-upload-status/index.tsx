@@ -1,41 +1,36 @@
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
+import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isLoaded, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const MarketplacePluginUpload = (): JSX.Element => {
+	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const isPluginStateLoaded = useSelector( ( state ) => isLoaded( state, [ selectedSiteId ] ) );
-	const isPluginStateFetching = useSelector( ( state ) =>
-		isRequestingForSites( state, [ selectedSiteId ] )
-	);
-	const pluginUploadProgress = useSelector( ( state ) =>
-		getPluginUploadProgress( state, [ selectedSiteId ] )
-	);
-	const pluginUploadError = useSelector( ( state ) =>
-		getPluginUploadError( state, [ selectedSiteId ] )
-	);
-	const uploadedPluginId = useSelector( ( state ) =>
-		getUploadedPluginId( state, [ selectedSiteId ] )
-	);
-	const pluginUploadComplete = useSelector( ( state ) =>
-		isPluginUploadComplete( state, [ selectedSiteId ] )
+	const siteId: number = useSelector( getSelectedSiteId );
+	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
+	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
+	const uploadedPluginId = useSelector( ( state ) => getUploadedPluginId( state, siteId ) );
+	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
+	const pluginActive = useSelector( ( state ) =>
+		isPluginActive( state, siteId, uploadedPluginId )
 	);
 
 	useEffect( () => {
@@ -43,22 +38,55 @@ const MarketplacePluginUpload = (): JSX.Element => {
 			page( `/plugins/upload/${ selectedSiteSlug }` );
 			return;
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginUploadError ] );
 
-	useEffect( () => {}, [] );
+	useEffect( () => {
+		if ( 100 === pluginUploadProgress ) {
+			// For smaller uploads or fast networks give
+			// the chance to Upload Plugin step to be shown
+			// before moving to next step.
+			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
+		}
+	}, [ pluginUploadProgress ] );
+
+	useEffect( () => {
+		if ( pluginUploadComplete && uploadedPluginId ) {
+			dispatch(
+				togglePluginActivation( siteId, {
+					slug: uploadedPluginId,
+					id: `${ uploadedPluginId }/${ uploadedPluginId }`,
+				} )
+			);
+			setCurrentStep( 2 );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ pluginUploadComplete ] );
+
+	useEffect( () => {
+		if ( pluginActive ) {
+			waitFor( 1 ).then( () =>
+				page( `/marketplace/thank-you/${ uploadedPluginId }/${ selectedSiteSlug }` )
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ pluginActive ] );
 
 	const steps = [
 		translate( 'Uploading plugin' ),
 		translate( 'Installing plugin' ),
 		translate( 'Activating plugin' ),
 	];
+
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker path="/marketplace/product/install/:site" title="Plugins > Installing" />
-			{ selectedSiteId ? <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> : '' }
-			<Masterbar></Masterbar>
+			{ siteId ? <QueryJetpackPlugins siteIds={ [ siteId ] } /> : '' }
+			<Masterbar>
+				<Item>{ translate( 'Plugin Installation' ) }</Item>
+			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
-				<MarketplaceProgressBar steps={ steps } currentStep={ 1 } accelerateCompletion={ true } />
+				<MarketplaceProgressBar steps={ steps } currentStep={ currentStep } />
 			</div>
 		</ThemeProvider>
 	);
