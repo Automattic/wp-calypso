@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	LoginFlow,
-	// NewPostFlow,
+	NewPostFlow,
 	ChangeUILanguageFlow,
 	GutenbergEditorPage,
 	setupHooks,
@@ -93,18 +93,15 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
 			await changeUILanguageFlow.changeUILanguage( locale );
+
+			await page.goto( DataHelper.getCalypsoURL( '/' ) );
 		} );
 
 		it( 'Start new post', async function () {
-			// @todo: NewPostFlow.newPostFromNavbar() doesn't work on non-English UI.
-			// const newPostFlow = new NewPostFlow( page );
-			// await newPostFlow.newPostFromNavbar();
-			await page.click( '.masterbar__publish a' );
-			await page.click( '.site-selector__sites .site__content' );
+			const newPostFlow = new NewPostFlow( page );
+			await newPostFlow.newPostFromNavbar();
 
 			gutenbergEditorPage = new GutenbergEditorPage( page );
-			await gutenbergEditorPage.waitUntilLoaded();
-			await gutenbergEditorPage.dismissWelcomeTourIfPresent();
 		} );
 
 		it.each( translations[ locale ].blocks )(
@@ -119,7 +116,8 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 					await frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` );
 				} );
 
-				await gutenbergEditorPage.openSettings();
+				const settingsToggleLabel = await frame.evaluate( 'wp?.i18n?.__( "Settings" )' );
+				await gutenbergEditorPage.openSettings( `[aria-label="${ settingsToggleLabel }"]` );
 				await frame.click( block.blockEditorSelector );
 
 				await frame.waitForSelector(

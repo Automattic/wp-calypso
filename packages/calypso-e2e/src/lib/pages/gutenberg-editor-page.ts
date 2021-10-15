@@ -14,7 +14,7 @@ const selectors = {
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
-	blockSearch: '[placeholder="Search"]',
+	blockSearch: '.block-editor-inserter__search input[type="search"]',
 	blockInserterResultItem: '.block-editor-block-types-list__list-item',
 
 	// Within the editor body.
@@ -266,16 +266,16 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async openSettings(): Promise< void > {
+	async openSettings( toggleSelector = selectors.settingsToggle ): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		const isSidebarOpen = await frame.$eval( selectors.settingsToggle, ( element ) =>
+		const isSidebarOpen = await frame.$eval( toggleSelector, ( element ) =>
 			element.classList.contains( 'is-pressed' )
 		);
 		if ( ! isSidebarOpen ) {
-			await frame.click( selectors.settingsToggle );
+			await frame.click( toggleSelector );
 		}
-		const settingsToggle = await frame.waitForSelector( selectors.settingsToggle );
+		const settingsToggle = await frame.waitForSelector( toggleSelector );
 		await frame.waitForFunction(
 			( element ) => element.getAttribute( 'aria-pressed' ) === 'true',
 			settingsToggle
