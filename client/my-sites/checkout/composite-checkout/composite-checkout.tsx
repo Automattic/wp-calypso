@@ -518,7 +518,6 @@ export default function CompositeCheckout( {
 	}
 
 	useRecordCheckoutLoaded( {
-		recordEvent,
 		isLoading,
 		isApplePayAvailable,
 		responseCart,
