@@ -1,8 +1,11 @@
+import config from '@automattic/calypso-config';
 import { Button, Popover, Gridicon } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -48,11 +51,17 @@ class InlineHelpPopover extends Component {
 		onClose();
 	};
 
-	moreHelpClicked = () => {
+	moreHelpClicked = ( e ) => {
 		this.props.onClose();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
 			location: 'inline-help-popover',
 		} );
+		if ( config.isEnabled( 'help-center-modal' ) ) {
+			e.preventDefault();
+			page.redirect(
+				addQueryArgs( window.location.pathname + window.location.search, { showHelpCenter: 1 } )
+			);
+		}
 	};
 
 	openSecondaryView = ( secondaryViewKey ) => {
