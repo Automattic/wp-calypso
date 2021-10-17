@@ -19,10 +19,11 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	domain,
 	email,
 	selectedSiteSlug,
+	hasProfessionalEmail,
 } ) => {
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
-		return propsGetter( { selectedSiteSlug, domain, email } );
+		return propsGetter( { selectedSiteSlug, domain, email, hasProfessionalEmail } );
 	}, [ type, domain, selectedSiteSlug, email ] );
 
 	return (
