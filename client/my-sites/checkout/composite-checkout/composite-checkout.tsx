@@ -23,6 +23,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
@@ -222,7 +223,6 @@ export default function CompositeCheckout( {
 	} );
 
 	useRecordCartLoaded( {
-		recordEvent,
 		responseCart,
 		productsForCart,
 		isInitialCartLoading,
@@ -409,13 +409,10 @@ export default function CompositeCheckout( {
 	const addItemWithEssentialProperties = useCallback(
 		( cartItem ) => {
 			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
-			recordEvent( {
-				type: 'CART_ADD_ITEM',
-				payload: adjustedItem,
-			} );
+			recordAddEvent( adjustedItem );
 			addProductsToCart( [ adjustedItem ] );
 		},
-		[ addProductsToCart, products, recordEvent ]
+		[ addProductsToCart, products ]
 	);
 
 	const includeDomainDetails = contactDetailsType === 'domain';

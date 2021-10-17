@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
@@ -25,14 +24,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'CART_INIT_COMPLETE':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_cart_loaded', {
-							products: action.payload.products
-								.map( ( product ) => product.product_slug )
-								.join( ',' ),
-						} )
-					);
 				case 'STEP_LOAD_ERROR':
 					reduxDispatch(
 						logStashLoadErrorEventAction( 'step_load', String( action.payload.message ), {
@@ -299,9 +290,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_summary_help_click' )
 					);
-				}
-				case 'CART_ADD_ITEM': {
-					return recordAddEvent( action.payload );
 				}
 				case 'CART_CHANGE_PLAN_LENGTH': {
 					return reduxDispatch(
