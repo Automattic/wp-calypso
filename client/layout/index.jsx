@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { getQueryArg } from '@wordpress/url';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useEffect, Component } from 'react';
@@ -200,6 +201,10 @@ class Layout extends Component {
 		);
 	}
 
+	shouldShowHelpCenter() {
+		return !! getQueryArg( window.location.href, 'showHelpCenter' );
+	}
+
 	renderMasterbar() {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -232,6 +237,7 @@ class Layout extends Component {
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
+			'is-modal-open': this.shouldShowHelpCenter(),
 		} );
 
 		const optionalBodyProps = () => {
@@ -335,7 +341,6 @@ class Layout extends Component {
 						} ) }
 					/>
 				) }
-
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
@@ -347,6 +352,13 @@ class Layout extends Component {
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'help-center-modal' ) && (
+					<AsyncLoad
+						require="calypso/blocks/help-center-modal"
+						isOpen={ this.shouldShowHelpCenter() }
+						placeholder={ null }
+					/>
 				) }
 			</div>
 		);

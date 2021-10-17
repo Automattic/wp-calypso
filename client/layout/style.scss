@@ -307,6 +307,12 @@
 	}
 }
 
+// Remove the vertical scroll when a full screen modal is open
+.layout.is-modal-open {
+	overflow: hidden;
+	height: 100%;
+}
+
 // Try to clean things up a bit when printing.
 .layout {
 	.masterbar,
