@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
-
+import { PluginsBrowserListVariant } from './types';
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -15,6 +15,11 @@ class PluginsBrowserList extends Component {
 
 	static propTypes = {
 		plugins: PropTypes.array.isRequired,
+		variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
+	};
+
+	static defaultProps = {
+		variant: PluginsBrowserListVariant.Fixed,
 	};
 
 	renderPluginsViewList() {
@@ -32,8 +37,6 @@ class PluginsBrowserList extends Component {
 			);
 		} );
 
-		this.renderPlaceholdersViews( pluginsViewsList );
-
 		// We need to complete the list with empty elements to keep the grid drawn.
 		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -50,28 +53,33 @@ class PluginsBrowserList extends Component {
 		return pluginsViewsList;
 	}
 
-	renderPlaceholdersViews( pluginViewsList ) {
-		if ( ! this.props.showPlaceholders ) {
-			return null;
-		}
-
-		const placeholders = times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
+	renderPlaceholdersViews() {
+		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
 			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
 		) );
-
-		if ( this.props.paginated || undefined === pluginViewsList ) {
-			return placeholders;
-		}
-
-		// this is for handling infinite scroll
-		return pluginViewsList.concat( placeholders );
 	}
 
 	renderViews() {
-		if ( this.props.plugins.length ) {
-			return this.renderPluginsViewList();
-		} else if ( this.props.showPlaceholders ) {
+		const { plugins, showPlaceholders, variant } = this.props;
+
+		if ( ! plugins.length ) {
 			return this.renderPlaceholdersViews();
+		}
+
+		switch ( variant ) {
+			case PluginsBrowserListVariant.InfiniteScroll:
+				if ( showPlaceholders ) {
+					return this.renderPluginsViewList().concat( this.renderPlaceholdersViews() );
+				}
+				return this.renderPluginsViewList();
+			case PluginsBrowserListVariant.Paginated:
+				if ( showPlaceholders ) {
+					return this.renderPlaceholdersViews();
+				}
+				return this.renderPluginsViewList();
+			case PluginsBrowserListVariant.Fixed:
+			default:
+				return this.renderPluginsViewList();
 		}
 	}
 
