@@ -1,5 +1,11 @@
 import React from 'react';
+import ListStep from './list';
+import './style.scss';
 
 export default function ImportOnboarding(): React.ReactNode {
-	return <h1>Onboarding importer module placeholder</h1>;
+	return (
+		<div className="import__onboarding-page">
+			<ListStep />
+		</div>
+	);
 }
