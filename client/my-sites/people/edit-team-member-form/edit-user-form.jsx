@@ -181,6 +181,7 @@ class EditUserForm extends Component {
 			case fieldKeys.roles:
 				returnField = (
 					<RoleSelect
+						key="role-select"
 						id={ fieldKeys.roles }
 						name={ fieldKeys.roles }
 						siteId={ this.props.siteId }
