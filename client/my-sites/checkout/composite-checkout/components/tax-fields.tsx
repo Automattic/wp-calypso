@@ -61,7 +61,7 @@ export default function TaxFields( {
 						// Reformat the postal code if the country changes
 						if ( postalCode ) {
 							updatePostalCode(
-								arePostalCodesSupported
+								getCountryPostalCodeSupport( countriesList, event.target.value )
 									? tryToGuessPostalCodeFormat( postalCode?.value, event.target.value )
 									: ''
 							);
