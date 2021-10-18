@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
@@ -10,7 +9,7 @@ import './style.scss';
 const DURATION_IN_MS = 6000;
 const HEADSTART_DURATION_IN_MS = 80000;
 
-const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
+const useSteps = ( { flowName, hasPaidDomain, isSetupSiteFlow } ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
@@ -37,7 +36,9 @@ const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
 			steps = [
 				__( 'Building your site' ),
 				hasPaidDomain && __( 'Getting your domain' ),
-				hasAppliedDesign && __( 'Applying design' ),
+				// If destination is not setup-site flow, we'll apply default design now
+				// because the user cannot choose design in current flow
+				! isSetupSiteFlow && __( 'Applying design' ),
 			];
 	}
 
@@ -48,14 +49,12 @@ const useSteps = ( { flowName, hasPaidDomain, hasAppliedDesign } ) => {
 // to work with the onboarding signup flow.
 export default function ReskinnedProcessingScreen( props ) {
 	const { __ } = useI18n();
-	const setupSiteFeatureEnabled = isEnabled( 'signup/setup-site-after-checkout' );
 
 	const steps = useSteps( props );
+	const { isSetupSiteFlow } = props;
 	const totalSteps = steps.current.length;
-	const isSetupSite =
-		props.flowName === 'setup-site' ||
-		( props.flowName === 'onboarding' && setupSiteFeatureEnabled );
-	const duration = isSetupSite ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
+
+	const duration = isSetupSiteFlow ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	/**
@@ -82,7 +81,7 @@ export default function ReskinnedProcessingScreen( props ) {
 			<h1 className="reskinned-processing-screen__progress-step">
 				{ steps.current[ currentStep ] }
 			</h1>
-			{ isSetupSite && (
+			{ isSetupSiteFlow && (
 				<div className="reskinned-processing-screen__loading-elipsis">
 					<div></div>
 					<div></div>
@@ -90,7 +89,7 @@ export default function ReskinnedProcessingScreen( props ) {
 					<div></div>
 				</div>
 			) }
-			{ ! isSetupSite && (
+			{ ! isSetupSiteFlow && (
 				<>
 					<div
 						className="reskinned-processing-screen__progress-bar"
@@ -118,5 +117,5 @@ export default function ReskinnedProcessingScreen( props ) {
 ReskinnedProcessingScreen.propTypes = {
 	flowName: PropTypes.string,
 	hasPaidDomain: PropTypes.bool,
-	hasAppliedDesign: PropTypes.bool,
+	isSetupSiteFlow: PropTypes.bool,
 };
