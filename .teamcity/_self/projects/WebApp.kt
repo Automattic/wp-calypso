@@ -595,7 +595,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					for i in {1..100}; do yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% specs/specs-playwright/wp-editor__post-basic-flow; done
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
