@@ -5,7 +5,7 @@ $progress-duration: 800ms;
 .reskinned-processing-screen {
 	padding: 1em;
 	max-width: 540px;
-
+	text-align: center;
 	margin: 32vh auto;
 
 	&__progress-bar {
@@ -29,19 +29,77 @@ $progress-duration: 800ms;
 		}
 	}
 
+	&__progress-numbered-steps {
+		margin-top: 0.7em;
+		padding: 1em;
+		text-align: center;
+		color: var( --studio-gray-40 );
+	}
+	
 	&__progress-step {
 		@include onboarding-font-recoleta;
-		font-size: 26px;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.625rem;
 		line-height: 40px;
 		text-align: center;
 		vertical-align: middle;
 		margin: 0;
 	}
 
-	&__progress-numbered-steps {
-		margin-top: 0.7em;
-		padding: 1em;
-		text-align: center;
-		color: var( --studio-gray-40 );
+	&__loading-elipsis {
+		display: inline-block;
+		position: relative;
+		width: 80px;
+		height: 80px;
+		> div {
+			position: absolute;
+			top: 33px;
+			width: 13px;
+			height: 13px;
+			border-radius: 50%; /*stylelint-disable-line declaration-property-unit-allowed-list*/
+			background: var( --studio-gray-60 );
+			animation-timing-function: cubic-bezier( 0, 1, 1, 0 );
+			&:nth-child( 1 ) {
+				left: 8px;
+				animation: loading-ellipsis-grow 0.6s infinite;
+			}
+			&:nth-child( 2 ) {
+				left: 8px;
+				animation: loading-ellipsis-move 0.6s infinite;
+			}
+			&:nth-child( 3 ) {
+				left: 32px;
+				animation: loading-ellipsis-move 0.6s infinite;
+			}
+			&:nth-child( 4 ) {
+				left: 56px;
+				animation: loading-ellipsis-shrink 0.6s infinite;
+			}
+		}
+	}
+}
+
+@keyframes loading-ellipsis-grow {
+	0% {
+		transform: scale( 0 );
+	}
+	100% {
+		transform: scale( 1 );
+	}
+}
+@keyframes loading-ellipsis-move {
+	0% {
+		transform: translate( 0, 0 );
+	}
+	100% {
+		transform: translate( 24px, 0 );
+	}
+}
+@keyframes loading-ellipsis-shrink {
+	0% {
+		transform: scale( 1 );
+	}
+	100% {
+		transform: scale( 0 );
 	}
 }
