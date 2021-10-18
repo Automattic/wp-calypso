@@ -19,7 +19,7 @@ import {
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
+import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useCallback } from 'react';
@@ -204,6 +204,11 @@ export default function WPCheckout( {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
 
+	const arePostalCodesSupported = getCountryPostalCodeSupport(
+		countriesList,
+		contactInfo.countryCode?.value ?? ''
+	);
+
 	const updateCartContactDetails = useCallback( () => {
 		// Update tax location in cart
 		const nonTaxPaymentMethods = [ 'free-purchase' ];
@@ -224,11 +229,17 @@ export default function WPCheckout( {
 			const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
 			updateLocation( {
 				countryCode: contactInfo.countryCode?.value,
-				postalCode: contactInfo.postalCode?.value,
+				postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
 				subdivisionCode,
 			} );
 		}
-	}, [ activePaymentMethod, updateLocation, contactInfo, contactDetailsType ] );
+	}, [
+		activePaymentMethod,
+		updateLocation,
+		contactInfo,
+		contactDetailsType,
+		arePostalCodesSupported,
+	] );
 
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
