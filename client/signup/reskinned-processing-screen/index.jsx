@@ -9,7 +9,7 @@ import './style.scss';
 const DURATION_IN_MS = 6000;
 const HEADSTART_DURATION_IN_MS = 80000;
 
-const useSteps = ( { flowName, hasPaidDomain, isSetupSiteFlow } ) => {
+const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
@@ -34,11 +34,9 @@ const useSteps = ( { flowName, hasPaidDomain, isSetupSiteFlow } ) => {
 			break;
 		default:
 			steps = [
-				__( 'Building your site' ),
+				! isDestinationSetupSiteFlow && __( 'Building your site' ),
 				hasPaidDomain && __( 'Getting your domain' ),
-				// If destination is not setup-site flow, we'll apply default design now
-				// because the user cannot choose design in current flow
-				! isSetupSiteFlow && __( 'Applying design' ),
+				! isDestinationSetupSiteFlow && __( 'Applying design' ),
 			];
 	}
 
@@ -51,10 +49,11 @@ export default function ReskinnedProcessingScreen( props ) {
 	const { __ } = useI18n();
 
 	const steps = useSteps( props );
-	const { isSetupSiteFlow } = props;
+	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
+	const shouldShowNewSpinner = isDestinationSetupSiteFlow || flowName === 'setup-site';
 
-	const duration = isSetupSiteFlow ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
+	const duration = isDestinationSetupSiteFlow ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	/**
@@ -81,7 +80,7 @@ export default function ReskinnedProcessingScreen( props ) {
 			<h1 className="reskinned-processing-screen__progress-step">
 				{ steps.current[ currentStep ] }
 			</h1>
-			{ isSetupSiteFlow && (
+			{ shouldShowNewSpinner && (
 				<div className="reskinned-processing-screen__loading-elipsis">
 					<div></div>
 					<div></div>
@@ -89,7 +88,7 @@ export default function ReskinnedProcessingScreen( props ) {
 					<div></div>
 				</div>
 			) }
-			{ ! isSetupSiteFlow && (
+			{ ! shouldShowNewSpinner && (
 				<>
 					<div
 						className="reskinned-processing-screen__progress-bar"
@@ -117,5 +116,5 @@ export default function ReskinnedProcessingScreen( props ) {
 ReskinnedProcessingScreen.propTypes = {
 	flowName: PropTypes.string,
 	hasPaidDomain: PropTypes.bool,
-	isSetupSiteFlow: PropTypes.bool,
+	isDestinationSetupSiteFlow: PropTypes.bool,
 };
