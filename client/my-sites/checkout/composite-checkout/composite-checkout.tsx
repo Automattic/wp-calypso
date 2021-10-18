@@ -263,7 +263,7 @@ export default function CompositeCheckout( {
 	);
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails( updateLocation );
+	useCachedDomainContactDetails( updateLocation, countriesList );
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
