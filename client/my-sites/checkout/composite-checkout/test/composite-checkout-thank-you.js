@@ -853,6 +853,11 @@ describe( 'getThankYouPageUrl', () => {
 				isPrimary: true,
 			},
 			{
+				name: 'domain-eligible-for-free-trial.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { isEligibleForIntroductoryOffer: true },
+			},
+			{
 				name: 'domain-expired.com',
 				currentUserCanAddEmail: true,
 				expired: true,
@@ -881,7 +886,9 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( '/checkout/offer-professional-email/1234abcd/foo.bar' );
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
 		} );
 
 		it( 'Is displayed if site has eligible domain and Personal plan is in the cart', () => {
@@ -901,7 +908,9 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( '/checkout/offer-professional-email/1234abcd/foo.bar' );
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
 		} );
 
 		it( 'Is displayed if site has eligible domain and Business plan is in the cart', () => {
@@ -921,7 +930,9 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( '/checkout/offer-professional-email/1234abcd/foo.bar' );
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
 		} );
 
 		it( 'Is displayed if site has eligible domain and eCommerce plan is in the cart', () => {
@@ -941,7 +952,35 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( '/checkout/offer-professional-email/1234abcd/foo.bar' );
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has domain registration and eligble plan in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PERSONAL,
+					},
+					{
+						meta: 'domain-from-cart.com',
+						is_domain_registration: true,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-from-cart.com/1234abcd/foo.bar'
+			);
 		} );
 
 		it( 'Is not displayed if cart is missing', () => {

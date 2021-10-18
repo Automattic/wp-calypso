@@ -101,7 +101,7 @@ describe( 'getEligibleTitanDomain()', () => {
 
 	test( 'return selected domain instead of other eligible domains', () => {
 		const domain = {
-			name: 'foo.bar',
+			name: 'domain-eligible-selected.com',
 			currentUserCanAddEmail: true,
 		};
 
@@ -118,7 +118,7 @@ describe( 'getEligibleTitanDomain()', () => {
 			domain,
 		];
 
-		expect( getEligibleTitanDomain( 'foo.bar', domains ) ).toBe( domain );
+		expect( getEligibleTitanDomain( 'domain-eligible-selected.com', domains ) ).toBe( domain );
 	} );
 
 	test( 'return first domain instead of other eligible domains when selected domain differs', () => {
@@ -140,5 +140,30 @@ describe( 'getEligibleTitanDomain()', () => {
 		];
 
 		expect( getEligibleTitanDomain( 'bar.bar', domains ) ).toBe( domain );
+	} );
+
+	test( 'return primary domain eligible for 3-month free trial instead of other eligible domains', () => {
+		const domain = {
+			name: 'domain-eligible-primary.com',
+			currentUserCanAddEmail: true,
+			isPrimary: true,
+			titanMailSubscription: { isEligibleForIntroductoryOffer: true },
+		};
+
+		const domains = [
+			{
+				name: 'domain-eligible.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { isEligibleForIntroductoryOffer: true },
+			},
+			{
+				name: 'another-domain-eligible.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { isEligibleForIntroductoryOffer: false },
+			},
+			domain,
+		];
+
+		expect( getEligibleTitanDomain( 'foo.bar', domains, true ) ).toBe( domain );
 	} );
 } );

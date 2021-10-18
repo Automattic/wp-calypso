@@ -9,7 +9,7 @@ import { getGSuiteSupportedDomains } from './gsuite-supported-domain';
  *   - The primary domain of the site, if eligible
  *   - The first non-primary domain eligible found
  *
- * @param {string} selectedDomainName - domain name for the site currently selected by the user
+ * @param {string} selectedDomainName - domain name of the site currently selected by the user
  * @param {Array} domains - list of domain objects
  * @returns {string} - the name of the first eligible domain found
  */
