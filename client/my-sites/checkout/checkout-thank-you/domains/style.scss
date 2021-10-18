@@ -4,7 +4,7 @@
 
 .is-section-checkout-thank-you {
 	background: var( --studio-white );
-	
+
 	.layout__content {
 		padding-right: 0;
 		padding-left: 0;
@@ -12,19 +12,6 @@
 }
 
 .checkout-thank-you__domains {
-	&.thank-you__container {
-		
-		margin-top: calc( -79px + var( --masterbar-height ) );
-	
-		@include breakpoint-deprecated( '<960px' ) {
-			margin-top: calc( -71px + var( --masterbar-height ) );
-		}
-	
-		@include breakpoint-deprecated( '<660px' ) {
-			margin-top: -1px;
-		}
-	}
-
 	.thank-you {
 
 		&__header {
@@ -81,7 +68,7 @@
 						width: 100%;
 					}
 				}
-				
+
 				@include break-mobile {
 					width: 144px;
 
@@ -100,7 +87,9 @@
 		&__container-header {
 			width: auto;
 			background-color: var( --studio-blue-50 );
-			padding: 0 20px 35px;
+			padding-right: 20px;
+			padding-left: 20px;
+			padding-bottom: 35px;
 			box-sizing: border-box;
 			text-align: center;
 			height: auto;
