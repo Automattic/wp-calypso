@@ -85,7 +85,7 @@ export default function PaymentMethodSelector( {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			reduxDispatch( errorNotice( stripeLoadingError ) );
+			reduxDispatch( errorNotice( stripeLoadingError.message ) );
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
