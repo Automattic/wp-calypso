@@ -12,7 +12,7 @@ const domainMappingThankYouProps = ( {
 	selectedSiteSlug,
 	domain,
 }: DomainThankYouParams ): DomainThankYouProps => {
-	const profesisonalEmail = buildCtaForProfessionalEmail(
+	const professionalEmail = buildCtaForProfessionalEmail(
 		{
 			domain,
 			email,
@@ -47,7 +47,7 @@ const domainMappingThankYouProps = ( {
 							</Button>
 						),
 					},
-					profesisonalEmail,
+					professionalEmail,
 				],
 			},
 		],

@@ -12,7 +12,7 @@ const DomainRegistrationThankYouProps = ( {
 	email,
 	hasProfessionalEmail,
 }: DomainThankYouParams ): DomainThankYouProps => {
-	const profesisonalEmail = buildCtaForProfessionalEmail(
+	const professionalEmail = buildCtaForProfessionalEmail(
 		{
 			domain,
 			email,
@@ -47,7 +47,7 @@ const DomainRegistrationThankYouProps = ( {
 							</Button>
 						),
 					},
-					profesisonalEmail,
+					professionalEmail,
 				],
 			},
 		],
