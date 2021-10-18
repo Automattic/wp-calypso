@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.wpcom-block-editor-draft-post-modal {
+.wpcom-block-editor-nux-modal {
 	.components-modal__header {
 		height: auto;
 		padding: 10px;
@@ -35,7 +35,7 @@
 		}
 	}
 
-	.wpcom-block-editor-draft-post-modal__image-container {
+	.wpcom-block-editor-nux-modal__image-container {
 		text-align: center;
 
 		img {
@@ -44,7 +44,7 @@
 		}
 	}
 
-	.wpcom-block-editor-draft-post-modal__title {
+	.wpcom-block-editor-nux-modal__title {
 		margin: 34px 0 0;
 		font-size: $font-headline-small;
 		font-weight: 500; // stylelint-disable-line scales/font-weights
@@ -55,7 +55,7 @@
 		}
 	}
 
-	.wpcom-block-editor-draft-post-modal__description {
+	.wpcom-block-editor-nux-modal__description {
 		max-width: 352px;
 		margin: 16px 0 0;
 		font-size: $font-body;
@@ -66,7 +66,7 @@
 		}
 	}
 
-	.wpcom-block-editor-draft-post-modal__buttons {
+	.wpcom-block-editor-nux-modal__buttons {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
