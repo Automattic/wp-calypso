@@ -30,11 +30,6 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-// Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
-jest.mock( 'calypso/lib/naive-client-side-rollout', () => ( {
-	badNaiveClientSideRollout: jest.fn( () => true ),
-} ) );
-
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
 	saveUrlToCookie: jest.fn(),
@@ -74,29 +69,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
-	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set even if the quickstart offer would normally be included', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
-		const cart = {
-			products: [
-				{
-					product_slug: 'personal-bundle',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			orderId: '1234abcd',
-			cart,
-		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
-	} );
-
-	// Note: This just verifies the existing behavior; this URL is invalid unless
-	// placed after a `redirectTo` query string; see the redirect payment
-	// processor
-	it( 'redirects to the quickstart offer thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
 		const cart = {
 			products: [
 				{
@@ -109,7 +82,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 		} );
-		expect( url ).toBe( '/checkout/offer-quickstart-session/:receiptId/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	// Note: This just verifies the existing behavior; this URL is invalid unless
@@ -749,7 +722,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to business upgrade nudge if concierge and jetpack are not in the cart, and premium is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -768,7 +740,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to business monthly upgrade nudge if concierge and jetpack are not in the cart, and premium monthly is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -787,7 +758,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -804,8 +774,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
-	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to the thank you page if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			products: [
 				{
@@ -819,11 +788,10 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: '1234abcd',
 		} );
-		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to the thank you page if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			products: [
 				{
@@ -837,11 +805,10 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: '1234abcd',
 		} );
-		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to thank-you page (with concierge display mode) if concierge is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -966,7 +933,7 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 		} );
 
-		it( 'Is not displayed if Premium plan is in the cart', () => {
+		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
 			const cart = {
 				products: [
 					{
@@ -983,12 +950,11 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
 		} );
 	} );
 
 	it( 'redirects to thank-you page if jetpack is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -1006,7 +972,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but hideNudge is true', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
