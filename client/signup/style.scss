@@ -512,6 +512,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			padding-bottom: 0;
 			border: 0;
 			box-shadow: none;
+			background-color: transparent;
 
 			@include break-small {
 				text-align: center;
@@ -688,7 +689,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			}
 
 			.signup-form__separator-text {
-				background: var( --studio-white );
+				background-color: #fdfdfd;
 				text-transform: uppercase;
 				text-align: center;
 				padding: 24px 0;
