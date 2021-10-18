@@ -344,7 +344,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'importer',
-			steps: [ 'list' ],
+			steps: isEnabled( 'gutenboarding/import' ) ? [ 'list' ] : [],
 			destination: '/',
 			description: 'A new import flow that can be used from the onboarding flow',
 			disallowResume: true,
