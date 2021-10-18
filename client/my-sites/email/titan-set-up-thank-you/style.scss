@@ -16,10 +16,6 @@
 	}
 }
 
-.thank-you__container-header.titan-set-up-thank-you__header {
-	padding-top: calc( -33px + var( --masterbar-height ) );
-}
-
 .thank-you__step-cta {
 	width: 100%;
 	@include break-mobile {
