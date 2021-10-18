@@ -1,9 +1,9 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -32,8 +32,14 @@ const TitanNewMailbox = ( {
 	selectedDomainName,
 	showAllErrors = false,
 	showLabels = true,
+	siteId,
 } ) => {
 	const translate = useTranslate();
+
+	const domainsForSite = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const selectedDomain = useSelector( () =>
+		getSelectedDomain( { domains: domainsForSite, selectedDomainName: selectedDomainName } )
+	);
 
 	const hasBeenValidated =
 		[ alternativeEmail, mailbox, name, password ].some( ( value ) => '' !== value ) ||
@@ -82,7 +88,7 @@ const TitanNewMailbox = ( {
 									setNameFieldTouched( hasBeenValidated );
 								} }
 								onKeyUp={ onReturnKeyPress }
-								suffix={ `@${ selectedDomainName }` }
+								suffix={ `@${ selectedDomain?.name }` }
 							/>
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
@@ -102,7 +108,7 @@ const TitanNewMailbox = ( {
 								setMailboxFieldTouched( hasBeenValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
-							suffix={ `@${ selectedDomainName }` }
+							suffix={ `@${ selectedDomain?.name }` }
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
@@ -184,13 +190,4 @@ TitanNewMailbox.propTypes = {
 	showLabels: PropTypes.bool.isRequired,
 };
 
-export default connect( ( state, ownProps ) => {
-	const domains = getDomainsBySiteId( state, ownProps.siteId );
-	const selectedDomain = getSelectedDomain( {
-		domains,
-		selectedDomainName: ownProps.selectedDomainName,
-	} );
-	return {
-		selectedDomainName: selectedDomain?.name,
-	};
-} )( localize( TitanNewMailbox ) );
+export default TitanNewMailbox;

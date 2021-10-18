@@ -1,17 +1,17 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate, TranslateResult, localize } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ChangeEvent, FunctionComponent, useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
-import { getSelectedDomain } from '../../../lib/domains';
-import { getDomainsBySiteId } from '../../../state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import GSuiteDomainsSelect from './domains-select';
 
 interface LabelWrapperProps {
@@ -33,7 +33,7 @@ interface Props {
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	selectedDomainName: string;
+	selectedDomainName?: string;
 	showTrashButton: boolean;
 	siteId: number;
 	user: NewUser;
@@ -54,8 +54,14 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	},
 	selectedDomainName,
 	showTrashButton = true,
+	siteId,
 } ) => {
 	const translate = useTranslate();
+
+	const domainsForSite = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const selectedDomain = useSelector( () =>
+		getSelectedDomain( { domains: domainsForSite, selectedDomainName: selectedDomainName } )
+	);
 
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
@@ -92,7 +98,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
-					suffix={ `@${ selectedDomainName }` }
+					suffix={ `@${ selectedDomain.name }` }
 				/>
 			</LabelWrapper>
 		);
@@ -119,7 +125,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 					onChange={ ( event ) => {
 						onUserValueChange( 'domain', event.target.value );
 					} }
-					value={ selectedDomainName }
+					value={ selectedDomain?.name }
 				/>
 			</LabelWrapper>
 		);
@@ -215,13 +221,4 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	);
 };
 
-export default connect( ( state, ownProps: Props ) => {
-	const domains = getDomainsBySiteId( state, ownProps.siteId );
-	const selectedDomain = getSelectedDomain( {
-		domains,
-		selectedDomainName: ownProps.selectedDomainName,
-	} );
-	return {
-		selectedDomainName: selectedDomain?.name,
-	};
-} )( localize( GSuiteNewUser ) );
+export default GSuiteNewUser;
