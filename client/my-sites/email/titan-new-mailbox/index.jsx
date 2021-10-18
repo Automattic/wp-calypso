@@ -1,6 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -35,6 +35,7 @@ const TitanNewMailbox = ( {
 	siteId,
 } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 
 	const domainsForSite = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const selectedDomain = useSelector( () =>
@@ -88,7 +89,7 @@ const TitanNewMailbox = ( {
 									setNameFieldTouched( hasBeenValidated );
 								} }
 								onKeyUp={ onReturnKeyPress }
-								suffix={ `@${ selectedDomain?.name }` }
+                suffix={ `@${ selectedDomain?.name }` }
 							/>
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
@@ -108,7 +109,8 @@ const TitanNewMailbox = ( {
 								setMailboxFieldTouched( hasBeenValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
-							suffix={ `@${ selectedDomain?.name }` }
+							prefix={ isRtl ? `\u200e@${ selectedDomain?.name }\u202c` : null }
+							suffix={ isRtl ? null : `\u200e@${ selectedDomain?.name }\u202c` }
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }

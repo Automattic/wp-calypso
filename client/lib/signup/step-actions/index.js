@@ -548,7 +548,7 @@ export function createAccount(
 			bearerToken.bearer_token = response.bearer_token;
 		} else {
 			// something odd happened...
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error( 'Expected either an error or a bearer token. got %o, %o.', error, response );
 		}
 

@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult, useRtl } from 'i18n-calypso';
 import { ChangeEvent, FunctionComponent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -57,6 +57,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	siteId,
 } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 
 	const domainsForSite = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const selectedDomain = useSelector( () =>
@@ -98,7 +99,8 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
-					suffix={ `@${ selectedDomain.name }` }
+					prefix={ isRtl ? `\u200e@${ selectedDomain.name }\u202c` : null }
+					suffix={ isRtl ? null : `\u200e@${ selectedDomain.name }\u202c` }
 				/>
 			</LabelWrapper>
 		);

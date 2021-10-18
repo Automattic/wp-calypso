@@ -6,9 +6,13 @@
 
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	PLAN_BLOGGER,
+	PLAN_ECOMMERCE,
+	PLAN_PREMIUM,
 	redirectCheckoutToWpAdmin,
+	TITAN_MAIL_MONTHLY_SLUG,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -723,7 +727,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
 
-	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but neither GSuite nor concierge are in the cart if user is in invalid country', () => {
+	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but neither G Suite nor concierge are in the cart if user is in invalid country', () => {
 		const cart = {
 			products: [
 				{
@@ -852,6 +856,135 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
+	} );
+
+	describe( 'Professional Email upsell', () => {
+		beforeEach( () => {
+			isEnabled.mockImplementation( ( flag ) => flag === 'upsell/professional-email' );
+		} );
+
+		const domains = [
+			{
+				name: 'domain-with-gsuite.com',
+				currentUserCanAddEmail: true,
+				googleAppsSubscription: { status: 'active' },
+			},
+			{
+				name: 'domain-with-titan.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { status: 'active' },
+			},
+			{
+				name: 'domain-eligible.com',
+				currentUserCanAddEmail: true,
+			},
+			{
+				name: 'domain-eligible-primary.com',
+				currentUserCanAddEmail: true,
+				isPrimary: true,
+			},
+			{
+				name: 'domain-expired.com',
+				currentUserCanAddEmail: true,
+				expired: true,
+			},
+			{
+				name: 'invalid.wpcomstaging.com',
+				currentUserCanAddEmail: true,
+				isWpcomStagingDomain: true,
+			},
+		];
+
+		it( 'Is displayed if site has eligible domain and eligible plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_BLOGGER,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/offer-professional-email/1234abcd/foo.bar' );
+		} );
+
+		it( 'Is not displayed if cart is missing', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+
+		it( 'Is not displayed if Google Workspace is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+
+		it( 'Is not displayed if Professional Email is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: TITAN_MAIL_MONTHLY_SLUG,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+
+		it( 'Is not displayed if Premium plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PREMIUM,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
 	} );
 
 	it( 'redirects to thank-you page if jetpack is in the cart', () => {

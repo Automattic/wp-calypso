@@ -78,6 +78,7 @@ import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream'
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ReaderFullPostUnavailable from './unavailable';
@@ -108,6 +109,7 @@ export class FullPostView extends Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
+		this.maybeDisableAppBanner();
 
 		this.checkForCommentAnchor();
 
@@ -131,6 +133,7 @@ export class FullPostView extends Component {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
+			this.maybeDisableAppBanner();
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -143,6 +146,13 @@ export class FullPostView extends Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// Check if we just finished loading the post and enable the app banner when there's no error
+		const finishedLoading = prevProps.post?._state === 'pending' && ! this.props.post?._state;
+		const isError = this.props.post?.is_error;
+		if ( finishedLoading && ! isError ) {
+			this.props.enableAppBanner();
+		}
 	}
 
 	componentWillUnmount() {
@@ -153,6 +163,7 @@ export class FullPostView extends Component {
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
+		this.props.enableAppBanner(); // reset the app banner
 	}
 
 	handleBack = ( event ) => {
@@ -294,6 +305,17 @@ export class FullPostView extends Component {
 				}
 			);
 			this.hasLoaded = true;
+		}
+	};
+
+	maybeDisableAppBanner = () => {
+		const { post, site } = this.props;
+
+		// disable the banner while the post is loading and when it failed to load
+		const isLoading = post?._state === 'pending';
+		const isError = post?.is_error || site?.is_error;
+		if ( isLoading || isError ) {
+			this.props.disableAppBanner();
 		}
 	};
 
@@ -624,6 +646,8 @@ export default connect(
 		return props;
 	},
 	{
+		disableAppBanner,
+		enableAppBanner,
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,

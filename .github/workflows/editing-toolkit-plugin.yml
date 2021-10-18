@@ -14,7 +14,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '^16.7.0'
+          node-version: '^16.11.1'
 
       - name: Checkout code
         uses: actions/checkout@HEAD

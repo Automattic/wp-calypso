@@ -8,9 +8,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { fetchCurrentUser } from '../../../state/current-user/actions';
 
 import './style.scss';
 
@@ -43,15 +44,14 @@ function SiteInformationCollection( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedDesign, username: signupUserName, selectedVertical } = useSelector(
-		getSignupDependencyStore
-	);
+	const { selectedDIFMDesign, selectedVertical } = useSelector( getSignupDependencyStore );
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
 
 	useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
 		dispatch( fetchCurrentUser() );
-	}, [ dispatch ] );
+	}, [ dispatch, stepName ] );
 
 	const nextStep = () => {
 		setIsFormSubmitted( true );
@@ -59,10 +59,10 @@ function SiteInformationCollection( {
 		const step = {
 			stepName,
 			cartItem,
-		};
-
-		submitSignupStep( step, {
 			...additionalStepData,
+		};
+		submitSignupStep( step, {
+			cartItem,
 		} );
 		goToNextStep();
 	};
@@ -79,8 +79,8 @@ function SiteInformationCollection( {
 			) : (
 				<Widget
 					hidden={ {
-						username: username ? username : signupUserName,
-						design: selectedDesign,
+						username,
+						design: selectedDIFMDesign,
 						vertical: selectedVertical,
 					} }
 					id={ getTypeformId() }

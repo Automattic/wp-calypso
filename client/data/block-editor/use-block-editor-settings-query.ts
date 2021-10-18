@@ -6,14 +6,19 @@ export type BlockEditorSettings = {
 };
 
 export const useBlockEditorSettingsQuery = (
-	siteId: string
+	siteId: string,
+	userLoggedIn = false
 ): UseQueryResult< BlockEditorSettings > => {
 	const queryKey = [ 'blockEditorSettings', siteId ];
 
-	return useQuery< BlockEditorSettings >( queryKey, () => {
-		return wpcom.req.get( {
-			path: `/sites/${ siteId }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-		} );
-	} );
+	return useQuery< BlockEditorSettings >(
+		queryKey,
+		() => {
+			return wpcom.req.get( {
+				path: `/sites/${ siteId }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} );
+		},
+		{ enabled: userLoggedIn && !! siteId }
+	);
 };

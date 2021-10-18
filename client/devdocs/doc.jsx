@@ -99,7 +99,7 @@ export default class extends Component {
 				</a>
 				<div
 					className="devdocs__doc-content"
-					//eslint-disable-next-line react/no-danger
+					// eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, body ) } }
 				/>
 			</div>

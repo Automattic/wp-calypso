@@ -40,6 +40,7 @@
 		"jetpack/pricing-page": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,
 		"jetpack/userless-checkout": true,
 		"layout/app-banner": false,

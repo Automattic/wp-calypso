@@ -1041,7 +1041,7 @@ const ConnectedPlanFeatures = connect(
 	{
 		recordTracksEvent,
 	}
-)( withShoppingCart( withCartKey( localize( PlanFeatures ) ) ) );
+)( withCartKey( withShoppingCart( localize( PlanFeatures ) ) ) );
 
 /* eslint-enable */
 

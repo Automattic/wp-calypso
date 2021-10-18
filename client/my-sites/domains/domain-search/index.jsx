@@ -301,4 +301,4 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( withShoppingCart( withCartKey( localize( DomainSearch ) ) ) );
+)( withCartKey( withShoppingCart( localize( DomainSearch ) ) ) );

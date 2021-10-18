@@ -1,6 +1,9 @@
+const nodeConfig = require( '@automattic/calypso-eslint-overrides/node' );
+
 module.exports = {
+	...nodeConfig,
 	env: {
-		node: true,
+		...nodeConfig.env,
 		mocha: false,
 	},
 	overrides: [
@@ -43,8 +46,7 @@ module.exports = {
 		},
 	],
 	rules: {
-		'import/no-nodejs-modules': 'off',
-		'no-console': 'off',
+		...nodeConfig.rules,
 
 		// We have many tests that don't make an explicit `expect`, but instead puts the browser
 		// in certain state that will be used by the next test, or asserted by WebDriver

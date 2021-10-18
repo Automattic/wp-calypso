@@ -14,6 +14,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -117,6 +118,9 @@ class ThemeShowcase extends Component {
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 		isSiteEditorActive: PropTypes.bool,
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
+		} ),
 	};
 
 	static defaultProps = {
@@ -269,7 +273,7 @@ class ThemeShowcase extends Component {
 				return this.props.isJetpackSite;
 			case this.tabFilters.FSE.key:
 				// Display FSE tab if the Site Editor is active for the site.
-				return this.props.isSiteEditorActive;
+				return this.props.blockEditorSettings?.is_fse_eligible;
 		}
 	};
 
@@ -438,4 +442,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	};
 };
 
-export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );
+export default connect(
+	mapStateToProps,
+	null
+)( localize( withBlockEditorSettings( ThemeShowcase ) ) );

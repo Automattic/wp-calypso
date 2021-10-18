@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
@@ -13,42 +12,18 @@ import {
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
+/**
+ * NOTE: This file should not be necessary and should slowly be reduced to
+ * nothing. Please try not to add anything new here.
+ *
+ * If you need to record an event, record it directly rather than sending an
+ * action to this handler.
+ */
 export default function createAnalyticsEventHandler( reduxDispatch ) {
 	return function recordEvent( action ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'PRODUCTS_ADD_ERROR':
-					reduxDispatch(
-						logStashEventAction( 'calypso_composite_checkout_products_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_products_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
-				case 'CHECKOUT_LOADED':
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_page_view', {
-							saved_cards: action.payload?.saved_cards,
-							is_renewal: action.payload?.is_renewal,
-							apple_pay_available: action.payload?.apple_pay_available,
-							product_slug: action.payload?.product_slug,
-							is_composite: true,
-							checkout_flow: action.payload?.checkout_flow,
-						} )
-					);
-					return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
-				case 'CART_INIT_COMPLETE':
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_cart_loaded', {
-							products: action.payload.products
-								.map( ( product ) => product.product_slug )
-								.join( ',' ),
-						} )
-					);
 				case 'STEP_LOAD_ERROR':
 					reduxDispatch(
 						logStashLoadErrorEventAction( 'step_load', String( action.payload.message ), {
@@ -315,9 +290,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_summary_help_click' )
 					);
-				}
-				case 'CART_ADD_ITEM': {
-					return recordAddEvent( action.payload );
 				}
 				case 'CART_CHANGE_PLAN_LENGTH': {
 					return reduxDispatch(

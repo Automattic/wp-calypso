@@ -54,12 +54,12 @@ export function* createSite( {
 		siteTitle,
 		siteVertical,
 		selectedFeatures,
+		shouldEnrollInFseBeta,
 	}: State = yield select( ONBOARD_STORE, 'getState' );
 
-	const shouldEnableFse = !! selectedDesign?.is_fse;
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
+	const defaultTheme = 'quadrat';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
@@ -79,7 +79,7 @@ export function* createSite( {
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
-			enable_fse: shouldEnableFse,
+			enable_fse: shouldEnrollInFseBeta,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),

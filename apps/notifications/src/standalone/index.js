@@ -2,7 +2,7 @@ import '@automattic/calypso-polyfills';
 import { createElement } from 'react';
 import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
-import AuthWrapper from './auth-wrapper';
+import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
 
 import '../panel/boot/stylesheets/style.scss';
@@ -65,11 +65,11 @@ const customMiddleware = {
 	],
 };
 
-const render = () => {
+const render = ( wpcom ) => {
 	document.body.classList.add( 'font-smoothing-antialiased' );
 
 	ReactDOM.render(
-		createElement( AuthWrapper( Notifications ), {
+		createElement( Notifications, {
 			customEnhancer,
 			customMiddleware,
 			isShowing,
@@ -77,13 +77,26 @@ const render = () => {
 			locale,
 			receiveMessage: sendMessage,
 			redirectPath: '/',
+			wpcom,
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);
 };
 
-const init = () => {
-	render();
+const setTracksUser = ( wpcom ) => {
+	wpcom
+		.me()
+		.get( { fields: 'ID,username' } )
+		.then( ( { ID, username } ) => {
+			window._tkq = window._tkq || [];
+			window._tkq.push( [ 'identifyUser', ID, username ] );
+		} )
+		.catch( () => {} );
+};
+
+const init = ( wpcom ) => {
+	setTracksUser( wpcom );
+	render( wpcom );
 
 	const refresh = () => store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	const reset = () => store.dispatch( { type: 'SELECT_NOTE', noteId: null } );
@@ -119,4 +132,4 @@ const init = () => {
 	);
 };
 
-init();
+createClient().then( init );

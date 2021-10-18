@@ -8,6 +8,8 @@ import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { getQueryArg } from '@wordpress/url';
+import DraftPostModal from './draft-post-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
@@ -53,9 +55,10 @@ registerPlugin( 'wpcom-block-editor-nux', {
 		}
 
 		if ( variant === DEFAULT_VARIANT ) {
+			const showDraftPostModal = getQueryArg( window.location.href, 'showDraftPostModal' );
 			return (
 				<LocaleProvider localeSlug={ window.wpcomBlockEditorNuxLocale ?? i18nDefaultLocaleSlug }>
-					<LaunchWpcomWelcomeTour />;
+					{ showDraftPostModal ? <DraftPostModal /> : <LaunchWpcomWelcomeTour /> }
 				</LocaleProvider>
 			);
 		}

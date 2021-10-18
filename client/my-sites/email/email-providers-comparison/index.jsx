@@ -765,4 +765,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( withShoppingCart( withCartKey( localize( EmailProvidersComparison ) ) ) );
+)( withCartKey( withShoppingCart( localize( EmailProvidersComparison ) ) ) );
