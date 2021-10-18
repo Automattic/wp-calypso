@@ -100,6 +100,8 @@ function getEditorDestination( dependencies ) {
 
 function getDestinationFromIntent( dependencies ) {
 	if ( dependencies.intent === 'write' ) {
+		// We also need to check starting point to decide show draft post modal or not in the future
+		window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 		return `/post/${ dependencies.siteSlug }`;
 	}
 	return getChecklistThemeDestination( dependencies );
