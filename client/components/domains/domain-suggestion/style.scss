@@ -391,6 +391,9 @@ body.is-section-signup.is-white-signup {
 				font-size: 1rem;
 			}
 		}
+		&.is-placeholder.card .domain-suggestion__action {
+			display: none;
+		}
 
 		& .domain-registration-suggestion__domain-title {
 			color: var( --studio-gray-90 );
