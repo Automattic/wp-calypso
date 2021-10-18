@@ -16,6 +16,8 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
+const itif = ( device: string ) => ( device === 'mobile' ? it : it.skip );
+
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity. \n— Abraham Lincoln';
 const title = DataHelper.getRandomPhrase();
@@ -73,12 +75,38 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 	} );
 
-	describe( 'Publish post', function () {
+	describe( 'Preview post', function () {
+		let previewPage: Page;
+
 		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
 			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
+		// The following two steps have conditiionals inside them, as how the Editor Preview behaves
+		// depends on the device type.
+		// On desktop and tablet, preview applies CSS attributes to modify the preview in-editor.
+		// On mobile web, preview button opens a new tab.
+		// TODO: step skipped for non-mobile due to https://github.com/Automattic/wp-calypso/issues/57128.
+		itif( BrowserHelper.getTargetDeviceName() )( 'Launch preview', async function () {
+			if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
+				previewPage = await gutenbergEditorPage.openPreviewAsMobile();
+			} else {
+				await gutenbergEditorPage.openPreviewAsDesktop( 'Mobile' );
+			}
+		} );
+
+		// TODO: step skipped for non-mobile due to https://github.com/Automattic/wp-calypso/issues/57128.
+		itif( BrowserHelper.getTargetDeviceName() )( 'Close preview', async function () {
+			if ( previewPage ) {
+				await previewPage.close();
+			} else {
+				await gutenbergEditorPage.closePreview();
+			}
+		} );
+	} );
+
+	describe( 'Publish post', function () {
 		it( 'Save draft', async function () {
 			await gutenbergEditorPage.saveDraft();
 		} );
