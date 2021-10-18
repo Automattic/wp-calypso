@@ -11,10 +11,6 @@ const DraftPostModal = () => {
 	const closeModal = () => setIsOpen( false );
 	const closeEditor = () => doAction( 'a8c.wpcom-block-editor.closeEditor' );
 
-	if ( ! isOpen ) {
-		return null;
-	}
-
 	return (
 		<NuxModal
 			isOpen={ isOpen }

@@ -1,29 +1,46 @@
+import apiFetch from '@wordpress/api-fetch';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import NuxModal from '../nux-modal';
 import postPublishedImage from './images/post-published.svg';
 import './style.scss';
 
+/**
+ * Show the first post publish modal
+ */
 const PostPublishedModal: React.FC = () => {
 	const { link } = useSelect( ( select ) => select( 'core/editor' ).getCurrentPost() );
 	const isCurrentPostPublished = useSelect( ( select ) =>
 		select( 'core/editor' ).isCurrentPostPublished()
 	);
-	const [ initialIsCurrentPostPublished ] = useState( isCurrentPostPublished );
+	const isCurrentPostPublishedRef = useRef( isCurrentPostPublished );
+	const [ hasEverPublishedPost, setHasEverPublishedPost ] = useState( false );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 
 	useEffect( () => {
-		if ( ! initialIsCurrentPostPublished && isCurrentPostPublished ) {
-			setIsOpen( true );
-		}
-	}, [ initialIsCurrentPostPublished, isCurrentPostPublished ] );
+		apiFetch( { path: '/wpcom/v2/site-has-ever-published-post' } ).then( ( result ) => {
+			setHasEverPublishedPost( !! result );
+		} );
+	}, [] );
 
-	if ( ! isOpen ) {
-		return null;
-	}
+	useEffect( () => {
+		// If the user never published any post before and the current post status changed to publish,
+		// open the post publish modal
+		if ( ! hasEverPublishedPost && ! isCurrentPostPublishedRef.current && isCurrentPostPublished ) {
+			isCurrentPostPublishedRef.current = isCurrentPostPublished;
+			setHasEverPublishedPost( true );
+
+			// When the post published panel shows, it is focused automatically.
+			// Thus, we need to delay open the modal so that the modal would not be close immediately
+			// because the outside of modal is focused
+			window.setTimeout( () => {
+				setIsOpen( true );
+			} );
+		}
+	}, [ hasEverPublishedPost, isCurrentPostPublished ] );
 
 	return (
 		<NuxModal
