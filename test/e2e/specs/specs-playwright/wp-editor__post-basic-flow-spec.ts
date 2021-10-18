@@ -16,6 +16,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
+// This allows a conditional skip based on the parameter input.
 const itif = ( device: string ) => ( device === 'mobile' ? it : it.skip );
 
 const quote =

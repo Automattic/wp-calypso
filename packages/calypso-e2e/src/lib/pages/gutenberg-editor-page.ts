@@ -25,7 +25,6 @@ const selectors = {
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
-	// There is a hidden button also with the "Preview" text, so using unique class name instead of text selector.
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
