@@ -48,7 +48,7 @@ function useLogBillingHistoryError( message: string ) {
 				} )
 			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, message ]
 	);
 }
 
