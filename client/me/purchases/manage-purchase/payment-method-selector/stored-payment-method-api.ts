@@ -45,22 +45,32 @@ export async function updateCreditCard( {
 	token,
 	stripeConfiguration,
 	useForAllSubscriptions,
+	eventSource,
 }: {
 	purchase: Purchase;
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
+	eventSource?: string;
 } ): Promise< StoredCardEndpointResponse > {
-	const { purchaseId, payment_partner, paygate_token, use_for_existing } = getParamsForApi( {
+	const {
+		purchaseId,
+		payment_partner,
+		paygate_token,
+		use_for_existing,
+		event_source,
+	} = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		purchase,
 		useForAllSubscriptions,
+		eventSource,
 	} );
 	const response = await wp.req.post( '/upgrades/' + purchaseId + '/update-credit-card', {
 		payment_partner,
 		paygate_token,
 		use_for_existing,
+		event_source,
 	} );
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );

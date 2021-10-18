@@ -96,6 +96,7 @@ export async function assignNewCardProcessor(
 				token,
 				stripeConfiguration,
 				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+				eventSource,
 			} );
 
 			return makeSuccessResponse( result );
