@@ -45,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 
 		it( 'Navigate to Signup page', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.clickSignup();
+			await loginPage.signup();
 		} );
 
 		it( 'Set store cookie', async function () {

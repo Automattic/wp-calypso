@@ -9,7 +9,7 @@ import {
 	DataHelper,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	setupHooks,
 	PublishedPostPage,
@@ -37,8 +37,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	describe( 'Starting and populating post data', function () {
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Start new post', async function () {
