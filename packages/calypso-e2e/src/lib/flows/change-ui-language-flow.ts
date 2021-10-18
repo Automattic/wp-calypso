@@ -36,5 +36,8 @@ export class ChangeUILanguageFlow {
 
 		const accountSettingsPage = new AccountSettingsPage( this.page );
 		await accountSettingsPage.changeUILanguage( localeSlug );
+
+		// Wait for settings save and page reload.
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
