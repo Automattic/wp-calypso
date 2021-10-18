@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, useCallback } from 'react';
@@ -24,7 +25,6 @@ import { logToLogstash } from 'calypso/state/logstash/actions';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
-import MePurchasesErrorBoundary from './me-purchases-error-boundary';
 import PurchasesList from './purchases-list';
 import titles from './titles';
 import VatInfoPage from './vat-info';
@@ -211,7 +211,7 @@ export function changePaymentMethod( context, next ) {
 			<PurchasesWrapper title={ titles.changePaymentMethod }>
 				<Main wideLayout className="purchases__edit-payment-method">
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<MePurchasesErrorBoundary
+					<CheckoutErrorBoundary
 						errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 						onError={ logPurchasesError }
 					>
@@ -221,7 +221,7 @@ export function changePaymentMethod( context, next ) {
 							getManagePurchaseUrlFor={ managePurchaseUrl }
 							purchaseListUrl={ purchasesRoot }
 						/>
-					</MePurchasesErrorBoundary>
+					</CheckoutErrorBoundary>
 				</Main>
 			</PurchasesWrapper>
 		);
