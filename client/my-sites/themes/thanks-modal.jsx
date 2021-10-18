@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { addQueryArgs } from 'calypso/lib/route';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
@@ -101,6 +102,11 @@ class ThanksModal extends Component {
 		this.onCloseModal();
 	};
 
+	goToSiteEditor = () => {
+		this.trackClick( 'thanks modal edit site' );
+		this.onCloseModal();
+	};
+
 	renderThemeInfo = () => {
 		return this.props.translate( '{{a}}Learn more about{{/a}} this theme.', {
 			components: {
@@ -170,22 +176,31 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
 		if ( ! hasActivated ) {
 			return this.props.translate( 'Activating theme…' );
 		}
 
-		const gutenbergContent = this.props.translate( 'Edit homepage' );
-		const customizerContent = (
-			<>
-				<Gridicon icon="external" />
-				{ this.props.translate( 'Customize site' ) }
-			</>
-		);
+		if ( isFSEActive ) {
+			return (
+				<span className="thanks-modal__button-customize">
+					{ this.props.translate( 'Edit site' ) }
+				</span>
+			);
+		}
+
+		if ( shouldEditHomepageWithGutenberg ) {
+			return (
+				<span className="thanks-modal__button-customize">
+					{ this.props.translate( 'Edit homepage' ) }
+				</span>
+			);
+		}
 
 		return (
 			<span className="thanks-modal__button-customize">
-				{ shouldEditHomepageWithGutenberg ? gutenbergContent : customizerContent }
+				<Gridicon icon="external" />
+				{ this.props.translate( 'Customize site' ) }
 			</span>
 		);
 	};
@@ -198,7 +213,7 @@ class ThanksModal extends Component {
 	);
 
 	getButtons = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated } = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -225,9 +240,9 @@ class ThanksModal extends Component {
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
 				disabled: ! hasActivated,
-				onClick: this.goToCustomizer,
+				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 				href: this.props.customizeUrl,
-				target: shouldEditHomepageWithGutenberg ? null : '_blank',
+				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
 			},
 		];
 	};
@@ -248,8 +263,12 @@ class ThanksModal extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
+const ConnectedThanksModal = connect(
+	( state, props ) => {
+		const { blockEditorSettings } = props;
+
+		const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
@@ -267,9 +286,9 @@ export default connect(
 			( isAtomic || isJetpack ) && hasAutoLoadingHomepage
 				? addQueryArgs(
 						{ 'new-homepage': true },
-						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
+						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive )
 				  )
-				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId );
+				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
 
 		return {
 			siteId,
@@ -282,6 +301,7 @@ export default connect(
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
 			isThemeWpcom: isWpcomTheme( state, currentThemeId ),
+			isFSEActive,
 		};
 	},
 	{
@@ -289,3 +309,5 @@ export default connect(
 		requestSite,
 	}
 )( localize( ThanksModal ) );
+
+export default withBlockEditorSettings( ConnectedThanksModal );
