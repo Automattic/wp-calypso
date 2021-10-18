@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-success.svg';
