@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
+import useFseBetaEligibility from './use-fse-beta-eligibility';
 import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
@@ -57,8 +58,8 @@ export default function useSteps(): Array< StepType > {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 
-	// Remove the FSE Beta Opt In if not in a configured environment
-	if ( ! isEnabled( 'full-site-editing/beta-opt-in' ) ) {
+	// Remove the FSE Beta Opt In step if user is not eligible
+	if ( ! useFseBetaEligibility() ) {
 		steps = steps.filter( ( step ) => step !== Step.FseBetaOptIn );
 	}
 
