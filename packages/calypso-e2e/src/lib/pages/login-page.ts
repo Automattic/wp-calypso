@@ -123,7 +123,7 @@ export class LoginPage {
 	 */
 	private async resolveUserCredentials(
 		requestedCredentials: LoginCredentials | TestAccount
-	): Promise< { [ key: string ]: string } > {
+	): Promise< LoginCredentials > {
 		let username;
 		let password;
 
