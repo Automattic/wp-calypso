@@ -503,11 +503,11 @@ export class CheckoutThankYou extends Component {
 
 			return (
 				<DomainThankYou
-					email={ inboxPurchase ? inboxPurchase.meta : this.props.user?.email }
-					type={ purchaseType }
 					domain={ domainName }
+					email={ inboxPurchase ? inboxPurchase.meta : this.props.user?.email }
 					hasProfessionalEmail={ hasProfessionalEmail }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
+					type={ purchaseType }
 				/>
 			);
 		} else if ( wasTitanEmailOnlyProduct ) {

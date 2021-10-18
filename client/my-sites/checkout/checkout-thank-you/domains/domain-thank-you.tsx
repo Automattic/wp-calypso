@@ -7,19 +7,20 @@ import { DomainThankYouProps, DomainThankYouType } from './types';
 import './style.scss';
 
 interface DomainThankYouContainerProps {
-	type: DomainThankYouType;
 	domain: string;
-	includeInbox: string;
 	email: string;
+	hasProfessionalEmail: boolean;
+	includeInbox: string;
 	selectedSiteSlug: string;
+	type: DomainThankYouType;
 }
 
 const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
-	type,
 	domain,
 	email,
-	selectedSiteSlug,
 	hasProfessionalEmail,
+	selectedSiteSlug,
+	type,
 } ) => {
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];

@@ -6,9 +6,9 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { DomainThankYouParams, DomainThankYouProps } from '../types';
 
 const domainTransferThankYouProps = ( {
-	selectedSiteSlug,
 	domain,
 	email,
+	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => ( {
 	thankYouNotice: {
 		noticeTitle: translate( 'The transfer process can take up to 5 days to complete' ),

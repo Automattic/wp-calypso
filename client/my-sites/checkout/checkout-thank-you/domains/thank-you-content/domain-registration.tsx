@@ -7,10 +7,10 @@ import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { DomainThankYouParams, DomainThankYouProps } from '../types';
 
 const DomainRegistrationThankYouProps = ( {
-	selectedSiteSlug,
 	domain,
 	email,
 	hasProfessionalEmail,
+	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildCtaForProfessionalEmail(
 		{
