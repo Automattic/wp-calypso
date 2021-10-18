@@ -1,9 +1,11 @@
 import { Modal } from '@wordpress/components';
+import classnames from 'classnames';
 import React from 'react';
 import './style.scss';
 
 interface Props {
 	isOpen: boolean;
+	className?: string;
 	title: string;
 	description: string;
 	imageSrc: string;
@@ -13,6 +15,7 @@ interface Props {
 
 const NuxModal: React.FC< Props > = ( {
 	isOpen,
+	className,
 	title,
 	description,
 	imageSrc,
@@ -25,7 +28,7 @@ const NuxModal: React.FC< Props > = ( {
 
 	return (
 		<Modal
-			className="wpcom-block-editor-nux-modal"
+			className={ classnames( 'wpcom-block-editor-nux-modal', className ) }
 			open={ isOpen }
 			title=""
 			onRequestClose={ onClose }

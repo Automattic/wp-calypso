@@ -29,10 +29,6 @@
 		@include break-mobile {
 			text-align: center;
 		}
-
-		@include break-small {
-			padding: 48px 128px;
-		}
 	}
 
 	.wpcom-block-editor-nux-modal__image-container {
@@ -72,7 +68,7 @@
 		justify-content: center;
 		margin-top: 24px;
 
-		button {
+		.components-button {
 			min-width: 130px;
 			height: 40px;
 			justify-content: center;
@@ -80,7 +76,7 @@
 			font-size: $font-body-small;
 		}
 
-		button + button {
+		.components-button + .components-button {
 			margin-top: 12px;
 		}
 
@@ -88,7 +84,7 @@
 			flex-direction: row;
 			margin-top: 28px;
 
-			button + button {
+			.components-button + .components-button {
 				margin-top: 0;
 				margin-left: 16px;
 			}

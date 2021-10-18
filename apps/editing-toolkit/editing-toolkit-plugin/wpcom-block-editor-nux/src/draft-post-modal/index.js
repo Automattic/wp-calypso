@@ -4,6 +4,7 @@ import { doAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import NuxModal from '../nux-modal';
 import draftPostImage from './images/draft-post.svg';
+import './style.scss';
 
 const DraftPostModal = () => {
 	const [ isOpen, setIsOpen ] = useState( true );
@@ -17,6 +18,7 @@ const DraftPostModal = () => {
 	return (
 		<NuxModal
 			isOpen={ isOpen }
+			className="wpcom-block-editor-draft-post-modal"
 			title={ __( 'Write your first post', 'full-site-editing' ) }
 			description={ __(
 				'It’s time to flex those writing muscles and start drafting your first post!',
