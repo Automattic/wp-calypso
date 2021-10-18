@@ -507,7 +507,12 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	if ( ! hasBloggerPlan( cart ) && ! hasPersonalPlan( cart ) && ! hasBusinessPlan( cart ) ) {
+	if (
+		! hasBloggerPlan( cart ) &&
+		! hasPersonalPlan( cart ) &&
+		! hasBusinessPlan( cart ) &&
+		! hasEcommercePlan( cart )
+	) {
 		return;
 	}
 
