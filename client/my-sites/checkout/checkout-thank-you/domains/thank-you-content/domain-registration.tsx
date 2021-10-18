@@ -54,7 +54,7 @@ const DomainRegistrationThankYouProps = ( {
 		thankYouImage: { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess },
 		thankYouTitle: translate( 'Congratulations on your purchase!' ),
 		thankYouSubtitle: translate(
-			'You can now connect {{strong}}%(domain)s{{/strong}} to your site',
+			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
 			{
 				args: {
 					domain,

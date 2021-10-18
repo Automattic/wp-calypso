@@ -492,16 +492,14 @@ export class CheckoutThankYou extends Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if (
-			wasDomainMappingOrTransferProduct ||
-			wasDomainMappingOrRegistration
-		) {
+		} else if ( wasDomainMappingOrTransferProduct || wasDomainMappingOrRegistration ) {
 			const [ purchaseType, predicate ] = this.domainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 
-			const inboxPurchase = wasDomainMappingOrRegistration
-				? purchases.filter( isTitanMail )[ 0 ]
-				: null;
+			const inboxPurchase = this.getProfessionalEmailFromPurchase(
+				wasDomainMappingOrRegistration,
+				purchases
+			);
 
 			return (
 				<DomainThankYou
@@ -545,10 +543,22 @@ export class CheckoutThankYou extends Component {
 		);
 	}
 
+	getProfessionalEmailFromPurchase( wasDomainMappingOrRegistration, purchases ) {
+		if ( ! wasDomainMappingOrRegistration ) {
+			return null;
+		}
+
+		if ( purchases.filter( isTitanMail ).length > 0 ) {
+			return purchases.filter( isTitanMail )[ 0 ];
+		}
+
+		return null;
+	}
+
 	domainPurchaseType( purchases ) {
 		if ( purchases.some( isDomainMapping ) && purchases.some( isDomainRegistration ) ) {
 			return [ 'REGISTRATION', isDomainRegistration ];
-		} else if ( purchases.some( isDomainRegistration ) ) {
+		} else if ( purchases.some( isDomainMapping ) ) {
 			return [ 'MAPPING', isDomainMapping ];
 		}
 		return [ 'TRANSFER', isDomainTransfer ];
