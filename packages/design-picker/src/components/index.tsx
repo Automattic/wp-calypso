@@ -128,7 +128,11 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const isBlankCanvas = isBlankCanvasDesign( design );
-	const designTitle = isBlankCanvas ? __( 'Blank Canvas' ) : design.title;
+
+	// We don't need preview for blank canvas
+	if ( isBlankCanvas ) {
+		return null;
+	}
 
 	return (
 		<div className="design-button-cover">
@@ -146,13 +150,13 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				>
 					{
 						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Start with %s', __i18n_text_domain__ ), designTitle )
+						sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title )
 					}
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{
 						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Preview %s', __i18n_text_domain__ ), designTitle )
+						sprintf( __( 'Preview %s', __i18n_text_domain__ ), design.title )
 					}
 				</Button>
 			</div>
