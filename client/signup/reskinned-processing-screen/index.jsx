@@ -53,7 +53,7 @@ export default function ReskinnedProcessingScreen( props ) {
 	const totalSteps = steps.current.length;
 	const shouldShowNewSpinner = isDestinationSetupSiteFlow || flowName === 'setup-site';
 
-	const duration = isDestinationSetupSiteFlow ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
+	const duration = flowName === 'setup-site' ? HEADSTART_DURATION_IN_MS : DURATION_IN_MS;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	/**
