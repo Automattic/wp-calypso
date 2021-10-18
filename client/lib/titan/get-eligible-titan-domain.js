@@ -2,13 +2,13 @@ import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 
 /**
- * Retrieves the first domain that is eligible to Titan in this order:
+ * Retrieves the first domain that is eligible for Titan in this order:
  *
  *   - The domain from the site currently selected, if eligible
  *   - The primary domain of the site, if eligible
  *   - The first non-primary domain eligible found
  *
- * Note this method doesn't check if a domain is eligible to the 3-month free trial.
+ * Note this method doesn't check if a domain is eligible for the 3-month free trial.
  *
  * @param {string} selectedDomainName - domain name for the site currently selected by the user
  * @param {Array} domains - list of domain objects

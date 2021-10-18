@@ -3,7 +3,7 @@ import { canDomainAddGSuite } from './can-domain-add-gsuite';
 import { getGSuiteSupportedDomains } from './gsuite-supported-domain';
 
 /**
- * Retrieves the first domain that is eligible to G Suite in this order:
+ * Retrieves the first domain that is eligible for G Suite in this order:
  *
  *   - The domain from the site currently selected, if eligible
  *   - The primary domain of the site, if eligible
