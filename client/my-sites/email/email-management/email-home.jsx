@@ -35,6 +35,7 @@ import {
 } from 'calypso/state/ui/selectors';
 
 import './style.scss';
+import ProgressLine from "calypso/my-sites/email/inbox/mailbox-selection-list/progress-line";
 
 class EmailManagementHome extends Component {
 	static propTypes = {
@@ -168,10 +169,10 @@ class EmailManagementHome extends Component {
 	}
 
 	renderLoadingPlaceholder() {
-		const { source } = this.props;
-		//Inbox has it's own loader, don't show any placeholder
+		const { source, translate } = this.props;
+
 		if ( source === INBOX_SOURCE ) {
-			return null;
+			return <ProgressLine statusText={ translate( 'Loading your email subscriptions' ) } />;
 		}
 		return this.renderContentWithHeader(
 			<>
