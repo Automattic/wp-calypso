@@ -22,6 +22,10 @@
 	width: 80px;
 	height: 80px;
 
+	&.wpcom-site__logo {
+		position: fixed;
+	}
+
 	> div {
 		position: absolute;
 		top: 33px;
