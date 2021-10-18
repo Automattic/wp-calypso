@@ -1,4 +1,5 @@
 export { getConfiguredTitanMailboxCount } from './get-configured-titan-mailbox-count';
+export { getEligibleTitanDomain } from './get-eligible-titan-domain';
 export { getMaxTitanMailboxCount } from './get-max-titan-mailbox-count';
 export { getTitanExpiryDate } from './get-titan-expiry-date';
 export { getTitanMailboxPurchaseCost } from './get-titan-mailbox-purchase-cost';

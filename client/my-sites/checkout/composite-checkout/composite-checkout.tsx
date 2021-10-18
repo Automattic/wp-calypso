@@ -26,6 +26,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
+import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
@@ -231,6 +232,8 @@ export default function CompositeCheckout( {
 		[ responseCart ]
 	);
 
+	const domains = useSiteDomains( siteId );
+
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug: updatedSiteSlug,
 		redirectTo,
@@ -242,7 +245,9 @@ export default function CompositeCheckout( {
 		hideNudge: !! isComingFromUpsell,
 		isInEditor,
 		isJetpackCheckout,
+		domains,
 	} );
+
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
 		recordEvent( {

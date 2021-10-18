@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
+import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
@@ -23,6 +24,7 @@ export default function useGetThankYouUrl( {
 	hideNudge,
 	isInEditor,
 	isJetpackCheckout = false,
+	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -49,10 +51,13 @@ export default function useGetThankYouUrl( {
 			hideNudge,
 			isInEditor,
 			isJetpackCheckout,
+			domains,
 		};
+
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		debug( 'getThankYouUrl returned', url );
+
 		return url;
 	}, [
 		isInEditor,
@@ -68,6 +73,7 @@ export default function useGetThankYouUrl( {
 		cart,
 		hideNudge,
 		isJetpackCheckout,
+		domains,
 	] );
 	return getThankYouUrl;
 }
@@ -84,4 +90,5 @@ export interface GetThankYouUrlProps {
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
+	domains: Domain[] | undefined;
 }
