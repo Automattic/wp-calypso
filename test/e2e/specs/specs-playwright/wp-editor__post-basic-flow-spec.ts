@@ -74,18 +74,22 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Publish post', function () {
-		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional
+		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
 			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
+		it( 'Save draft', async function () {
+			await gutenbergEditorPage.saveDraft();
+		} );
+
 		it( 'Publish and visit post', async function () {
 			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
-			expect( publishedURL ).toBe( await page.url() );
-			publishedPostPage = new PublishedPostPage( page );
+			expect( publishedURL ).toBe( page.url() );
 		} );
 
 		it( 'Post content is found in published post', async function () {
+			publishedPostPage = new PublishedPostPage( page );
 			await publishedPostPage.validateTextInPost( title );
 			await publishedPostPage.validateTextInPost( quote );
 		} );
