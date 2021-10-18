@@ -23,7 +23,7 @@ const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
 	skip: [ 'design-setup-site' ],
 };
 
-export default function IntentStep( props: Props ): React.ReactNode {
+export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName } = props;
