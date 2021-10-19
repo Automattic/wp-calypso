@@ -61,7 +61,9 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 			<EmptyContent
 				title={ translate( 'Hang on! Our experts are building your site.' ) }
 				line={ translate(
-					'Our Built By WordPress.com team will be in touch with you when your site is ready to be transferred to your account and launched.'
+					'Thank you for your purchase. ' +
+						'Our Built By WordPress.com team will begin building your site soon. ' +
+						'We’ll be in touch when your site is ready to be launched.'
 				) }
 				secondaryAction={ translate( 'Manage domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
