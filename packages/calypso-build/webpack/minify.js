@@ -48,7 +48,6 @@ function isFeatureSupported( feature, browsers ) {
  * and the world will be a better place.
  *
  * @param {Array<string>} browsers The list of supported browsers.
- *
  * @returns {number} The maximum supported ECMAScript version.
  */
 function chooseTerserEcmaVersion( browsers ) {
@@ -106,6 +105,7 @@ function chooseTerserEcmaVersion( browsers ) {
  * @param options.cssMinimizerOptions Options for CSS Minimizer plugin
  * @param options.extractComments Whether to extract comments into a separate LICENSE file (defaults to true)
  * @param options.parallel Whether to run minifiers in parallel (defaults to true)
+ * @param {boolean} options.useEsbuild Uses esbuild to minify instead of terser. When this option is set, `extractComments` is ignored and `terserOptions` are the options defined in https://esbuild.github.io/api/#minify. False by default
  * @returns {object[]}     Terser plugin object to be used in Webpack minification.
  */
 module.exports = ( {
@@ -113,22 +113,27 @@ module.exports = ( {
 	cssMinimizerOptions = {},
 	parallel = true,
 	extractComments = true,
+	useEsbuild = false,
 } = {} ) => {
-	terserOptions = {
-		ecma: chooseTerserEcmaVersion( supportedBrowsers ),
-		ie8: false,
-		safari10: supportedBrowsers.some(
-			( browser ) => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
-		),
-		...terserOptions,
-	};
+	let terser;
+
+	if ( ! useEsbuild ) {
+		terserOptions = {
+			ecma: chooseTerserEcmaVersion( supportedBrowsers ),
+			ie8: false,
+			safari10: supportedBrowsers.some(
+				( browser ) => browser.includes( 'safari 10' ) || browser.includes( 'ios_saf 10' )
+			),
+			...terserOptions,
+		};
+		terser = new TerserPlugin( { parallel, extractComments, terserOptions } );
+	} else {
+		terser = new TerserPlugin( { minify: TerserPlugin.esbuildMinify, terserOptions } );
+	}
 	cssMinimizerOptions = {
 		preset: 'default',
 		...cssMinimizerOptions,
 	};
 
-	return [
-		new TerserPlugin( { parallel, extractComments, terserOptions } ),
-		new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ),
-	];
+	return [ terser, new CssMinimizerPlugin( { parallel, minimizerOptions: cssMinimizerOptions } ) ];
 };

@@ -79,10 +79,16 @@
 	},
 	"peerDependencies": {
 		"enzyme": "^3.11.0",
+		"esbuild": "^0.13.8",
 		"jest": ">=27.2.4",
 		"postcss": "^8.2.15",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"webpack": "^5.54.0"
+	},
+	"peerDependenciesMeta": {
+		"esbuild": {
+			"optional": true
+		}
 	}
 }
