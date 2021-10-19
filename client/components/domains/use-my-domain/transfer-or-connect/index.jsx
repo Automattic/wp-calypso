@@ -94,7 +94,12 @@ function DomainTransferOrConnect( {
 			<QueryProductsList />
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
-					<OptionContent key={ 'option-' + index } disabled={ actionClicked } { ...optionProps } />
+					<OptionContent
+						isPlaceholder={ isFetching }
+						key={ 'option-' + index }
+						disabled={ actionClicked }
+						{ ...optionProps }
+					/>
 				) ) }
 				<div className={ baseClassName + '__support-link' }>
 					{ createInterpolateElement(
