@@ -3,10 +3,11 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -39,6 +40,8 @@ function DomainTransferOrConnect( {
 	transferDomainUrl,
 } ) {
 	const [ actionClicked, setActionClicked ] = useState( false );
+	const [ availabilityData, setAvailabilityData ] = useState( availability );
+	const [ isFetching, setIsFetching ] = useState( availabilityData === null );
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -54,7 +57,7 @@ function DomainTransferOrConnect( {
 	};
 
 	const content = getOptionInfo( {
-		availability,
+		availability: availabilityData,
 		cart,
 		currencyCode,
 		domain,
@@ -67,6 +70,21 @@ function DomainTransferOrConnect( {
 		selectedSite,
 		siteIsOnPaidPlan,
 		transferDomainUrl,
+	} );
+
+	// retrieves the availability data by itself if not provided by the parent component
+	useEffect( () => {
+		( async () => {
+			if ( ! availabilityData ) {
+				setIsFetching( true );
+				const retrievedAvailabilityData = await wpcom
+					.domain( domain )
+					.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
+
+				setAvailabilityData( retrievedAvailabilityData );
+				setIsFetching( false );
+			}
+		} )();
 	} );
 
 	const baseClassName = 'domain-transfer-or-connect';
