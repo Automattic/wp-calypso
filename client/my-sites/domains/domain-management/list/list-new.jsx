@@ -6,7 +6,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import DomainActionsButton from './domain-actions-button';
+import AddDomainButton from './options-domain-button';
 
 import './list-new.scss';
 
@@ -35,8 +35,8 @@ class ListNew extends Component {
 			),
 		};
 		const buttons = [
-			<DomainActionsButton key="breadcrumb_button_1" specificSiteActions />,
-			<DomainActionsButton key="breadcrumb_button_2" ellipsisButton />,
+			<AddDomainButton key="breadcrumb_button_1" specificSiteActions />,
+			<AddDomainButton key="breadcrumb_button_2" ellipsisButton />,
 		];
 
 		return (
