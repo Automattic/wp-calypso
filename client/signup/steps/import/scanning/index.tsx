@@ -9,8 +9,13 @@ interface Props {
 	goToStep: ( name: string ) => void;
 }
 
-const ScanningStep: React.FunctionComponent< Props > = () => {
+const ScanningStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
 	const { __ } = useI18n();
+
+	// temp peace of code
+	setTimeout( () => {
+		goToStep( 'list' );
+	}, 3000 );
 
 	return (
 		<div className="import-layout__center">

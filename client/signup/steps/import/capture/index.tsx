@@ -11,7 +11,11 @@ const validateUrl = ( url: string ): boolean => {
 	return urlRgx.test( url );
 };
 
-const CaptureStep: React.FunctionComponent = () => {
+interface Props {
+	goToStep: ( name: string ) => void;
+}
+
+const CaptureStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
 	const { __ } = useI18n();
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
@@ -19,6 +23,7 @@ const CaptureStep: React.FunctionComponent = () => {
 
 	const runProcess = (): void => {
 		// Redirect to the next step!
+		goToStep( 'scanning' );
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {

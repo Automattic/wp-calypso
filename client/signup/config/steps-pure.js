@@ -745,9 +745,15 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 		},
 
+		// ↓ importer steps
 		list: {
 			stepName: 'list',
-			providesDependencies: [ 'siteSlug' ],
+		},
+		capture: {
+			stepName: 'capture',
+		},
+		scanning: {
+			stepName: 'scanning',
 		},
 	};
 }

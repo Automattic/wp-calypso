@@ -77,6 +77,8 @@ const stepNameToModuleName = {
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
 	list: 'import',
+	capture: 'import',
+	scanning: 'import',
 };
 
 export function getStepModuleName( stepName ) {
