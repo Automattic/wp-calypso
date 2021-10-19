@@ -71,6 +71,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
@@ -986,7 +987,10 @@ export class MySitesSidebar extends Component {
 	};
 
 	renderSidebarMenus() {
-		if ( this.props.isDomainOnly || this.props.isDIFMLiteInProgress ) {
+		if (
+			! this.props.isSupportSession &&
+			( this.props.isDomainOnly || this.props.isDIFMLiteInProgress )
+		) {
 			return (
 				<SidebarMenu>
 					<SidebarItem
@@ -1140,6 +1144,7 @@ function mapStateToProps( state ) {
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
 		isDIFMLiteInProgress: isDIFMLiteInProgress( state, selectedSiteId ),
+		isSupportSession: isSupportSession( state ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),

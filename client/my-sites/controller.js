@@ -58,6 +58,7 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -252,7 +253,10 @@ function onSelectedSiteAvailable( context ) {
 		return false;
 	}
 
-	// The paths allowed for domain-only sites and DIFM in-progress sites are the same
+	/**
+	 * The paths allowed for domain-only sites and DIFM in-progress sites are the same.
+	 * Ignore this check if we are inside a support session.
+	 */
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite(
@@ -260,7 +264,8 @@ function onSelectedSiteAvailable( context ) {
 			selectedSite.slug,
 			primaryDomain,
 			context.params
-		)
+		) &&
+		! isSupportSession( state )
 	) {
 		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
