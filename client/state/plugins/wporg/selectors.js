@@ -1,5 +1,4 @@
 import 'calypso/state/plugins/init';
-import { Pagination } from './types';
 
 export function getAllPlugins( state ) {
 	return state?.plugins.wporg.items;
@@ -66,9 +65,9 @@ export function getNextPluginsListPage( state, category ) {
 /**
  * Retrieve the current state of pagination.
  *
- * @param {object} state		State object
- * @param {string} searchTerm	Plugin search term
- * @returns {Pagination}		Pagination object, including current page, total pages, and total results
+ * @param {object} state                   State object
+ * @param {string} searchTerm              Plugin search term
+ * @returns {import('./types').Pagination} Pagination object, including current page, total pages, and total results
  */
 export function getPluginsListPagination( state, searchTerm ) {
 	return state.plugins.wporg.listsPagination?.search?.[ searchTerm ];
