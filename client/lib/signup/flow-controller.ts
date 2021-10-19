@@ -287,8 +287,8 @@ export default class SignupFlowController {
 	 */
 	_getFlowSteps() {
 		// As signup framework is shared across multiple products, we keep using this value with excluded steps
-		// to ensure this change not break any existed behavior. Thus, the excluded steps will be processed for
-		// those flow.
+		// to ensure that this change does not any existed behavior. Thus, the excluded steps will be processed
+		// for those flows.
 		if ( ! this._flow.enableBranchSteps ) {
 			return this._flow.steps;
 		}
