@@ -33,7 +33,7 @@ interface Props {
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	selectedDomainName?: string;
+	selectedDomainName: string;
 	showTrashButton: boolean;
 	siteId: number;
 	user: NewUser;
