@@ -390,7 +390,6 @@ export class CheckoutThankYou extends Component {
 		let wasMarketplaceProduct = false;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
-		let wasDomainMappingOrTransferProduct = false;
 		let wasDomainProduct = false;
 		let wasTitanEmailOnlyProduct = false;
 		let wasTitanEmailProduct = false;
