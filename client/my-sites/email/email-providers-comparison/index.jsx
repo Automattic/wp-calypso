@@ -501,7 +501,7 @@ class EmailProvidersComparison extends Component {
 			<TitanNewMailboxList
 				onMailboxesChange={ this.onTitanMailboxesChange }
 				mailboxes={ this.state.titanMailboxes }
-				domain={ selectedDomainName }
+				selectedDomainName={ selectedDomainName }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }

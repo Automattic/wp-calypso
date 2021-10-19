@@ -17,7 +17,7 @@ const noop = () => {};
 
 const TitanNewMailboxList = ( {
 	children,
-	domain,
+	selectedDomainName,
 	mailboxes,
 	onMailboxesChange,
 	onReturnKeyPress = noop,
@@ -50,7 +50,7 @@ const TitanNewMailboxList = ( {
 	};
 
 	const onMailboxAdd = () => {
-		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( domain, false ) ] );
+		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( selectedDomainName, false ) ] );
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
@@ -59,7 +59,7 @@ const TitanNewMailboxList = ( {
 		const updatedMailboxes =
 			0 < remainingMailboxes.length
 				? remainingMailboxes
-				: [ buildNewTitanMailbox( domain, false ) ];
+				: [ buildNewTitanMailbox( selectedDomainName, false ) ];
 		onMailboxesChange( updatedMailboxes );
 	};
 
@@ -82,7 +82,7 @@ const TitanNewMailboxList = ( {
 					) }
 
 					<TitanNewMailbox
-						selectedDomainName={ domain }
+						selectedDomainName={ selectedDomainName }
 						onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
 						mailbox={ mailbox }
 						onReturnKeyPress={ onReturnKeyPress }
@@ -122,7 +122,7 @@ const TitanNewMailboxList = ( {
 
 TitanNewMailboxList.propTypes = {
 	children: PropTypes.node,
-	domain: PropTypes.string.isRequired,
+	selectedDomainName: PropTypes.string.isRequired,
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,

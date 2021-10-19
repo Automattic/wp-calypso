@@ -89,7 +89,6 @@ const TitanNewMailbox = ( {
 									setNameFieldTouched( hasBeenValidated );
 								} }
 								onKeyUp={ onReturnKeyPress }
-                suffix={ `@${ selectedDomain?.name }` }
 							/>
 						</FormLabel>
 						{ hasNameError && <FormInputValidation text={ nameError } isError /> }
@@ -190,6 +189,7 @@ TitanNewMailbox.propTypes = {
 	mailbox: getMailboxPropTypeShape(),
 	showAllErrors: PropTypes.bool,
 	showLabels: PropTypes.bool.isRequired,
+	selectedDomainName: PropTypes.string.isRequired,
 };
 
 export default TitanNewMailbox;
