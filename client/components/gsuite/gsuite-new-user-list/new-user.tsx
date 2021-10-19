@@ -99,8 +99,8 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						setMailBoxFieldTouched( wasValidated );
 					} }
 					onKeyUp={ onReturnKeyPress }
-					prefix={ isRtl ? `\u200e@${ selectedDomain.name }\u202c` : null }
-					suffix={ isRtl ? null : `\u200e@${ selectedDomain.name }\u202c` }
+					prefix={ isRtl ? `\u200e@${ selectedDomain?.name }\u202c` : null }
+					suffix={ isRtl ? null : `\u200e@${ selectedDomain?.name }\u202c` }
 				/>
 			</LabelWrapper>
 		);
