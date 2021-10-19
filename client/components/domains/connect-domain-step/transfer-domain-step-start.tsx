@@ -3,9 +3,13 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
+import { useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
-import { getDomainTransferrability } from 'calypso/components/domains/use-my-domain/utilities';
+import {
+	getDomainInboundTransferStatusInfo,
+	getDomainTransferrability,
+} from 'calypso/components/domains/use-my-domain/utilities';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
@@ -24,12 +28,34 @@ export default function TransferDomainStepStart( {
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => page( MAP_EXISTING_DOMAIN );
+	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState(
+		domainInboundTransferStatusInfo
+	);
+	const [ isFetching, setIsFetching ] = useState( isFetchingAvailability );
 	const isDomainTransferrable = getDomainTransferrability( domainInboundTransferStatusInfo )
 		.transferrable;
 
+	// retrieves the availability data by itself if not provided by the parent component
+	useEffect( () => {
+		( async () => {
+			try {
+				setIsFetching( true );
+
+				if ( ! inboundTransferStatusInfo ) {
+					const inboundTransferStatusResult = await getDomainInboundTransferStatusInfo( domain );
+					setInboundTransferStatusInfo( inboundTransferStatusResult );
+				}
+				setIsFetching( false );
+			} catch {
+				setIsFetching( false );
+				setInboundTransferStatusInfo( {} );
+			}
+		} )();
+	} );
+
 	const stepContent = (
 		<>
-			{ ! isFetchingAvailability && ! isDomainTransferrable && (
+			{ ! isFetching && ! isDomainTransferrable && (
 				<Notice
 					status="is-error"
 					showDismiss={ false }
