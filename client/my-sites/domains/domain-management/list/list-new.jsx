@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import AddDomainButton from './options-domain-button';
@@ -52,6 +53,7 @@ class ListNew extends Component {
 	render() {
 		return (
 			<Main fullWidthLayout>
+				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				{ this.renderBreadcrumbs() }
 				<SidebarNavigation />
 			</Main>
