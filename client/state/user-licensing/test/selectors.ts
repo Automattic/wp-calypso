@@ -8,37 +8,41 @@ const userLicensingState = {
 	userLicensing: {
 		licensesFetching: false,
 		hasFetchedLicenses: false,
-		licenses: {
-			currentPage: 1,
-			itemsPerPage: 50,
-			totalPages: 1,
-			currentItems: 0,
-			totalItems: 0,
-			items: [],
-		},
+		licenses: null,
 		countsFetching: false,
 		hasFetchedLicenseCounts: true,
-		counts: {
-			attached: 0,
-			detached: 0,
-			revoked: 0,
-			not_revoked: 0,
-		},
+		counts: null,
 	},
 };
 
+const licensesResponse = {
+	currentPage: 1,
+	itemsPerPage: 50,
+	totalPages: 1,
+	currentItems: 0,
+	totalItems: 0,
+	items: [],
+};
+
+const countsResponse = {
+	attached: 0,
+	detached: 0,
+	revoked: 0,
+	not_revoked: 0,
+};
+
 describe( 'selectors', () => {
-	describe( '#hasFetchedLicenses()', () => {
-		test( 'should return the value of hasFetched', () => {
-			const { hasFetchedLicenses } = selectors;
+	describe( '#hasFetchedUserLicenses()', () => {
+		test( 'should return the value of hasFetchedLicenses', () => {
+			const { hasFetchedUserLicenses } = selectors;
 			const state = {
 				...userLicensingState,
 			};
 
-			expect( hasFetchedLicenses( state ) ).toEqual( false );
+			expect( hasFetchedUserLicenses( state ) ).toEqual( false );
 
 			state.userLicensing.hasFetchedLicenses = true;
-			expect( hasFetchedLicenses( state ) ).toEqual( true );
+			expect( hasFetchedUserLicenses( state ) ).toEqual( true );
 		} );
 	} );
 
@@ -57,13 +61,28 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getUserLicenses()', () => {
-		test( 'should return the value of licenses', () => {
+		test( 'should return null if licenses have not been fetched yet.', () => {
 			const { getUserLicenses } = selectors;
 			const state = {
 				...userLicensingState,
 			};
 
-			expect( getUserLicenses( state ) ).toEqual( userLicensingState.userLicensing.licenses );
+			expect( getUserLicenses( state ) ).toEqual( null );
+		} );
+
+		test( 'should return the value of state.userLicensing.licenses', () => {
+			const { getUserLicenses } = selectors;
+			const state = {
+				...userLicensingState,
+				userLicensing: {
+					...userLicensingState.userLicensing,
+					licenses: {
+						...licensesResponse,
+					},
+				},
+			};
+
+			expect( getUserLicenses( state ) ).toEqual( state.userLicensing.licenses );
 
 			const licenses = {
 				currentPage: 2,
@@ -93,13 +112,28 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getLicensesCounts()', () => {
-		test( 'should return the value of counts', () => {
+		test( 'should return null if licenses counts have not been fetched yet.', () => {
 			const { getUserLicensesCounts } = selectors;
 			const state = {
 				...userLicensingState,
 			};
 
-			expect( getUserLicensesCounts( state ) ).toEqual( userLicensingState.userLicensing.counts );
+			expect( getUserLicensesCounts( state ) ).toEqual( null );
+		} );
+
+		test( 'should return the value of state.userLicensing.counts', () => {
+			const { getUserLicensesCounts } = selectors;
+			const state = {
+				...userLicensingState,
+				userLicensing: {
+					...userLicensingState.userLicensing,
+					counts: {
+						...countsResponse,
+					},
+				},
+			};
+
+			expect( getUserLicensesCounts( state ) ).toEqual( state.userLicensing.counts );
 
 			const counts = {
 				attached: 1,
@@ -112,19 +146,35 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#hasFetchedLicenseCounts()', () => {
+	describe( '#hasFetchedUserLicensesCounts()', () => {
 		test( 'should return the value of hasFetchedLicenseCounts', () => {
-			const { hasFetchedLicenseCounts } = selectors;
+			const { hasFetchedUserLicensesCounts } = selectors;
 			const state = {
 				...userLicensingState,
 			};
 
-			expect( hasFetchedLicenseCounts( state ) ).toEqual(
+			expect( hasFetchedUserLicensesCounts( state ) ).toEqual(
 				userLicensingState.userLicensing.hasFetchedLicenseCounts
 			);
 
 			state.userLicensing.hasFetchedLicenseCounts = true;
-			expect( hasFetchedLicenseCounts( state ) ).toEqual( true );
+			expect( hasFetchedUserLicensesCounts( state ) ).toEqual( true );
+		} );
+	} );
+
+	describe( '#isFetchingUserLicensesCounts()', () => {
+		test( 'should return the value of countsFetching', () => {
+			const { isFetchingUserLicensesCounts } = selectors;
+			const state = {
+				...userLicensingState,
+			};
+
+			expect( isFetchingUserLicensesCounts( state ) ).toEqual(
+				userLicensingState.userLicensing.countsFetching
+			);
+
+			state.userLicensing.countsFetching = true;
+			expect( isFetchingUserLicensesCounts( state ) ).toEqual( true );
 		} );
 	} );
 } );

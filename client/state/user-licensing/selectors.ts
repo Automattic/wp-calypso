@@ -1,31 +1,27 @@
-import {
-	License,
-	LicenseCounts,
-	PaginatedItems,
-	UserLicensingStore,
-} from 'calypso/state/user-licensing/types';
+import { License, LicenseCounts, PaginatedItems } from 'calypso/state/user-licensing/types';
+import { AppState } from 'calypso/types';
 import 'calypso/state/user-licensing/init';
 
-export function getUserLicensesCounts( state: UserLicensingStore ): LicenseCounts | null {
+export function getUserLicensesCounts( state: AppState ): LicenseCounts | null {
 	return state?.userLicensing?.counts;
 }
 
-export function getUserLicenses( state: UserLicensingStore ): PaginatedItems< License > | null {
+export function getUserLicenses( state: AppState ): PaginatedItems< License > | null {
 	return state?.userLicensing?.licenses;
 }
 
-export function hasFetchedLicenseCounts( state: UserLicensingStore ): boolean {
+export function hasFetchedUserLicensesCounts( state: AppState ): boolean {
 	return state.userLicensing?.hasFetchedLicenseCounts;
 }
 
-export function isFetchingLicenseCounts( state: UserLicensingStore ): boolean {
+export function isFetchingUserLicensesCounts( state: AppState ): boolean {
 	return state.userLicensing?.countsFetching;
 }
 
-export function hasFetchedLicenses( state: UserLicensingStore ): boolean {
+export function hasFetchedUserLicenses( state: AppState ): boolean {
 	return state.userLicensing?.hasFetchedLicenses;
 }
 
-export function isFetchingUserLicenses( state: UserLicensingStore ): boolean {
+export function isFetchingUserLicenses( state: AppState ): boolean {
 	return state.userLicensing?.licensesFetching;
 }
