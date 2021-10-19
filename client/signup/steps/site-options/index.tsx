@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import siteOptionsImage from 'calypso/assets/images/onboarding/site-options.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SiteOptions from './site-options';
 import type { SiteOptionsFormValues } from './types';
 import './index.scss';
@@ -30,6 +30,11 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 		dispatch( submitSignupStep( { stepName }, { siteTitle, tagline } ) );
 		goToNextStep();
 	};
+
+	// Only do following things when mounted
+	React.useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
+	}, [] );
 
 	return (
 		<StepWrapper
