@@ -38,7 +38,7 @@ function UseMyDomain( {
 	initialMode,
 } ) {
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( null );
-	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( {} );
+	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( null );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const [ domainLockStatus, setDomainLockStatus ] = useState( domainLockStatusType.LOCKED );

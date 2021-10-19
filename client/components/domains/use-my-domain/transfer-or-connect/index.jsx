@@ -41,6 +41,9 @@ function DomainTransferOrConnect( {
 } ) {
 	const [ actionClicked, setActionClicked ] = useState( false );
 	const [ availabilityData, setAvailabilityData ] = useState( availability );
+	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState(
+		domainInboundTransferStatusInfo
+	);
 	const [ isFetching, setIsFetching ] = useState( availabilityData === null );
 
 	const handleConnect = () => {
@@ -61,7 +64,7 @@ function DomainTransferOrConnect( {
 		cart,
 		currencyCode,
 		domain,
-		domainInboundTransferStatusInfo,
+		domainInboundTransferStatusInfo: inboundTransferStatusInfo,
 		isSignupStep,
 		onConnect: handleConnect,
 		onTransfer: handleTransfer,
@@ -75,15 +78,39 @@ function DomainTransferOrConnect( {
 	// retrieves the availability data by itself if not provided by the parent component
 	useEffect( () => {
 		( async () => {
+			if ( availabilityData && inboundTransferStatusInfo ) return;
+			setIsFetching( true );
 			if ( ! availabilityData ) {
-				setIsFetching( true );
 				const retrievedAvailabilityData = await wpcom
 					.domain( domain )
 					.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
 				setAvailabilityData( retrievedAvailabilityData );
-				setIsFetching( false );
 			}
+
+			if ( ! inboundTransferStatusInfo ) {
+				// TODO: remove this try-catch when the next statuses get added on the API
+
+				const inboundTransferStatusResult = await wpcom
+					.undocumented()
+					.getInboundTransferStatus( domain );
+
+				const retrievedInboundTransferStatusInfo = {
+					creationDate: inboundTransferStatusResult.creation_date,
+					email: inboundTransferStatusResult.admin_email,
+					inRedemption: inboundTransferStatusResult.in_redemption,
+					losingRegistrar: inboundTransferStatusResult.registrar,
+					losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
+					privacy: inboundTransferStatusResult.privacy,
+					termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
+					transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
+					transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
+					unlocked: inboundTransferStatusResult.unlocked,
+				};
+
+				setInboundTransferStatusInfo( retrievedInboundTransferStatusInfo );
+			}
+			setIsFetching( false );
 		} )();
 	} );
 
