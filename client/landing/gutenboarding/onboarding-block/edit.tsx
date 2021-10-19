@@ -23,7 +23,6 @@ import CreateSiteError from './create-site-error';
 import Designs from './designs';
 import Domains from './domains';
 import Features from './features';
-import FseBetaOptIn from './fse-beta-opt-in';
 import Language from './language';
 import Plans from './plans';
 import StylePreview from './style-preview';
@@ -201,10 +200,6 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
-				</Route>
-
-				<Route path={ makePath( Step.FseBetaOptIn ) }>
-					<FseBetaOptIn />
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>

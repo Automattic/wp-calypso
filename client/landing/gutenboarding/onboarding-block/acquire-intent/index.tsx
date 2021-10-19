@@ -6,12 +6,14 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
+import useFseBetaEligibility from '../../hooks/use-fse-beta-eligibility';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import { useIsAnchorFm } from '../../path';
 import { STORE_KEY } from '../../stores/onboard';
 import Arrow from './arrow';
+import FseBetaOptIn from './fse-beta-opt-in';
 import SiteTitle from './site-title';
 import VerticalSelect from './vertical-select';
 
@@ -51,6 +53,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 	// Allow Anchor Gutenboarding to check the backend for matching sites and redirect if found.
 	const isAnchorFm = useIsAnchorFm();
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
+
+	const isSiteEligibleForFseBeta = useFseBetaEligibility();
+	const [ isFseBetaOptInStep, setIsFseBetaOptInStep ] = React.useState( true );
+	const shouldShowFseOptInStep = isSiteEligibleForFseBeta && isFseBetaOptInStep && ! isAnchorFm;
 
 	const handleSkip = () => {
 		skipSiteVertical();
@@ -104,6 +110,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 	// have an anchor site. If we're still waiting for this response, don't show anything yet.
 	if ( isAnchorFm && isLookingUpMatchingAnchorSites ) {
 		return <div className="gutenboarding-page acquire-intent" />;
+	}
+
+	if ( shouldShowFseOptInStep ) {
+		return <FseBetaOptIn setVisible={ setIsFseBetaOptInStep } />;
 	}
 
 	return (

@@ -1,33 +1,28 @@
-import {
-	Title,
-	SubTitle,
-	ActionButtons,
-	NextButton,
-	BackButton,
-	SkipButton,
-} from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, NextButton, SkipButton } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, siteLogo, header, navigation, arrowRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import useStepNavigation from '../../hooks/use-step-navigation';
-import { useTrackStep } from '../../hooks/use-track-step';
-import { trackEventWithFlow } from '../../lib/analytics';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { useTrackStep } from '../../../hooks/use-track-step';
+import { trackEventWithFlow } from '../../../lib/analytics';
+import { STORE_KEY as ONBOARD_STORE } from '../../../stores/onboard';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-const FseBetaOptIn: FunctionComponent = () => {
+interface FseBetaOptInProps {
+	setVisible: ( isVisible: boolean ) => void;
+}
+
+const FseBetaOptIn: FunctionComponent< FseBetaOptInProps > = ( { setVisible } ) => {
 	const { __ } = useI18n();
-	const { goNext, goBack } = useStepNavigation();
 	const { enrollInFseBeta } = useDispatch( ONBOARD_STORE );
 	const { shouldEnrollInFseBeta } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const pickBeta = ( shouldEnroll: boolean ) => {
+		setVisible( false );
 		enrollInFseBeta( shouldEnroll );
 		trackEventWithFlow( 'calypso_fse_beta_opt_in', {
 			selected_fse_beta_opt_in: shouldEnroll,
 		} );
-		goNext();
 	};
 
 	useTrackStep( 'FseBetaOptIn', () => ( {
@@ -42,7 +37,6 @@ const FseBetaOptIn: FunctionComponent = () => {
 					<SubTitle>{ __( 'Experience the new WordPress.com site editing features' ) }</SubTitle>
 				</div>
 				<ActionButtons className="fse-beta-opt-in__actions">
-					<BackButton onClick={ goBack } />
 					<SkipButton onClick={ () => pickBeta( false ) } />
 				</ActionButtons>
 			</div>
