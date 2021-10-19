@@ -31,8 +31,6 @@ import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
-	CONCIERGE_SUPPORT_SESSION,
-	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
 import { getDomainOrProductFromContext } from './utils';
@@ -234,13 +232,7 @@ export function upsellNudge( context, next ) {
 	let upsellType;
 	let upgradeItem;
 
-	if ( context.path.includes( 'offer-quickstart-session' ) ) {
-		upsellType = CONCIERGE_QUICKSTART_SESSION;
-		upgradeItem = 'concierge-session';
-	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
-		upsellType = CONCIERGE_SUPPORT_SESSION;
-		upgradeItem = 'concierge-session';
-	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
+	if ( context.path.includes( 'offer-plan-upgrade' ) ) {
 		upgradeItem = context.params.upgradeItem;
 
 		switch ( upgradeItem ) {
@@ -271,16 +263,6 @@ export function upsellNudge( context, next ) {
 	);
 
 	next();
-}
-
-export function redirectToSupportSession( context ) {
-	const { receiptId, site } = context.params;
-
-	// Redirect the old URL structure to the new URL structure to maintain backwards compatibility.
-	if ( context.params.receiptId ) {
-		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
-	}
-	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
 export function jetpackCheckoutThankYou( context, next ) {

@@ -35,7 +35,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getProductsList,
-	getProductDisplayCost,
 	getProductCost,
 	getProductBySlug,
 	isProductsListFetching,
@@ -57,8 +56,6 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import { ConciergeQuickstartSession } from './concierge-quickstart-session';
-import { ConciergeSupportSession } from './concierge-support-session';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 
@@ -70,8 +67,6 @@ const noop = () => {};
 /**
  * Upsell Types
  */
-export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
-export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
@@ -91,10 +86,8 @@ export class UpsellNudge extends Component {
 		hasSitePlans: PropTypes.bool,
 		product: PropTypes.object,
 		productCost: PropTypes.number,
-		productDisplayCost: PropTypes.string,
 		planRawPrice: PropTypes.string,
 		planDiscountedRawPrice: PropTypes.string,
-		isLoggedIn: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 		hasSevenDayRefundPeriod: PropTypes.bool,
@@ -262,10 +255,8 @@ export class UpsellNudge extends Component {
 			currencyCode,
 			domains,
 			productCost,
-			productDisplayCost,
 			planRawPrice,
 			planDiscountedRawPrice,
-			isLoggedIn,
 			upsellType,
 			translate,
 			siteSlug,
@@ -273,36 +264,6 @@ export class UpsellNudge extends Component {
 		} = this.props;
 
 		switch ( upsellType ) {
-			case CONCIERGE_QUICKSTART_SESSION:
-				return (
-					<ConciergeQuickstartSession
-						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
-						isLoggedIn={ isLoggedIn }
-						receiptId={ receiptId }
-						translate={ translate }
-						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
-
-			case CONCIERGE_SUPPORT_SESSION:
-				return (
-					<ConciergeSupportSession
-						currencyCode={ currencyCode }
-						productCost={ productCost }
-						productDisplayCost={ productDisplayCost }
-						isLoggedIn={ isLoggedIn }
-						receiptId={ receiptId }
-						translate={ translate }
-						siteSlug={ siteSlug }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-					/>
-				);
-
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
 				return (
 					<BusinessPlanUpgradeUpsell
@@ -420,7 +381,6 @@ export class UpsellNudge extends Component {
 
 		const supportedUpsellTypes = [
 			BUSINESS_PLAN_UPGRADE_UPSELL,
-			CONCIERGE_QUICKSTART_SESSION,
 			PROFESSIONAL_EMAIL_UPSELL,
 		];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
@@ -491,10 +451,6 @@ const resolveProductSlug = ( upsellType, productAlias ) => {
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
 		case PROFESSIONAL_EMAIL_UPSELL:
 			return TITAN_MAIL_MONTHLY_SLUG;
-		case CONCIERGE_QUICKSTART_SESSION:
-		case CONCIERGE_SUPPORT_SESSION:
-		default:
-			return 'concierge-session';
 	}
 };
 
@@ -544,10 +500,8 @@ export default connect(
 			hasSitePlans: sitePlans && sitePlans.length > 0,
 			product,
 			productCost: getProductCost( state, productSlug ),
-			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
-			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,
 			hasSevenDayRefundPeriod: isMonthly( planSlug ),

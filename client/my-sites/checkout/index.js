@@ -11,7 +11,6 @@ import {
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
-	redirectToSupportSession,
 	upsellNudge,
 } from './controller';
 import { noop } from './utils';
@@ -119,46 +118,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	if ( isEnabled( 'upsell/concierge-session' ) ) {
-		// For backwards compatibility, retaining the old URL structure.
-		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
-
-		page(
-			'/checkout/offer-support-session/:site?',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-support-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:site?',
-			loggedInSiteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-	}
 
 	page(
 		'/checkout/offer-professional-email/:receiptId/:site',

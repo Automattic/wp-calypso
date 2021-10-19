@@ -121,7 +121,6 @@
 		"upgrades/presale-chat": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"upsell/concierge-session": true,
 		"upsell/nudge-component": false,
 		"upsell/troubleshooting": false,
 		"use-translation-chunks": true,

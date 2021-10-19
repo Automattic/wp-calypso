@@ -7,7 +7,7 @@ export default class UpsellPage extends AsyncBaseContainer {
 		super(
 			driver,
 			By.css(
-				'.concierge-quickstart-session, .premium-plan-upgrade-upsell, .business-plan-upgrade-upsell'
+				'.premium-plan-upgrade-upsell, .business-plan-upgrade-upsell'
 			)
 		);
 	}
