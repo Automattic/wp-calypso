@@ -25,13 +25,13 @@ export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	);
 }
 
-export const submitSurvey = ( surveyName, siteID, surveyData ) => ( dispatch ) => {
-	const survey = wpcom.marketing().survey( surveyName, siteID );
-	survey.addResponses( surveyData );
-
-	debug( 'Survey responses', survey );
-	return survey
-		.submit()
+export const submitSurvey = ( surveyName, siteId, surveyData ) => ( dispatch ) => {
+	return wpcom.req
+		.post( '/marketing/survey', {
+			survey_id: surveyName,
+			site_id: siteId,
+			survey_responses: surveyData,
+		} )
 		.then( ( res ) => {
 			debug( 'Survey submit response', res );
 			if ( ! res.success ) {
