@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Step, StepType, useIsAnchorFm } from '../path';
