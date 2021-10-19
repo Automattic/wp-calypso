@@ -6,7 +6,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
-import useFseBetaEligibility from '../../hooks/use-fse-beta-eligibility';
+import useFseBetaOptInStep from '../../hooks/use-fse-beta-opt-in-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
@@ -54,9 +54,11 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const isAnchorFm = useIsAnchorFm();
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
-	const isSiteEligibleForFseBeta = useFseBetaEligibility();
-	// Initial value `true` as it needs to be shown by default, but only for sites eligible for the FSE Beta
-	const [ isFseBetaOptInStep, setIsFseBetaOptInStep ] = React.useState( true );
+	const [
+		isFseBetaOptInStep,
+		isSiteEligibleForFseBeta,
+		setIsFseBetaOptInStep,
+	] = useFseBetaOptInStep();
 
 	const handleSkip = () => {
 		skipSiteVertical();
@@ -113,11 +115,11 @@ const AcquireIntent: React.FunctionComponent = () => {
 	}
 
 	// The FSE Beta flow shows the opt-in step first, before AcquireIntent.
-	if ( isSiteEligibleForFseBeta && isFseBetaOptInStep && ! isAnchorFm ) {
+	if ( isSiteEligibleForFseBeta && isFseBetaOptInStep ) {
 		return <FseBetaOptIn setVisible={ setIsFseBetaOptInStep } />;
 	}
 	// In the FSE Beta flow, AcquireIntent becomes the second step, and it gains a BackButton.
-	if ( isSiteEligibleForFseBeta && ! isFseBetaOptInStep && ! isAnchorFm ) {
+	if ( isSiteEligibleForFseBeta && ! isFseBetaOptInStep ) {
 		return (
 			<div className="gutenboarding-page acquire-intent">
 				<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
