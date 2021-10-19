@@ -16,22 +16,22 @@ const PostPublishedModal: React.FC = () => {
 		select( 'core/editor' ).isCurrentPostPublished()
 	);
 	const isCurrentPostPublishedRef = useRef( isCurrentPostPublished );
-	const [ hasEverPublishedPost, setHasEverPublishedPost ] = useState( false );
+	const [ hasNeverPublishedPost, setHasNeverPublishedPost ] = useState( false );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 
 	useEffect( () => {
-		apiFetch( { path: '/wpcom/v2/site-has-ever-published-post' } ).then( ( result ) => {
-			setHasEverPublishedPost( !! result );
+		apiFetch( { path: '/wpcom/v2/site-has-never-published-post' } ).then( ( result ) => {
+			setHasNeverPublishedPost( !! result );
 		} );
 	}, [] );
 
 	useEffect( () => {
 		// If the user never published any post before and the current post status changed to publish,
 		// open the post publish modal
-		if ( ! hasEverPublishedPost && ! isCurrentPostPublishedRef.current && isCurrentPostPublished ) {
+		if ( hasNeverPublishedPost && ! isCurrentPostPublishedRef.current && isCurrentPostPublished ) {
 			isCurrentPostPublishedRef.current = isCurrentPostPublished;
-			setHasEverPublishedPost( true );
+			setHasNeverPublishedPost( false );
 
 			// When the post published panel shows, it is focused automatically.
 			// Thus, we need to delay open the modal so that the modal would not be close immediately
@@ -40,7 +40,7 @@ const PostPublishedModal: React.FC = () => {
 				setIsOpen( true );
 			} );
 		}
-	}, [ hasEverPublishedPost, isCurrentPostPublished ] );
+	}, [ hasNeverPublishedPost, isCurrentPostPublished ] );
 
 	return (
 		<NuxModal
