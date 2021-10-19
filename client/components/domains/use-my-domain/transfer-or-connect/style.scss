@@ -171,7 +171,7 @@
 
 			.is-placeholder {
 				.option-content {
-					&__header, &__top-text, &__learn-more {
+					&__header, &__top-text, &__learn-more, &__benefits, &__pricing {
 						@include placeholder( --color-neutral-10 );
 						color: transparent;
 					}
