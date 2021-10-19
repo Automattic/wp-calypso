@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
-import { SkipButton, NextButton } from '@automattic/onboarding';
+import { SkipButton, NextButton, ActionButtons, BackButton } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -55,8 +55,8 @@ const AcquireIntent: React.FunctionComponent = () => {
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
 	const isSiteEligibleForFseBeta = useFseBetaEligibility();
+	// Initial value `true` as it needs to be shown by default, but only for sites eligible for the FSE Beta
 	const [ isFseBetaOptInStep, setIsFseBetaOptInStep ] = React.useState( true );
-	const shouldShowFseOptInStep = isSiteEligibleForFseBeta && isFseBetaOptInStep && ! isAnchorFm;
 
 	const handleSkip = () => {
 		skipSiteVertical();
@@ -112,8 +112,22 @@ const AcquireIntent: React.FunctionComponent = () => {
 		return <div className="gutenboarding-page acquire-intent" />;
 	}
 
-	if ( shouldShowFseOptInStep ) {
+	// The FSE Beta flow shows the opt-in step first, before AcquireIntent.
+	if ( isSiteEligibleForFseBeta && isFseBetaOptInStep && ! isAnchorFm ) {
 		return <FseBetaOptIn setVisible={ setIsFseBetaOptInStep } />;
+	}
+	// In the FSE Beta flow, AcquireIntent becomes the second step, and it gains a BackButton.
+	if ( isSiteEligibleForFseBeta && ! isFseBetaOptInStep && ! isAnchorFm ) {
+		return (
+			<div className="gutenboarding-page acquire-intent">
+				<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
+
+				<ActionButtons className="acquire-intent__footer">
+					<BackButton onClick={ () => setIsFseBetaOptInStep( true ) } />
+					{ nextStepButton }
+				</ActionButtons>
+			</div>
+		);
 	}
 
 	return (
