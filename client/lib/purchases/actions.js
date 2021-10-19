@@ -5,7 +5,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 const debug = debugFactory( 'calypso:purchases:actions' );
 
 export function cancelPurchase( purchaseId, onComplete ) {
-	wpcom.undocumented().cancelPurchase( purchaseId, ( error, data ) => {
+	wpcom.req.post( `/upgrades/${ purchaseId }/disable-auto-renew`, ( error, data ) => {
 		debug( error, data );
 
 		const success = ! error && data.success;
@@ -42,7 +42,7 @@ export const submitSurvey = ( surveyName, siteID, surveyData ) => ( dispatch ) =
 };
 
 export function disableAutoRenew( purchaseId, onComplete ) {
-	wpcom.undocumented().disableAutoRenew( purchaseId, ( error, data ) => {
+	wpcom.req.post( `/upgrades/${ purchaseId }/disable-auto-renew`, ( error, data ) => {
 		debug( error, data );
 
 		const success = ! error && data.success;
@@ -52,7 +52,7 @@ export function disableAutoRenew( purchaseId, onComplete ) {
 }
 
 export function enableAutoRenew( purchaseId, onComplete ) {
-	wpcom.undocumented().enableAutoRenew( purchaseId, ( error, data ) => {
+	wpcom.req.post( `/upgrades/${ purchaseId }/enable-auto-renew`, ( error, data ) => {
 		debug( error, data );
 
 		const success = ! error && data.success;
