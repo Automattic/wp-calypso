@@ -89,8 +89,6 @@ function DomainTransferOrConnect( {
 			}
 
 			if ( ! inboundTransferStatusInfo ) {
-				// TODO: remove this try-catch when the next statuses get added on the API
-
 				const inboundTransferStatusResult = await wpcom
 					.undocumented()
 					.getInboundTransferStatus( domain );
