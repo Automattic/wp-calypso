@@ -16,7 +16,11 @@ import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getOptionInfo, connectDomainAction } from '../utilities';
+import {
+	getDomainInboundTransferStatusInfo,
+	getOptionInfo,
+	connectDomainAction,
+} from '../utilities';
 import OptionContent from './option-content';
 
 import './style.scss';
@@ -92,24 +96,8 @@ function DomainTransferOrConnect( {
 				}
 
 				if ( ! inboundTransferStatusInfo ) {
-					const inboundTransferStatusResult = await wpcom
-						.undocumented()
-						.getInboundTransferStatus( domain );
-
-					const retrievedInboundTransferStatusInfo = {
-						creationDate: inboundTransferStatusResult.creation_date,
-						email: inboundTransferStatusResult.admin_email,
-						inRedemption: inboundTransferStatusResult.in_redemption,
-						losingRegistrar: inboundTransferStatusResult.registrar,
-						losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
-						privacy: inboundTransferStatusResult.privacy,
-						termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
-						transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
-						transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
-						unlocked: inboundTransferStatusResult.unlocked,
-					};
-
-					setInboundTransferStatusInfo( retrievedInboundTransferStatusInfo );
+					const inboundTransferStatusResult = await getDomainInboundTransferStatusInfo( domain );
+					setInboundTransferStatusInfo( inboundTransferStatusResult );
 				}
 				setIsFetching( false );
 			} catch {
