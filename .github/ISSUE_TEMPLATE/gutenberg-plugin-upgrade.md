@@ -56,4 +56,4 @@ As you complete the tasks in this list, please update the relevant lines with di
  **Issues transferred from previous release(s)**
 
  ---
- cc @Automattic/gutenberg-upgrades @simison
+ cc @Automattic/gutenberg-upgrades @Automattic/cylon @simison
