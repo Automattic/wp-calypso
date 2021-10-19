@@ -14,7 +14,7 @@ const Title = styled.h1`
 	font-size: 2rem;
 `;
 
-const ACCELERATED_REFRESH_INTERVAL = 500;
+const ACCELERATED_REFRESH_INTERVAL = 750;
 const ACCELERATED_INCREMENT = 5;
 
 export default function MarketplaceProgressBar( {
