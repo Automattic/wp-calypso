@@ -195,7 +195,7 @@ class EditUserForm extends Component {
 			case fieldKeys.isExternalContributor:
 				returnField = (
 					<ContractorSelect
-						key={ fieldKeys.isExternalContributor }
+						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
 						checked={ this.state.isExternalContributor }
 						disabled={ isDisabled }
