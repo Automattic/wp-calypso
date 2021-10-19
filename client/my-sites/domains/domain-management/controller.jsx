@@ -35,7 +35,7 @@ export default {
 				<DomainManagementData
 					analyticsPath={ domainManagementList( ':site' ) }
 					analyticsTitle="Domain Management"
-					component={ DomainManagement.ListNew }
+					component={ DomainManagement.List }
 					context={ pageContext }
 					needsContactDetails
 					needsDomains
