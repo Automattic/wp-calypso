@@ -721,7 +721,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to business upgrade nudge if concierge and jetpack are not in the cart, and premium is in the cart', () => {
+	it( 'redirects to business upgrade nudge if jetpack is not in the cart, and premium is in the cart', () => {
 		const cart = {
 			products: [
 				{
@@ -739,7 +739,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
 	} );
 
-	it( 'redirects to business monthly upgrade nudge if concierge and jetpack are not in the cart, and premium monthly is in the cart', () => {
+	it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
 		const cart = {
 			products: [
 				{
@@ -774,7 +774,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
-	it( 'redirects to the thank you page if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
+	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			products: [
 				{
@@ -791,7 +791,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to the thank you page if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
+	it( 'redirects to the thank you page if jetpack is not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			products: [
 				{
