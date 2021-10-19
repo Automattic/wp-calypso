@@ -744,6 +744,11 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},
+
+		list: {
+			stepName: 'list',
+			providesDependencies: [ 'siteSlug' ],
+		},
 	};
 }
 
