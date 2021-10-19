@@ -11,6 +11,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
@@ -36,9 +37,11 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	const uploadedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, uploadedPluginSlug )
 	);
-
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, uploadedPluginSlug )
+	);
+	const automatedTransferStatus = useSelector( ( state ) =>
+		getAutomatedTransferStatus( state, siteId )
 	);
 
 	useEffect( () => {
@@ -70,7 +73,7 @@ const MarketplacePluginUpload = (): JSX.Element => {
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive ] );
+	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when automatedTransferStatus changes.
 
 	const steps = [
 		translate( 'Uploading plugin' ),
