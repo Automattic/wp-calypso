@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -26,7 +25,7 @@ export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	);
 }
 
-export function submitSurvey( surveyName, siteID, surveyData ) {
+export const submitSurvey = ( surveyName, siteID, surveyData ) => ( dispatch ) => {
 	const survey = wpcom.marketing().survey( surveyName, siteID );
 	survey.addResponses( surveyData );
 
@@ -36,11 +35,11 @@ export function submitSurvey( surveyName, siteID, surveyData ) {
 		.then( ( res ) => {
 			debug( 'Survey submit response', res );
 			if ( ! res.success ) {
-				reduxDispatch( errorNotice( res.err ) );
+				dispatch( errorNotice( res.err ) );
 			}
 		} )
 		.catch( ( err ) => debug( err ) ); // shouldn't get here
-}
+};
 
 export function disableAutoRenew( purchaseId, onComplete ) {
 	wpcom.undocumented().disableAutoRenew( purchaseId, ( error, data ) => {
