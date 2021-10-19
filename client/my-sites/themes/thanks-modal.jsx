@@ -169,7 +169,7 @@ class ThanksModal extends Component {
 
 	renderLoading = () => {
 		return (
-			<div className="themes__thanks-modal-loading">
+			<div className="themes__thanks-modal-loading" data-testid="loadingThanksModalContent">
 				<PulsingDot active={ true } />
 			</div>
 		);
