@@ -29,7 +29,25 @@ export default function OptionContent( {
 		'is-placeholder': isPlaceholder,
 	} );
 
-	return (
+	return isPlaceholder ? (
+		<div className="option-content is-placeholder">
+			<div className="option-content__illustration" height={ 100 } width={ 150 }></div>
+			<div className="option-content__main">
+				<div className="option-content__header">
+					<h2> </h2>
+				</div>
+				<div className="option-content__top-text"></div>
+				<a
+					className="option-content__learn-more"
+					target="_blank"
+					href={ learnMoreLink }
+					rel="noopener noreferrer"
+				>
+					{ __( 'Learn more' ) }
+				</a>
+			</div>
+		</div>
+	) : (
 		<div className="option-content">
 			<div className="option-content__illustration">
 				{ illustration && <img src={ illustration } alt="" width={ 150 } /> }

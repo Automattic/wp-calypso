@@ -169,9 +169,9 @@
 				}
 			}
 
-			.is-placeholder {
+			&.is-placeholder {
 				.option-content {
-					&__header, &__top-text, &__learn-more, &__benefits, &__pricing {
+					&__illustration, &__header, &__top-text, &__learn-more {
 						@include placeholder( --color-neutral-10 );
 						color: transparent;
 					}
