@@ -37,7 +37,7 @@ function UseMyDomain( {
 	transferDomainUrl,
 	initialMode,
 } ) {
-	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
+	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( null );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
@@ -153,7 +153,7 @@ function UseMyDomain( {
 		}
 
 		setIsFetchingAvailability( true );
-		setDomainAvailabilityData( {} );
+		setDomainAvailabilityData( null );
 
 		try {
 			const availabilityData = await wpcom
@@ -239,7 +239,7 @@ function UseMyDomain( {
 				domain={ domainName }
 				isSignupStep={ isSignupStep }
 				onConnect={
-					'auth_code' === domainAvailabilityData.ownership_verification_type
+					'auth_code' === domainAvailabilityData?.ownership_verification_type
 						? showOwnershipVerificationFlow
 						: onConnect
 				}
