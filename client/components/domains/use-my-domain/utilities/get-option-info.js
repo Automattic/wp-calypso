@@ -46,6 +46,7 @@ export function getOptionInfo( {
 	selectedSite,
 	siteIsOnPaidPlan,
 } ) {
+	availability = availability ?? {};
 	const mappingFreeText = getMappingFreeText( {
 		cart,
 		domain,
