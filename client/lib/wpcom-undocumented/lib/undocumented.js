@@ -621,88 +621,6 @@ Undocumented.prototype.validateDomainContactInformation = function (
 };
 
 /**
- * Retrieves the Titan order provisioning URL for a domain.
- *
- * @param domain the domain name
- * @param fn The callback function
- */
-Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/emails/titan/${ encodeURIComponent( domain ) }/order-provisioning-url`,
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.getTitanDetailsForIncomingRedirect = function ( mode, jwt, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/titan/redirect-info/${ encodeURIComponent( mode ) }`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{ jwt },
-		fn
-	);
-};
-
-/**
- * Retrieves the auto login link to Titan's control panel.
- *
- * @param emailAccountId The email account ID
- * @param context Optional context enum to launch into a specific part of the control panel
- * @param fn The callback function
- */
-Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( emailAccountId, context, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-auto-login-url`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{ context },
-		fn
-	);
-};
-
-/**
- * Retrieves the URL to embed Titan's control panel in an iframe.
- *
- * @param emailAccountId The email account ID
- * @param context Optional context enum to launch into a specific part of the control panel
- * @param fn The callback function
- */
-Undocumented.prototype.getTitanControlPanelIframeURL = function ( emailAccountId, context, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/emails/titan/${ encodeURIComponent( emailAccountId ) }/control-panel-iframe-url`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{ context },
-		fn
-	);
-};
-
-/**
- * Checks the availability of a mailbox
- *
- * @param domain The domain name to check the mailbox name against
- * @param mailbox The mailbox to check for availability
- * @param fn The callback function
- */
-Undocumented.prototype.getTitanMailboxAvailability = function ( domain, mailbox, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/emails/titan/${ encodeURIComponent(
-				domain
-			) }/check-mailbox-availability/${ encodeURIComponent( mailbox ) }`,
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-/**
  * Get site specific details for WordPress.com products
  *
  * @param {Function} siteDomain The site slug
@@ -798,84 +716,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 		{
 			path: '/sites/' + siteId + '/external-services',
 			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
-/**
- * Return a list of P2's connected services
- *
- * @param {number} hubId hub identifier
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.p2KeyringConnections = function ( hubId, fn ) {
-	debug( 'get: /p2/connections/items' );
-
-	return this.wpcom.req.get(
-		{ path: '/p2/connections/items', apiNamespace: 'wpcom/v2' },
-		{ hub_id: hubId },
-		fn
-	);
-};
-
-/**
- * Deletes a single keyring P2 connection
- *
- * @param {number} keyringConnectionId The keyring connection ID to remove
- * @param {number} hubId The hub Id.
- * @param {Function} fn Method to invoke when request is complete
- */
-Undocumented.prototype.deleteP2KeyringConnection = function ( keyringConnectionId, hubId, fn ) {
-	debug( 'delete: /p2/connections/items/:keyring_connection_id' );
-	return this.wpcom.req.get(
-		{
-			path: '/p2/connections/items/' + keyringConnectionId,
-			apiNamespace: 'wpcom/v2',
-			method: 'DELETE',
-		},
-		{ hub_id: hubId },
-		fn
-	);
-};
-
-/**
- * Return a list of user's connected services
- *
- * @param {*} forceExternalUsersRefetch ???
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete.
- */
-Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefetch, fn ) {
-	debug( '/me/connections query' );
-
-	// set defaults, first argument is actually a callback
-	if ( typeof forceExternalUsersRefetch === 'function' ) {
-		fn = forceExternalUsersRefetch;
-		forceExternalUsersRefetch = false;
-	}
-
-	return this.wpcom.req.get(
-		{ path: '/me/connections', apiNamespace: 'wpcom/v2' },
-		forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {},
-		fn
-	);
-};
-
-/**
- * Deletes a single keyring connection for the current user
- *
- * @param {number} keyringConnectionId The keyring connection ID to remove
- * @param {Function} fn Method to invoke when request is complete
- */
-Undocumented.prototype.deletekeyringConnection = function ( keyringConnectionId, fn ) {
-	debug( '/me/connections/:keyring_connection_id:/ delete' );
-	return this.wpcom.req.get(
-		{
-			path: '/me/connections/' + keyringConnectionId,
-			apiNamespace: 'wpcom/v2',
-			method: 'DELETE',
 		},
 		fn
 	);
@@ -2160,29 +2000,6 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 		},
 		queryParts
 	);
-};
-
-Undocumented.prototype.getAtomicSiteLogs = function ( siteIdOrSlug, start, end, scrollId ) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ siteIdOrSlug }/hosting/logs`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{},
-		{
-			start,
-			end,
-			page_size: 10000,
-			scroll_id: scrollId,
-		}
-	);
-};
-
-Undocumented.prototype.restoreAtomicPlanSoftware = function ( siteIdOrSlug ) {
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteIdOrSlug }/hosting/restore-plan-software`,
-		apiNamespace: 'wpcom/v2',
-	} );
 };
 
 export default Undocumented;
