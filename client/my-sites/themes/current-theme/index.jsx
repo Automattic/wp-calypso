@@ -72,43 +72,47 @@ class CurrentTheme extends Component {
 							) }
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
-									{ showBetaBadge && (
-										<Badge type="warning-clear" className="current-theme__badge-beta">
-											{ translate( 'Beta' ) }
-										</Badge>
-									) }
-									<span className="current-theme__label">
-										{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
-									</span>
+									<div className="current-theme__badge-wrapper">
+										{ showBetaBadge && (
+											<Badge type="warning-clear" className="current-theme__badge-beta">
+												{ translate( 'Beta' ) }
+											</Badge>
+										) }
+										<span className="current-theme__label">
+											{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
+										</span>
+									</div>
 									<span className="current-theme__name">{ text }</span>
 								</div>
-								<p>
-									{ translate( 'This is the active theme on your site.' ) }{ ' ' }
-									<InlineSupportLink supportContext="themes-switch">
-										{ translate( 'Learn more.' ) }
-									</InlineSupportLink>
-								</p>
+								<div className="current-theme__content-wrapper">
+									<p>
+										{ translate( 'This is the active theme on your site.' ) }{ ' ' }
+										<InlineSupportLink supportContext="themes-switch">
+											{ translate( 'Learn more.' ) }
+										</InlineSupportLink>
+									</p>
+									<div className={ classNames( 'current-theme__actions' ) }>
+										{ map( options, ( option, name ) => (
+											<Button
+												className={ classNames(
+													'current-theme__button',
+													'components-button',
+													'current-theme__' + this.props.name
+												) }
+												primary={ option.label.toLowerCase() === 'customize' }
+												name={ name }
+												key={ name }
+												label={ option.label }
+												href={ currentThemeId && option.getUrl( currentThemeId ) }
+												onClick={ this.trackClick }
+											>
+												{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
+												{ option.label }
+											</Button>
+										) ) }
+									</div>
+								</div>
 							</div>
-						</div>
-						<div className={ classNames( 'current-theme__actions' ) }>
-							{ map( options, ( option, name ) => (
-								<Button
-									className={ classNames(
-										'current-theme__button',
-										'components-button',
-										'current-theme__' + this.props.name
-									) }
-									primary={ option.label.toLowerCase() === 'customize' }
-									name={ name }
-									key={ name }
-									label={ option.label }
-									href={ currentThemeId && option.getUrl( currentThemeId ) }
-									onClick={ this.trackClick }
-								>
-									{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
-									{ option.label }
-								</Button>
-							) ) }
 						</div>
 					</div>
 				</div>

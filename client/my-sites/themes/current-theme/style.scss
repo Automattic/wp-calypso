@@ -17,6 +17,19 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 			min-height: 112px;
 			flex-direction: row;
 		}
+
+		&::after {
+			content: '';
+			display: block;
+			background: #fff;
+			height: 69px;
+			width: 100%;
+			border-top: $current-theme-border;
+
+			@include break-xlarge {
+				content: none;
+			}
+		}
 	}
 
 	.current-theme__details {
@@ -24,20 +37,26 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		flex-direction: column;
 		font-size: $font-body-small;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-small {
 			flex-direction: row;
 			font-size: $font-body;
+			width: 100%;
 		}
 	}
 
 	.current-theme__img {
 		border-bottom: $current-theme-border;
+		max-height: none;
+		width: auto;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-small {
+			max-height: 150px;
 			border-right: $current-theme-border;
 			border-bottom: none;
-			max-height: 150px;
-			width: auto;
+		}
+
+		@include break-large {
+			max-height: 120px;
 		}
 	}
 
@@ -63,15 +82,17 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 			flex-wrap: initial;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-small {
 			flex-direction: row-reverse;
 			justify-content: flex-end;
-			margin-top: -8px;
+			flex-wrap: wrap;
 		}
 	}
 
-	.current-theme__badge-beta {
-		margin-top: 8px;
+	.current-theme__badge-wrapper {
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
 	}
 
 	.current-theme__label {
@@ -83,10 +104,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		padding: 4px 12px;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 120px;
-		margin-bottom: 4px;
-		margin-top: 8px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-small {
 			align-self: center;
 			margin-bottom: 0;
 			margin-right: 8px;
@@ -97,15 +116,22 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		font-weight: 600;
 		box-sizing: border-box;
 		overflow: hidden;
-		white-space: nowrap;
 		text-overflow: ellipsis;
 		font-size: $font-body;
 		max-width: 100%;
-		margin-top: 8px;
 		margin-right: 8px;
 
 		@include breakpoint-deprecated( '>960px' ) {
 			font-size: $font-title-small;
+		}
+	}
+
+	.current-theme__content-wrapper {
+		display: flex;
+		justify-content: center;
+
+		@include break-small {
+			justify-content: space-between;
 		}
 	}
 
@@ -118,7 +144,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	.current-theme__description {
 		align-self: center;
 		font-size: $font-body-small;
-		padding: 16px;
+		margin: 16px;
+		width: 100%;
 
 		p {
 			color: var( --color-text-subtle );
@@ -131,25 +158,26 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__actions {
-		border-top: $current-theme-border;
 		box-sizing: border-box;
 		padding-top: 16px;
 		display: flex;
 		align-items: flex-end;
 		justify-content: flex-end;
 		flex-grow: 1;
+		position: absolute;
+		bottom: 16px;
+		right: 15px;
 
 		@include break-xlarge {
-			border-top: none;
-			min-height: 112px;
 			padding-top: 0;
+			position: initial;
 		}
 	}
 
 	.current-theme__button {
 		display: flex;
 		margin-right: 10px;
-		margin-bottom: 16px;
+		margin-top: 12px;
 		font-weight: normal;
 		position: relative;
 		border-width: 1px;
