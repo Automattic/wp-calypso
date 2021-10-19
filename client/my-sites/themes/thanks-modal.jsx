@@ -176,8 +176,14 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
-		if ( ! hasActivated ) {
+		const {
+			shouldEditHomepageWithGutenberg,
+			hasActivated,
+			isFSEActive,
+			areBlockEditorSettingsLoading,
+		} = this.props;
+
+		if ( ! hasActivated || areBlockEditorSettingsLoading ) {
 			return this.props.translate( 'Activating theme…' );
 		}
 
@@ -248,7 +254,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
+		const { currentTheme, hasActivated, isActivating, areBlockEditorSettingsLoading } = this.props;
+
+		const shouldDisplayContent = hasActivated && currentTheme && ! areBlockEditorSettingsLoading;
 
 		return (
 			<Dialog
@@ -257,7 +265,7 @@ class ThanksModal extends Component {
 				buttons={ this.getButtons() }
 				onClose={ this.onCloseModal }
 			>
-				{ hasActivated && currentTheme ? this.renderContent() : this.renderLoading() }
+				{ shouldDisplayContent ? this.renderContent() : this.renderLoading() }
 			</Dialog>
 		);
 	}
