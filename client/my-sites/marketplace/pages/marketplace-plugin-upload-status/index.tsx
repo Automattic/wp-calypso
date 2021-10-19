@@ -4,6 +4,7 @@ import page from 'page';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import EmptyContent from 'calypso/components/empty-content';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -25,10 +26,12 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const siteId: number = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
-	const uploadedPluginSlug = useSelector( ( state ) => getUploadedPluginId( state, siteId ) );
+	const uploadedPluginSlug = useSelector( ( state ) =>
+		getUploadedPluginId( state, siteId )
+	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
 	const uploadedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, uploadedPluginSlug )
@@ -37,14 +40,6 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	const pluginActive = useSelector( ( state ) =>
 		isPluginActive( state, siteId, uploadedPluginSlug )
 	);
-
-	useEffect( () => {
-		if ( pluginUploadError ) {
-			page( `/plugins/upload/${ selectedSiteSlug }` );
-			return;
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadError ] );
 
 	useEffect( () => {
 		if ( 100 === pluginUploadProgress ) {
@@ -91,7 +86,16 @@ const MarketplacePluginUpload = (): JSX.Element => {
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-upload-status__root">
-				<MarketplaceProgressBar steps={ steps } currentStep={ currentStep } />
+				{ pluginUploadError ? (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/error.svg"
+						title={ translate( 'An error occurred while installing the plugin.' ) }
+						action={ translate( 'Back' ) }
+						actionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+					/>
+				) : (
+					<MarketplaceProgressBar steps={ steps } currentStep={ currentStep } />
+				) }
 			</div>
 		</ThemeProvider>
 	);
