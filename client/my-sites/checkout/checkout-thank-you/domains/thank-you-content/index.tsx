@@ -1,19 +1,18 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import * as React from 'react';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
-import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
+import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
+import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
 import {
 	DomainThankYouParams,
 	DomainThankYouProps,
 	DomainThankYouPropsGetter,
 	DomainThankYouType,
-} from '../types';
-import DomainMappingProps from './domain-mapping';
-import DomainRegistrationThankYouProps from './domain-registration';
-import DomainTransferProps from './domain-transfer';
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 
 const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGetter > = {
 	MAPPING: DomainMappingProps,
