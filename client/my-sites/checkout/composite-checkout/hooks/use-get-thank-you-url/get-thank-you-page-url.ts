@@ -29,7 +29,6 @@ import {
 	hasDIFMProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
@@ -454,9 +453,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	}
 
 	if (
-		config.isEnabled( 'upsell/concierge-session' ) &&
 		cart &&
-		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
 		! hasDIFMProduct( cart ) &&
 		( hasBloggerPlan( cart ) ||
@@ -476,44 +473,9 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		if ( planUpgradeUpsellUrl ) {
 			return planUpgradeUpsellUrl;
 		}
-
-		const quickstartSessionUpsellUrl = getQuickstartSessionUpsellUrl( {
-			pendingOrReceiptId,
-			siteSlug,
-			orderId,
-		} );
-
-		if ( quickstartSessionUpsellUrl ) {
-			return quickstartSessionUpsellUrl;
-		}
 	}
 
 	return;
-}
-
-function getQuickstartSessionUpsellUrl( {
-	pendingOrReceiptId,
-	siteSlug,
-	orderId,
-}: {
-	pendingOrReceiptId: string;
-	siteSlug: string | undefined;
-	orderId: number | undefined;
-} ): string | undefined {
-	if ( orderId ) {
-		return;
-	}
-
-	// This is used when we need to quickly dial back the volume of concierge sessions
-	// being offered and sold, to be inline with HE availability.
-	// Change this percentage to change the amount of offers given out:
-	const percentConciergeOffers = 75;
-
-	if ( ! badNaiveClientSideRollout( 'conciergeUpsellDial', percentConciergeOffers ) ) {
-		return;
-	}
-
-	return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getProfessionalEmailUpsellUrl( {
