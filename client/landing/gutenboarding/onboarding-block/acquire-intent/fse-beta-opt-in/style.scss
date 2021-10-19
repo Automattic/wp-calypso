@@ -1,14 +1,12 @@
 @import '../../../mixins';
 
 .fse-beta-opt-in.gutenboarding-page {
-	max-width: 1260px;
+	max-width: 960px;
 }
 
 .fse-beta-opt-in__header {
-	align-items: center;
-	display: flex;
-	justify-content: space-between;
 	margin: 48px 0 30px;
+	text-align: center;
 
 	@include break-large {
 		margin: 80px 0 64px;
@@ -16,26 +14,13 @@
 }
 
 .fse-beta-opt-in__content {
-	position: relative;
-
-	ol {
-		display: flex;
-		flex-wrap: wrap;
-
-		@include break-large {
-			padding-right: 25%;
-		}
-	}
+	margin: 0 auto;
+	width: 480px;
 
 	li {
-		padding: 0 10px 0 30px;
-		position: relative;
 		margin-bottom: 30px;
-
-		@include break-large {
-			width: calc( 50% - 40px );
-			margin: 0 30px 30px 0;
-		}
+		padding-left: 30px;
+		position: relative;
 
 		svg {
 			position: absolute;
@@ -56,26 +41,16 @@
 			color: var( --color-neutral-dark );
 		}
 	}
-
-	@include break-large {
-		&::after {
-			background: url( '/calypso/images/signup/beta-wp-icon.png' ) no-repeat;
-			background-position: top right;
-			background-size: contain;
-			content: '';
-			display: block;
-			height: 100%;
-			position: absolute;
-			right: 0;
-			top: 0;
-			width: 25%;
-		}
-	}
 }
 
-.fse-beta-opt-in__submit {
-	margin-top: 40px;
-	svg {
+.fse-beta-opt-in__actions.action-buttons {
+	@include break-small {
+		justify-content: center;
+		margin: 40px auto 0;
+		max-width: 480px;
+	}
+
+	.action-buttons__next svg {
 		margin-left: 10px;
 	}
 }

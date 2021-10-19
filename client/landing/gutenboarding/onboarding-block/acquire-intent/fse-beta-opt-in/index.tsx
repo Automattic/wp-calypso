@@ -32,46 +32,39 @@ const FseBetaOptIn: FunctionComponent< FseBetaOptInProps > = ( { setVisible } ) 
 	return (
 		<div className="gutenboarding-page fse-beta-opt-in">
 			<div className="fse-beta-opt-in__header">
-				<div>
-					<Title>{ __( 'Join Our Full Site Editing Beta' ) }</Title>
-					<SubTitle>{ __( 'Experience the new WordPress.com site editing features' ) }</SubTitle>
-				</div>
-				<ActionButtons className="fse-beta-opt-in__actions">
-					<SkipButton onClick={ () => pickBeta( false ) } />
-				</ActionButtons>
+				<Title>{ __( 'Join Our Full Site Editing Beta' ) }</Title>
+				<SubTitle>{ __( 'Experience the new WordPress.com site editing features' ) }</SubTitle>
 			</div>
-			<div className="fse-beta-opt-in__content">
-				<ol>
-					<li>
-						<Icon icon={ siteLogo } />
-						<h3>{ __( 'Edit Your Logo' ) }</h3>
-						<p>
-							{ __(
-								'Change and update your logo and other header elements without leaving the editor'
-							) }
-						</p>
-					</li>
-					<li>
-						<Icon icon={ header } />
-						<h3>{ __( 'Update Your Header and Footer' ) }</h3>
-						<p>
-							{ __(
-								'Full Site Editing allows you to make changes on your site header and footer.'
-							) }
-						</p>
-					</li>
-					<li>
-						<Icon icon={ navigation } />
-						<h3>{ __( 'Build Your Navigation' ) }</h3>
-						<p>{ __( 'Take your site menus to the next level by adding blocks to it.' ) }</p>
-					</li>
-				</ol>
-
-				<NextButton className="fse-beta-opt-in__submit" onClick={ () => pickBeta( true ) }>
+			<ol className="fse-beta-opt-in__content">
+				<li>
+					<Icon icon={ siteLogo } />
+					<h3>{ __( 'Edit Your Logo' ) }</h3>
+					<p>
+						{ __(
+							'Change and update your logo and other header elements without leaving the editor'
+						) }
+					</p>
+				</li>
+				<li>
+					<Icon icon={ header } />
+					<h3>{ __( 'Update Your Header and Footer' ) }</h3>
+					<p>
+						{ __( 'Full Site Editing allows you to make changes on your site header and footer.' ) }
+					</p>
+				</li>
+				<li>
+					<Icon icon={ navigation } />
+					<h3>{ __( 'Build Your Navigation' ) }</h3>
+					<p>{ __( 'Take your site menus to the next level by adding blocks to it.' ) }</p>
+				</li>
+			</ol>
+			<ActionButtons className="fse-beta-opt-in__actions">
+				<SkipButton onClick={ () => pickBeta( false ) } />
+				<NextButton onClick={ () => pickBeta( true ) }>
 					{ __( 'Enroll in Beta' ) }
 					<Icon icon={ arrowRight } />
 				</NextButton>
-			</div>
+			</ActionButtons>
 		</div>
 	);
 };
