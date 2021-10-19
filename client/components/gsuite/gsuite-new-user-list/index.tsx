@@ -19,6 +19,7 @@ interface Props {
 	selectedDomainName: string;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
+	siteId: number;
 	users: NewUser[];
 }
 
