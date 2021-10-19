@@ -1,10 +1,12 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import * as React from 'react';
-import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-success.svg';
-import { buildCtaForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
+import domainRegisteredSuccess from 'calypso/assets/images/illustrations/domain-registration-success.svg';
+import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
-import { DomainThankYouParams, DomainThankYouProps } from '../types';
+import type {
+	DomainThankYouParams,
+	DomainThankYouProps,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
 const DomainRegistrationThankYouProps = ( {
 	domain,
@@ -12,14 +14,14 @@ const DomainRegistrationThankYouProps = ( {
 	hasProfessionalEmail,
 	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => {
-	const professionalEmail = buildCtaForProfessionalEmail(
+	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
 			domain,
 			email,
 			hasProfessionalEmail,
 			selectedSiteSlug,
 		},
-		'registration',
+		'REGISTRATION',
 		false
 	);
 
@@ -51,7 +53,7 @@ const DomainRegistrationThankYouProps = ( {
 				],
 			},
 		],
-		thankYouImage: { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess },
+		thankYouImage: { alt: translate( 'Domain Registered' ), src: domainRegisteredSuccess },
 		thankYouTitle: translate( 'Congratulations on your purchase!' ),
 		thankYouSubtitle: translate(
 			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',

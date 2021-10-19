@@ -1,10 +1,12 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import * as React from 'react';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
-import { buildCtaForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
+import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
-import { DomainThankYouParams, DomainThankYouProps } from '../types';
+import type {
+	DomainThankYouParams,
+	DomainThankYouProps,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
 const domainMappingThankYouProps = ( {
 	domain,
@@ -12,14 +14,14 @@ const domainMappingThankYouProps = ( {
 	hasProfessionalEmail,
 	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => {
-	const professionalEmail = buildCtaForProfessionalEmail(
+	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
 			domain,
 			email,
 			hasProfessionalEmail,
 			selectedSiteSlug,
 		},
-		'mapping',
+		'MAPPING',
 		false
 	);
 

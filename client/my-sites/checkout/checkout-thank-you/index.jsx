@@ -391,26 +391,25 @@ export class CheckoutThankYou extends Component {
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainMappingOrTransferProduct = false;
-		let wasDomainMappingOrRegistration = false;
+		let wasDomainProduct = false;
 		let wasTitanEmailOnlyProduct = false;
-		let hasProfessionalEmail = false;
+		let wasTitanEmailProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 
-			hasProfessionalEmail = purchases.some( isTitanMail );
+			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
-			wasDomainMappingOrTransferProduct =
-				purchases.length === 1 &&
-				purchases.some(
-					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
-				);
-			wasDomainMappingOrRegistration =
-				purchases.some( isDomainRegistration ) || purchases.some( isDomainMapping );
+			wasDomainProduct = purchases.some(
+				( purchase ) =>
+					isDomainMapping( purchase ) ||
+					isDomainTransfer( purchase ) ||
+					isDomainRegistration( purchase )
+			);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
 		}
@@ -492,20 +491,22 @@ export class CheckoutThankYou extends Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainMappingOrTransferProduct || wasDomainMappingOrRegistration ) {
-			const [ purchaseType, predicate ] = this.domainPurchaseType( purchases );
+		} else if ( wasDomainProduct ) {
+			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 
-			const inboxPurchase = this.getProfessionalEmailFromPurchase(
-				wasDomainMappingOrRegistration,
+			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
+				predicate,
 				purchases
 			);
 
 			return (
 				<DomainThankYou
 					domain={ domainName }
-					email={ inboxPurchase ? inboxPurchase.meta : this.props.user?.email }
-					hasProfessionalEmail={ hasProfessionalEmail }
+					email={
+						professionalEmailPurchase ? professionalEmailPurchase.meta : this.props.user?.email
+					}
+					hasProfessionalEmail={ wasTitanEmailProduct }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 					type={ purchaseType }
 				/>
@@ -543,22 +544,23 @@ export class CheckoutThankYou extends Component {
 		);
 	}
 
-	getProfessionalEmailFromPurchase( wasDomainMappingOrRegistration, purchases ) {
-		if ( ! wasDomainMappingOrRegistration ) {
-			return null;
-		}
-
-		if ( purchases.filter( isTitanMail ).length > 0 ) {
-			return purchases.filter( isTitanMail )[ 0 ];
+	getProfessionalEmailPurchaseFromPurchases( purchaseTypePredicate, purchases ) {
+		const titanMailPurchases = purchases.filter(
+			( product ) => isTitanMail( product ) && purchaseTypePredicate( product )
+		);
+		if ( titanMailPurchases.length > 0 ) {
+			return titanMailPurchases[ 0 ];
 		}
 
 		return null;
 	}
 
-	domainPurchaseType( purchases ) {
-		if ( purchases.some( isDomainMapping ) && purchases.some( isDomainRegistration ) ) {
+	getDomainPurchaseType( purchases ) {
+		const hasDomainMapping = purchases.some( isDomainMapping );
+
+		if ( hasDomainMapping && purchases.some( isDomainRegistration ) ) {
 			return [ 'REGISTRATION', isDomainRegistration ];
-		} else if ( purchases.some( isDomainMapping ) ) {
+		} else if ( hasDomainMapping ) {
 			return [ 'MAPPING', isDomainMapping ];
 		}
 		return [ 'TRANSFER', isDomainTransfer ];

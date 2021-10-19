@@ -26,14 +26,14 @@ export default thankYouContentGetter;
 /**
  * Helper function to reuse Get Inbox/Access your inbox components
  */
-export function buildCtaForProfessionalEmail(
+export function buildDomainStepForProfessionalEmail(
 	{ email, hasProfessionalEmail, selectedSiteSlug, domain }: DomainThankYouParams,
-	source: string,
+	domainType: DomainThankYouType,
 	primary: boolean
 ): DomainThankYouProps {
 	if ( ! hasProfessionalEmail ) {
 		return {
-			stepKey: `domain_${ source }_whats_next_view_posts`,
+			stepKey: `domain_${ domainType }_whats_next_get_professional_email`,
 			stepTitle: translate( 'Get Professional Email' ),
 			stepDescription: translate(
 				'Add a custom email address to send and receive emails from %(domain)s today.',
@@ -46,7 +46,7 @@ export function buildCtaForProfessionalEmail(
 			stepCta: (
 				<FullWidthButton
 					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain ) }
-					className={ `domain-${ source }__thank-you-button domain-thank-you__button` }
+					className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 					primary={ primary }
 					busy={ false }
 					disabled={ false }
@@ -58,7 +58,7 @@ export function buildCtaForProfessionalEmail(
 	}
 
 	return {
-		stepKey: `domain_${ source }_whats_next_plugin_setup_view_inbox`,
+		stepKey: `domain_${ domainType }_whats_next_email_setup_view_inbox`,
 		stepTitle: translate( 'Access your inbox' ),
 		stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 		stepCta: (
@@ -75,7 +75,7 @@ export function buildCtaForProfessionalEmail(
 				} }
 			>
 				{ translate( 'Go to Inbox' ) }
-				<Gridicon className={ `domain-${ source }__icon-external` } icon="external" />
+				<Gridicon className={ `domain-${ domainType }__icon-external` } icon="external" />
 			</FullWidthButton>
 		),
 	};
