@@ -14,6 +14,16 @@ import {
 } from './index';
 
 export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
+	if ( ! domainInboundTransferStatusInfo ) {
+		return {
+			transferrable: false,
+			domainTransferContent: {
+				...optionInfo.transferNotSupported,
+				topText: optionInfo.transferNotSupported.topText,
+			},
+		};
+	}
+
 	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
 
 	const result = {
