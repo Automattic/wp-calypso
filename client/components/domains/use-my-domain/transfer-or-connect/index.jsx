@@ -79,36 +79,44 @@ function DomainTransferOrConnect( {
 	useEffect( () => {
 		( async () => {
 			if ( availabilityData && inboundTransferStatusInfo ) return;
-			setIsFetching( true );
-			if ( ! availabilityData ) {
-				const retrievedAvailabilityData = await wpcom
-					.domain( domain )
-					.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
+			try {
+				setIsFetching( true );
+				if ( ! availabilityData ) {
+					const retrievedAvailabilityData = await wpcom.domain( domain ).isAvailable( {
+						apiVersion: '1.3',
+						blog_id: selectedSite.ID,
+						is_cart_pre_check: false,
+					} );
 
-				setAvailabilityData( retrievedAvailabilityData );
+					setAvailabilityData( retrievedAvailabilityData );
+				}
+
+				if ( ! inboundTransferStatusInfo ) {
+					const inboundTransferStatusResult = await wpcom
+						.undocumented()
+						.getInboundTransferStatus( domain );
+
+					const retrievedInboundTransferStatusInfo = {
+						creationDate: inboundTransferStatusResult.creation_date,
+						email: inboundTransferStatusResult.admin_email,
+						inRedemption: inboundTransferStatusResult.in_redemption,
+						losingRegistrar: inboundTransferStatusResult.registrar,
+						losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
+						privacy: inboundTransferStatusResult.privacy,
+						termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
+						transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
+						transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
+						unlocked: inboundTransferStatusResult.unlocked,
+					};
+
+					setInboundTransferStatusInfo( retrievedInboundTransferStatusInfo );
+				}
+				setIsFetching( false );
+			} catch {
+				setIsFetching( false );
+				setAvailabilityData( {} );
+				setInboundTransferStatusInfo( {} );
 			}
-
-			if ( ! inboundTransferStatusInfo ) {
-				const inboundTransferStatusResult = await wpcom
-					.undocumented()
-					.getInboundTransferStatus( domain );
-
-				const retrievedInboundTransferStatusInfo = {
-					creationDate: inboundTransferStatusResult.creation_date,
-					email: inboundTransferStatusResult.admin_email,
-					inRedemption: inboundTransferStatusResult.in_redemption,
-					losingRegistrar: inboundTransferStatusResult.registrar,
-					losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
-					privacy: inboundTransferStatusResult.privacy,
-					termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
-					transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
-					transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
-					unlocked: inboundTransferStatusResult.unlocked,
-				};
-
-				setInboundTransferStatusInfo( retrievedInboundTransferStatusInfo );
-			}
-			setIsFetching( false );
 		} )();
 	} );
 
