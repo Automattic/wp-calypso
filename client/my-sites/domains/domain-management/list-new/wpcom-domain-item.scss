@@ -9,7 +9,7 @@
 	justify-content: space-between;
 	margin: 16px 0;
 	padding: 16px;
-	background-color: #f6f7f7;
+	background-color: var( --studio-gray-0 );
 
 	@include break-mobile {
 		margin: 24px 0;
