@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import DomainActionsButton from 'calypso/my-sites/domains/domain-management/list-new/domain-actions-button';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import DomainActionsButton from './domain-actions-button';
 
-import './style.scss';
+import './list-new.scss';
 
 class ListNew extends Component {
 	static propTypes = {
