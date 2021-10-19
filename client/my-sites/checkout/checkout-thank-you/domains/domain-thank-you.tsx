@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
 import * as React from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
+import {
+	DomainThankYouProps,
+	DomainThankYouType,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import domainThankYouContent from './thank-you-content';
-import { DomainThankYouProps, DomainThankYouType } from './types';
 
 import './style.scss';
 

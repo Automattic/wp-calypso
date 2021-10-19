@@ -44,7 +44,7 @@ export function buildDomainStepForProfessionalEmail(
 	if ( ! hasProfessionalEmail ) {
 		return {
 			stepKey: `domain_${ domainType }_whats_next_get_professional_email`,
-			stepTitle: translate( 'Get Professional Email' ),
+			stepTitle: translate( 'Get a professional email' ),
 			stepDescription: translate(
 				'Add a custom email address to send and receive emails from %(domain)s today.',
 				{
