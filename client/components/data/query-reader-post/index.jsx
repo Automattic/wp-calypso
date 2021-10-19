@@ -14,8 +14,8 @@ class QueryReaderPost extends Component {
 		this.maybeFetch();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeFetch( nextProps );
+	componentDidUpdate() {
+		this.maybeFetch();
 	}
 
 	maybeFetch = ( props = this.props ) => {
