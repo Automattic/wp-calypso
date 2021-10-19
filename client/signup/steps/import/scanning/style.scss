@@ -1,0 +1,11 @@
+.import__onboarding-page {
+	.scanning__header {
+		.import__heading {
+			.onboarding-title {
+				font-family: var( --font-base, var( --font-base-default ) );
+				font-size: 1.75em; /* stylelint-disable-line */
+				margin-bottom: 0.5em /* stylelint-disable-line */;
+			}
+		}
+	}
+}
