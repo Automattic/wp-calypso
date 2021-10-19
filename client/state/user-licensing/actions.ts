@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { AnyAction } from 'redux';
 import {
 	LicenseFilter,
@@ -14,6 +15,7 @@ import {
 	USER_LICENSES_COUNTS_REQUEST_SUCCESS,
 	USER_LICENSES_COUNTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import { ReduxDispatch } from 'calypso/state/redux-store';
 import {
@@ -62,11 +64,16 @@ export const licensesRequestSuccessAction = (): AnyAction => {
 	return { type: USER_LICENSES_REQUEST_SUCCESS };
 };
 
-export const licensesRequestFailureAction = ( error: string | undefined ): AnyAction => {
-	return {
+export const licensesRequestFailureAction = (
+	error: string | undefined
+): UserLicensingThunkAction => ( dispatch ) => {
+	dispatch( {
 		type: USER_LICENSES_REQUEST_FAILURE,
 		error: error,
-	};
+	} );
+	return dispatch(
+		errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) )
+	);
 };
 
 export const requestLicenses = (

@@ -25,7 +25,7 @@ export interface License {
 	userId: number | null;
 	username: string | null;
 	blogId: number | null;
-	siteUrl: string | null;
+	siteurl: string | null;
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;

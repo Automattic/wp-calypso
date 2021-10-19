@@ -1,5 +1,6 @@
 import { USER_LICENSES_REQUEST, USER_LICENSES_COUNTS_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { convertToCamelCase } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
@@ -108,38 +109,11 @@ export const dispatchCountsRequest = dispatchRequest( {
 	onError: receiveCountsError,
 } );
 
-function formatLicenses( items ) {
-	return items.map( ( item ) => ( {
-		licenseId: item.license_id,
-		licenseKey: item.license_key,
-		product: item.product,
-		productId: item.product_id,
-		userId: item.user_id,
-		username: item.username,
-		blogId: item.blog_id,
-		siteUrl: item.siteurl,
-		issuedAt: item.issued_at,
-		attachedAt: item.attached_at,
-		revokedAt: item.revoked_at,
-	} ) );
-}
-
-function formatPaginatedItems( itemFormatter, paginatedItems ) {
-	return {
-		currentItems: paginatedItems.current_items,
-		currentPage: paginatedItems.current_page,
-		items: itemFormatter( paginatedItems.items ),
-		itemsPerPage: paginatedItems.items_per_page,
-		totalItems: paginatedItems.total_items,
-		totalPages: paginatedItems.total_pages,
-	};
-}
-
 export const dispatchLicensesRequest = dispatchRequest( {
 	fetch: requestLicenses,
 	onSuccess: receiveLicenses,
 	onError: receiveLicensesError,
-	fromApi: ( paginatedItems ) => formatPaginatedItems( formatLicenses, paginatedItems ),
+	fromApi: ( paginatedItems ) => convertToCamelCase( paginatedItems ),
 } );
 
 registerHandlers( 'state/data-layer/wpcom/user-licensing', {
