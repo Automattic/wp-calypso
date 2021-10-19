@@ -12,6 +12,7 @@ const DomainRegistrationThankYouProps = ( {
 	domain,
 	email,
 	hasProfessionalEmail,
+	hideProfessionalEmailStep,
 	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
@@ -19,6 +20,7 @@ const DomainRegistrationThankYouProps = ( {
 			domain,
 			email,
 			hasProfessionalEmail,
+			hideProfessionalEmailStep,
 			selectedSiteSlug,
 		},
 		'REGISTRATION',

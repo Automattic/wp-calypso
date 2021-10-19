@@ -11,6 +11,7 @@ export type DomainThankYouParams = {
 	domain: string;
 	email?: string;
 	hasProfessionalEmail: boolean;
+	hideProfessionalEmailStep: boolean;
 	selectedSiteSlug: string;
 };
 

@@ -12,6 +12,7 @@ const domainMappingThankYouProps = ( {
 	domain,
 	email,
 	hasProfessionalEmail,
+	hideProfessionalEmailStep,
 	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
@@ -20,6 +21,7 @@ const domainMappingThankYouProps = ( {
 			email,
 			hasProfessionalEmail,
 			selectedSiteSlug,
+			hideProfessionalEmailStep,
 		},
 		'MAPPING',
 		false

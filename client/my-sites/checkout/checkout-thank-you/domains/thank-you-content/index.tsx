@@ -27,10 +27,20 @@ export default thankYouContentGetter;
  * Helper function to reuse Get Inbox/Access your inbox components
  */
 export function buildDomainStepForProfessionalEmail(
-	{ email, hasProfessionalEmail, selectedSiteSlug, domain }: DomainThankYouParams,
+	{
+		email,
+		hasProfessionalEmail,
+		hideProfessionalEmailStep,
+		selectedSiteSlug,
+		domain,
+	}: DomainThankYouParams,
 	domainType: DomainThankYouType,
 	primary: boolean
 ): DomainThankYouProps {
+	if ( hideProfessionalEmailStep ) {
+		return null;
+	}
+
 	if ( ! hasProfessionalEmail ) {
 		return {
 			stepKey: `domain_${ domainType }_whats_next_get_professional_email`,

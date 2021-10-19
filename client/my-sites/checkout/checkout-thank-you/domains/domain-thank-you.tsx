@@ -10,6 +10,7 @@ interface DomainThankYouContainerProps {
 	domain: string;
 	email: string;
 	hasProfessionalEmail: boolean;
+	hideProfessionalEmailStep: boolean;
 	includeInbox: string;
 	selectedSiteSlug: string;
 	type: DomainThankYouType;
@@ -20,11 +21,18 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	email,
 	hasProfessionalEmail,
 	selectedSiteSlug,
+	hideProfessionalEmailStep,
 	type,
 } ) => {
 	const thankYouProps = useMemo< DomainThankYouProps >( () => {
 		const propsGetter = domainThankYouContent[ type ];
-		return propsGetter( { selectedSiteSlug, domain, email, hasProfessionalEmail } );
+		return propsGetter( {
+			selectedSiteSlug,
+			domain,
+			email,
+			hasProfessionalEmail,
+			hideProfessionalEmailStep,
+		} );
 	}, [ type, domain, selectedSiteSlug, email ] );
 
 	return (

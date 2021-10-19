@@ -7,6 +7,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isEcommerce,
+	isGSuite,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGuidedTransfer,
 	isJetpackPlan,
@@ -391,12 +392,14 @@ export class CheckoutThankYou extends Component {
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
+		let wasGSuiteProduct = false;
 		let wasTitanEmailOnlyProduct = false;
 		let wasTitanEmailProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 
+			wasGSuiteProduct = purchases.some( isGSuite );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
@@ -506,6 +509,7 @@ export class CheckoutThankYou extends Component {
 						professionalEmailPurchase ? professionalEmailPurchase.meta : this.props.user?.email
 					}
 					hasProfessionalEmail={ wasTitanEmailProduct }
+					hideProfessionalEmailStep={ wasGSuiteProduct }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 					type={ purchaseType }
 				/>
