@@ -16,10 +16,11 @@ import { AppState } from 'calypso/types';
 
 export const initialState = {
 	licensesFetching: false,
+	hasFetchedLicenses: false,
 	licenses: null,
 	countsFetching: false,
-	counts: null,
 	hasFetchedLicenseCounts: false,
+	counts: null,
 };
 
 export const countsFetching = (
@@ -90,12 +91,25 @@ export const licenses = (
 	return state;
 };
 
+export const hasFetchedLicenses = (
+	state = initialState.hasFetchedLicenses,
+	action: AnyAction
+): AppState | boolean => {
+	switch ( action.type ) {
+		case USER_LICENSES_RECEIVE:
+			return true;
+	}
+
+	return state;
+};
+
 const combinedReducer = combineReducers( {
 	licensesFetching,
-	countsFetching,
+	hasFetchedLicenses,
 	licenses,
-	counts,
+	countsFetching,
 	hasFetchedLicenseCounts,
+	counts,
 } );
 
 export default withStorageKey( 'userLicensing', combinedReducer );

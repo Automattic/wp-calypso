@@ -22,6 +22,10 @@ export function isFetchingLicenseCounts( state: UserLicensingStore ): boolean {
 	return state.userLicensing?.countsFetching;
 }
 
+export function hasFetchedLicenses( state: UserLicensingStore ): boolean {
+	return state.userLicensing?.hasFetchedLicenses;
+}
+
 export function isFetchingUserLicenses( state: UserLicensingStore ): boolean {
 	return state.userLicensing?.licensesFetching;
 }

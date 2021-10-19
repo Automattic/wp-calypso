@@ -36,6 +36,7 @@ export interface LicensesStore {
 	countsFetching: boolean;
 	licenses: PaginatedItems< License > | null;
 	counts: LicenseCounts | null;
+	hasFetchedLicenses: boolean;
 	hasFetchedLicenseCounts: boolean;
 }
 
