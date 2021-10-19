@@ -30,7 +30,6 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PopUpSearch from '../popup-search';
 import Item from './item';
 import Masterbar from './masterbar';
 import Notifications from './notifications';
@@ -236,7 +235,11 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<>
 				{ isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
-					<PopUpSearch onClose={ this.onSearchActionsClose } />
+					<AsyncLoad
+						require="calypso/layout/popup-search"
+						placeholder={ null }
+						onClose={ this.onSearchActionsClose }
+					/>
 				) : null }
 				<Masterbar>
 					{ this.renderMySites() }
