@@ -51,7 +51,7 @@ const MarketplacePluginUpload = (): JSX.Element => {
 			// before moving to next step.
 			waitFor( 1 ).then( () => setCurrentStep( 1 ) );
 		}
-	}, [ pluginUploadProgress ] );
+	}, [ pluginUploadProgress, setCurrentStep ] );
 
 	useEffect( () => {
 		if ( pluginUploadComplete && uploadedPlugin ) {
@@ -64,7 +64,7 @@ const MarketplacePluginUpload = (): JSX.Element => {
 			setCurrentStep( 2 );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginUploadComplete, uploadedPlugin ] );
+	}, [ pluginUploadComplete, uploadedPlugin, setCurrentStep ] );
 
 	useEffect( () => {
 		if ( pluginActive ) {
