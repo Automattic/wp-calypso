@@ -175,8 +175,8 @@ export default function getThankYouPageUrl( {
 	debug( 'fallbackUrl is', fallbackUrl );
 
 	// If receipt ID is 'noPreviousPurchase', then send the user to a generic page (not post-purchase related).
-	// For example, this case arises when a Skip button is clicked on a concierge upsell
-	// nudge opened by a direct link to /checkout/offer-support-session.
+	// For example, this case arises when a Skip button is clicked on a concierge upsell nudge opened by a direct
+	// link to /checkout/offer-support-session.
 	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
 		debug( 'receipt ID is "noPreviousPurchase", so returning: ', fallbackUrl );
 		return fallbackUrl;
