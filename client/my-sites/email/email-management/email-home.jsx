@@ -21,6 +21,7 @@ import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import ProgressLine from 'calypso/my-sites/email/inbox/mailbox-selection-list/progress-line';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -35,7 +36,6 @@ import {
 } from 'calypso/state/ui/selectors';
 
 import './style.scss';
-import ProgressLine from "calypso/my-sites/email/inbox/mailbox-selection-list/progress-line";
 
 class EmailManagementHome extends Component {
 	static propTypes = {
@@ -169,11 +169,6 @@ class EmailManagementHome extends Component {
 	}
 
 	renderLoadingPlaceholder() {
-		const { source, translate } = this.props;
-
-		if ( source === INBOX_SOURCE ) {
-			return <ProgressLine statusText={ translate( 'Loading your email subscriptions' ) } />;
-		}
 		return this.renderContentWithHeader(
 			<>
 				<SectionHeader className="email-home__section-placeholder is-placeholder" />
