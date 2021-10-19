@@ -8,9 +8,9 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
 
-import './wpcom-domain-item.scss';
+import './free-domain-item.scss';
 
-export default function WpcomDomainItem( {
+export default function FreeDomainItem( {
 	currentRoute,
 	domain,
 	disabled,
@@ -70,7 +70,7 @@ export default function WpcomDomainItem( {
 	);
 }
 
-WpcomDomainItem.propTypes = {
+FreeDomainItem.propTypes = {
 	currentRoute: PropTypes.string,
 	domain: PropTypes.object.isRequired,
 	disabled: PropTypes.bool,

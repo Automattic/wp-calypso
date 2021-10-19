@@ -8,8 +8,8 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { type } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import DomainActionsButton from 'calypso/my-sites/domains/domain-management/list-new/domain-actions-button';
-import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list-new/wpcom-domain-item';
+import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
+import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -121,7 +121,7 @@ class ListNew extends Component {
 
 		return (
 			wpcomDomain && (
-				<WpcomDomainItem
+				<FreeDomainItem
 					key="wpcom-domain-item"
 					isAtomicSite={ isAtomicSite }
 					currentRoute={ currentRoute }
