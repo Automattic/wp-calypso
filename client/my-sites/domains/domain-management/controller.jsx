@@ -29,14 +29,15 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
+		let listComponent = DomainManagement.List;
 		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-			// TODO: set different component for the new domain list
+			listComponent = DomainManagement.SiteDomains;
 		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementList( ':site' ) }
 				analyticsTitle="Domain Management"
-				component={ DomainManagement.List }
+				component={ listComponent }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
