@@ -127,12 +127,6 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 	onPreview,
 } ) => {
 	const { __ } = useI18n();
-	const isBlankCanvas = isBlankCanvasDesign( design );
-
-	// We don't need preview for blank canvas
-	if ( isBlankCanvas ) {
-		return null;
-	}
 
 	return (
 		<div className="design-button-cover">
@@ -173,6 +167,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	...props
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
+	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
 	if ( ! onPreview ) {
 		return <DesignButton { ...props } />;
@@ -183,14 +178,17 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 		return <DesignButton { ...props } onSelect={ onPreview } />;
 	}
 
+	// We don't need preview for blank canvas
 	return (
 		<div className="design-button-container">
-			<DesignButtonCover
-				design={ props.design }
-				onSelect={ props.onSelect }
-				onPreview={ onPreview }
-			/>
-			<DesignButton { ...props } disabled />
+			{ ! isBlankCanvas && (
+				<DesignButtonCover
+					design={ props.design }
+					onSelect={ props.onSelect }
+					onPreview={ onPreview }
+				/>
+			) }
+			<DesignButton { ...props } disabled={ ! isBlankCanvas } />
 		</div>
 	);
 };
