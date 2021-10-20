@@ -532,33 +532,26 @@ export default function CompositeCheckout( {
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
 		( errorType, errorMessage, errorData ) => {
 			reduxDispatch( logStashLoadErrorEventAction( errorType, errorMessage, errorData ) );
-			switch ( errorType ) {
-				case 'page_load':
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
-							error_message: errorMessage,
-						} )
-					);
-				case 'step_load':
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
-							error_message: errorMessage,
-							...errorData,
-						} )
-					);
-				case 'submit_button_load':
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_submit_button_load_error', {
-							error_message: errorMessage,
-						} )
-					);
-				case 'payment_method_load':
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
-							error_message: errorMessage,
-						} )
-					);
+			function errorTypeToTracksEventName( type: string ): string {
+				switch ( type ) {
+					case 'page_load':
+						return 'calypso_checkout_composite_page_load_error';
+					case 'step_load':
+						return 'calypso_checkout_composite_step_load_error';
+					case 'submit_button_load':
+						return 'calypso_checkout_composite_submit_button_load_error';
+					case 'payment_method_load':
+						return 'calypso_checkout_composite_payment_method_load_error';
+					default:
+						return 'unknown';
+				}
 			}
+			reduxDispatch(
+				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
+					error_message: errorMessage,
+					...errorData,
+				} )
+			);
 		},
 		[ reduxDispatch ]
 	);
