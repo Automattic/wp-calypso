@@ -77,6 +77,7 @@ import {
 } from './types/wpcom-store-state';
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -528,14 +529,24 @@ export default function CompositeCheckout( {
 		checkoutFlow,
 	} );
 
-	const onPageLoadError = useCallback(
-		( error: string ) => {
-			reduxDispatch( logStashLoadErrorEventAction( 'page_load', error ) );
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
-					error_message: error,
-				} )
-			);
+	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
+		( errorType, errorMessage, errorData ) => {
+			reduxDispatch( logStashLoadErrorEventAction( errorType, errorMessage, errorData ) );
+			switch ( errorType ) {
+				case 'page_load':
+					reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
+							error_message: errorMessage,
+						} )
+					);
+				case 'step_load':
+					reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
+							error_message: errorMessage,
+							...errorData,
+						} )
+					);
+			}
 		},
 		[ reduxDispatch ]
 	);
