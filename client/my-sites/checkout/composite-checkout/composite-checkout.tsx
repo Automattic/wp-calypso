@@ -552,6 +552,12 @@ export default function CompositeCheckout( {
 							error_message: errorMessage,
 						} )
 					);
+				case 'payment_method_load':
+					reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
+							error_message: errorMessage,
+						} )
+					);
 			}
 		},
 		[ reduxDispatch ]

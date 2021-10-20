@@ -4,11 +4,7 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	logStashLoadErrorEventAction,
-	logStashEventAction,
-	recordCompositeCheckoutErrorDuringAnalytics,
-} from './lib/analytics';
+import { logStashEventAction, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
@@ -24,15 +20,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'PAYMENT_METHOD_LOAD_ERROR':
-					reduxDispatch(
-						logStashLoadErrorEventAction( 'payment_method_load', String( action.payload ) )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
 				case 'PAYMENT_METHOD_SELECT': {
 					reduxDispatch(
 						logStashEventAction( 'payment_method_select', {
