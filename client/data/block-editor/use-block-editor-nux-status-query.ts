@@ -10,10 +10,14 @@ export const useBlockEditorNuxStatusQuery = (
 ): UseQueryResult< BlockEditorNuxStatus > => {
 	const queryKey = [ 'blockEditorNuxStatus', siteId ];
 
-	return useQuery< BlockEditorNuxStatus >( queryKey, () => {
-		return wpcom.req.get( {
-			path: `/sites/${ siteId }/block-editor/nux`,
-			apiNamespace: 'wpcom/v2',
-		} );
-	} );
+	return useQuery< BlockEditorNuxStatus >(
+		queryKey,
+		() => {
+			return wpcom.req.get( {
+				path: `/sites/${ siteId }/block-editor/nux`,
+				apiNamespace: 'wpcom/v2',
+			} );
+		},
+		{ enabled: !! siteId }
+	);
 };
