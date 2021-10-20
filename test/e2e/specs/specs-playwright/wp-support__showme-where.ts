@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	LoginPage,
-	SidebarComponent,
 	SupportComponent,
 	setupHooks,
 	GutenboardingFlow,
