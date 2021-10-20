@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { DataRegistry } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
@@ -45,6 +45,7 @@ export function CheckoutProvider( {
 	onPaymentComplete,
 	onPaymentRedirect,
 	onPaymentError,
+	onPageLoadError,
 	redirectToUrl,
 	theme,
 	paymentMethods,
@@ -138,12 +139,8 @@ export function CheckoutProvider( {
 
 	const { __ } = useI18n();
 	const errorMessage = __( 'Sorry, there was an error loading this page.' );
-	const onError = useCallback(
-		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
-	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onPageLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
