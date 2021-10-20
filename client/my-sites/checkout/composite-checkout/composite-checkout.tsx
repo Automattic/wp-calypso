@@ -67,7 +67,6 @@ import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
 import createAnalyticsEventHandler from './record-analytics';
-import { CountryListItem } from './types/country-list-item';
 import { StoredCard } from './types/stored-cards';
 import {
 	emptyManagedContactDetails,
@@ -78,7 +77,7 @@ import {
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { ManagedContactDetails, CountryListItem } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -271,7 +270,7 @@ export default function CompositeCheckout( {
 	);
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails( updateLocation );
+	useCachedDomainContactDetails( updateLocation, countriesList );
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
