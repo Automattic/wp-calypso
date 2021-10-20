@@ -1,10 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
-import useFseBetaEligibility from './use-fse-beta-eligibility';
+import useFseBetaOptInStep from './use-fse-beta-opt-in-step';
 import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
@@ -32,7 +31,6 @@ export default function useSteps(): Array< StepType > {
 		steps = [
 			Step.IntentGathering,
 			Step.Domains,
-			Step.FseBetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Features,
@@ -41,7 +39,6 @@ export default function useSteps(): Array< StepType > {
 	} else {
 		steps = [
 			Step.IntentGathering,
-			Step.FseBetaOptIn,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Domains,
@@ -58,9 +55,9 @@ export default function useSteps(): Array< StepType > {
 		steps = steps.filter( ( step ) => step !== Step.Style );
 	}
 
-	// Remove the FSE Beta Opt In step if user is not eligible
-	if ( ! useFseBetaEligibility() ) {
-		steps = steps.filter( ( step ) => step !== Step.FseBetaOptIn );
+	// Add the FSE Beta Opt In step if the user is eligible
+	if ( useFseBetaOptInStep() ) {
+		steps = [ Step.FseBetaOptIn, Step.FseBetaIntentGathering, ...steps.slice( 1 ) ];
 	}
 
 	// Logic necessary to skip Domains or Plans steps
