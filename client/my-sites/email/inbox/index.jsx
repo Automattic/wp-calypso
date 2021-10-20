@@ -88,9 +88,7 @@ const InboxManagement = () => {
 	);
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
 	const isLoadingDomains = useSelector(
-		( state ) =>
-			! hasLoadedSiteDomains( state, selectedSiteId ) ||
-			isRequestingSiteDomains( state, selectedSiteId )
+		( state ) => ! hasLoadedSiteDomains( state, selectedSiteId )
 	);
 	const translate = useTranslate();
 
