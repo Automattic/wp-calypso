@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/design-picker';
 import { css } from '@emotion/react';

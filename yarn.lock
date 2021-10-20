@@ -91,6 +91,7 @@ __metadata:
     "@babel/preset-env": ^7.15.0
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.15.0
+    "@emotion/babel-plugin": ^11.3.0
     "@types/webpack-env": ^1.16.2
     "@wojtekmaj/enzyme-adapter-react-17": ^0.6.3
     "@wordpress/babel-plugin-import-jsx-pragma": ^3.1.0
