@@ -111,7 +111,7 @@ class SiteRedirect extends Component {
 	render() {
 		const { location, translate } = this.props;
 		const { isUpdating, notice } = location;
-		const isFetching = location.isFetching || this.state.redirectUrl.length === 0;
+		const isFetching = location.isFetching;
 
 		const classes = classNames( 'site-redirect-card', { fetching: isFetching } );
 
