@@ -101,6 +101,7 @@
 		"settings/theme-setup": false,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/difm-expanded-designs": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,

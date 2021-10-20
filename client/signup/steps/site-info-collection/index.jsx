@@ -44,7 +44,9 @@ function SiteInformationCollection( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedDIFMDesign, selectedVertical } = useSelector( getSignupDependencyStore );
+	const { selectedDesign, selectedDIFMDesign, selectedVertical } = useSelector(
+		getSignupDependencyStore
+	);
 	const username = useSelector( getCurrentUserName );
 	const [ isFormSubmitted, setIsFormSubmitted ] = useState( false );
 
@@ -69,6 +71,8 @@ function SiteInformationCollection( {
 
 	return (
 		<Container>
+			{ /* TODO: Remove before merging */ }
+			<button onClick={ nextStep }>Next </button>
 			{ isFormSubmitted ? (
 				<LoadingContainer>
 					<CardHeading tagName="h5" size={ 24 }>
@@ -80,7 +84,7 @@ function SiteInformationCollection( {
 				<Widget
 					hidden={ {
 						username,
-						design: selectedDIFMDesign,
+						design: selectedDesign || selectedDIFMDesign,
 						vertical: selectedVertical,
 					} }
 					id={ getTypeformId() }

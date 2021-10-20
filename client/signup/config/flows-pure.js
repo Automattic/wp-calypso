@@ -433,7 +433,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
+			steps: isEnabled( 'signup/difm-expanded-designs' )
+				? [ 'user', 'difm-design-setup-site', 'site-info-collection', 'domains' ]
+				: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
 			destination: getSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			lastModified: '2021-09-30',
