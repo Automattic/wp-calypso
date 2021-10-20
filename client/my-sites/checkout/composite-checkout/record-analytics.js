@@ -24,18 +24,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'STEP_LOAD_ERROR':
-					reduxDispatch(
-						logStashLoadErrorEventAction( 'step_load', String( action.payload.message ), {
-							stepId: action.payload.stepId,
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
-							error_message: String( action.payload.message ),
-							step_id: String( action.payload.stepId ),
-						} )
-					);
 				case 'SUBMIT_BUTTON_LOAD_ERROR':
 					reduxDispatch(
 						logStashLoadErrorEventAction( 'submit_button_load', String( action.payload ) )
