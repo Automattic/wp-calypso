@@ -546,6 +546,12 @@ export default function CompositeCheckout( {
 							...errorData,
 						} )
 					);
+				case 'submit_button_load':
+					reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_submit_button_load_error', {
+							error_message: errorMessage,
+						} )
+					);
 			}
 		},
 		[ reduxDispatch ]
