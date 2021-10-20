@@ -9,7 +9,12 @@ module.exports = {
 	overrides: [
 		{
 			plugins: [ 'mocha' ],
-			files: [ 'specs/specs-jetpack/*', 'specs/specs-calypso/*', 'specs/specs-wpcom/*' ],
+			files: [
+				'specs/specs-jetpack/*',
+				'specs/specs-calypso/*',
+				'specs/specs-wpcom/*',
+				'lib/mocha-hooks.js',
+			],
 			rules: {
 				'mocha/no-exclusive-tests': 'error',
 				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
