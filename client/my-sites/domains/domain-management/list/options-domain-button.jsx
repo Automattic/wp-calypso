@@ -64,10 +64,10 @@ class AddDomainButton extends Component {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 			return (
 				<Fragment>
-					<PopoverMenuItem onClick={ this.clickAddDomain }>
+					<PopoverMenuItem icon="search" onClick={ this.clickAddDomain }>
 						{ translate( 'Search for a domain' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
+					<PopoverMenuItem icon="domains" href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
 						{ translate( 'Use a domain I own' ) }
 					</PopoverMenuItem>
 				</Fragment>
