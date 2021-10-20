@@ -9,7 +9,6 @@ import SiteRedirect from './edit/site-redirect';
 import TransferIn from './edit/transfer-in';
 import List from './list';
 import ListAll from './list/list-all';
-import ListNew from './list/list-new';
 import ManageConsent from './manage-consent';
 import NameServers from './name-servers';
 import Security from './security';
