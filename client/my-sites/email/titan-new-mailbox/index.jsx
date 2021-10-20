@@ -173,7 +173,7 @@ const TitanNewMailbox = ( {
 							} }
 							onKeyUp={ onReturnKeyPress }
 						/>
-					</FormLabel>client/components/gsuite/gsuite-new-user-list/new-user.tsx
+					</FormLabel>
 					{ hasAlternativeEmailError && (
 						<FormInputValidation text={ alternativeEmailError } isError />
 					) }
