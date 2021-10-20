@@ -17,9 +17,9 @@ const DesignPickerPreviewToolbar = ( {
 	translate,
 } ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: computer },
-		tablet: { title: translate( 'Tablet' ), icon: tablet },
-		phone: { title: translate( 'Phone' ), icon: phone },
+		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
+		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
+		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
 
 	return (
@@ -37,7 +37,7 @@ const DesignPickerPreviewToolbar = ( {
 							onClick={ () => setDeviceViewport( device ) }
 						>
 							<Icon
-								size={ device === 'computer' ? 36 : 24 }
+								size={ devices.current[ device ].iconSize }
 								icon={ devices.current[ device ].icon }
 							/>
 						</Button>
