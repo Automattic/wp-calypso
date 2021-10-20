@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.wpcom-domain-item {
+.free-domain-item {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
@@ -29,8 +29,15 @@
 		font-size: $font-body-extra-small;
 		border-radius: 4px; /* stylelint-disable-line */
 		font-weight: 500; /* stylelint-disable-line */
+		margin-top: 8px;
+
+		svg {
+			transform: translateY( 2px );
+			margin-right: 4px;
+		}
 
 		@include break-mobile {
+			margin-top: 0;
 			margin-left: 12px;
 		}
 	}
@@ -39,7 +46,7 @@
 		background: none;
 	}
 
-	.wpcom-domain-item__description {
+	.free-domain-item__description {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;

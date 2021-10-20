@@ -1,5 +1,6 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Icon, home } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
 import Badge from 'calypso/components/badge';
@@ -27,8 +28,8 @@ export default function FreeDomainItem( {
 	};
 
 	return (
-		<div className="wpcom-domain-item">
-			<span className="wpcom-domain-item__description">
+		<div className="free-domain-item">
+			<span className="free-domain-item__description">
 				{ createInterpolateElement(
 					sprintf(
 						/* translators: %s - The WordPress.com subdomain. (ex.: subdomain.wordpress.com) */
@@ -38,8 +39,8 @@ export default function FreeDomainItem( {
 					{ strong: createElement( 'strong', null ) }
 				) }
 				{ domain.isPrimary && (
-					<Badge className="wpcom-domain-item__primary-badge" type="info-green">
-						{ __( 'Primary site address' ) }
+					<Badge className="free-domain-item__primary-badge" type="info-green">
+						<Icon icon={ home } size={ 14 } /> { __( 'Primary site address' ) }
 					</Badge>
 				) }
 			</span>
