@@ -48,11 +48,13 @@ export class AppBanner extends Component {
 		translate: PropTypes.func,
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
+		blockEditorNuxStatus: PropTypes.shape( {
+			show_welcome_guide: PropTypes.bool,
+		} ),
 		// connected
 		currentSection: PropTypes.string,
 		dismissedUntil: PropTypes.object,
 		fetchingPreferences: PropTypes.bool,
-		blockEditorNuxStatus: PropTypes.bool,
 	};
 
 	static defaultProps = {
