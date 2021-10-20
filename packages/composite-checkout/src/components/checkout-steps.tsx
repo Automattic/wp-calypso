@@ -17,6 +17,7 @@ import {
 	useState,
 	createContext,
 } from 'react';
+import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import theme from '../lib/theme';
@@ -287,6 +288,7 @@ export const CheckoutStep = ( {
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
+	const { onPageLoadError } = useContext( CheckoutContext );
 	const { formStatus, setFormValidating, setFormReady } = useFormStatus();
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
@@ -328,15 +330,8 @@ export const CheckoutStep = ( {
 	];
 
 	const onError = useCallback(
-		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId,
-				},
-			} ),
-		[ onEvent, stepId ]
+		( error ) => onPageLoadError?.( 'step_load', error, { step_id: stepId } ),
+		[ onPageLoadError, stepId ]
 	);
 
 	return (
