@@ -20,6 +20,8 @@ class DomainsTable extends PureComponent {
 			primaryDomainIndex,
 			translate,
 			shouldUpgradeToMakeDomainPrimary,
+			goToEditDomainRoot,
+			handleUpdatePrimaryDomainOptionClick,
 		} = this.props;
 
 		if ( isLoading ) {
@@ -40,14 +42,14 @@ class DomainsTable extends PureComponent {
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
-				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
+				onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
 				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
 				busyMessage={ translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
 				disabled={ settingPrimaryDomain }
 				selectionIndex={ index }
-				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
+				onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
 				shouldUpgradeToMakePrimary={ shouldUpgradeToMakeDomainPrimary( domain ) }
 			/>
 		) );

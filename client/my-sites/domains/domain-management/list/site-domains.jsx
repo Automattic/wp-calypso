@@ -153,6 +153,8 @@ export class SiteDomains extends Component {
 						primaryDomainIndex={ primaryDomainIndex }
 						settingPrimaryDomain={ settingPrimaryDomain }
 						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
+						goToEditDomainRoot={ this.goToEditDomainRoot }
+						handleUpdatePrimaryDomainOptionClick={ this.handleUpdatePrimaryDomainOptionClick }
 					/>
 				</div>
 
