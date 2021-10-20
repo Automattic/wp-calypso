@@ -356,7 +356,7 @@ class DomainsStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleAddTransfer = ( domain, authCode ) => {
+	handleAddTransfer = ( { domain, authCode } ) => {
 		const domainItem = domainTransfer( {
 			domain,
 			extra: {
