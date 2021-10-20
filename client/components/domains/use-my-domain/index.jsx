@@ -39,6 +39,7 @@ function UseMyDomain( props ) {
 		transferDomainUrl,
 		showHeader = true,
 		initialMode,
+		onNextStep,
 	} = props;
 
 	const { __ } = useI18n();
@@ -64,6 +65,10 @@ function UseMyDomain( props ) {
 	const initialValidation = useRef( isSignupStep );
 
 	const baseClassName = 'use-my-domain';
+
+	useEffect( () => {
+		if ( initialMode ) setMode( initialMode );
+	}, [ initialMode ] );
 
 	const onGoBack = () => {
 		const prevOwnershipVerificationFlowPageSlug =
@@ -176,6 +181,7 @@ function UseMyDomain( props ) {
 			if ( availabilityErrorMessage ) {
 				setDomainNameValidationError( availabilityErrorMessage );
 			} else {
+				onNextStep?.( { mode: inputMode.transferOrConnect, domain: domainName } );
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
 			}
@@ -184,7 +190,7 @@ function UseMyDomain( props ) {
 		} finally {
 			setIsFetchingAvailability( false );
 		}
-	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName ] );
+	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName, onNextStep ] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -214,10 +220,12 @@ function UseMyDomain( props ) {
 	}, [ mode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
+		onNextStep?.( { mode: inputMode.ownershipVerification, domain: domainName } );
 		setMode( inputMode.ownershipVerification );
 	};
 
 	const showTransferDomainFlow = () => {
+		onNextStep?.( { mode: inputMode.transferDomain, domain: domainName } );
 		setMode( inputMode.transferDomain );
 	};
 

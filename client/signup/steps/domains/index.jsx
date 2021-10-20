@@ -1,10 +1,12 @@
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { parse, stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
@@ -117,6 +119,10 @@ class DomainsStep extends Component {
 
 			props.goToNextStep();
 		}
+		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
+		this.state = {
+			currentStep: inputMode.domainInput,
+		};
 	}
 
 	/**
@@ -549,8 +555,31 @@ class DomainsStep extends Component {
 		this.handleAddMapping( 'useYourDomainForm', domain );
 	};
 
+	insertUrlParam( key, value ) {
+		if ( history.pushState ) {
+			const searchParams = new URLSearchParams( window.location.search );
+			searchParams.set( key, value );
+			const newurl =
+				window.location.protocol +
+				'//' +
+				window.location.host +
+				window.location.pathname +
+				'?' +
+				searchParams.toString();
+			window.history.pushState( { path: newurl }, '', newurl );
+		}
+	}
+
+	setCurrentFlowStep( { mode, domain } ) {
+		this.setState( { currentStep: mode }, () => {
+			this.insertUrlParam( 'step', this.state.currentStep );
+			this.insertUrlParam( 'initialQuery', domain );
+		} );
+	}
+
 	useYourDomainForm = () => {
-		const initialQuery = get( this.props.step, 'domainForm.lastQuery' );
+		const queryObject = parse( window.location.search.replace( '?', '' ) );
+		const initialQuery = get( this.props.step, 'domainForm.lastQuery' ) ?? queryObject.initialQuery;
 
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
@@ -559,6 +588,8 @@ class DomainsStep extends Component {
 						analyticsSection={ this.getAnalyticsSection() }
 						basePath={ this.props.path }
 						initialQuery={ initialQuery }
+						initialMode={ queryObject.step }
+						onNextStep={ this.setCurrentFlowStep }
 						isSignupStep
 						showHeader={ false }
 						onTransfer={ this.handleAddTransfer }
@@ -670,23 +701,46 @@ class DomainsStep extends Component {
 		);
 	}
 
+	getPreviousStepUrl( currentStep ) {
+		const basePath = '/start/domains/use-your-domain';
+		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
+
+		let mode = inputMode.domainInput;
+		switch ( currentStep ) {
+			case inputMode.domainInput:
+				return null;
+
+			case inputMode.transferOrConnect:
+				mode = inputMode.domainInput;
+				break;
+
+			case inputMode.transferDomain:
+			case inputMode.ownershipVerification:
+				mode = inputMode.transferOrConnect;
+				break;
+		}
+		return (
+			`${ basePath }?step=${ mode }` +
+			( Object.keys( queryValues ).length ? `&${ stringify( { ...queryValues } ) }` : '' )
+		);
+	}
+
 	render() {
 		if ( this.skipRender ) {
 			return null;
 		}
 
-		const { isAllDomains, translate, sites, isReskinned, userLoggedIn } = this.props;
+		const { isAllDomains, translate, sites, isReskinned } = this.props;
 		const source = get( this.props, 'queryObject.source' );
 		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
 		let backLabelText;
-		let isExternalBackUrl;
-		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+		let isExternalBackUrl = false;
 
-		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, 'use-your-domain', locale );
-		} else if ( this.props.stepSectionName ) {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, locale );
+		const previousStepBackUrl = this.getPreviousStepUrl( this.state?.currentStep );
+
+		if ( previousStepBackUrl ) {
+			backUrl = previousStepBackUrl;
 		} else if ( 0 === this.props.positionInFlow && hasSite ) {
 			backUrl = '/sites/';
 			backLabelText = translate( 'Back to My Sites' );
@@ -695,14 +749,14 @@ class DomainsStep extends Component {
 				backUrl = domainManagementRoot();
 				backLabelText = translate( 'Back to All Domains' );
 			}
-		}
-
-		const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
-		if ( externalBackUrl ) {
-			backUrl = externalBackUrl;
-			backLabelText = translate( 'Back' );
-			// Solves route conflicts between LP and calypso (ex. /domains).
-			isExternalBackUrl = true;
+		} else {
+			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
+			if ( externalBackUrl ) {
+				backUrl = externalBackUrl;
+				backLabelText = translate( 'Back' );
+				// Solves route conflicts between LP and calypso (ex. /domains).
+				isExternalBackUrl = true;
+			}
 		}
 
 		const headerText = this.getHeaderText();
