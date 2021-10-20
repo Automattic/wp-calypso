@@ -12,6 +12,8 @@ export const pendingPayments = purchasesRoot + '/pending';
 
 export const vatDetails = purchasesRoot + '/vat-details';
 
+export const licenses = purchasesRoot + '/licenses';
+
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof receiptId ) {

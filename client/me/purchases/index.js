@@ -5,6 +5,7 @@ import { sidebar } from 'calypso/me/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
 import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as billingController from 'calypso/me/purchases/billing-history/controller';
+import * as licensesController from 'calypso/me/purchases/licenses/controller';
 import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
 import { siteSelection } from 'calypso/my-sites/controller';
 import * as controller from './controller';
@@ -45,6 +46,10 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
+	// if ( config.isEnabled( 'jetpack/user-licensing-m1' ) ) {
+	router( paths.licenses, sidebar, licensesController.licenses, makeLayout, clientRender );
+	// }
 
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(

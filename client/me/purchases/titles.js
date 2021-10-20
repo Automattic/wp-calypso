@@ -13,6 +13,7 @@ const titles = {
 	billingHistory: i18n.translate( 'Billing History' ),
 	paymentMethods: i18n.translate( 'Payment Methods' ),
 	pendingPayments: i18n.translate( 'Pending Payments' ),
+	licenses: i18n.translate( 'Licenses' ),
 };
 
 /**

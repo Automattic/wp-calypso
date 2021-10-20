@@ -1,3 +1,4 @@
+// import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import Search from 'calypso/components/search';
@@ -36,6 +37,9 @@ export default function PurchasesNavigation( {
 					selected={ sectionTitle === 'Payment Methods' }
 				>
 					{ translate( 'Payment Methods' ) }
+				</NavItem>
+				<NavItem path={ `/purchases/licenses` } selected={ sectionTitle === 'Licenses' }>
+					{ translate( 'Licenses' ) }
 				</NavItem>
 			</NavTabs>
 

@@ -11,6 +11,7 @@ import {
 	paymentMethods,
 	pendingPayments,
 	purchasesRoot,
+	licenses,
 } from 'calypso/me/purchases/paths.js';
 import titles from 'calypso/me/purchases/titles';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
@@ -32,6 +33,10 @@ export default function PurchasesNavigation( { section } ) {
 
 				<NavItem path={ paymentMethods } selected={ section === 'paymentMethods' }>
 					{ titles.paymentMethods }
+				</NavItem>
+
+				<NavItem path={ licenses } selected={ section === 'licenses' }>
+					{ titles.licenses }
 				</NavItem>
 
 				{ isEnabled( 'async-payments' ) && (
