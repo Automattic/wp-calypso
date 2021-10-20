@@ -56,7 +56,6 @@ export default function ContactDetailsContainer( {
 		updateDomainContactFields,
 		updateCountryCode,
 		updatePostalCode,
-		updateRequiredDomainFields,
 		updateEmail,
 	} = useDispatch( 'wpcom-checkout' );
 	const contactDetails = prepareDomainContactDetails( contactInfo );
@@ -66,9 +65,6 @@ export default function ContactDetailsContainer( {
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
 		updateDomainContactFields( details );
 	};
-
-	const getIsFieldRequired = ( field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' > ) =>
-		contactInfo[ field ]?.isRequired ?? false;
 
 	switch ( contactDetailsType ) {
 		case 'domain':
@@ -84,8 +80,6 @@ export default function ContactDetailsContainer( {
 						contactDetails={ contactDetails }
 						contactDetailsErrors={ contactDetailsErrors }
 						updateDomainContactFields={ updateDomainContactRelatedData }
-						updateRequiredDomainFields={ updateRequiredDomainFields }
-						getIsFieldRequired={ getIsFieldRequired }
 						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }

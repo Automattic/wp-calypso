@@ -150,7 +150,7 @@ export class UpsellNudge extends Component {
 				},
 			};
 			const validationResult = await getTaxValidationResult( contactInfo );
-			return isContactValidationResponseValid( validationResult, contactInfo );
+			return isContactValidationResponseValid( validationResult );
 		};
 
 		validateContactDetails().then( ( isValid ) => {

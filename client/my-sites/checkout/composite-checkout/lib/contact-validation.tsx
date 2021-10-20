@@ -16,7 +16,6 @@ import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isCompleteAndValid,
-	areRequiredFieldsNotEmpty,
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
@@ -144,7 +143,7 @@ export async function validateContactDetails(
 				clearDomainContactErrorMessages,
 			} );
 		}
-		return isContactValidationResponseValid( validationResult, contactInfo );
+		return isContactValidationResponseValid( validationResult );
 	};
 
 	if ( isLoggedOutCart ) {
@@ -165,7 +164,7 @@ export async function validateContactDetails(
 			} );
 		}
 
-		if ( ! isContactValidationResponseValid( loggedOutValidationResult, contactInfo ) ) {
+		if ( ! isContactValidationResponseValid( loggedOutValidationResult ) ) {
 			return false;
 		}
 	}
@@ -189,22 +188,12 @@ function isContactValidationResponse( data: unknown ): data is DomainContactVali
 	return true;
 }
 
-export function isContactValidationResponseValid(
-	data: unknown,
-	contactDetails: ManagedContactDetails
-): boolean {
+export function isContactValidationResponseValid( data: unknown ): boolean {
 	if ( ! isContactValidationResponse( data ) ) {
 		throw new Error( 'Invalid contact validation response.' );
 	}
 	if ( ! data.success ) {
 		debug( 'Validation response says that the contact details not valid' );
-		return false;
-	}
-	if ( ! areRequiredFieldsNotEmpty( contactDetails ) ) {
-		debug(
-			'Validation response says that the contact details are valid but there are empty required fields in',
-			contactDetails
-		);
 		return false;
 	}
 	return true;
