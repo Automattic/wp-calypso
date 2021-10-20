@@ -46,7 +46,7 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 						...item,
 						meta: [
 							...item.meta?.filter( ( meta ) => meta.meta_key !== 'is_backup' ),
-							{ meta_key: 'is_backup', meta_value: is_backup ? 'yes' : null },
+							{ meta_key: 'is_backup', meta_value: is_backup ? 'backup' : null },
 						],
 					};
 				}

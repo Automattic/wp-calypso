@@ -162,13 +162,13 @@ describe( 'items', () => {
 			{
 				type: STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
 				stored_details_id: STORED_CARDS_FROM_API[ 0 ].stored_details_id,
-				is_backup: 'yes',
+				is_backup: 'backup',
 			}
 		);
 
 		expect(
 			state.items[ 0 ].meta.find( ( meta ) => meta.meta_key === 'is_backup' ).meta_value
-		).to.be.eql( 'yes' );
+		).to.be.eql( 'backup' );
 	} );
 
 	test( 'should modify the stored card is_backup property correctly when is_backup is disabled', () => {

@@ -26,8 +26,8 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const storedDetailsId = card.stored_details_id;
-	const initialIsBackup =
-		card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value === 'backup';
+	const initialIsBackup = !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )
+		?.meta_value;
 	const queryClient = useQueryClient();
 	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >(
 		[ 'payment-method-backup-toggle', storedDetailsId ],
