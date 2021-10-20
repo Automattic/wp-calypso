@@ -69,13 +69,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug )
 					);
 				}
-				case 'PAGE_LOAD_ERROR':
-					reduxDispatch( logStashLoadErrorEventAction( 'page_load', String( action.payload ) ) );
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
 				case 'STORED_CARD_ERROR':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {

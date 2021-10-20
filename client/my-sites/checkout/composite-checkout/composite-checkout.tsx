@@ -54,7 +54,7 @@ import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from './hooks/use-stored-cards';
 import { useWpcomStore } from './hooks/wpcom-store';
-import { logStashEventAction } from './lib/analytics';
+import { logStashLoadErrorEventAction, logStashEventAction } from './lib/analytics';
 import existingCardProcessor from './lib/existing-card-processor';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
@@ -528,6 +528,18 @@ export default function CompositeCheckout( {
 		checkoutFlow,
 	} );
 
+	const onPageLoadError = useCallback(
+		( error: string ) => {
+			reduxDispatch( logStashLoadErrorEventAction( 'page_load', error ) );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
+					error_message: error,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
@@ -624,6 +636,7 @@ export default function CompositeCheckout( {
 				onPaymentComplete={ handlePaymentComplete }
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
+				onPageLoadError={ onPageLoadError }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
