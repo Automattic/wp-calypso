@@ -480,8 +480,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		// Temporarily skip these tests until we can update track events / tests to handle the new
-		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
 		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
