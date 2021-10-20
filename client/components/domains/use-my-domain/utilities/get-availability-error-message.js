@@ -43,7 +43,7 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 		? status
 		: mappable;
 	const maintenanceEndTime = maintenance_end_time ?? null;
-	const site = other_site_domain ?? selectedSite.slug;
+	const site = other_site_domain ?? selectedSite?.slug;
 
 	const errorData = getAvailabilityNotice( domainName, availabilityStatus, {
 		site,

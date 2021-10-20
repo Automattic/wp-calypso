@@ -88,7 +88,7 @@ function DomainTransferOrConnect( {
 				if ( ! availabilityData ) {
 					const retrievedAvailabilityData = await wpcom.domain( domain ).isAvailable( {
 						apiVersion: '1.3',
-						blog_id: selectedSite.ID,
+						blog_id: selectedSite?.ID,
 						is_cart_pre_check: false,
 					} );
 
@@ -100,7 +100,7 @@ function DomainTransferOrConnect( {
 					setInboundTransferStatusInfo( inboundTransferStatusResult );
 				}
 				setIsFetching( false );
-			} catch {
+			} catch ( error ) {
 				setIsFetching( false );
 				setAvailabilityData( {} );
 				setInboundTransferStatusInfo( {} );

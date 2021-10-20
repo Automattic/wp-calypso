@@ -37,6 +37,7 @@ function UseMyDomain( props ) {
 		onTransfer,
 		selectedSite,
 		transferDomainUrl,
+		showHeader = true,
 		initialMode,
 	} = props;
 
@@ -162,7 +163,7 @@ function UseMyDomain( props ) {
 		try {
 			const availabilityData = await wpcom
 				.domain( domainName )
-				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
+				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
 
 			await setDomainTransferData();
 
