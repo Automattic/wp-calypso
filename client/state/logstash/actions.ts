@@ -6,7 +6,7 @@ import 'calypso/state/data-layer/wpcom/logstash';
  *
  * @see PCYsg-5T4-p2
  */
-interface LogToLogstashParams {
+export interface LogToLogstashParams {
 	/**
 	 * Feature name.
 	 *
