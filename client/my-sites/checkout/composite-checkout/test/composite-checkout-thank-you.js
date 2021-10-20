@@ -957,7 +957,7 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		it( 'Is displayed if site has domain registration and eligble plan in the cart', () => {
+		it( 'Is displayed if site has domain registration and eligible plan in the cart', () => {
 			const cart = {
 				products: [
 					{
