@@ -128,7 +128,11 @@ export type PaymentErrorCallback = ( args: {
 	paymentMethodId: string | null;
 	transactionError: string | null;
 } ) => void;
-export type CheckoutPageErrorCallback = ( error: string ) => void;
+export type CheckoutPageErrorCallback = (
+	errorType: string,
+	errorMessage: string,
+	errorData?: Record< string, string | number | undefined >
+) => void;
 
 export type PaymentEventCallbackArguments = {
 	paymentMethodId: string | null;
