@@ -224,6 +224,9 @@ class Signup extends Component {
 		}
 
 		if ( isReskinnedFlow( flowName ) ) {
+			// Add a class here to make the background dark on the whole page.
+			// It could be triggered depending on the stepName
+			// document.body.classList.add( 'is-dark' );
 			document.body.classList.add( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 		} else {

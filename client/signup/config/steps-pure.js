@@ -743,6 +743,12 @@ export function generateSteps( {
 			stepName: 'intent-screen',
 			dependencies: [ 'siteSlug' ],
 		},
+		'video-showcase': {
+			stepName: 'video-showcase',
+			dependencies: [ 'siteSlug' ],
+			//providesDependencies: [ 'viewedVideos' ],
+			//apiRequestFunction: setOptionsOnSite,
+		},
 	};
 }
 

@@ -152,6 +152,7 @@
 		"signup/design-picker-categories": true,
 		"signup/setup-site-after-checkout": true,
 		"signup/hero-flow": false,
+		"signup/video-showcase": true,
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,

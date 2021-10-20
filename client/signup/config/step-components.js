@@ -76,6 +76,7 @@ const stepNameToModuleName = {
 	'difm-design': 'difm-design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
+	'video-showcase': 'video-showcase',
 };
 
 export function getStepModuleName( stepName ) {
