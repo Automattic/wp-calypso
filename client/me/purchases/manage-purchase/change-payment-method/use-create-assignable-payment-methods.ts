@@ -1,4 +1,3 @@
-import { isJetpackProductSlug } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -15,8 +14,7 @@ import useFetchAvailablePaymentMethods from './use-fetch-available-payment-metho
 import type { PaymentMethod } from '@automattic/composite-checkout';
 
 export default function useCreateAssignablePaymentMethods(
-	currentPaymentMethodId: string,
-	productSlug: string
+	currentPaymentMethodId: string
 ): PaymentMethod[] {
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
@@ -35,7 +33,7 @@ export default function useCreateAssignablePaymentMethods(
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),
-		allowUseForAllSubscriptions: ! isJetpackProductSlug( productSlug ),
+		allowUseForAllSubscriptions: true,
 	} );
 
 	const payPalMethod = useCreatePayPal( {
