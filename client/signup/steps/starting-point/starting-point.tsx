@@ -1,18 +1,10 @@
-import { Button } from '@automattic/components';
-import { Icon } from '@wordpress/icons';
-import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
 import { write, design } from '../../icons';
+import SelectItems, { SelectItem } from '../../select-items';
 import type { StartingPointFlag } from './types';
-import './starting-point.scss';
 
-interface StartingPointConfig {
-	title: TranslateResult;
-	description: TranslateResult;
-	icon: React.ReactElement;
-	startingPoint: StartingPointFlag;
-	actionText: TranslateResult;
-}
+type StartingPointConfig = SelectItem< StartingPointFlag >;
 
 interface Props {
 	onSelect: ( startingPoint: StartingPointFlag ) => void;
@@ -22,17 +14,19 @@ interface Props {
 const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): StartingPointConfig[] => {
 	return [
 		{
+			key: 'write',
 			title: translate( 'Draft your first post' ),
 			description: translate( 'Start writing and build an audience' ),
 			icon: write,
-			startingPoint: 'write',
+			value: 'write',
 			actionText: translate( 'Start writing' ),
 		},
 		{
+			key: 'design',
 			title: translate( 'Choose a design' ),
 			description: translate( 'Make your blog feel like home' ),
 			icon: design,
-			startingPoint: 'design',
+			value: 'design',
 			actionText: translate( 'View designs' ),
 		},
 	];
@@ -41,29 +35,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 const StartingPoint: React.FC< Props > = ( { onSelect, translate } ) => {
 	const startingPoints = useStartingPoints( { translate } );
 
-	return (
-		<div className="starting-point">
-			<div className="starting-point__cards">
-				{ startingPoints.map( ( { title, description, icon, actionText, startingPoint } ) => (
-					<div key={ startingPoint } className="starting-point__card">
-						<Icon className="starting-point__card-icon" icon={ icon } size={ 24 } />
-						<div className="starting-point__card-info-wrapper">
-							<div className="starting-point__card-info">
-								<h2 className="starting-point__card-title">{ title }</h2>
-								<p className="starting-point__card-description">{ description }</p>
-							</div>
-							<Button
-								className="starting-point__card-button"
-								onClick={ () => onSelect( startingPoint ) }
-							>
-								{ actionText }
-							</Button>
-						</div>
-					</div>
-				) ) }
-			</div>
-		</div>
-	);
+	return <SelectItems items={ startingPoints } onSelect={ onSelect } />;
 };
 
 export default localize( StartingPoint );
