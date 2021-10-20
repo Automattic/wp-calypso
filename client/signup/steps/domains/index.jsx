@@ -701,9 +701,10 @@ class DomainsStep extends Component {
 		);
 	}
 
-	getPreviousStepUrl( currentStep ) {
-		const basePath = '/start/domains/use-your-domain';
+	getPreviousStepUrl() {
+		const basePath = getStepUrl( this.props.flowName, this.props.stepName, 'use-your-domain' );
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
+		const currentStep = step ?? this.state?.currentStep;
 
 		let mode = inputMode.domainInput;
 		switch ( currentStep ) {
@@ -730,26 +731,27 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, sites, isReskinned } = this.props;
+		const { isAllDomains, translate, isReskinned } = this.props;
 		const source = get( this.props, 'queryObject.source' );
-		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
 
-		const previousStepBackUrl = this.getPreviousStepUrl( this.state?.currentStep );
+		const previousStepBackUrl = this.getPreviousStepUrl();
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
-		} else if ( 0 === this.props.positionInFlow && hasSite ) {
-			backUrl = '/sites/';
-			backLabelText = translate( 'Back to My Sites' );
-
-			if ( isAllDomains ) {
-				backUrl = domainManagementRoot();
-				backLabelText = translate( 'Back to All Domains' );
-			}
+		} else if ( isAllDomains ) {
+			backUrl = domainManagementRoot();
+			backLabelText = translate( 'Back to All Domains' );
 		} else {
+			backUrl = getStepUrl( this.props.flowName, this.props.stepName );
+
+			if ( backUrl === this.props.path ) {
+				backUrl = '/sites/';
+				backLabelText = translate( 'Back to My Sites' );
+			}
+
 			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
 			if ( externalBackUrl ) {
 				backUrl = externalBackUrl;
