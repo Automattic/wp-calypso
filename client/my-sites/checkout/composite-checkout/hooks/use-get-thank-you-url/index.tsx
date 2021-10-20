@@ -5,6 +5,7 @@ import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
 import type { Domain } from '@automattic/data-stores';
+import type { ExperimentAssignment } from '@automattic/explat-client';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
@@ -25,6 +26,7 @@ export default function useGetThankYouUrl( {
 	isInEditor,
 	isJetpackCheckout = false,
 	domains,
+	postCheckoutEmailExperimentAssignment,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -52,6 +54,7 @@ export default function useGetThankYouUrl( {
 			isInEditor,
 			isJetpackCheckout,
 			domains,
+			postCheckoutEmailExperimentAssignment,
 		};
 
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
@@ -74,6 +77,7 @@ export default function useGetThankYouUrl( {
 		hideNudge,
 		isJetpackCheckout,
 		domains,
+		postCheckoutEmailExperimentAssignment,
 	] );
 	return getThankYouUrl;
 }
@@ -91,4 +95,5 @@ export interface GetThankYouUrlProps {
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
 	domains: Domain[] | undefined;
+	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 }

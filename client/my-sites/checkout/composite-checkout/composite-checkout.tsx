@@ -26,6 +26,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { useExperiment } from 'calypso/lib/explat';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -236,6 +237,12 @@ export default function CompositeCheckout( {
 
 	const domains = useSiteDomains( siteId );
 
+	// Given where this code is running, it feels like we may need an exposure event.
+	const [
+		isLoadingPostCheckoutEmailUpsellExperiment,
+		postCheckoutEmailExperimentAssignment,
+	] = useExperiment( 'promote_professional_email_post_checkout_2021_10' );
+
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug: updatedSiteSlug,
 		redirectTo,
@@ -248,6 +255,7 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isJetpackCheckout,
 		domains,
+		postCheckoutEmailExperimentAssignment,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
@@ -257,7 +265,7 @@ export default function CompositeCheckout( {
 			payload: { url },
 		} );
 		return url;
-	}, [ getThankYouUrlBase, recordEvent ] );
+	}, [ getThankYouUrlBase, isLoadingPostCheckoutEmailUpsellExperiment, recordEvent ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 

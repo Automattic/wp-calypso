@@ -14,6 +14,7 @@ import {
 	hasEcommercePlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
+import { useExperiment } from 'calypso/lib/explat';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
@@ -99,6 +100,11 @@ export default function useCreatePaymentCompleteCallback( {
 
 	const domains = useSiteDomains( siteId );
 
+	const [
+		isLoadingPostCheckoutEmailUpsellExperiment,
+		postCheckoutEmailExperimentAssignment,
+	] = useExperiment( 'promote_professional_email_post_checkout_2021_10' );
+
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
@@ -130,6 +136,7 @@ export default function useCreatePaymentCompleteCallback( {
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
+				postCheckoutEmailExperimentAssignment,
 			};
 
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
@@ -263,6 +270,8 @@ export default function useCreatePaymentCompleteCallback( {
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
+			isLoadingPostCheckoutEmailUpsellExperiment,
+			postCheckoutEmailExperimentAssignment,
 		]
 	);
 }

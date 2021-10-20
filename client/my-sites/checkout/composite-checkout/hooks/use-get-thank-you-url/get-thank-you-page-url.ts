@@ -1,5 +1,4 @@
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import config from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -36,6 +35,7 @@ import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/u
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import type { Domain } from '@automattic/data-stores';
+import type { ExperimentAssignment } from '@automattic/explat-client';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
@@ -63,6 +63,7 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
+	postCheckoutEmailExperimentAssignment,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -83,6 +84,7 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains: Domain[] | undefined;
+	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -228,6 +230,7 @@ export default function getThankYouPageUrl( {
 		siteSlug,
 		hideUpsell: Boolean( hideNudge ),
 		domains,
+		postCheckoutEmailExperimentAssignment,
 	} );
 
 	if ( redirectUrlForPostCheckoutUpsell ) {
@@ -430,6 +433,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug,
 	hideUpsell,
 	domains,
+	postCheckoutEmailExperimentAssignment,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
@@ -437,6 +441,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: Domain[] | undefined;
+	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -448,6 +453,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		orderId,
 		siteSlug,
 		domains,
+		postCheckoutEmailExperimentAssignment,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -486,22 +492,20 @@ function getProfessionalEmailUpsellUrl( {
 	siteSlug,
 	orderId,
 	domains,
+	postCheckoutEmailExperimentAssignment,
 }: {
 	pendingOrReceiptId: string;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
 	domains: Domain[] | undefined;
+	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;
 	}
 
-	if (
-		! config.isEnabled( 'upsell/professional-email' ) ||
-		hasGoogleApps( cart ) ||
-		hasTitanMail( cart )
-	) {
+	if ( hasGoogleApps( cart ) || hasTitanMail( cart ) ) {
 		return;
 	}
 
@@ -534,6 +538,13 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if ( ! domainName ) {
+		return;
+	}
+
+	if (
+		! postCheckoutEmailExperimentAssignment ||
+		postCheckoutEmailExperimentAssignment.variationName !== 'treatment'
+	) {
 		return;
 	}
 
