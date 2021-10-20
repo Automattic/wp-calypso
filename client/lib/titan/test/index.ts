@@ -166,4 +166,53 @@ describe( 'getEligibleTitanDomain()', () => {
 
 		expect( getEligibleTitanDomain( 'foo.bar', domains, true ) ).toBe( domain );
 	} );
+
+	test( 'return most recent non-primary domain eligible first', () => {
+		const domain = {
+			name: 'domain-eligible-most-recent.com',
+			currentUserCanAddEmail: true,
+			registrationDate: '2021-03-25T10:58:17+00:00',
+		};
+
+		const domains = [
+			{
+				name: 'domain-eligible.com',
+				currentUserCanAddEmail: true,
+				registrationDate: '2021-01-25T17:53:49+00:00',
+			},
+			{
+				name: 'another-domain-eligible.com',
+				currentUserCanAddEmail: true,
+				registrationDate: '2021-01-26T14:14:43+00:00',
+			},
+			domain,
+		];
+
+		expect( getEligibleTitanDomain( 'foo.bar', domains ) ).toBe( domain );
+	} );
+
+	test( 'return primary domain eligible instead of most recent eligible domains', () => {
+		const domain = {
+			name: 'domain-eligible-primary.com',
+			currentUserCanAddEmail: true,
+			registrationDate: '2020-06-01T11:48:49+00:00',
+			isPrimary: true,
+		};
+
+		const domains = [
+			{
+				name: 'domain-eligible.com',
+				currentUserCanAddEmail: true,
+				registrationDate: '2021-01-25T17:53:49+00:00',
+			},
+			{
+				name: 'domain-eligible-most-recent.com',
+				currentUserCanAddEmail: true,
+				registrationDate: '2021-03-25T10:58:17+00:00',
+			},
+			domain,
+		];
+
+		expect( getEligibleTitanDomain( 'foo.bar', domains ) ).toBe( domain );
+	} );
 } );

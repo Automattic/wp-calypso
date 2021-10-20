@@ -34,7 +34,7 @@ function isEligibleTitanDomain( domain, mustBeEligibleForFreeTrial ) {
  *
  *   - The domain from the site currently selected, if eligible
  *   - The primary domain of the site, if eligible
- *   - The first non-primary domain eligible found
+ *   - The most recent non-primary domain eligible found
  *
  * @param {string} selectedDomainName - domain name of the site currently selected by the user
  * @param {Array} domains - list of domain objects
@@ -60,8 +60,13 @@ export function getEligibleTitanDomain( selectedDomainName, domains, mustBeEligi
 		return selectedDomain;
 	}
 
-	// Orders domains with the primary domain in first position, if any, and returns the first domain
-	return eligibleDomains.sort(
-		( a, b ) => Number( b.isPrimary ?? false ) - Number( a.isPrimary ?? false )
-	)[ 0 ];
+	return eligibleDomains
+		.sort(
+			// Orders domains by most recent registration date
+			( a, b ) => new Date( b.registrationDate ) - new Date( a.registrationDate )
+		)
+		.sort(
+			// Moves the primary domain in first position of this list of domains
+			( a, b ) => Number( b.isPrimary ?? false ) - Number( a.isPrimary ?? false )
+		)[ 0 ];
 }
