@@ -59,6 +59,11 @@
 	& a {
 		color: var( --color-neutral-50 );
 	}
+	& span:first-child {
+		font-size: $font-body;
+		font-weight: 600;
+		color: var( --color-neutral-80 );
+	}
 
 	@include break-mobile {
 		display: none;
