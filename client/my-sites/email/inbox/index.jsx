@@ -15,11 +15,7 @@ import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection
 import ProgressLine from 'calypso/my-sites/email/inbox/mailbox-selection-list/progress-line';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import {
-	getDomainsBySiteId,
-	hasLoadedSiteDomains,
-	isRequestingSiteDomains,
-} from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
