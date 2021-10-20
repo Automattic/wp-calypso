@@ -67,10 +67,7 @@ function ChangePaymentMethod( {
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
-	const paymentMethods = useCreateAssignablePaymentMethods(
-		currentPaymentMethodId,
-		purchase?.productSlug ?? ''
-	);
+	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
 	const reduxDispatch = useDispatch();
 
 	if ( isDataLoading || ! isDataValid ) {
