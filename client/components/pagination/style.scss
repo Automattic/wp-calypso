@@ -17,6 +17,44 @@
 			padding: 6px;
 		}
 	}
+
+	&.is-minimal {
+		.pagination__list-item,
+		.pagination__list-item:first-child,
+		.pagination__list-item:last-child {
+			.pagination__list-button.button {
+				background-color: transparent;
+				border: none;
+				color: var( --studio-gray-30 );
+
+				&:hover {
+					color: var( --studio-black );
+				}
+
+				&:disabled {
+					color: var( --studio-gray-30 ); // don't highlight on hover when disabled
+				}
+			}
+
+			&.pagination__ellipsis span {
+				background-color: transparent;
+				border: none;
+				color: var( --studio-gray-30 );
+			}
+
+
+			&.is-selected {
+				.pagination__list-button.button {
+					background-color: transparent;
+					color: var( --studio-black );
+	
+					&:hover {
+						color: var( --studio-black );
+					}
+				}
+			}
+		}
+	}
 }
 
 .pagination__list {

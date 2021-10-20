@@ -220,6 +220,7 @@ export class PluginsBrowser extends Component {
 							pageClick={ ( page ) => {
 								fetchPlugins( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH );
 							} }
+							variant={ Pagination.VARIANT_MINIMAL }
 						/>
 					) }
 				</>
