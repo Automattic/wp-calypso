@@ -2,19 +2,19 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-
 import {
 	Dispatch,
 	SetStateAction,
+	Children,
+	Fragment,
 	useCallback,
 	useContext,
 	useEffect,
 	useRef,
 	useMemo,
 	useState,
+	createContext,
 } from 'react';
-
-import * as React from 'react';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import theme from '../lib/theme';
@@ -58,7 +58,7 @@ interface CheckoutSingleStepDataContext {
 	areStepsActive: boolean;
 }
 
-const CheckoutStepDataContext = React.createContext< CheckoutStepDataContext >( {
+const CheckoutStepDataContext = createContext< CheckoutStepDataContext >( {
 	activeStepNumber: 0,
 	stepCompleteStatus: {},
 	totalSteps: 0,
@@ -67,7 +67,7 @@ const CheckoutStepDataContext = React.createContext< CheckoutStepDataContext >( 
 	setTotalSteps: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 } );
 
-const CheckoutSingleStepDataContext = React.createContext< CheckoutSingleStepDataContext >( {
+const CheckoutSingleStepDataContext = createContext< CheckoutSingleStepDataContext >( {
 	stepNumber: 0,
 	nextStepNumber: null,
 	isStepActive: false,
@@ -155,7 +155,7 @@ export const CheckoutSteps = ( {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
 
-	const steps = React.Children.toArray( children ).filter( ( child ) => child );
+	const steps = Children.toArray( children ).filter( ( child ) => child );
 	const totalSteps = steps.length;
 	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
@@ -367,7 +367,7 @@ function DefaultCheckoutSteps() {
 	const paymentMethodStep = getDefaultPaymentMethodStep();
 	const reviewOrderStep = getDefaultOrderReviewStep();
 	return (
-		<React.Fragment>
+		<Fragment>
 			<CheckoutSummaryArea className={ orderSummary.className }>
 				<CheckoutSummaryCard>{ orderSummary.summaryContent }</CheckoutSummaryCard>
 			</CheckoutSummaryArea>
@@ -401,7 +401,7 @@ function DefaultCheckoutSteps() {
 					/>
 				</CheckoutSteps>
 			</CheckoutStepArea>
-		</React.Fragment>
+		</Fragment>
 	);
 }
 
