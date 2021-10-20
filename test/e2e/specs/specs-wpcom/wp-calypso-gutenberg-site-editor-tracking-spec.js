@@ -36,12 +36,6 @@ const navigationSidebarBackToRoot = async ( driver ) => {
 	}
 };
 
-const clickGlobalStylesButton = async ( driver ) =>
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css( '.edit-site-header__actions button[aria-label="Global Styles"]' )
-	);
-
 const clickGlobalStylesResetButton = async ( driver ) => {
 	await driverHelper.clickIfPresent(
 		driver,
@@ -49,14 +43,6 @@ const clickGlobalStylesResetButton = async ( driver ) => {
 			'.edit-site-global-styles-sidebar .edit-site-global-styles-sidebar__reset-button:enabled'
 		)
 	);
-};
-
-const clickGlobalStylesBlockPanel = async ( driver, name ) => {
-	const locator = driverHelper.createTextLocator(
-		By.css( '.edit-site-global-styles-sidebar .components-panel__body button' ),
-		name
-	);
-	await driverHelper.clickWhenClickable( driver, locator );
 };
 
 const changeGlobalStylesFontSize = async ( driver, value ) =>
@@ -114,23 +100,19 @@ const clickBlockSettingsButton = async ( driver ) =>
 		By.css( '.edit-site-header__actions button[aria-label="Settings"]' )
 	);
 
-const clickNthTabInGlobalStylesSidebar = async ( driver, tabIndex ) =>
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css(
-			`.edit-site-global-styles-sidebar .components-tab-panel__tabs button:nth-child(${ tabIndex })`
-		)
-	);
-
-const clickGlobalStylesBlockTypeTab = async ( driver ) =>
-	await clickNthTabInGlobalStylesSidebar( driver, 2 );
-
 const clickGlobalStylesMenuItem = async ( driver, menuTitle ) => {
 	const locator = driverHelper.createTextLocator(
 		By.css( '.edit-site-global-styles-sidebar button' ),
 		menuTitle
 	);
 	return await driverHelper.clickWhenClickable( driver, locator );
+};
+
+const clickGlobalStylesBackButton = async ( driver ) => {
+	const backButtonLocator = By.css(
+		'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
+	);
+	return await driverHelper.clickWhenClickable( driver, backButtonLocator );
 };
 
 const getGlobalStylesToggleEvents = async ( driver ) => {
@@ -178,22 +160,28 @@ const saveGlobalStyles = async ( driver ) => {
 
 const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false ) => {
 	if ( blocksLevel ) {
-		await clickGlobalStylesBlockTypeTab( driver );
-		await clickGlobalStylesBlockPanel( driver, 'Button' );
+		await clickGlobalStylesMenuItem( driver, 'Blocks' );
+		await clickGlobalStylesMenuItem( driver, 'Button' );
 	}
 
+	await clickGlobalStylesMenuItem( driver, 'Typography' );
 	await changeGlobalStylesFontSize( driver, '11' );
+	await clickGlobalStylesBackButton( driver );
 	// Update events are debounced to avoid event spam when items are updated using
 	// slider inputs. Therefore we must wait so this update event is not debounced.
 	await driver.sleep( 100 );
 
 	// Update text color option.
+	await clickGlobalStylesMenuItem( driver, 'Colors' );
 	await changeGlobalStylesColor( driver, 1, 1 );
+
 	await driver.sleep( 100 );
 
 	if ( blocksLevel ) {
-		await clickGlobalStylesBlockPanel( driver, 'Button' );
-		await clickGlobalStylesBlockPanel( driver, 'Column' );
+		await clickGlobalStylesBackButton( driver );
+		await clickGlobalStylesBackButton( driver );
+		await clickGlobalStylesMenuItem( driver, 'Column' );
+		await clickGlobalStylesMenuItem( driver, 'Colors' );
 	}
 
 	// Update link color option.
@@ -299,14 +287,20 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 	);
 };
 
-const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => {
+const testGlobalStylesColorPalette = async ( driver, editor, blockName = undefined ) => {
+	await clickGlobalStylesMenuItem( driver, 'Colors' );
+	const colorPaletteLocator = By.css(
+		'.edit-site-global-styles-sidebar .edit-site-global-style-palette button'
+	);
+	await driverHelper.clickWhenClickable( driver, colorPaletteLocator );
+
 	await changeGlobalStylesFirstColorPaletteItem( driver, '#ff0ff0' );
 
 	// A timeout is necessary both because the function is debounced and needs time to retrieve
 	// entities to compare.
 	await driver.sleep( 500 );
 
-	let updateEvents = await getEventsStack( driver );
+	let updateEvents = await getGlobalStylesUpdateEvents( driver );
 
 	// The first palette change will instantiate all palette settings onto the global styles object.
 	// We expect to see one update per palette setting.
@@ -370,8 +364,8 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 	// Toggle the menu to ensure the color picker closes.
 	// Otherwise clicking 'reset' will close the color picker after the reset
 	// takes place, causing an unwanted update to that value.
-	await clickGlobalStylesButton( driver );
-	await clickGlobalStylesButton( driver );
+	await editor.toggleGlobalStyles();
+	await editor.toggleGlobalStyles();
 
 	await clearEventsStack( driver );
 
@@ -476,14 +470,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 					await editor.toggleGlobalStyles();
 
-					const backButtonLocator = By.css(
-						'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
-					);
-
 					await clickGlobalStylesMenuItem( this.driver, 'Typography' );
-					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
+					await clickGlobalStylesBackButton( this.driver );
 					await clickGlobalStylesMenuItem( this.driver, 'Colors' );
-					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
+					await clickGlobalStylesBackButton( this.driver );
 					await clickGlobalStylesMenuItem( this.driver, 'Blocks' );
 
 					const globalStylesMenuEvents = await getGlobalStylesMenuEvents( this.driver );
@@ -506,10 +496,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		// Temporarily skip these tests until we can update track events / tests to handle the new
-		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
-		describe.skip( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
-			before( async function () {
+		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+			beforeEach( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
 			} );
@@ -531,12 +519,13 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				await testGlobalStylesColorAndTypography( this.driver );
 			} );
 
-			it( 'global color palette settings', async function () {
+			// Keep this skipped for now as changing global palette crashes editor. investigating...
+			it.skip( 'global color palette settings', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				if ( editor.screenSize === 'mobile' ) {
 					return this.skip();
 				}
-				await testGlobalStylesColorPalette( this.driver );
+				await testGlobalStylesColorPalette( this.driver, editor );
 			} );
 
 			it( 'block level typography and color', async function () {
@@ -552,10 +541,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				if ( editor.screenSize === 'mobile' ) {
 					return this.skip();
 				}
-				await testGlobalStylesColorPalette( this.driver, 'core/column' );
+				await clickGlobalStylesMenuItem( this.driver, 'Blocks' );
+				await clickGlobalStylesMenuItem( this.driver, 'Column' );
+				await testGlobalStylesColorPalette( this.driver, editor, 'core/column' );
 			} );
 
-			after( async function () {
+			afterEach( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.closeGlobalStyles();
 			} );
@@ -563,7 +554,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		// Temporarily skip these tests until we can update track events / tests to handle the new
 		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
-		describe.skip( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
@@ -583,7 +574,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				await saveGlobalStyles( this.driver );
 				await clearEventsStack( this.driver );
 
+				await clickGlobalStylesMenuItem( this.driver, 'Typography' );
 				await changeGlobalStylesFontSize( this.driver, '11' );
+				await clickGlobalStylesBackButton( this.driver );
+				await clickGlobalStylesMenuItem( this.driver, 'Colors' );
 				await changeGlobalStylesColor( this.driver, 1, 1 );
 				await changeGlobalStylesColor( this.driver, 3, 2 );
 				await saveGlobalStyles( this.driver );
