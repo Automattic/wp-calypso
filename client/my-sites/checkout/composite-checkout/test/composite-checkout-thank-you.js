@@ -9,7 +9,9 @@ import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	PLAN_BLOGGER,
+	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	redirectCheckoutToWpAdmin,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -851,6 +853,11 @@ describe( 'getThankYouPageUrl', () => {
 				isPrimary: true,
 			},
 			{
+				name: 'domain-eligible-for-free-trial.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { isEligibleForIntroductoryOffer: true },
+			},
+			{
 				name: 'domain-expired.com',
 				currentUserCanAddEmail: true,
 				expired: true,
@@ -862,7 +869,7 @@ describe( 'getThankYouPageUrl', () => {
 			},
 		];
 
-		it( 'Is displayed if site has eligible domain and eligible plan is in the cart', () => {
+		it( 'Is displayed if site has eligible domain and Blogger plan is in the cart', () => {
 			const cart = {
 				products: [
 					{
@@ -879,7 +886,101 @@ describe( 'getThankYouPageUrl', () => {
 				siteSlug: 'foo.bar',
 			} );
 
-			expect( url ).toBe( '/checkout/offer-professional-email/1234abcd/foo.bar' );
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has eligible domain and Personal plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PERSONAL,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has eligible domain and Business plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_BUSINESS,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has eligible domain and eCommerce plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_ECOMMERCE,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has domain registration and eligible plan in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PERSONAL,
+					},
+					{
+						meta: 'domain-from-cart.com',
+						is_domain_registration: true,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-from-cart.com/1234abcd/foo.bar'
+			);
 		} );
 
 		it( 'Is not displayed if cart is missing', () => {

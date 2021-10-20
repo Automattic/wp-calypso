@@ -15,6 +15,7 @@ import debugFactory from 'debug';
 import {
 	hasRenewalItem,
 	getAllCartItems,
+	getDomainRegistrations,
 	getRenewalItems,
 	hasConciergeSession,
 	hasJetpackPlan,
@@ -507,17 +508,35 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	if ( ! hasBloggerPlan( cart ) && ! hasPersonalPlan( cart ) && ! hasBusinessPlan( cart ) ) {
+	if (
+		! hasBloggerPlan( cart ) &&
+		! hasPersonalPlan( cart ) &&
+		! hasBusinessPlan( cart ) &&
+		! hasEcommercePlan( cart )
+	) {
 		return;
 	}
 
-	const domain = getEligibleTitanDomain( siteSlug, domains );
+	const domainRegistrations = getDomainRegistrations( cart );
 
-	if ( ! domain ) {
+	let domainName = null;
+
+	// Uses either a domain being purchased, or the first domain eligible found in site domains
+	if ( domainRegistrations.length > 0 ) {
+		domainName = domainRegistrations[ 0 ].meta;
+	} else {
+		const domain = getEligibleTitanDomain( siteSlug, domains, true );
+
+		if ( domain ) {
+			domainName = domain.name;
+		}
+	}
+
+	if ( ! domainName ) {
 		return;
 	}
 
-	return `/checkout/offer-professional-email/${ pendingOrReceiptId }/${ siteSlug }`;
+	return `/checkout/offer-professional-email/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
