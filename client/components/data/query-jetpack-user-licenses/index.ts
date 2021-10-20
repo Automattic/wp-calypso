@@ -1,17 +1,36 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+	LicenseFilter,
+	LicenseSortField,
+	LicenseSortDirection,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { requestLicenses } from 'calypso/state/user-licensing/actions';
-import { getUserLicenses } from 'calypso/state/user-licensing/selectors';
+import { isFetchingUserLicenses } from 'calypso/state/user-licensing/selectors';
 
-export default function QueryJetpackUserLicenses(): null {
+interface Props {
+	filter?: LicenseFilter;
+	search?: string;
+	sortField?: LicenseSortField;
+	sortDirection?: LicenseSortDirection;
+	page?: number;
+}
+
+export default function QueryJetpackUserLicenses( {
+	filter,
+	search,
+	sortField,
+	sortDirection,
+	page,
+}: Props ): null {
 	const dispatch = useDispatch();
-	const licenses = useSelector( getUserLicenses );
+	const currentlyFetchingUserLicenses = useSelector( isFetchingUserLicenses );
 
 	useEffect( () => {
-		if ( ! licenses ) {
-			dispatch( requestLicenses() );
+		if ( ! currentlyFetchingUserLicenses ) {
+			dispatch( requestLicenses( filter, search, sortField, sortDirection, page ) );
 		}
-	}, [ dispatch, licenses ] );
+	}, [ dispatch, currentlyFetchingUserLicenses, filter, search, sortField, sortDirection, page ] );
 
 	return null;
 }
