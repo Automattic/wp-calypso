@@ -19,8 +19,8 @@ import { type } from 'calypso/lib/domains/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
+import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -170,7 +170,7 @@ export class SiteDomains extends Component {
 				<DomainToPlanNudge />
 
 				{ wpcomDomain && (
-					<WpcomDomainItem
+					<FreeDomainItem
 						key="wpcom-domain-item"
 						isAtomicSite={ isAtomicSite }
 						currentRoute={ currentRoute }
