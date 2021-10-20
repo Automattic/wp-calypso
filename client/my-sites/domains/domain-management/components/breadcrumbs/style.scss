@@ -2,9 +2,12 @@
 @import '@wordpress/base-styles/mixins';
 
 .breadcrumbs {
+	position: relative;
 	margin: 0;
 
 	@include break-mobile {
+		position: sticky;
+		top: -44px;
 		/* hack to make the breadcrumbs closer to the top of the content area */
 		margin-top: -44px;
 	}
