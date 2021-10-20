@@ -4,7 +4,7 @@ type SupportResultType = 'article' | 'where';
 
 const selectors = {
 	// Components
-	supportPopoverButton: '.inline-help__button',
+	supportPopoverButton: `button[title="Help"]`,
 	supportPopover: '.inline-help__popover',
 	searchInput: '[aria-label="Search"]',
 	clearSearch: '[aria-label="Close Search"]',
@@ -61,13 +61,22 @@ export class SupportComponent {
 		if ( await this.page.isVisible( selectors.supportPopover ) ) {
 			return;
 		}
+
 		await Promise.all( [
+			this.waitForQueryComplete(),
 			this.page.waitForResponse(
 				( response ) => response.status() === 200 && response.url().includes( 'language-names?' )
 			),
 			this.page.waitForSelector( selectors.supportPopover ),
 			this.page.click( selectors.supportPopoverButton ),
 		] );
+
+		const elementHandle = await this.page.waitForSelector( selectors.supportPopoverButton );
+
+		await this.page.waitForFunction(
+			( element: HTMLElement | SVGElement ) => element.classList.contains( 'is-active' ),
+			elementHandle
+		);
 	}
 
 	/**
@@ -140,6 +149,7 @@ export class SupportComponent {
 	 */
 	async clickResult( category: SupportResultType, target: number ): Promise< void > {
 		let selector: string;
+
 		if ( category === 'article' ) {
 			selector = selectors.results( selectors.supportCategory );
 		} else {
@@ -147,6 +157,7 @@ export class SupportComponent {
 		}
 
 		await this.page.click( `:nth-match(${ selector }, ${ target })` );
+
 		if ( category === 'article' ) {
 			await this.page.click( selectors.readMoreButton );
 		}
