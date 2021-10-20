@@ -488,15 +488,14 @@ export function CheckoutStepArea( {
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
-	const onEvent = useEvents();
-
+	const { onPageLoadError } = useContext( CheckoutContext );
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
 	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
 	const onSubmitButtonLoadError = useCallback(
-		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
+		( error ) => onPageLoadError?.( 'submit_button_load', error ),
+		[ onPageLoadError ]
 	);
 
 	const classNames = joinClasses( [
