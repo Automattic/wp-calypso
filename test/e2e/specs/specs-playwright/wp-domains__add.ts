@@ -91,7 +91,7 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 	} );
 
 	describe( 'Cancel domain', function () {
-		it( 'Return to Home dashbaoard', async function () {
+		it( 'Return to Home dashboard', async function () {
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.clickMySites();
 		} );
