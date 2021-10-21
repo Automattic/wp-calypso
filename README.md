@@ -48,4 +48,5 @@ If you have any problems running Calypso, [please see most common issues](./docs
 
 ## License
 
-Calypso is licensed under [GNU General Public License v2 (or later)](./LICENSE.md).
+Calypso is licensed under [GNU General Public License v2 (or
+later)](./LICENSE.md)..
