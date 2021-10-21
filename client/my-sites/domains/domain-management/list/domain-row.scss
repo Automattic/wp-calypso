@@ -8,7 +8,10 @@
 
 .domain-row__domain-cell {
 	flex: 83 83 0;
-	font-weight: 500; /* stylelint-disable-line */
+
+	.domain-row__domain-name {
+		font-weight: 500; /* stylelint-disable-line */
+	}
 }
 .domain-row__status-cell {
 	flex: 40 40 0;

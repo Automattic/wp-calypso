@@ -19,7 +19,7 @@ import {
 	getDomainTypeText,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
@@ -428,6 +428,15 @@ class DomainRow extends PureComponent {
 		);
 	}
 
+	getSiteMeta2() {
+		const { domainDetails, translate } = this.props;
+		return (
+			<Fragment>
+				{ getDomainTypeText( domainDetails, translate, domainInfoContext.DOMAIN_ROW ) }
+			</Fragment>
+		);
+	}
+
 	render() {
 		const {
 			domain,
@@ -452,8 +461,8 @@ class DomainRow extends PureComponent {
 		return (
 			<div className={ rowClasses } onClick={ this.handleClick }>
 				<div className="domain-row__domain-cell">
-					<div>{ domain.domain }</div>
-					<div>{ this.getSiteMeta() }</div>
+					<span className="domain-row__domain-name">{ domain.domain }</span>
+					<div>{ this.getSiteMeta2() }</div>
 					{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 				</div>
 				<div className="domain-row__status-cell">status</div>
