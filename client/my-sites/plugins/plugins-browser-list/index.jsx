@@ -1,10 +1,11 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import SectionHeader from 'calypso/components/section-header';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
+import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
 import './style.scss';
 
@@ -16,6 +17,7 @@ class PluginsBrowserList extends Component {
 	static propTypes = {
 		plugins: PropTypes.array.isRequired,
 		variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
+		extended: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -33,6 +35,11 @@ class PluginsBrowserList extends Component {
 					plugin={ plugin }
 					currentSites={ this.props.currentSites }
 					listName={ this.props.listName }
+					variant={
+						this.props.extended
+							? PluginsBrowserElementVariant.Extended
+							: PluginsBrowserElementVariant.Compact
+					}
 				/>
 			);
 		} );
@@ -83,24 +90,10 @@ class PluginsBrowserList extends Component {
 		}
 	}
 
-	renderLink() {
-		if ( this.props.expandedListLink ) {
-			return (
-				<a
-					className="button is-link plugins-browser-list__select-all"
-					href={ this.props.expandedListLink + ( this.props.site || '' ) }
-				>
-					{ this.props.translate( 'See All' ) }
-					<Gridicon icon="chevron-right" size={ 18 } />
-				</a>
-			);
-		}
-	}
-
 	render() {
 		return (
 			<div className="plugins-browser-list">
-				<SectionHeader label={ this.props.title }>{ this.renderLink() }</SectionHeader>
+				<SectionHeader label={ this.props.title } />
 				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
 			</div>
 		);

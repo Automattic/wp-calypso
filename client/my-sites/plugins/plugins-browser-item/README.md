@@ -26,3 +26,9 @@ function render() {
 - `key`: Unique plugin key, this help react render a list better.
 - `isPlaceholder`: Boolean, it marks if the item is a placeholder
 - `iconSize`: number with the size of the icon. Defaulted to 40, since all the intertal css are adjusted around that value, it would be better to not change the default
+- `variant`: the component can be used in compact or extended view. Defaults to `Compact`.
+
+  | variant        | displays                                                                  |
+  | -------------- | ------------------------------------------------------------------------- |
+  | Compact        | Icon, Name, Short Description
+  | Extended       | Icon, Name, Author, Short Description, Pricing Info              |

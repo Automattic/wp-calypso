@@ -1,3 +1,13 @@
+.is-section-plugins.color-scheme.is-nav-unification {
+	--color-surface-backdrop: --studio-white;
+}
+
+.upsell-nudge {
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 16px;
+	}
+}
+
 .plugin__installed-on {
 	margin-bottom: 16px;
 }
