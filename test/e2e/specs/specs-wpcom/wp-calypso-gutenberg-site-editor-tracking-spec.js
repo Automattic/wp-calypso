@@ -84,7 +84,11 @@ const getGlobalStylesUpdateEvents = async ( driver ) => {
 	);
 };
 
-const testGlobalStylesColorAndTypography = async ( driver, editor, blocksLevel = false ) => {
+const testGlobalStylesColorAndTypography = async (
+	driver,
+	editor,
+	{ blocksLevel = false } = {}
+) => {
 	if ( blocksLevel ) {
 		await editor.clickGlobalStylesMenuItem( 'Blocks' );
 		await editor.clickGlobalStylesMenuItem( 'Button' );
@@ -99,7 +103,7 @@ const testGlobalStylesColorAndTypography = async ( driver, editor, blocksLevel =
 
 	// Update text color option.
 	await editor.clickGlobalStylesMenuItem( 'Colors' );
-	await editor.changeGlobalStylesColor( 1, 1 );
+	await editor.changeGlobalStylesColor( { typeIndex: 1, valueIndex: 1 } );
 
 	await driver.sleep( 100 );
 
@@ -111,7 +115,7 @@ const testGlobalStylesColorAndTypography = async ( driver, editor, blocksLevel =
 	}
 
 	// Update link color option.
-	await editor.changeGlobalStylesColor( 3, 2 );
+	await editor.changeGlobalStylesColor( { typeIndex: 3, valueIndex: 2 } );
 	// The last sleep before accessing the event stack must be longer to ensure there is
 	// enough time for the function to retrieve entities and compare.
 	await driver.sleep( 500 );
@@ -258,7 +262,7 @@ const testGlobalStylesColorPalette = async ( driver, editor, blockName = undefin
 		} )
 	);
 	await clearEventsStack( driver );
-	await editor.changeGlobalStylesFirstColorPaletteItem( '#a1a1a1', true );
+	await editor.changeGlobalStylesFirstColorPaletteItem( '#a1a1a1', { pickerOpened: true } );
 	await driver.sleep( 500 );
 	updateEvents = await getGlobalStylesUpdateEvents( driver );
 
@@ -439,7 +443,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				}
 				// Reset Global Styles before testing.
 				await editor.clickGlobalStylesResetButton();
-				await editor.saveGlobalStyles( true );
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 				await clearEventsStack( this.driver );
 
 				await testGlobalStylesColorAndTypography( this.driver, editor );
@@ -461,7 +465,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				if ( editor.screenSize === 'mobile' ) {
 					return this.skip();
 				}
-				await testGlobalStylesColorAndTypography( this.driver, editor, true );
+				await testGlobalStylesColorAndTypography( this.driver, editor, { blocksLevel: true } );
 			} );
 
 			it( 'block level color palette settings', async function () {
@@ -497,16 +501,16 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				// Reset global styles before testing.
 				await editor.clickGlobalStylesResetButton();
-				await editor.saveGlobalStyles( true );
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 				await clearEventsStack( this.driver );
 
 				await editor.clickGlobalStylesMenuItem( 'Typography' );
 				await editor.changeGlobalStylesFontSize( '11' );
 				await editor.clickGlobalStylesBackButton();
 				await editor.clickGlobalStylesMenuItem( 'Colors' );
-				await editor.changeGlobalStylesColor( 1, 1 );
-				await editor.changeGlobalStylesColor( 3, 2 );
-				await editor.saveGlobalStyles( true );
+				await editor.changeGlobalStylesColor( { typeIndex: 1, valueIndex: 1 } );
+				await editor.changeGlobalStylesColor( { typeIndex: 3, valueIndex: 2 } );
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
 				);
@@ -514,7 +518,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				// Clean up by resetting to be safe.
 				await editor.clickGlobalStylesResetButton();
-				await editor.saveGlobalStyles( true );
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 			} );
 
 			after( async function () {

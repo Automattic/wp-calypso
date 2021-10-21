@@ -239,16 +239,16 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		);
 	}
 
-	async changeGlobalStylesColor( colorTypeIndex, colorValueIndex ) {
+	async changeGlobalStylesColor( { typeIndex = 1, valueIndex = 1 } ) {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
-				`.edit-site-global-styles-sidebar .block-editor-color-gradient-control:nth-of-type(${ colorTypeIndex }) .components-circular-option-picker__option-wrapper:nth-of-type(${ colorValueIndex }) .components-circular-option-picker__option`
+				`.edit-site-global-styles-sidebar .block-editor-color-gradient-control:nth-of-type(${ typeIndex }) .components-circular-option-picker__option-wrapper:nth-of-type(${ valueIndex }) .components-circular-option-picker__option`
 			)
 		);
 	}
 
-	async saveGlobalStyles( pauseAfter = false ) {
+	async saveGlobalStyles( { pauseAfter = false } = {} ) {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.edit-site-save-button__button' )
@@ -277,7 +277,7 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		return saveClicked;
 	}
 
-	async changeGlobalStylesFirstColorPaletteItem( value, pickerOpened = false ) {
+	async changeGlobalStylesFirstColorPaletteItem( value, { pickerOpened = false } = {} ) {
 		if ( ! pickerOpened ) {
 			await driverHelper.clickWhenClickable(
 				this.driver,
