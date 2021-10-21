@@ -1,7 +1,7 @@
 import {
 	READER_UNSEEN_STATUS_REQUEST,
 	READER_UNSEEN_STATUS_RECEIVE,
-} from 'calypso/state/action-types';
+} from 'calypso/state/reader-ui/action-types';
 
 import 'calypso/state/data-layer/wpcom/seen-posts/unseen/status';
 import 'calypso/state/reader-ui/init';

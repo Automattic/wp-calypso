@@ -1,4 +1,4 @@
-import { READER_UNSEEN_STATUS_RECEIVE } from 'calypso/state/action-types';
+import { READER_UNSEEN_STATUS_RECEIVE } from 'calypso/state/reader-ui/action-types';
 
 /**
  * Reader Unseen status for any section (used global reader unseen bubble)
