@@ -17,5 +17,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@automattic/calypso-typescript-config": "^1.0.0"
+	},
+	"peerDependencies": {
+		"@babel/core": "^7.15.0"
 	}
 }

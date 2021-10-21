@@ -29,7 +29,6 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
 		"classnames": "^2.3.1",
 		"gridicons": "^3.4.0",
 		"i18n-calypso": "^5.0.0",

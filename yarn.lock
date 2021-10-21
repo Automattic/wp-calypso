@@ -43,6 +43,8 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
+  peerDependencies:
+    "@babel/core": ^7.15.0
   languageName: unknown
   linkType: soft
 
@@ -53,6 +55,8 @@ __metadata:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@babel/core": ^7.15.0
     lodash: ^4.17.21
+  peerDependencies:
+    "@babel/core": ^7.15.0
   languageName: unknown
   linkType: soft
 
@@ -281,7 +285,6 @@ __metadata:
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
     "@storybook/addon-actions": ^6.3.11
     "@storybook/preset-scss": ^1.0.3
     classnames: ^2.3.1
@@ -491,7 +494,6 @@ __metadata:
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
     i18n-calypso: ^5.0.0
   peerDependencies:
     react: ^17.0.2
@@ -609,7 +611,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/search": ^1.0.0
-    "@babel/runtime": ^7.15.3
     "@wordpress/base-styles": ^4.0.0
     "@wordpress/components": ^17.0.0
     "@wordpress/i18n": ^4.2.2
@@ -945,8 +946,6 @@ __metadata:
   resolution: "@automattic/search@workspace:packages/search"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/core": ^7.14.8
-    "@babel/preset-env": ^7.14.8
     "@babel/runtime": ^7.15.3
     "@storybook/addon-actions": ^6.3.11
     "@storybook/builder-webpack5": ^6.3.11
@@ -1000,7 +999,6 @@ __metadata:
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
     "@wordpress/components": ^17.0.0
     "@wordpress/i18n": ^4.2.2
     classnames: ^2.3.1
@@ -1074,7 +1072,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/viewport": ^1.0.0
-    "@babel/runtime": ^7.15.3
     "@wordpress/compose": ^5.0.2
     regenerator-runtime: ^0.13.9
   peerDependencies:
@@ -1276,7 +1273,6 @@ __metadata:
     "@automattic/plans-grid": ^1.0.0-alpha.0
     "@automattic/typography": ^1.0.0
     "@babel/core": ^7.15.0
-    "@babel/preset-typescript": ^7.15.0
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.1
@@ -1428,7 +1424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.15.5, @babel/core@npm:>=7.9.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.8, @babel/core@npm:^7.15.0, @babel/core@npm:^7.2.2, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.5":
+"@babel/core@npm:7.15.5, @babel/core@npm:>=7.9.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.14.0, @babel/core@npm:^7.15.0, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.5":
   version: 7.15.5
   resolution: "@babel/core@npm:7.15.5"
   dependencies:
@@ -2766,7 +2762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.1.6, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.14.8, @babel/preset-env@npm:^7.15.0, @babel/preset-env@npm:^7.3.1":
+"@babel/preset-env@npm:^7.1.6, @babel/preset-env@npm:^7.12.1, @babel/preset-env@npm:^7.12.11, @babel/preset-env@npm:^7.13.10, @babel/preset-env@npm:^7.15.0":
   version: 7.15.6
   resolution: "@babel/preset-env@npm:7.15.6"
   dependencies:
@@ -27323,7 +27319,6 @@ fsevents@~2.1.2:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
     crc32: ^0.2.2
     debug: ^4.0.0
     seed-random: ^2.2.0
@@ -37385,16 +37380,13 @@ typescript@^4.4.3:
   version: 0.0.0-use.local
   resolution: "wp-e2e-tests@workspace:test/e2e"
   dependencies:
+    "@automattic/calypso-babel-config": ^1.0.0
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-e2e": ^0.1.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/mocha-debug-reporter": ^0.1.0
     "@automattic/testarmada-magellan-mocha-plugin": ^10.0.0
-    "@babel/core": ^7.2.2
-    "@babel/preset-env": ^7.3.1
-    "@babel/register": ^7.0.0
-    "@babel/runtime": ^7.3.1
     "@testim/chrome-version": ^1.0.7
     "@types/jest": ^27.0.1
     "@wordpress/i18n": ^3.20.0
@@ -37483,7 +37475,6 @@ typescript@^4.4.3:
   dependencies:
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
     chai: ^4.3.4
     debug: ^4.1.1
     progress-event: ^1.0.0
@@ -37510,7 +37501,6 @@ typescript@^4.4.3:
   dependencies:
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@babel/runtime": ^7.15.3
     debug: ^4.1.1
     npm-run-all: ^4.1.5
     qs: ^6.5.2

@@ -30,7 +30,6 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/search": "^1.0.0",
-		"@babel/runtime": "^7.15.3",
 		"@wordpress/base-styles": "^4.0.0",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/i18n": "^4.2.2",

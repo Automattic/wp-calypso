@@ -23,14 +23,11 @@
 		"@automattic/calypso-typescript-config": "^1.0.0"
 	},
 	"dependencies": {
+		"@automattic/calypso-babel-config": "^1.0.0",
 		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-e2e": "^0.1.0",
 		"@automattic/mocha-debug-reporter": "^0.1.0",
 		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
-		"@babel/core": "^7.2.2",
-		"@babel/preset-env": "^7.3.1",
-		"@babel/register": "^7.0.0",
-		"@babel/runtime": "^7.3.1",
 		"@testim/chrome-version": "^1.0.7",
 		"@types/jest": "^27.0.1",
 		"@wordpress/i18n": "^3.20.0",

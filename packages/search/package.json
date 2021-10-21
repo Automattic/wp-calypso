@@ -45,8 +45,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@babel/core": "^7.14.8",
-		"@babel/preset-env": "^7.14.8",
 		"@storybook/addon-actions": "^6.3.11",
 		"@storybook/builder-webpack5": "^6.3.11",
 		"@storybook/manager-webpack5": "^6.3.11",
