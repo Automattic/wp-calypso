@@ -21,7 +21,7 @@ const FseBetaOptIn: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goNext, goBack } = useStepNavigation();
 	const { enrollInFseBeta } = useDispatch( ONBOARD_STORE );
-	const { shouldEnrollInFseBeta } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { isEnrollingInFseBeta } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const pickBeta = ( shouldEnroll: boolean ) => {
 		enrollInFseBeta( shouldEnroll );
 		trackEventWithFlow( 'calypso_fse_beta_opt_in', {
@@ -31,7 +31,7 @@ const FseBetaOptIn: FunctionComponent = () => {
 	};
 
 	useTrackStep( 'FseBetaOptIn', () => ( {
-		selected_fse_beta_opt_in: shouldEnrollInFseBeta(),
+		selected_fse_beta_opt_in: isEnrollingInFseBeta(),
 	} ) );
 
 	return (

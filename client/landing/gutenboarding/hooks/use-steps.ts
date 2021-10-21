@@ -15,7 +15,7 @@ export default function useSteps(): Array< StepType > {
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
-				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta(),
+				isEnrollingInFse: onboardSelect.isEnrollingInFseBeta(),
 			};
 		},
 		[ ONBOARD_STORE ]
