@@ -543,7 +543,9 @@ export default function CompositeCheckout( {
 					case 'payment_method_load':
 						return 'calypso_checkout_composite_payment_method_load_error';
 					default:
-						return 'unknown';
+						// These are important so we might as well use something that we'll
+						// notice even if we don't recognize the event.
+						return 'calypso_checkout_composite_page_load_error';
 				}
 			}
 			reduxDispatch(
