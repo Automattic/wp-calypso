@@ -11,6 +11,7 @@ import {
 	useState,
 	useRef,
 	createInterpolateElement,
+	useCallback,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
@@ -73,6 +74,7 @@ function WelcomeTourFrame() {
 	const popperElementRef = useRef( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ focusedElementOnLaunch, setFocusedElementOnLaunch ] = useState( null );
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 	const localeSlug = useLocale();
@@ -91,11 +93,11 @@ function WelcomeTourFrame() {
 		};
 	};
 
-	const handleNextStepProgression = () => {
+	const handleNextStepProgression = useCallback( () => {
 		if ( lastStepIndex > currentStepIndex ) {
 			setCurrentStepIndex( currentStepIndex + 1 );
 		}
-	};
+	}, [ currentStepIndex ] );
 
 	const handlePreviousStepProgression = () => {
 		currentStepIndex && setCurrentStepIndex( currentStepIndex - 1 );
@@ -120,8 +122,8 @@ function WelcomeTourFrame() {
 
 	useEffect( () => {
 		// focus the Next/Begin button as the first interactive element when tour loads
-		setTimeout( () => focusedOnLaunchRef.current?.focus() );
-	}, [] );
+		setTimeout( () => focusedElementOnLaunch?.focus() );
+	}, [ focusedElementOnLaunch ] );
 
 	// Preload card images
 	steps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
@@ -158,7 +160,6 @@ function WelcomeTourFrame() {
 								cardContent={ steps[ currentStepIndex ].meta }
 								currentStepIndex={ currentStepIndex }
 								justMaximized={ justMaximized }
-								key={ currentStepIndex }
 								lastStepIndex={ lastStepIndex }
 								onDismiss={ handleDismiss }
 								onMinimize={ handleMinimize }
@@ -167,7 +168,7 @@ function WelcomeTourFrame() {
 								onNextStepProgression={ handleNextStepProgression }
 								onPreviousStepProgression={ handlePreviousStepProgression }
 								isGutenboarding={ isGutenboarding }
-								focusedOnLaunchRef={ focusedOnLaunchRef }
+								setFocusedElementOnLaunch={ setFocusedElementOnLaunch }
 							/>
 						</>
 					) : (
