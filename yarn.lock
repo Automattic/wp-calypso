@@ -11436,6 +11436,7 @@ __metadata:
     "@automattic/accessible-focus": ^1.0.0-alpha.0
     "@automattic/browser-data-collector": ^3.0.0
     "@automattic/calypso-analytics": ^1.0.0-alpha.1
+    "@automattic/calypso-babel-config": ^1.0.0
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-color-schemes": ^2.1.1
     "@automattic/calypso-config": ^1.0.0-alpha.0
