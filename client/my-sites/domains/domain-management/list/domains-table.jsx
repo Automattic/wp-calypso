@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import DomainItem from './domain-item';
+import DomainRow from './domain-row';
 import DomainsTableHeader from './domains-table-header';
 import ListItemPlaceholder from './item-placeholder';
 import { filterOutWpcomDomains } from './utils';
@@ -106,7 +106,7 @@ class DomainsTable extends PureComponent {
 		}
 
 		const domainListItems = domainItems.map( ( domain, index ) => (
-			<DomainItem
+			<DomainRow
 				key={ `${ domain.name }-${ index }` }
 				currentRoute={ currentRoute }
 				domain={ domain }

@@ -1,0 +1,41 @@
+.domain-row {
+	display: flex;
+	align-items: center;
+	padding: 16px 0;
+	border-bottom: 1px solid var( --studio-gray-5 );
+	font-size: $font-body-small;
+}
+
+.domain-row__domain-cell {
+	flex: 83 83 0;
+	font-weight: 500; /* stylelint-disable-line */
+}
+.domain-row__status-cell {
+	flex: 40 40 0;
+}
+.domain-row__registered-until-cell {
+	flex: 50 50 0;
+}
+.domain-row__auto-renew-cell {
+	flex: 30 30 0;
+}
+.domain-row__email-cell {
+	flex: 30 30 0;
+
+	button.domain-row__email-button {
+		color: var( --color-link );
+		background: none;
+		border: none;
+		padding: 0;
+		line-height: 1.5;
+		box-shadow: none;
+		font-size: $font-body-small;
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
+	}
+}
+.domain-row__action-cell {
+	flex: 6 6 0;
+}
