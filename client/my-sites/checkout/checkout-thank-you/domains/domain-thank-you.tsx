@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import * as React from 'react';
 import { ThankYou } from 'calypso/components/thank-you';
+import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
 import {
 	DomainThankYouProps,
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
-import domainThankYouContent from './thank-you-content';
 
 import './style.scss';
 
@@ -14,7 +14,6 @@ interface DomainThankYouContainerProps {
 	email: string;
 	hasProfessionalEmail: boolean;
 	hideProfessionalEmailStep: boolean;
-	includeInbox: string;
 	selectedSiteSlug: string;
 	type: DomainThankYouType;
 }
