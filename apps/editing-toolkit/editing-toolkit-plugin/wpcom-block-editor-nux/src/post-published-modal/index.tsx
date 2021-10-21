@@ -57,7 +57,7 @@ const PostPublishedModal: React.FC = () => {
 					{ __( 'View Post', 'full-site-editing' ) }
 				</Button>
 			}
-			onClose={ closeModal }
+			onRequestClose={ closeModal }
 		/>
 	);
 };

@@ -31,7 +31,7 @@ const DraftPostModal = () => {
 					</Button>
 				</>
 			}
-			onClose={ closeModal }
+			onRequestClose={ closeModal }
 		/>
 	);
 };

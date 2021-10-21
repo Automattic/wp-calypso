@@ -10,7 +10,7 @@ interface Props {
 	description: string;
 	imageSrc: string;
 	actionButtons: React.ReactElement;
-	onClose: () => void;
+	onRequestClose: () => void;
 }
 
 const NuxModal: React.FC< Props > = ( {
@@ -20,7 +20,7 @@ const NuxModal: React.FC< Props > = ( {
 	description,
 	imageSrc,
 	actionButtons,
-	onClose,
+	onRequestClose,
 } ) => {
 	if ( ! isOpen ) {
 		return null;
@@ -31,7 +31,7 @@ const NuxModal: React.FC< Props > = ( {
 			className={ classnames( 'wpcom-block-editor-nux-modal', className ) }
 			open={ isOpen }
 			title=""
-			onRequestClose={ onClose }
+			onRequestClose={ onRequestClose }
 		>
 			<div className="wpcom-block-editor-nux-modal__image-container">
 				<img src={ imageSrc } alt={ title } />
