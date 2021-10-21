@@ -102,7 +102,7 @@ describe( 'thanks-modal', () => {
 		} );
 	} );
 
-	describe( 'when activating a Gutenberg-first theme that has a front page', () => {
+	describe( 'when activating a non-FSE theme that has a front page', () => {
 		beforeEach( () => {
 			setupAPIResponse( { is_fse_active: false } );
 		} );
@@ -139,7 +139,7 @@ describe( 'thanks-modal', () => {
 		} );
 	} );
 
-	describe( 'when activating a theme that is not FSE and does not have a front page', () => {
+	describe( 'when activating a non-FSE theme that does not have a front page', () => {
 		beforeEach( () => {
 			setupAPIResponse( { is_fse_active: false } );
 		} );
