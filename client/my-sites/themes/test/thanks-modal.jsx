@@ -32,7 +32,7 @@ const TestComponent = ( { store } ) => {
 const themeId = 'twentysixteen';
 const themeStyleSheet = `pub/${ themeId }`;
 const siteId = 123;
-const userId = 123;
+const userId = 456;
 const source = 'unknown';
 const purchased = false;
 
