@@ -45,6 +45,7 @@ export function CheckoutProvider( {
 	onPaymentComplete,
 	onPaymentRedirect,
 	onPaymentError,
+	onPageLoadError,
 	redirectToUrl,
 	theme,
 	paymentMethods,
@@ -124,6 +125,7 @@ export function CheckoutProvider( {
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
+			onPageLoadError,
 		} ),
 		[
 			formStatus,
@@ -133,17 +135,20 @@ export function CheckoutProvider( {
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
+			onPageLoadError,
 		]
 	);
 
 	const { __ } = useI18n();
 	const errorMessage = __( 'Sorry, there was an error loading this page.' );
-	const onError = useCallback(
-		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
+	const onLoadError = useCallback(
+		( errorMessage ) => {
+			onPageLoadError?.( 'page_load', errorMessage );
+		},
+		[ onPageLoadError ]
 	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
