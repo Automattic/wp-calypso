@@ -1,9 +1,23 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .domain-row {
 	display: flex;
 	align-items: center;
 	padding: 16px 0;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	font-size: $font-body-small;
+
+	& &__primary-badge {
+		font-size: $font-body-extra-small;
+		border-radius: 4px; /* stylelint-disable-line */
+		font-weight: 500; /* stylelint-disable-line */
+		margin-top: 8px;
+
+		svg {
+			transform: translateY( 2px );
+			margin-right: 4px;
+		}
+	}
 }
 
 .domain-row__domain-cell {

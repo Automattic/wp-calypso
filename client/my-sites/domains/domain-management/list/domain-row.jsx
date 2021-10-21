@@ -1,4 +1,5 @@
 import { Button, CompactCard } from '@automattic/components';
+import { Icon, home } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -413,8 +414,8 @@ class DomainRow extends PureComponent {
 
 	renderPrimaryBadge() {
 		return (
-			<Badge className="domain-item__primary-badge" type="info-green">
-				{ this.props.translate( 'Primary site address' ) }
+			<Badge className="domain-row__primary-badge" type="info-green">
+				<Icon icon={ home } size={ 14 } /> { this.props.translate( 'Primary site address' ) }
 			</Badge>
 		);
 	}
