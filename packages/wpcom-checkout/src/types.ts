@@ -80,6 +80,7 @@ export interface TransactionRequest {
 	gstin?: string | undefined;
 	nik?: string | undefined;
 	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 }
 
 export type WPCOMTransactionEndpoint = (

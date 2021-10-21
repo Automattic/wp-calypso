@@ -146,6 +146,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 						<PaymentMethodSelector
 							paymentMethods={ paymentMethodList }
 							successCallback={ goToBillingHistory }
+							eventContext={ '/purchases/add-payment-method' }
 						/>
 					</Column>
 					<Column type="sidebar">

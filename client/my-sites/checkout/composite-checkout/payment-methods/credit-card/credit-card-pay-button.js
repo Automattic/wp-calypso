@@ -55,6 +55,7 @@ export default function CreditCardPayButton( {
 							countryCode: fields?.countryCode?.value,
 							postalCode: fields?.postalCode?.value,
 							useForAllSubscriptions,
+							eventSource: 'checkout',
 						} );
 						return;
 					}
