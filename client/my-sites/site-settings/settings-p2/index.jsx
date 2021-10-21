@@ -1,23 +1,30 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
-import { flowRight } from 'lodash';
+import debugModule from 'debug';
+import { flowRight, includes, pickBy, filter } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormInput from 'calypso/components/forms/form-text-input';
+import TokenField from 'calypso/components/token-field';
+// import wpcom from 'calypso/lib/wp';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
 
+const debug = debugModule( 'calypso:my-sites:settings:p2-settings' );
 export class P2GeneralSettingsForm extends Component {
 	state = {
 		showPreapprovedDomainsTextBox: false,
+		preapprovedDomains: [],
+		success: [],
+		errors: {},
+		errorToDisplay: '',
 	};
 
 	handleSubmitForm = () => {
@@ -25,12 +32,100 @@ export class P2GeneralSettingsForm extends Component {
 	};
 
 	handleP2PreapprovedDomainsToggle = () => {
-		this.setState( { showPreapprovedDomainsTextBox: ! this.state.showPreapprovedDomainsTextBox } );
+		this.setState( {
+			...this.state,
+			showPreapprovedDomainsTextBox: ! this.state.showPreapprovedDomainsTextBox,
+			preapprovedDomains: [], // always empty when toggle is triggered
+		} );
+	};
+
+	refreshValidation = ( success = [], errors = {} ) => {
+		const errorsKeys = Object.keys( errors );
+		const errorToDisplay =
+			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
+
+		this.setState( {
+			errorToDisplay,
+			errors,
+			success,
+		} );
+
+		if ( errorsKeys.length ) {
+			this.props.recordTracksEvent( 'calypso_invite_people_validation_refreshed_with_error' );
+		}
+	};
+
+	async validateDomains( siteId, preapprovedDomains ) {
+		try {
+			// TODO Should this be GET? Technically we are not creating anything.
+			// const { success, errors } = await wpcom.req.get( `/p2/hub-settings/domains/validate`, {
+			// 	domains: preapprovedDomains.join( ',' ),
+			// } );
+
+			const { success, errors } = { success: preapprovedDomains, errors: {} }; // DELETE ME!
+
+			this.refreshValidation( success, errors );
+
+			// this.props.recordTracksEvent( 'calypso_p2_preapproved_domain_validation_success' );
+		} catch ( error ) {
+			// this.props.recordTracksEvent( 'calypso_p2_preapproved_domain_validation_failed' );
+		}
+	}
+
+	onTokensChange = ( tokens ) => {
+		const { errorToDisplay, errors, success } = this.state;
+		const filteredTokens = tokens.map( ( value ) => {
+			if ( 'object' === typeof value ) {
+				return value.value;
+			}
+			return value;
+		} );
+
+		const filteredErrors = pickBy( errors, ( error, key ) => {
+			return filteredTokens.includes( key );
+		} );
+
+		const filteredSuccess = filter( success, ( successfulValidation ) => {
+			return filteredTokens.includes( successfulValidation );
+		} );
+
+		this.setState( {
+			preapprovedDomains: filteredTokens,
+			errors: filteredErrors,
+			success: filteredSuccess,
+			errorToDisplay: filteredTokens.includes( errorToDisplay ) && errorToDisplay,
+		} );
+
+		this.validateDomains( this.props.siteId, filteredTokens );
+	};
+
+	getTokensWithStatus = () => {
+		const { success, errors } = this.state;
+
+		const tokens = this.state.preapprovedDomains.map( ( value ) => {
+			if ( errors && errors[ value ] ) {
+				return {
+					status: 'error',
+					value,
+					tooltip: this.getTooltip( value ),
+					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
+				};
+			}
+			if ( ! includes( success, value ) ) {
+				return {
+					value,
+					status: 'validating',
+				};
+			}
+			return value;
+		} );
+
+		debug( 'Generated tokens: ' + JSON.stringify( tokens ) );
+		return tokens;
 	};
 
 	render() {
 		const {
-			fields,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -74,15 +169,20 @@ export class P2GeneralSettingsForm extends Component {
 								{ this.state.showPreapprovedDomainsTextBox && (
 									<>
 										<FormLabel htmlFor="blogname">{ translate( 'Approved domains' ) }</FormLabel>
-										<FormInput
+										<TokenField
 											name="p2_preapproved_domains"
 											id="p2-preapproved-domains"
-											data-tip-target="p2-preapproved-domains-input"
-											value={ fields.p2_preapproved_domains || '' }
-											onChange={ null } // TODO
+											isBorderless
+											tokenizeOnSpace
+											autoCapitalize="none"
+											autoComplete="off"
+											autoCorrect="off"
+											spellCheck="false"
+											maxLength={ 60 }
+											value={ this.getTokensWithStatus() }
+											onChange={ this.onTokensChange }
+											onFocus={ /*this.onFocusTokenField*/ null }
 											disabled={ isRequestingSettings }
-											onClick={ null } // TODO
-											onKeyPress={ null } // TODO
 										/>
 										<FormSettingExplanation>
 											{ translate(
