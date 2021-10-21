@@ -59,10 +59,9 @@ function getWebpackConfig(
 	let babelConfig = path.join( process.cwd(), 'babel.config.js' );
 	let presets = [];
 	if ( ! fs.existsSync( babelConfig ) ) {
-		// Default to this package's Babel presets
 		presets = [
-			path.join( __dirname, 'babel', 'default' ),
-			env.WP && path.join( __dirname, 'babel', 'wordpress-element' ),
+			require.resolve( '@automattic/calypso-babel-config/presets/default' ),
+			env.WP && require.resolve( '@automattic/calypso-babel-config/presets/wordpress-element' ),
 		].filter( Boolean );
 		babelConfig = undefined;
 	}
@@ -108,7 +107,7 @@ function getWebpackConfig(
 				TranspileConfig.loader( {
 					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					include: shouldTranspileDependency,
-					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
+					presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 					workerCount,
 				} ),
 				SassConfig.loader( {
