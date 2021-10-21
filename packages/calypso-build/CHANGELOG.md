@@ -4,7 +4,7 @@
 
 - Dropped `cache-loader`, as it is not compatible with Webpack 5.
 - Dropped `cacheDirectory` option in Sass loader
-- Dropped Babel presets. They have been moved to `@automattic/calypso-babel-config`. The new packge should be a drop in replacement, you anywhere you were using `@automattic/calypso-build/presets/dependencies` you can use `@automattic/calypso-babel-config/presets/dependencies` (same for the other presets)
+- Dropped Babel presets. They have been moved to `@automattic/calypso-babel-config`. The new packge should be a drop in replacement, you anywhere you were using `@automattic/calypso-build/babel/dependencies` you can use `@automattic/calypso-babel-config/presets/dependencies` (same for the other presets)
 - Updated dependencies:
   - sass to ^1.37.5
   - sass-loader to ^12.1.0
