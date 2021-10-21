@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { PaginationVariant } from './constants';
 import PaginationPage from './pagination-page';
 
 import './style.scss';
@@ -14,6 +15,11 @@ class Pagination extends Component {
 		perPage: PropTypes.number.isRequired,
 		prevLabel: PropTypes.string,
 		total: PropTypes.number,
+		variant: PropTypes.oneOf( Object.values( PaginationVariant ) ),
+	};
+
+	static defaultProps = {
+		variant: PaginationVariant.outlined,
 	};
 
 	getPageList = ( page, pageCount ) => {
@@ -56,6 +62,7 @@ class Pagination extends Component {
 			perPage,
 			prevLabel,
 			total,
+			variant,
 		} = this.props;
 		const pageCount = Math.ceil( total / perPage );
 
@@ -80,7 +87,12 @@ class Pagination extends Component {
 		} );
 
 		return (
-			<div className={ classnames( 'pagination', className, { 'is-compact': compact } ) }>
+			<div
+				className={ classnames( 'pagination', className, {
+					'is-compact': compact,
+					'is-minimal': variant === PaginationVariant.minimal,
+				} ) }
+			>
 				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);
