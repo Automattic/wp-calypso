@@ -292,9 +292,6 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		// ExPlat: Temporarily testing out the effects of prefetching experiments. Delete after 2021 week 31.
-		loadExperimentAssignment( 'explat_test_aa_weekly_calypso_2021_week_31' );
-
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
