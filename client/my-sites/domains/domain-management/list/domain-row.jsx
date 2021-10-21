@@ -145,7 +145,7 @@ class DomainRow extends PureComponent {
 		const { translate, domainDetails } = this.props;
 
 		if ( ! this.shouldShowAutoRenewStatus() ) {
-			return;
+			return <span className="domain-row__auto-renew-cell"></span>;
 		}
 
 		const autoRenewLabel = domainDetails?.isAutoRenewing
@@ -248,7 +248,7 @@ class DomainRow extends PureComponent {
 		const { translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
-			return;
+			return <span className="domain-row__email-cell"></span>;
 		}
 
 		if ( hasGSuiteWithUs( domainDetails ) ) {
@@ -295,7 +295,7 @@ class DomainRow extends PureComponent {
 		}
 
 		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
-			return;
+			return <span className="domain-row__email-cell"></span>;
 		}
 
 		return (
