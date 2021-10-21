@@ -193,7 +193,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		<StylePreview />
 	);
 
-	const initialStep = () => {
+	function initialStep() {
 		// In the FSE Beta flow, the opt-in screen becomes the first step.
 		if ( canUseFseBetaOptInStep ) {
 			return <Redirect to={ Step.FseBetaOptIn } />;
@@ -202,7 +202,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			return <AnchorError />;
 		}
 		return <AcquireIntent />;
-	};
+	}
 
 	return (
 		<div className="onboarding-block">
@@ -214,7 +214,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
-					{ initialStep }
+					{ initialStep() }
 				</Route>
 
 				<Route path={ makePath( Step.FseBetaOptIn ) }>
