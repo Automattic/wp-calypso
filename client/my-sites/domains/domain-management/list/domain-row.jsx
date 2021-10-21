@@ -146,7 +146,7 @@ class DomainRow extends PureComponent {
 		const { translate, domainDetails } = this.props;
 
 		if ( ! this.shouldShowAutoRenewStatus() ) {
-			return <span className="domain-row__auto-renew-cell"></span>;
+			return <span className="domain-row__auto-renew-cell">-</span>;
 		}
 
 		const autoRenewLabel = domainDetails?.isAutoRenewing
@@ -249,7 +249,7 @@ class DomainRow extends PureComponent {
 		const { translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
-			return <span className="domain-row__email-cell"></span>;
+			return <span className="domain-row__email-cell">-</span>;
 		}
 
 		if ( hasGSuiteWithUs( domainDetails ) ) {
@@ -296,7 +296,7 @@ class DomainRow extends PureComponent {
 		}
 
 		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
-			return <span className="domain-row__email-cell"></span>;
+			return <span className="domain-row__email-cell">-</span>;
 		}
 
 		return (
@@ -467,7 +467,7 @@ class DomainRow extends PureComponent {
 					{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 				</div>
 				<div className="domain-row__status-cell">status</div>
-				<div className="domain-row__registered-until-cell">{ expiryDate }</div>
+				<div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>
 				{ this.renderAutoRenew() }
 				{ this.renderEmail( domainDetails ) }
 				{ /* 
