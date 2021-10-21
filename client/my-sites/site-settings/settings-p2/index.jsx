@@ -10,7 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TokenField from 'calypso/components/token-field';
-// import wpcom from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -49,20 +49,20 @@ export class P2GeneralSettingsForm extends Component {
 			errors,
 			success,
 		} );
-
-		if ( errorsKeys.length ) {
-			this.props.recordTracksEvent( 'calypso_invite_people_validation_refreshed_with_error' );
-		}
 	};
 
 	async validateDomains( siteId, preapprovedDomains ) {
 		try {
 			// TODO Should this be GET? Technically we are not creating anything.
-			// const { success, errors } = await wpcom.req.get( `/p2/hub-settings/domains/validate`, {
-			// 	domains: preapprovedDomains.join( ',' ),
-			// } );
-
-			const { success, errors } = { success: preapprovedDomains, errors: {} }; // DELETE ME!
+			const { success, errors } = await wpcom.req.get(
+				{
+					path: `/p2/hub-settings/domains/validate`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					domains: preapprovedDomains.join( ',' ),
+				}
+			);
 
 			this.refreshValidation( success, errors );
 
@@ -102,22 +102,22 @@ export class P2GeneralSettingsForm extends Component {
 	getTokensWithStatus = () => {
 		const { success, errors } = this.state;
 
-		const tokens = this.state.preapprovedDomains.map( ( value ) => {
-			if ( errors && errors[ value ] ) {
+		const tokens = this.state.preapprovedDomains.map( ( domain ) => {
+			if ( errors && errors[ domain ] ) {
 				return {
 					status: 'error',
-					value,
-					tooltip: this.getTooltip( value ),
-					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
+					value: domain,
+					tooltip: errors[ domain ],
+					onMouseEnter: () => this.setState( { errorToDisplay: domain } ),
 				};
 			}
-			if ( ! includes( success, value ) ) {
+			if ( ! includes( success, domain ) ) {
 				return {
-					value,
+					value: domain,
 					status: 'validating',
 				};
 			}
-			return value;
+			return domain;
 		} );
 
 		debug( 'Generated tokens: ' + JSON.stringify( tokens ) );
@@ -181,7 +181,7 @@ export class P2GeneralSettingsForm extends Component {
 											maxLength={ 60 }
 											value={ this.getTokensWithStatus() }
 											onChange={ this.onTokensChange }
-											onFocus={ /*this.onFocusTokenField*/ null }
+											onFocus={ /*this.onFocusTokenField*/ () => {} } // TODO
 											disabled={ isRequestingSettings }
 										/>
 										<FormSettingExplanation>
