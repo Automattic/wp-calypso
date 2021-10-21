@@ -1,5 +1,8 @@
 $autobar-height: 20px;
 
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 // Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
 	.masterbar {
@@ -37,7 +40,7 @@ $autobar-height: 20px;
 		color: var( --color-jetpack-masterbar-text );
 	}
 
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {  /* stylelint-disable-line */
 		body.font-smoothing-antialiased & {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;
@@ -86,10 +89,10 @@ $autobar-height: 20px;
 
 .masterbar__item-bubble {
 	border: solid 2px var( --color-masterbar-background );
-	border-radius: 50%;
+	border-radius: 50%;  /* stylelint-disable-line */
 	display: none;
 	// stylelint-disable-next-line scales/font-size
-	font-size: 8px;
+	font-size: 8px;  /* stylelint-disable-line */
 	height: 8px;
 	letter-spacing: 0;
 	line-height: 12px;
@@ -462,10 +465,10 @@ $autobar-height: 20px;
 
 	.masterbar__notifications-bubble {
 		border: solid 2px var( --color-masterbar-background );
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line */
 		display: none;
 		// stylelint-disable-next-line scales/font-size
-		font-size: 8px;
+		font-size: 8px; /* stylelint-disable-line */
 		height: 8px;
 		letter-spacing: 0;
 		line-height: 12px;
@@ -548,7 +551,7 @@ $autobar-height: 20px;
 	border-radius: 0 2px 2px 0;
 	position: relative;
 	transition: all 0.2s ease-out;
-	font-weight: 500;
+	font-weight: 500; /* stylelint-disable-line */
 	color: var( --color-text );
 	border-left: 1px solid var( --studio-gray-5 );
 
@@ -680,14 +683,33 @@ a.masterbar__quick-language-switcher {
 	transition: all 0.3s ease-in-out;
 }
 
-.is-section-post-editor .masterbar,
-.is-section-gutenberg-editor .masterbar {
+.is-section-post-editor .masterbar {
 	opacity: 0;
 	pointer-events: none;
 
 	.masterbar__item,
 	.masterbar__toggle-drafts {
 		transform: translateY( -48px );
+	}
+}
+
+.is-section-gutenberg-editor .masterbar {
+	@include break-medium {
+		opacity: 0;
+		pointer-events: none;
+
+		.masterbar__item,
+		.masterbar__toggle-drafts {
+			transform: translateY( -48px );
+		}
+	}
+}
+
+.is-section-gutenberg-editor .main.calypsoify.is-iframe {
+	top: 45px;
+
+	@include break-medium {
+		top: 0;
 	}
 }
 
@@ -717,7 +739,7 @@ a.masterbar__quick-language-switcher {
 		margin-left: 5px;
 
 		@include breakpoint-deprecated( '>480px' ) {
-			font-size: 100%;
+			font-size: 100%; /* stylelint-disable-line */
 			margin-left: 0;
 		}
 
