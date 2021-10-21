@@ -195,7 +195,7 @@ export class GutenbergEditorPage {
 	 * Dismisses the Welcome Tour (card) if it is present.
 	 */
 	async dismissWelcomeTourIfPresent(): Promise< void > {
-		const frame = await this.getEditorFrame();
+		const frame = await this.waitUntilLoaded();
 		if ( await frame.isVisible( selectors.welcomeTourCloseButton ) ) {
 			await frame.click( selectors.welcomeTourCloseButton );
 		}
