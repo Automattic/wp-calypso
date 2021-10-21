@@ -18,6 +18,7 @@ export const SITE_REQUEST_FIELDS = [
 	'lang',
 	'launch_status',
 	'site_migration',
+	'site_owner',
 	'is_fse_active',
 	'is_fse_eligible',
 	'is_core_site_editor_enabled',
