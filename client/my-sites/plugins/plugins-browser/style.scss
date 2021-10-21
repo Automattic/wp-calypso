@@ -3,32 +3,11 @@
 	flex: 1 1 auto;
 	justify-content: flex-start;
 	align-items: center;
+	border-bottom: 1px solid var( --studio-gray-5 );
 
 	.plugins-browser__page-heading {
-		width: 100%;
+		margin-bottom: 24px;
 	}
-}
-
-.plugins-browser__main-header {
-	background: var( --color-surface );
-	flex-direction: column;
-	display: flex;
-	margin-bottom: 9px;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-		margin-bottom: 17px;
-	}
-}
-
-.plugins-browser__page-heading .formatted-header__subtitle {
-	margin: 0;
-}
-
-.plugins-browser__main-header .section-nav {
-	box-shadow: none;
-	flex: auto;
-	margin: 0;
 }
 
 .plugins-browser__main-buttons {
