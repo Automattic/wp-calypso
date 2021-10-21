@@ -77,7 +77,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 		return addQueryArgs( queryParam, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
 	}
 
-	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
+	if ( isEnabled( 'signup/setup-site-after-checkout' ) && englishLocales.includes( localeSlug ) ) {
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
