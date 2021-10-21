@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
+import domainRegisteredSuccess from 'calypso/assets/images/illustrations/domain-registration-success.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import type {
@@ -8,7 +8,7 @@ import type {
 	DomainThankYouProps,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
-const domainMappingThankYouProps = ( {
+const DomainRegistrationThankYouProps = ( {
 	domain,
 	email,
 	hasProfessionalEmail,
@@ -20,34 +20,34 @@ const domainMappingThankYouProps = ( {
 			domain,
 			email,
 			hasProfessionalEmail,
-			selectedSiteSlug,
 			hideProfessionalEmailStep,
+			selectedSiteSlug,
 		},
-		'MAPPING',
+		'REGISTRATION',
 		false
 	);
 
 	const returnProps: DomainThankYouProps = {
 		sections: [
 			{
-				sectionKey: 'domain_mapping_whats_next',
+				sectionKey: 'domain_registration_whats_next',
 				sectionTitle: translate( 'What’s next?' ),
 				nextSteps: [
 					{
-						stepKey: 'domain_mapping_whats_next_plugin_setup',
-						stepTitle: translate( 'Connect your domain' ),
+						stepKey: 'domain_registration_whats_next_plugin_setup',
+						stepTitle: translate( 'Organize your domains' ),
 						stepDescription: translate(
-							'Set up your connection by following our suggested setup.'
+							'Set up a primary domain, connect other domains and make sure people can find your site'
 						),
 						stepCta: (
 							<Button
 								href={ domainMappingSetup( selectedSiteSlug, domain ) }
-								className={ 'domain-mapping__thank-you-button domain-thank-you__button' }
+								className={ 'domain-registration__thank-you-button domain-thank-you__button' }
 								primary
 								busy={ false }
 								disabled={ false }
 							>
-								{ translate( 'Go to setup' ) }
+								{ translate( 'Manage domains' ) }
 							</Button>
 						),
 					},
@@ -55,10 +55,10 @@ const domainMappingThankYouProps = ( {
 				],
 			},
 		],
-		thankYouImage: { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess },
+		thankYouImage: { alt: translate( 'Domain Registered' ), src: domainRegisteredSuccess },
 		thankYouTitle: translate( 'Congratulations on your purchase!' ),
 		thankYouSubtitle: translate(
-			'You can now connect {{strong}}%(domain)s{{/strong}} to your site',
+			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
 			{
 				args: {
 					domain,
@@ -67,8 +67,7 @@ const domainMappingThankYouProps = ( {
 			}
 		),
 	};
-
 	return returnProps;
 };
 
-export default domainMappingThankYouProps;
+export default DomainRegistrationThankYouProps;
