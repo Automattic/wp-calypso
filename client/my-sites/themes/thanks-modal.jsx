@@ -48,6 +48,8 @@ class ThanksModal extends Component {
 		isActivating: PropTypes.bool.isRequired,
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
+		isFSEActive: PropTypes.bool,
+		areBlockEditorSettingsLoading: PropTypes.bool.isRequired,
 	};
 
 	componentDidUpdate( prevProps ) {
