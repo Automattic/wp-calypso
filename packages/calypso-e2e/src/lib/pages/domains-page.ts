@@ -7,8 +7,12 @@ const selectors = {
 	removeItemButton: 'button[aria-label="Remove item"]',
 	popOverCartPlaceholder: '.cart-item__loading-placeholder',
 
+	// Domain actions
 	searchForDomainButton: `a:text-matches("search", "i")`,
 	useADomainIOwnButton: `text=I have a domain`,
+
+	// Purchased domains
+	purchasedDomains: ( domain: string ) => `div.card:has-text("${ domain }")`,
 };
 
 /**
@@ -26,6 +30,8 @@ export class DomainsPage {
 		this.page = page;
 	}
 
+	/* Initiate a domain action */
+
 	/**
 	 * Clicks on the button to add a domain to the site.
 	 */
@@ -35,6 +41,15 @@ export class DomainsPage {
 			this.page.click( selectors.searchForDomainButton ),
 		] );
 	}
+
+	/**
+	 * Click initial button to use a domain already owned by the user (make connection or transfer)
+	 */
+	async useADomainIOwn(): Promise< void > {
+		await this.page.click( selectors.useADomainIOwnButton );
+	}
+
+	/* Cart methods */
 
 	/**
 	 * Returns whether the cart is visible.
@@ -89,10 +104,14 @@ export class DomainsPage {
 		}
 	}
 
+	/* Interact with purchased domains */
+
 	/**
-	 * Click initial button to use a domain already owned by the user (make connection or transfer)
+	 * Given a partially matching string, locates and clicks on the matching purchased domain card.
+	 *
+	 * @param {string} domain Domain string to match on.
 	 */
-	async useADomainIOwn(): Promise< void > {
-		await this.page.click( selectors.useADomainIOwnButton );
+	async click( domain: string ): Promise< void > {
+		await this.page.click( selectors.purchasedDomains( domain ) );
 	}
 }
