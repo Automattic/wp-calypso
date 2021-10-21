@@ -1,9 +1,38 @@
+import fs from 'fs/promises';
+import path from 'path';
 const JestEnvironmentNode = require( 'jest-environment-node' );
 
 class JestEnvironmentE2E extends JestEnvironmentNode {
 	testFailed = false;
+	describeFailed = false;
 	hookFailed = false;
 
+	constructor( config, context ) {
+		super( config, context );
+		this.testPath = context.testPath;
+	}
+
+	/**
+	 * Set up the environment.
+	 */
+	async setup() {
+		await super.setup();
+
+		// Intermediate path storing all artifacts.
+		const resultsPath = path.join( process.cwd(), 'results' );
+		// Create the directory if necessary.
+		await fs.mkdir( resultsPath, { recursive: true } );
+		const testPath = path.basename( this.testPath, path.extname( this.testPath ) );
+		// Create a unique artifact directory.
+		const artifactPath = await fs.mkdtemp( path.join( resultsPath, testPath + '-' ) );
+		this.global.artifactPath = artifactPath;
+	}
+
+	/**
+	 * Custom handler for the test events emitted by jest-circus.
+	 *
+	 * @param {*} event Test event emitted.
+	 */
 	async handleTestEvent( event ) {
 		switch ( event.name ) {
 			case 'setup':

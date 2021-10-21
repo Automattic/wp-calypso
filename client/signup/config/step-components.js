@@ -43,6 +43,7 @@ const stepNameToModuleName = {
 	'site-style': 'site-style',
 	'site-title': 'site-title',
 	'site-title-without-domains': 'site-title',
+	'site-options': 'site-options',
 	'site-topic': 'site-topic',
 	'site-topic-with-theme': 'site-topic',
 	'site-type': 'site-type',
@@ -71,8 +72,8 @@ const stepNameToModuleName = {
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
 	'plans-premium-monthly': 'plans',
-	design: 'design-picker',
 	'design-setup-site': 'design-picker',
+	'difm-design': 'difm-design-picker',
 	'site-info-collection': 'site-info-collection',
 	intent: 'intent',
 };

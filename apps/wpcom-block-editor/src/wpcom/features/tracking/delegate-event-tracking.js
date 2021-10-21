@@ -3,7 +3,7 @@ import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade
 import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
-import wpcomBlockEditorGlobalStylesTabSelected from './wpcom-block-editor-global-styles-tab-selected';
+import wpcomBlockEditorGlobalStylesMenuSelected from './wpcom-block-editor-global-styles-menu-selected';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
 import wpcomBlockEditorPostPublishAddNewClick from './wpcom-block-editor-post-publish-add-new-click';
 import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
@@ -46,7 +46,7 @@ export const registerSubscriber = ( id, type, handler ) => {
 const EVENTS_MAPPING = [
 	wpcomBlockEditorCloseClick(),
 	wpcomBlockEditorDetailsOpen(),
-	wpcomBlockEditorGlobalStylesTabSelected(),
+	wpcomBlockEditorGlobalStylesMenuSelected(),
 	wpcomInserterInlineSearchTerm(),
 	wpcomInserterTabPanelSelected(),
 	wpcomBlockDonationsPlanUpgrade(),

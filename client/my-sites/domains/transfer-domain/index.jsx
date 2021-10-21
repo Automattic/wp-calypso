@@ -193,4 +193,4 @@ export default connect( ( state ) => ( {
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
 	productsList: getProductsList( state ),
-} ) )( withShoppingCart( withCartKey( TransferDomain ) ) );
+} ) )( withCartKey( withShoppingCart( TransferDomain ) ) );

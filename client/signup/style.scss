@@ -11,6 +11,7 @@ body.is-section-signup {
 
 		.layout:not( .dops ) .wpcom-site__logo {
 			fill: var( --color-neutral-10 );
+			color: var( --color-neutral-10 );
 			opacity: 1;
 
 			path {
@@ -23,6 +24,7 @@ body.is-section-signup {
 	&.is-p2-signup {
 		background: var( --p2-color-white );
 		color: var( --p2-color-text );
+		letter-spacing: -0.01em;
 
 		&.has-loading-screen-signup {
 			background: var( --p2-color-text );
@@ -105,6 +107,7 @@ body.is-section-signup .layout.gravatar {
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
 		fill: var( --color-primary-dark );
+		color: var( --color-primary-dark );
 		opacity: 0.3;
 	}
 
@@ -375,6 +378,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 		@include break-small {
 			left: 72px;
+			right: 24px;
 		}
 	}
 
@@ -508,6 +512,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			padding-bottom: 0;
 			border: 0;
 			box-shadow: none;
+			background-color: transparent;
 
 			@include break-small {
 				text-align: center;
@@ -684,7 +689,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			}
 
 			.signup-form__separator-text {
-				background: var( --studio-white );
+				background-color: #fdfdfd;
 				text-transform: uppercase;
 				text-align: center;
 				padding: 24px 0;
@@ -767,12 +772,23 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.signup__step.is-design,
 	.signup__step.is-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-left: 0;
 				margin-right: 0;
+			}
+		}
+
+		.design-picker__preview .step-wrapper__header {
+			margin-top: 40px;
+
+			@include break-mobile {
+				margin-top: 11px;
+			}
+
+			@include break-xlarge {
+				margin-top: 6px;
 			}
 		}
 	}

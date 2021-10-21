@@ -1,4 +1,7 @@
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	tryToGuessPostalCodeFormat,
+	getCountryPostalCodeSupport,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { camelCase, deburr } from 'lodash';
@@ -20,7 +23,6 @@ import {
 } from './custom-form-fieldsets/constants';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { getCountryPostalCodeSupport } from './helper';
 
 import './style.scss';
 

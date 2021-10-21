@@ -57,12 +57,13 @@ export default ( eventName, eventProperties ) => {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
-				console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( errorMessage, eventProperties );
 				return;
 			}
 
 			if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
-				//eslint-disable-next-line no-console
+				// eslint-disable-next-line no-console
 				console.error(
 					'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
 						'Please use a compliant property name.',

@@ -121,11 +121,12 @@ export function phpToMomentDatetimeFormat( momentDate, formatString ) {
 				case 'L':
 					// 1 or 0
 					return `[${ momentDate.isLeapYear() | 0 }]`;
-				case 'B':
+				case 'B': {
 					const utcDate = momentDate.clone().utc();
 					const swatchTime =
 						( ( utcDate.hours() + 1 ) % 24 ) + utcDate.minutes() / 60 + utcDate.seconds() / 3600;
 					return Math.floor( ( swatchTime * 1000 ) / 24 );
+				}
 				case 'I':
 					// 1 or 0
 					return `[${ momentDate.isDST() | 0 }]`;

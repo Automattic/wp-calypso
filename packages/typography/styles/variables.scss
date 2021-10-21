@@ -25,7 +25,7 @@ $brand-serif: 'Recoleta', $serif;
 $root-font-size: 16px;
 
 @function rem( $pixels, $context: $root-font-size ) {
-	@return math.div($pixels, $context) * 1rem;
+	@return math.div( $pixels, $context ) * 1rem;
 }
 
 // NOTE:
@@ -41,6 +41,7 @@ $font-headline-small: rem( 36px );
 $font-title-large: rem( 32px );
 $font-title-medium: rem( 24px );
 $font-title-small: rem( 20px );
+$font-body-large: rem( 18px );
 $font-body: rem( 16px );
 $font-body-small: rem( 14px );
 $font-body-extra-small: rem( 12px );

@@ -39,13 +39,13 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 	} );
 
 	describe( 'Signup via /start', function () {
-		const targetDomain = `${ blogName }.com`;
+		const targetDomain = `${ blogName }.live`;
 
 		let cartCheckoutPage: CartCheckoutPage;
 
 		it( 'Navigate to Signup page', async function () {
 			const loginPage = new LoginPage( page );
-			await loginPage.clickSignup();
+			await loginPage.signup();
 		} );
 
 		it( 'Set store cookie', async function () {
@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await userSignupPage.signup( email, username, signupPassword );
 		} );
 
-		it( 'Select a .com domain', async function () {
+		it( 'Select a .live domain', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
 			await domainSearchComponent.selectDomain( targetDomain );
@@ -74,9 +74,11 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 			await cartCheckoutPage.validateCartItem( targetDomain );
 		} );
 
-		it( 'Prices are shown with expected currency symbol for GBP', async function () {
-			const buttonText = await cartCheckoutPage.getPaymentButtonText();
-			await buttonText.startsWith( '£' );
+		it( 'Prices are shown in GBP', async function () {
+			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
+				rawString: true,
+			} ) ) as string;
+			expect( cartAmount.startsWith( '£' ) ).toBe( true );
 		} );
 
 		it( 'Remove domain purchase from cart', async function () {
@@ -124,7 +126,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 
 		it( 'Verify site is not yet launched', async function () {
 			// Obtain a new Page in a separate BrowserContext.
-			const testPage = await BrowserManager.newPage( { newContext: true } );
+			const testContext = await BrowserManager.newBrowserContext();
+			const testPage = await BrowserManager.newPage( { context: testContext } );
 			// TODO: make a utility to obtain the blog URL.
 			await testPage.goto( `https://${ blogName }.wordpress.com` );
 			// View site without logging in.

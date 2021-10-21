@@ -32,6 +32,7 @@ import {
 	isEcommerce,
 	isVipPlan,
 	isMarketplaceProduct,
+	getProductFromSlug,
 } from '.';
 
 export function getPlans() {
@@ -134,7 +135,7 @@ export function planHasFeature( plan, feature ) {
  *
  *
  * @param {object|string} plan	Plan object or plan name
- * @param {[string]} features	Array of feature names
+ * @param {string[]} features	Array of feature names
  * @returns {boolean}			Whether or not the specified plan has one of the features
  */
 export function planHasAtLeastOneFeature( plan, features ) {
@@ -492,6 +493,26 @@ export function applyTestFiltersToPlansList( planName, abtest, extraArgs = {} ) 
 	filteredPlanConstantObj.getPlanCompareFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
+}
+
+export function applyTestFiltersToProductsList( productName ) {
+	const filteredProductConstantObj = { ...getProductFromSlug( productName ) };
+
+	// these becomes no-ops when we removed some of the abtest overrides, but
+	// we're leaving the code in place for future tests
+	const removeDisabledFeatures = () => {};
+
+	const updatePlanDescriptions = () => {};
+
+	const updatePlanFeatures = () => {};
+
+	removeDisabledFeatures();
+	updatePlanDescriptions();
+	updatePlanFeatures();
+
+	filteredProductConstantObj.getPlanCompareFeatures = () => [];
+
+	return filteredProductConstantObj;
 }
 
 export function getPlanTermLabel( planName, translate ) {

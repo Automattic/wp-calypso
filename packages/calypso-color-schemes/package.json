@@ -28,6 +28,8 @@
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"postcss": "^8.2.15",
 		"postcss-custom-properties": "^11.0.0",
 		"sass": "^1.37.5"

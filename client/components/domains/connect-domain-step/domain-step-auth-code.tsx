@@ -21,6 +21,7 @@ const DomainStepAuthCode = ( {
 	selectedSite,
 	buttonMessage,
 	customHeading,
+	...props
 }: DomainStepAuthCodeProps ) => {
 	const { __ } = useI18n();
 	const [ authCode, setAuthCode ] = useState( '' );
@@ -43,13 +44,14 @@ const DomainStepAuthCode = ( {
 
 		validateHandler(
 			{
+				...props,
 				domain,
 				selectedSite,
 				verificationData: getVerificationData(),
 			},
 			( error ) => {
 				if ( ! error ) return;
-				if ( 'ownership_verification_failed' === error.error ) {
+				if ( error.message ) {
 					setAuthCodeError( error.message );
 				}
 				setConnectInProgress( false );

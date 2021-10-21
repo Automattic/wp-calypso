@@ -48,7 +48,7 @@ class LoginPage extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, gdprBannerButton );
 			return await driverHelper.waitTillNotPresent( this.driver, gdprBannerButton, 3000 );
 		} catch ( e ) {
-			console.log( 'GDPR button is not present.' ); // eslint-disable-line no-console
+			console.log( 'GDPR button is not present.' );
 			return true;
 		}
 	}

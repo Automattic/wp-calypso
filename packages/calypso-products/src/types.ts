@@ -69,6 +69,8 @@ export interface Product {
 	term: typeof TERMS_LIST[ number ];
 	bill_period: typeof PERIOD_LIST[ number ];
 	getFeatures?: () => Feature[];
+	getProductId: () => number;
+	getStoreSlug: () => ProductSlug;
 }
 
 export interface Plan {

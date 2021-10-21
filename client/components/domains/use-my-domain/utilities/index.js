@@ -3,7 +3,7 @@ export { getAvailabilityErrorMessage } from './get-availability-error-message';
 export { getDomainNameValidationErrorMessage } from './get-domain-name-validation-error-message';
 export { getMappingFreeText } from './get-mapping-free-text';
 export { getMappingPriceText } from './get-mapping-price-text';
-export { getOptionInfo } from './get-option-info';
+export { getOptionInfo, getDomainTransferrability } from './get-option-info';
 export { getTransferFreeText } from './get-transfer-free-text';
 export { getTransferPriceText } from './get-transfer-price-text';
 export { getTransferRestrictionMessage } from './get-transfer-restriction-message';

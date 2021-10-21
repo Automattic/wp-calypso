@@ -130,7 +130,6 @@ export default function transformer( file, api ) {
 				} catch ( error ) {
 					// If something fails, output the error and do nothing.
 					// That will skip this get call and move on to the next.
-					// eslint-disable-next-line no-console
 					console.error( error );
 				}
 			} );

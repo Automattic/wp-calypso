@@ -91,7 +91,9 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 					ref={ upsellRef }
 					className="visible-days-limit-upsell__call-to-action-button"
 					onClick={ trackUpgradeClick }
-					href={ isJetpackCloud() ? `/pricing/${ siteSlug }` : `/plans/${ siteSlug }` }
+					href={
+						isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }`
+					}
 				>
 					{ translate( 'Upgrade storage' ) }
 				</Button>

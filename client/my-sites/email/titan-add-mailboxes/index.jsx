@@ -20,7 +20,7 @@ import {
 	getTitanProductName,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,
@@ -68,10 +68,12 @@ class TitanAddMailboxes extends Component {
 	}
 
 	recordClickEvent = ( eventName, eventProps ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		recordTracksEvent( eventName, {
 			...eventProps,
 			domain_name: selectedDomainName,
+			provider: TITAN_PROVIDER_NAME,
+			source,
 		} );
 	};
 
@@ -81,13 +83,15 @@ class TitanAddMailboxes extends Component {
 			isSelectedDomainNameValid,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		page(
 			emailManagement(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute
+				currentRoute,
+				{ source }
 			)
 		);
 	};
@@ -164,6 +168,7 @@ class TitanAddMailboxes extends Component {
 						// Stay on the page to show the relevant error
 						return;
 					}
+
 					return this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
 		}
@@ -205,7 +210,7 @@ class TitanAddMailboxes extends Component {
 
 				<Card>
 					<TitanNewMailboxList
-						domain={ selectedDomainName }
+						selectedDomainName={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
 						validatedMailboxUuids={ this.state.validatedMailboxUuids }
@@ -310,4 +315,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withCartKey( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );
+)( withCartKey( withShoppingCart( withLocalizedMoment( localize( TitanAddMailboxes ) ) ) ) );

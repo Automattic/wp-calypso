@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-nodejs-modules
 const fs = require( 'fs' );
 const path = require( 'path' );
 const config = require( 'config' );
@@ -7,7 +6,6 @@ process.env.NODE_CONFIG_DIR = path.join( __dirname, '../../../config' );
 const account = config.get( 'visualRegressionUser' );
 
 // Remove all the logging statements. They are too noisy.
-// eslint-disable-next-line no-console
 console.log = () => {};
 
 function createDir( dir ) {

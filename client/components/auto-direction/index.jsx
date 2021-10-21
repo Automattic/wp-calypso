@@ -163,7 +163,7 @@ const setChildDirection = ( child, isRtl ) => {
 		return cloneElement( child, getDirectionProps( child, childDirection ) );
 	}
 
-	if ( child && child.props.children ) {
+	if ( child?.props?.children ) {
 		const children = Children.map( child.props.children, ( innerChild ) => {
 			if ( ! innerChild ) {
 				return innerChild;

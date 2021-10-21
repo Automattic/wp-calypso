@@ -122,16 +122,28 @@ const clickNthTabInGlobalStylesSidebar = async ( driver, tabIndex ) =>
 		)
 	);
 
-const clickGlobalStylesRootTab = async ( driver ) =>
-	await clickNthTabInGlobalStylesSidebar( driver, 1 );
-
 const clickGlobalStylesBlockTypeTab = async ( driver ) =>
 	await clickNthTabInGlobalStylesSidebar( driver, 2 );
 
-const getGlobalStylesTabSelectedEvents = async ( driver ) => {
+const clickGlobalStylesMenuItem = async ( driver, menuTitle ) => {
+	const locator = driverHelper.createTextLocator(
+		By.css( '.edit-site-global-styles-sidebar button' ),
+		menuTitle
+	);
+	return await driverHelper.clickWhenClickable( driver, locator );
+};
+
+const getGlobalStylesToggleEvents = async ( driver ) => {
 	const eventsStack = await getEventsStack( driver );
 	return eventsStack.filter(
-		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_tab_selected'
+		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_panel_toggle'
+	);
+};
+
+const getGlobalStylesMenuEvents = async ( driver ) => {
+	const eventsStack = await getEventsStack( driver );
+	return eventsStack.filter(
+		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_menu_selected'
 	);
 };
 
@@ -381,8 +393,9 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 	} );
 };
 
-const GLOBAL_STYLES_ROOT_TAB_NAME = 'root';
-const GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME = 'block-type';
+const GLOBAL_STYLES_TYPOGRAPHY_MENU_NAME = 'typography';
+const GLOBAL_STYLES_COLORS_MENU_NAME = 'colors';
+const GLOBAL_STYLES_BLOCKS_MENU_NAME = 'blocks';
 
 describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
@@ -415,98 +428,76 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
-		// Temporarily skip these tests until we can update track events / tests to handle the new
-		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
-		describe.skip( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
-			it( 'when Global Styles sidebar is opened', async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
+		describe( 'Global styles panel events', function () {
+			describe( 'Tracks "wpcom_block_editor_global_styles_panel_toggle', function () {
+				it( 'when Global Styles sidebar is opened', async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
 
-				await editor.toggleGlobalStyles();
+					await editor.toggleGlobalStyles();
+					const globalStylesToggleEvents = await getGlobalStylesToggleEvents( this.driver );
+					assert.strictEqual( globalStylesToggleEvents.length, 1 );
+					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
+					assert.strictEqual( eventData.open, true );
+				} );
 
-				const eventsStack = await getEventsStack( this.driver );
-				const tabSelectedEvents = eventsStack.filter(
-					( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_tab_selected'
-				);
-				assert.strictEqual( tabSelectedEvents.length, 1 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( eventData.open, true );
+				it( 'when Global Styles sidebar is closed', async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
+
+					// Note the sidebar is already open here because of the previous test.
+					await editor.toggleGlobalStyles();
+
+					const globalStylesToggleEvents = await getGlobalStylesToggleEvents( this.driver );
+					assert.strictEqual( globalStylesToggleEvents.length, 1 );
+					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
+					assert.strictEqual( eventData.open, false );
+				} );
+
+				it( `when Global Styles sidebar is closed by opening another sidebar`, async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
+
+					// It is not possible to open multiple sidebars on mobile.
+					if ( editor.screenSize === 'mobile' ) {
+						return this.skip();
+					}
+
+					await editor.toggleGlobalStyles();
+					await clickBlockSettingsButton( this.driver );
+
+					const globalStylesToggleEvents = await getGlobalStylesToggleEvents( this.driver );
+					assert.strictEqual( globalStylesToggleEvents.length, 2 );
+					const [ , eventData ] = globalStylesToggleEvents[ 0 ];
+					assert.strictEqual( eventData.open, false );
+				} );
 			} );
 
-			it( 'when Global Styles sidebar is closed', async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
+			describe( 'Tracks "wpcom_block_editor_global_styles_menu_selected"', function () {
+				it( 'when a menu is selected in the sidebar', async function () {
+					const editor = await SiteEditorComponent.Expect( this.driver );
 
-				// Note the sidebar is already open here because of the previous test.
-				await editor.toggleGlobalStyles();
+					await editor.toggleGlobalStyles();
 
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 1 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( eventData.open, false );
-			} );
+					const backButtonLocator = By.css(
+						'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
+					);
 
-			it( `when Global Styles sidebar is closed by opening another sidebar (tab = ${ GLOBAL_STYLES_ROOT_TAB_NAME })`, async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
+					await clickGlobalStylesMenuItem( this.driver, 'Typography' );
+					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
+					await clickGlobalStylesMenuItem( this.driver, 'Colors' );
+					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
+					await clickGlobalStylesMenuItem( this.driver, 'Blocks' );
 
-				// It is not possible to open multiple sidebars on mobile.
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-
-				await editor.toggleGlobalStyles();
-				await clickBlockSettingsButton( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 2 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( eventData.open, false );
-			} );
-
-			it( `when Global Styles sidebar is closed by opening another sidebar (tab = ${ GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME })`, async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
-
-				// It is not possible to open multiple sidebars on mobile.
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-
-				await editor.toggleGlobalStyles();
-				await clickGlobalStylesBlockTypeTab( this.driver );
-				await clickBlockSettingsButton( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 3 );
-				const [ , eventData ] = tabSelectedEvents[ 0 ];
-				assert.strictEqual( eventData.tab, GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME );
-				assert.strictEqual( eventData.open, false );
-			} );
-
-			it( 'when tab is changed in Global Styles sidebar', async function () {
-				const editor = await SiteEditorComponent.Expect( this.driver );
-
-				await editor.toggleGlobalStyles();
-				await clickGlobalStylesBlockTypeTab( this.driver );
-				await clickGlobalStylesRootTab( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 3 );
-				const [ , blockTypeSelectedEventData ] = tabSelectedEvents[ 1 ];
-				assert.strictEqual( blockTypeSelectedEventData.tab, GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME );
-				assert.strictEqual( blockTypeSelectedEventData.open, true );
-				const [ , rootSelectedEventData ] = tabSelectedEvents[ 2 ];
-				assert.strictEqual( rootSelectedEventData.tab, GLOBAL_STYLES_ROOT_TAB_NAME );
-				assert.strictEqual( rootSelectedEventData.open, true );
-			} );
-
-			it( 'should not trigger the event when clicking on the already active tab', async function () {
-				await clickGlobalStylesRootTab( this.driver );
-				await clickGlobalStylesRootTab( this.driver );
-				await clickGlobalStylesRootTab( this.driver );
-
-				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
-				assert.strictEqual( tabSelectedEvents.length, 0 );
+					const globalStylesMenuEvents = await getGlobalStylesMenuEvents( this.driver );
+					assert.strictEqual( globalStylesMenuEvents.length, 3 );
+					const [ , typographySelectedEventData ] = globalStylesMenuEvents[ 2 ];
+					assert.strictEqual(
+						typographySelectedEventData.menu,
+						GLOBAL_STYLES_TYPOGRAPHY_MENU_NAME
+					);
+					const [ , colorsSelectedEventData ] = globalStylesMenuEvents[ 1 ];
+					assert.strictEqual( colorsSelectedEventData.menu, GLOBAL_STYLES_COLORS_MENU_NAME );
+					const [ , blocksSelectedEventData ] = globalStylesMenuEvents[ 0 ];
+					assert.strictEqual( blocksSelectedEventData.menu, GLOBAL_STYLES_BLOCKS_MENU_NAME );
+				} );
 			} );
 
 			after( async function () {

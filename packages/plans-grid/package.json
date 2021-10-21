@@ -46,6 +46,7 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@automattic/typography": "^1.0.0",
 		"@wordpress/base-styles": "^4.0.0",
 		"prop-types": "^15.7.2",

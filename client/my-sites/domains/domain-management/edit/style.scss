@@ -1,3 +1,34 @@
+@import '../../../customer-home/grid-mixins.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import '@wordpress/base-styles/_breakpoints.scss';
+
+.edit__container {
+	@include break-xlarge {
+		@include grid-row( 1, 1 );
+		@include grid-column( 1, 12 );
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+		grid-gap: 24px;
+		.edit__main {
+			@include grid-column( 1, 8 );
+		}
+		.edit__sidebar {
+			@include grid-column( 9, 4 );
+		}
+		.edit__fullwidth {
+			@include grid-column( 1, 12 );
+		}
+	}
+}
+
+body.edit__body-white {
+	background: var( --studio-white );
+	&.is-nav-unification .sidebar .sidebar__heading::after,
+	&.is-nav-unification .sidebar .sidebar__menu-link::after {
+		border-right-color: var( --studio-white );
+	}
+}
+
 .domain-details-card {
 	.flag {
 		font-size: $font-body-extra-small;

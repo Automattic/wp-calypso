@@ -33,6 +33,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
+import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
@@ -156,7 +157,10 @@ export class PlanFeatures extends Component {
 
 	renderNotice() {
 		return (
-			this.renderUpgradeDisabledNotice() || this.renderDiscountNotice() || this.renderCreditNotice()
+			this.renderUpgradeDisabledNotice() ||
+			this.renderDiscountNotice() ||
+			this.renderCreditNotice() ||
+			this.renderMarketingMessage()
 		);
 	}
 
@@ -280,6 +284,21 @@ export class PlanFeatures extends Component {
 		);
 	}
 
+	renderMarketingMessage() {
+		const { siteId, hasPlaceholders, isInSignup } = this.props;
+
+		if ( hasPlaceholders || isInSignup ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal( <MarketingMessage siteId={ siteId } />, bannerContainer );
+	}
+
 	renderMobileView() {
 		const {
 			redirectToAddDomainFlow,
@@ -300,13 +319,25 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
+
+		// move any popular plan to the first place in the mobile view.
+		let popularPlanProperties;
 		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
 				freePlanProperties = properties;
 				return false;
 			}
+			// remove the popular plan.
+			if ( properties.popular && ! popularPlanProperties ) {
+				popularPlanProperties = properties;
+				return false;
+			}
 			return true;
 		} );
+
+		if ( popularPlanProperties ) {
+			reorderedPlans.unshift( popularPlanProperties );
+		}
 
 		if ( freePlanProperties ) {
 			reorderedPlans.push( freePlanProperties );
@@ -1022,7 +1053,7 @@ const ConnectedPlanFeatures = connect(
 	{
 		recordTracksEvent,
 	}
-)( withShoppingCart( withCartKey( localize( PlanFeatures ) ) ) );
+)( withCartKey( withShoppingCart( localize( PlanFeatures ) ) ) );
 
 /* eslint-enable */
 

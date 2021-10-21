@@ -7,7 +7,8 @@ const BoxedSearch = ( props ) => (
 		<Search
 			placeholder="Search..."
 			fitsContainer
-			onSearch={ ( search ) => console.log( 'Searched:', search ) } // eslint-disable-line no-console
+			// eslint-disable-next-line no-console
+			onSearch={ ( search ) => console.log( 'Searched:', search ) }
 			{ ...props }
 		/>
 	</div>

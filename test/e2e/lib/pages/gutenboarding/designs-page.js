@@ -1,6 +1,5 @@
 import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../../async-base-container';
-import * as dataHelper from '../../data-helper';
 
 export default class DesignLocatorPage extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -11,11 +10,13 @@ export default class DesignLocatorPage extends AsyncBaseContainer {
 
 	async selectFreeDesign() {
 		const freeOptions = await this.driver.findElements( this.freeOptionLocator );
-		await freeOptions[ dataHelper.getRandomInt( 0, freeOptions.length - 1 ) ].click();
-	}
+		if ( freeOptions.length <= 1 ) {
+			throw new Error(
+				'There should be more than one free design found on the design selection page'
+			);
+		}
 
-	async selectPaidDesign() {
-		const paidOptions = await this.driver.findElements( this.paidOptionLocator );
-		await paidOptions[ dataHelper.getRandomInt( 0, paidOptions.length - 1 ) ].click();
+		const firstNonBlankDesign = freeOptions[ 1 ];
+		await firstNonBlankDesign.click();
 	}
 }

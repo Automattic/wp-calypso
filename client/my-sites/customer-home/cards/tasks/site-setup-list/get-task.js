@@ -1,6 +1,5 @@
 import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
@@ -181,8 +180,7 @@ export const getTask = (
 						// The following classes are globally shared
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className="button is-primary task__action"
-						supportPostId={ 59580 }
-						supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+						supportContext="menus"
 						showIcon={ false }
 						tracksEvent="calypso_customer_home_menus_support_page_view"
 						statsGroup="calypso_customer_home"

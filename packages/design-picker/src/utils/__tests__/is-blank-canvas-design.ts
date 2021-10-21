@@ -12,7 +12,7 @@ describe( 'Design Picker blank canvas utils', () => {
 				slug: 'mock-blank-canvas-design-slug',
 				template: 'mock-blank-canvas-design-template',
 				theme: 'mock-blank-canvas-design-theme',
-				categories: [ 'featured' ],
+				categories: [ { slug: 'featured', name: 'Featured' } ],
 				is_premium: false,
 				features: [],
 			};

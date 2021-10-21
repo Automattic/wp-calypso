@@ -6,7 +6,7 @@ import {
 	setupHooks,
 	BrowserManager,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	PublishedPostsListPage,
 	CommentsComponent,
 	NavbarComponent,
@@ -20,43 +20,43 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
-	const comment = DataHelper.getRandomPhrase() + ' TBD';
+	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
-		let testPage;
-
 		it( `Log in as ${ commentingUser }`, async function () {
-			testPage = await BrowserManager.newPage( { newContext: true } );
-			const loginFlow = new LoginFlow( testPage, commentingUser );
-			await loginFlow.logIn();
-			await testPage.waitForURL( '**/read' );
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: commentingUser }, { landingUrl: '**/read' } );
 		} );
 
 		it( 'View site', async function () {
 			// TODO make a utility to obtain a blog URL without string substitution.
 			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
-			await testPage.goto( siteURL );
+			await page.goto( siteURL );
 		} );
 
 		it( 'View first post', async function () {
-			publishedPostsListPage = new PublishedPostsListPage( testPage );
+			publishedPostsListPage = new PublishedPostsListPage( page );
 			publishedPostsListPage.visitPost( 1 );
 		} );
 
 		it( 'Comment on the post', async function () {
-			const commentsComponent = new CommentsComponent( testPage );
+			const commentsComponent = new CommentsComponent( page );
 			await commentsComponent.postComment( comment );
+		} );
+
+		it( 'Clear authentication state', async function () {
+			await BrowserManager.clearAuthenticationState( page );
 		} );
 	} );
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
 		it( `Log in as ${ notificationsUser }`, async function () {
-			const loginFlow = new LoginFlow( page, notificationsUser );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: notificationsUser } );
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {

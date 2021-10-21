@@ -1,15 +1,18 @@
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
-import { stepSlug } from '../constants';
+import { stepSlug, useMyDomainInputMode } from '../constants';
 
 type ValueOf< T > = T[ keyof T ];
 type Maybe< T > = T | null;
 
 type PossibleSlugs = ValueOf< typeof stepSlug >;
+type PossibleInitialModes = ValueOf< typeof useMyDomainInputMode >;
 
-export type AuthCodeValidationError = {
+export type DomainsApiError = {
 	error?: string;
 	message?: string;
 };
+
+export type AuthCodeValidationError = DomainsApiError;
 
 export type AuthCodeValidationData = {
 	domain: string;
@@ -27,13 +30,32 @@ export type AuthCodeValidationHandler = (
 	onDone?: ( error?: Maybe< AuthCodeValidationError >, callbackData?: unknown ) => void
 ) => unknown;
 
+export type InboundTransferResult = {
+	success: boolean;
+};
+
+export type InboundTransferStatusInfo = {
+	creationDate: string;
+	email: string;
+	inRedemption: boolean;
+	losingRegistrar: boolean;
+	privacy: boolean;
+	termMaximumInYears: number;
+	transferEligibleDate: string;
+	transferRestrictionStatus: string;
+	unlocked: boolean;
+};
+
 export type StartStepProps = {
 	domain: string;
 	className: string;
 	pageSlug: PossibleSlugs;
 	onNextStep: () => void;
 	stepContent: JSX.Element;
+	isFetchingAvailability: boolean;
 	progressStepList: Record< PossibleSlugs, string >;
+	domainInboundTransferStatusInfo: Partial< InboundTransferStatusInfo >;
+	initialMode: PossibleInitialModes;
 	setPage: ( page: PossibleSlugs ) => void;
 };
 

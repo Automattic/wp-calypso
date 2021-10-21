@@ -50,6 +50,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/happychat": true,
+		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,
 		"lasagna": false,
 		"layout/app-banner": true,

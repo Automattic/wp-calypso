@@ -20,6 +20,8 @@ export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
 export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
+export const PRODUCT_JETPACK_VIDEOPRESS = 'jetpack_videopress';
+export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
 
 // Legacy Products
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -74,11 +76,18 @@ export const JETPACK_CRM_FREE_PRODUCTS = <const>[
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 ];
 
+// VideoPress
+export const JETPACK_VIDEOPRESS_PRODUCTS = <const>[
+	PRODUCT_JETPACK_VIDEOPRESS,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+];
+
 export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_BACKUP_PRODUCTS,
 	...JETPACK_SCAN_PRODUCTS,
 	...JETPACK_ANTI_SPAM_PRODUCTS,
 	...JETPACK_SEARCH_PRODUCTS,
+	...JETPACK_VIDEOPRESS_PRODUCTS,
 ];
 export const JETPACK_PRODUCTS_BY_TERM = <const>[
 	{
@@ -121,6 +130,10 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		yearly: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		monthly: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	},
+	{
+		yearly: PRODUCT_JETPACK_VIDEOPRESS,
+		monthly: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -151,6 +164,15 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 		relatedProduct: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 		ratio: 12,
 	},
+	[ PRODUCT_JETPACK_VIDEOPRESS ]: {
+		relatedProduct: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+		ratio: 12,
+	},
+};
+// Key/value: Superseding product/Products superseded (yearly terms)
+export const JETPACK_PRODUCT_UPGRADE_MAP: Record< string, string[] > = {
+	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: [ PRODUCT_JETPACK_BACKUP_T1_YEARLY ],
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: [ PRODUCT_JETPACK_BACKUP_DAILY ],
 };
 
 // Plans
@@ -257,6 +279,17 @@ export const JETPACK_PLANS_BY_TERM = <const>[
 	...JETPACK_RESET_PLANS_BY_TERM,
 ];
 export const BEST_VALUE_PLANS = <const>[ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+// Key/value: Superseding plan/Plans superseded (yearly terms)
+export const JETPACK_PLAN_UPGRADE_MAP: Record< string, string[] > = {
+	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [ PLAN_JETPACK_SECURITY_T1_YEARLY ],
+	[ PLAN_JETPACK_SECURITY_REALTIME ]: [ PLAN_JETPACK_SECURITY_DAILY ],
+	[ PLAN_JETPACK_COMPLETE ]: [
+		PLAN_JETPACK_SECURITY_REALTIME,
+		PLAN_JETPACK_SECURITY_DAILY,
+		PLAN_JETPACK_SECURITY_T2_YEARLY,
+		PLAN_JETPACK_SECURITY_T1_YEARLY,
+	],
+};
 
 // URL
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';

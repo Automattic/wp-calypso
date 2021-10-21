@@ -3,7 +3,6 @@ import config from 'config';
 import { By } from 'selenium-webdriver';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
-import PostPreviewComponent from '../../lib/components/post-preview-component';
 import RevisionsModalComponent from '../../lib/components/revisions-modal-component';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import * as dataHelper from '../../lib/data-helper';
@@ -95,64 +94,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			await gEditorSidebarComponent.collapseCategories();
 			await gEditorSidebarComponent.collapseTags();
 			await gEditorComponent.closeSidebar();
-		} );
-
-		it( 'Can launch post preview', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
-			await gEditorComponent.ensureSaved();
-			await gEditorComponent.launchPreview();
-		} );
-
-		it( 'Can see correct post title in preview', async function () {
-			this.postPreviewComponent = await PostPreviewComponent.Expect( this.driver );
-
-			const postTitle = await this.postPreviewComponent.postTitle();
-			assert.strictEqual(
-				postTitle.toLowerCase(),
-				blogPostTitle.toLowerCase(),
-				'The blog post preview title is not correct'
-			);
-		} );
-
-		it( 'Can see correct post content in preview', async function () {
-			const content = await this.postPreviewComponent.postContent();
-			assert.strictEqual(
-				content.indexOf( blogPostQuote ) > -1,
-				true,
-				'The post preview content (' +
-					content +
-					') does not include the expected content (' +
-					blogPostQuote +
-					')'
-			);
-		} );
-
-		it( 'Can see the post category in preview', async function () {
-			const categoryDisplayed = await this.postPreviewComponent.categoryDisplayed();
-			assert.strictEqual(
-				categoryDisplayed.toUpperCase(),
-				newCategoryName.toUpperCase(),
-				'The tag: ' + newCategoryName + ' is not being displayed on the post'
-			);
-		} );
-
-		// Disable this step until https://github.com/Automattic/wp-calypso/issues/28974 is solved
-		// it( 'Can see the post tag in preview', async function() {
-		// 	let tagDisplayed = await this.postPreviewComponent.tagDisplayed();
-		// 	assert.strictEqual(
-		// 		tagDisplayed.toUpperCase(),
-		// 		newTagName.toUpperCase(),
-		// 		'The tag: ' + newTagName + ' is not being displayed on the post'
-		// 	);
-		// } );
-
-		it( 'Can see the image in preview', async function () {
-			const imageDisplayed = await this.postPreviewComponent.imageDisplayed( fileDetails );
-			assert.strictEqual( imageDisplayed, true, 'Could not see the image in the web preview' );
-		} );
-
-		it( 'Can close post preview', async function () {
-			await this.postPreviewComponent.close();
 		} );
 
 		it( 'Can publish and view content', async function () {

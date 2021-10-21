@@ -5,6 +5,7 @@ import { ThankYou } from 'calypso/components/thank-you';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
 	emailManagementTitanControlPanelRedirect,
@@ -59,7 +60,18 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 				stepTitle: translate( 'Access your inbox' ),
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
-					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary target="_blank">
+					<FullWidthButton
+						href={ getTitanEmailUrl( emailAddress ) }
+						primary
+						target="_blank"
+						onClick={ () => {
+							recordEmailAppLaunchEvent( {
+								provider: 'titan',
+								app: 'webmail',
+								context: 'checkout-thank-you',
+							} );
+						} }
+					>
 						{ translate( 'Go to Inbox' ) }
 						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
@@ -72,7 +84,17 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 					"Access your email on the go with Titan's Android and iOS apps."
 				),
 				stepCta: (
-					<FullWidthButton href={ titanControlPanelUrl } target="_blank">
+					<FullWidthButton
+						href={ titanControlPanelUrl }
+						target="_blank"
+						onClick={ () => {
+							recordEmailAppLaunchEvent( {
+								provider: 'titan',
+								app: 'app',
+								context: 'checkout-thank-you',
+							} );
+						} }
+					>
 						{ translate( 'Get app' ) }
 						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
@@ -93,6 +115,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 
 	return (
 		<ThankYou
+			containerClassName="titan-set-up-thank-you__container"
 			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }

@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -25,11 +26,13 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -99,6 +102,9 @@ class ThemeSheet extends Component {
 			label: PropTypes.string,
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
+		} ),
+		blockEditorSettings: PropTypes.shape( {
+			is_fse_eligible: PropTypes.bool,
 		} ),
 	};
 
@@ -176,15 +182,24 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
+		const { author, blockEditorSettings, name, taxonomies, translate } = this.props;
+
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
-		const title = this.props.name || placeholder;
-		const tag = this.props.author
-			? this.props.translate( 'by %(author)s', { args: { author: this.props.author } } )
-			: placeholder;
+		const title = name || placeholder;
+		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
+		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+		const showBetaBadge = isFullSiteEditingTheme( { taxonomies } ) && isFSEEligible;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ showBetaBadge && (
+						<Badge type="warning-clear" className="theme__sheet-badge-beta">
+							{ translate( 'Beta' ) }
+						</Badge>
+					) }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -501,13 +516,7 @@ class ThemeSheet extends Component {
 								{
 									components: {
 										InlineSupportLink: (
-											<InlineSupportLink
-												showIcon={ false }
-												supportPostId={ 174865 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
-												) }
-											/>
+											<InlineSupportLink supportContext="themes-unsupported" showIcon={ false } />
 										),
 									},
 								}
@@ -605,6 +614,7 @@ class ThemeSheet extends Component {
 	renderButton = () => {
 		const { getUrl } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
+		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive } = this.props;
 
@@ -613,11 +623,15 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={ getUrl ? getUrl( this.props.id ) : null }
 				onClick={ this.onButtonClick }
-				primary={ isActive }
+				primary
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
-				{ this.props.isWpcomTheme && this.renderPrice() }
+				{ price && this.props.isWpcomTheme && (
+					<Badge type="info" className="theme__sheet-badge-beta">
+						{ price }
+					</Badge>
+				) }
 			</Button>
 		);
 	};
@@ -786,6 +800,7 @@ class ThemeSheet extends Component {
 }
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
+const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
@@ -812,7 +827,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ConnectedThemeSheet
+		<ThemeSheetWithEditorSettings
 			{ ...props }
 			demo_uri={ demoUrl }
 			siteId={ siteId }

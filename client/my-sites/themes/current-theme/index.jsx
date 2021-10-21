@@ -5,10 +5,12 @@ import { map, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { trackClick } from '../helpers';
 import { connectOptions } from '../theme-options';
@@ -28,6 +30,7 @@ class CurrentTheme extends Component {
 				getUrl: PropTypes.func,
 			} )
 		),
+		blockEditorSettings: PropTypes.shape( { is_fse_eligible: PropTypes.bool } ),
 		siteId: PropTypes.number.isRequired,
 		// connected props
 		currentTheme: PropTypes.object,
@@ -36,7 +39,7 @@ class CurrentTheme extends Component {
 	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, translate } = this.props;
+		const { currentTheme, currentThemeId, blockEditorSettings, siteId, translate } = this.props;
 		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
 		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
 
@@ -49,6 +52,8 @@ class CurrentTheme extends Component {
 		const showScreenshot = currentTheme && currentTheme.screenshot;
 		// Some themes have no screenshot, so only show placeholder until details loaded
 		const showScreenshotPlaceholder = ! currentTheme;
+		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+		const showBetaBadge = isFullSiteEditingTheme( currentTheme ) && isFSEEligible;
 
 		return (
 			<Card className="current-theme">
@@ -67,41 +72,47 @@ class CurrentTheme extends Component {
 							) }
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
-									<span className="current-theme__label">
-										{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
-									</span>
+									<div className="current-theme__badge-wrapper">
+										{ showBetaBadge && (
+											<Badge type="warning-clear" className="current-theme__badge-beta">
+												{ translate( 'Beta' ) }
+											</Badge>
+										) }
+										<span className="current-theme__label">
+											{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
+										</span>
+									</div>
 									<span className="current-theme__name">{ text }</span>
 								</div>
-								<p>
-									{ translate( 'This is the active theme on your site.' ) }{ ' ' }
-									<InlineSupportLink
-										supportPostId={ 184023 }
-										supportLink={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-									>
-										{ translate( 'Learn more.' ) }
-									</InlineSupportLink>
-								</p>
+								<div className="current-theme__content-wrapper">
+									<p>
+										{ translate( 'This is the active theme on your site.' ) }{ ' ' }
+										<InlineSupportLink supportContext="themes-switch">
+											{ translate( 'Learn more.' ) }
+										</InlineSupportLink>
+									</p>
+									<div className={ classNames( 'current-theme__actions' ) }>
+										{ map( options, ( option, name ) => (
+											<Button
+												className={ classNames(
+													'current-theme__button',
+													'components-button',
+													'current-theme__' + this.props.name
+												) }
+												primary={ option.label.toLowerCase() === 'customize' }
+												name={ name }
+												key={ name }
+												label={ option.label }
+												href={ currentThemeId && option.getUrl( currentThemeId ) }
+												onClick={ this.trackClick }
+											>
+												{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
+												{ option.label }
+											</Button>
+										) ) }
+									</div>
+								</div>
 							</div>
-						</div>
-						<div className={ classNames( 'current-theme__actions' ) }>
-							{ map( options, ( option, name ) => (
-								<Button
-									className={ classNames(
-										'current-theme__button',
-										'components-button',
-										'current-theme__' + this.props.name
-									) }
-									primary={ option.label.toLowerCase() === 'customize' }
-									name={ name }
-									key={ name }
-									label={ option.label }
-									href={ currentThemeId && option.getUrl( currentThemeId ) }
-									onClick={ this.trackClick }
-								>
-									{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
-									{ option.label }
-								</Button>
-							) ) }
 						</div>
 					</div>
 				</div>
@@ -111,9 +122,10 @@ class CurrentTheme extends Component {
 }
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
+const CurrentThemeWithEditorSettings = withBlockEditorSettings( ConnectedCurrentTheme );
 
 const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => (
-	<ConnectedCurrentTheme
+	<CurrentThemeWithEditorSettings
 		currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
 		siteId={ siteId }

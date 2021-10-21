@@ -38,10 +38,13 @@ import {
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+} from 'calypso/lib/gsuite/constants';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
-import { getTitanProductName } from 'calypso/lib/titan';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -85,6 +88,7 @@ class EmailProvidersComparison extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		showSkipButton: PropTypes.bool,
 		skipButtonLabel: PropTypes.string,
+		source: PropTypes.string,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
@@ -148,9 +152,12 @@ class EmailProvidersComparison extends Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSite } = this.props;
+		const { currentRoute, selectedDomainName, selectedSite, source } = this.props;
 
-		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
+		recordTracksEvent( 'calypso_email_providers_add_click', {
+			provider: 'email-forwarding',
+			source,
+		} );
 
 		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -172,7 +179,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain } = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain, source } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -187,7 +194,8 @@ class EmailProvidersComparison extends Component {
 			context: comparisonContext,
 			mailbox_count: validatedTitanMailboxes.length,
 			mailboxes_valid: mailboxesAreValid ? 1 : 0,
-			provider: 'titan',
+			provider: TITAN_PROVIDER_NAME,
+			source,
 			user_can_add_email: userCanAddEmail,
 			user_cannot_add_email_code: userCannotAddEmailReason ? userCannotAddEmailReason.code : '',
 		} );
@@ -227,6 +235,7 @@ class EmailProvidersComparison extends Component {
 					// Stay on the page to show the relevant error(s)
 					return;
 				}
+
 				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
@@ -243,7 +252,7 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { comparisonContext, domain, gSuiteProduct, hasCartDomain } = this.props;
+		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, source } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -253,7 +262,8 @@ class EmailProvidersComparison extends Component {
 			context: comparisonContext,
 			mailbox_count: googleUsers.length,
 			mailboxes_valid: usersAreValid ? 1 : 0,
-			provider: 'google',
+			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_can_add_email: userCanAddEmail ? 1 : 0,
 		} );
 
@@ -323,6 +333,7 @@ class EmailProvidersComparison extends Component {
 			isGSuiteSupported,
 			onSkipClick,
 			selectedDomainName,
+			selectedSite,
 			showSkipButton,
 			skipButtonLabel,
 			translate,
@@ -388,6 +399,7 @@ class EmailProvidersComparison extends Component {
 						domains={ domainList }
 						onUsersChange={ this.onGoogleUsersChange }
 						selectedDomainName={ selectedDomainName }
+						siteId={ selectedSite.ID }
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
@@ -443,6 +455,7 @@ class EmailProvidersComparison extends Component {
 			skipButtonLabel,
 			titanMailProduct,
 			translate,
+			selectedSite,
 		} = this.props;
 
 		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
@@ -452,8 +465,7 @@ class EmailProvidersComparison extends Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial =
-			hasCartDomain || domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
 		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
@@ -489,10 +501,11 @@ class EmailProvidersComparison extends Component {
 			<TitanNewMailboxList
 				onMailboxesChange={ this.onTitanMailboxesChange }
 				mailboxes={ this.state.titanMailboxes }
-				domain={ selectedDomainName }
+				selectedDomainName={ selectedDomainName }
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
+				siteId={ selectedSite.ID }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"
@@ -752,4 +765,4 @@ export default connect(
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
 		};
 	}
-)( withShoppingCart( withCartKey( localize( EmailProvidersComparison ) ) ) );
+)( withCartKey( withShoppingCart( localize( EmailProvidersComparison ) ) ) );

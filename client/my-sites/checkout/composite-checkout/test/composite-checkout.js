@@ -274,7 +274,6 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
-			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
@@ -332,6 +331,44 @@ describe( 'CompositeCheckout', () => {
 		} );
 	} );
 
+	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
+		} );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'CW' } } );
+		} );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		await waitFor( () => {
+			fireEvent.change( screen.getByLabelText( 'Country' ), { target: { value: 'US' } } );
+		} );
+		await waitFor( () => {
+			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+		} );
+	} );
+
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
@@ -342,7 +379,9 @@ describe( 'CompositeCheckout', () => {
 			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Postal Code' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'ZIP code' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

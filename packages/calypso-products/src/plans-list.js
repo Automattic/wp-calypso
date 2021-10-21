@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import i18n, { translate } from 'i18n-calypso';
 import {
-	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
@@ -26,6 +25,7 @@ import {
 	FEATURE_AUTOMATIC_SECURITY_FIXES,
 	FEATURE_BACKUP_ARCHIVE_30,
 	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BASIC_DESIGN,
@@ -55,19 +55,23 @@ import {
 	FEATURE_HOSTING,
 	FEATURE_INSTALL_PLUGINS,
 	FEATURE_JETPACK_ADVANCED,
+	FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
-	FEATURE_JETPACK_BACKUP_T1_YEARLY,
 	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
-	FEATURE_JETPACK_BACKUP_T2_YEARLY,
+	FEATURE_JETPACK_BACKUP_T1_YEARLY,
 	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T2_YEARLY,
 	FEATURE_JETPACK_CRM,
 	FEATURE_JETPACK_CRM_MONTHLY,
 	FEATURE_JETPACK_ESSENTIAL,
+	FEATURE_JETPACK_PRODUCT_BACKUP,
+	FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+	FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 	FEATURE_JETPACK_SCAN_DAILY,
 	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 	FEATURE_JETPACK_SEARCH,
@@ -120,7 +124,6 @@ import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
-	FEATURE_VIDEO_HOSTING_V2,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_WORDADS_INSTANT,
@@ -152,10 +155,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
-	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
@@ -771,7 +774,6 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		FEATURE_PRODUCT_SCAN_DAILY_V2,
 		FEATURE_ANTISPAM_V2,
-		FEATURE_VIDEO_HOSTING_V2,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -781,7 +783,6 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		FEATURE_JETPACK_ANTI_SPAM,
 		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
-		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		FEATURE_REPUBLICIZE,
 		FEATURE_ADVANCED_SEO,
 		FEATURE_SEO_PREVIEW_TOOLS,
@@ -848,14 +849,12 @@ const getPlanJetpackSecurityT1Details = () => ( {
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
 		),
-	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
 	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
-		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-		FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		FEATURE_JETPACK_PRODUCT_BACKUP,
+		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
+		FEATURE_ANTISPAM_V2,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T1_YEARLY,
@@ -874,29 +873,12 @@ const getPlanJetpackSecurityT1Details = () => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 	],
-	getInferiorFeatures: () => [
-		FEATURE_JETPACK_BACKUP_DAILY,
-		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-		FEATURE_BACKUP_ARCHIVE_30,
-	],
+	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
 const getPlanJetpackSecurityT2Details = () => ( {
-	group: GROUP_JETPACK,
+	...getPlanJetpackSecurityT1Details(),
 	type: TYPE_SECURITY_T2,
-	getTitle: () => translate( 'Security' ),
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
-	getDescription: () =>
-		translate(
-			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
-		),
-	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
-	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
-		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-		FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T2_YEARLY,
 		FEATURE_JETPACK_BACKUP_T2_MONTHLY,
@@ -931,17 +913,29 @@ const getPlanJetpackCompleteDetails = () => ( {
 	availableFor: ( plan ) =>
 		[ PLAN_JETPACK_FREE, ...JETPACK_SECURITY_PLANS, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
-		translate(
-			'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
-		),
+		isEnabled( 'jetpack/only-realtime-products' )
+			? translate(
+					'Get the full power of Jetpack with all Security, Performance, Growth, and Design tools.'
+			  )
+			: translate(
+					'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
+			  ),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
-	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
-		FEATURE_BACKUP_REALTIME_V2,
-		FEATURE_PRODUCT_SCAN_REALTIME_V2,
-		FEATURE_CRM_V2,
-		FEATURE_PRODUCT_SEARCH_V2,
-	],
+	getPlanCardFeatures: () =>
+		isEnabled( 'jetpack/only-realtime-products' )
+			? [
+					FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+					FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
+					FEATURE_PRODUCT_SEARCH_V2,
+					FEATURE_CRM_V2,
+			  ]
+			: [
+					FEATURE_PLAN_SECURITY_DAILY,
+					FEATURE_BACKUP_REALTIME_V2,
+					FEATURE_PRODUCT_SCAN_REALTIME_V2,
+					FEATURE_CRM_V2,
+					FEATURE_PRODUCT_SEARCH_V2,
+			  ],
 	getIncludedFeatures: () =>
 		isEnabled( 'jetpack/only-realtime-products' )
 			? [
@@ -1459,7 +1453,7 @@ export const PLANS_LIST = {
 		...getPlanJetpackSecurityT1Details(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
-		getPathSlug: () => 'security',
+		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
 	},
 
@@ -1467,7 +1461,7 @@ export const PLANS_LIST = {
 		...getPlanJetpackSecurityT1Details(),
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
-		getPathSlug: () => 'security-monthly',
+		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
 	},
 
@@ -1475,7 +1469,7 @@ export const PLANS_LIST = {
 		...getPlanJetpackSecurityT2Details(),
 		...getAnnualTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
-		getPathSlug: () => 'security-pro',
+		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
 	},
 
@@ -1483,7 +1477,7 @@ export const PLANS_LIST = {
 		...getPlanJetpackSecurityT2Details(),
 		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
-		getPathSlug: () => 'security-pro-monthly',
+		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
 	},
 

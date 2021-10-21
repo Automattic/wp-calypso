@@ -1,4 +1,4 @@
-const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
+const { promisify } = require( 'util' );
 const { ipcMain: ipc, Notification } = require( 'electron' );
 const { debounce } = require( 'lodash' );
 const Config = require( '../../lib/config' );

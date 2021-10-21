@@ -16,6 +16,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import {
 	isContactValidationResponseValid,
@@ -61,6 +62,7 @@ import { extractStoredCardMetaValue } from './purchase-modal/util';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
+const noop = () => {};
 
 /**
  * Upsell Types
@@ -99,6 +101,7 @@ export class UpsellNudge extends Component {
 	};
 
 	state = {
+		cartItem: null,
 		showPurchaseModal: false,
 		isContactInfoValid: false,
 	};
@@ -250,6 +253,7 @@ export class UpsellNudge extends Component {
 			planDiscountedRawPrice,
 			isLoggedIn,
 			upsellType,
+			upgradeItem,
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
@@ -301,7 +305,20 @@ export class UpsellNudge extends Component {
 				);
 
 			case PROFESSIONAL_EMAIL_UPSELL:
-				return <ProfessionalEmailUpsell />;
+				return (
+					<ProfessionalEmailUpsell
+						currencyCode={ currencyCode }
+						domainName={ upgradeItem }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
+						productCost={ productCost }
+						/* Use the callback form of setState() to ensure handleClickAccept()
+						 is called after the state update */
+						setCartItem={ ( newCartItem, callback = noop ) =>
+							this.setState( { cartItem: newCartItem }, callback )
+						}
+					/>
+				);
 		}
 	}
 
@@ -317,6 +334,7 @@ export class UpsellNudge extends Component {
 			hideNudge: shouldHideUpsellNudges,
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
+
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
@@ -336,11 +354,13 @@ export class UpsellNudge extends Component {
 	};
 
 	handleClickAccept = ( buttonAction ) => {
-		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
+		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
+
+		const productToAdd = PROFESSIONAL_EMAIL_UPSELL === upsellType ? this.state.cartItem : product;
 
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
 			this.setState( {
@@ -353,7 +373,21 @@ export class UpsellNudge extends Component {
 				countryCode,
 				postalCode,
 			} );
-			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
+			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] );
+			return;
+		}
+
+		// Professional Email needs to add the locally built cartItem to the cart,
+		// as we need to handle validation failures before redirecting to checkout.
+		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
+			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).then( () => {
+				const { errors } = this.props?.cart?.messages;
+				if ( errors && errors.length ) {
+					// Stay on the page to show the relevant error(s)
+					return;
+				}
+				page( '/checkout/' + siteSlug );
+			} );
 			return;
 		}
 
@@ -364,13 +398,18 @@ export class UpsellNudge extends Component {
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { product, cards, siteSlug, upsellType } = this.props;
+		const { cartItem } = this.state;
 
-		if ( ! product ) {
+		if ( ! product || ( upsellType === PROFESSIONAL_EMAIL_UPSELL && ! cartItem ) ) {
 			debug( 'not eligible for one-click upsell because no product exists' );
 			return false;
 		}
 
-		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, BUSINESS_PLAN_UPGRADE_UPSELL ];
+		const supportedUpsellTypes = [
+			BUSINESS_PLAN_UPGRADE_UPSELL,
+			CONCIERGE_QUICKSTART_SESSION,
+			PROFESSIONAL_EMAIL_UPSELL,
+		];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			debug(
 				`not eligible for one-click upsell because the upsellType (${ upsellType }) is not supported`
@@ -437,6 +476,8 @@ const resolveProductSlug = ( upsellType, productAlias ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+		case PROFESSIONAL_EMAIL_UPSELL:
+			return TITAN_MAIL_MONTHLY_SLUG;
 		case CONCIERGE_QUICKSTART_SESSION:
 		case CONCIERGE_SUPPORT_SESSION:
 		default:
@@ -500,4 +541,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withShoppingCart( withCartKey( localize( UpsellNudge ) ) ) );
+)( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) );

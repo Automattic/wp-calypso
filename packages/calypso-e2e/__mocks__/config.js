@@ -3,11 +3,6 @@
 const config = jest.createMockFromModule( 'config' );
 
 const values = {
-	artifacts: {
-		screenshot: 'screenshots',
-		video: 'screenshots/videos',
-		log: '.',
-	},
 	viewportName: 'desktop',
 	locale: 'en',
 	calypsoBaseURL: 'https://wordpress.com',

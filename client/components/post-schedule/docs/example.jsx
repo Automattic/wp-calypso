@@ -64,8 +64,7 @@ const PostScheduleExample = localize(
 			}
 
 			setDate = ( date ) => {
-				console.log( 'date: ', date.format() ); // eslint-disable-line no-console
-
+				console.log( 'date: ', date.format() );
 				this.setState( {
 					isFuture: +new Date() < +new Date( date ),
 					date: date,
@@ -73,7 +72,7 @@ const PostScheduleExample = localize(
 			};
 
 			setMonth = ( date ) => {
-				console.log( 'month: %s', date.format() ); // eslint-disable-line no-console
+				console.log( 'month: %s', date.format() );
 				this.setState( { month: date } );
 			};
 

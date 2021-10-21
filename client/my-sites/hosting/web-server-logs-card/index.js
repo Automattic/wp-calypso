@@ -130,9 +130,19 @@ const WebServerLogsCard = ( props ) => {
 		let isError = false;
 
 		do {
-			await wpcom
-				.undocumented()
-				.getAtomicSiteLogs( siteId, startTime, endTime, scrollId )
+			await wpcom.req
+				.post(
+					{
+						path: `/sites/${ siteId }/hosting/logs`,
+						apiNamespace: 'wpcom/v2',
+					},
+					{
+						start: startTime,
+						end: endTime,
+						page_size: 10000,
+						scroll_id: scrollId,
+					}
+				)
 				.then( ( response ) => {
 					const newLogData = get( response, 'data.logs', [] );
 					scrollId = get( response, 'data.scroll_id', null );

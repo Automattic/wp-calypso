@@ -23,6 +23,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
+import Pagination from 'calypso/components/pagination';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -31,13 +32,18 @@ import urlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
+import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { fetchPluginsCategoryNextPage } from 'calypso/state/plugins/wporg/actions';
+import {
+	fetchPluginsCategoryNextPage,
+	fetchPluginsList,
+} from 'calypso/state/plugins/wporg/actions';
 import {
 	getPluginsListByCategory,
 	getPluginsListBySearchTerm,
 	isFetchingPluginsList,
+	getPluginsListPagination,
 } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
@@ -63,6 +69,7 @@ import './style.scss';
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
+const SEARCH_RESULTS_LIST_LENGTH = 12;
 const VISIBLE_CATEGORIES = [ 'new', 'popular', 'featured' ];
 const VISIBLE_CATEGORIES_FOR_RECOMMENDATIONS = [ 'new', 'popular' ];
 
@@ -170,13 +177,20 @@ export class PluginsBrowser extends Component {
 					site={ this.props.siteSlug }
 					showPlaceholders={ isFetchingPluginsByCategory }
 					currentSites={ this.props.sites }
+					variant={ PluginsBrowserListVariant.InfiniteScroll }
 				/>
 			);
 		}
 	}
 
 	getSearchListView() {
-		const { search: searchTerm, isFetchingPluginsBySearchTerm, pluginsBySearchTerm } = this.props;
+		const {
+			search: searchTerm,
+			isFetchingPluginsBySearchTerm,
+			pluginsBySearchTerm,
+			pluginsPagination,
+			fetchPluginsList: fetchPlugins,
+		} = this.props;
 		if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 			const searchTitle =
 				this.props.searchTitle ||
@@ -187,14 +201,28 @@ export class PluginsBrowser extends Component {
 					},
 				} );
 			return (
-				<PluginsBrowserList
-					plugins={ pluginsBySearchTerm }
-					listName={ searchTerm }
-					title={ searchTitle }
-					site={ this.props.siteSlug }
-					showPlaceholders={ isFetchingPluginsBySearchTerm }
-					currentSites={ this.props.sites }
-				/>
+				<>
+					<PluginsBrowserList
+						plugins={ pluginsBySearchTerm }
+						listName={ searchTerm }
+						title={ searchTitle }
+						site={ this.props.siteSlug }
+						showPlaceholders={ isFetchingPluginsBySearchTerm }
+						size={ SEARCH_RESULTS_LIST_LENGTH }
+						currentSites={ this.props.sites }
+						variant={ PluginsBrowserListVariant.Paginated }
+					/>
+					{ pluginsPagination && (
+						<Pagination
+							page={ pluginsPagination.page }
+							perPage={ SEARCH_RESULTS_LIST_LENGTH }
+							total={ pluginsPagination.results }
+							pageClick={ ( page ) => {
+								fetchPlugins( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH );
+							} }
+						/>
+					) }
+				</>
 			);
 		}
 		return (
@@ -234,6 +262,7 @@ export class PluginsBrowser extends Component {
 				size={ SHORT_LIST_LENGTH }
 				showPlaceholders={ isFetching }
 				currentSites={ this.props.sites }
+				variant={ PluginsBrowserListVariant.Fixed }
 			/>
 		);
 	}
@@ -254,6 +283,7 @@ export class PluginsBrowser extends Component {
 				site={ this.props.siteSlug }
 				size={ SHORT_LIST_LENGTH }
 				title={ this.translateCategory( 'recommended' ) }
+				variant={ PluginsBrowserListVariant.Fixed }
 			/>
 		);
 	}
@@ -565,6 +595,7 @@ export default flow(
 				pluginsByCategoryPopular: getPluginsListByCategory( state, 'popular' ),
 				pluginsByCategoryFeatured: getPluginsListByCategory( state, 'featured' ),
 				pluginsBySearchTerm: getPluginsListBySearchTerm( state, search ),
+				pluginsPagination: getPluginsListPagination( state, search ),
 				isFetchingPluginsByCategory: isFetchingPluginsList( state, category ),
 				isFetchingPluginsByCategoryNew: isFetchingPluginsList( state, 'new' ),
 				isFetchingPluginsByCategoryPopular: isFetchingPluginsList( state, 'popular' ),
@@ -574,6 +605,7 @@ export default flow(
 			};
 		},
 		{
+			fetchPluginsList,
 			fetchPluginsCategoryNextPage,
 			recordTracksEvent,
 			recordGoogleEvent,

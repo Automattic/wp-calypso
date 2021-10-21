@@ -703,6 +703,8 @@
 	}
 	.jetpack-checkout-siteless-thank-you-completed__card {
 		padding: 0;
+		border-radius: 4px; /* stylelint-disable-line */
+		overflow: hidden;
 		box-shadow: 0 0 40px 0 #00000014;
 
 		width: 100%;
@@ -725,10 +727,15 @@
 				font-size: $font-headline-medium;
 			}
 		}
+
 		p {
 			@include break-mobile {
 				font-size: 18px; /* stylelint-disable-line */
 				line-height: 1.75rem;
+			}
+
+			&:last-of-type {
+				margin-bottom: 0;
 			}
 		}
 		.jetpack-checkout-siteless-thank-you-completed__button,
@@ -749,7 +756,7 @@
 		.jetpack-checkout-siteless-thank-you-completed__main-message {
 			font-size: 2.25rem;
 			font-weight: 700;
-			margin-bottom: 56px;
+			margin-bottom: 32px;
 			line-height: 1;
 			@include break-mobile {
 				font-size: 3rem;

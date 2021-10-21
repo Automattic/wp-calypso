@@ -44,7 +44,8 @@ export function receiveError( action, error ) {
 	} );
 
 	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( errorText, error ); // eslint-disable-line no-console
+		// eslint-disable-next-line no-console
+		console.error( errorText, error );
 	}
 	return errorNotice( errorText );
 }

@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-process-exit*/
-/* eslint-disable import/no-nodejs-modules*/
-
 const { execSync, spawn } = require( 'child_process' );
 const { openSync, mkdirSync } = require( 'fs' );
 const path = require( 'path' );
@@ -160,7 +157,7 @@ async function run() {
 			}
 		);
 	} catch ( err ) {
-		console.error( err ); // eslint-disable-line no-console
+		console.error( err );
 		process.exitCode = 1;
 	} finally {
 		await videoRecorder.stopVideo();

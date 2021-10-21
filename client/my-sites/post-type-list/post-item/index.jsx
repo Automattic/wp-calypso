@@ -137,7 +137,7 @@ class PostItem extends Component {
 								</a>
 							) }
 						</div>
-						<h1 //eslint-disable-line
+						<h1 // eslint-disable-line
 							className="post-item__title"
 							onClick={ this.clickHandler( 'title' ) }
 							onMouseOver={ preloadEditor }

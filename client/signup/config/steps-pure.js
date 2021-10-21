@@ -28,6 +28,8 @@ export function generateSteps( {
 	currentPage = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
+	setOptionsOnSite = noop,
+	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
@@ -175,6 +177,14 @@ export function generateSteps( {
 		'site-title': {
 			stepName: 'site-title',
 			providesDependencies: [ 'siteTitle' ],
+		},
+
+		'site-options': {
+			stepName: 'site-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
 		},
 
 		test: {
@@ -707,40 +717,32 @@ export function generateSteps( {
 			},
 		},
 
-		design: {
-			stepName: 'design-picker',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
-		},
-
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'intent', 'selectedDesign' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'intent' ],
+			optionalDependencies: [ 'intent' ],
+			apiRequestFunction: setIntentOnSite,
+			delayApiRequestUntilComplete: true,
 		},
 
 		'design-setup-site': {
 			stepName: 'design-setup-site',
-			props: {
-				largeThumbnails: true,
-				showOnlyThemes: true,
-			},
 			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 		},
+		'difm-design': {
+			stepName: 'difm-design',
+			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'selectedDIFMDesign', 'selectedVertical' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
-		},
-		'intent-screen': {
-			stepName: 'intent-screen',
-			dependencies: [ 'siteSlug' ],
 		},
 	};
 }

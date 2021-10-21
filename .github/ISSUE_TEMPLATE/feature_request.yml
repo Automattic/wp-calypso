@@ -30,4 +30,4 @@ body:
     id: how
     attributes:
       label: How
-      description: If applicable, add screenshots, mockup, aminations and/or videos to help illustrate how the feature could be done.
+      description: If applicable, add screenshots, mockup, animations and/or videos to help illustrate how the feature could be done.

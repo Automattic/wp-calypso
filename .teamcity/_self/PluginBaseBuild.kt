@@ -1,5 +1,6 @@
 package _self
 
+import Settings
 import jetbrains.buildServer.configs.kotlin.v2019_2.Template
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
@@ -150,7 +151,7 @@ open class PluginBaseBuild : Template({
 						**This PR modifies the release build for $pluginSlug**
 
 						To test your changes on WordPress.com, run \`install-plugin.sh $pluginSlug %teamcity.build.branch%\` on your sandbox.
-						
+
 						To deploy your changes after merging, see the documentation: %docs_link%
 						EOF
 					fi

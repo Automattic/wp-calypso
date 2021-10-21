@@ -36,5 +36,8 @@
 	"peerDependencies": {
 		"react": "^17.0.2"
 	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
+	},
 	"types": "types"
 }

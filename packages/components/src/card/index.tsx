@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 import { createElement, forwardRef, memo } from 'react';
 import Gridicon from '../gridicon';
+import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
 import './style.scss';
 

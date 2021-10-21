@@ -199,7 +199,6 @@ describe( 'helpers', () => {
 				},
 			];
 
-			const homepageId = 4;
 			const sortedPages = sortPagesHierarchically( testData, 4 );
 
 			expect( sortedPages ).to.deep.equal( [

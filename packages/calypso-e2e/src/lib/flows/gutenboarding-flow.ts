@@ -13,11 +13,14 @@ export type Features =
 	| 'Priority support';
 
 const selectors = {
+	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
+	wpLogo: 'div.gutenboarding__header-wp-logo',
 
 	// Start your website
 	siteTitle: '.acquire-intent-text-input__input',
 	siteTitleLabel: 'label.site-title__input-label',
+	siteIsCalled: 'label[data-e2e-string="My site is called"]',
 
 	// Domain
 	domainSearch: 'input[placeholder="Search for a domain"]',
@@ -79,6 +82,13 @@ export class GutenboardingFlow {
 		await this.page.click( selectors.button( text ) );
 	}
 
+	/**
+	 * Clicks on the WP Logo on top left.
+	 */
+	async clickWpLogo(): Promise< void > {
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.wpLogo ) ] );
+	}
+
 	/* Initial (landing) screen */
 
 	/**
@@ -97,7 +107,6 @@ export class GutenboardingFlow {
 	 */
 	async getSiteTitleLabel(): Promise< string > {
 		const elementHandle = await this.page.waitForSelector( selectors.siteTitleLabel );
-		await elementHandle.waitForElementState( 'stable' );
 		return await elementHandle.innerText();
 	}
 
@@ -259,10 +268,14 @@ export class GutenboardingFlow {
 	 */
 	async switchLanguage( target: string ): Promise< void > {
 		await this.clickLanguagePicker();
-		// Clicking on a language button triggers a navigation to a URL containing
-		// the ISO 639-1 code eg. /new/ja.
 		await Promise.all( [
-			this.page.waitForNavigation(),
+			// Wait for the request response to complete.
+			// This request runs last when selecting a new language and is responsible for obtaining
+			// the translated strings.
+			this.page.waitForResponse(
+				( response ) =>
+					response.status() === 200 && response.url().includes( `details?locale=${ target }` )
+			),
 			this.page.click( selectors.languageButton( target ) ),
 		] );
 	}

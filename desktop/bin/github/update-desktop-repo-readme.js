@@ -1,6 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
-/* eslint-disable no-console */
-
 /* Used to update wp-desktop repository README prior to application deployments */
 
 // External Dependencies

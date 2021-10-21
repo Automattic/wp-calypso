@@ -8,6 +8,7 @@ import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/c
 import {
 	stepSlug,
 	domainLockStatusType,
+	useMyDomainInputMode as inputMode,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	connectADomainOwnershipVerificationStepsDefinition,
@@ -34,17 +35,8 @@ function UseMyDomain( {
 	onTransfer,
 	selectedSite,
 	transferDomainUrl,
+	initialMode,
 } ) {
-	const inputMode = useMemo(
-		() => ( {
-			domainInput: 'domain-input',
-			transferOrConnect: 'transfer-or-connect',
-			ownershipVerification: 'ownership-verification',
-			transferDomain: 'transfer-domain',
-		} ),
-		[]
-	);
-
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
@@ -54,7 +46,10 @@ function UseMyDomain( {
 		transferLockedDomainStepsDefinition
 	);
 	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
-	const [ mode, setMode ] = useState( inputMode.domainInput );
+	const wasInitialModeSet = Boolean(
+		Object.values( inputMode ).includes( initialMode ) && initialQuery
+	);
+	const [ mode, setMode ] = useState( wasInitialModeSet ? initialMode : inputMode.domainInput );
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
 		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
 	);
@@ -83,6 +78,7 @@ function UseMyDomain( {
 				if ( prevTransferDomainStepsDefinition ) {
 					setTransferDomainFlowPageSlug( prevTransferDomainStepsDefinition );
 				} else {
+					if ( wasInitialModeSet ) return goBack();
 					setMode( inputMode.transferOrConnect );
 				}
 				return;
@@ -100,7 +96,7 @@ function UseMyDomain( {
 		return ! errorMessage;
 	}, [ domainName ] );
 
-	const setDomainTransferData = useCallback(
+	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
 			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
 			let lockStatus = UNKNOWN;
@@ -122,6 +118,35 @@ function UseMyDomain( {
 		[ setTransferDomainStepsDefinition, setDomainLockStatus ]
 	);
 
+	const setDomainTransferData = useCallback( async () => {
+		// TODO: remove this try-catch when the next statuses get added on the API
+		setIsFetchingAvailability( true );
+		let inboundTransferStatusResult = {};
+		try {
+			inboundTransferStatusResult = await wpcom
+				.undocumented()
+				.getInboundTransferStatus( domainName );
+		} catch {}
+
+		const inboundTransferStatusInfo = {
+			creationDate: inboundTransferStatusResult.creation_date,
+			email: inboundTransferStatusResult.admin_email,
+			inRedemption: inboundTransferStatusResult.in_redemption,
+			losingRegistrar: inboundTransferStatusResult.registrar,
+			losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
+			privacy: inboundTransferStatusResult.privacy,
+			termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
+			transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
+			transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
+			unlocked: inboundTransferStatusResult.unlocked,
+		};
+
+		setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
+		setTransferStepsAndLockStatus( inboundTransferStatusInfo.unlocked );
+
+		setIsFetchingAvailability( false );
+	}, [ domainName, setTransferStepsAndLockStatus ] );
+
 	const onNext = useCallback( async () => {
 		if ( ! validateDomainName() ) {
 			return;
@@ -135,26 +160,7 @@ function UseMyDomain( {
 				.domain( domainName )
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } );
 
-			// TODO: remove this try-catch when the next statuses get added on the API
-			let inboundTransferStatusResult = {};
-			try {
-				inboundTransferStatusResult = await wpcom
-					.undocumented()
-					.getInboundTransferStatus( domainName );
-			} catch {}
-
-			const inboundTransferStatusInfo = {
-				creationDate: inboundTransferStatusResult.creation_date,
-				email: inboundTransferStatusResult.admin_email,
-				inRedemption: inboundTransferStatusResult.in_redemption,
-				losingRegistrar: inboundTransferStatusResult.registrar,
-				losingRegistrarIanaId: inboundTransferStatusResult.registrar_iana_id,
-				privacy: inboundTransferStatusResult.privacy,
-				termMaximumInYears: inboundTransferStatusResult.term_maximum_in_years,
-				transferEligibleDate: inboundTransferStatusResult.transfer_eligible_date,
-				transferRestrictionStatus: inboundTransferStatusResult.transfer_restriction_status,
-				unlocked: inboundTransferStatusResult.unlocked,
-			};
+			await setDomainTransferData();
 
 			const availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
@@ -167,24 +173,13 @@ function UseMyDomain( {
 			} else {
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
-				setDomainInboundTransferStatusInfo( inboundTransferStatusInfo );
-				setDomainTransferData(
-					inboundTransferStatusInfo.isDomainUnlocked,
-					inboundTransferStatusInfo.transferEligibleDate
-				);
 			}
 		} catch ( error ) {
 			setDomainNameValidationError( error.message );
 		} finally {
 			setIsFetchingAvailability( false );
 		}
-	}, [
-		domainName,
-		inputMode.transferOrConnect,
-		selectedSite,
-		validateDomainName,
-		setDomainTransferData,
-	] );
+	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName ] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -202,8 +197,16 @@ function UseMyDomain( {
 		}
 
 		initialValidation.current = true;
-		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
-	}, [ initialQuery, onNext ] );
+		initialQuery &&
+			! initialMode &&
+			! getDomainNameValidationErrorMessage( initialQuery ) &&
+			onNext();
+	}, [ initialMode, initialQuery, onNext ] );
+
+	useEffect( () => {
+		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode )
+			setDomainTransferData();
+	}, [ mode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
 		setMode( inputMode.ownershipVerification );
@@ -264,6 +267,9 @@ function UseMyDomain( {
 		return (
 			<ConnectDomainSteps
 				baseClassName={ 'connect-domain-step' }
+				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
+				isFetchingAvailability={ isFetchingAvailability }
+				initialMode={ initialMode }
 				domain={ domainName }
 				initialPageSlug={ transferDomainFlowPageSlug }
 				onTransfer={ onTransfer }

@@ -104,6 +104,29 @@ export class Login extends Component {
 		this.setState( { usernameOrEmail } );
 	}
 
+	renderP2Logo() {
+		return (
+			<div className="wp-login__p2-logo">
+				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
+			</div>
+		);
+	}
+
+	renderP2PoweredBy() {
+		return (
+			<div className="wp-login__p2-powered-by">
+				<img
+					src="/calypso/images/p2/w-logo.png"
+					className="wp-login__p2-powered-by-logo"
+					alt="WP.com logo"
+				/>
+				<span className="wp-login__p2-powered-by-text">
+					{ this.props.translate( 'Powered by WordPress.com' ) }
+				</span>
+			</div>
+		);
+	}
+
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -115,10 +138,10 @@ export class Login extends Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isGutenboarding, translate } = this.props;
+		const { isJetpack, isGutenboarding, isP2Login, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isGutenboarding ) {
+		if ( isJetpack || isGutenboarding || isP2Login ) {
 			return null;
 		}
 
@@ -196,6 +219,7 @@ export class Login extends Component {
 			isLoggedIn,
 			isJetpack,
 			isGutenboarding,
+			isP2Login,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -226,6 +250,7 @@ export class Login extends Component {
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isGutenboarding={ isGutenboarding }
+						isP2Login={ isP2Login }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 					/>
@@ -242,6 +267,7 @@ export class Login extends Component {
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isGutenboarding={ isGutenboarding }
+				isP2Login={ isP2Login }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
@@ -260,6 +286,7 @@ export class Login extends Component {
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
+				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main className="wp-login__main">
 					{ this.renderI18nSuggestions() }
 
@@ -273,6 +300,7 @@ export class Login extends Component {
 				</Main>
 
 				{ this.renderFooter() }
+				{ this.props.isP2Login && this.renderP2PoweredBy() }
 			</div>
 		);
 	}

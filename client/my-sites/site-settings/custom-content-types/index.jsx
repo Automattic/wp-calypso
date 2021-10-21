@@ -10,7 +10,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
@@ -141,12 +140,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: (
-						<InlineSupportLink
-							supportLink={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) }
-							supportPostId={ 97757 }
-						/>
-					),
+					link: <InlineSupportLink supportContext="testimonials" />,
 				},
 			}
 		);
@@ -162,12 +156,7 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: (
-						<InlineSupportLink
-							supportLink={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) }
-							supportPostId={ 84808 }
-						/>
-					),
+					link: <InlineSupportLink supportContext="portfolios" />,
 				},
 			}
 		);

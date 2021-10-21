@@ -1,18 +1,26 @@
-import { getPlan, applyTestFiltersToPlansList } from '@automattic/calypso-products';
+import {
+	applyTestFiltersToPlansList,
+	applyTestFiltersToProductsList,
+	getPlan,
+	getProductFromSlug,
+	objectIsProduct,
+} from '@automattic/calypso-products';
 
 /**
  * Computes a plan object and a related product object based on plan slug/constant
  *
  * @param {Array[]} products A list of products
- * @param {string} planSlug Plan constant/slug
+ * @param {string} planOrProductSlug Plan constant/slug
  * @returns {object} Object with a related plan and product objects
  */
-export const planSlugToPlanProduct = ( products, planSlug ) => {
-	const plan = getPlan( planSlug );
-	const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
+export const planSlugToPlanProduct = ( products, planOrProductSlug ) => {
+	const plan = getPlan( planOrProductSlug ) ?? getProductFromSlug( planOrProductSlug );
+	const constantObj = objectIsProduct( plan )
+		? applyTestFiltersToProductsList( plan )
+		: applyTestFiltersToPlansList( plan, undefined );
 	return {
-		planSlug,
-		plan: planConstantObj,
-		product: products[ planSlug ],
+		planSlug: planOrProductSlug,
+		plan: plan === planOrProductSlug ? null : constantObj,
+		product: products[ planOrProductSlug ],
 	};
 };

@@ -49,6 +49,10 @@
 	align-items: center;
 	font-size: 0.875rem;
 
+	&:empty {
+		display: none;
+	}
+
 	@mixin unstick {
 		position: absolute;
 		top: 2px;
@@ -75,6 +79,10 @@
 		font-size: 0.875rem;
 		font-weight: 500; /* stylelint-disable-line */
 
+		.button {
+			border-radius: 4px; /* stylelint-disable-line scales/radii */
+		}
+
 		&.has-underline {
 			text-decoration: underline;
 		}
@@ -93,15 +101,11 @@
 }
 
 .step-wrapper__header-image {
-	margin-top: 24px;
+	margin-top: 40px;
 	display: none;
 
 	@include break-small {
 		display: block;
-	}
-	
-	img {
-		width: 50%;
 	}
 }
 
@@ -162,7 +166,7 @@
 			margin-bottom: 0;
 		}
 
-		&.has-header-buttons {
+		&.has-navigation {
 			padding-bottom: 60px;
 		}
 	}

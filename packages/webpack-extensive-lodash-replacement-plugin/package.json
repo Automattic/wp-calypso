@@ -27,5 +27,8 @@
 	},
 	"dependencies": {
 		"semver": "^7.0.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

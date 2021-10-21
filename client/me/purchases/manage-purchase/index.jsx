@@ -34,7 +34,6 @@ import { connect } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
-import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -833,9 +832,6 @@ class ManagePurchase extends Component {
 					<QueryUserPurchases userId={ this.props.userId } />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				{ purchase?.siteId && config.isEnabled( 'atomic/automated-revert' ) && (
-					<QueryBlogStickers blogId={ purchase.siteId } />
-				) }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>

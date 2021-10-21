@@ -22,5 +22,9 @@
 		"debug": "^4.0.0",
 		"globby": "^10.0.0",
 		"xgettext-js": "^3.0.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
+		"@automattic/calypso-typescript-config": "^1.0.0"
 	}
 }

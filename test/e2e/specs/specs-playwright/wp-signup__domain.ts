@@ -25,6 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
 
 	let page: Page;
+	let selectedDomain: string;
 	let domainSearchComponent: DomainSearchComponent;
 	let cartCheckoutPage: CartCheckoutPage;
 
@@ -47,7 +48,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Select a .live domain', async function () {
-			await domainSearchComponent.selectDomain( '.live' );
+			selectedDomain = await domainSearchComponent.selectDomain( '.live' );
 		} );
 
 		it( 'Select to buy just the domain', async function () {
@@ -75,7 +76,9 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 			await cartCheckoutPage.enterPaymentDetails( DataHelper.getTestPaymentDetails() );
 		} );
 
-		it( 'Prices are shown in Japanese Yen', async function () {
+		// Skipping this test because of inconsistency in cookie working in this flow
+		// See GH Issue #56961 (https://github.com/Automattic/wp-calypso/issues/56961)
+		it.skip( 'Prices are shown in Japanese Yen', async function () {
 			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
 				rawString: true,
 			} ) ) as string;
@@ -83,21 +86,21 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 		} );
 
 		it( 'Check out', async function () {
-			// This step is affected by an issue with page redirect of the post-checkout page.
-			// See: https://github.com/Automattic/wp-calypso/issues/56548
+			// Purchasing a domain on a domain-only account results in multiple redirects
+			// to URLs such as `**/checkout/thank-you/no-site/**` and
+			// `**/checkout/thank-you/<selectedDomain>`, and this occurs multiple times.
+			// The following `waitForNavigation` is meant to catch those and ensure the page
+			// has loaded fully prior to next steps.
 			await Promise.all( [
 				page.waitForNavigation( {
-					url: '**/checkout/thank-you/no-site/**',
-					waitUntil: 'networkidle',
+					url: `**/checkout/thank-you/${ selectedDomain }`,
+					timeout: 120 * 1000,
 				} ),
 				cartCheckoutPage.purchase(),
 			] );
-			// The redirect to the `thank-you` page occurs twice, so capture and wait for
-			// the second redirect to settle.
-			// See issue linked above for more details.
+
 			await page.waitForNavigation( {
-				url: '**/checkout/thank-you/no-site/**',
-				waitUntil: 'networkidle',
+				url: `**/checkout/thank-you/${ selectedDomain }`,
 			} );
 		} );
 	} );

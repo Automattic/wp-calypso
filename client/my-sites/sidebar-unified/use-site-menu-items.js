@@ -50,7 +50,7 @@ const useSiteMenuItems = () => {
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
 
-	const shouldShowBetaTesting = ! isJetpack && ! isP2;
+	const shouldShowInbox = ! isP2;
 
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
@@ -67,18 +67,18 @@ const useSiteMenuItems = () => {
 	}
 
 	/**
-	 * Overides for the static fallback data which will be displayed if/when there are
+	 * Overrides for the static fallback data which will be displayed if/when there are
 	 * no menu items in the API response or the API response has yet to be cached in
 	 * browser storage APIs.
 	 */
-	const fallbackDataOverides = {
+	const fallbackDataOverrides = {
 		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
-		shouldShowBetaTesting,
+		shouldShowInbox,
 	};
 
-	return menuItems ?? buildFallbackResponse( fallbackDataOverides );
+	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
 };
 
 export default useSiteMenuItems;

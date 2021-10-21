@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	MarketingPage,
 	setupHooks,
@@ -19,8 +19,8 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'wooCommerceUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'wooCommerceUser' } );
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {

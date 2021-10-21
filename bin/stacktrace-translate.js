@@ -13,7 +13,6 @@ const fs = require( 'fs' );
 const readline = require( 'readline' );
 const glob = require( 'glob' );
 const _ = require( 'lodash' );
-const sourceMap = require( 'source-map' );
 const SourceMap = require( 'source-map' );
 const StackFrame = require( 'stackframe' );
 const StackTraceGPS = require( 'stacktrace-gps' );
@@ -23,7 +22,6 @@ const SOURCE_PATTERN = './public/*.js';
 const SOURCEMAP_PATTERN = './public/*.js.map';
 
 let verbose = false;
-const loadedMaps = {};
 
 function loadSources() {
 	const filePrefixChars = SOURCE_PATTERN.indexOf( '*' );
@@ -51,20 +49,6 @@ function loadSourceMaps() {
 		const text = fs.readFileSync( fileName );
 		const data = JSON.parse( text );
 		files[ url ] = new SourceMap.SourceMapConsumer( data );
-	} );
-
-	return files;
-}
-
-function loadFiles( filePattern, urlPrefix ) {
-	const filePrefixChars = filePattern.indexOf( '*' );
-	const fileNames = glob.sync( filePattern );
-	const files = {};
-
-	fileNames.forEach( ( fileName ) => {
-		const url = urlPrefix + fileName.substring( filePrefixChars );
-		const data = fs.readFileSync( fileName );
-		files[ url ] = data;
 	} );
 
 	return files;
@@ -101,16 +85,6 @@ function printStackFrame( minified, mapped, index ) {
 	console.log( '            function: \t' + mapped.functionName );
 	console.log( '            location: \t' + mapped.lineNumber + ':' + mapped.columnNumber );
 	console.log( '' );
-}
-
-function translatePosition( rawSourceMap, line, column ) {
-	const consumerCreate = new sourceMap.SourceMapConsumer( rawSourceMap );
-
-	return consumerCreate.then( ( consumer ) => {
-		const info = consumer.originalPositionFor( { line, column } );
-		consumer.destroy();
-		return info;
-	} );
 }
 
 function loadBuild() {
@@ -167,7 +141,7 @@ function readFromStdin() {
 	} );
 }
 
-function showUsage( bin, script ) {
+function showUsage() {
 	console.log( 'Usage: stacktrace-translate.js [options] <json file>' );
 	console.log( '' );
 	console.log( '<json file>: Stack trace file (if not provided stdin will be used.)' );

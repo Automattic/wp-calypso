@@ -1,10 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import intentImageUrl from 'calypso/assets/images/intent-screen/intent.svg';
+import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import IntentScreen from './intent-screen';
 import type { IntentFlag } from './types';
 
@@ -15,35 +16,30 @@ interface Props {
 	stepName: string;
 }
 
+const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
+	write: [ 'design-setup-site' ],
+	build: [ 'site-options' ],
+};
+
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName } = props;
-
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
+	const branchSteps = useBranchSteps( stepName );
 
 	const submitIntent = ( intent: IntentFlag ) => {
+		branchSteps( EXCLUDE_STEPS[ intent ] );
 		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
-
 		dispatch( submitSignupStep( { stepName }, { intent } ) );
-
-		if ( intent === 'write' ) {
-			dispatch(
-				submitSignupStep(
-					{ stepName: 'design-setup-site' },
-					{
-						selectedDesign: {
-							theme: 'independent-publisher-2',
-							slug: 'independent-publisher-2',
-						},
-					}
-				)
-			);
-		}
-
 		goToNextStep();
 	};
+
+	// Only do following things when mounted
+	React.useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<StepWrapper

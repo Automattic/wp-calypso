@@ -1,15 +1,6 @@
-/**
- * @file Helps manage browser instance.
- * @author Edwin Takahashi
- */
-
 import config from 'config';
 import { BrowserType } from 'playwright';
-import {
-	getDefaultLoggerConfiguration,
-	getHeadless,
-	getLaunchConfiguration,
-} from './browser-helper';
+import { getHeadless, getLaunchConfiguration } from './browser-helper';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -52,27 +43,16 @@ export async function newBrowserContext(
  *
  * If the optional parameter `context` is provivided, this method will return a
  * new instance of a Page belonging to the supplied BrowserContext.
- * Alternatively, if optional parameter
  * Otherwise, a new instance of a Page is returned from the most recent BrowserContext.
  *
  * @param param0 Keyed object parameter.
  * @param {BrowserContext} [param0.context] BrowserContext on which the new Page should be created.
- * @param {boolean} [param0.newContext] If a new BrowserContext is desired.
  * @returns {Promise<Page>} Instance of a new Page object.
  */
-export async function newPage( {
-	context,
-	newContext = false,
-}: { context?: BrowserContext; newContext?: boolean } = {} ): Promise< Page > {
+export async function newPage( { context }: { context?: BrowserContext } = {} ): Promise< Page > {
 	// If caller supplies the target BrowserContext.
 	if ( context ) {
 		return await context.newPage();
-	}
-
-	// If caller wants the Page object in a new BrowserContext.
-	if ( newContext ) {
-		const newContext = await newBrowserContext( await getDefaultLoggerConfiguration() );
-		return await newContext.newPage();
 	}
 
 	// Default case - launch a new Page object in the most recent BrowserContext.

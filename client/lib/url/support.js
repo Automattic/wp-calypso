@@ -39,6 +39,7 @@ export const INCOMING_DOMAIN_TRANSFER = `${ root }/incoming-domain-transfer/`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#unlock`;
 export const INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE = `${ root }/incoming-domain-transfer/prepare-domain-for-transfer/#auth-code`;
 export const INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID = `${ root }/incoming-domain-transfer/#auth-code-invalid`;
+export const INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS = `${ root }/incoming-domain-transfer/#which-tl-ds-extensions-can-i-transfer-to-word-press-com`;
 export const EDIT_PAYMENT_DETAILS = `${ root }/payment/#edit-payment-details`;
 export const EMAIL_FORWARDING = `${ root }/email-forwarding`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;

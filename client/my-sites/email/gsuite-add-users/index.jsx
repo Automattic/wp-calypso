@@ -22,7 +22,11 @@ import {
 	getGSuiteSupportedDomains,
 	getProductSlug,
 } from 'calypso/lib/gsuite';
-import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_PROVIDER_NAME,
+	GOOGLE_WORKSPACE_PRODUCT_TYPE,
+	GSUITE_PRODUCT_TYPE,
+} from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -110,11 +114,13 @@ class GSuiteAddUsers extends Component {
 	};
 
 	recordClickEvent = ( eventName ) => {
-		const { recordTracksEvent, selectedDomainName } = this.props;
+		const { recordTracksEvent, selectedDomainName, source } = this.props;
 		const { users } = this.state;
 
 		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
+			provider: GOOGLE_PROVIDER_NAME,
+			source,
 			user_count: users.length,
 		} );
 	};
@@ -277,6 +283,7 @@ GSuiteAddUsers.propTypes = {
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
 	} ).isRequired,
+	source: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
 
@@ -297,4 +304,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( withCartKey( localize( GSuiteAddUsers ) ) ) );
+)( withCartKey( withShoppingCart( localize( GSuiteAddUsers ) ) ) );

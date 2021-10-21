@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
+import interpolateComponents from '@automattic/interpolate-components';
 import sprintf from '@tannin/sprintf';
 import debugFactory from 'debug';
 import sha1 from 'hash.js/lib/hash/sha/1';
-import interpolateComponents from 'interpolate-components';
 import LRU from 'lru';
 import Tannin from 'tannin';
 import numberFormat from './number-format';

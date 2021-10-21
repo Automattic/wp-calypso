@@ -13,12 +13,11 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	JETPACK_CRM_FREE_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import {
-	getForCurrentCROIteration,
 	doForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
@@ -50,18 +49,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
-	}
-
-	// Include Jetpack CRM
-	const includeCrmFree =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: false,
-		} ) ?? true;
-	if (
-		includeCrmFree &&
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
-	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
 	}
 
 	const backupProductsToShow: string[] = [];
@@ -129,6 +116,13 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_ANTI_SPAM_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
+	}
+
+	// If Jetpack VideoPress is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_VIDEOPRESS_PRODUCTS.includes( ownedProduct ) )
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
 	}
 
 	return {

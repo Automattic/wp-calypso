@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import debugModule from 'debug';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
@@ -38,8 +37,6 @@ import {
 	shouldForceLogin,
 	isReskinnedFlow,
 } from './utils';
-
-const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -295,19 +292,6 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		let actualFlowName = flowName;
-		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
-			const experimentAssignment = await loadExperimentAssignment(
-				'design_picker_after_onboarding'
-			);
-			debug(
-				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
-			);
-			if ( 'treatment' === experimentAssignment?.variationName ) {
-				actualFlowName = 'with-design-picker';
-			}
-		}
-
 		// ExPlat: Temporarily testing out the effects of prefetching experiments. Delete after 2021 week 31.
 		loadExperimentAssignment( 'explat_test_aa_weekly_calypso_2021_week_31' );
 
@@ -316,13 +300,13 @@ export default {
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: actualFlowName,
+			flowName,
 			queryObject: query,
 			refParameter: query && query.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( actualFlowName, userLoggedIn ),
+			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
 		} );
 
 		next();

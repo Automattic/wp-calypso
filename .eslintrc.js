@@ -1,4 +1,5 @@
 const path = require( 'path' );
+const { nodeConfig } = require( '@automattic/calypso-eslint-overrides' );
 const { merge } = require( 'lodash' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
@@ -57,13 +58,8 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'bin/**/*' ],
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'no-console': 'off',
-				'no-process-exit': 'off',
-				'valid-jsdoc': 'off',
-			},
+			files: [ 'bin/**/*', 'test/**/*' ],
+			...nodeConfig,
 		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
@@ -241,7 +237,10 @@ module.exports = {
 		],
 
 		// Only use known tag names plus `jest-environment`.
-		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
+		'jsdoc/check-tag-names': [
+			'error',
+			{ definedTags: [ 'jest-environment', 'jsxImportSource' ] },
+		],
 
 		// Do not require param/return description, see https://github.com/Automattic/wp-calypso/issues/56330
 		'jsdoc/require-param-description': 'off',

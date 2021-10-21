@@ -6,21 +6,21 @@ body:
     attributes:
       value: |
         <br>
-         
-        ### Thanks for contributing! 
-        
+
+        ### Thanks for contributing!
+
         Please write a clear title, then fill in the fields below and submit.
         There are only ***3 required fields***, but please provide as much additional information and context as you are able to.
-        
-        Avoid using image hosting services such as Cloudup, Droplr, Imgur, etc., to link to media.
-        Instead, attach screenshot(s) or recording(s) directly in any of the text  areas below: click, then drag and drop.
-                
+
+        Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
+        Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
+
         If you have any questions, please ask in: `slack-bug-herders`.
-        
+
         <br>
-        
+
         ---
-        
+
         <br>
   - type: textarea
     id: summary
@@ -63,7 +63,7 @@ body:
       label: What actually happened
       placeholder: |
         e.g. Clicking the button does nothing visibly.
-        
+
     validations:
       required: true
   - type: markdown
@@ -80,19 +80,19 @@ body:
     attributes:
       value: |
         <br>
-        
+
         ---
-        
+
         <br>
-         
+
         ### Additional context
-        
-        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue. 
-        
+
+        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue.
+
         <br>
-        
+
         ---
-        
+
         <br>
   - type: dropdown
     id: os
@@ -159,9 +159,9 @@ body:
     attributes:
       value: |
         <br>
-        
+
         ---
-        
+
         <br>
   - type: dropdown
     id: reproducibility
@@ -196,7 +196,7 @@ body:
       description: Is a workaround possible? What is the impact of this issue to users?
       options:
         - No and the platform is unusable
-        - No but the platform is still usable 
+        - No but the platform is still usable
         - Yes, difficult to implement
         - Yes, easy to implement
         - There is no user impact

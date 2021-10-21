@@ -33,6 +33,7 @@ export default function useCreateAssignablePaymentMethods(
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),
+		allowUseForAllSubscriptions: true,
 	} );
 
 	const payPalMethod = useCreatePayPal( {

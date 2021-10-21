@@ -44,12 +44,9 @@ exports[`DateRange should render 1`] = `
           <Gridicon
             aria-hidden="true"
             icon="info"
-            key="interpolation-child-1/.0"
           />
            Please select the 
-          <em
-            key="interpolation-child-3/.0"
-          >
+          <em>
             first
           </em>
            day.

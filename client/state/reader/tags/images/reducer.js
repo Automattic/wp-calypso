@@ -14,17 +14,16 @@ import { combineReducers } from 'calypso/state/utils';
  * @returns {Array}        Updated state
  */
 export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_TAG_IMAGES_RECEIVE:
-			let images = action.images;
-			if ( state[ action.tag ] ) {
-				images = state[ action.tag ].concat( action.images );
-			}
+	if ( action.type === READER_TAG_IMAGES_RECEIVE ) {
+		let images = action.images;
+		if ( state[ action.tag ] ) {
+			images = state[ action.tag ].concat( action.images );
+		}
 
-			return {
-				...state,
-				[ action.tag ]: images,
-			};
+		return {
+			...state,
+			[ action.tag ]: images,
+		};
 	}
 
 	return state;

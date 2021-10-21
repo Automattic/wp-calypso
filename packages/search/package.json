@@ -44,11 +44,12 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@babel/core": "^7.14.8",
 		"@babel/preset-env": "^7.14.8",
-		"@storybook/addon-actions": "^6.3.8",
-		"@storybook/builder-webpack5": "^6.3.8",
-		"@storybook/manager-webpack5": "^6.3.8",
+		"@storybook/addon-actions": "^6.3.11",
+		"@storybook/builder-webpack5": "^6.3.11",
+		"@storybook/manager-webpack5": "^6.3.11",
 		"@storybook/preset-scss": "^1.0.3",
 		"@testing-library/dom": "^8.7.0",
 		"@testing-library/react": "^12.1.1",

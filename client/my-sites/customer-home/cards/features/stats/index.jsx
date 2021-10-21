@@ -10,7 +10,6 @@ import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Spinner from 'calypso/components/spinner';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -87,8 +86,7 @@ export const StatsV2 = ( {
 						<div>
 							{ translate( 'Launch your site to see a snapshot of traffic and insights.' ) }
 							<InlineSupportLink
-								supportPostId={ 4454 }
-								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
+								supportContext="stats"
 								showIcon={ false }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"
@@ -114,8 +112,7 @@ export const StatsV2 = ( {
 								'Stats can help you optimize for the right keywords, and feature content your readers are interested in.'
 							) }
 							<InlineSupportLink
-								supportPostId={ 4454 }
-								supportLink={ localizeUrl( 'https://wordpress.com/support/stats/' ) }
+								supportContext="stats"
 								showIcon={ false }
 								tracksEvent="calypso_customer_home_stats_support_page_view"
 								statsGroup="calypso_customer_home"

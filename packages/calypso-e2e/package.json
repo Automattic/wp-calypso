@@ -21,6 +21,8 @@
 		"playwright": "1.14.0"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "^1.0.0",
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@types/config": "^0.0.39",
 		"@types/jest": "^27.0.2",
 		"@types/node": "^15.0.2",

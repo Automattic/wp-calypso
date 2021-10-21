@@ -16,6 +16,7 @@ import {
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
+import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
@@ -96,6 +97,8 @@ export default function useCreatePaymentCompleteCallback( {
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
+	const domains = useSiteDomains( siteId );
+
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
@@ -126,7 +129,9 @@ export default function useCreatePaymentCompleteCallback( {
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
+				domains,
 			};
+
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 			debug( 'getThankYouUrl returned', url );
@@ -141,7 +146,8 @@ export default function useCreatePaymentCompleteCallback( {
 					reduxDispatch,
 				} );
 			} catch ( err ) {
-				console.error( err ); // eslint-disable-line no-console
+				// eslint-disable-next-line no-console
+				console.error( err );
 				recordCompositeCheckoutErrorDuringAnalytics( {
 					reduxDispatch,
 					errorObject: err,
@@ -256,6 +262,7 @@ export default function useCreatePaymentCompleteCallback( {
 			isJetpackCheckout,
 			checkoutFlow,
 			adminPageRedirect,
+			domains,
 		]
 	);
 }

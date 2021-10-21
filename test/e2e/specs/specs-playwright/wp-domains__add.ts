@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	BrowserManager,
-	LoginFlow,
+	LoginPage,
 	DomainsPage,
 	SidebarComponent,
 	DomainSearchComponent,
@@ -31,8 +31,8 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 	let domainsPage: DomainsPage;
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'calypsoPreReleaseUser' );
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'calypsoPreReleaseUser' } );
 	} );
 
 	it( 'Set store cookie', async function () {
@@ -76,7 +76,15 @@ describe( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), functio
 	} );
 
 	it( 'Make purchase', async function () {
-		await cartCheckoutPage.purchase();
+		await Promise.all( [
+			page.waitForNavigation( {
+				url: '**/checkout/thank-you/**',
+				waitUntil: 'networkidle',
+				// Sometimes the testing domain third party system is really slow. It's better to wait a while than to throw a false positive.
+				timeout: 90 * 1000,
+			} ),
+			cartCheckoutPage.purchase(),
+		] );
 	} );
 
 	it( 'Manage domain', async function () {

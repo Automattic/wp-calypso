@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce, get, noop } from 'lodash';
+import { debounce, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -17,6 +17,8 @@ import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
 import { updateMedia } from 'calypso/state/media/thunks';
 import EditorMediaModalFieldset from '../fieldset';
+
+const noop = () => {};
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -229,7 +231,7 @@ class EditorMediaModalDetailFields extends Component {
 					/>
 					<span>
 						{ this.props.translate(
-							'Display share menu and allow viewers to embed or download this video'
+							'Display share menu and allow viewers to copy a link or embed this video'
 						) }
 					</span>
 				</FormLabel>

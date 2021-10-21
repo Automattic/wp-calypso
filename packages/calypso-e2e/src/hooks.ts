@@ -1,14 +1,15 @@
-import { mkdir, rename } from 'fs/promises';
+import { mkdir, unlink } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
-import { chromium, Page, Video } from 'playwright';
-import { getDefaultLoggerConfiguration, getArtifactDir } from './browser-helper';
+import { BrowserContext, chromium, Page, Video } from 'playwright';
+import { getDefaultLoggerConfiguration } from './browser-helper';
 import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
 import { getDateString } from './data-helper';
 
 // These are defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
 declare const __CURRENT_TEST_FAILED__: boolean;
 declare const __CURRENT_TEST_NAME__: string;
+declare const artifactPath: string;
 
 /**
  * Generates a filename using the test name and a date string.
@@ -35,17 +36,21 @@ function getTestNameWithTime( testName: string ): string {
  */
 export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): void => {
 	let page: Page;
-	let tempDir: string;
+	let context: BrowserContext;
 
 	beforeAll( async () => {
-		tempDir = await getArtifactDir();
-		// Get default logging configuration, which will create a directory to store
-		// artifacts.
-		const loggingConfiguration = await getDefaultLoggerConfiguration();
+		// Obtain the default logger configuration.
+		const loggingConfiguration = await getDefaultLoggerConfiguration( artifactPath );
+
 		// Start the browser
 		await startBrowser( chromium );
+
 		// Launch context with logging.
-		const context = await newBrowserContext( loggingConfiguration );
+		context = await newBrowserContext( loggingConfiguration );
+
+		// Begin tracing the context.
+		await context.tracing.start( { screenshots: true, snapshots: true } );
+
 		// Launch a new page within the context.
 		page = await context.newPage();
 		callback( { page } );
@@ -55,40 +60,47 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		if ( ! browser ) {
 			throw new Error( 'No browser instance found.' );
 		}
+
 		const testName = __CURRENT_TEST_NAME__;
 
 		// Take screenshot for failed tests
 		if ( __CURRENT_TEST_FAILED__ ) {
 			const fileName = path.join(
-				tempDir,
+				artifactPath,
 				'screenshots',
 				`${ getTestNameWithTime( testName ) }.png`
 			);
 			await mkdir( path.dirname( fileName ), { recursive: true } );
 			await page.screenshot( { path: fileName } );
 		}
-
-		// Close the browser. This needs to be called before trying to access
-		// the video recording
+		// Close the page. This needs to be called before trying to access
+		// the video recording.
 		await page.close();
 
-		// Save video
+		// Stop tracing and remove the trace output if the test did not fail.
+		const traceOutputPath = path.join( artifactPath, `${ getTestNameWithTime( testName ) }.zip` );
+		await context.tracing.stop( { path: traceOutputPath } );
+		if ( ! __CURRENT_TEST_FAILED__ ) {
+			await unlink( traceOutputPath );
+		}
+
 		if ( __CURRENT_TEST_FAILED__ ) {
-			const original = await ( page.video() as Video ).path();
 			const destination = path.join(
-				tempDir,
+				artifactPath,
 				'screenshots',
 				`${ getTestNameWithTime( testName ) }.webm`
 			);
 			try {
-				await rename( original, destination );
+				// Save the failing test case with a specific name.
+				await page.video()?.saveAs( destination );
 			} catch ( err ) {
-				console.error( 'Failed to rename video of failing test case.' );
+				console.error( `Failed to save video of failing test case.\nSee stack trace:` );
+				console.trace( err );
 			}
-		} else {
-			await ( page.video() as Video ).delete();
 		}
 
+		// In all cases, clean up the directory after itself.
+		await ( page.video() as Video ).delete();
 		await closeBrowser();
 	} );
 };

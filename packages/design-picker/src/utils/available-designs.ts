@@ -3,10 +3,14 @@ import { addQueryArgs } from '@wordpress/url';
 import { availableDesignsConfig } from './available-designs-config';
 import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
-import type { Design } from '../types';
+import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
 
-export const getDesignUrl = ( design: Design, locale: string ): string => {
+export const getDesignUrl = (
+	design: Design,
+	locale: string,
+	options: DesignUrlOptions = {}
+): string => {
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
@@ -20,6 +24,7 @@ export const getDesignUrl = ( design: Design, locale: string ): string => {
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
+			...options,
 		}
 	);
 };
@@ -40,9 +45,15 @@ interface AvailableDesignsOptions {
 	useFseDesigns?: boolean;
 	randomize?: boolean;
 }
+
+/**
+ * To prevent the accumulation of tech debt, make duplicate entries for all Universal
+ * themes, one with `is_fse: true`, the other not. This tech debt can be eliminated
+ * by using the REST API for themes rather than a hardcoded list.
+ */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = isEnabled( 'gutenboarding/site-editor' ),
+	useFseDesigns = false,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -57,8 +68,7 @@ export function getAvailableDesigns( {
 		};
 	}
 
-	// If we are in the FSE flow, only show FSE designs. In normal flows, remove
-	// the FSE designs.
+	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
 		featured: designs.featured.filter( ( design ) =>

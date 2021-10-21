@@ -8,6 +8,7 @@ const selectors = {
 	popOverCartPlaceholder: '.cart-item__loading-placeholder',
 
 	searchForDomainButton: `a:text-matches("search", "i")`,
+	useADomainIOwnButton: `text=I have a domain`,
 };
 
 /**
@@ -86,5 +87,12 @@ export class DomainsPage {
 				state: 'hidden',
 			} );
 		}
+	}
+
+	/**
+	 * Click initial button to use a domain already owned by the user (make connection or transfer)
+	 */
+	async useADomainIOwn(): Promise< void > {
+		await this.page.click( selectors.useADomainIOwnButton );
 	}
 }

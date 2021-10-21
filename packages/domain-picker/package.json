@@ -47,6 +47,7 @@
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
+		"@automattic/calypso-typescript-config": "^1.0.0",
 		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.1.1",
 		"react": "^17.0.2",

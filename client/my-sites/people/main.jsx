@@ -61,7 +61,9 @@ class People extends Component {
 							'Invite contributors to your site and manage their access settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
-									learnMoreLink: <InlineSupportLink supportContext="team" showIcon={ false } />,
+									learnMoreLink: (
+										<InlineSupportLink key="learnMore" supportContext="team" showIcon={ false } />
+									),
 								},
 							}
 					  );

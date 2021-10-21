@@ -337,11 +337,47 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
 			} )
 		)
 		.then( () => {
 			callback();
 		} )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
+export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
+	if ( ! siteTitle && ! tagline ) {
+		defer( callback );
+		return;
+	}
+
+	const settings = {
+		apiVersion: '1.4',
+		blogname: siteTitle,
+		blogdescription: tagline,
+	};
+
+	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
+		callback( isEmpty( errors ) ? undefined : [ errors ] );
+	} );
+}
+
+export function setIntentOnSite( callback, { siteSlug, intent } ) {
+	if ( ! intent ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/site-intent`,
+			apiNamespace: 'wpcom/v2',
+			body: { site_intent: intent },
+		} )
+		.then( () => callback() )
 		.catch( ( errors ) => {
 			callback( [ errors ] );
 		} );
@@ -530,7 +566,7 @@ export function createAccount(
 			bearerToken.bearer_token = response.bearer_token;
 		} else {
 			// something odd happened...
-			//eslint-disable-next-line no-console
+			// eslint-disable-next-line no-console
 			console.error( 'Expected either an error or a bearer token. got %o, %o.', error, response );
 		}
 

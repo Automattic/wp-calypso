@@ -1,17 +1,79 @@
 {
 	"featured": [
 		{
-			"title": "Seedlet",
-			"slug": "seedlet-blocks",
-			"template": "seedlet-blocks",
-			"theme": "seedlet-blocks",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
-			"categories": [ "featured" ],
+			"title": "Quadrat",
+			"slug": "quadrat",
+			"template": "quadrat",
+			"theme": "quadrat",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat",
+			"slug": "quadrat",
+			"template": "quadrat",
+			"theme": "quadrat",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist",
+			"slug": "geologist",
+			"template": "geologist",
+			"theme": "geologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist",
+			"slug": "geologist",
+			"template": "geologist",
+			"theme": "geologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Zoologist",
+			"slug": "zoologist",
+			"template": "zoologist",
+			"theme": "zoologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Zoologist",
+			"slug": "zoologist",
+			"template": "zoologist",
+			"theme": "zoologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Blockbase",
+			"slug": "blockbase",
+			"template": "blockbase",
+			"theme": "blockbase",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Blockbase",
+			"slug": "blockbase",
+			"template": "blockbase",
+			"theme": "blockbase",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
 			"features": []
 		},
 		{
@@ -23,7 +85,10 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "blog" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "blog", "name": "Blog" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -36,7 +101,10 @@
 				"headings": "Chivo",
 				"base": "Open Sans"
 			},
-			"categories": [ "featured", "blog" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "blog", "name": "Blog" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -49,7 +117,10 @@
 				"headings": "Cabin",
 				"base": "Raleway"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -62,7 +133,10 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "business", "name": "Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -75,7 +149,10 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "blog" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "blog", "name": "Blog" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -88,7 +165,10 @@
 				"headings": "Space Mono",
 				"base": "Roboto"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -101,7 +181,10 @@
 				"headings": "Space Mono",
 				"base": "Roboto"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -114,7 +197,10 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" }
+			],
 			"is_premium": false,
 			"is_alpha": true,
 			"features": []
@@ -128,7 +214,10 @@
 				"headings": "Cabin",
 				"base": "Raleway"
 			},
-			"categories": [ "featured", "business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "business", "name": "Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -141,7 +230,11 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "charity", "non-profit" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "charity", "name": "Charity" },
+				{ "slug": "non-profit", "name": "Non-profit" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -154,7 +247,10 @@
 				"headings": "Open Sans",
 				"base": "Chivo"
 			},
-			"categories": [ "featured", "business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "business", "name": "Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -167,7 +263,11 @@
 				"headings": "Arvo",
 				"base": "Montserrat"
 			},
-			"categories": [ "featured", "non-profit", "charity" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "non-profit", "name": "Non-profit" },
+				{ "slug": "charity", "name": "Charity" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -180,7 +280,10 @@
 				"headings": "Raleway",
 				"base": "Cabin"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -193,7 +296,10 @@
 				"headings": "Arvo",
 				"base": "Montserrat"
 			},
-			"categories": [ "featured", "real estate listing" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "real-estate-listing", "name": "Real Estate Listing" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -206,7 +312,11 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "restaurant, small business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "restaurant", "name": "Restaurant" },
+				{ "slug": "small-business", "name": "Small Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -219,7 +329,11 @@
 				"headings": "Open Sans",
 				"base": "Chivo"
 			},
-			"categories": [ "featured", "restaurant, small business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "restaurant", "name": "Restaurant" },
+				{ "slug": "small-business", "name": "Small Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -232,7 +346,10 @@
 				"headings": "Chivo",
 				"base": "Open Sans"
 			},
-			"categories": [ "featured", "school" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "school", "name": "School" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -245,7 +362,11 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "restaurant", "small business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "restaurant", "name": "Restaurant" },
+				{ "slug": "small-business", "name": "Small Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -258,7 +379,10 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" }
+			],
 			"is_premium": false,
 			"is_alpha": true,
 			"features": []
@@ -272,7 +396,11 @@
 				"headings": "Chivo",
 				"base": "Open Sans"
 			},
-			"categories": [ "featured", "portfolio", "small business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "portfolio", "name": "Portfolio" },
+				{ "slug": "small-business", "name": "Small Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -285,7 +413,11 @@
 				"headings": "Fira Sans",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "restaurant", "small business" ],
+			"categories": [
+				{ "slug": "featured", "name": "Featured" },
+				{ "slug": "restaurant", "name": "Restaurant" },
+				{ "slug": "small-business", "name": "Small Business" }
+			],
 			"is_premium": false,
 			"features": []
 		},
@@ -298,7 +430,7 @@
 				"headings": "Roboto",
 				"base": "Roboto"
 			},
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
 		},
@@ -311,7 +443,7 @@
 				"headings": "Raleway",
 				"base": "Cabin"
 			},
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
 		},
@@ -325,7 +457,7 @@
 				"headings": "Rubik",
 				"base": "Roboto"
 			},
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": []
 		},
@@ -339,7 +471,7 @@
 				"headings": "Cabin",
 				"base": "Raleway"
 			},
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": []
 		},
@@ -353,7 +485,7 @@
 				"headings": "Cabin",
 				"base": "Cabin"
 			},
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": []
 		},
@@ -366,70 +498,18 @@
 				"headings": "Raleway",
 				"base": "Cabin"
 			},
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": [ "anchorfm" ]
-		},
-		{
-			"title": "Vesta",
-			"slug": "vesta-blocks",
-			"template": "vesta-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Cabin",
-				"base": "Raleway"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
-			"title": "Easley",
-			"slug": "easley-blocks",
-			"template": "easley-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Space Mono",
-				"base": "Roboto"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
-			"title": "Mayland",
-			"slug": "mayland-blocks",
-			"template": "mayland-blocks",
-			"theme": "mayland-blocks",
-			"fonts": {
-				"headings": "Raleway",
-				"base": "Cabin"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
 		},
 		{
 			"title": "Start with an empty page",
 			"slug": "blank-canvas",
 			"template": "blank-canvas",
 			"theme": "blank-canvas",
-			"categories": [ "featured" ],
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
-			"features": []
-		},
-		{
-			"title": "Start with an empty page",
-			"slug": "blockbase",
-			"template": "blockbase",
-			"theme": "blockbase",
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
 			"features": []
 		}
 	]

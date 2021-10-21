@@ -6,29 +6,32 @@ import {
 } from '@automattic/calypso-products';
 import { Duration } from './types';
 
-function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {
-	const mainTerm = slugTerm === TERM_MONTHLY ? 'monthly' : 'yearly';
-	const oppositeTerm = mainTerm === 'monthly' ? 'yearly' : 'monthly';
-
-	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
-		( product ) => product[ oppositeTerm ] === yearlySlug
-	);
-	if ( matchingProduct ) {
-		return matchingProduct[ mainTerm ];
+export function getSlugInTerm( slug: string | null, term: Duration ): string | null {
+	if ( slug === null ) {
+		return null;
 	}
 
-	const matchingPlan = JETPACK_PLANS_BY_TERM.find(
-		( plan ) => plan[ oppositeTerm ] === yearlySlug
+	const toTermKey = term === TERM_MONTHLY ? 'monthly' : 'yearly';
+
+	const matchingProducts = JETPACK_PRODUCTS_BY_TERM.find( ( p ) =>
+		( Object.values( p ) as string[] ).includes( slug )
 	);
-	if ( matchingPlan ) {
-		return matchingPlan[ mainTerm ];
+	if ( matchingProducts ) {
+		return matchingProducts[ toTermKey ];
+	}
+
+	const matchingPlans = JETPACK_PLANS_BY_TERM.find( ( p ) =>
+		( Object.values( p ) as string[] ).includes( slug )
+	);
+	if ( matchingPlans ) {
+		return matchingPlans[ toTermKey ];
 	}
 
 	return null;
 }
 
 /**
- * Get the monthly version of a product slug.
+ * Get the monthly version of a product slug, or return null if one doesn't exist.
  *
  * @param {string} yearlySlug a yearly term product slug
  * @returns {string} a monthly term product slug
@@ -38,7 +41,7 @@ export function getMonthlySlugFromYearly( yearlySlug: string | null ): string | 
 }
 
 /**
- * Get the yearly version of a product slug.
+ * Get the yearly version of a product slug, or return null if one doesn't exist.
  *
  * @param {string} monthlySlug a monthly term product slug
  * @returns {string} a yearly term product slug

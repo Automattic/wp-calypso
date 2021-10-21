@@ -43,7 +43,8 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.3.8",
+		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@storybook/addon-actions": "^6.3.11",
 		"@storybook/preset-scss": "^1.0.3",
 		"css-loader": "^3.4.2",
 		"enzyme": "^3.11.0",

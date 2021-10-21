@@ -346,4 +346,4 @@ export class CartItem extends Component {
 	}
 }
 
-export default withShoppingCart( withCartKey( localize( withLocalizedMoment( CartItem ) ) ) );
+export default withCartKey( withShoppingCart( localize( withLocalizedMoment( CartItem ) ) ) );

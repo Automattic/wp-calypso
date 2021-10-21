@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import * as React from 'react';
+import { useGetProductVariants } from '../hooks/product-variants';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export type WPCOMProductSlug = string;
@@ -20,7 +21,8 @@ export type ItemVariationPickerProps = {
 	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
-	variants: WPCOMProductVariant[];
+	siteId: number | undefined;
+	productSlug: string;
 };
 
 export type OnChangeItemVariant = (
@@ -33,8 +35,11 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	selectedItem,
 	onChangeItemVariant,
 	isDisabled,
-	variants,
+	siteId,
+	productSlug,
 } ) => {
+	const variants = useGetProductVariants( siteId, productSlug );
+
 	if ( variants.length < 2 ) {
 		return null;
 	}
@@ -43,7 +48,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 		<TermOptions className="item-variation-picker">
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
 				<ProductVariant
-					key={ productVariant.variantLabel }
+					key={ productVariant.productSlug + productVariant.variantLabel }
 					selectedItem={ selectedItem }
 					onChangeItemVariant={ onChangeItemVariant }
 					isDisabled={ isDisabled }
@@ -73,8 +78,8 @@ function ProductVariant( {
 	return (
 		<TermOptionsItem>
 			<RadioButton
-				name={ variantLabel }
-				id={ variantLabel }
+				name={ productSlug + variantLabel }
+				id={ productSlug + variantLabel }
 				value={ productSlug }
 				checked={ isChecked }
 				disabled={ isDisabled }

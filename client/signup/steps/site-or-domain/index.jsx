@@ -51,7 +51,7 @@ class SiteOrDomain extends Component {
 				label: translate( 'Existing WordPress.com site' ),
 				image: <ExistingSiteImage />,
 				description: translate(
-					'Use with a site you already started. A free domain for one year is included with all plans.'
+					'Use with a site you already started. A free domain for one year is included with all annual plans.'
 				),
 			} );
 		}

@@ -39,7 +39,6 @@ describe( 'reducer', () => {
 			'guidedTransfer',
 			'monitor',
 			'requesting',
-			'sharingButtons',
 			'blogStickers',
 			'hasAllSitesList',
 			'features',

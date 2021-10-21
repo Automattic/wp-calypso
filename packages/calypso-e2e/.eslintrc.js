@@ -1,11 +1,10 @@
+const nodeConfig = require( '@automattic/calypso-eslint-overrides/node' );
+
 module.exports = {
-	env: {
-		node: true,
-	},
+	...nodeConfig,
 	rules: {
-		// This is a node.js project, it is ok to import node modules
-		'import/no-nodejs-modules': 'off',
-		'no-console': 'off',
+		...nodeConfig.rules,
+
 		'require-jsdoc': [
 			'error',
 			{

@@ -1,0 +1,16 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.signup__step .is-site-options {
+	.step-wrapper__header {
+		@include break-small {
+			flex-basis: 34%;
+		}
+	}
+
+	.step-wrapper__content {
+		@include break-small {
+			flex-basis: 50%;
+		}
+	}
+}

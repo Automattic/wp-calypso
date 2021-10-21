@@ -1,15 +1,22 @@
 package _self.projects
 
+import Settings
 import _self.bashNodeScript
+import _self.lib.playwright.prepareEnvironment
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WebApp : Project({
@@ -19,10 +26,10 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"));
-	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"));
-	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
-	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
+	buildType(seleniumBuildType("desktop", "52f38738-92b2-43cb-b7fb-19fce03cb67c"))
+	buildType(seleniumBuildType("mobile", "04de2dd8-9896-4917-b31d-c04eb1c8ecdb"))
+	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
+	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
 })
 
@@ -338,6 +345,17 @@ object CheckCodeStyleBranch : BuildType({
 	name = "Code style"
 	description = "Check code style"
 
+	params {
+		checkbox(
+			name = "run_full_eslint",
+			value = "false",
+			label = "Run full eslint",
+			description = "Run ESLint for all files in the repo, not only for changed files",
+			checked = "true",
+			unchecked = "false"
+		)
+	}
+
 	artifactRules = """
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
@@ -363,7 +381,7 @@ object CheckCodeStyleBranch : BuildType({
 				export NODE_ENV="test"
 
 				# Find files to lint
-				if [ "%calypso.run_full_eslint%" = "true" ]; then
+				if [ "%run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
 					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
@@ -511,36 +529,10 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 		}
 
 		features {
-			perfmon {
-			}
-			pullRequests {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				provider = github {
-					authType = token {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-				}
-			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
+			perfmon {}
 		}
 
-		triggers {
-			vcs {
-				branchFilter = """
-					+:*
-					-:pull*
-				""".trimIndent()
-			}
-		}
+		triggers {}
 
 		failureConditions {
 			executionTimeoutMin = 20
@@ -551,18 +543,6 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
 			// been muted previously.
 			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
 		}
 
 		dependencies {
@@ -581,9 +561,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		description = "Runs Calypso e2e tests as $targetDevice using Playwright"
 
 		artifactRules = """
-			reports => reports
 			logs.tgz => logs.tgz
 			screenshots => screenshots
+			trace => trace
 		""".trimIndent()
 
 		vcs {
@@ -592,20 +572,8 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		}
 
 		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					export NODE_ENV="test"
-					export PLAYWRIGHT_BROWSERS_PATH=0
+			prepareEnvironment()
 
-					# Install modules
-					${_self.yarn_install_cmd}
-
-					# Build packages
-					yarn workspace @automattic/calypso-e2e build
-				"""
-				dockerImage = "%docker_image_e2e%"
-			}
 			bashNodeScript {
 				name = "Run e2e tests ($targetDevice)"
 				scriptContent = """
@@ -627,6 +595,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG_ENV=test
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
+					export HEADLESS=true
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -637,7 +606,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -652,6 +621,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 					mkdir -p logs
 					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -685,6 +657,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 				branchFilter = """
 					+:*
 					-:pull*
+					-:trunk
 				""".trimIndent()
 			}
 		}
@@ -706,11 +679,12 @@ object PreReleaseE2ETests : BuildType({
 	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
 	name = "Pre-Release E2E Tests"
 	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+	maxRunningBuilds = 1
 
 	artifactRules = """
-		reports => reports
 		logs.tgz => logs.tgz
 		screenshots => screenshots
+		trace => trace
 	""".trimIndent()
 
 	vcs {
@@ -719,20 +693,7 @@ object PreReleaseE2ETests : BuildType({
 	}
 
 	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				export NODE_ENV="test"
-				export PLAYWRIGHT_BROWSERS_PATH=0
-
-				# Install modules
-				${_self.yarn_install_cmd}
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
+		prepareEnvironment()
 		bashNodeScript {
 			name = "Run pre-release e2e tests"
 			scriptContent = """
@@ -751,11 +712,12 @@ object PreReleaseE2ETests : BuildType({
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
+				export HEADLESS=true
 
 				# Decrypt config
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+				yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -770,6 +732,9 @@ object PreReleaseE2ETests : BuildType({
 
 				mkdir -p logs
 				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}

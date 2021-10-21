@@ -16,7 +16,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import LanguagePicker from 'calypso/components/language-picker';
+import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
@@ -270,7 +270,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
 				{ errorNotice }
-				<LanguagePicker
+				<SiteLanguagePicker
 					languages={ languages }
 					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
 					value={ errorNotice ? 'en_US' : fields.lang_id }

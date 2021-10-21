@@ -11,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
+import MarketingMessage from 'calypso/components/marketing-message';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { Experiment } from 'calypso/lib/explat';
@@ -180,7 +181,7 @@ export class PlansStep extends Component {
 			<div>
 				<QueryPlans />
 				<Experiment
-					name="tabbed_layout_plans_signup"
+					name="tabbed_layout_plans_signup_v2"
 					defaultExperience={ defaultPlanDisplay }
 					treatmentExperience={ treatmentPlanDisplay }
 					loadingExperience={ loadingPlanDisplay }
@@ -234,7 +235,7 @@ export class PlansStep extends Component {
 
 		return (
 			<Experiment
-				name="tabbed_layout_plans_signup"
+				name="tabbed_layout_plans_signup_v2"
 				defaultExperience={ defaultHeaderText }
 				treatmentExperience={ experimentHeaderText }
 				loadingExperience={ '\u00A0' } // &nbsp;
@@ -248,7 +249,7 @@ export class PlansStep extends Component {
 
 		return (
 			<Experiment
-				name="tabbed_layout_plans_signup"
+				name="tabbed_layout_plans_signup_v2"
 				defaultExperience={ defaultSubHeaderText }
 				treatmentExperience={ experimentSubHeaderText }
 				loadingExperience={ '\u00A0' } // &nbsp;
@@ -305,7 +306,12 @@ export class PlansStep extends Component {
 			'is-wide-layout': true,
 		} );
 
-		return <div className={ classes }>{ this.plansFeaturesSelection() }</div>;
+		return (
+			<>
+				<MarketingMessage path="signup/plans" />
+				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
+			</>
+		);
 	}
 }
 

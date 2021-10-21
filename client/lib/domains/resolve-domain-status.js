@@ -139,6 +139,17 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.REGISTERED:
+			if ( domain.isPendingRenewal ) {
+				const pendingRenewalMessage = translate( 'Renewal in progress' );
+				return {
+					statusText: pendingRenewalMessage,
+					statusClass: 'status-warning',
+					icon: 'info',
+					listStatusText: pendingRenewalMessage,
+					listStatusClass: 'warning',
+				};
+			}
+
 			if ( domain.pendingTransfer ) {
 				return {
 					statusText: translate( 'Outbound transfer initiated' ),

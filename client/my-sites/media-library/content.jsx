@@ -31,7 +31,8 @@ import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
 } from 'calypso/state/sharing/keyring/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
@@ -66,6 +67,7 @@ export class MediaLibraryContent extends Component {
 		filterRequiresUpgrade: PropTypes.bool,
 		search: PropTypes.string,
 		source: PropTypes.string,
+		onSourceChange: PropTypes.func,
 		containerWidth: PropTypes.number,
 		single: PropTypes.bool,
 		scrollable: PropTypes.bool,
@@ -133,7 +135,7 @@ export class MediaLibraryContent extends Component {
 	}
 
 	renderErrors() {
-		const { mediaValidationErrorTypes, site, translate } = this.props;
+		const { isJetpack, mediaValidationErrorTypes, site, siteSlug, translate } = this.props;
 		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
 			let message;
 			let onDismiss;
@@ -199,8 +201,14 @@ export class MediaLibraryContent extends Component {
 					);
 					break;
 				case MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT:
-					upgradeNudgeName = 'plan-media-storage-error';
-					upgradeNudgeFeature = 'extra-storage';
+					if ( isJetpack ) {
+						actionText = translate( 'Upgrade Plan' );
+						actionLink = `/checkout/${ siteSlug }/jetpack_videopress`;
+						externalAction = true;
+					} else {
+						upgradeNudgeName = 'plan-media-storage-error';
+						upgradeNudgeFeature = 'extra-storage';
+					}
 					message = translate(
 						'%d file could not be uploaded because you have reached your plan storage limit.',
 						'%d files could not be uploaded because you have reached your plan storage limit.',
@@ -416,6 +424,7 @@ export class MediaLibraryContent extends Component {
 					thumbnailType={ this.getThumbnailType() }
 					single={ this.props.single }
 					scrollable={ this.props.scrollable }
+					onSourceChange={ this.props.onSourceChange }
 					mediaScale={ this.props.mediaScale }
 				/>
 			</MediaListData>
@@ -485,6 +494,7 @@ export default withMobileBreakpoint(
 	connect(
 		( state, ownProps ) => {
 			const guidedTourState = getGuidedTourState( state );
+			const selectedSiteId = getSelectedSiteId( state );
 			const mediaValidationErrorTypes = values( ownProps.mediaValidationErrors ).map( first );
 			const shouldPauseGuidedTour =
 				! isEmpty( guidedTourState.tour ) && 0 < size( mediaValidationErrorTypes );
@@ -492,6 +502,7 @@ export default withMobileBreakpoint(
 
 			return {
 				siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
+				isJetpack: isJetpackSite( state, selectedSiteId ),
 				isRequesting: isKeyringConnectionsFetching( state ),
 				displayUploadMediaButton: canCurrentUser( state, ownProps.site.ID, 'publish_posts' ),
 				mediaValidationErrorTypes,

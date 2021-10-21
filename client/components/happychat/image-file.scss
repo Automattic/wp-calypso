@@ -1,0 +1,61 @@
+.happychat__image-file {
+	display: block;
+	overflow: hidden;
+	border-radius: 2px;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+	border: 1px solid rgba( 0, 0, 0, 0.1 );
+	color: inherit !important;
+	text-decoration: none;
+	position: relative;
+	&:hover {
+		.happychat__image-file-hover-prompt {
+			display: block;
+		}
+	}
+}
+
+.happychat__image-file-hover-prompt {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate( -50%, -50% );
+	color: var( --color-accent );
+	background: rgba( 255, 255, 255, 0.9 );
+	padding: 0.5em;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.2 );
+	display: none;
+}
+
+.happychat__image-file-placeholder {
+	display: block;
+	position: relative;
+	&::after {
+		content: 'Loading';
+		position: absolute;
+		bottom: 50%;
+		width: 100%;
+		text-align: center;
+		font-size: 0.8em;
+		line-height: 0;
+		color: #aaa;
+		animation: fadeInOut 2s infinite;
+	}
+}
+
+.happychat__image-file-thumbnail {
+	display: block;
+}
+
+@keyframes fadeInOut {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
+}

@@ -1,4 +1,5 @@
 export { getConfiguredTitanMailboxCount } from './get-configured-titan-mailbox-count';
+export { getEligibleTitanDomain } from './get-eligible-titan-domain';
 export { getMaxTitanMailboxCount } from './get-max-titan-mailbox-count';
 export { getTitanExpiryDate } from './get-titan-expiry-date';
 export { getTitanMailboxPurchaseCost } from './get-titan-mailbox-purchase-cost';
@@ -8,3 +9,4 @@ export { getTitanProductName } from './get-titan-product-name';
 export { getTitanSubscriptionId } from './get-titan-subscription-id';
 export { getTitanCalendarlUrl, getTitanContactsUrl, getTitanEmailUrl } from './get-titan-urls';
 export { hasTitanMailWithUs } from './has-titan-mail-with-us';
+export { isDomainEligibleForTitanFreeTrial } from './is-domain-eligible-for-titan-free-trial';

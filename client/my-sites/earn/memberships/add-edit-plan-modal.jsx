@@ -31,7 +31,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * Stripe Currencies also supported by WordPress.com with minimum transaction amounts.
  *
  * https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts
- *
  * @type { [currency: string]: number }
  */
 const MINIMUM_CURRENCY_AMOUNT = {
@@ -303,11 +302,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						{ translate(
 							'Allow members of this payment plan to opt into receiving new posts via email.'
 						) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 168381 }
-							supportLink="https://wordpress.com/support/paid-newsletters/"
-							showIcon={ false }
-						>
+						<InlineSupportLink supportContext="paid-newsletters" showIcon={ false }>
 							{ translate( 'Learn more.' ) }
 						</InlineSupportLink>
 					</p>

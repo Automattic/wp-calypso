@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
@@ -15,11 +14,7 @@ class AccountSettingsClosedComponent extends Component {
 	};
 
 	render() {
-		const { isUserAccountClosed, previousRoute, translate } = this.props;
-
-		if ( previousRoute !== '/me/account/close' ) {
-			page( '/me/account/close' );
-		}
+		const { isUserAccountClosed, translate } = this.props;
 
 		if ( ! isUserAccountClosed ) {
 			return (
