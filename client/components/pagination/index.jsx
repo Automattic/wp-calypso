@@ -1,14 +1,12 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { PaginationVariant } from './constants';
 import PaginationPage from './pagination-page';
 
 import './style.scss';
 
 class Pagination extends Component {
-	static VARIANT_OUTLINED = 'outlined';
-	static VARIANT_MINIMAL = 'minimal';
-
 	static propTypes = {
 		compact: PropTypes.bool,
 		nextLabel: PropTypes.string,
@@ -17,11 +15,11 @@ class Pagination extends Component {
 		perPage: PropTypes.number.isRequired,
 		prevLabel: PropTypes.string,
 		total: PropTypes.number,
-		variant: PropTypes.oneOf( [ this.VARIANT_OUTLINED, this.VARIANT_MINIMAL ] ),
+		variant: PropTypes.oneOf( [ PaginationVariant.outlined, PaginationVariant.minimal ] ),
 	};
 
 	static defaultProps = {
-		variant: this.VARIANT_OUTLINED,
+		variant: PaginationVariant.outlined,
 	};
 
 	getPageList = ( page, pageCount ) => {
@@ -92,7 +90,7 @@ class Pagination extends Component {
 			<div
 				className={ classnames( 'pagination', className, {
 					'is-compact': compact,
-					'is-minimal': variant === Pagination.VARIANT_MINIMAL,
+					'is-minimal': variant === PaginationVariant.minimal,
 				} ) }
 			>
 				<ul className="pagination__list">{ pageListRendered }</ul>

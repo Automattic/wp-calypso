@@ -23,7 +23,7 @@ function render() {
 | `compact`     | `bool`                  | false    | Render a smaller version.                                                                        |
 | `nextLabel`   | `string`                | null     | Overrides the "Next" button label.                                                               |
 | `prevLabel`   | `string`                | null     | Overrides the "Previous" button label.                                                           |
-| `variant`     | `"outlined"\|"minimal"` | outlined | Sets the style of the component                                                                  |
+| `variant`     | `PaginationVariant`     | outlined | Sets the style of the component                                                                  |
 
 ### General guidelines
 
