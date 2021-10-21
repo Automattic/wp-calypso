@@ -4,8 +4,6 @@ import type { AppState } from 'calypso/types';
 export type SelectedSiteSelector = ( state: AppState, siteId: number | null ) => unknown;
 
 /**
- * withSelectedSite
- *
  * Closes over the getSelectedSiteId step when using selected site selectors.
  *
  * Usage:
