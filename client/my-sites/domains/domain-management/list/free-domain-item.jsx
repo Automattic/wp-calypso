@@ -1,6 +1,6 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, home } from '@wordpress/icons';
+import { Icon, edit, home } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
 import Badge from 'calypso/components/badge';
@@ -51,15 +51,20 @@ export default function FreeDomainItem( {
 					toggleTitle={ __( 'Free WordPress address options' ) }
 				>
 					{ canMakePrimary && (
-						<PopoverMenuItem icon="house" onClick={ handleMakePrimary }>
-							{ __( 'Make primary address' ) }
+						<PopoverMenuItem onClick={ handleMakePrimary }>
+							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
+							{ __( 'Make primary site address' ) }
 						</PopoverMenuItem>
 					) }
 					{ ! isAtomicSite && (
 						<PopoverMenuItem
-							icon="pencil"
 							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
 						>
+							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+							<Icon icon={ edit } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 							{ __( 'Change site address' ) }
 						</PopoverMenuItem>
 					) }
