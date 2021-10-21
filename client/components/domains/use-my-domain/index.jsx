@@ -37,7 +37,6 @@ function UseMyDomain( props ) {
 		onTransfer,
 		selectedSite,
 		transferDomainUrl,
-		showHeader = true,
 		initialMode,
 		onNextStep,
 	} = props;
@@ -320,10 +319,6 @@ function UseMyDomain( props ) {
 	}, [ domainName, mode, __ ] );
 
 	const renderHeader = () => {
-		if ( ! showHeader ) {
-			return null;
-		}
-
 		return (
 			<>
 				{ goBack && (

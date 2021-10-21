@@ -100,7 +100,7 @@ function DomainTransferOrConnect( {
 					setInboundTransferStatusInfo( inboundTransferStatusResult );
 				}
 				setIsFetching( false );
-			} catch ( error ) {
+			} catch {
 				setIsFetching( false );
 				setAvailabilityData( {} );
 				setInboundTransferStatusInfo( {} );
