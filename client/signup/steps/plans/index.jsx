@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
-import { parse as parseQs } from 'qs';
+import { parse as parseQs, stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -16,6 +16,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
@@ -223,6 +224,22 @@ export class PlansStep extends Component {
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
 			backLabelText = translate( 'Back to My Sites' );
+		}
+
+		const isComingFromUseYourDomainStep =
+			'use-your-domain' === this.props.progress?.domains?.stepSectionName;
+
+		if ( 0 !== this.props.positionInFlow && isComingFromUseYourDomainStep ) {
+			const queryParams = {
+				step: 'transfer-or-connect',
+				initialQuery: this.props.progress?.domains?.siteUrl,
+			};
+
+			backUrl =
+				getStepUrl( this.props.flowName, 'domains', 'use-your-domain' ) +
+				'?' +
+				stringify( queryParams );
+			backLabelText = translate( 'Back' );
 		}
 
 		return (

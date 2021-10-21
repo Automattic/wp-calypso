@@ -579,7 +579,7 @@ class DomainsStep extends Component {
 
 	useYourDomainForm = () => {
 		const queryObject = parse( window.location.search.replace( '?', '' ) );
-		const initialQuery = get( this.props.step, 'domainForm.lastQuery' ) ?? queryObject.initialQuery;
+		const initialQuery = get( this.props.step, 'domainForm.lastQuery' ) || queryObject.initialQuery;
 
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
