@@ -103,9 +103,9 @@ export default function PaymentMethodSelector( {
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
 				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
-				'existing-card': ( data: any ) =>
+				'existing-card': ( data: unknown ) =>
 					assignExistingCardProcessor( purchase, reduxDispatch, data ),
-				card: ( data: any ) =>
+				card: ( data: unknown ) =>
 					assignNewCardProcessor(
 						{
 							purchase,
