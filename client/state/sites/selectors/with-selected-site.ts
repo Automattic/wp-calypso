@@ -12,8 +12,8 @@ export type SelectedSiteSelector = ( state: AppState, siteId: number | null ) =>
  *
  *   useSelector( withSelectedSite( isJetpackSite ) );
  *
- * @param selector
- * @returns
+ * @param selector A selector that takes both state and a site id.
+ * @returns A selector that only takes application state for use in useSelector.
  */
 export default function withSelectedSite( selector: SelectedSiteSelector ) {
 	return ( state: AppState ): unknown => {
