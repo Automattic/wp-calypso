@@ -1,0 +1,7 @@
+{
+	"extends": "@automattic/calypso-typescript-config/js-package.json",
+	"include": [
+		"config.js",
+		"presets/*.js",
+	],
+}

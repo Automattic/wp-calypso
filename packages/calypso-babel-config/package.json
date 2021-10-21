@@ -1,0 +1,42 @@
+{
+	"name": "@automattic/calypso-babel-config",
+	"version": "1.0.0",
+	"description": "Shared babel configuration used in Calypso projects",
+	"keywords": [
+		"babel",
+		"build",
+		"calypso"
+	],
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"main": "./config.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-babel-config"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"dependencies": {
+		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
+		"@automattic/babel-plugin-optimize-i18n": "^1.0.0",
+		"@automattic/babel-plugin-transform-wpcalypso-async": "^1.0.1",
+		"@babel/core": "^7.15.0",
+		"@babel/helpers": "^7.15.3",
+		"@babel/plugin-proposal-class-properties": "^7.14.5",
+		"@babel/plugin-transform-react-jsx": "^7.14.9",
+		"@babel/plugin-transform-runtime": "^7.15.0",
+		"@babel/preset-env": "^7.15.0",
+		"@babel/preset-react": "^7.14.5",
+		"@babel/preset-typescript": "^7.15.0",
+		"@emotion/babel-plugin": "^11.3.0",
+		"@wordpress/babel-plugin-import-jsx-pragma": "^3.1.0",
+		"babel-plugin-dynamic-import-node": "^2.3.0",
+		"babel-plugin-transform-react-remove-prop-types": "^0.4.24"
+	}
+}
