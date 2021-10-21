@@ -1,6 +1,5 @@
-import apiFetch from '@wordpress/api-fetch';
 import { Button } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import NuxModal from '../nux-modal';
@@ -16,22 +15,29 @@ const PostPublishedModal: React.FC = () => {
 		select( 'core/editor' ).isCurrentPostPublished()
 	);
 	const isCurrentPostPublishedRef = useRef( isCurrentPostPublished );
-	const [ hasNeverPublishedPost, setHasNeverPublishedPost ] = useState( false );
+	const siteHasNeverPublishedPost = useSelect( ( select ) =>
+		select( 'automattic/wpcom-welcome-guide' ).getSiteHasNeverPublishedPost()
+	);
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
+	const { fetchSiteHasNeverPublishedPost, setSiteHasNeverPublishedPost } = useDispatch(
+		'automattic/wpcom-welcome-guide'
+	);
 
 	useEffect( () => {
-		apiFetch( { path: '/wpcom/v2/site-has-never-published-post' } ).then( ( result ) => {
-			setHasNeverPublishedPost( !! result );
-		} );
-	}, [] );
+		fetchSiteHasNeverPublishedPost();
+	}, [ fetchSiteHasNeverPublishedPost ] );
 
 	useEffect( () => {
 		// If the user never published any post before and the current post status changed to publish,
 		// open the post publish modal
-		if ( hasNeverPublishedPost && ! isCurrentPostPublishedRef.current && isCurrentPostPublished ) {
+		if (
+			siteHasNeverPublishedPost &&
+			! isCurrentPostPublishedRef.current &&
+			isCurrentPostPublished
+		) {
 			isCurrentPostPublishedRef.current = isCurrentPostPublished;
-			setHasNeverPublishedPost( false );
+			setSiteHasNeverPublishedPost( false );
 
 			// When the post published panel shows, it is focused automatically.
 			// Thus, we need to delay open the modal so that the modal would not be close immediately
@@ -40,7 +46,7 @@ const PostPublishedModal: React.FC = () => {
 				setIsOpen( true );
 			} );
 		}
-	}, [ hasNeverPublishedPost, isCurrentPostPublished ] );
+	}, [ siteHasNeverPublishedPost, isCurrentPostPublished, setSiteHasNeverPublishedPost ] );
 
 	return (
 		<NuxModal
