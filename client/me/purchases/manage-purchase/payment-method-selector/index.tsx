@@ -5,7 +5,6 @@ import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	CheckoutSubmitButton,
-	CheckoutPageErrorCallback,
 } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useTranslate } from 'i18n-calypso';
@@ -29,7 +28,7 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
-import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
