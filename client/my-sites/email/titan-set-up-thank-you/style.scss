@@ -5,9 +5,21 @@
 	margin-left: 4px;
 }
 
-.thank-you__container {
-	margin: -32px -32px -33px -34px;
-	@media ( max-width: 660px ) {
-		padding: 0 32px 34px 34px;
+.thank-you__container.titan-set-up-thank-you__container {
+	margin-left: -33px;
+	margin-right: -32px;
+	padding-left: 33px;
+	padding-right: 32px;
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.thank-you__step-cta {
+	width: 100%;
+	@include break-mobile {
+		min-width: 144px;
+		width: auto;
 	}
 }

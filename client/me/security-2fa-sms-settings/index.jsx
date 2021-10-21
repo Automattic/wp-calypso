@@ -14,10 +14,9 @@ import Security2faProgress from 'calypso/me/security-2fa-progress';
 import getCountries from 'calypso/state/selectors/get-countries';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
-import { saveTwoStepSMSSettings } from 'calypso/state/user-settings/thunks';
-
-import './style.scss';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
+import { saveTwoStepSMSSettings } from 'calypso/state/user-settings/thunks';
+import './style.scss';
 
 class Security2faSMSSettings extends Component {
 	static propTypes = {

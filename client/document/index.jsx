@@ -11,6 +11,7 @@ import EnvironmentBadge, {
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
@@ -82,7 +83,7 @@ class Document extends Component {
 
 		const theme = config( 'theme' );
 
-		const LoadingLogo = config.isEnabled( 'jetpack-cloud' ) ? JetpackLogo : WordPressLogo;
+		const LoadingLogo = chooseLoadingLogo( this.props );
 
 		return (
 			<html
@@ -243,6 +244,17 @@ class Document extends Component {
 			</html>
 		);
 	}
+}
+
+function chooseLoadingLogo( { useLoadingEllipsis } ) {
+	if ( useLoadingEllipsis ) {
+		return LoadingEllipsis;
+	}
+	if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		return JetpackLogo;
+	}
+
+	return WordPressLogo;
 }
 
 export default Document;

@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	SidebarComponent,
 	SupportComponent,
 	setupHooks,
@@ -26,8 +26,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		let supportArticlePage: Page;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Tools > Marketing', async function () {
@@ -73,8 +73,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		let supportComponent: SupportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Open Settings page', async function () {

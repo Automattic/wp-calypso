@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
@@ -5,7 +6,6 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
-import config from '@automattic/calypso-config';
 
 describe( 'isEligibleForUpworkSupport()', () => {
 	test( 'returns false for `en` users and all sites have a free plan', () => {

@@ -347,3 +347,31 @@
 		}
 	}
 }
+
+.domain-table-header {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 0;
+	border-bottom: 1px solid var( --color-neutral-20 );
+	font-size: $font-body-small;
+	color: var( --color-neutral );
+}
+
+.list__domain-cell {
+	flex: 83 83 0;
+}
+.list__status-cell {
+	flex: 40 40 0;
+}
+.list__registered-until-cell {
+	flex: 50 50 0;
+}
+.list__auto-renew-cell {
+	flex: 30 30 0;
+}
+.list__email-cell {
+	flex: 30 30 0;
+}
+.list__action-cell {
+	flex: 6 6 0;
+}

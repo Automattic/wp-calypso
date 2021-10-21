@@ -13,6 +13,7 @@
 	flex-direction: column;
 	text-align: center;
 	align-items: center;
+	padding-top: calc( -33px + var( --masterbar-height ) );
 }
 
 .thank-you__step-cta {

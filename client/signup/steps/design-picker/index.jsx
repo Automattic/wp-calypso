@@ -11,7 +11,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import PreviewToolbar from './preview-toolbar';
@@ -47,6 +47,7 @@ class DesignPickerStep extends Component {
 	};
 
 	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
 		this.fetchThemes();
 	}
 
@@ -77,11 +78,12 @@ class DesignPickerStep extends Component {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		// taxonomies.theme_subject probably maps to category
 		return this.props.themes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-			.map( ( { id, name } ) => ( {
-				categories: [],
+			.map( ( { id, name, taxonomies } ) => ( {
+				categories: taxonomies?.theme_subject ?? [
+					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
+				],
 				features: [],
 				is_premium: false,
 				slug: id,
@@ -129,24 +131,7 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
-		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
-		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
-		// component itself. The `/new` environment needs helpers for making authenticated requests to
-		// the theme API before we can do this.
-		const designs = this.props.themes
-			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-			.map( ( { id, name, taxonomies } ) => ( {
-				categories: taxonomies?.theme_subject ?? [
-					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
-				],
-				features: [],
-				is_premium: false,
-				slug: id,
-				template: id,
-				theme: id,
-				title: name,
-				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-			} ) );
+		const designs = this.getDesigns();
 
 		return (
 			<DesignPicker
@@ -253,7 +238,7 @@ export default compose(
 				themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
 			};
 		},
-		{ fetchRecommendedThemes, submitSignupStep }
+		{ fetchRecommendedThemes, saveSignupStep, submitSignupStep }
 	),
 	withViewportMatch( { isMobile: '< small' } ),
 	localize

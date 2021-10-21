@@ -115,6 +115,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 
 	return (
 		<ThankYou
+			containerClassName="titan-set-up-thank-you__container"
 			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }

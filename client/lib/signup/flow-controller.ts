@@ -36,19 +36,9 @@ import {
 import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
-
-interface Dependencies {
-	[ other: string ]: string[];
-}
-
-interface Flow {
-	destination: string | ( ( dependencies: Dependencies ) => string );
-	providesDependenciesInQuery?: string[];
-	optionalDependenciesInQuery?: string[];
-	steps: string[];
-}
 
 interface Step {
 	apiRequestFunction?: (
@@ -226,7 +216,7 @@ export default class SignupFlowController {
 	}
 
 	_assertFlowHasValidDependencies() {
-		forEach( pick( steps, this._flow.steps ), ( step ) => {
+		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.dependencies ) {
 				return;
 			}
@@ -258,7 +248,7 @@ export default class SignupFlowController {
 	_assertFlowProvidedRequiredDependencies() {
 		const storedDependencies = keys( getSignupDependencyStore( this._reduxStore.getState() ) );
 
-		forEach( pick( steps, this._flow.steps ), ( step ) => {
+		forEach( pick( steps, this._getFlowSteps() ), ( step ) => {
 			if ( ! step.providesDependencies ) {
 				return;
 			}
@@ -290,19 +280,38 @@ export default class SignupFlowController {
 	}
 
 	/**
+	 * Returns a list of non-excluded steps in the flow which enable the branch steps. Otherwise, return a list
+	 * of all steps
+	 *
+	 * @returns {Array} a list of dependency names
+	 */
+	_getFlowSteps() {
+		// As signup framework is shared across multiple products, we keep using this value with excluded steps
+		// to ensure that this change does not any existed behavior. Thus, the excluded steps will be processed
+		// for those flows.
+		if ( ! this._flow.enableBranchSteps ) {
+			return this._flow.steps;
+		}
+
+		const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
+		const flow = flows.getFlow( this._flowName, userLoggedIn );
+		return flow.steps;
+	}
+
+	/**
 	 * Returns a list of the dependencies provided in the flow configuration.
 	 *
 	 * @returns {Array} a list of dependency names
 	 */
 	_getFlowProvidesDependencies() {
 		return flatMap(
-			this._flow.steps,
+			this._getFlowSteps(),
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		).concat( this._flow.providesDependenciesInQuery || [] );
 	}
 
 	_process() {
-		const currentSteps = this._flow.steps;
+		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
 			includes( currentSteps, step.stepName )
 		);
@@ -330,7 +339,7 @@ export default class SignupFlowController {
 		const { dependencies = [], providesToken } = steps[ step.stepName ];
 		const dependenciesFound = this._findDependencies( step.stepName, 'dependencies' );
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
-		const currentSteps = this._flow.steps;
+		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter(
 			getSignupProgress( this._reduxStore.getState() ),
 			( { stepName } ) => includes( currentSteps, stepName )
@@ -410,7 +419,7 @@ export default class SignupFlowController {
 
 	_getStoredDependencies() {
 		const requiredDependencies = flatMap(
-			this._flow.steps,
+			this._getFlowSteps(),
 			( stepName ) => ( steps && steps[ stepName ] && steps[ stepName ].providesDependencies ) || []
 		);
 

@@ -61,7 +61,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug };
+	let queryParam = { siteSlug, loading_ellipsis: 1 };
 	if ( domainItem ) {
 		// If the user is purchasing a domain then the site's primary url might change from
 		// `siteSlug` to something else during the checkout process, which means the
@@ -175,9 +175,10 @@ const Flows = {
 	 *
 	 * The returned flow is modified according to several filters.
 	 *
+	 * @typedef {import('../types').Flow} Flow
 	 * @param {string} flowName The name of the flow to return
 	 * @param {boolean} isUserLoggedIn Whether the user is logged in
-	 * @returns {object} A flow object
+	 * @returns {Flow} A flow object
 	 */
 	getFlow( flowName, isUserLoggedIn ) {
 		let flow = Flows.getFlows()[ flowName ];

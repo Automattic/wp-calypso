@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,7 +14,6 @@ import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -74,12 +74,12 @@ export function Purchases(): JSX.Element {
 			/>
 			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
 				<Subscriptions />
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -108,7 +108,7 @@ export function PurchaseDetails( {
 				title="Purchases > Manage Purchase"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -124,7 +124,7 @@ export function PurchaseDetails( {
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -149,7 +149,7 @@ export function PurchaseCancel( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -160,7 +160,7 @@ export function PurchaseCancel( {
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -187,7 +187,7 @@ export function PurchaseChangePaymentMethod( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -197,7 +197,7 @@ export function PurchaseChangePaymentMethod( {
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -222,7 +222,7 @@ export function PurchaseCancelDomain( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
@@ -232,7 +232,7 @@ export function PurchaseCancelDomain( {
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
