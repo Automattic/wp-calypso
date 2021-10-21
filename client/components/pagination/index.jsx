@@ -15,7 +15,7 @@ class Pagination extends Component {
 		perPage: PropTypes.number.isRequired,
 		prevLabel: PropTypes.string,
 		total: PropTypes.number,
-		variant: PropTypes.oneOf( [ PaginationVariant.outlined, PaginationVariant.minimal ] ),
+		variant: PropTypes.oneOf( Object.values( PaginationVariant ) ),
 	};
 
 	static defaultProps = {
