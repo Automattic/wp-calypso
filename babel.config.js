@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const { babelConfig } = require( '@automattic/calypso-babel-config' );
+const babelConfig = require( '@automattic/calypso-babel-config' );
 
 // We implicitly use browserslist configuration in package.json for build targets.
 
