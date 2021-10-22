@@ -1,7 +1,9 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
+import { getTargetDeviceName } from '../../browser-helper';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
+type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
 const selectors = {
 	// iframe and editor
@@ -23,7 +25,7 @@ const selectors = {
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
-	// there's a hidden button also with the "Preview" text, so using unique class name instead of text selector
+	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
@@ -42,6 +44,10 @@ const selectors = {
 	// Block editor sidebar
 	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
 	dashboardLink: 'a[aria-description="Returns to the dashboard"]',
+
+	// Preview
+	previewMenuItem: ( target: PreviewOptions ) => `button[role="menuitem"] span:text("${ target }")`,
+	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 };
 
 /**
@@ -353,5 +359,82 @@ export class GutenbergEditorPage {
 	async returnToDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.dashboardLink );
+	}
+
+	/* Previews */
+
+	/**
+	 * Click on the `Preview` button on the editor toolbar.
+	 *
+	 * This method interacts with the mobile implementation of the editor preview,
+	 * which:
+	 * 	1. launch a new tab.
+	 * 	2. load the preview.
+	 *
+	 * This method will throw if used in a desktop environment.
+	 *
+	 * @throws {Error} If environment is not 'mobile'.
+	 */
+	async openPreviewAsMobile(): Promise< Page > {
+		if ( getTargetDeviceName() !== 'mobile' ) {
+			throw new Error( 'This method only works in a mobile environment.' );
+		}
+		const frame = await this.getEditorFrame();
+		const [ popup ] = await Promise.all( [
+			this.page.waitForEvent( 'popup' ),
+			frame.click( selectors.previewButton ),
+		] );
+		await popup.waitForLoadState( 'load' );
+		return popup;
+	}
+
+	/**
+	 * Click on the `Preview` button on the editor toolbar, then select requested the preview option.
+	 *
+	 * This method interacts with the non-mobile implementation of the editor preview,
+	 * which applies an attribute to the editor to simulate target device.
+	 *
+	 *
+	 * @param {PreviewOptions} target Preview option to be selected.
+	 * @throws {Error} If environment is 'mobile'.
+	 */
+	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
+		if ( getTargetDeviceName() === 'mobile' ) {
+			throw new Error( 'This method only works in a non-mobile environment.' );
+		}
+		const frame = await this.getEditorFrame();
+		await frame.click( selectors.previewButton );
+		await frame.click( selectors.previewMenuItem( target ) );
+		await frame.waitForSelector( selectors.previewPane( target ) );
+	}
+
+	/**
+	 * Terminates the Post Preview mode.
+	 *
+	 * This method will click on the Preview button if required, then select the `Desktop` entry,
+	 * which is the default view setting when the editor is opened initially.
+	 *
+	 * @throws {Error} If environment is 'mobile'.
+	 */
+	async closePreview(): Promise< void > {
+		if ( getTargetDeviceName() === 'mobile' ) {
+			throw new Error( ' This method only works in a non-mobile environment.' );
+		}
+		const frame = await this.getEditorFrame();
+
+		const previewButtonHandle = await frame.waitForSelector( selectors.previewButton );
+		// Check if the Preview button has been clicked and that menu options are showing.
+		// If required, click and show the menu items so that 'Desktop' can be clicked.
+		if ( ( await previewButtonHandle.getAttribute( 'aria-expanded' ) ) === 'false' ) {
+			await frame.click( selectors.previewButton );
+		}
+		// Select 'Desktop'.
+		await frame.click( selectors.previewMenuItem( 'Desktop' ) );
+		// Dismiss the Preview button.
+		await previewButtonHandle.click();
+
+		// Ensure the preview menu is closed and that preview settings are back to default.
+		await frame.waitForSelector( 'button[aria-expanded=false]' );
+		await frame.waitForSelector( selectors.previewPane( 'Desktop' ) );
 	}
 }
