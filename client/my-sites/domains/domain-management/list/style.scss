@@ -375,6 +375,13 @@
 	}
 	&.domain-table-header__mobile {
 		display: flex;
+		padding: 16px;
+		.select-dropdown {
+			width: 100%;
+			.select-dropdown__container {
+				width: 100%;
+			}
+		}
 	}
 
 	@include break-mobile {

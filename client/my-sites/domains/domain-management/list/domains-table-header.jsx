@@ -1,4 +1,4 @@
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { Icon, arrowDown, arrowUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
-
 import './style.scss';
 
 class DomainsTableHeader extends PureComponent {
@@ -19,7 +18,7 @@ class DomainsTableHeader extends PureComponent {
 		isBusy: PropTypes.bool,
 		onToggle: PropTypes.func,
 		isManagingAllSites: PropTypes.bool,
-		onHeaderClick: PropTypes.func,
+		onChangeSortOrder: PropTypes.func,
 		activeSortKey: PropTypes.string,
 		activeSortOrder: PropTypes.number,
 	};
@@ -44,7 +43,13 @@ class DomainsTableHeader extends PureComponent {
 
 	handleHeaderClick = ( event ) => {
 		const { column } = event.currentTarget.dataset;
-		this.props.onHeaderClick( column );
+		this.props.onChangeSortOrder( column );
+	};
+
+	handleSelectChange = ( option ) => {
+		const sortKey = option.value.slice( 0, -1 );
+		const sortOrder = option.value.slice( -1 ) === '+' ? 1 : -1;
+		this.props.onChangeSortOrder( sortKey, sortOrder );
 	};
 
 	renderSortIcon( sortOrder ) {
@@ -57,6 +62,26 @@ class DomainsTableHeader extends PureComponent {
 		}
 
 		return null;
+	}
+
+	prepareSortOptions( columns ) {
+		const { translate } = this.props;
+
+		return columns
+			.filter( ( column ) => column.label )
+			.map( ( column ) => {
+				return [
+					{
+						value: `${ column.name }+`,
+						label: translate( '%(column)s ascending', { args: { column: column.label } } ),
+					},
+					{
+						value: `${ column.name }-`,
+						label: translate( '%(column)s descending', { args: { column: column.label } } ),
+					},
+				];
+			} )
+			.flat();
 	}
 
 	renderHeaderContent() {
@@ -83,7 +108,13 @@ class DomainsTableHeader extends PureComponent {
 		return (
 			<>
 				<div className={ listHeaderMobileClasses }>
-					<SelectDropdown compact onSelect={ this.handleSelectChange } />
+					<SelectDropdown
+						compact
+						onSelect={ this.handleSelectChange }
+						selectedIcon={ <Gridicon icon="filter" width="16" height="16" /> }
+						options={ this.prepareSortOptions( columns ) }
+						initialSelected={ activeSortKey + ( activeSortOrder === 1 ? '+' : '-' ) }
+					/>
 				</div>
 				<div className={ listHeaderClasses }>
 					{ columns.map( ( column, index ) => (

@@ -28,11 +28,11 @@ class DomainsTable extends PureComponent {
 		sortOrder: 1, // sort order where 1 = ascending and -1 = descending
 	};
 
-	changeTableSort = ( column ) => {
+	changeTableSort = ( column, sortOrder = null ) => {
 		this.setState( ( prevState ) => {
 			return {
 				sortKey: column,
-				sortOrder: column === prevState.sortKey ? prevState.sortOrder * -1 : 1,
+				sortOrder: sortOrder || column === prevState.sortKey ? prevState.sortOrder * -1 : 1,
 			};
 		} );
 	};
@@ -104,7 +104,7 @@ class DomainsTable extends PureComponent {
 				<DomainsTableHeader
 					key="domains-header"
 					isManagingAllSites={ false }
-					onHeaderClick={ this.changeTableSort }
+					onChangeSortOrder={ this.changeTableSort }
 					activeSortKey={ sortKey }
 					activeSortOrder={ sortOrder }
 				/>
