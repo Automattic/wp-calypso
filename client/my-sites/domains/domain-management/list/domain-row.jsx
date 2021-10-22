@@ -1,6 +1,5 @@
-import { Button, CompactCard } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Icon, home } from '@wordpress/icons';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -9,8 +8,6 @@ import { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import InfoPopover from 'calypso/components/info-popover';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import {
@@ -41,15 +38,12 @@ class DomainRow extends PureComponent {
 		site: PropTypes.object,
 		isManagingAllSites: PropTypes.bool,
 		isBusy: PropTypes.bool,
-		showCheckbox: PropTypes.bool,
 		onClick: PropTypes.func.isRequired,
 		onMakePrimaryClick: PropTypes.func,
-		onToggle: PropTypes.func,
 		shouldUpgradeToMakePrimary: PropTypes.bool,
 		purchase: PropTypes.object,
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
-		isChecked: PropTypes.bool,
 		showDomainDetails: PropTypes.bool,
 		actionResult: PropTypes.object,
 	};
@@ -57,29 +51,18 @@ class DomainRow extends PureComponent {
 	static defaultProps = {
 		disabled: false,
 		isManagingAllSites: false,
-		showCheckbox: false,
-		onToggle: null,
 		isLoadingDomainDetails: false,
 		isBusy: false,
-		isChecked: false,
 		showDomainDetails: true,
 	};
 
 	handleClick = () => {
-		const { onClick, domainDetails, showCheckbox, domain, isChecked, onToggle } = this.props;
-
+		const { onClick, domainDetails } = this.props;
 		onClick( domainDetails );
-		showCheckbox && onToggle( domain.domain, ! isChecked );
 	};
 
 	stopPropagation = ( event ) => {
 		event.stopPropagation();
-	};
-
-	onToggle = ( event ) => {
-		if ( this.props.onToggle ) {
-			this.props.onToggle( this.props.domain.domain, event.target.checked );
-		}
 	};
 
 	addEmailClick = ( event ) => {
@@ -94,13 +77,6 @@ class DomainRow extends PureComponent {
 		page( emailManagement( site.slug, domain.domain, currentRoute ) );
 	};
 
-	renewDomain = ( event ) => {
-		event.stopPropagation();
-
-		const { purchase, site } = this.props;
-		handleRenewNowClick( purchase, site.slug );
-	};
-
 	makePrimary = ( event ) => {
 		event.stopPropagation();
 
@@ -109,17 +85,6 @@ class DomainRow extends PureComponent {
 			onMakePrimaryClick( selectionIndex, domainDetails );
 		}
 	};
-
-	canRenewDomain() {
-		const { domainDetails, purchase } = this.props;
-		return (
-			domainDetails &&
-			purchase &&
-			domainDetails.currentUserCanManage &&
-			[ domainTypes.WPCOM, domainTypes.TRANSFER ].indexOf( domainDetails.type ) === -1 &&
-			! domainDetails.bundledPlanSubscriptionId
-		);
-	}
 
 	canSetAsPrimary() {
 		const { domainDetails, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
@@ -148,7 +113,7 @@ class DomainRow extends PureComponent {
 		}
 
 		return (
-			<div className="domain-row__auto-renew-cell" onClick={ ( e ) => e.stopPropagation() }>
+			<div className="domain-row__auto-renew-cell" onClick={ this.stopPropagation }>
 				<AutoRenewToggle
 					planName={ site.plan.product_name_short }
 					siteDomain={ site.domain }
@@ -195,8 +160,8 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	renderEmail( domainDetails ) {
-		const { translate } = this.props;
+	renderEmail() {
+		const { domainDetails, translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
 			return <span className="domain-row__email-cell">-</span>;
@@ -279,26 +244,6 @@ class DomainRow extends PureComponent {
 		return withoutHttp( site.URL );
 	}
 
-	renderSiteMeta() {
-		const { showDomainDetails, isLoadingDomainDetails, domainDetails } = this.props;
-
-		if ( ! showDomainDetails ) {
-			return;
-		}
-
-		if ( isLoadingDomainDetails || ! domainDetails ) {
-			return <div className="domain-item__meta domain-item__meta-placeholder" />;
-		}
-
-		return (
-			<div className="domain-item__meta">
-				{ this.getSiteMeta() }
-				{ this.renderAutoRenew() }
-				{ this.renderEmail( domainDetails ) }
-			</div>
-		);
-	}
-
 	getSiteMeta() {
 		const { domainDetails, isManagingAllSites, site, translate } = this.props;
 
@@ -309,22 +254,6 @@ class DomainRow extends PureComponent {
 				},
 				comment: '%(siteName)s is the site name and URL or just the URL used to identify a site',
 			} );
-		}
-
-		if ( domainDetails.isWPCOMDomain ) {
-			return (
-				<div className="domain-item__meta">
-					{ translate( 'Free site address' ) }
-
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'Your WordPress.com site comes with a free address using a WordPress.com subdomain. As ' +
-								'an alternative to using the free subdomain, you can instead use a custom domain ' +
-								'name for your site, for example: yourgroovydomain.com.'
-						) }
-					</InfoPopover>
-				</div>
-			);
 		}
 
 		return <Fragment>{ getDomainTypeText( domainDetails, translate ) }</Fragment>;
@@ -386,64 +315,45 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	render() {
-		const {
-			domain,
-			domainDetails,
-			disabled,
-			isBusy,
-			isChecked,
-			isManagingAllSites,
-			showCheckbox,
-			site,
-		} = this.props;
-		const { listStatusText, listStatusClass, status, statusColor } = resolveDomainStatus(
-			domainDetails || domain,
-			null,
-			{
-				siteSlug: site?.slug,
-				hasMappingError: this.hasMappingError( domain ),
-			}
+	renderDomainName() {
+		const { domain, domainDetails, isManagingAllSites } = this.props;
+		return (
+			<div className="domain-row__domain-cell">
+				<span className="domain-row__domain-name">{ domain.domain }</span>
+				<div>{ this.getSiteMeta2() }</div>
+				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
+			</div>
 		);
+	}
 
-		const rowClasses = classNames( 'domain-row', `domain-row__status-${ listStatusClass }` );
+	renderDomainStatus( status, statusColor ) {
+		return (
+			<div className="domain-row__status-cell">
+				<span className={ `domain-row__${ statusColor }-dot` }></span> { status }
+			</div>
+		);
+	}
 
+	renderExpiryDate() {
+		const { domain, domainDetails } = this.props;
 		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry ).format( 'LL' );
+		return <div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>;
+	}
+
+	render() {
+		const { domain, domainDetails, site } = this.props;
+		const { status, statusColor } = resolveDomainStatus( domainDetails || domain, null, {
+			siteSlug: site?.slug,
+			hasMappingError: this.hasMappingError( domain ),
+		} );
 
 		return (
-			<div className={ rowClasses } onClick={ this.handleClick }>
-				<div className="domain-row__domain-cell">
-					<span className="domain-row__domain-name">{ domain.domain }</span>
-					<div>{ this.getSiteMeta2() }</div>
-					{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
-				</div>
-				<div className="domain-row__status-cell">
-					<span className={ `domain-row__${ statusColor }-dot` }></span> { status }
-				</div>
-				<div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>
+			<div className="domain-row" onClick={ this.handleClick }>
+				{ this.renderDomainName() }
+				{ this.renderDomainStatus( status, statusColor ) }
+				{ this.renderExpiryDate() }
 				{ this.renderAutoRenew() }
-				{ this.renderEmail( domainDetails ) }
-				{ /* 
-				{ showCheckbox && (
-					<FormCheckbox
-						className="domain-item__checkbox"
-						onChange={ this.onToggle }
-						onClick={ this.stopPropagation }
-						checked={ isChecked }
-						disabled={ disabled || isBusy }
-					/>
-				) }
-				<div className="list__domain-link">
-					<div className="domain-item__status">
-						<div className="domain-item__title">{ domain.domain }</div>
-						{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
-						{ this.renderActionResult() }
-					</div>
-					{ this.renderSiteMeta() }
-					{ listStatusText && (
-						<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
-					) }
-				</div> */ }
+				{ this.renderEmail() }
 				{ this.renderActionItems() }
 				{ this.renderOverlay() }
 			</div>
