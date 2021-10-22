@@ -67,10 +67,7 @@ function ChangePaymentMethod( {
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
-	const paymentMethods = useCreateAssignablePaymentMethods(
-		currentPaymentMethodId,
-		purchase?.productSlug ?? ''
-	);
+	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
 	const reduxDispatch = useDispatch();
 
 	if ( isDataLoading || ! isDataValid ) {
@@ -109,6 +106,7 @@ function ChangePaymentMethod( {
 						purchase={ purchase }
 						paymentMethods={ paymentMethods }
 						successCallback={ successCallback }
+						eventContext={ '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' }
 					/>
 				</Column>
 				<Column type="sidebar">

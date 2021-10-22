@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,7 +19,6 @@ import {
 } from 'calypso/me/purchases/billing-history/receipt';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { logToLogstash } from 'calypso/state/logstash/actions';
@@ -48,7 +48,7 @@ function useLogBillingHistoryError( message: string ) {
 				} )
 			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, message ]
 	);
 }
 
@@ -84,7 +84,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logBillingHistoryError }
 			>
@@ -92,7 +92,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 					siteId={ selectedSiteId }
 					getReceiptUrlFor={ getReceiptUrlForReceiptId }
 				/>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 			<CompactCard href="/me/purchases/billing">
 				{ translate( 'View all billing history and receipts' ) }
 			</CompactCard>
@@ -140,7 +140,7 @@ export function ReceiptView( {
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logBillingHistoryError }
 			>
@@ -150,7 +150,7 @@ export function ReceiptView( {
 				) : (
 					<ReceiptPlaceholder />
 				) }
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }

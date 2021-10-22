@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -22,7 +23,6 @@ import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-meth
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { logToLogstash } from 'calypso/state/logstash/actions';
@@ -81,12 +81,12 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
 				<PaymentMethodList addPaymentMethodUrl={ getAddNewPaymentMethodUrlFor( siteSlug ) } />
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }
@@ -136,7 +136,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 				align="left"
 			/>
 
-			<SiteLevelPurchasesErrorBoundary
+			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
@@ -146,13 +146,14 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 						<PaymentMethodSelector
 							paymentMethods={ paymentMethodList }
 							successCallback={ goToBillingHistory }
+							eventContext={ '/purchases/add-payment-method' }
 						/>
 					</Column>
 					<Column type="sidebar">
 						<PaymentMethodSidebar />
 					</Column>
 				</Layout>
-			</SiteLevelPurchasesErrorBoundary>
+			</CheckoutErrorBoundary>
 		</Main>
 	);
 }

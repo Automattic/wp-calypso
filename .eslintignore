@@ -20,6 +20,9 @@ node_modules/
 
 # Built packages
 /packages/*/dist/
+packages/calypso-color-schemes/src/__color-studio
+packages/calypso-color-schemes/css
+packages/calypso-color-schemes/js
 
 #
 # Eslint won't lint json, but prettier shares this ignore

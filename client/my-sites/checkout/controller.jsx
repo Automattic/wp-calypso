@@ -254,7 +254,7 @@ export function upsellNudge( context, next ) {
 		}
 	} else if ( context.path.includes( 'offer-professional-email' ) ) {
 		upsellType = PROFESSIONAL_EMAIL_UPSELL;
-		upgradeItem = null;
+		upgradeItem = context.params.domain;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

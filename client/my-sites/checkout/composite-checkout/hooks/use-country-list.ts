@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
-import type { CountryListItem } from '../types/country-list-item';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
+
+const emptyList: CountryListItem[] = [];
 
 export default function useCountryList(
 	overrideCountryList: CountryListItem[]
@@ -16,7 +18,8 @@ export default function useCountryList(
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
 
 	const reduxDispatch = useDispatch();
-	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
+	const globalCountryList =
+		useSelector( ( state ) => getCountries( state, 'payments' ) ) || emptyList;
 
 	// Has the global list been populated?
 	const isListFetched = globalCountryList.length > 0;

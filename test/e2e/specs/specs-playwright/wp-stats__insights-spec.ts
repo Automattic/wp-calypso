@@ -5,7 +5,7 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	StatsPage,
 	SidebarComponent,
 } from '@automattic/calypso-e2e';
@@ -24,8 +24,8 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 		${ 'Atomic' } | ${ 'wooCommerceUser' }
 	`( 'View Insights ($siteType)', function ( { user } ) {
 		it( 'Log In', async function () {
-			const loginFlow = new LoginFlow( page, user );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: user } );
 		} );
 
 		it( 'Navigate to Stats', async function () {

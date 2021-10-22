@@ -14,13 +14,15 @@ class QueryReaderPost extends Component {
 		this.maybeFetch();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeFetch( nextProps );
+	componentDidUpdate() {
+		this.maybeFetch();
 	}
 
-	maybeFetch = ( props = this.props ) => {
-		if ( isPostKeyLike( props.postKey ) && ( ! props.post || props.post._state === 'minimal' ) ) {
-			this.props.fetchPost( props.postKey );
+	maybeFetch = () => {
+		const { post, postKey } = this.props;
+
+		if ( isPostKeyLike( postKey ) && ( ! post || post._state === 'minimal' ) ) {
+			this.props.fetchPost( postKey );
 		}
 	};
 

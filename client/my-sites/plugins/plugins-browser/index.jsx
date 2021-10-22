@@ -24,6 +24,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
+import { PaginationVariant } from 'calypso/components/pagination/constants';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -32,6 +33,7 @@ import urlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
+import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
@@ -176,6 +178,7 @@ export class PluginsBrowser extends Component {
 					site={ this.props.siteSlug }
 					showPlaceholders={ isFetchingPluginsByCategory }
 					currentSites={ this.props.sites }
+					variant={ PluginsBrowserListVariant.InfiniteScroll }
 				/>
 			);
 		}
@@ -208,7 +211,7 @@ export class PluginsBrowser extends Component {
 						showPlaceholders={ isFetchingPluginsBySearchTerm }
 						size={ SEARCH_RESULTS_LIST_LENGTH }
 						currentSites={ this.props.sites }
-						paginated
+						variant={ PluginsBrowserListVariant.Paginated }
 					/>
 					{ pluginsPagination && (
 						<Pagination
@@ -218,6 +221,7 @@ export class PluginsBrowser extends Component {
 							pageClick={ ( page ) => {
 								fetchPlugins( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH );
 							} }
+							variant={ PaginationVariant.minimal }
 						/>
 					) }
 				</>
@@ -260,6 +264,7 @@ export class PluginsBrowser extends Component {
 				size={ SHORT_LIST_LENGTH }
 				showPlaceholders={ isFetching }
 				currentSites={ this.props.sites }
+				variant={ PluginsBrowserListVariant.Fixed }
 			/>
 		);
 	}
@@ -280,6 +285,7 @@ export class PluginsBrowser extends Component {
 				site={ this.props.siteSlug }
 				size={ SHORT_LIST_LENGTH }
 				title={ this.translateCategory( 'recommended' ) }
+				variant={ PluginsBrowserListVariant.Fixed }
 			/>
 		);
 	}

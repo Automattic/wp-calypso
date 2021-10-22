@@ -19,7 +19,7 @@ import {
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled } from '@automattic/wpcom-checkout';
+import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useCallback } from 'react';
@@ -47,9 +47,8 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
-import type { CountryListItem } from '../types/country-list-item';
 import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -205,6 +204,11 @@ export default function WPCheckout( {
 		setSiteId( siteId );
 	}, [ siteId, setSiteId ] );
 
+	const arePostalCodesSupported = getCountryPostalCodeSupport(
+		countriesList,
+		contactInfo.countryCode?.value ?? ''
+	);
+
 	const updateCartContactDetails = useCallback( () => {
 		// Update tax location in cart
 		const nonTaxPaymentMethods = [ 'free-purchase' ];
@@ -225,11 +229,17 @@ export default function WPCheckout( {
 			const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
 			updateLocation( {
 				countryCode: contactInfo.countryCode?.value,
-				postalCode: contactInfo.postalCode?.value,
+				postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
 				subdivisionCode,
 			} );
 		}
-	}, [ activePaymentMethod, updateLocation, contactInfo, contactDetailsType ] );
+	}, [
+		activePaymentMethod,
+		updateLocation,
+		contactInfo,
+		contactDetailsType,
+		arePostalCodesSupported,
+	] );
 
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 

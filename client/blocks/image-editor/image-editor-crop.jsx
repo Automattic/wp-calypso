@@ -151,7 +151,7 @@ class ImageEditorCrop extends Component {
 		let finalHeight = newHeight;
 
 		switch ( aspectRatio ) {
-			case AspectRatios.ORIGINAL:
+			case AspectRatios.ORIGINAL: {
 				//image not loaded yet
 				if ( ! this.props.originalAspectRatio ) {
 					this.setState( newValues, callback );
@@ -163,6 +163,7 @@ class ImageEditorCrop extends Component {
 				imageHeight = rotated ? width : height;
 
 				break;
+			}
 
 			case AspectRatios.ASPECT_1X1:
 				imageWidth = 1;

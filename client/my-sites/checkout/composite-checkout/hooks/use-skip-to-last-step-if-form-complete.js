@@ -57,7 +57,7 @@ function saveStepNumberToUrl( stepNumber ) {
 	// We use try/catch because we support IE11 and that browser does not include
 	// HashChange.
 	try {
-		const event = new HashChangeEvent( 'hashchange' ); // eslint-disable-line no-undef
+		const event = new HashChangeEvent( 'hashchange' );
 		window.dispatchEvent( event );
 	} catch ( error ) {
 		debug( 'hashchange firing failed' );

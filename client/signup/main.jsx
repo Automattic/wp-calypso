@@ -587,9 +587,7 @@ class Signup extends Component {
 				<ReskinnedProcessingScreen
 					flowName={ this.props.flowName }
 					hasPaidDomain={ hasPaidDomain }
-					// If destination is not setup-site flow, we'll apply default design now
-					// because the user cannot choose design in current flow
-					hasAppliedDesign={ ! destination.startsWith( '/start/setup-site' ) }
+					isDestinationSetupSiteFlow={ destination.startsWith( '/start/setup-site' ) }
 				/>
 			);
 		}

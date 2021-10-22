@@ -6,7 +6,7 @@ import {
 	setupHooks,
 	BrowserManager,
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	PublishedPostsListPage,
 	CommentsComponent,
 	NavbarComponent,
@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
-	const comment = DataHelper.getRandomPhrase() + ' TBD';
+	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -28,9 +28,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
 		it( `Log in as ${ commentingUser }`, async function () {
-			const loginFlow = new LoginFlow( page, commentingUser );
-			await loginFlow.logIn();
-			await page.waitForURL( '**/read' );
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: commentingUser }, { landingUrl: '**/read' } );
 		} );
 
 		it( 'View site', async function () {
@@ -56,8 +55,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
 		it( `Log in as ${ notificationsUser }`, async function () {
-			const loginFlow = new LoginFlow( page, notificationsUser );
-			await loginFlow.logIn();
+			const loginPage = new LoginPage( page );
+			await loginPage.login( { account: notificationsUser } );
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {

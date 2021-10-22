@@ -23,6 +23,7 @@ import { shallow } from 'enzyme';
 import { PluginsBrowser } from '../';
 
 const props = {
+	isRequestingRecommendedPlugins: false,
 	pluginsByCategory: [],
 	pluginsByCategoryNew: [],
 	pluginsByCategoryPopular: [],

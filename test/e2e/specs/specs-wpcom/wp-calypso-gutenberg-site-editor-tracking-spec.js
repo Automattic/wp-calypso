@@ -428,9 +428,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
-		// Temporarily skip these tests until we can deploy wpcom-block-editor changes from
-		// https://github.com/Automattic/wp-calypso/pull/56551
-		describe.skip( 'Global styles panel events', function () {
+		describe( 'Global styles panel events', function () {
 			describe( 'Tracks "wpcom_block_editor_global_styles_panel_toggle', function () {
 				it( 'when Global Styles sidebar is opened', async function () {
 					const editor = await SiteEditorComponent.Expect( this.driver );
@@ -478,10 +476,14 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 					await editor.toggleGlobalStyles();
 
+					const backButtonLocator = By.css(
+						'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
+					);
+
 					await clickGlobalStylesMenuItem( this.driver, 'Typography' );
-					await clickGlobalStylesMenuItem( this.driver, 'Back' );
+					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
 					await clickGlobalStylesMenuItem( this.driver, 'Colors' );
-					await clickGlobalStylesMenuItem( this.driver, 'Back' );
+					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
 					await clickGlobalStylesMenuItem( this.driver, 'Blocks' );
 
 					const globalStylesMenuEvents = await getGlobalStylesMenuEvents( this.driver );

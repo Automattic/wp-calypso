@@ -3,12 +3,15 @@ import { translate } from 'i18n-calypso';
 import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { DomainThankYouParams, DomainThankYouProps } from '../types';
+import type {
+	DomainThankYouParams,
+	DomainThankYouProps,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
 const domainTransferThankYouProps = ( {
-	selectedSiteSlug,
 	domain,
 	email,
+	selectedSiteSlug,
 }: DomainThankYouParams ): DomainThankYouProps => ( {
 	thankYouNotice: {
 		noticeTitle: translate( 'The transfer process can take up to 5 days to complete' ),

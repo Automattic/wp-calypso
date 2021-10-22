@@ -253,6 +253,7 @@ export class UpsellNudge extends Component {
 			planDiscountedRawPrice,
 			isLoggedIn,
 			upsellType,
+			upgradeItem,
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
@@ -307,6 +308,7 @@ export class UpsellNudge extends Component {
 				return (
 					<ProfessionalEmailUpsell
 						currencyCode={ currencyCode }
+						domainName={ upgradeItem }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						productCost={ productCost }
@@ -332,6 +334,7 @@ export class UpsellNudge extends Component {
 			hideNudge: shouldHideUpsellNudges,
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
+
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
@@ -538,4 +541,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withShoppingCart( withCartKey( localize( UpsellNudge ) ) ) );
+)( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) );

@@ -11,6 +11,7 @@ body.is-section-signup {
 
 		.layout:not( .dops ) .wpcom-site__logo {
 			fill: var( --color-neutral-10 );
+			color: var( --color-neutral-10 );
 			opacity: 1;
 
 			path {
@@ -106,6 +107,7 @@ body.is-section-signup .layout.gravatar {
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
 		fill: var( --color-primary-dark );
+		color: var( --color-primary-dark );
 		opacity: 0.3;
 	}
 
@@ -510,6 +512,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			padding-bottom: 0;
 			border: 0;
 			box-shadow: none;
+			background-color: transparent;
 
 			@include break-small {
 				text-align: center;
@@ -686,7 +689,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			}
 
 			.signup-form__separator-text {
-				background: var( --studio-white );
+				background-color: #fdfdfd;
 				text-transform: uppercase;
 				text-align: center;
 				padding: 24px 0;
@@ -780,17 +783,17 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		.design-picker__preview .step-wrapper__header {
 			margin-top: 40px;
 
-			@include break-mobile {
-				margin-top: 11px;
+			.formatted-header__title {
+				font-size: 2rem; /* stylelint-disable-line */
 			}
 
-			@include break-xlarge {
-				margin-top: 6px;
+			@include break-mobile {
+				margin-top: 12px;
 			}
 		}
 	}
 
-	button.is-primary {
+	button.is-borderless {
 		box-shadow: none;
 		border: 0;
 	}

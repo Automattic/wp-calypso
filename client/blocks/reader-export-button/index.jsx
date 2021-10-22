@@ -76,7 +76,7 @@ class ReaderExportButton extends Component {
 			return;
 		}
 
-		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } ); // eslint-disable-line no-undef
+		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } );
 		saveAs( blob, this.props.filename );
 
 		if ( this.isMounted ) {

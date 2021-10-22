@@ -80,6 +80,7 @@ export interface TransactionRequest {
 	gstin?: string | undefined;
 	nik?: string | undefined;
 	useForAllSubscriptions?: boolean;
+	eventSource?: string;
 }
 
 export type WPCOMTransactionEndpoint = (
@@ -498,3 +499,9 @@ export type RawDomainContactValidationResponse = {
 	success: boolean;
 	messages?: RawContactValidationResponseMessages;
 };
+
+export interface CountryListItem {
+	code: string;
+	name: string;
+	has_postal_codes: boolean;
+}

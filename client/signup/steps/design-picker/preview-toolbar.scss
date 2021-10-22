@@ -4,12 +4,13 @@
 .preview-toolbar__toolbar {
 	// Move spinner to the bottom of browser header
 	& ~ hr.spinner-line {
+		width: calc( 100% - 1px );
 		top: 16px;
 		left: 50%;
 		transform: translateX( -50% );
 
 		@include break-small {
-			top: 68px;
+			top: 82px;
 		}
 	}
 
@@ -35,7 +36,7 @@
 .button.preview-toolbar__button {
 	color: var( --studio-gray-10 );
 	height: auto;
-	margin: 0 13px;
+	margin: 0 9px;
 	transition: color 0.1s ease-in-out;
 
 	&.is-selected,

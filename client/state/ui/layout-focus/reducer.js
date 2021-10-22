@@ -18,7 +18,7 @@ export default function layoutFocus( state = initialState, action ) {
 				return state;
 			}
 			return Object.assign( {}, state, { next: action.area } );
-		case LAYOUT_NEXT_FOCUS_ACTIVATE:
+		case LAYOUT_NEXT_FOCUS_ACTIVATE: {
 			// If we don't have a change queued, set it to `content`. This avoids
 			// having to set the focus to content on all navigation links because it
 			// becomes the default after focus has shifted.
@@ -30,6 +30,7 @@ export default function layoutFocus( state = initialState, action ) {
 				return state;
 			}
 			return Object.assign( {}, state, { current: next, next: null } );
+		}
 	}
 	return state;
 }

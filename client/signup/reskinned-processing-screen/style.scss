@@ -5,8 +5,19 @@ $progress-duration: 800ms;
 .reskinned-processing-screen {
 	padding: 1em;
 	max-width: 540px;
-
+	text-align: center;
 	margin: 32vh auto;
+
+	&.is-force-centered {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 	&__progress-bar {
 		position: relative;
@@ -29,19 +40,20 @@ $progress-duration: 800ms;
 		}
 	}
 
-	&__progress-step {
-		@include onboarding-font-recoleta;
-		font-size: 26px;
-		line-height: 40px;
-		text-align: center;
-		vertical-align: middle;
-		margin: 0;
-	}
-
 	&__progress-numbered-steps {
 		margin-top: 0.7em;
 		padding: 1em;
 		text-align: center;
 		color: var( --studio-gray-40 );
+	}
+
+	&__progress-step {
+		@include onboarding-font-recoleta;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.625rem;
+		line-height: 40px;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
 	}
 }

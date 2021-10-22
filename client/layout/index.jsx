@@ -20,7 +20,6 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
@@ -30,7 +29,6 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -276,7 +274,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+				{ config.isEnabled( 'keyboard-shortcuts' ) && (
+					<AsyncLoad require="calypso/lib/keyboard-shortcuts/menu" placeholder={ null } />
+				) }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
@@ -304,16 +304,7 @@ class Layout extends Component {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' )
-					? this.props.isCommunityTranslatorEnabled && (
-							<AsyncLoad require="calypso/components/community-translator" />
-					  )
-					: config( 'restricted_me_access' ) && (
-							<AsyncLoad
-								require="calypso/layout/community-translator/launcher"
-								placeholder={ null }
-							/>
-					  ) }
+				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="calypso/components/happychat" />
 				) }
@@ -401,7 +392,6 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isEligibleForJITM,
-			isCommunityTranslatorEnabled: isCommunityTranslatorEnabled( state ),
 			oauth2Client,
 			wccomFrom,
 			isSupportSession: isSupportSession( state ),

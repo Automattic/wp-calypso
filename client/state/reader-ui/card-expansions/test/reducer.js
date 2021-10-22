@@ -4,7 +4,7 @@ import { keyToString } from 'calypso/reader/post-key';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,
-} from 'calypso/state/reader/action-types';
+} from 'calypso/state/reader-ui/action-types';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {

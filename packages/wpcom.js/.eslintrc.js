@@ -6,7 +6,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: './examples/server/**/*',
+			files: [ './examples/server/**/*', './examples/node/**/*' ],
 			...nodeConfig,
 		},
 		{

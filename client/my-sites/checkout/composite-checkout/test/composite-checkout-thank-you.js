@@ -6,9 +6,15 @@
 
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	PLAN_ECOMMERCE,
 	JETPACK_REDIRECT_URL,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	PLAN_BLOGGER,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
 	redirectCheckoutToWpAdmin,
+	TITAN_MAIL_MONTHLY_SLUG,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -25,11 +31,6 @@ jest.mock( '@automattic/calypso-config', () => {
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
-
-// Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
-jest.mock( 'calypso/lib/naive-client-side-rollout', () => ( {
-	badNaiveClientSideRollout: jest.fn( () => true ),
-} ) );
 
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
@@ -70,29 +71,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
-	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set even if the quickstart offer would normally be included', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
-		const cart = {
-			products: [
-				{
-					product_slug: 'personal-bundle',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			orderId: '1234abcd',
-			cart,
-		} );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
-	} );
-
-	// Note: This just verifies the existing behavior; this URL is invalid unless
-	// placed after a `redirectTo` query string; see the redirect payment
-	// processor
-	it( 'redirects to the quickstart offer thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
 		const cart = {
 			products: [
 				{
@@ -105,7 +84,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 		} );
-		expect( url ).toBe( '/checkout/offer-quickstart-session/:receiptId/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	// Note: This just verifies the existing behavior; this URL is invalid unless
@@ -723,7 +702,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
 
-	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but neither GSuite nor concierge are in the cart if user is in invalid country', () => {
+	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but neither G Suite nor concierge are in the cart if user is in invalid country', () => {
 		const cart = {
 			products: [
 				{
@@ -744,8 +723,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to business upgrade nudge if concierge and jetpack are not in the cart, and premium is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to business upgrade nudge if jetpack is not in the cart, and premium is in the cart', () => {
 		const cart = {
 			products: [
 				{
@@ -763,8 +741,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
 	} );
 
-	it( 'redirects to business monthly upgrade nudge if concierge and jetpack are not in the cart, and premium monthly is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
 		const cart = {
 			products: [
 				{
@@ -783,7 +760,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -800,8 +776,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
-	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			products: [
 				{
@@ -815,11 +790,10 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: '1234abcd',
 		} );
-		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
-	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+	it( 'redirects to the thank you page if jetpack is not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
 			products: [
 				{
@@ -833,11 +807,10 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: '1234abcd',
 		} );
-		expect( url ).toBe( '/checkout/offer-quickstart-session/1234abcd/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 	} );
 
 	it( 'redirects to thank-you page (with concierge display mode) if concierge is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -854,8 +827,235 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
 	} );
 
+	describe( 'Professional Email upsell', () => {
+		beforeEach( () => {
+			isEnabled.mockImplementation( ( flag ) => flag === 'upsell/professional-email' );
+		} );
+
+		const domains = [
+			{
+				name: 'domain-with-gsuite.com',
+				currentUserCanAddEmail: true,
+				googleAppsSubscription: { status: 'active' },
+			},
+			{
+				name: 'domain-with-titan.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { status: 'active' },
+			},
+			{
+				name: 'domain-eligible.com',
+				currentUserCanAddEmail: true,
+			},
+			{
+				name: 'domain-eligible-primary.com',
+				currentUserCanAddEmail: true,
+				isPrimary: true,
+			},
+			{
+				name: 'domain-eligible-for-free-trial.com',
+				currentUserCanAddEmail: true,
+				titanMailSubscription: { isEligibleForIntroductoryOffer: true },
+			},
+			{
+				name: 'domain-expired.com',
+				currentUserCanAddEmail: true,
+				expired: true,
+			},
+			{
+				name: 'invalid.wpcomstaging.com',
+				currentUserCanAddEmail: true,
+				isWpcomStagingDomain: true,
+			},
+		];
+
+		it( 'Is displayed if site has eligible domain and Blogger plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_BLOGGER,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has eligible domain and Personal plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PERSONAL,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has eligible domain and Business plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_BUSINESS,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has eligible domain and eCommerce plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_ECOMMERCE,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is displayed if site has domain registration and eligible plan in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PERSONAL,
+					},
+					{
+						meta: 'domain-from-cart.com',
+						is_domain_registration: true,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				'/checkout/offer-professional-email/domain-from-cart.com/1234abcd/foo.bar'
+			);
+		} );
+
+		it( 'Is not displayed if cart is missing', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+
+		it( 'Is not displayed if Google Workspace is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+
+		it( 'Is not displayed if Professional Email is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: TITAN_MAIL_MONTHLY_SLUG,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
+		} );
+
+		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PREMIUM,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+		} );
+	} );
+
 	it( 'redirects to thank-you page if jetpack is in the cart', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{
@@ -873,7 +1073,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but hideNudge is true', () => {
-		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
 		const cart = {
 			products: [
 				{

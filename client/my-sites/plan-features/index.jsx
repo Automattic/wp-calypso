@@ -319,13 +319,25 @@ export class PlanFeatures extends Component {
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
+
+		// move any popular plan to the first place in the mobile view.
+		let popularPlanProperties;
 		const reorderedPlans = planProperties.filter( ( properties ) => {
 			if ( isFreePlan( properties.planName ) ) {
 				freePlanProperties = properties;
 				return false;
 			}
+			// remove the popular plan.
+			if ( properties.popular && ! popularPlanProperties ) {
+				popularPlanProperties = properties;
+				return false;
+			}
 			return true;
 		} );
+
+		if ( popularPlanProperties ) {
+			reorderedPlans.unshift( popularPlanProperties );
+		}
 
 		if ( freePlanProperties ) {
 			reorderedPlans.push( freePlanProperties );
@@ -1041,7 +1053,7 @@ const ConnectedPlanFeatures = connect(
 	{
 		recordTracksEvent,
 	}
-)( withShoppingCart( withCartKey( localize( PlanFeatures ) ) ) );
+)( withCartKey( withShoppingCart( localize( PlanFeatures ) ) ) );
 
 /* eslint-enable */
 

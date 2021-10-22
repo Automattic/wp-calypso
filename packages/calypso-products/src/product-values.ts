@@ -91,3 +91,4 @@ export { isMarketplaceProduct } from './is-marketplace-product';
 export * from './is-p2-plus';
 export * from './products-list';
 export * from './translations';
+export { findProductKeys } from './find-product-keys';

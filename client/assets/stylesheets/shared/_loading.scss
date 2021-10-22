@@ -1,5 +1,6 @@
 .wpcom-site__logo {
 	fill: var( --color-neutral-10 );
+	color: var( --color-neutral-10 );
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -12,5 +13,68 @@
 	@include breakpoint-deprecated( '>960px' ) {
 		width: 100px;
 		height: 100px;
+	}
+}
+
+.wpcom__loading-ellipsis {
+	display: inline-block;
+	position: relative;
+	width: 80px;
+	height: 80px;
+
+	&.wpcom-site__logo {
+		position: fixed;
+	}
+
+	> div {
+		position: absolute;
+		top: 33px;
+		width: 13px;
+		height: 13px;
+		border-radius: 50%; /*stylelint-disable-line declaration-property-unit-allowed-list*/
+		background: var( --studio-gray-60 );
+		animation-timing-function: cubic-bezier( 0, 1, 1, 0 );
+
+		&:nth-child( 1 ) {
+			left: 8px;
+			animation: wpcom__loading-ellipsis-grow 0.6s infinite;
+		}
+		&:nth-child( 2 ) {
+			left: 8px;
+			animation: wpcom__loading-ellipsis-move 0.6s infinite;
+		}
+		&:nth-child( 3 ) {
+			left: 32px;
+			animation: wpcom__loading-ellipsis-move 0.6s infinite;
+		}
+		&:nth-child( 4 ) {
+			left: 56px;
+			animation: wpcom__loading-ellipsis-shrink 0.6s infinite;
+		}
+	}
+}
+
+@keyframes wpcom__loading-ellipsis-grow {
+	0% {
+		transform: scale( 0 );
+	}
+	100% {
+		transform: scale( 1 );
+	}
+}
+@keyframes wpcom__loading-ellipsis-move {
+	0% {
+		transform: translate( 0, 0 );
+	}
+	100% {
+		transform: translate( 24px, 0 );
+	}
+}
+@keyframes wpcom__loading-ellipsis-shrink {
+	0% {
+		transform: scale( 1 );
+	}
+	100% {
+		transform: scale( 0 );
 	}
 }

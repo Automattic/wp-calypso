@@ -1,3 +1,4 @@
+/* global google:false */
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 
@@ -16,7 +17,6 @@ function queryGoogleMapsApi( queryParams ) {
 		}
 
 		loadScript( GOOGLE_MAPS_API_BASE_URL + '?key=' + GOOGLE_MAPS_API_KEY, function () {
-			// eslint-disable-next-line no-undef
 			geocoder = new google.maps.Geocoder();
 			return queryGeocoder( queryParams, resolve, reject );
 		} );

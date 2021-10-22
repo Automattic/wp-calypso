@@ -38,7 +38,7 @@ const ProfessionalEmailFeature = ( { children } ) => {
 
 const ProfessionalEmailUpsell = ( {
 	currencyCode,
-	domainName = 'example.com',
+	domainName,
 	handleClickAccept,
 	handleClickDecline,
 	productCost,
@@ -70,13 +70,6 @@ const ProfessionalEmailUpsell = ( {
 		},
 		comment: '{{price/}} is the formatted price, e.g. $20',
 	} );
-
-	const isEligibleForFreeTrial = true;
-	const discountBadge = isEligibleForFreeTrial ? (
-		<span>
-			<Badge type="success">{ translate( '3 months free' ) }</Badge>
-		</span>
-	) : null;
 
 	const onMailboxValueChange = ( fieldName, fieldValue ) => {
 		const updatedMailboxData = {
@@ -137,12 +130,15 @@ const ProfessionalEmailUpsell = ( {
 				<div className="professional-email-upsell__pricing">
 					<span
 						className={ classNames( 'professional-email-upsell__standard-price', {
-							'is-discounted': isEligibleForFreeTrial,
+							'is-discounted': true,
 						} ) }
 					>
 						{ formattedPrice }
 					</span>
-					{ discountBadge }
+
+					<span>
+						<Badge type="success">{ translate( '3 months free' ) }</Badge>
+					</span>
 				</div>
 			</header>
 			<div className="professional-email-upsell__content">

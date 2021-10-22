@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { transferDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
+import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { authCodeStepDefaultDescription, stepsHeadingTransfer } from './constants';
 import DomainStepAuthCode from './domain-step-auth-code';
@@ -43,4 +44,4 @@ const TransferDomainStepAuthCode = ( {
 
 export default connect( null, {
 	transferDomainActionHandler: transferDomainAction,
-} )( withShoppingCart( TransferDomainStepAuthCode ) );
+} )( withCartKey( withShoppingCart( TransferDomainStepAuthCode ) ) );

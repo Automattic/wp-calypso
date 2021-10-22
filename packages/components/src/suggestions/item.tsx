@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { escapeRegExp } from 'lodash';
-import type { ForwardRefRenderFunction, FocusEvent, MouseEvent } from 'react';
 import { useEffect, memo, forwardRef } from 'react';
+import type { ForwardRefRenderFunction, FocusEvent, MouseEvent } from 'react';
 
 function escapeRegExpWithSpace( str: string ) {
 	return escapeRegExp( str ).replace( /\s/g, '\\s' );
