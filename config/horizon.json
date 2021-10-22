@@ -75,7 +75,7 @@
 		"mailchimp": false,
 		"manage/export/guided-transfer": true,
 		"marketplace-test": false,
-		"marketplace-yoast": false,
+		"marketplace": false,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"network-connection": true,

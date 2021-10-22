@@ -116,7 +116,7 @@
 		"manage/import/site-importer-endpoints": true,
 		"manage/plugins/compatibility-warning": false,
 		"marketplace-test": true,
-		"marketplace-yoast": true,
+		"marketplace": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
