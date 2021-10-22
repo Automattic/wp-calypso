@@ -105,6 +105,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			disableMonthlyExperiment = false,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -144,6 +145,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					monthlyDisabled={ disableMonthlyExperiment }
 				/>
 			</div>
 		);
