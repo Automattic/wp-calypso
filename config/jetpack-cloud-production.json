@@ -33,7 +33,6 @@
 		"current-site/stale-cart-notice": false,
 		"checkout/google-pay": false,
 		"i18n/community-translator": false,
-		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/only-realtime-products": false,

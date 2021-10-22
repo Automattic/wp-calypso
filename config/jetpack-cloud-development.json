@@ -36,7 +36,6 @@
 		"checkout/google-pay": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
-		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/backups-date-picker": true,
