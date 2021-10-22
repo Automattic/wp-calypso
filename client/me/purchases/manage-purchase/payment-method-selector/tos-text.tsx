@@ -1,10 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
-	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'calypso/lib/url/support';
 
 export default function TosText(): JSX.Element {
 	const translate = useTranslate();
