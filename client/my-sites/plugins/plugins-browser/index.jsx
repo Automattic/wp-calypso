@@ -24,9 +24,6 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
@@ -456,8 +453,10 @@ export class PluginsBrowser extends Component {
 							headerText={ this.props.translate( 'Plugins' ) }
 							align="left"
 						/>
+
+						<div className="plugins-browser__searchbox">{ this.getSearchBox() }</div>
+
 						<div className="plugins-browser__main-buttons">
-							{ this.getSearchBox() }
 							{ this.renderManageButton() }
 							{ this.renderUploadPluginButton() }
 						</div>

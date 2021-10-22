@@ -10,12 +10,27 @@
 	}
 }
 
-.plugins-browser__main-buttons {
+.plugins-browser__searchbox {
+	width: 250px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
 	align-items: stretch;
 	margin: auto;
+	margin-right: 15px;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+		align-items: flex-end;
+		margin-bottom: 17px;
+	}
+}
+
+.plugins-browser__main-buttons {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: stretch;
 	margin-right: 15px;
 
 	@include breakpoint-deprecated( '>480px' ) {
