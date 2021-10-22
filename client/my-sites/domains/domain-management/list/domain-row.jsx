@@ -151,7 +151,11 @@ class DomainRow extends PureComponent {
 		}
 
 		if ( ! purchase ) {
-			return <span className="domain-row__auto-renew-cell">ldng</span>;
+			return (
+				<span className="domain-row__auto-renew-cell">
+					<p className="domain-row__auto-renew-placeholder" />
+				</span>
+			);
 		}
 
 		return (

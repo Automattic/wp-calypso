@@ -55,6 +55,16 @@
 }
 .domain-row__auto-renew-cell {
 	flex: 30 30 0;
+
+	.domain-row__auto-renew-placeholder {
+		width: 30%;
+		@include placeholder( --color-neutral-5 );
+		margin: 0;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
 }
 .domain-row__email-cell {
 	flex: 30 30 0;
