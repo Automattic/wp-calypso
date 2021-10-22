@@ -148,7 +148,9 @@ export class P2GeneralSettingsForm extends Component {
 
 				<SettingsSectionHeader
 					data-tip-target="settings-site-profile-save"
-					disabled={ isRequestingSettings || isSavingSettings }
+					disabled={
+						isRequestingSettings || isSavingSettings || Object.keys( this.state.errors ).length > 0
+					}
 					isSaving={ isSavingSettings }
 					onButtonClick={ this.handleSubmitForm }
 					showButton
