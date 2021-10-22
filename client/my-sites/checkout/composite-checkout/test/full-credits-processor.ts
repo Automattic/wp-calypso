@@ -1,13 +1,12 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import fullCreditsProcessor from '../lib/full-credits-processor';
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsSuccessResponse,
+	processorOptions,
+} from './util';
 
 describe( 'fullCreditsProcessor', () => {
-	const stripeConfiguration = {
-		processor_id: 'IE',
-		js_url: 'https://stripe-js-url',
-		public_key: 'stripe-public-key',
-		setup_intent_id: null,
-	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -16,17 +15,8 @@ describe( 'fullCreditsProcessor', () => {
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
-		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
+		...processorOptions,
 		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
 	};
 
 	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
@@ -47,31 +37,31 @@ describe( 'fullCreditsProcessor', () => {
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
+		domain_details: undefined,
 		payment: {
 			address: undefined,
-			cancelUrl: undefined,
+			cancel_url: undefined,
 			city: undefined,
 			country: 'US',
-			countryCode: 'US',
-			deviceId: undefined,
+			country_code: 'US',
+			device_id: undefined,
 			document: undefined,
 			email: undefined,
 			gstin: undefined,
-			idealBank: undefined,
+			ideal_bank: undefined,
 			name: '',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: undefined,
-			paymentMethod: 'WPCOM_Billing_WPCOM',
-			paymentPartner: undefined,
-			phoneNumber: undefined,
-			postalCode: '10001',
+			payment_key: undefined,
+			payment_method: 'WPCOM_Billing_WPCOM',
+			payment_partner: undefined,
+			phone_number: undefined,
+			postal_code: '10001',
 			state: undefined,
-			storedDetailsId: undefined,
-			streetNumber: undefined,
-			successUrl: undefined,
-			tefBank: undefined,
+			stored_details_id: undefined,
+			street_number: undefined,
+			success_url: undefined,
+			tef_bank: undefined,
 			zip: '10001',
 		},
 	};
@@ -79,9 +69,9 @@ describe( 'fullCreditsProcessor', () => {
 	const basicExpectedDomainDetails = {
 		address1: undefined,
 		address2: undefined,
-		alternateEmail: undefined,
+		alternate_email: undefined,
 		city: undefined,
-		countryCode: 'US',
+		country_code: 'US',
 		email: undefined,
 		extra: {
 			ca: null,
@@ -89,27 +79,17 @@ describe( 'fullCreditsProcessor', () => {
 			uk: null,
 		},
 		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
+		first_name: undefined,
+		last_name: undefined,
 		organization: undefined,
 		phone: undefined,
-		postalCode: '10001',
+		postal_code: '10001',
 		state: undefined,
 	};
 
-	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
-
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue( Promise.resolve( 'success' ) );
-	} );
-
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			fullCreditsProcessor( {
 				...options,
@@ -122,8 +102,14 @@ describe( 'fullCreditsProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
-	it( 'returns an explicit error response if the transaction fails', async () => {
-		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
+	it( 'returns an explicit error response if the transaction fails with a non-200 response', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			fullCreditsProcessor( {
@@ -137,7 +123,8 @@ describe( 'fullCreditsProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			fullCreditsProcessor( {
 				...options,
@@ -162,7 +149,8 @@ describe( 'fullCreditsProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			fullCreditsProcessor( {
 				...options,
@@ -198,7 +186,8 @@ describe( 'fullCreditsProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
-		const expected = { payload: 'success', type: 'SUCCESS' };
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 		await expect(
 			fullCreditsProcessor( {
 				...options,
@@ -222,7 +211,7 @@ describe( 'fullCreditsProcessor', () => {
 				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 		} );
 	} );
 } );
