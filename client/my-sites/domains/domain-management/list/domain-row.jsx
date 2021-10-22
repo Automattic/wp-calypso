@@ -26,6 +26,7 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { handleRenewNowClick } from 'calypso/lib/purchases';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { withoutHttp } from 'calypso/lib/url';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
 import {
 	domainManagementChangeSiteAddress,
@@ -143,16 +144,27 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { translate, domainDetails } = this.props;
+		const { site, purchase, translate, domainDetails } = this.props;
 
 		if ( ! this.shouldShowAutoRenewStatus() ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
 		}
 
-		const autoRenewLabel = domainDetails?.isAutoRenewing
-			? translate( '(on)' )
-			: translate( '(off)' );
-		return <span className="domain-row__auto-renew-cell">{ autoRenewLabel }</span>;
+		if ( ! purchase ) {
+			return <span className="domain-row__auto-renew-cell">ldng</span>;
+		}
+
+		return (
+			<div className="domain-row__auto-renew-cell" onClick={ ( e ) => e.stopPropagation() }>
+				<AutoRenewToggle
+					planName={ site.plan.product_name_short }
+					siteDomain={ site.domain }
+					purchase={ purchase }
+					withTextStatus={ false }
+					toggleSource="registered-domain-status"
+				/>
+			</div>
+		);
 	}
 
 	shouldShowAutoRenewStatus = () => {
@@ -163,7 +175,7 @@ class DomainRow extends PureComponent {
 		) {
 			return false;
 		}
-		return ! domainDetails?.bundledPlanSubscriptionId;
+		return ! domainDetails?.bundledPlanSubscriptionId && domainDetails.currentUserCanManage;
 	};
 
 	renderOptionsButton() {

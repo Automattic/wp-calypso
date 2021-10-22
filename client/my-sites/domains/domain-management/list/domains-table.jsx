@@ -105,25 +105,33 @@ class DomainsTable extends PureComponent {
 			} );
 		}
 
-		const domainListItems = domainItems.map( ( domain, index ) => (
-			<DomainRow
-				key={ `${ domain.name }-${ index }` }
-				currentRoute={ currentRoute }
-				domain={ domain }
-				domainDetails={ domain }
-				site={ selectedSite }
-				isManagingAllSites={ false }
-				onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
-				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
-				busyMessage={ translate( 'Setting Primary Domain…', {
-					context: 'Shows up when the primary domain is changing and the user is waiting',
-				} ) }
-				disabled={ settingPrimaryDomain }
-				selectionIndex={ index }
-				onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
-				shouldUpgradeToMakePrimary={ shouldUpgradeToMakeDomainPrimary( domain ) }
-			/>
-		) );
+		const domainListItems = domainItems.map( ( domain, index ) => {
+			const purchase = this.props.purchases
+				? this.props.purchases.find(
+						( purchase ) => purchase.id === parseInt( domain.subscriptionId, 10 )
+				  )
+				: null;
+			return (
+				<DomainRow
+					key={ `${ domain.name }-${ index }` }
+					currentRoute={ currentRoute }
+					domain={ domain }
+					domainDetails={ domain }
+					site={ selectedSite }
+					isManagingAllSites={ false }
+					onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
+					isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
+					busyMessage={ translate( 'Setting Primary Domain…', {
+						context: 'Shows up when the primary domain is changing and the user is waiting',
+					} ) }
+					disabled={ settingPrimaryDomain }
+					selectionIndex={ index }
+					onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
+					shouldUpgradeToMakePrimary={ shouldUpgradeToMakeDomainPrimary( domain ) }
+					purchase={ purchase }
+				/>
+			);
+		} );
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,

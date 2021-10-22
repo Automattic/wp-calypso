@@ -9,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -32,6 +33,7 @@ import {
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getPurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -198,6 +200,7 @@ export class SiteDomains extends Component {
 						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						goToEditDomainRoot={ this.goToEditDomainRoot }
 						handleUpdatePrimaryDomainOptionClick={ this.handleUpdatePrimaryDomainOptionClick }
+						purchases={ this.props.purchases }
 					/>
 				</div>
 
@@ -276,6 +279,9 @@ export class SiteDomains extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
+				{ this.props.selectedSite.ID && ! this.props.purchases && (
+					<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
+				) }
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
@@ -434,6 +440,7 @@ export default connect(
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
 		const siteCount = getSites( state )?.length || 0;
+		const purchases = getPurchases( state );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
@@ -447,6 +454,7 @@ export default connect(
 			isOnFreePlan,
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+			purchases,
 		};
 	},
 	( dispatch ) => {
