@@ -42,7 +42,6 @@ class DomainRow extends PureComponent {
 		isLoadingDomainDetails: PropTypes.bool,
 		selectionIndex: PropTypes.number,
 		showDomainDetails: PropTypes.bool,
-		actionResult: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -225,7 +224,7 @@ class DomainRow extends PureComponent {
 		} = this.props;
 
 		if ( ! showDomainDetails ) {
-			return;
+			return <div className="domain-row__action-cell"></div>;
 		}
 
 		if ( isLoadingDomainDetails || ! domainDetails ) {
