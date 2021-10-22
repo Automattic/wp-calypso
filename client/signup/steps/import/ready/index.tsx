@@ -14,7 +14,7 @@ interface Props {
 	platform: string;
 }
 
-const ReadyStep: React.FunctionComponent< Props > = ( { website, platform } ) => {
+const ReadyPreviewStep: React.FunctionComponent< Props > = ( { website, platform } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
@@ -96,7 +96,7 @@ const ReadyNotStep: React.FunctionComponent = () => {
 interface PropsWithoutUrl {
 	platform: string;
 }
-const ReadyNoUrlStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
+const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -128,4 +128,4 @@ const ReadyNoUrlStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform 
 	);
 };
 
-export { ReadyStep, ReadyNotStep, ReadyNoUrlStep };
+export { ReadyPreviewStep, ReadyNotStep, ReadyStep };

@@ -1,7 +1,7 @@
 import React from 'react';
 import CaptureStep from './capture';
 import ListStep from './list';
-import { ReadyStep, ReadyNotStep, ReadyNoUrlStep } from './ready';
+import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
 import ScanningStep from './scanning';
 import { GoToStep } from './types';
 import './style.scss';
@@ -25,11 +25,11 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 			{ props.stepName === 'list' && <ListStep /> }
 
 			{ props.stepName === 'ready' && ! props.stepSectionName && (
-				<ReadyNoUrlStep platform={ MOCK_DATA.platform } />
+				<ReadyStep platform={ MOCK_DATA.platform } />
 			) }
 			{ props.stepName === 'ready' && props.stepSectionName === 'not' && <ReadyNotStep /> }
 			{ props.stepName === 'ready' && props.stepSectionName === 'preview' && (
-				<ReadyStep website={ MOCK_DATA.website } platform={ MOCK_DATA.platform } />
+				<ReadyPreviewStep website={ MOCK_DATA.website } platform={ MOCK_DATA.platform } />
 			) }
 		</div>
 	);
