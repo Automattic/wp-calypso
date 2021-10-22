@@ -15,7 +15,7 @@ export function getMappingFreeText( { cart, domain, primaryWithPlansOnly, select
 	) {
 		mappingFreeText = __( 'No additional charge with your plan' );
 	} else if ( primaryWithPlansOnly ) {
-		mappingFreeText = __( 'Included in paid plans' );
+		mappingFreeText = __( 'Included in annual paid plans' );
 	}
 
 	return mappingFreeText;
