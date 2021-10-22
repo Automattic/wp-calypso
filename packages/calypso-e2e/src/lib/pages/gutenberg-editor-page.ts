@@ -411,23 +411,30 @@ export class GutenbergEditorPage {
 	/**
 	 * Terminates the Post Preview mode.
 	 *
-	 * This method will click on the Preview button if required, then select the `Desktop` entry.
-	 * `Desktop` is the default editor setting.
+	 * This method will click on the Preview button if required, then select the `Desktop` entry,
+	 * which is the default view setting when the editor is opened initially.
+	 *
+	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async closePreview(): Promise< void > {
+		if ( getTargetDeviceName() === 'mobile' ) {
+			throw new Error( ' This method only works in a non-mobile environment.' );
+		}
 		const frame = await this.getEditorFrame();
 
 		const previewButtonHandle = await frame.waitForSelector( selectors.previewButton );
 		// Check if the Preview button has been clicked and that menu options are showing.
-		// If required, click and show the menu items.
+		// If required, click and show the menu items so that 'Desktop' can be clicked.
 		if ( ( await previewButtonHandle.getAttribute( 'aria-expanded' ) ) === 'false' ) {
 			await frame.click( selectors.previewButton );
 		}
+		// Select 'Desktop'.
 		await frame.click( selectors.previewMenuItem( 'Desktop' ) );
 		// Dismiss the Preview button.
 		await previewButtonHandle.click();
 
-		assert.strictEqual( await previewButtonHandle.getAttribute( 'aria-expanded' ), 'false' );
+		// Ensure the preview menu is closed and that preview settings are back to default.
+		await frame.waitForSelector( 'button[aria-expanded=false]' );
 		await frame.waitForSelector( selectors.previewPane( 'Desktop' ) );
 	}
 }
