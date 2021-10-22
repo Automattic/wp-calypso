@@ -1,5 +1,28 @@
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+
+export const stripeConfiguration = {
+	processor_id: 'IE',
+	js_url: 'https://stripe-js-url',
+	public_key: 'stripe-public-key',
+	setup_intent_id: null,
+};
+
+export const processorOptions = {
+	includeDomainDetails: false,
+	includeGSuiteDetails: false,
+	createUserAndSiteBeforeTransaction: false,
+	stripeConfiguration,
+	recordEvent: () => null,
+	reduxDispatch: () => null,
+	responseCart: getEmptyResponseCart(),
+	getThankYouUrl: () => '',
+	siteSlug: undefined,
+	siteId: undefined,
+	contactDetails: undefined,
+	stripe: undefined,
+};
 
 export const countryList = [
 	{
