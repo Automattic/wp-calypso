@@ -31,7 +31,7 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const thankYouImage = {
-		alt: 'success image',
+		alt: '',
 		src: successImage,
 	};
 
