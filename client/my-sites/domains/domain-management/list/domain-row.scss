@@ -31,8 +31,13 @@
 		margin: 0;
 	}
 
-	&__ok-dot,
-	&__warning-dot {
+	&__status-success-dot,
+	&__status-verifying-dot,
+	&__status-premium-dot,
+	&__status-neutral-dot,
+	&__status-alert-dot,
+	&__status-warning-dot,
+	&__status-error-dot {
 		display: inline-block;
 		width: 8px;
 		height: 8px;
@@ -40,7 +45,11 @@
 		border-radius: 50%; /* stylelint-disable-line */
 		background-color: var( --studio-green-50 );
 	}
-	&__warning-dot {
+
+	&__status-neutral-dot,
+	&__status-alert-dot,
+	&__status-warning-dot,
+	&__status-error-dot {
 		background-color: var( --studio-orange-40 );
 	}
 }

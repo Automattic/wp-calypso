@@ -85,10 +85,10 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	renderDomainStatus( status, statusColor ) {
+	renderDomainStatus( status, statusClass ) {
 		return (
 			<div className="domain-row__status-cell">
-				<span className={ `domain-row__${ statusColor }-dot` }></span> { status }
+				<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
 			</div>
 		);
 	}
@@ -295,7 +295,7 @@ class DomainRow extends PureComponent {
 
 	render() {
 		const { domain, domainDetails, site } = this.props;
-		const { status, statusColor } = resolveDomainStatus( domainDetails || domain, null, {
+		const { status, statusClass } = resolveDomainStatus( domainDetails || domain, null, {
 			siteSlug: site?.slug,
 			hasMappingError: this.hasMappingError( domain ),
 		} );
@@ -303,7 +303,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row" onClick={ this.handleClick }>
 				{ this.renderDomainName() }
-				{ this.renderDomainStatus( status, statusColor ) }
+				{ this.renderDomainStatus( status, statusClass ) }
 				{ this.renderExpiryDate() }
 				{ this.renderAutoRenew() }
 				{ this.renderEmail() }
