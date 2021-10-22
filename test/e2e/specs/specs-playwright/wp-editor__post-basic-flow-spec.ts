@@ -107,13 +107,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 				await gutenbergEditorPage.closePreview();
 			}
 		} );
+
+		// TODO: step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
+		itif( targetDevice !== 'mobile' )( 'Save draft', async function () {
+			await gutenbergEditorPage.saveDraft();
+		} );
 	} );
 
 	describe( 'Publish post', function () {
-		it( 'Save draft', async function () {
-			await gutenbergEditorPage.saveDraft();
-		} );
-
 		it( 'Publish and visit post', async function () {
 			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
 			expect( publishedURL ).toBe( page.url() );
