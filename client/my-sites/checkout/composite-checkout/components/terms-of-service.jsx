@@ -3,10 +3,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
-	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'calypso/lib/url/support';
+import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -32,34 +29,7 @@ class TermsOfService extends Component {
 
 		// Need to add check for subscription products in the cart so we don't show this for one-off purchases like themes
 		if ( this.props.hasRenewableSubscription ) {
-			message = this.props.translate(
-				'You agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
-				{
-					components: {
-						tosLink: (
-							<a
-								href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						autoRenewalSupportPage: (
-							<a
-								href={ MANAGE_PURCHASES_AUTOMATIC_RENEWAL }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						faqCancellingSupportPage: (
-							<a
-								href={ MANAGE_PURCHASES_FAQ_CANCELLING }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			);
+			message = <TosText />;
 		}
 
 		return message;
