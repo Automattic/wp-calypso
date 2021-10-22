@@ -25,3 +25,7 @@ export function hasFetchedUserLicenses( state: AppState ): boolean {
 export function isFetchingUserLicenses( state: AppState ): boolean {
 	return state.userLicensing?.licensesFetching;
 }
+
+export function userHasDetachedLicenses( state: AppState ): boolean {
+	return !! state.userLicensing?.counts?.detached;
+}
