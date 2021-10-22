@@ -56,14 +56,14 @@ const MarketplaceThankYou = ( { productSlug } ): JSX.Element => {
 				),
 			},
 			{
-				stepKey: 'yoast_whats_next_view_posts',
+				stepKey: 'whats_next_grow',
 				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
 					'Take your site to the next level. We have all the solutions to help you grow and thrive.'
 				),
 				stepCta: (
 					<FullWidthButton href={ `/plugins/${ siteSlug }` }>
-						{ translate( 'Explore Plugins' ) }
+						{ translate( 'Explore plugins' ) }
 					</FullWidthButton>
 				),
 			},

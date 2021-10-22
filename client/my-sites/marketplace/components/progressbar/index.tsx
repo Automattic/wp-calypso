@@ -48,7 +48,11 @@ export default function MarketplaceProgressBar( {
 	return (
 		<Container>
 			<Title className="progressbar__title wp-brand-font">{ steps[ currentStep ] }</Title>
-			<StyledProgressBar value={ simulatedProgressPercentage } color="#C9356E" compact />
+			<StyledProgressBar
+				value={ simulatedProgressPercentage }
+				color="var( --studio-pink-50 )"
+				compact
+			/>
 			<div>{ stepIndication }</div>
 		</Container>
 	);

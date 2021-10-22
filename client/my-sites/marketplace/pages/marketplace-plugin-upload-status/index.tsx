@@ -73,7 +73,7 @@ const MarketplacePluginUpload = (): JSX.Element => {
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when automatedTransferStatus changes.
+	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	const steps = [
 		translate( 'Uploading plugin' ),
@@ -84,7 +84,7 @@ const MarketplacePluginUpload = (): JSX.Element => {
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker path="/marketplace/product/install/:site" title="Plugins > Installing" />
-			{ siteId ? <QueryJetpackPlugins siteIds={ [ siteId ] } /> : '' }
+			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
 				<Item>{ translate( 'Plugin Installation' ) }</Item>
 			</Masterbar>
