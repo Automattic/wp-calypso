@@ -1,8 +1,5 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import wp from 'calypso/lib/wp';
 import fullCreditsProcessor from '../lib/full-credits-processor';
-
-jest.mock( 'calypso/lib/wp' );
 
 describe( 'fullCreditsProcessor', () => {
 	const stripeConfiguration = {
