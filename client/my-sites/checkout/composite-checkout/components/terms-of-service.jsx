@@ -3,10 +3,6 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
-	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'calypso/lib/url/support';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
