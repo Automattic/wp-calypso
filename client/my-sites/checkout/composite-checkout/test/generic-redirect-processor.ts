@@ -1,8 +1,6 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import wp from 'calypso/lib/wp';
+import nock from 'nock';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-
-jest.mock( 'calypso/lib/wp' );
 
 describe( 'genericRedirectProcessor', () => {
 	const stripeConfiguration = {
@@ -30,6 +28,7 @@ describe( 'genericRedirectProcessor', () => {
 		siteSlug: undefined,
 		siteId: undefined,
 		contactDetails: undefined,
+		stripe: undefined,
 	};
 
 	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
@@ -50,32 +49,32 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
+		domain_details: undefined,
 		payment: {
 			address: undefined,
-			cancelUrl: 'https://wordpress.com/',
+			cancel_url: 'https://wordpress.com/',
 			city: undefined,
 			country: 'US',
-			countryCode: 'US',
-			deviceId: undefined,
+			country_code: 'US',
+			device_id: undefined,
 			document: undefined,
 			email: 'test@example.com',
 			gstin: undefined,
-			idealBank: undefined,
+			ideal_bank: undefined,
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: undefined,
-			paymentMethod: 'WPCOM_Billing_Stripe_Source_Bancontact',
-			paymentPartner: 'IE',
-			phoneNumber: undefined,
-			postalCode: '10001',
+			payment_key: undefined,
+			payment_method: 'WPCOM_Billing_Stripe_Source_Bancontact',
+			payment_partner: 'IE',
+			phone_number: undefined,
+			postal_code: '10001',
 			state: undefined,
-			storedDetailsId: undefined,
-			streetNumber: undefined,
-			successUrl:
+			stored_details_id: undefined,
+			street_number: undefined,
+			success_url:
 				'https://wordpress.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fwordpress.com',
-			tefBank: undefined,
+			tef_bank: undefined,
 			zip: '10001',
 		},
 	};
@@ -83,9 +82,9 @@ describe( 'genericRedirectProcessor', () => {
 	const basicExpectedDomainDetails = {
 		address1: undefined,
 		address2: undefined,
-		alternateEmail: undefined,
+		alternate_email: undefined,
 		city: undefined,
-		countryCode: 'US',
+		country_code: 'US',
 		email: undefined,
 		extra: {
 			ca: null,
@@ -93,25 +92,30 @@ describe( 'genericRedirectProcessor', () => {
 			uk: null,
 		},
 		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
+		first_name: undefined,
+		last_name: undefined,
 		organization: undefined,
 		phone: undefined,
-		postalCode: '10001',
+		postal_code: '10001',
 		state: undefined,
 	};
 
 	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
+	const transactionsEndpointResponse = jest.fn();
 
 	beforeEach( () => {
 		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue(
-			Promise.resolve( { redirect_url: 'https://test-redirect-url' } )
-		);
+		transactionsEndpoint.mockReturnValue( true );
+		transactionsEndpointResponse.mockReturnValue( [
+			200,
+			{ redirect_url: 'https://test-redirect-url' },
+		] );
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/transactions', ( body ) => {
+				return transactionsEndpoint( body );
+			} )
+			.reply( transactionsEndpointResponse );
 	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
@@ -132,12 +136,42 @@ describe( 'genericRedirectProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
-	it( 'returns an explicit error response if the transaction fails', async () => {
+	it( 'returns a generic error response if the transaction fails with a 200 response', async () => {
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
 		};
-		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
+		transactionsEndpointResponse.mockReturnValue( [
+			200,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const expected = { payload: 'Error during transaction', type: 'ERROR' };
+		await expect(
+			genericRedirectProcessor( 'bancontact', submitData, {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+	} );
+
+	it( 'returns an explicit error response if the transaction fails with a non-200 response', async () => {
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
+		transactionsEndpointResponse.mockReturnValue( [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			genericRedirectProcessor( 'bancontact', submitData, {
@@ -178,7 +212,7 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
 			},
 		} );
@@ -214,7 +248,7 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
 					encodeURIComponent( thankYouUrl ),
 			},
@@ -251,7 +285,7 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
 					encodeURIComponent( thankYouUrl ),
 			},
@@ -297,7 +331,7 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
 			},
 		} );
@@ -332,10 +366,10 @@ describe( 'genericRedirectProcessor', () => {
 				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
 			},
 		} );
