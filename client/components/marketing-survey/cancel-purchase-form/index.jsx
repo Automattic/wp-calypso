@@ -37,6 +37,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
 import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -74,7 +75,13 @@ import { radioTextOption, radioSelectOption } from './radio-option';
 import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
-import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, FINAL_STEP, INITIAL_STEP } from './steps';
+import {
+	ATOMIC_REVERT_STEP,
+	BENEFITS_STEP,
+	FEEDBACK_STEP,
+	FINAL_STEP,
+	INITIAL_STEP,
+} from './steps';
 
 import './style.scss';
 
@@ -121,6 +128,9 @@ class CancelPurchaseForm extends Component {
 		if ( isPlan( purchase ) ) {
 			if ( this.shouldUseBlankCanvasLayout() ) {
 				if ( shouldRevertAtomicSite ) {
+					if ( purchase.productSlug === 'business-bundle' ) {
+						return [ FEEDBACK_STEP, BENEFITS_STEP, ATOMIC_REVERT_STEP ];
+					}
 					return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
 				}
 
@@ -897,10 +907,93 @@ class CancelPurchaseForm extends Component {
 		return parseFloat( refundAmount ).toFixed( precision );
 	};
 
+	renderBenefitsGrid = () => {
+		const { purchase, translate } = this.props;
+
+		switch ( purchase.productSlug ) {
+			case 'business-bundle':
+				return (
+					<div className={ 'cancel-purchase-form__benefits-wrapper' }>
+						<div className={ 'cancel-purchase-form__benefits-wrapper-grid' }>
+							{ /* TODO: translate the below */ }
+							<div>
+								{ /* would be good not to hardcode this */ }
+								<h3>200GB of storage</h3>
+								{ /*  Not sure about this - is using USD ok when customers are using other currencies? */ }
+								<p>
+									Other hosting providers charge $25 or more per month for storage increases over
+									100GB
+								</p>
+								<p>After removing plan:</p>
+								{ /* would be good not to hardcode this */ }
+								<p>3 GB File Storage</p>
+							</div>
+							<div>
+								<h3>Design Customization</h3>
+								<p>Free tools to easily customize your website design</p>
+								<p>After downgrade:</p>
+								<p>No Customization</p>
+							</div>
+							<div>
+								<h3>Plugins and Developer Tools</h3>
+								<p>
+									Hundreds of plugins and developer tools to customize and enhance your website.
+								</p>
+								<p>After removing plan:</p>
+								<p>No Plugins or Tools</p>
+							</div>
+						</div>
+						<div className={ 'cancel-purchase-form__benefits-wrapper-grid' }>
+							<div>
+								<p>
+									<GridiconCrossSmall />
+									{ translate( 'Email & Live Chat Support' ) }
+								</p>
+								<p>
+									<GridiconCrossSmall />
+									{ translate( 'Remove WordPress.com ads' ) }
+								</p>
+							</div>
+							<div>
+								<p>
+									<GridiconCrossSmall />
+									{ translate( 'Upload videos' ) }
+								</p>
+								<p>
+									<GridiconCrossSmall />
+									{ translate( 'Business features (incl. SEO)' ) }
+								</p>
+							</div>
+							<div>
+								<p>
+									<GridiconCrossSmall />
+									{ translate( 'Google Analytics Support' ) }
+								</p>
+								<p>
+									<GridiconCrossSmall />
+									{ translate( 'Earn ad revenue' ) }
+								</p>
+							</div>
+						</div>
+					</div>
+				);
+		}
+	};
+
 	surveyContent() {
-		const { atomicTransfer, translate, isImport, isJetpack, moment, showSurvey, site } = this.props;
+		const {
+			atomicTransfer,
+			translate,
+			isImport,
+			isJetpack,
+			moment,
+			showSurvey,
+			site,
+			purchase,
+		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
+		const planName = purchase.productName;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -921,6 +1014,39 @@ class CancelPurchaseForm extends Component {
 						{ this.renderQuestionTwo() }
 						{ this.renderFreeformQuestion() }
 					</div>
+				</div>
+			);
+		}
+
+		if ( surveyStep === BENEFITS_STEP ) {
+			return (
+				<div>
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Before you go %(name)s', {
+							args: { productName },
+						} ) }
+						subHeaderText={ translate(
+							"You'll be missing the following {{strong}}%(planName)s{{/strong}} benefits when you cancel:",
+							{
+								args: { planName },
+								components: { strong: <strong /> },
+							}
+						) }
+					/>
+
+					{ this.renderBenefitsGrid() }
+
+					<p>
+						{ translate(
+							'The {{strong}}%(planName)s plan{{/strong}} provides everything you need to scale including enterprise-grade security,' +
+								'generous storage, plugins and advanced developer tools.',
+							{
+								args: { planName },
+								components: { strong: <strong /> },
+							}
+						) }
+					</p>
 				</div>
 			);
 		}
