@@ -17,7 +17,6 @@ import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { attachLogmein } from 'calypso/lib/logmein';
 import { getToken } from 'calypso/lib/oauth-token';
 import { checkFormHandler } from 'calypso/lib/protect-form';
@@ -370,7 +369,9 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		setupGlobalKeyboardShortcuts();
+		asyncRequire( 'calypso/lib/keyboard-shortcuts/global', ( setupGlobalKeyboardShortcuts ) => {
+			setupGlobalKeyboardShortcuts();
+		} );
 	}
 
 	if ( window.electron ) {
