@@ -117,7 +117,13 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'wpcom_public_coming_soon', 'wpcom_coming_soon', 'site_icon' ],
+				[
+					'blog_public',
+					'wpcom_public_coming_soon',
+					'wpcom_coming_soon',
+					'site_icon',
+					'site_header_code',
+				],
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.

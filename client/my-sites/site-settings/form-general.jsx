@@ -39,6 +39,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import SiteHeaderCode from './site-header-code';
 import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
 
@@ -590,11 +591,15 @@ export class SiteSettingsFormGeneral extends Component {
 			siteSlug,
 			translate,
 			isWPForTeamsSite,
+			onChangeField,
+			fields,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
+
+		console.log( site );
 
 		return (
 			<div className={ classNames( classes ) }>
@@ -619,6 +624,23 @@ export class SiteSettingsFormGeneral extends Component {
 				</Card>
 
 				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+
+				<div className="site-settings__site-header-code-container">
+					<SettingsSectionHeader
+						title={ translate( 'Site header code' ) }
+						disabled={ isRequestingSettings || isSavingSettings }
+						isSaving={ isSavingSettings }
+						onButtonClick={ handleSubmitForm }
+						showButton
+						id="site-settings__site-header-code"
+					/>
+					<SiteHeaderCode
+						onChangeField={ onChangeField( 'site_header_code' ) }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
+				</div>
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
@@ -702,6 +724,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
 		admin_url: '',
+		site_header_code: '',
 	};
 
 	if ( ! settings ) {
@@ -718,6 +741,8 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
+
+		site_header_code: settings.site_header_code,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

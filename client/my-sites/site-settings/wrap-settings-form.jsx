@@ -158,6 +158,11 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
+					case 'site_header_code':
+						trackTracksEvent( 'calypso_settings_site_header_code_updated', {
+							path,
+						} );
+						break;
 				}
 			} );
 			this.submitForm();
