@@ -30,9 +30,13 @@ class DomainsTable extends PureComponent {
 
 	changeTableSort = ( column, sortOrder = null ) => {
 		this.setState( ( prevState ) => {
+			let newSortOrder = sortOrder;
+			if ( ! sortOrder ) {
+				newSortOrder = column === prevState.sortKey ? prevState.sortOrder * -1 : 1;
+			}
 			return {
 				sortKey: column,
-				sortOrder: sortOrder || column === prevState.sortKey ? prevState.sortOrder * -1 : 1,
+				sortOrder: newSortOrder,
 			};
 		} );
 	};
