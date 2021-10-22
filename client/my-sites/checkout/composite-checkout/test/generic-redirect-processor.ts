@@ -1,7 +1,10 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import nock from 'nock';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-import { processorOptions } from './util';
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsRedirectResponse,
+	processorOptions,
+} from './util';
 
 describe( 'genericRedirectProcessor', () => {
 	const product = getEmptyResponseCartProduct();
@@ -85,25 +88,8 @@ describe( 'genericRedirectProcessor', () => {
 		state: undefined,
 	};
 
-	const transactionsEndpoint = jest.fn();
-	const transactionsEndpointResponse = jest.fn();
-
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue( true );
-		transactionsEndpointResponse.mockReturnValue( [
-			200,
-			{ redirect_url: 'https://test-redirect-url' },
-		] );
-		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/transactions', ( body ) => {
-				return transactionsEndpoint( body );
-			} )
-			.reply( transactionsEndpointResponse );
-	} );
-
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -122,17 +108,17 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'returns a generic error response if the transaction fails with a 200 response', async () => {
-		const submitData = {
-			name: 'test name',
-			email: 'test@example.com',
-		};
-		transactionsEndpointResponse.mockReturnValue( [
+		mockTransactionsEndpoint( () => [
 			200,
 			{
 				error: 'test_error',
 				message: 'test error',
 			},
 		] );
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
 		const expected = { payload: 'Error during transaction', type: 'ERROR' };
 		await expect(
 			genericRedirectProcessor( 'bancontact', submitData, {
@@ -146,17 +132,17 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'returns an explicit error response if the transaction fails with a non-200 response', async () => {
-		const submitData = {
-			name: 'test name',
-			email: 'test@example.com',
-		};
-		transactionsEndpointResponse.mockReturnValue( [
+		mockTransactionsEndpoint( () => [
 			400,
 			{
 				error: 'test_error',
 				message: 'test error',
 			},
 		] );
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			genericRedirectProcessor( 'bancontact', submitData, {
@@ -170,6 +156,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -204,6 +191,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint a relative thankYouUrl', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -241,6 +229,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint a fully-qualified thankYouUrl', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -278,6 +267,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -323,6 +313,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',

@@ -1,4 +1,5 @@
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
+import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
@@ -697,3 +698,23 @@ export function createTestReduxStore() {
 		};
 	} );
 }
+
+export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
+	const transactionsEndpoint = jest.fn();
+	transactionsEndpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/transactions', ( body ) => {
+			return transactionsEndpoint( body );
+		} )
+		.reply( transactionsEndpointResponse );
+
+	return transactionsEndpoint;
+}
+
+export const mockTransactionsRedirectResponse = () => [
+	200,
+	{ redirect_url: 'https://test-redirect-url' },
+];
+
+export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
