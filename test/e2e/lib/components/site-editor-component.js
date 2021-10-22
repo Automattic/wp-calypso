@@ -223,15 +223,24 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 	}
 
 	async clickGlobalStylesResetButton() {
-		return await driverHelper.clickIfPresent(
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css(
-				'.edit-site-global-styles-sidebar .edit-site-global-styles-sidebar__reset-button:enabled'
-			)
+			By.css( '.edit-site-global-styles-sidebar button[aria-label="More Global Styles Actions"' )
 		);
+		const resetButtonLocator = driverHelper.createTextLocator(
+			By.css( '.popover-slot button.components-dropdown-menu__menu-item' ),
+			'Reset to defaults'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, resetButtonLocator );
 	}
 
-	async changeGlobalStylesFontSize( value ) {
+	async changeGlobalStylesFontSize( value, blocksLevel ) {
+		if ( ! blocksLevel ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.edit-site-global-styles-sidebar button[aria-label="Set custom size"]' )
+			);
+		}
 		return await driverHelper.setWhenSettable(
 			this.driver,
 			By.css( '.edit-site-global-styles-sidebar .components-font-size-picker input' ),
@@ -239,11 +248,12 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		);
 	}
 
-	async changeGlobalStylesColor( { typeIndex = 1, valueIndex = 1 } ) {
+	async changeGlobalStylesColor( colorType, { valueIndex = 1 } ) {
+		await this.clickGlobalStylesMenuItem( colorType );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
-				`.edit-site-global-styles-sidebar .block-editor-color-gradient-control:nth-of-type(${ typeIndex }) .components-circular-option-picker__option-wrapper:nth-of-type(${ valueIndex }) .components-circular-option-picker__option`
+				`.edit-site-global-styles-sidebar .components-circular-option-picker .components-circular-option-picker__option-wrapper:nth-of-type(${ valueIndex }) button`
 			)
 		);
 	}
@@ -284,6 +294,10 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 				By.css(
 					'.edit-site-global-styles-sidebar .components-base-control:last-of-type .components-color-edit__color-option button'
 				)
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-color-picker button[aria-label="Show detailed inputs"]' )
 			);
 		}
 
