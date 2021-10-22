@@ -804,3 +804,16 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 }
+/**
+ * Removed the navigation back button step from mobile viewports.
+ * This is done because the there is usally already a back button displayed to the user (Browser back button)
+ * and the current back button is redundent.
+*/
+body.is-section-signup.is-white-signup {
+	.signup__step.is-plans .step-wrapper__navigation,
+	.signup__step.is-domains .step-wrapper__navigation {
+		@include breakpoint-deprecated( '<660px' ) {
+			display: none;
+		}
+	}
+}
