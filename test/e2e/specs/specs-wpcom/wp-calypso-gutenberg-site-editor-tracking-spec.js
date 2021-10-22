@@ -506,7 +506,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				// Clean up by resetting to be safe.
 				await editor.clickGlobalStylesResetButton();
-				await editor.saveGlobalStyles( { pauseAfter: true } );
+				await editor.saveGlobalStyles();
 			} );
 
 			after( async function () {
