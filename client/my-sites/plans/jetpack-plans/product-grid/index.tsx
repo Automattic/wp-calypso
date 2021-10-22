@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
