@@ -25,7 +25,8 @@
 		}
 	}
 
-	&__ok-dot {
+	&__ok-dot,
+	&__warning-dot {
 		display: inline-block;
 		width: 8px;
 		height: 8px;
@@ -34,11 +35,6 @@
 		background-color: var( --studio-green-50 );
 	}
 	&__warning-dot {
-		display: inline-block;
-		width: 8px;
-		height: 8px;
-		margin-right: 8px;
-		border-radius: 50%; /* stylelint-disable-line */
 		background-color: var( --studio-orange-40 );
 	}
 }
