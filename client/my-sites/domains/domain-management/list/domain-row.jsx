@@ -15,8 +15,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import {
 	canCurrentUserAddEmail,
-	isDomainInGracePeriod,
-	isDomainUpdateable,
 	getDomainTypeText,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
@@ -28,14 +26,6 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { withoutHttp } from 'calypso/lib/url';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
-import {
-	domainManagementChangeSiteAddress,
-	domainManagementContactsPrivacy,
-	domainManagementNameServers,
-	domainManagementTransfer,
-	domainManagementDns,
-	domainManagementSecurity,
-} from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -112,10 +102,9 @@ class DomainRow extends PureComponent {
 	};
 
 	makePrimary = ( event ) => {
-		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
-
 		event.stopPropagation();
 
+		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
 		if ( onMakePrimaryClick ) {
 			onMakePrimaryClick( selectionIndex, domainDetails );
 		}
@@ -183,7 +172,7 @@ class DomainRow extends PureComponent {
 	};
 
 	renderOptionsButton() {
-		const { disabled, isBusy, site, domain, domainDetails, currentRoute, translate } = this.props;
+		const { disabled, isBusy, translate } = this.props;
 
 		return (
 			<div className="domain-row__action-cell">
@@ -201,64 +190,6 @@ class DomainRow extends PureComponent {
 							{ translate( 'Make primary site address' ) }
 						</PopoverMenuItem>
 					) }
-					{ /* { this.canRenewDomain() && (
-						<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
-							{ translate( 'Renew now' ) }
-						</PopoverMenuItem>
-					) } */ }
-					{ /* { domain.type === domainTypes.MAPPED && (
-						<PopoverMenuItem
-							icon="list-unordered"
-							href={ domainManagementDns( site.slug, domain.domain, currentRoute ) }
-						>
-							{ translate( 'DNS Records' ) }
-						</PopoverMenuItem>
-					) } */ }
-					{ /* { domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
-						<PopoverMenuItem
-							icon="reblog"
-							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
-						>
-							{ translate( 'Change site address' ) }
-						</PopoverMenuItem>
-					) } */ }
-					{ /* { domain.type === domainTypes.REGISTERED &&
-						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
-							<PopoverMenuItem
-								icon="domains"
-								href={ domainManagementNameServers( site.slug, domain.domain, currentRoute ) }
-							>
-								{ translate( 'Name servers' ) }
-							</PopoverMenuItem>
-						) } */ }
-					{ /* { domain.type === domainTypes.REGISTERED &&
-						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
-							<PopoverMenuItem
-								icon="reader"
-								href={ domainManagementContactsPrivacy( site.slug, domain.domain, currentRoute ) }
-							>
-								{ translate( 'Contact information' ) }
-							</PopoverMenuItem>
-						) } */ }
-					{ /* { domain.type === domainTypes.REGISTERED &&
-						! ( domainDetails?.expired && ! isDomainInGracePeriod( domainDetails ) ) && (
-							<PopoverMenuItem
-								icon="reply"
-								href={ domainManagementTransfer( site.slug, domain.domain, currentRoute ) }
-							>
-								{ translate( 'Transfer domain' ) }
-							</PopoverMenuItem>
-						) } */ }
-					{ /* { [ domainTypes.REGISTERED, domainTypes.MAPPED ].includes( domain.type ) &&
-						domainDetails?.pointsToWpcom &&
-						domainDetails?.sslStatus && (
-							<PopoverMenuItem
-								icon="lock"
-								href={ domainManagementSecurity( site.slug, domain.domain, currentRoute ) }
-							>
-								{ translate( 'Security' ) }
-							</PopoverMenuItem>
-						) } */ }
 				</EllipsisMenu>
 			</div>
 		);
