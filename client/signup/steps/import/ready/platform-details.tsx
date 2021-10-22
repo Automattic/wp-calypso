@@ -1,4 +1,3 @@
-import { BackButton } from '@automattic/onboarding';
 import { Modal } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, close, check } from '@wordpress/icons';
@@ -69,7 +68,9 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			<div className="import__details-modal-content">
 				<p>{ getInfo( platform ) }</p>
 
-				<BackButton>{ __( 'Learn more' ) }</BackButton>
+				<a className="import__details-learn-more" href="#link-to-doc">
+					{ __( 'Learn more' ) }
+				</a>
 
 				<div className={ 'import__details-features' }>
 					<p>
