@@ -26,11 +26,18 @@ export default function QueryJetpackUserLicenses( {
 	const dispatch = useDispatch();
 	const currentlyFetchingUserLicenses = useSelector( isFetchingUserLicenses );
 
-	useEffect( () => {
-		if ( ! currentlyFetchingUserLicenses ) {
-			dispatch( requestLicenses( filter, search, sortField, sortDirection, page ) );
-		}
-	}, [ dispatch, currentlyFetchingUserLicenses, filter, search, sortField, sortDirection, page ] );
+	useEffect(
+		() => {
+			if ( ! currentlyFetchingUserLicenses ) {
+				dispatch( requestLicenses( filter, search, sortField, sortDirection, page ) );
+			}
+		},
+		// `currentlyFetchingUserLicenses` is technically a dependency but we exclude it here;
+		// otherwise, it would re-run the effect once the request completes,
+		// causing another request to be sent, starting an infinite loop.
+		/* eslint-disable-next-line react-hooks/exhaustive-deps */
+		[ dispatch, filter, search, sortField, sortDirection, page ]
+	);
 
 	return null;
 }
