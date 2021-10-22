@@ -1,9 +1,11 @@
-import { CompactCard } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
+import { Icon, arrowDown, arrowUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 
 import './style.scss';
@@ -17,6 +19,9 @@ class DomainsTableHeader extends PureComponent {
 		isBusy: PropTypes.bool,
 		onToggle: PropTypes.func,
 		isManagingAllSites: PropTypes.bool,
+		onHeaderClick: PropTypes.func,
+		activeSortKey: PropTypes.string,
+		activeSortOrder: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -37,17 +42,64 @@ class DomainsTableHeader extends PureComponent {
 		}
 	};
 
+	handleHeaderClick = ( event ) => {
+		const { column } = event.currentTarget.dataset;
+		this.props.onHeaderClick( column );
+	};
+
+	renderSortIcon( sortOrder ) {
+		if ( sortOrder === 1 ) {
+			return <Icon icon={ arrowDown } size={ 16 } />;
+		}
+
+		if ( sortOrder === -1 ) {
+			return <Icon icon={ arrowUp } size={ 16 } />;
+		}
+
+		return null;
+	}
+
 	renderHeaderContent() {
-		const { headerClasses, translate } = this.props;
-		const listHeaderClasses = classNames( 'domain-table-header', headerClasses );
+		const { headerClasses, activeSortKey, activeSortOrder, translate } = this.props;
+		const listHeaderClasses = classNames(
+			'domain-table-header',
+			'domain-table-header__desktop',
+			headerClasses
+		);
+		const listHeaderMobileClasses = classNames(
+			'domain-table-header',
+			'domain-table-header__mobile',
+			headerClasses
+		);
+		const columns = [
+			{ name: 'domain', label: translate( 'Domain' ) },
+			{ name: 'status', label: translate( 'Status' ) },
+			{ name: 'registered-until', label: translate( 'Registered until' ) },
+			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
+			{ name: 'email', label: translate( 'Email' ) },
+			{ name: 'action', label: null },
+		];
+
 		return (
-			<div className={ listHeaderClasses }>
-				<span className="list__domain-cell">{ translate( 'Domain' ) }</span>
-				<span className="list__status-cell">{ translate( 'Status' ) }</span>
-				<span className="list__registered-until-cell">{ translate( 'Registered until' ) }</span>
-				<span className="list__auto-renew-cell">{ translate( 'Auto-renew' ) }</span>
-				<span className="list__email-cell">{ translate( 'Email' ) }</span>
-			</div>
+			<>
+				<div className={ listHeaderMobileClasses }>
+					<SelectDropdown compact onSelect={ this.handleSelectChange } />
+				</div>
+				<div className={ listHeaderClasses }>
+					{ columns.map( ( column, index ) => (
+						<Button
+							plain
+							key={ `item-${ index }` }
+							onClick={ this.handleHeaderClick }
+							className={ classNames( 'list__header-column', `list__${ column.name }-cell` ) }
+							data-column={ column.name }
+						>
+							{ column.label }{ ' ' }
+							{ activeSortKey === column.name && this.renderSortIcon( activeSortOrder ) }
+						</Button>
+					) ) }
+				</div>
+			</>
 		);
 	}
 

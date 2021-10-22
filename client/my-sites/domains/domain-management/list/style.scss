@@ -354,7 +354,37 @@
 	padding: 8px 0;
 	border-bottom: 1px solid var( --color-neutral-20 );
 	font-size: $font-body-small;
-	color: var( --color-neutral );
+	font-weight: 600;
+	color: var( --color-neutral-50 );
+
+	.button-plain {
+		text-align: left;
+	}
+
+	.list__header-column {
+		display: flex;
+		align-items: center;
+		svg {
+			margin-left: 4px;
+			fill: var( --color-neutral-10 );
+		}
+	}
+
+	&.domain-table-header__desktop {
+		display: none;
+	}
+	&.domain-table-header__mobile {
+		display: flex;
+	}
+
+	@include break-mobile {
+		&.domain-table-header__desktop {
+			display: flex;
+		}
+		&.domain-table-header__mobile {
+			display: none;
+		}
+	}
 }
 
 .list__domain-cell {
