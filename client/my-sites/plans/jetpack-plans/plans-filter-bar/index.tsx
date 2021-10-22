@@ -34,20 +34,18 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 				toggleChecked,
 			} ) }
 		>
-			<div>
-				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
-				<span className="plans-filter-bar__discount-message-text">
-					{ isMobile
-						? translate( 'Get %(discount)s%% off by paying yearly', {
-								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-								comment: 'Discount is a percentage',
-						  } )
-						: translate( 'Get %(discount)s%% off*', {
-								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
-						  } ) }
-				</span>
-			</div>
+			{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
+			<span className="plans-filter-bar__discount-message-text">
+				{ isMobile
+					? translate( 'Get %(discount)s%% off by billing yearly', {
+							args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+							comment: 'Discount is a percentage',
+					  } )
+					: translate( 'Get %(discount)s%% off*', {
+							args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+							comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
+					  } ) }
+			</span>
 		</div>
 	) : null;
 };
@@ -93,20 +91,24 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 							checked: durationChecked,
 						} ) }
 					>
-						<span className="plans-filter-bar__toggle-off-label">
-							{ translate( 'Bill monthly' ) }
-						</span>
+						<div className="plans-filter-bar__toggle-left-hand-side">
+							<span className="plans-filter-bar__toggle-off-label">
+								{ translate( 'Bill monthly' ) }
+							</span>
+						</div>
 						<ToggleControl
 							className="plans-filter-bar__toggle-control"
 							checked={ durationChecked }
 							onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
 						/>
-						<span className="plans-filter-bar__toggle-on-label">
-							{ translate( 'Bill yearly' ) }
-						</span>
-						{ ! isMobile && showDiscountMessage && (
-							<DiscountMessage toggleChecked={ durationChecked } />
-						) }
+						<div className="plans-filter-bar__toggle-right-hand-side">
+							<span className="plans-filter-bar__toggle-on-label">
+								{ translate( 'Bill yearly' ) }
+							</span>
+							{ ! isMobile && showDiscountMessage && (
+								<DiscountMessage toggleChecked={ durationChecked } />
+							) }
+						</div>
 					</div>
 					{ isMobile && showDiscountMessage && (
 						<DiscountMessage toggleChecked={ durationChecked } />

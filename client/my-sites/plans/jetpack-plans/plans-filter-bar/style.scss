@@ -2,19 +2,19 @@
 @import '@wordpress/base-styles/mixins';
 
 .plans-filter-bar {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	flex: 0 0 250px;
+	// display: flex;
+	// justify-content: center;
+	// align-items: center;
+	// flex-direction: column;
+	// flex: 0 0 250px;
 	padding: 16px 0;
 	color: var( --studio-gray-50 );
 
 	box-sizing: border-box;
 
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-	}
+	// @include breakpoint-deprecated( '>480px' ) {
+	// 	flex-direction: row;
+	// }
 
 	.plans-filter-bar__duration-toggle-wrapper {
 		position: relative;
@@ -80,6 +80,20 @@
 			}
 		}
 	}
+
+	.plans-filter-bar__toggle-left-hand-side {
+		display: flex;
+		flex-direction: row;
+		flex: 1;
+		justify-content: flex-end;
+	}
+
+	.plans-filter-bar__toggle-right-hand-side {
+		display: flex;
+		flex-direction: row;
+		flex: 1;
+		justify-content: flex-start;
+	}
 }
 
 .plans-filter-bar__discount-message {
@@ -88,8 +102,12 @@
 	white-space: nowrap;
 	text-align: center;
 	font-weight: 700;
-	font-size: 16;
+	font-size: 16px;
 	padding-left: 10px;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		padding-top: 0;
+	}
 
 	.plans-filter-bar__discount-message-text {
 		padding-right: 6px;
