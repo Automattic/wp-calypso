@@ -30,7 +30,6 @@
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
 		"checkout/google-pay": true,
-		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/search-product": true,
