@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Fragment, PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -18,11 +18,8 @@ import {
 import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
-import { handleRenewNowClick } from 'calypso/lib/purchases';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { withoutHttp } from 'calypso/lib/url';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
-import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -56,45 +53,51 @@ class DomainRow extends PureComponent {
 		showDomainDetails: true,
 	};
 
+	hasMappingError( domain ) {
+		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
+		return (
+			domain.type === domainTypes.MAPPED &&
+			! domain.pointsToWpcom &&
+			moment.utc().isAfter( registrationDatePlus3Days )
+		);
+	}
+
 	handleClick = () => {
 		const { onClick, domainDetails } = this.props;
 		onClick( domainDetails );
 	};
 
-	stopPropagation = ( event ) => {
-		event.stopPropagation();
-	};
-
-	addEmailClick = ( event ) => {
-		const { trackAddEmailClick, currentRoute, disabled, domain, site } = this.props;
-		event.stopPropagation();
-
-		trackAddEmailClick( domain ); // analytics/tracks
-
-		if ( disabled ) {
-			return;
-		}
-		page( emailManagement( site.slug, domain.domain, currentRoute ) );
-	};
-
-	makePrimary = ( event ) => {
-		event.stopPropagation();
-
-		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
-		if ( onMakePrimaryClick ) {
-			onMakePrimaryClick( selectionIndex, domainDetails );
-		}
-	};
-
-	canSetAsPrimary() {
-		const { domainDetails, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
+	renderDomainName() {
+		const { domain, domainDetails, isManagingAllSites, translate } = this.props;
 		return (
-			! isManagingAllSites &&
-			domainDetails &&
-			domainDetails.canSetAsPrimary &&
-			! domainDetails.isPrimary &&
-			! shouldUpgradeToMakePrimary
+			<div className="domain-row__domain-cell">
+				<span className="domain-row__domain-name">{ domain.domain }</span>
+				<div>{ getDomainTypeText( domainDetails, translate, domainInfoContext.DOMAIN_ROW ) }</div>
+				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
+			</div>
 		);
+	}
+
+	renderPrimaryBadge() {
+		return (
+			<Badge className="domain-row__primary-badge" type="info-green">
+				<Icon icon={ home } size={ 14 } /> { this.props.translate( 'Primary site address' ) }
+			</Badge>
+		);
+	}
+
+	renderDomainStatus( status, statusColor ) {
+		return (
+			<div className="domain-row__status-cell">
+				<span className={ `domain-row__${ statusColor }-dot` }></span> { status }
+			</div>
+		);
+	}
+
+	renderExpiryDate() {
+		const { domain, domainDetails } = this.props;
+		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry ).format( 'LL' );
+		return <div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>;
 	}
 
 	renderAutoRenew() {
@@ -107,13 +110,13 @@ class DomainRow extends PureComponent {
 		if ( ! purchase ) {
 			return (
 				<span className="domain-row__auto-renew-cell">
-					<p className="domain-row__auto-renew-placeholder" />
+					<p className="domain-row__placeholder" />
 				</span>
 			);
 		}
 
 		return (
-			<div className="domain-row__auto-renew-cell" onClick={ this.stopPropagation }>
+			<div className="domain-row__auto-renew-cell" onClick={ ( e ) => e.stopPropagation() }>
 				<AutoRenewToggle
 					planName={ site.plan.product_name_short }
 					siteDomain={ site.domain }
@@ -135,30 +138,6 @@ class DomainRow extends PureComponent {
 		}
 		return ! domainDetails?.bundledPlanSubscriptionId && domainDetails.currentUserCanManage;
 	};
-
-	renderOptionsButton() {
-		const { disabled, isBusy, translate } = this.props;
-
-		return (
-			<div className="domain-row__action-cell">
-				<EllipsisMenu
-					disabled={ disabled || isBusy }
-					onClick={ this.stopPropagation }
-					toggleTitle={ translate( 'Options' ) }
-				>
-					<PopoverMenuItem icon="domains">{ translate( 'View settings' ) }</PopoverMenuItem>
-					{ this.canSetAsPrimary() && (
-						<PopoverMenuItem onClick={ this.makePrimary }>
-							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
-							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
-							{ translate( 'Make primary site address' ) }
-						</PopoverMenuItem>
-					) }
-				</EllipsisMenu>
-			</div>
-		);
-	}
 
 	renderEmail() {
 		const { domainDetails, translate } = this.props;
@@ -223,47 +202,80 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	renderActionItems() {
-		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
+	addEmailClick = ( event ) => {
+		const { trackAddEmailClick, currentRoute, disabled, domain, site } = this.props;
+		event.stopPropagation();
+
+		trackAddEmailClick( domain ); // analytics/tracks
+
+		if ( disabled ) {
+			return;
+		}
+		page( emailManagement( site.slug, domain.domain, currentRoute ) );
+	};
+
+	renderEllipsisMenu() {
+		const {
+			isLoadingDomainDetails,
+			domainDetails,
+			showDomainDetails,
+			disabled,
+			isBusy,
+			translate,
+		} = this.props;
 
 		if ( ! showDomainDetails ) {
 			return;
 		}
 
 		if ( isLoadingDomainDetails || ! domainDetails ) {
-			return <div className="list__domain-options list__action_item_placeholder" />;
+			return (
+				<div className="domain-row__action-cell">
+					<p className="domain-row__placeholder" />
+				</div>
+			);
 		}
 
-		return this.renderOptionsButton();
+		return (
+			<div className="domain-row__action-cell">
+				<EllipsisMenu
+					disabled={ disabled || isBusy }
+					onClick={ ( e ) => e.stopPropagation() }
+					toggleTitle={ translate( 'Options' ) }
+				>
+					<PopoverMenuItem icon="domains">{ translate( 'View settings' ) }</PopoverMenuItem>
+					{ this.canSetAsPrimary() && (
+						<PopoverMenuItem onClick={ this.makePrimary }>
+							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
+							{ translate( 'Make primary site address' ) }
+						</PopoverMenuItem>
+					) }
+				</EllipsisMenu>
+			</div>
+		);
 	}
 
-	getSiteName( site ) {
-		if ( site.name ) {
-			return `${ site.name } (${ withoutHttp( site.URL ) })`;
+	canSetAsPrimary() {
+		const { domainDetails, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
+		return (
+			! isManagingAllSites &&
+			domainDetails &&
+			domainDetails.canSetAsPrimary &&
+			! domainDetails.isPrimary &&
+			! shouldUpgradeToMakePrimary
+		);
+	}
+
+	makePrimary = ( event ) => {
+		event.stopPropagation();
+
+		const { domainDetails, selectionIndex, onMakePrimaryClick } = this.props;
+		if ( onMakePrimaryClick ) {
+			onMakePrimaryClick( selectionIndex, domainDetails );
 		}
-		return withoutHttp( site.URL );
-	}
-
-	getSiteMeta() {
-		const { domainDetails, isManagingAllSites, site, translate } = this.props;
-
-		if ( isManagingAllSites ) {
-			return translate( 'Site: %(siteName)s', {
-				args: {
-					siteName: this.getSiteName( site ),
-				},
-				comment: '%(siteName)s is the site name and URL or just the URL used to identify a site',
-			} );
-		}
-
-		return <Fragment>{ getDomainTypeText( domainDetails, translate ) }</Fragment>;
-	}
-
-	busyMessage() {
-		if ( this.props.isBusy && this.props.busyMessage ) {
-			return <div className="domain-row__busy-message">{ this.props.busyMessage }</div>;
-		}
-	}
+	};
 
 	renderOverlay() {
 		return (
@@ -276,68 +288,10 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	renderActionResult() {
-		const { actionResult } = this.props;
-
-		if ( ! actionResult?.type || ! actionResult?.message ) {
-			return;
+	busyMessage() {
+		if ( this.props.isBusy && this.props.busyMessage ) {
+			return <div className="domain-row__busy-message">{ this.props.busyMessage }</div>;
 		}
-
-		const { type, message } = actionResult;
-		const statusClass = 'error' === type ? 'alert' : 'success';
-
-		return <DomainNotice status={ statusClass } text={ message } />;
-	}
-
-	renderPrimaryBadge() {
-		return (
-			<Badge className="domain-row__primary-badge" type="info-green">
-				<Icon icon={ home } size={ 14 } /> { this.props.translate( 'Primary site address' ) }
-			</Badge>
-		);
-	}
-
-	hasMappingError( domain ) {
-		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
-		return (
-			domain.type === domainTypes.MAPPED &&
-			! domain.pointsToWpcom &&
-			moment.utc().isAfter( registrationDatePlus3Days )
-		);
-	}
-
-	getSiteMeta2() {
-		const { domainDetails, translate } = this.props;
-		return (
-			<Fragment>
-				{ getDomainTypeText( domainDetails, translate, domainInfoContext.DOMAIN_ROW ) }
-			</Fragment>
-		);
-	}
-
-	renderDomainName() {
-		const { domain, domainDetails, isManagingAllSites } = this.props;
-		return (
-			<div className="domain-row__domain-cell">
-				<span className="domain-row__domain-name">{ domain.domain }</span>
-				<div>{ this.getSiteMeta2() }</div>
-				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
-			</div>
-		);
-	}
-
-	renderDomainStatus( status, statusColor ) {
-		return (
-			<div className="domain-row__status-cell">
-				<span className={ `domain-row__${ statusColor }-dot` }></span> { status }
-			</div>
-		);
-	}
-
-	renderExpiryDate() {
-		const { domain, domainDetails } = this.props;
-		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry ).format( 'LL' );
-		return <div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>;
 	}
 
 	render() {
@@ -354,7 +308,7 @@ class DomainRow extends PureComponent {
 				{ this.renderExpiryDate() }
 				{ this.renderAutoRenew() }
 				{ this.renderEmail() }
-				{ this.renderActionItems() }
+				{ this.renderEllipsisMenu() }
 				{ this.renderOverlay() }
 			</div>
 		);
