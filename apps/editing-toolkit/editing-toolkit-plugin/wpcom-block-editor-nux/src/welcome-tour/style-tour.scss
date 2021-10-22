@@ -130,7 +130,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 	.components-card__media {
 		height: 0;
-		padding-top: 65%; // width:height ratio 1,53
+		padding-top: percentage( 1 / 1.53 ); // width:height ratio 
 		position: relative;
 		width: 100%;
 
@@ -168,7 +168,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
-	z-index: 1;
+	top: 0;
 
 	.components-button {
 		width: 32px;

@@ -56,9 +56,9 @@ function WelcomeTourCard( {
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
-			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
 				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />
+				<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
