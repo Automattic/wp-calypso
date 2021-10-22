@@ -62,17 +62,21 @@ export class SupportComponent {
 			return;
 		}
 
+		// This Promise.all wrapper contains many calls due to a certain level of uncertainty
+		// when the support popover is launched.
 		await Promise.all( [
+			// Waits for all placeholder CSS elements to be removed from the DOM.
 			this.waitForQueryComplete(),
+			// Waits for one of the network request (triggered by the opening of the popover) to complete.
 			this.page.waitForResponse(
 				( response ) => response.status() === 200 && response.url().includes( 'language-names?' )
 			),
-			this.page.waitForSelector( selectors.supportPopover ),
 			this.page.click( selectors.supportPopoverButton ),
 		] );
 
+		// Obtain the element handle for the Support popover, then wait until the `is-active` attribute
+		// is added.
 		const elementHandle = await this.page.waitForSelector( selectors.supportPopoverButton );
-
 		await this.page.waitForFunction(
 			( element: HTMLElement | SVGElement ) => element.classList.contains( 'is-active' ),
 			elementHandle
