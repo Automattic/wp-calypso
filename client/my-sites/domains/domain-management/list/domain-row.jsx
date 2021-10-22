@@ -449,10 +449,13 @@ class DomainRow extends PureComponent {
 			showCheckbox,
 			site,
 		} = this.props;
-		const { listStatusText, listStatusClass } = resolveDomainStatus(
+		const { listStatusText, listStatusClass, status, statusColor } = resolveDomainStatus(
 			domainDetails || domain,
 			null,
-			{ siteSlug: site?.slug, hasMappingError: this.hasMappingError( domain ) }
+			{
+				siteSlug: site?.slug,
+				hasMappingError: this.hasMappingError( domain ),
+			}
 		);
 
 		const rowClasses = classNames( 'domain-row', `domain-row__status-${ listStatusClass }` );
@@ -466,7 +469,9 @@ class DomainRow extends PureComponent {
 					<div>{ this.getSiteMeta2() }</div>
 					{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 				</div>
-				<div className="domain-row__status-cell">status</div>
+				<div className="domain-row__status-cell">
+					<span className={ `domain-row__${ statusColor }-dot` }></span> { status }
+				</div>
 				<div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>
 				{ this.renderAutoRenew() }
 				{ this.renderEmail( domainDetails ) }
