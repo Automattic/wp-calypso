@@ -14,7 +14,7 @@ const PostPublishedModal: React.FC = () => {
 	const isCurrentPostPublished = useSelect( ( select ) =>
 		select( 'core/editor' ).isCurrentPostPublished()
 	);
-	const isCurrentPostPublishedRef = useRef( isCurrentPostPublished );
+	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
 	const siteHasNeverPublishedPost = useSelect( ( select ) =>
 		select( 'automattic/wpcom-welcome-guide' ).getSiteHasNeverPublishedPost()
 	);
@@ -33,10 +33,10 @@ const PostPublishedModal: React.FC = () => {
 		// open the post publish modal
 		if (
 			siteHasNeverPublishedPost &&
-			! isCurrentPostPublishedRef.current &&
+			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished
 		) {
-			isCurrentPostPublishedRef.current = isCurrentPostPublished;
+			previousIsCurrentPostPublished.current = isCurrentPostPublished;
 			setSiteHasNeverPublishedPost( false );
 
 			// When the post published panel shows, it is focused automatically.
