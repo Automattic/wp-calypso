@@ -121,7 +121,7 @@ class DomainsTable extends PureComponent {
 					isManagingAllSites={ false }
 					onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
 					isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
-					busyMessage={ translate( 'Setting Primary Domain…', {
+					busyMessage={ translate( 'Setting primary site address…', {
 						context: 'Shows up when the primary domain is changing and the user is waiting',
 					} ) }
 					disabled={ settingPrimaryDomain }

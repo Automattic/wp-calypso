@@ -332,21 +332,19 @@ class DomainRow extends PureComponent {
 
 	busyMessage() {
 		if ( this.props.isBusy && this.props.busyMessage ) {
-			return <div className="domain-item__busy-message">{ this.props.busyMessage }</div>;
+			return <div className="domain-row__busy-message">{ this.props.busyMessage }</div>;
 		}
 	}
 
 	renderOverlay() {
-		const { isBusy } = this.props;
-		if ( isBusy ) {
-			return (
-				<div className="domain-item__overlay">
+		return (
+			this.props.isBusy && (
+				<div className="domain-row__overlay">
 					{ this.busyMessage() }
-					<Spinner className="domain-item__spinner" size={ 20 } />
+					<Spinner size={ 20 } />
 				</div>
-			);
-		}
-		return null;
+			)
+		);
 	}
 
 	renderActionResult() {
