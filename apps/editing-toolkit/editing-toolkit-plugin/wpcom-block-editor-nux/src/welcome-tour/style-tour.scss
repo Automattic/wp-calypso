@@ -129,7 +129,17 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 
 	.components-card__media {
-		min-height: 260px;
+		height: 0;
+		padding-top: 65%; // width:height ratio 1,53
+		position: relative;
+		width: 100%;
+
+		img {
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
 	}
 
 	.components-guide__page-control {
@@ -158,6 +168,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
+	z-index: 1;
 
 	.components-button {
 		width: 32px;
