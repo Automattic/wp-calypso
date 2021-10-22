@@ -114,7 +114,7 @@ class ConfirmCancelDomain extends Component {
 
 		this.setState( { submitting: true } );
 
-		cancelAndRefundPurchase( purchase.id, data, ( error, response ) => {
+		cancelAndRefundPurchase( purchase.id, data, ( error ) => {
 			this.setState( { submitting: false } );
 
 			const { isDomainOnlySite, translate, selectedSite } = this.props;
@@ -135,27 +135,17 @@ class ConfirmCancelDomain extends Component {
 				return;
 			}
 
-			let successMessage;
-			if ( response.status === 'completed' ) {
-				successMessage = translate( '%(purchaseName)s was successfully cancelled and refunded.', {
-					args: { purchaseName },
-				} );
-
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-			} else if ( response.status === 'queued' ) {
-				successMessage = translate(
-					'We are cancelling %(purchaseName)s and processing your refund.{{br/}}' +
-						'Please give it some time for changes to take effect. ' +
-						'An email will be sent once the process is complete.',
-					{ args: { purchaseName }, components: { br: <br /> } }
-				);
-			}
+			this.props.refreshSitePlans( purchase.siteId );
+			this.props.clearPurchases();
 
 			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
 				product_slug: purchase.productSlug,
 			} );
 
+			const successMessage = translate(
+				'%(purchaseName)s was successfully cancelled and refunded.',
+				{ args: { purchaseName } }
+			);
 			this.props.successNotice( successMessage, { displayOnNextPage: true } );
 			page.redirect( this.props.purchaseListUrl );
 		} );
