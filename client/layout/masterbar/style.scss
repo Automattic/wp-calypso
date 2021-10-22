@@ -700,7 +700,7 @@ a.masterbar__quick-language-switcher {
 }
 
 .is-section-gutenberg-editor .main.calypsoify.is-iframe {
-	top: 45px;
+	top: var( --masterbar-height );
 
 	@include break-medium {
 		top: 0;
