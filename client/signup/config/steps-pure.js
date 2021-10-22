@@ -755,6 +755,9 @@ export function generateSteps( {
 		scanning: {
 			stepName: 'scanning',
 		},
+		ready: {
+			stepName: 'ready',
+		},
 	};
 }
 
