@@ -1,3 +1,9 @@
+/**
+ * This script is used to build calypso apps (anything in /apps). Since most of
+ * those apps use a similar structure and ultimately deploy to WordPress.com, we
+ * include sandbox sync logic to assist with local DevX.
+ */
+
 import { exec } from 'child_process';
 import { EventEmitter } from 'events';
 import chokidar from 'chokidar';
@@ -31,7 +37,7 @@ const { argv } = yargs( hideBin( process.argv ) ).options( {
 		coerce: ( distPath ) => ( distPath ? `${ process.cwd() }/${ distPath }/` : undefined ),
 	},
 	verbose: { type: 'boolean', default: false, alias: 'v' },
-	watch: { type: 'boolean', default: false, alias: 'w' },
+	watch: { type: 'boolean', default: process.env.NODE_ENV === 'development', alias: 'w' },
 } );
 const VERBOSE = argv.versbose;
 
@@ -49,7 +55,6 @@ try {
 
 async function runBuilder( args ) {
 	const { sync, localPath, remotePath, watch } = args;
-	const shouldWatch = process.env.NODE_ENV === 'development';
 
 	if ( VERBOSE ) {
 		console.log( JSON.stringify( args ) );
@@ -68,13 +73,13 @@ async function runBuilder( args ) {
 	return Promise.all( [
 		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
-			if ( ! shouldWatch && sync ) {
+			if ( ! watch && sync ) {
 				// In non-watch + sync mode, we sync only once after the build has finished.
 				setupRemoteSync( localPath, remotePath );
 			}
 		} ),
 		// In dev mode, we start watching to sync while the webpack build is happening.
-		shouldWatch && sync && setupRemoteSync( localPath, remotePath, true ),
+		watch && sync && setupRemoteSync( localPath, remotePath, true ),
 	] );
 }
 
