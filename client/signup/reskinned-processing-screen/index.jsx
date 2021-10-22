@@ -9,7 +9,7 @@ import './style.scss';
 
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
-const HEADSTART_DURATION_IN_MS = 80000;
+const HEADSTART_DURATION_IN_MS = 60000;
 
 const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();
@@ -21,16 +21,15 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			break;
 		case 'setup-site':
 			steps = [
+				__( 'Laying the foundations' ),
+				__( 'Turning on the lights' ),
+				__( 'Making it beautiful' ),
 				__( 'Personalizing your site' ),
-				__( 'Applying your theme' ),
-				__( 'Turning on hosting' ),
-				__( 'Enabling SSL encryption' ),
-				__( 'Switching on email' ),
-				__( 'Applying Jetpack essentials' ),
-				__( 'Adding a domain' ),
-				__( 'Applying a plan' ),
-				__( 'Securing your information' ),
+				__( 'Sprinkling some magic' ),
+				__( 'Securing your data' ),
+				__( 'Enabling encryption' ),
 				__( 'Optimizing your content' ),
+				__( 'Applying a shiny top coat' ),
 				__( 'Closing the loop' ),
 			];
 			break;
