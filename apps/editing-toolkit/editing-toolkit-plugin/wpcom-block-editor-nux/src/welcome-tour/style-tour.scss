@@ -168,7 +168,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
-	top: 0;
+	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
 
 	.components-button {
 		width: 32px;
