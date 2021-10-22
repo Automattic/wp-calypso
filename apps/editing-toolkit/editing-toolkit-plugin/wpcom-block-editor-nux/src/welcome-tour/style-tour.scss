@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -130,7 +131,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 	.components-card__media {
 		height: 0;
-		padding-top: percentage( 1 / 1.53 ); // width:height ratio 
+		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
 		position: relative;
 		width: 100%;
 
