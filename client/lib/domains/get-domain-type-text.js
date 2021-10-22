@@ -29,7 +29,7 @@ export function getDomainTypeText(
 				return __( 'Connected Domain' );
 			}
 
-			return __( 'Managed by external provider' );
+			return __( 'Registered with an external provider' );
 
 		case domainTypes.REGISTERED:
 			if ( domain?.isPremium ) {
