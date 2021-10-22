@@ -10,11 +10,13 @@ export const FootnotesList: React.FunctionComponent = () => {
 			<li className="footnotes-list__item">
 				{ translate(
 					'* Discount applies to yearly subscriptions, first year only. All renewals are at full price.',
-					{ comment: '* ' }
+					{ comment: '* is used to reference clause in other locations on page' }
 				) }
 			</li>
 			<li className="footnotes-list__item">
-				{ translate( '** Monthly plans are 7-day money back guarantee.', { comment: '** ' } ) }
+				{ translate( '** Monthly plans are 7-day money back guarantee.', {
+					comment: '** is used to reference clause in other locations on page ',
+				} ) }
 			</li>
 		</ul>
 	);

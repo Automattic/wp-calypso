@@ -2,19 +2,10 @@
 @import '@wordpress/base-styles/mixins';
 
 .plans-filter-bar {
-	// display: flex;
-	// justify-content: center;
-	// align-items: center;
-	// flex-direction: column;
-	// flex: 0 0 250px;
 	padding: 16px 0;
 	color: var( --studio-gray-50 );
 
 	box-sizing: border-box;
-
-	// @include breakpoint-deprecated( '>480px' ) {
-	// 	flex-direction: row;
-	// }
 
 	.plans-filter-bar__duration-toggle-wrapper {
 		position: relative;
