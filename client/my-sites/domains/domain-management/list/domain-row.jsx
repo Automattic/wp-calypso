@@ -144,7 +144,7 @@ class DomainRow extends PureComponent {
 	}
 
 	renderAutoRenew() {
-		const { site, purchase, translate, domainDetails } = this.props;
+		const { site, purchase } = this.props;
 
 		if ( ! this.shouldShowAutoRenewStatus() ) {
 			return <span className="domain-row__auto-renew-cell">-</span>;
@@ -188,34 +188,37 @@ class DomainRow extends PureComponent {
 					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
 				>
+					<PopoverMenuItem icon="domains">{ translate( 'View settings' ) }</PopoverMenuItem>
 					{ this.canSetAsPrimary() && (
-						<PopoverMenuItem icon="domains" onClick={ this.makePrimary }>
-							{ translate( 'Make primary address' ) }
+						<PopoverMenuItem onClick={ this.makePrimary }>
+							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
+							{ translate( 'Make primary site address' ) }
 						</PopoverMenuItem>
 					) }
-					{ this.canRenewDomain() && (
+					{ /* { this.canRenewDomain() && (
 						<PopoverMenuItem icon="refresh" onClick={ this.renewDomain }>
 							{ translate( 'Renew now' ) }
 						</PopoverMenuItem>
-					) }
-					<PopoverMenuItem icon="pencil">{ translate( 'Edit settings' ) }</PopoverMenuItem>
-					{ domain.type === domainTypes.MAPPED && (
+					) } */ }
+					{ /* { domain.type === domainTypes.MAPPED && (
 						<PopoverMenuItem
 							icon="list-unordered"
 							href={ domainManagementDns( site.slug, domain.domain, currentRoute ) }
 						>
 							{ translate( 'DNS Records' ) }
 						</PopoverMenuItem>
-					) }
-					{ domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
+					) } */ }
+					{ /* { domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
 						<PopoverMenuItem
 							icon="reblog"
 							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
 						>
 							{ translate( 'Change site address' ) }
 						</PopoverMenuItem>
-					) }
-					{ domain.type === domainTypes.REGISTERED &&
+					) } */ }
+					{ /* { domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
 							<PopoverMenuItem
 								icon="domains"
@@ -223,8 +226,8 @@ class DomainRow extends PureComponent {
 							>
 								{ translate( 'Name servers' ) }
 							</PopoverMenuItem>
-						) }
-					{ domain.type === domainTypes.REGISTERED &&
+						) } */ }
+					{ /* { domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
 							<PopoverMenuItem
 								icon="reader"
@@ -232,8 +235,8 @@ class DomainRow extends PureComponent {
 							>
 								{ translate( 'Contact information' ) }
 							</PopoverMenuItem>
-						) }
-					{ domain.type === domainTypes.REGISTERED &&
+						) } */ }
+					{ /* { domain.type === domainTypes.REGISTERED &&
 						! ( domainDetails?.expired && ! isDomainInGracePeriod( domainDetails ) ) && (
 							<PopoverMenuItem
 								icon="reply"
@@ -241,8 +244,8 @@ class DomainRow extends PureComponent {
 							>
 								{ translate( 'Transfer domain' ) }
 							</PopoverMenuItem>
-						) }
-					{ [ domainTypes.REGISTERED, domainTypes.MAPPED ].includes( domain.type ) &&
+						) } */ }
+					{ /* { [ domainTypes.REGISTERED, domainTypes.MAPPED ].includes( domain.type ) &&
 						domainDetails?.pointsToWpcom &&
 						domainDetails?.sslStatus && (
 							<PopoverMenuItem
@@ -251,7 +254,7 @@ class DomainRow extends PureComponent {
 							>
 								{ translate( 'Security' ) }
 							</PopoverMenuItem>
-						) }
+						) } */ }
 				</EllipsisMenu>
 			</div>
 		);
