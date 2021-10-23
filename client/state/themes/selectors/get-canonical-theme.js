@@ -1,6 +1,6 @@
 import { find } from 'lodash';
-import { Theme } from 'calypso/my-sites/themes/types';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import { Theme } from 'calypso/types';
 import 'calypso/state/themes/init';
 
 /**
