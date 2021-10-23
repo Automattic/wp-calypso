@@ -30,5 +30,5 @@ function render() {
 
   | variant        | displays                                                                  |
   | -------------- | ------------------------------------------------------------------------- |
-  | Compact        | Icon, Name, Short Description
-  | Extended       | Icon, Name, Author, Short Description, Pricing Info              |
+  | Compact        | Icon, Name, Short Description                                             |
+  | Extended       | Icon, Name, Author, Short Description, Pricing Info                       |
