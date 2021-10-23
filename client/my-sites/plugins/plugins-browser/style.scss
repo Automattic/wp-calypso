@@ -19,6 +19,11 @@
 	margin: auto;
 	margin-right: 15px;
 
+	.search-component {
+		height: 40px;
+		box-shadow: 0 0 0 1px var( --studio-gray-10 );
+	}
+
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 		align-items: flex-end;
