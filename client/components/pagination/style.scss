@@ -38,7 +38,7 @@ $minimal-arrow-size: 24px;
 				}
 
 				&:disabled {
-					color: $minimal-inactive; // don't highlight on hover when disabled
+					visibility: hidden;
 				}
 			}
 
