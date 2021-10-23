@@ -1,4 +1,4 @@
-import { Theme } from './types';
+import { Theme } from 'calypso/types';
 
 export function isFullSiteEditingTheme( theme: Theme | null ): boolean | undefined {
 	const features = theme?.taxonomies?.theme_feature;
