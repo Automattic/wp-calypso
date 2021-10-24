@@ -11,7 +11,6 @@ import {
 	useState,
 	useRef,
 	createInterpolateElement,
-	useCallback,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
@@ -71,9 +70,9 @@ function LaunchWpcomWelcomeTour() {
 function WelcomeTourFrame() {
 	const tourContainerRef = useRef( null );
 	const popperElementRef = useRef( null );
+	const [ initialFocusedElement, setInitialFocusedElement ] = useState( null );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ focusedElementOnLaunch, setFocusedElementOnLaunch ] = useState( null );
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 	const localeSlug = useLocale();
@@ -121,8 +120,8 @@ function WelcomeTourFrame() {
 
 	useEffect( () => {
 		// focus the Next/Begin button as the first interactive element when tour loads
-		setTimeout( () => focusedElementOnLaunch?.focus() );
-	}, [ focusedElementOnLaunch ] );
+		setTimeout( () => initialFocusedElement?.focus() );
+	}, [ initialFocusedElement ] );
 
 	// Preload card images
 	steps.forEach( ( step ) => ( new window.Image().src = step.meta.imgSrc ) );
@@ -171,7 +170,7 @@ function WelcomeTourFrame() {
 								onNextStepProgression={ handleNextStepProgression }
 								onPreviousStepProgression={ handlePreviousStepProgression }
 								isGutenboarding={ isGutenboarding }
-								setFocusedElementOnLaunch={ setFocusedElementOnLaunch }
+								setInitialFocusedElement={ setInitialFocusedElement }
 							/>
 						</>
 					) : (
