@@ -103,6 +103,16 @@
 	}
 }
 
+// Navigation
+.signup.is-importer .step-wrapper__navigation {
+	.step-wrapper__navigation-link.forward {
+		border: none;
+		background: none;
+		text-decoration: underline;
+		color: var( --studio-gray-100 );
+	}
+}
+
 /**
  * New components style
  	- it's mostly style overrides
