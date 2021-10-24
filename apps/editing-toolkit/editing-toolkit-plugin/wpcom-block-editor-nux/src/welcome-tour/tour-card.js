@@ -33,7 +33,7 @@ function WelcomeTourCard( {
 	onNextStepProgression,
 	onPreviousStepProgression,
 	isGutenboarding,
-	setFocusedElementOnLaunch,
+	setInitialFocusedElement,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
@@ -69,7 +69,7 @@ function WelcomeTourCard( {
 							className="welcome-tour-card__description"
 							isTertiary
 							onClick={ () => setCurrentStepIndex( 0 ) }
-							ref={ setFocusedElementOnLaunch }
+							ref={ setInitialFocusedElement }
 						>
 							{ __( 'Restart tour', 'full-site-editing' ) }
 						</Button>
@@ -87,7 +87,7 @@ function WelcomeTourCard( {
 						setCurrentStepIndex={ setCurrentStepIndex }
 						onNextStepProgression={ onNextStepProgression }
 						onPreviousStepProgression={ onPreviousStepProgression }
-						setFocusedElementOnLaunch={ setFocusedElementOnLaunch }
+						setInitialFocusedElement={ setInitialFocusedElement }
 					></CardNavigation>
 				) }
 			</CardFooter>
@@ -102,7 +102,7 @@ function CardNavigation( {
 	setCurrentStepIndex,
 	onNextStepProgression,
 	onPreviousStepProgression,
-	setFocusedElementOnLaunch,
+	setInitialFocusedElement,
 } ) {
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
@@ -131,7 +131,7 @@ function CardNavigation( {
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
 					onClick={ onNextStepProgression }
-					ref={ setFocusedElementOnLaunch }
+					ref={ setInitialFocusedElement }
 				>
 					{ currentStepIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
