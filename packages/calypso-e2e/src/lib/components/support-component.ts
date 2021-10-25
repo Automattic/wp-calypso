@@ -23,6 +23,7 @@ const selectors = {
 
 	// Article
 	readMoreButton: 'text=Read more',
+	supportArticlePlaceholder: 'p.support-article-dialog__placeholder-text',
 	visitArticleButton: 'text="Visit article"',
 	closeButton: 'button:text("Close")',
 };
@@ -161,10 +162,15 @@ export class SupportComponent {
 		}
 
 		await this.page.click( `:nth-match(${ selector }, ${ target })` );
+	}
 
-		if ( category === 'article' ) {
-			await this.page.click( selectors.readMoreButton );
-		}
+	/**
+	 * Click on the `Read More` button shown on the support popover.
+	 *
+	 * The target button is shown only for Article type results.
+	 */
+	async clickReadMore(): Promise< void > {
+		await this.page.click( selectors.readMoreButton );
 	}
 
 	/**
@@ -173,14 +179,18 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
-		await this.page.waitForSelector( selectors.visitArticleButton );
+		// Wait for the placeholder to disappear from the Support article preview.
+		await this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } );
 
 		const browserContext = this.page.context();
+		// `Visit article` launches a new page.
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
 			this.page.click( selectors.visitArticleButton ),
 		] );
 		await newPage.waitForLoadState( 'domcontentloaded' );
+
+		// Return handler to the new tab.
 		return newPage;
 	}
 
