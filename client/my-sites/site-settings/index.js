@@ -115,8 +115,8 @@ export default function () {
 	page(
 		'/settings/:section',
 		legacyRedirects,
-		redirectToGeneral,
 		siteSelection,
+		redirectToGeneral,
 		sites,
 		makeLayout,
 		clientRender
