@@ -6,7 +6,8 @@
 	align-items: flex-start;
 	padding: 16px;
 	border-bottom: 1px solid var( --studio-gray-5 );
-	font-size: $font-body-small;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
 	cursor: pointer;
 
 	@include break-mobile {
@@ -55,12 +56,17 @@
 }
 
 .domain-row__mobile-container {
+	flex: 233 233 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	flex: 233 233 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 
 	@include break-mobile {
+		overflow: visible;
+		text-overflow: inherit;
 		flex-direction: row;
 	}
 }
@@ -71,7 +77,9 @@
 	margin-top: 8px;
 
 	@include break-mobile {
+		flex: 90 90 0;
 		flex-direction: row;
+		margin-top: 0;
 	}
 }
 
@@ -99,7 +107,13 @@
 	flex: 83 83 0;
 
 	.domain-row__domain-name {
+		color: var( --studio-gray-90 );
+		font-size: $font-body-large;
 		font-weight: 500; /* stylelint-disable-line */
+
+		@include break-mobile {
+			font-size: $font-body-small;
+		}
 	}
 }
 
@@ -157,11 +171,16 @@
 }
 
 .domain-row__action-cell {
-	flex: 6 6 0;
 	height: 20px;
+	margin-left: 20px;
 
 	.ellipsis-menu__toggle {
 		transform: translateY( -4px );
 		padding: 0;
+	}
+
+	@include break-mobile {
+		flex: 6 6 0;
+		margin: 0;
 	}
 }
