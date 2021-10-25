@@ -2,7 +2,6 @@ import debugModule from 'debug';
 import Batch from './lib/batch';
 import Domain from './lib/domain';
 import Domains from './lib/domains';
-import Marketing from './lib/marketing';
 import Me from './lib/me';
 import Plans from './lib/plans';
 import Site from './lib/site';
@@ -61,15 +60,6 @@ export default function WPCOM( token, reqHandler ) {
 	// Default api version;
 	this.apiVersion = '1.1';
 }
-
-/**
- * Return `Marketing` object instance
- *
- * @returns {Marketing} Marketing instance
- */
-WPCOM.prototype.marketing = function () {
-	return new Marketing( this );
-};
 
 /**
  * Return `Me` object instance
@@ -169,7 +159,6 @@ WPCOM.prototype.sendRequest = function ( params, query, body, fn ) {
 WPCOM.Batch = Batch;
 WPCOM.Domain = Domain;
 WPCOM.Domains = Domains;
-WPCOM.Marketing = Marketing;
 WPCOM.Me = Me;
 WPCOM.Pinghub = Pinghub;
 WPCOM.Plans = Plans;

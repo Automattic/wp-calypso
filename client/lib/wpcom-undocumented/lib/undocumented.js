@@ -1505,40 +1505,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-// TODO: remove this once the auto-renewal toggle has been fully rolled out.
-Undocumented.prototype.cancelPurchase = function ( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/disable-auto-renew`,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.disableAutoRenew = function ( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/disable-auto-renew' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/disable-auto-renew`,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.enableAutoRenew = function ( purchaseId, fn ) {
-	debug( 'upgrades/{purchaseId}/enable-auto-renew' );
-
-	return this.wpcom.req.post(
-		{
-			path: `/upgrades/${ purchaseId }/enable-auto-renew`,
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.cancelPlanTrial = function ( planId, fn ) {
 	debug( '/upgrades/{planId}/cancel-plan-trial' );
 
