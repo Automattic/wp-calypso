@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -15,7 +14,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import CommentList from './comment-list';
-import CommentTree from './comment-tree';
 import { NEWEST_FIRST } from './constants';
 
 import './style.scss';
@@ -51,7 +49,6 @@ export class CommentsManagement extends Component {
 			page,
 			postId,
 			showCommentList,
-			showCommentTree,
 			showPermissionError,
 			siteId,
 			siteFragment,
@@ -106,38 +103,21 @@ export class CommentsManagement extends Component {
 						status={ status }
 					/>
 				) }
-				{ showCommentTree && (
-					<CommentTree
-						changePage={ changePage }
-						order={ order }
-						page={ page }
-						postId={ postId }
-						setOrder={ this.setOrder }
-						siteId={ siteId }
-						siteFragment={ siteFragment }
-						status={ status }
-					/>
-				) }
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { postId, siteFragment } ) => {
+const mapStateToProps = ( state, { siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
-	const isPostView = !! postId;
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
 	const showPermissionError = ! canModerateComments;
 
-	const showCommentTree =
-		! showPermissionError && isPostView && isEnabled( 'comments/management/threaded-view' );
-
-	const showCommentList = ! showCommentTree && ! showPermissionError;
+	const showCommentList = ! showPermissionError;
 
 	return {
 		siteId,
 		showCommentList,
-		showCommentTree,
 		showPermissionError,
 	};
 };

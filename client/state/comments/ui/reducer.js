@@ -4,7 +4,6 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_QUERY_UPDATE,
-	COMMENTS_TREE_SITE_REQUEST,
 } from 'calypso/state/action-types';
 import { getFiltersKey } from 'calypso/state/comments/ui/utils';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -105,7 +104,6 @@ export const pendingActions = function ( state = [], action ) {
 			return state;
 		}
 		case COMMENTS_LIST_REQUEST:
-		case COMMENTS_TREE_SITE_REQUEST:
 			//ignore pending requests if we're looking at a fresh view
 			return [];
 		default:

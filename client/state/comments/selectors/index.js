@@ -15,8 +15,4 @@ export { getPostOldestCommentDate } from 'calypso/state/comments/selectors/get-p
 export { getPostTotalCommentsCount } from 'calypso/state/comments/selectors/get-post-total-comments-count';
 export { getSiteComment } from 'calypso/state/comments/selectors/get-site-comment';
 export { getSiteCommentCounts } from 'calypso/state/comments/selectors/get-site-comment-counts';
-export { getSiteCommentParentDepth } from 'calypso/state/comments/selectors/get-site-comment-parent-depth';
-export { getSiteCommentRepliesTree } from 'calypso/state/comments/selectors/get-site-comment-replies-tree';
 export { getSiteComments } from 'calypso/state/comments/selectors/get-site-comments';
-export { getSiteCommentsTree } from 'calypso/state/comments/selectors/get-site-comments-tree';
-export { isCommentsTreeInitialized } from 'calypso/state/comments/selectors/is-comments-tree-initialized';
