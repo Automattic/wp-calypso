@@ -741,13 +741,16 @@ export function generateSteps( {
 			optionalDependencies: [ 'selectedDesign' ],
 		},
 		'difm-design-setup-site': {
-			stepName: 'design-setup-site',
+			stepName: 'difm-design-setup-site',
 			apiRequestFunction: setDesignOnSite,
+			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'selectedDesign' ],
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
-				showSkipButton: false,
+				hideSkip: true,
+				excludeBlankCanvas: true,
+				hideExternalPreview: true,
 			},
 		},
 		'difm-design': {
@@ -756,8 +759,7 @@ export function generateSteps( {
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedVertical' ],
-			optionalDependencies: [ 'selectedDIFMDesign', 'selectedVertical', 'selectedDesign' ],
+			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			apiRequestFunction: addPlanToCart,
 		},

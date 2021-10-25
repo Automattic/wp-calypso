@@ -81,6 +81,9 @@ class DesignPickerStep extends Component {
 		// the theme API before we can do this.
 		return this.props.themes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
+			.filter(
+				( { id } ) => ! ( this.props.excludeBlankCanvas && isBlankCanvasDesign( { slug: id } ) )
+			)
 			.map( ( { id, name, taxonomies } ) => ( {
 				categories: taxonomies?.theme_subject ?? [
 					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
@@ -119,7 +122,8 @@ class DesignPickerStep extends Component {
 	};
 
 	previewDesign = ( selectedDesign ) => {
-		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme ) );
+		const locale = ! this.props.userLoggedIn ? getLocaleSlug() : '';
+		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme, locale ) );
 	};
 
 	submitDesign = ( selectedDesign = this.state.selectedDesign ) => {
@@ -152,6 +156,7 @@ class DesignPickerStep extends Component {
 			signupDependencies: { siteSlug },
 			locale,
 			translate,
+			hideExternalPreview,
 		} = this.props;
 
 		const { selectedDesign } = this.state;
@@ -165,6 +170,7 @@ class DesignPickerStep extends Component {
 				showClose={ false }
 				showEdit={ false }
 				externalUrl={ siteSlug }
+				showExternal={ ! hideExternalPreview }
 				previewUrl={ previewUrl }
 				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 					components: { strong: <strong /> },
@@ -215,6 +221,7 @@ class DesignPickerStep extends Component {
 					defaultDependencies={ defaultDependencies }
 					backUrl={ getStepUrl( flowName, stepName, '', locale ) }
 					goToNextStep={ this.submitDesign }
+					stepSectionName={ designTitle }
 				/>
 			);
 		}
