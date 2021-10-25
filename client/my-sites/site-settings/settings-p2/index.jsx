@@ -28,16 +28,42 @@ export class P2GeneralSettingsForm extends Component {
 		errorToDisplay: '',
 	};
 
-	static getDerivedStateFromProps( props ) {
+	static getDerivedStateFromProps( props, state ) {
 		if ( ! props.fields || ! props.fields.p2_preapproved_domains ) {
 			return null;
 		}
 
-		return { isDomainsToggledOn: !! props.fields?.p2_preapproved_domains };
+		if ( state.isDomainsToggledOn === !! props.fields?.p2_preapproved_domains ) {
+			return null;
+		}
+
+		// Domains should always be toggled on if text field is not empty.
+		// The reverse is not true -- can be toggled on even if empty.
+		if ( props.fields?.p2_preapproved_domains?.length > 0 ) {
+			return { isDomainsToggledOn: true };
+		}
 	}
 
+	getPreapprovedDomains = () => {
+		const { fields } = this.props;
+
+		return fields?.p2_preapproved_domains || [];
+	};
+
+	setPreapprovedDomains = ( domains ) => {
+		const { updateFields } = this.props;
+
+		updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: domains } );
+	};
+
+	/**
+	 * Handle toggle button action.
+	 */
 	handleDomainsToggle = () => {
-		this.props.updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: '' } );
+		const { updateFields } = this.props;
+
+		updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: [] } );
+
 		this.setState( {
 			isDomainsToggledOn: ! this.state.isDomainsToggledOn,
 		} );
@@ -63,14 +89,12 @@ export class P2GeneralSettingsForm extends Component {
 
 		try {
 			// TODO Should this be GET? Technically we are not creating anything.
-			const { success, errors } = await wpcom.req.get(
+			const { success, errors } = await wpcom.req.post(
 				{
 					path: `/p2/hub-settings/domains/validate`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{
-					domains: domains.join( ',' ),
-				}
+				{ domains }
 			);
 
 			this.refreshDomainsValidation( success, errors );
@@ -90,7 +114,7 @@ export class P2GeneralSettingsForm extends Component {
 			return value;
 		} );
 
-		this.props.updateFields( { p2_preapproved_domains: filteredTokens.join( ',' ) } );
+		this.setPreapprovedDomains( filteredTokens );
 
 		const filteredErrors = pickBy( errors, ( error, key ) => {
 			return filteredTokens.includes( key );
@@ -112,9 +136,7 @@ export class P2GeneralSettingsForm extends Component {
 	getDomainTokensWithStatus = () => {
 		const { success, errors } = this.state;
 
-		const domains = this.props.fields.p2_preapproved_domains
-			.split( ',' )
-			.filter( ( domain ) => !! domain );
+		const domains = this.getPreapprovedDomains();
 
 		const tokens = domains.map( ( domain ) => {
 			if ( errors && errors[ domain ] ) {
@@ -152,8 +174,7 @@ export class P2GeneralSettingsForm extends Component {
 			return <></>;
 		}
 
-		const classes = classNames( 'site-settings__general-settings', {
-			// TODO
+		const classes = classNames( 'site-settings__p2-settings', {
 			'is-loading': isRequestingSettings,
 		} );
 
