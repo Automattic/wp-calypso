@@ -923,6 +923,7 @@ const ConnectedPlanFeatures = connect(
 				if (
 					! withScroll &&
 					intervalType === 'monthly' &&
+					monthlyDisabled &&
 					( planObject?.product_name_short === 'Premium' ||
 						planObject?.product_name_short === 'Personal' )
 				) {

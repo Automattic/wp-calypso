@@ -106,7 +106,9 @@ export class PlanFeaturesComparisonHeader extends Component {
 			return (
 				<div
 					className={ classNames( {
-						'plan-features-comparison__header-annual-discount': ! disabledClasses,
+						'plan-features-comparison__header-annual-discount': ! disabledClasses[
+							'plan-monthly-disabled-experiment'
+						],
 						'plan-features-comparison__header-annual-discount-is-loading': isLoading,
 					} ) }
 				>
