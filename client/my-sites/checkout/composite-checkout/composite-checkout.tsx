@@ -522,6 +522,7 @@ export default function CompositeCheckout( {
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
+			isLoadingPostCheckoutEmailUpsellExperiment,
 		} );
 	} else {
 		debug( 'no longer loading' );
