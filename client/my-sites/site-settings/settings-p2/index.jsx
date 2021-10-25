@@ -19,27 +19,31 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const debug = debugModule( 'calypso:my-sites:settings:p2-settings' );
 export class P2GeneralSettingsForm extends Component {
+	SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
+
 	state = {
-		showPreapprovedDomainsTextBox: false,
-		preapprovedDomains: [],
+		isDomainsToggledOn: false,
 		success: [],
 		errors: {},
 		errorToDisplay: '',
 	};
 
-	handleSubmitForm = () => {
-		// TODO
-	};
+	static getDerivedStateFromProps( props ) {
+		if ( ! props.fields || ! props.fields.p2_preapproved_domains ) {
+			return null;
+		}
 
-	handleP2PreapprovedDomainsToggle = () => {
+		return { isDomainsToggledOn: !! props.fields?.p2_preapproved_domains };
+	}
+
+	handleDomainsToggle = () => {
+		this.props.updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: '' } );
 		this.setState( {
-			...this.state,
-			showPreapprovedDomainsTextBox: ! this.state.showPreapprovedDomainsTextBox,
-			preapprovedDomains: [], // always empty when toggle is triggered
+			isDomainsToggledOn: ! this.state.isDomainsToggledOn,
 		} );
 	};
 
-	refreshValidation = ( success = [], errors = {} ) => {
+	refreshDomainsValidation = ( success = [], errors = {} ) => {
 		const errorsKeys = Object.keys( errors );
 		const errorToDisplay =
 			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
@@ -51,7 +55,12 @@ export class P2GeneralSettingsForm extends Component {
 		} );
 	};
 
-	async validateDomains( siteId, preapprovedDomains ) {
+	async validateDomains( domains ) {
+		if ( domains.length < 1 ) {
+			this.refreshDomainsValidation( [], {} );
+			return;
+		}
+
 		try {
 			// TODO Should this be GET? Technically we are not creating anything.
 			const { success, errors } = await wpcom.req.get(
@@ -60,11 +69,11 @@ export class P2GeneralSettingsForm extends Component {
 					apiNamespace: 'wpcom/v2',
 				},
 				{
-					domains: preapprovedDomains.join( ',' ),
+					domains: domains.join( ',' ),
 				}
 			);
 
-			this.refreshValidation( success, errors );
+			this.refreshDomainsValidation( success, errors );
 
 			// this.props.recordTracksEvent( 'calypso_p2_preapproved_domain_validation_success' );
 		} catch ( error ) {
@@ -72,7 +81,7 @@ export class P2GeneralSettingsForm extends Component {
 		}
 	}
 
-	onTokensChange = ( tokens ) => {
+	onDomainTokensChange = ( tokens ) => {
 		const { errorToDisplay, errors, success } = this.state;
 		const filteredTokens = tokens.map( ( value ) => {
 			if ( 'object' === typeof value ) {
@@ -80,6 +89,8 @@ export class P2GeneralSettingsForm extends Component {
 			}
 			return value;
 		} );
+
+		this.props.updateFields( { p2_preapproved_domains: filteredTokens.join( ',' ) } );
 
 		const filteredErrors = pickBy( errors, ( error, key ) => {
 			return filteredTokens.includes( key );
@@ -90,19 +101,22 @@ export class P2GeneralSettingsForm extends Component {
 		} );
 
 		this.setState( {
-			preapprovedDomains: filteredTokens,
 			errors: filteredErrors,
 			success: filteredSuccess,
 			errorToDisplay: filteredTokens.includes( errorToDisplay ) && errorToDisplay,
 		} );
 
-		this.validateDomains( this.props.siteId, filteredTokens );
+		this.validateDomains( filteredTokens );
 	};
 
-	getTokensWithStatus = () => {
+	getDomainTokensWithStatus = () => {
 		const { success, errors } = this.state;
 
-		const tokens = this.state.preapprovedDomains.map( ( domain ) => {
+		const domains = this.props.fields.p2_preapproved_domains
+			.split( ',' )
+			.filter( ( domain ) => !! domain );
+
+		const tokens = domains.map( ( domain ) => {
 			if ( errors && errors[ domain ] ) {
 				return {
 					status: 'error',
@@ -139,6 +153,7 @@ export class P2GeneralSettingsForm extends Component {
 		}
 
 		const classes = classNames( 'site-settings__general-settings', {
+			// TODO
 			'is-loading': isRequestingSettings,
 		} );
 
@@ -152,7 +167,7 @@ export class P2GeneralSettingsForm extends Component {
 						isRequestingSettings || isSavingSettings || Object.keys( this.state.errors ).length > 0
 					}
 					isSaving={ isSavingSettings }
-					onButtonClick={ this.handleSubmitForm }
+					onButtonClick={ this.props.handleSubmitForm }
 					showButton
 					title={ translate( 'Joining this workspace' ) }
 				/>
@@ -161,14 +176,14 @@ export class P2GeneralSettingsForm extends Component {
 						<div className="settings-p2__preapproved-domains">
 							<FormFieldset>
 								<ToggleControl
-									checked={ this.state.showPreapprovedDomainsTextBox }
+									checked={ this.state.isDomainsToggledOn }
 									disabled={ isRequestingSettings || isSavingSettings }
-									onChange={ this.handleP2PreapprovedDomainsToggle }
+									onChange={ this.handleDomainsToggle }
 									label={ translate(
 										'Allow people with an email address from specified domains to join this workspace.'
 									) }
 								></ToggleControl>
-								{ this.state.showPreapprovedDomainsTextBox && (
+								{ this.state.isDomainsToggledOn && (
 									<>
 										<FormLabel htmlFor="blogname">{ translate( 'Approved domains' ) }</FormLabel>
 										<TokenField
@@ -181,9 +196,8 @@ export class P2GeneralSettingsForm extends Component {
 											autoCorrect="off"
 											spellCheck="false"
 											maxLength={ 60 }
-											value={ this.getTokensWithStatus() }
-											onChange={ this.onTokensChange }
-											onFocus={ /*this.onFocusTokenField*/ () => {} } // TODO
+											value={ this.getDomainTokensWithStatus() }
+											onChange={ this.onDomainTokensChange }
 											disabled={ isRequestingSettings }
 										/>
 										<FormSettingExplanation>
