@@ -23,10 +23,10 @@ const DraftPostModal = () => {
 			imageSrc={ draftPostImage }
 			actionButtons={
 				<>
-					<Button variant="primary" onClick={ closeModal }>
+					<Button isPrimary onClick={ closeModal }>
 						{ __( 'Start writing', 'full-site-editing' ) }
 					</Button>
-					<Button variant="secondary" onClick={ closeEditor }>
+					<Button isSecondary onClick={ closeEditor }>
 						{ __( "I'm not ready", 'full-site-editing' ) }
 					</Button>
 				</>

@@ -59,7 +59,7 @@ const PostPublishedModal: React.FC = () => {
 			) }
 			imageSrc={ postPublishedImage }
 			actionButtons={
-				<Button variant="primary" href={ link }>
+				<Button isPrimary href={ link }>
 					{ __( 'View Post', 'full-site-editing' ) }
 				</Button>
 			}
