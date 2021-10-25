@@ -153,19 +153,19 @@
 
 	@include break-mobile {
 		display: flex;
+	}
 
-		button.domain-row__email-button {
-			color: var( --color-text );
-			background: none;
-			border: none;
-			padding: 0;
-			line-height: 1.5;
-			box-shadow: none;
-			font-size: $font-body-small;
+	button.domain-row__email-button {
+		color: var( --color-text );
+		background: none;
+		border: none;
+		padding: 0;
+		line-height: 1.5;
+		box-shadow: none;
+		font-size: $font-body-small;
 
-			&:hover {
-				color: var( --color-link );
-			}
+		&:hover {
+			color: var( --color-link );
 		}
 	}
 }
