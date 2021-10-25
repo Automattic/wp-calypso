@@ -237,7 +237,6 @@ export default function CompositeCheckout( {
 
 	const domains = useSiteDomains( siteId );
 
-	// Given where this code is running, it feels like we may need an exposure event.
 	const [
 		isLoadingPostCheckoutEmailUpsellExperiment,
 		postCheckoutEmailExperimentAssignment,
@@ -265,7 +264,7 @@ export default function CompositeCheckout( {
 			payload: { url },
 		} );
 		return url;
-	}, [ getThankYouUrlBase, isLoadingPostCheckoutEmailUpsellExperiment, recordEvent ] );
+	}, [ getThankYouUrlBase, recordEvent ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
@@ -515,7 +514,8 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
-		responseCart.products.length < 1;
+		responseCart.products.length < 1 ||
+		isLoadingPostCheckoutEmailUpsellExperiment;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
