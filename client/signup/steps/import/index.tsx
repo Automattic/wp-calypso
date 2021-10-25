@@ -1,11 +1,20 @@
 import React from 'react';
+import CaptureStep from './capture';
 import ListStep from './list';
+import ScanningStep from './scanning';
 import './style.scss';
 
-export default function ImportOnboarding(): React.ReactNode {
+interface Props {
+	stepName: string;
+	goToStep: ( name: string ) => void;
+}
+
+export default function ImportOnboarding( props: Props ): React.ReactNode {
 	return (
 		<div className="import__onboarding-page">
-			<ListStep />
+			{ props.stepName === 'capture' && <CaptureStep goToStep={ props.goToStep } /> }
+			{ props.stepName === 'scanning' && <ScanningStep goToStep={ props.goToStep } /> }
+			{ props.stepName === 'list' && <ListStep /> }
 		</div>
 	);
 }

@@ -179,7 +179,8 @@
 		"onboarding",
 		"onboarding-with-email",
 		"setup-site",
-		"do-it-for-me"
+		"do-it-for-me",
+		"importer"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"difm_typeform_id": "YMiXMYId",

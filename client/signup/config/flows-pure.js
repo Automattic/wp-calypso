@@ -344,11 +344,12 @@ export function generateFlows( {
 		},
 		{
 			name: 'importer',
-			steps: isEnabled( 'gutenboarding/import' ) ? [ 'list' ] : [],
+			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'scanning', 'list' ] : [],
 			destination: '/',
 			description: 'A new import flow that can be used from the onboarding flow',
-			disallowResume: true,
 			lastModified: '2021-10-18',
+			disallowResume: true,
+			hideFlowProgress: true,
 			showRecaptcha: true,
 		},
 		{
