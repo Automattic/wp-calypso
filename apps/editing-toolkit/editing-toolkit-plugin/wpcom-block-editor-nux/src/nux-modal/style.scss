@@ -32,12 +32,8 @@
 	}
 
 	.wpcom-block-editor-nux-modal__image-container {
-		text-align: center;
-
-		img {
-			width: 209px;
-			height: 95px;
-		}
+		display: flex;
+		justify-content: center;
 	}
 
 	.wpcom-block-editor-nux-modal__title {
