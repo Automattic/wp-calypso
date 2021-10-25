@@ -210,7 +210,7 @@ class TitanAddMailboxes extends Component {
 
 				<Card>
 					<TitanNewMailboxList
-						domain={ selectedDomainName }
+						selectedDomainName={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
 						validatedMailboxUuids={ this.state.validatedMailboxUuids }

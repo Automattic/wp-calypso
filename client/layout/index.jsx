@@ -20,7 +20,6 @@ import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
@@ -275,7 +274,9 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+				{ config.isEnabled( 'keyboard-shortcuts' ) && (
+					<AsyncLoad require="calypso/lib/keyboard-shortcuts/menu" placeholder={ null } />
+				) }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />

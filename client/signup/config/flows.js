@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -57,7 +58,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug } ) {
+function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -71,11 +72,12 @@ function getSignupDestination( { domainItem, siteId, siteSlug } ) {
 		queryParam = { siteId };
 	}
 
-	if ( isEnabled( 'signup/hero-flow' ) ) {
+	// Initially ship to English users only, then ship to all users when translations complete
+	if ( isEnabled( 'signup/hero-flow' ) && englishLocales.includes( localeSlug ) ) {
 		return addQueryArgs( queryParam, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
 	}
 
-	if ( isEnabled( 'signup/setup-site-after-checkout' ) ) {
+	if ( isEnabled( 'signup/setup-site-after-checkout' ) && englishLocales.includes( localeSlug ) ) {
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
@@ -99,11 +101,17 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	if ( dependencies.intent === 'write' ) {
-		// We also need to check starting point to decide show draft post modal or not in the future
-		window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
-		return `/post/${ dependencies.siteSlug }`;
+	const { intent, startingPoint, siteSlug } = dependencies;
+
+	// If the user skips starting point, redirect them to My Home
+	if ( intent === 'write' && startingPoint !== 'skip' ) {
+		if ( startingPoint !== 'write' ) {
+			window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
+		}
+
+		return `/post/${ siteSlug }`;
 	}
+
 	return getChecklistThemeDestination( dependencies );
 }
 

@@ -6,7 +6,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import { tip } from './icons';
+import { tip } from '../../icons';
 import type { SiteOptionsFormValues } from './types';
 import './site-options.scss';
 

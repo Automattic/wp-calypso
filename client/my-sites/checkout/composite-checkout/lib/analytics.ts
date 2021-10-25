@@ -11,7 +11,7 @@ import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 export function logStashLoadErrorEventAction(
 	errorType: string,
 	errorMessage: string,
-	additionalData: Record< string, string > = {}
+	additionalData: Record< string, string | number | undefined > = {}
 ): ReturnType< typeof logToLogstash > {
 	return logStashEventAction( 'composite checkout load error', {
 		...additionalData,

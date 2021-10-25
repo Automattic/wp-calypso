@@ -187,6 +187,12 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'starting-point': {
+			stepName: 'starting-point',
+			providesDependencies: [ 'startingPoint' ],
+			optionalDependencies: [ 'startingPoint' ],
+		},
+
 		test: {
 			stepName: 'test',
 		},
