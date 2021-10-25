@@ -61,11 +61,24 @@ const welcomeGuideVariantReducer = ( state = DEFAULT_VARIANT, action ) => {
 	}
 };
 
+const siteHasNeverPublishedPostReducer = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_FETCH_SUCCESS':
+		case 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_SET':
+			return action.value;
+		case 'WPCOM_WELCOME_GUIDE_RESET_STORE':
+			return false;
+		default:
+			return state;
+	}
+};
+
 const reducer = combineReducers( {
 	welcomeGuideManuallyOpened: welcomeGuideManuallyOpenedReducer,
 	showWelcomeGuide: showWelcomeGuideReducer,
 	tourRating: tourRatingReducer,
 	welcomeGuideVariant: welcomeGuideVariantReducer,
+	siteHasNeverPublishedPost: siteHasNeverPublishedPostReducer,
 } );
 
 const actions = {
@@ -75,6 +88,14 @@ const actions = {
 		return {
 			type: 'WPCOM_WELCOME_GUIDE_FETCH_STATUS_SUCCESS',
 			response,
+		};
+	},
+	*fetchSiteHasNeverPublishedPost() {
+		const response = yield apiFetchControls( { path: '/wpcom/v2/site-has-never-published-post' } );
+
+		return {
+			type: 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_FETCH_SUCCESS',
+			value: !! response,
 		};
 	},
 	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
@@ -96,6 +117,9 @@ const actions = {
 	setUsedPageOrPatternsModal: () => {
 		return { type: 'WPCOM_HAS_USED_PATTERNS_MODAL' };
 	},
+	setSiteHasNeverPublishedPost: ( value ) => {
+		return { type: 'WPCOM_SITE_HAS_NEVER_PUBLISHED_POST_SET', value };
+	},
 	// The `resetStore` action is only used for testing to reset the
 	// store inbetween tests.
 	resetStore: () => ( {
@@ -111,6 +135,7 @@ const selectors = {
 	// the 'modal' variant previously used for mobile has been removed but its slug may still be persisted in local storage
 	getWelcomeGuideVariant: ( state ) =>
 		state.welcomeGuideVariant === 'modal' ? DEFAULT_VARIANT : state.welcomeGuideVariant,
+	getSiteHasNeverPublishedPost: ( state ) => state.siteHasNeverPublishedPost,
 };
 
 export function register() {

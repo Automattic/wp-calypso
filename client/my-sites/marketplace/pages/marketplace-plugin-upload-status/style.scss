@@ -1,0 +1,28 @@
+.is-section-plugins.has-no-sidebar {
+	.layout__content {
+		background-color: var( --studio-white );
+		height: 100vh;
+		@media ( max-width: 782px ) {
+			padding: 0;
+			background-color: var( --studio-white );
+			height: 100vh;
+			.layout__primary {
+				height: 100vh;
+				.marketplace-domain-upsell__root {
+					height: calc( 100vh - 50px );
+				}
+			}
+		}
+	}
+}
+
+.marketplace-plugin-upload-status__root {
+	margin-top: 350px;
+	display: flex;
+	justify-content: center;
+
+	> div {
+		width: 90%;
+		max-width: 509px;
+	}
+}

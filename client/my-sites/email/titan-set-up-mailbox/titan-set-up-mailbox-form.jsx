@@ -166,7 +166,7 @@ const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 	return (
 		<Card>
 			<TitanNewMailboxList
-				domain={ selectedDomainName }
+				selectedDomainName={ selectedDomainName }
 				mailboxes={ mailboxes }
 				onMailboxesChange={ onMailboxesChange }
 				showAddAnotherMailboxButton={ false }

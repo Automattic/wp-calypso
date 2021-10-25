@@ -2,6 +2,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import { isE2ETest } from 'calypso/lib/e2e';
+import useFseBetaOptInStep from '../hooks/use-fse-beta-opt-in-step';
 import { usePrevious } from '../hooks/use-previous';
 import {
 	GutenLocationStateType,
@@ -49,7 +50,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
 				isRedirecting: onboardSelect.getIsRedirecting(),
-				isEnrollingInFse: onboardSelect.shouldEnrollInFseBeta(),
+				isEnrollingInFse: onboardSelect.isEnrollingInFseBeta(),
 			};
 		},
 		[ STORE_KEY ]
@@ -126,6 +127,8 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
 
+	const canUseFseBetaOptInStep = useFseBetaOptInStep();
+
 	const getLatestStepPath = () => {
 		if ( hasSelectedDesign && ! isAnchorFmSignup ) {
 			return makePathWithState( Step.Plans );
@@ -190,6 +193,17 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		<StylePreview />
 	);
 
+	function initialStep() {
+		// In the FSE Beta flow, the opt-in screen becomes the first step.
+		if ( canUseFseBetaOptInStep ) {
+			return <Redirect to={ Step.FseBetaOptIn } />;
+		}
+		if ( isAnchorFmPodcastIdError ) {
+			return <AnchorError />;
+		}
+		return <AcquireIntent />;
+	}
+
 	return (
 		<div className="onboarding-block">
 			{ isCreatingSite && (
@@ -200,12 +214,18 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
-					{ isAnchorFmPodcastIdError ? <AnchorError /> : <AcquireIntent /> }
+					{ initialStep() }
 				</Route>
 
 				<Route path={ makePath( Step.FseBetaOptIn ) }>
 					<FseBetaOptIn />
 				</Route>
+
+				{ canUseFseBetaOptInStep && (
+					<Route path={ makePath( Step.FseBetaIntentGathering ) }>
+						<AcquireIntent />
+					</Route>
+				) }
 
 				<Route path={ makePath( Step.DesignSelection ) }>
 					<Designs />

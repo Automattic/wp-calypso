@@ -37,7 +37,6 @@ function createPurchaseObject( purchase ) {
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
-		isLocked: Boolean( purchase.is_locked ),
 		isRechargeable: Boolean( purchase.is_rechargable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),

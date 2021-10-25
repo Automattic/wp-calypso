@@ -340,15 +340,17 @@ class CancelPurchaseForm extends Component {
 				type: this.getSurveyDataType(),
 			};
 
-			submitSurvey(
-				'calypso-remove-purchase',
-				purchase.siteId,
-				enrichedSurveyData( surveyData, purchase )
-			).then( () => {
-				this.setState( {
-					isSubmitting: false,
+			this.props
+				.submitSurvey(
+					'calypso-remove-purchase',
+					purchase.siteId,
+					enrichedSurveyData( surveyData, purchase )
+				)
+				.then( () => {
+					this.setState( {
+						isSubmitting: false,
+					} );
 				} );
-			} );
 		}
 
 		this.props.onClickFinalConfirm();
@@ -1284,5 +1286,6 @@ export default connect(
 	{
 		fetchAtomicTransfer,
 		recordTracksEvent,
+		submitSurvey,
 	}
 )( localize( withLocalizedMoment( CancelPurchaseForm ) ) );

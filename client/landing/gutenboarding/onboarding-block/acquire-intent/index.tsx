@@ -1,11 +1,12 @@
 import config from '@automattic/calypso-config';
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
-import { SkipButton, NextButton } from '@automattic/onboarding';
+import { ActionButtons, BackButton, NextButton, SkipButton } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
+import useFseBetaOptInStep from '../../hooks/use-fse-beta-opt-in-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
@@ -34,7 +35,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const isMobile = useViewportMatch( 'small', '<' );
 
-	const { goNext } = useStepNavigation();
+	const { goBack, goNext } = useStepNavigation();
 
 	const showSiteTitleAndNext = !! (
 		getSelectedVertical() ||
@@ -95,6 +96,20 @@ const AcquireIntent: React.FunctionComponent = () => {
 			{ __( 'I donʼt know' ) }
 		</SkipButton>
 	);
+
+	// In the FSE Beta flow, AcquireIntent becomes the second step, and it gains a BackButton.
+	if ( useFseBetaOptInStep() ) {
+		return (
+			<div className="gutenboarding-page acquire-intent">
+				<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
+
+				<ActionButtons className="acquire-intent__footer">
+					<BackButton onClick={ goBack } />
+					{ nextStepButton }
+				</ActionButtons>
+			</div>
+		);
+	}
 
 	const siteVertical = getSelectedVertical();
 

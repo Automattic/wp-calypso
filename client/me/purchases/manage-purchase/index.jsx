@@ -86,7 +86,6 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
-	isPurchaseManagementLocked,
 	getRenewableSitePurchases,
 	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
@@ -705,7 +704,6 @@ class ManagePurchase extends Component {
 			siteSlug,
 			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
-			canManagePurchase,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -760,7 +758,7 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && canManagePurchase && (
+					{ isProductOwner && (
 						<>
 							{ preventRenewal && this.renderSelectNewButton() }
 							{ ! preventRenewal && this.renderRenewButton() }
@@ -772,7 +770,7 @@ class ManagePurchase extends Component {
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && canManagePurchase && (
+				{ isProductOwner && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
@@ -930,6 +928,5 @@ export default connect( ( state, props ) => {
 			state,
 			purchase?.id
 		),
-		canManagePurchase: ! isPurchaseManagementLocked( state, purchase?.id ),
 	};
 } )( localize( ManagePurchase ) );

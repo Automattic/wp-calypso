@@ -1253,7 +1253,9 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				isJetpackCheckout: true,
 			} );
-			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=%3AreceiptId'
+			);
 		} );
 
 		it( 'redirects with receiptId query param when a valid receipt ID is provided', () => {

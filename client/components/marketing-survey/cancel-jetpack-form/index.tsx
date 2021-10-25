@@ -127,10 +127,12 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 				type: 'cancel',
 			};
 
-			submitSurvey(
-				'calypso-cancel-jetpack',
-				purchase.siteId,
-				enrichedSurveyData( surveyData, purchase )
+			dispatch(
+				submitSurvey(
+					'calypso-cancel-jetpack',
+					purchase.siteId,
+					enrichedSurveyData( surveyData, purchase )
+				)
 			);
 		}
 

@@ -22,7 +22,7 @@ const selectors = {
 	magicLinkContinueLoginButton: ':text("Continue to WordPress.com")',
 
 	// Notices
-	noticeBox: '.notice',
+	errorMessage: 'div.is-error',
 };
 
 interface LoginCredentials {
@@ -102,17 +102,21 @@ export class LoginPage {
 		await this.page.keyboard.press( 'Enter' );
 		await this.page.fill( selectors.password, password );
 
-		await this.page.click( selectors.loginButton );
-
-		// Wait for the response from the login endpoint.
-		const response = await this.page.waitForResponse( '**/wp-login.php?action=login-endpoint' );
+		// Wait for response from the Login endpoint.
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( '**/wp-login.php?action=login-endpoint' ),
+			this.page.click( selectors.loginButton ),
+		] );
 
 		// If the account credentials are rejected, throw an error containing the text of
-		// the notice box.
+		// the validation error.
+		// Credentaials can be rejected for any number of reasons:
+		// 	- closed account
+		//	- wrong password
 		if ( response.status() === 400 ) {
 			throw new Error(
 				await this.page
-					.waitForSelector( selectors.noticeBox )
+					.waitForSelector( selectors.errorMessage )
 					.then( ( element ) => element.innerText() )
 			);
 		}

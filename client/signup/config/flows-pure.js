@@ -418,14 +418,14 @@ export function generateFlows( {
 		{
 			name: 'setup-site',
 			steps: isEnabled( 'signup/hero-flow' )
-				? [ 'intent', 'site-options', 'design-setup-site' ]
+				? [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ]
 				: [ 'design-setup-site' ],
 			destination: isEnabled( 'signup/hero-flow' )
 				? getDestinationFromIntent
 				: getChecklistThemeDestination,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
-			lastModified: '2021-09-02',
+			lastModified: '2021-10-14',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
 			pageTitle: translate( 'Setup your site' ),
