@@ -11,6 +11,7 @@ import {
 	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
 import debugFactory from 'debug';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -540,6 +541,10 @@ function getProfessionalEmailUpsellUrl( {
 	if ( ! domainName ) {
 		return;
 	}
+
+	recordTracksEvent( 'calypso_post_checkout_upsell_exposure_trigger', {
+		upsell: 'professional-email-2021-10',
+	} );
 
 	if (
 		! postCheckoutEmailExperimentAssignment ||
