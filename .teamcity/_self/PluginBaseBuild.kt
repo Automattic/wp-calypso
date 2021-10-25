@@ -129,7 +129,7 @@ open class PluginBaseBuild : Template({
 				# 1. Download and unzip current release build.
 				mkdir ./release-archive
 				wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
-				unzip ./tmp-release-archive-download.zip -d ./release-archive
+				unzip -q ./tmp-release-archive-download.zip -d ./release-archive
 				echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
 
 				# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
@@ -167,6 +167,7 @@ open class PluginBaseBuild : Template({
 					fi
 				else
 					# If the current build is the same as trunk, remove any related comments posted to the PR.
+					echo -e "No changes detected, so this is not a release build.\n"
 					%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" "delete" <<< "" || true
 				fi
 
@@ -180,7 +181,7 @@ open class PluginBaseBuild : Template({
 
 				# 5. Create artifact of cwd.
 				echo
-				zip -r ../../../$pluginSlug.zip .
+				zip -rq ../../../$pluginSlug.zip .
 			"""
 		}
 	}
