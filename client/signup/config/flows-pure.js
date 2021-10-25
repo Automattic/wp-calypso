@@ -343,6 +343,15 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'importer',
+			steps: isEnabled( 'gutenboarding/import' ) ? [ 'list' ] : [],
+			destination: '/',
+			description: 'A new import flow that can be used from the onboarding flow',
+			disallowResume: true,
+			lastModified: '2021-10-18',
+			showRecaptcha: true,
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',

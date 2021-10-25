@@ -77,6 +77,7 @@
 		"google-drive": true,
 		"gutenboarding/alpha-templates": false,
 		"gutenboarding/show-vertical-input": false,
+		"gutenboarding/import": true,
 		"help": true,
 		"home/layout-dev": true,
 		"importers/substack": true,
