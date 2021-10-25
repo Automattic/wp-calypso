@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
@@ -23,15 +22,13 @@ const P2Following = ( props ) => {
 	return (
 		<Stream { ...props } shouldCombineCards={ false }>
 			<SectionHeader label={ translate( 'Followed P2 Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
-					<Button
-						compact
-						onClick={ () => markAllAsSeen( props.feedsInfo ) }
-						disabled={ ! props.feedsInfo.unseenCount }
-					>
-						{ translate( 'Mark all as seen' ) }
-					</Button>
-				) }
+				<Button
+					compact
+					onClick={ () => markAllAsSeen( props.feedsInfo ) }
+					disabled={ ! props.feedsInfo.unseenCount }
+				>
+					{ translate( 'Mark all as seen' ) }
+				</Button>
 			</SectionHeader>
 		</Stream>
 	);

@@ -101,7 +101,6 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
-		"reader/seen-posts": true,
 		"recommend-plugins": true,
 		"republicize": true,
 		"rum-tracking/logstash": true,
