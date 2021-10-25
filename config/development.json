@@ -178,6 +178,7 @@
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false,
-		"redirect-fallback-browsers": true
+		"redirect-fallback-browsers": true,
+		"onboarding-video-ui": true
 	}
 }
