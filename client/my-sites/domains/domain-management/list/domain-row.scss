@@ -4,7 +4,7 @@
 	position: relative;
 	display: flex;
 	align-items: flex-start;
-	padding: 16px 0;
+	padding: 16px;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	font-size: $font-body-small;
 	cursor: pointer;
@@ -54,6 +54,27 @@
 	}
 }
 
+.domain-row__mobile-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	flex: 233 233 0;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.domain-row__mobile-status-container {
+	display: flex;
+	width: 100%;
+	margin-top: 8px;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
 .domain-row__overlay {
 	z-index: 2;
 	background-color: rgba( 255, 255, 255, 0.8 );
@@ -83,13 +104,20 @@
 }
 
 .domain-row__status-cell {
-	flex: 40 40 0;
-	display: flex;
-	align-items: center;
+	@include break-mobile {
+		flex: 40 40 0;
+		display: flex;
+		align-items: center;
+	}
 }
 
 .domain-row__registered-until-cell {
-	flex: 50 50 0;
+	margin-left: 16px;
+
+	@include break-mobile {
+		flex: 50 50 0;
+		margin: 0;
+	}
 }
 
 .domain-row__auto-renew-cell {

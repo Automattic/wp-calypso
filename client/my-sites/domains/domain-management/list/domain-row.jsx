@@ -302,11 +302,15 @@ class DomainRow extends PureComponent {
 
 		return (
 			<div className="domain-row" onClick={ this.handleClick }>
-				{ this.renderDomainName() }
-				{ this.renderDomainStatus( status, statusClass ) }
-				{ this.renderExpiryDate() }
-				{ this.renderAutoRenew() }
-				{ this.renderEmail() }
+				<div className="domain-row__mobile-container">
+					{ this.renderDomainName() }
+					<div className="domain-row__mobile-status-container">
+						{ this.renderDomainStatus( status, statusClass ) }
+						{ this.renderExpiryDate() }
+					</div>
+					{ this.renderAutoRenew() }
+					{ this.renderEmail() }
+				</div>
 				{ this.renderEllipsisMenu() }
 				{ this.renderOverlay() }
 			</div>
