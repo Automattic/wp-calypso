@@ -19,7 +19,11 @@
 		font-size: $font-body-extra-small;
 		border-radius: 4px; /* stylelint-disable-line */
 		font-weight: 500; /* stylelint-disable-line */
-		margin-top: 8px;
+		margin: 4px 0;
+
+		@include break-mobile {
+			margin-top: 8px;
+		}
 
 		svg {
 			transform: translateY( 2px );
@@ -67,7 +71,7 @@
 
 .domain-row__mobile-status-container {
 	display: flex;
-	margin-top: 8px;
+	margin-top: 4px;
 
 	@include break-mobile {
 		flex: 90 90 0;
