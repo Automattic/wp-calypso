@@ -14,7 +14,8 @@
 		padding: 20px 0;
 	}
 
-	&__primary-badge {
+	/* div. for increased specificity */
+	div.domain-row__primary-badge {
 		font-size: $font-body-extra-small;
 		border-radius: 4px; /* stylelint-disable-line */
 		font-weight: 500; /* stylelint-disable-line */
@@ -113,7 +114,7 @@
 		font-weight: 500; /* stylelint-disable-line */
 
 		@include break-mobile {
-			font-size: $font-body;
+			font-size: $font-body-small;
 		}
 	}
 }
