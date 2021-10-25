@@ -3,7 +3,6 @@ import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import SectionHeader from 'calypso/components/section-header';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
@@ -93,7 +92,10 @@ class PluginsBrowserList extends Component {
 	render() {
 		return (
 			<div className="plugins-browser-list">
-				<SectionHeader label={ this.props.title } />
+				<div className="plugins-browser-list__header">
+					<div className="plugins-browser-list__title">{ this.props.title }</div>
+					<div className="plugins-browser-list__subtitle">{ this.props.subtitle }</div>
+				</div>
 				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
 			</div>
 		);

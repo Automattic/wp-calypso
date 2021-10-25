@@ -304,10 +304,13 @@ export class PluginsMain extends Component {
 
 		let searchTitle;
 		if ( search ) {
-			searchTitle = this.props.translate( 'Suggested plugins for: %(searchQuery)s', {
+			searchTitle = this.props.translate( 'Suggested plugins for: {{b}}%(searchQuery)s{{/b}}', {
 				textOnly: true,
 				args: {
 					searchQuery: search,
+				},
+				components: {
+					b: <b />,
 				},
 			} );
 		}

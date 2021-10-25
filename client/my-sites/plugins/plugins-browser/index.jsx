@@ -192,18 +192,32 @@ export class PluginsBrowser extends Component {
 		if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 			const searchTitle =
 				this.props.searchTitle ||
-				this.props.translate( 'Results for: %(searchTerm)s', {
+				this.props.translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
 					textOnly: true,
 					args: {
 						searchTerm,
 					},
+					components: {
+						b: <b />,
+					},
 				} );
+
+			const subtitle =
+				pluginsPagination &&
+				this.props.translate( '%(total)s plugins', {
+					textOnly: true,
+					args: {
+						total: pluginsPagination.results,
+					},
+				} );
+
 			return (
 				<>
 					<PluginsBrowserList
 						plugins={ pluginsBySearchTerm }
 						listName={ searchTerm }
 						title={ searchTitle }
+						subtitle={ subtitle }
 						site={ this.props.siteSlug }
 						showPlaceholders={ isFetchingPluginsBySearchTerm }
 						size={ SEARCH_RESULTS_LIST_LENGTH }
