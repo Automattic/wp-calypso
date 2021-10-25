@@ -457,49 +457,6 @@ Undocumented.prototype.getAvailableTlds = function ( query = {} ) {
 };
 
 /**
- * Determine whether a domain name can be used for Site Redirect
- *
- * @param {number|string} siteId The site ID
- * @param {string} domain The domain name to check
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.canRedirect = function ( siteId, domain, fn ) {
-	domain = encodeURIComponent( domain.toLowerCase() );
-
-	return this.wpcom.req.get( { path: '/domains/' + siteId + '/' + domain + '/can-redirect' }, fn );
-};
-
-/**
- * Retrieves the target of the site redirect.
- *
- * @param {number|string} siteId The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getSiteRedirect = function ( siteId, fn ) {
-	debug( '/sites/:site_id/domains/redirect query' );
-
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/domains/redirect' }, fn );
-};
-
-/**
- * Points the site redirect to the specified location.
- *
- * @param {number|string} siteId The site ID
- * @param {string} location The location to redirect the site to
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.setSiteRedirect = function ( siteId, location, fn ) {
-	debug( '/sites/:site_id/domains/redirect' );
-
-	return this.wpcom.req.post(
-		{ path: '/sites/' + siteId + '/domains/redirect' },
-		{ location },
-		fn
-	);
-};
-
-/**
  * Retrieves the domain contact information of the user.
  *
  * @param {Function} fn The callback function
