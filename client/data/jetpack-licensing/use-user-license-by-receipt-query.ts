@@ -30,7 +30,7 @@ const useUserLicenseByReceiptQuery = ( receiptId: number ): UseQueryResult< User
 		queryKey,
 		async () =>
 			wpcom.req.get( {
-				path: `/jetpack-licensing/receipt/${ receiptId }`,
+				path: `/jetpack-licensing/user/receipt/${ receiptId }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
