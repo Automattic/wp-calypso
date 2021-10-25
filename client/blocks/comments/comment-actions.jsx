@@ -11,18 +11,15 @@ const CommentActions = ( {
 	post,
 	comment: { isPlaceholder },
 	translate,
-	activeEditCommentId,
 	activeReplyCommentId,
 	commentId,
 	handleReply,
 	onReplyCancel,
-	editCommentCancel,
 	showReadMore,
 	onReadMore,
 } ) => {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
-	const showCancelEditButton = activeEditCommentId === commentId;
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {
@@ -50,11 +47,6 @@ const CommentActions = ( {
 			{ showCancelReplyButton && (
 				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
-				</Button>
-			) }
-			{ showCancelEditButton && (
-				<Button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
-					{ translate( 'Cancel' ) }
 				</Button>
 			) }
 			<CommentLikeButtonContainer

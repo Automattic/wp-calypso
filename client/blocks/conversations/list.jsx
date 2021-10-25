@@ -63,12 +63,6 @@ export class ConversationCommentList extends Component {
 		setActiveReply: noop,
 	};
 
-	state = {
-		activeEditCommentId: null,
-	};
-
-	onEditCommentClick = ( commentId ) => this.setState( { activeEditCommentId: commentId } );
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
 
 	onReplyClick = ( commentId ) => {
@@ -250,9 +244,6 @@ export class ConversationCommentList extends Component {
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onEditCommentClick={ this.onEditCommentClick }
-								onEditCommentCancel={ this.onEditCommentCancel }
-								activeEditCommentId={ this.state.activeEditCommentId }
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }

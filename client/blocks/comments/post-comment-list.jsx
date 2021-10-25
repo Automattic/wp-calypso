@@ -88,7 +88,6 @@ class PostCommentList extends Component {
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentsFilter: 'all',
-		activeEditCommentId: null,
 	};
 
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
@@ -198,19 +197,13 @@ class PostCommentList extends Component {
 			return null;
 		}
 
-		// TODO Should not need to bind here
-		const onEditCommentClick = this.onEditCommentClick.bind( this, commentId );
-
 		return (
 			<PostComment
 				post={ this.props.post }
 				commentsTree={ this.props.commentsTree }
 				commentId={ commentId }
 				key={ commentId }
-				activeEditCommentId={ this.state.activeEditCommentId }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
-				onEditCommentClick={ onEditCommentClick }
-				onEditCommentCancel={ this.onEditCommentCancel }
 				onReplyClick={ this.onReplyClick }
 				onReplyCancel={ this.onReplyCancel }
 				commentText={ this.commentText }
@@ -242,12 +235,6 @@ class PostCommentList extends Component {
 			</Button>
 		);
 	};
-
-	onEditCommentClick = ( commentId ) => {
-		this.setState( { activeEditCommentId: commentId } );
-	};
-
-	onEditCommentCancel = () => this.setState( { activeEditCommentId: null } );
 
 	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
