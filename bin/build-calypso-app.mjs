@@ -18,13 +18,13 @@ import { hideBin } from 'yargs/helpers';
 EventEmitter.setMaxListeners( 20 );
 
 // Default NODE_ENV is development unless manually set to production.
-if ( ! process.env.NODE_ENV ) {
+if ( process.env.NODE_ENV == null ) {
 	process.env.NODE_ENV = 'development';
 }
-if ( ! process.env.BROWSERSLIST_ENV ) {
+if ( process.env.BROWSERSLIST_ENV == null ) {
 	process.env.BROWSERSLIST_ENV = 'wpcom';
 }
-if ( ! process.env.DISABLE_DUPLICATE_PACKAGE_CHECK ) {
+if ( process.env.DISABLE_DUPLICATE_PACKAGE_CHECK == null ) {
 	process.env.DISABLE_DUPLICATE_PACKAGE_CHECK = true;
 }
 
@@ -78,7 +78,7 @@ async function runBuilder( args ) {
 				setupRemoteSync( localPath, remotePath );
 			}
 		} ),
-		// In dev mode, we start watching to sync while the webpack build is happening.
+		// In watch + sync mode, we start watching to sync while the webpack build is happening.
 		watch && sync && setupRemoteSync( localPath, remotePath, true ),
 	] );
 }
@@ -97,6 +97,7 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 				console.log( 'Attempting sync...' );
 			}
 			if ( rsync ) {
+				// Kill any existing rsync attempt.
 				rsync.kill( 'SIGINT' );
 			}
 			rsync = exec(
