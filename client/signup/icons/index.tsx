@@ -70,7 +70,7 @@ export const design: ReactElement = (
 			strokeLinecap="round"
 			strokeLinejoin="round"
 		/>
-		<Rect x="3" y="3" width="18" height="18" rx="1" stroke="#8C8F94" stroke-width="1.6" />
+		<Rect x="3" y="3" width="18" height="18" rx="1" stroke="#8C8F94" strokeWidth="1.6" />
 	</SVG>
 );
 
