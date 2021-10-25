@@ -10,6 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
+import { Icon, upload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { flow, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -383,6 +384,7 @@ export class PluginsBrowser extends Component {
 				onClick={ this.handleUploadPluginButtonClick }
 				href={ uploadUrl }
 			>
+				<Icon className="plugins-browser__button-icon" icon={ upload } width={ 16 } height={ 16 } />
 				<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
 			</Button>
 		);

@@ -47,6 +47,12 @@
 
 	.plugins-browser__button {
 		white-space: nowrap;
+		display: flex;
+		align-items: center;
+
+		.plugins-browser__button-icon {
+			margin-right: 5px;
+		}
 
 		&:not( :last-child ) {
 			margin-bottom: 8px;
