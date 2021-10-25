@@ -14,7 +14,6 @@ import {
 	hasEcommercePlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
-import { useExperiment } from 'calypso/lib/explat';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
@@ -45,6 +44,7 @@ import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
+import type { ExperimentAssignment } from '@automattic/explat-client';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
 
@@ -62,6 +62,7 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug,
 	isJetpackCheckout = false,
 	checkoutFlow,
+	postCheckoutEmailExperimentAssignment = null,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -74,6 +75,7 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug: string | undefined;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
+	postCheckoutEmailExperimentAssignment?: ExperimentAssignment | null;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
@@ -99,11 +101,6 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 
 	const domains = useSiteDomains( siteId );
-
-	const [
-		isLoadingPostCheckoutEmailUpsellExperiment,
-		postCheckoutEmailExperimentAssignment,
-	] = useExperiment( 'promote_professional_email_post_checkout_2021_10' );
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
@@ -270,7 +267,6 @@ export default function useCreatePaymentCompleteCallback( {
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
-			isLoadingPostCheckoutEmailUpsellExperiment,
 			postCheckoutEmailExperimentAssignment,
 		]
 	);

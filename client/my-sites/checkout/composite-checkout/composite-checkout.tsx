@@ -578,6 +578,7 @@ export default function CompositeCheckout( {
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
+		postCheckoutEmailExperimentAssignment,
 	} );
 
 	const handlePaymentComplete = useCallback(
