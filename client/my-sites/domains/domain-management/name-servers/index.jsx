@@ -173,7 +173,7 @@ class NameServers extends Component {
 
 		return (
 			<Main className={ classes }>
-				{ config.isEnabled( 'domains/management-list-redesign' )
+				{ config.isEnabled( 'domains/dns-records-redesign' )
 					? this.renderBreadcrumbs()
 					: this.header() }
 				{ this.getContent() }

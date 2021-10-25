@@ -107,7 +107,7 @@ class Dns extends Component {
 
 		return (
 			<Main className="dns">
-				{ config.isEnabled( 'domains/management-list-redesign' )
+				{ config.isEnabled( 'domains/dns-records-redesign' )
 					? this.renderBreadcrumbs()
 					: this.renderHeader() }
 				<Card>
