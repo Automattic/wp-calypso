@@ -5,6 +5,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -12,8 +13,8 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
 import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
 import {
@@ -170,7 +171,7 @@ class NameServers extends Component {
 
 		return (
 			<Main className={ classes }>
-				{ this.header() }
+				{ this.renderBreadcrumbs() }
 				{ this.getContent() }
 			</Main>
 		);
@@ -208,19 +209,47 @@ class NameServers extends Component {
 		}
 	};
 
+	renderBreadcrumbs() {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const previousPath = domainManagementEdit(
+			selectedSite.slug,
+			selectedDomainName,
+			currentRoute
+		);
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				helpBubble: translate(
+					'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+						},
+					}
+				),
+			},
+			{
+				label: selectedDomainName,
+				href: previousPath,
+			},
+			{ label: translate( 'DNS records' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back' ),
+			href: previousPath,
+			showBackArrow: true,
+		};
+
+		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+	}
+
 	saveNameservers = () => {
 		const { nameservers } = this.state;
 
 		this.props.updateNameservers( nameservers );
 	};
-
-	header() {
-		return (
-			<Header onClick={ this.back } selectedDomainName={ this.props.selectedDomainName }>
-				{ this.props.translate( 'Name Servers and DNS' ) }
-			</Header>
-		);
-	}
 
 	back = () => {
 		page(

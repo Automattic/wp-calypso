@@ -7,13 +7,18 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import VerticalNav from 'calypso/components/vertical-nav';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import { domainConnect } from 'calypso/lib/domains/constants';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementNameServers,
+	domainManagementDns,
+} from 'calypso/my-sites/domains/paths';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -49,8 +54,40 @@ class Dns extends Component {
 		);
 	}
 
+	renderBreadcrumbs() {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const previousPath = domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute );
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				helpBubble: translate(
+					'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+						},
+					}
+				),
+			},
+			{
+				label: selectedDomainName,
+				href: previousPath,
+			},
+			{ label: translate( 'DNS records' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back' ),
+			href: previousPath,
+			showBackArrow: true,
+		};
+
+		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+	}
+
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
 		const domainConnectEnabled = some( dns.records, {
@@ -61,9 +98,7 @@ class Dns extends Component {
 
 		return (
 			<Main className="dns">
-				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
-					{ translate( 'DNS Records' ) }
-				</Header>
+				{ this.renderBreadcrumbs() }
 				<Card>
 					<DnsDetails />
 					<DnsList
