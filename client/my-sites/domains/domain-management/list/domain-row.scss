@@ -93,28 +93,37 @@
 }
 
 .domain-row__auto-renew-cell {
+	display: none;
 	flex: 30 30 0;
 
-	.components-base-control__field {
-		margin-bottom: 0;
+	@include break-mobile {
+		display: flex;
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
 	}
 }
 
 .domain-row__email-cell {
+	display: none;
 	flex: 30 30 0;
 
-	button.domain-row__email-button {
-		color: var( --color-text );
-		background: none;
-		border: none;
-		padding: 0;
-		line-height: 1.5;
-		box-shadow: none;
-		font-size: $font-body-small;
+	@include break-mobile {
+		display: flex;
 
-		&:hover {
-			color: var( --color-link );
-			// color: var( --color-link-dark );
+		button.domain-row__email-button {
+			color: var( --color-text );
+			background: none;
+			border: none;
+			padding: 0;
+			line-height: 1.5;
+			box-shadow: none;
+			font-size: $font-body-small;
+
+			&:hover {
+				color: var( --color-link );
+			}
 		}
 	}
 }
