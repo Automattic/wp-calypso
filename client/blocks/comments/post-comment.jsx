@@ -460,7 +460,6 @@ class PostComment extends PureComponent {
 				<CommentActions
 					post={ this.props.post || {} }
 					comment={ comment }
-					showModerationTools={ this.props.showModerationTools }
 					activeEditCommentId={ this.props.activeEditCommentId }
 					activeReplyCommentId={ this.props.activeReplyCommentId }
 					commentId={ this.props.commentId }

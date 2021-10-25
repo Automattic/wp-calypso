@@ -207,7 +207,6 @@ class PostCommentList extends Component {
 				commentsTree={ this.props.commentsTree }
 				commentId={ commentId }
 				key={ commentId }
-				showModerationTools={ this.props.showModerationTools }
 				activeEditCommentId={ this.state.activeEditCommentId }
 				activeReplyCommentId={ this.props.activeReplyCommentId }
 				onEditCommentClick={ onEditCommentClick }

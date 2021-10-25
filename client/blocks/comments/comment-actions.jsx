@@ -1,13 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
-import { changeCommentStatus } from 'calypso/state/comments/actions';
-import CommentApproveAction from './comment-approve-action';
 import CommentLikeButtonContainer from './comment-likes';
 
 import './comment-actions.scss';
@@ -16,19 +9,13 @@ const noop = () => {};
 
 const CommentActions = ( {
 	post,
-	comment: { isPlaceholder, status },
-	showModerationTools,
+	comment: { isPlaceholder },
 	translate,
 	activeEditCommentId,
 	activeReplyCommentId,
 	commentId,
 	handleReply,
 	onReplyCancel,
-	approveComment,
-	unapproveComment,
-	trashComment,
-	spamComment,
-	editComment,
 	editCommentCancel,
 	showReadMore,
 	onReadMore,
@@ -36,7 +23,6 @@ const CommentActions = ( {
 	const showReplyButton = post && post.discussion && post.discussion.comments_open === true;
 	const showCancelReplyButton = activeReplyCommentId === commentId;
 	const showCancelEditButton = activeEditCommentId === commentId;
-	const isApproved = status === 'approved';
 
 	// Only render actions for non placeholders
 	if ( isPlaceholder ) {
@@ -78,44 +64,6 @@ const CommentActions = ( {
 				postId={ post.ID }
 				commentId={ commentId }
 			/>
-			{ showModerationTools && (
-				<div className="comments__comment-actions-moderation-tools">
-					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
-					<Button className="comments__comment-actions-trash" onClick={ trashComment }>
-						<Gridicon icon="trash" size={ 18 } />
-						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
-					</Button>
-					<Button className="comments__comment-actions-spam" onClick={ spamComment }>
-						<Gridicon icon="spam" size={ 18 } />
-						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
-					</Button>
-					<Button className="comments__comment-actions-edit" onClick={ editComment }>
-						<Gridicon icon="pencil" size={ 18 } />
-						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
-					</Button>
-					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
-						<PopoverMenuItem
-							className={ classnames( 'comments__comment-actions-approve', {
-								'is-approved': isApproved,
-							} ) }
-							icon="checkmark"
-							onClick={ ! isApproved ? approveComment : unapproveComment }
-						>
-							{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem icon="trash" onClick={ trashComment }>
-							{ translate( 'Trash' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem icon="spam" onClick={ spamComment }>
-							{ translate( 'Spam' ) }
-						</PopoverMenuItem>
-						<PopoverMenuSeparator />
-						<PopoverMenuItem icon="pencil" onClick={ editComment }>
-							{ translate( 'Edit' ) }
-						</PopoverMenuItem>
-					</EllipsisMenu>
-				</div>
-			) }
 		</div>
 	);
 };
@@ -124,19 +72,4 @@ CommentActions.defaultProps = {
 	onReadMore: noop,
 };
 
-const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const {
-		post: { site_ID: siteId, ID: postId },
-		commentId,
-	} = ownProps;
-
-	return {
-		approveComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'approved' ) ),
-		unapproveComment: () =>
-			dispatch( changeCommentStatus( siteId, postId, commentId, 'unapproved' ) ),
-		trashComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'trash' ) ),
-		spamComment: () => dispatch( changeCommentStatus( siteId, postId, commentId, 'spam' ) ),
-	};
-};
-
-export default connect( null, mapDispatchToProps )( localize( CommentActions ) );
+export default localize( CommentActions );
