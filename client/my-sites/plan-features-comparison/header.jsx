@@ -55,7 +55,9 @@ export class PlanFeaturesComparisonHeader extends Component {
 			disabledClasses,
 		} = this.props;
 
-		if ( disabledClasses ) return null;
+		if ( disabledClasses[ 'plan-monthly-disabled-experiment' ] ) {
+			return null;
+		}
 
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
@@ -83,9 +85,9 @@ export class PlanFeaturesComparisonHeader extends Component {
 			translate,
 		} = this.props;
 
-		if ( disabledClasses ) {
+		if ( disabledClasses[ 'plan-monthly-disabled-experiment' ] ) {
 			return (
-				<div className={ classNames( 'not-available-with-monthly-disclaimer' ) }>
+				<div className="plan-features-comparison__not-available-with-monthly-disclaimer">
 					This plan is only available with annual billing
 				</div>
 			);
@@ -115,15 +117,11 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	getBillingTimeframe() {
-		const { billingTimeFrame, isDisabled } = this.props;
+		const { billingTimeFrame } = this.props;
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 
 		return (
-			<div
-				className={ classNames( 'plan-features-comparison__header-billing-info', {
-					'not-available-with-monthly-disclaimer': isDisabled,
-				} ) }
-			>
+			<div className="plan-features-comparison__header-billing-info">
 				<span>{ perMonthDescription }</span>
 			</div>
 		);
@@ -131,7 +129,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 
 	renderPriceGroup() {
 		const { currencyCode, disabledClasses, rawPrice, discountPrice } = this.props;
-		const displayNotation = ! disabledClasses;
+		const displayNotation = ! disabledClasses[ 'plan-monthly-disabled-experiment' ];
 
 		if ( discountPrice ) {
 			return (
@@ -167,7 +165,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 }
 
 PlanFeaturesComparisonHeader.propTypes = {
-	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	billingTimeFrame: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 	currencyCode: PropTypes.string,
 	discountPrice: PropTypes.number,
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
@@ -175,6 +173,7 @@ PlanFeaturesComparisonHeader.propTypes = {
 	rawPrice: PropTypes.number,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
+	disabledClasses: PropTypes.object,
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,

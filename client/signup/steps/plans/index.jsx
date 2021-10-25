@@ -11,9 +11,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import MarketingMessage from 'calypso/components/marketing-message';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { Experiment } from 'calypso/lib/explat';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -129,67 +128,36 @@ export class PlansStep extends Component {
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 		} = this.props;
-
-		const loadingPlanDisplay = (
-			<div className="plans__loading-container">
-				<PulsingDot delay={ 400 } active />
-			</div>
-		);
-
-		const treatmentPlanDisplay = (
-			<PlansFeaturesMain
-				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-				hideFreePlan={ hideFreePlan }
-				isInSignup={ true }
-				isLaunchPage={ isLaunchPage }
-				intervalType={ this.getIntervalType() }
-				onUpgradeClick={ this.onSelectPlan }
-				showFAQ={ false }
-				domainName={ this.getDomainName() }
-				customerType={ this.getCustomerType() }
-				disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-				plansWithScroll={ this.state.isDesktop }
-				planTypes={ planTypes }
-				flowName={ flowName }
-				showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-				isAllPaidPlansShown={ true }
-				isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-				shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-				isReskinned={ isReskinned }
-				disableMonthlyExperiment={ true }
-			/>
-		);
-		const defaultPlanDisplay = (
-			<PlansFeaturesMain
-				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-				hideFreePlan={ hideFreePlan }
-				isInSignup={ true }
-				isLaunchPage={ isLaunchPage }
-				intervalType={ this.getIntervalType() }
-				onUpgradeClick={ this.onSelectPlan }
-				showFAQ={ false }
-				domainName={ this.getDomainName() }
-				customerType={ this.getCustomerType() }
-				disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-				plansWithScroll={ this.state.isDesktop }
-				planTypes={ planTypes }
-				flowName={ flowName }
-				showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-				isAllPaidPlansShown={ true }
-				isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-				shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-				isReskinned={ isReskinned }
-			/>
-		);
+		let experiment;
+		try {
+			experiment = dangerouslyGetExperimentAssignment( 'disabled_monthly_personal_premium' );
+		} catch {
+			experiment = false;
+		}
 
 		return (
 			<div>
 				<QueryPlans />
-				<Experiment
-					name="disabled_monthly_personal_premium"
-					defaultExperience={ defaultPlanDisplay }
-					treatmentExperience={ treatmentPlanDisplay }
-					loadingExperience={ loadingPlanDisplay }
+				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={ hideFreePlan }
+					isInSignup={ true }
+					isLaunchPage={ isLaunchPage }
+					intervalType={ this.getIntervalType() }
+					onUpgradeClick={ this.onSelectPlan }
+					showFAQ={ false }
+					domainName={ this.getDomainName() }
+					customerType={ this.getCustomerType() }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					plansWithScroll={ this.state.isDesktop }
+					planTypes={ planTypes }
+					flowName={ flowName }
+					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+					isAllPaidPlansShown={ true }
+					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+					isReskinned={ isReskinned }
+					disableMonthlyExperiment={ experiment?.variationName !== null }
 				/>
 			</div>
 		);

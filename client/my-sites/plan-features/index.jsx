@@ -828,6 +828,8 @@ PlanFeatures.propTypes = {
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
 	kindOfPlanTypeSelector: PropTypes.oneOf( [ 'interval', 'customer' ] ),
+	monthlyDisabled: PropTypes.bool,
+	intervalType: PropTypes.string,
 };
 
 PlanFeatures.defaultProps = {
@@ -838,6 +840,7 @@ PlanFeatures.defaultProps = {
 	siteId: null,
 	onUpgradeClick: noop,
 	kindOfPlanTypeSelector: 'customer',
+	monthlyDisabled: false,
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
@@ -877,10 +880,13 @@ const ConnectedPlanFeatures = connect(
 			placeholder,
 			plans,
 			isLandingPage,
+			monthlyDisabled,
 			siteId,
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
+			intervalType,
+			withScroll,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -912,7 +918,22 @@ const ConnectedPlanFeatures = connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+
+				// remove Personal and Premium monthly plan options from the monthly disabled test
+				if (
+					! withScroll &&
+					intervalType === 'monthly' &&
+					( planObject?.product_name_short === 'Premium' ||
+						planObject?.product_name_short === 'Personal' )
+				) {
+					return;
+				}
+
+				// Make Business plan popular for the monthly plans disabled test
+				const popular = monthlyDisabled
+					? planObject?.product_name_short === 'Business'
+					: popularPlanSpec && planMatches( plan, popularPlanSpec );
+
 				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;

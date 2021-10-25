@@ -107,7 +107,9 @@ export class PlanFeaturesComparison extends Component {
 				'has-border-top': ! isReskinned,
 			} );
 			const audience = planConstantObj.getAudience?.();
-			const billingTimeFrame = ! disabledClasses ? planConstantObj.getBillingTimeFrame() : null;
+			const billingTimeFrame = ! disabledClasses[ 'plan-monthly-disabled-experiment' ]
+				? planConstantObj.getBillingTimeFrame()
+				: null;
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
@@ -162,11 +164,11 @@ export class PlanFeaturesComparison extends Component {
 				planConstantObj,
 				popular,
 			} = properties;
-			const isDisabled = this.getDisabledClasses( planName );
+			const disabledClasses = this.getDisabledClasses( planName );
 			const classes = classNames(
 				'plan-features-comparison__table-item',
 				'is-top-buttons',
-				isDisabled
+				disabledClasses
 			);
 
 			return (
@@ -176,7 +178,7 @@ export class PlanFeaturesComparison extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						isDisabled={ isDisabled }
+						isDisabled={ disabledClasses[ 'plan-monthly-disabled-experiment' ] }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
@@ -191,14 +193,11 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 	getDisabledClasses( planName ) {
-		const { monthlyDisabled } = this.props;
-		const disabledPlans = [ 'personal-bundle-monthly', 'value_bundle_monthly' ];
-		if ( monthlyDisabled && disabledPlans.includes( planName ) ) {
-			return {
-				'plan-monthly-disabled-experiment': true,
-			};
-		}
-		return false;
+		return {
+			'plan-monthly-disabled-experiment':
+				this.props.monthlyDisabled &&
+				[ 'personal-bundle-monthly', 'value_bundle_monthly' ].includes( planName ),
+		};
 	}
 
 	getLongestFeaturesList() {
@@ -315,6 +314,7 @@ PlanFeaturesComparison.propTypes = {
 	selectedFeature: PropTypes.string,
 	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
+	monthlyDisabled: PropTypes.bool,
 };
 
 PlanFeaturesComparison.defaultProps = {
@@ -322,6 +322,7 @@ PlanFeaturesComparison.defaultProps = {
 	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,
+	monthlyDisabled: false,
 };
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
@@ -370,12 +371,15 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
+
 				let popular;
-				if ( monthlyDisabled && planObject.product_name_short === 'Business' ) {
+				if ( monthlyDisabled && planObject?.product_name_short === 'Business' ) {
 					popular = true;
 				} else if ( monthlyDisabled ) {
 					popular = false;
-				} else popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+				} else {
+					popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+				}
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
