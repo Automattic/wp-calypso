@@ -68,10 +68,15 @@ class DomainRow extends PureComponent {
 
 	renderDomainName() {
 		const { domain, domainDetails, isManagingAllSites, translate } = this.props;
+		const domainTypeText = getDomainTypeText(
+			domainDetails,
+			translate,
+			domainInfoContext.DOMAIN_ROW
+		);
 		return (
 			<div className="domain-row__domain-cell">
 				<span className="domain-row__domain-name">{ domain.domain }</span>
-				<div>{ getDomainTypeText( domainDetails, translate, domainInfoContext.DOMAIN_ROW ) }</div>
+				{ domainTypeText && <div>{ domainTypeText }</div> }
 				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
 		);
