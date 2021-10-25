@@ -141,7 +141,7 @@ if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
 	NEW_VERSION=v`sed -En 's|.*"@automattic/newspack-blocks": "\^#?(.*)".*|\1|p' package.json`
 	# Avoids replacing the version if there is no value.
-	if [[ "${#NEW_VERSION}" -ge 1 ]] ; then
+	if [[ "${#NEW_VERSION}" -ge 2 ]] ; then
 		# Replaces the line containing the version definition with the new version.
 		sed "${sedi[@]}" -e "s|define( 'NEWSPACK_BLOCKS__VERSION', '\(.*\)' );|define( 'NEWSPACK_BLOCKS__VERSION', '$NEW_VERSION' );|" $ENTRY
 		echo "Updated Newspack version '$NEW_VERSION'";
