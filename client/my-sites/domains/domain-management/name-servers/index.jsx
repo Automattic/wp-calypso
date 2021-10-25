@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -15,6 +16,7 @@ import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
 import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
 import {
@@ -171,7 +173,9 @@ class NameServers extends Component {
 
 		return (
 			<Main className={ classes }>
-				{ this.renderBreadcrumbs() }
+				{ config.isEnabled( 'domains/management-list-redesign' )
+					? this.renderBreadcrumbs()
+					: this.header() }
 				{ this.getContent() }
 			</Main>
 		);
@@ -250,6 +254,14 @@ class NameServers extends Component {
 
 		this.props.updateNameservers( nameservers );
 	};
+
+	header() {
+		return (
+			<Header onClick={ this.back } selectedDomainName={ this.props.selectedDomainName }>
+				{ this.props.translate( 'Name Servers and DNS' ) }
+			</Header>
+		);
+	}
 
 	back = () => {
 		page(

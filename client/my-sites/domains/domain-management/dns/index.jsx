@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
@@ -14,6 +15,7 @@ import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/l
 import { domainConnect } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	domainManagementEdit,
 	domainManagementNameServers,
@@ -52,6 +54,13 @@ class Dns extends Component {
 				<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
 			</VerticalNav>
 		);
+	}
+
+	renderHeader() {
+		const { translate, selectedDomainName } = this.props;
+		<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
+			{ translate( 'DNS Records' ) }
+		</Header>;
 	}
 
 	renderBreadcrumbs() {
@@ -98,7 +107,9 @@ class Dns extends Component {
 
 		return (
 			<Main className="dns">
-				{ this.renderBreadcrumbs() }
+				{ config.isEnabled( 'domains/management-list-redesign' )
+					? this.renderBreadcrumbs()
+					: this.renderHeader() }
 				<Card>
 					<DnsDetails />
 					<DnsList
