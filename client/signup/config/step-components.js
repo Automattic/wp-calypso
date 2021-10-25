@@ -78,7 +78,6 @@ const stepNameToModuleName = {
 	intent: 'intent',
 	list: 'import',
 	capture: 'import',
-	scanning: 'import',
 	ready: 'import',
 };
 

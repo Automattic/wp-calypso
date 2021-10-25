@@ -752,9 +752,6 @@ export function generateSteps( {
 		capture: {
 			stepName: 'capture',
 		},
-		scanning: {
-			stepName: 'scanning',
-		},
 		ready: {
 			stepName: 'ready',
 		},
