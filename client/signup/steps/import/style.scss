@@ -7,6 +7,20 @@
 .import__onboarding-page {
 	@include onboarding-block-margin;
 
+	.components-button.action-buttons__next.is-primary {
+		padding: 9px 40px;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+
+		// override unnecessary super specificity added by another class
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+		&:disabled {
+			color: #fff;
+			background-color: #dcdcde;
+		}
+	}
+
 	.import__header {
 		@include onboarding-heading-padding;
 		display: flex;
