@@ -18,7 +18,9 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"build": "yarn clean && BROWSERSLIST_ENV=wpcom calypso-build"
+		"build:o2-blocks": "calypso-build",
+		"dev": "node ../../bin/build-calypso-app.mjs --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/a8c-blocks",
+		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "^9.0.0",

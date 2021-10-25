@@ -311,7 +311,8 @@
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"bunyan": "^1.8.15",
 		"chokidar": "^3.5.1",
-		"eslint-nibble": "^7.0.0"
+		"eslint-nibble": "^7.0.0",
+		"tree-kill": "^1.2.2"
 	},
 	"resolutions": {
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
