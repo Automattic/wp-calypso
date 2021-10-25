@@ -161,7 +161,7 @@ export class SiteNotice extends Component {
 
 		if ( priceAndSaleInfo.minSalePrice ) {
 			if ( get( priceAndSaleInfo, 'saleTlds.length', 0 ) === 1 ) {
-				noticeText = translate( 'Get a %(tld)s domain for just %(salePrice)s for a limited time', {
+				noticeText = translate( 'Get a .%(tld)s domain for just %(salePrice)s for a limited time', {
 					args: {
 						tld: priceAndSaleInfo.saleTlds[ 0 ],
 						salePrice: formatCurrency( priceAndSaleInfo.minSalePrice, currencyCode ),
