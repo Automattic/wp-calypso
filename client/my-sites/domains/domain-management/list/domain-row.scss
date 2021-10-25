@@ -57,23 +57,15 @@
 
 .domain-row__mobile-container {
 	flex: 233 233 0;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
 	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 
 	@include break-mobile {
-		overflow: visible;
-		text-overflow: inherit;
-		flex-direction: row;
+		display: flex;
 	}
 }
 
 .domain-row__mobile-status-container {
 	display: flex;
-	width: 100%;
 	margin-top: 8px;
 
 	@include break-mobile {
@@ -104,15 +96,24 @@
 }
 
 .domain-row__domain-cell {
-	flex: 83 83 0;
+	overflow: hidden;
+
+	@include break-mobile {
+		flex: 83 83 0;
+		font-size: $font-body-small;
+	}
 
 	.domain-row__domain-name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
 		color: var( --studio-gray-90 );
 		font-size: $font-body-large;
 		font-weight: 500; /* stylelint-disable-line */
 
 		@include break-mobile {
-			font-size: $font-body-small;
+			font-size: $font-body;
 		}
 	}
 }
@@ -120,7 +121,7 @@
 .domain-row__status-cell {
 	@include break-mobile {
 		flex: 40 40 0;
-		display: flex;
+		display: block;
 		align-items: center;
 	}
 }
@@ -152,7 +153,7 @@
 	flex: 30 30 0;
 
 	@include break-mobile {
-		display: flex;
+		display: block;
 	}
 
 	button.domain-row__email-button {
@@ -171,6 +172,7 @@
 }
 
 .domain-row__action-cell {
+	flex: 1 1 0;
 	height: 20px;
 	margin-left: 20px;
 

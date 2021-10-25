@@ -75,7 +75,7 @@ class DomainRow extends PureComponent {
 		);
 		return (
 			<div className="domain-row__domain-cell">
-				<span className="domain-row__domain-name">{ domain.domain }</span>
+				<div className="domain-row__domain-name">{ domain.domain }</div>
 				{ domainTypeText && <div>{ domainTypeText }</div> }
 				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
