@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import { adminSections, filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,13 +15,18 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @param   {number} limit      The maximum number of results to show
  * @returns {Array}             A filtered (or empty) array
  */
-export default function getAdminHelpResults( state, searchTerm = '', limit ) {
-	if ( ! searchTerm ) {
-		return [];
-	}
+const getAdminHelpResults = createSelector(
+	( state, searchTerm = '', limit ) => {
+		if ( ! searchTerm ) {
+			return [];
+		}
 
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
 
-	return filterListBySearchTerm( searchTerm, adminSections( siteId, siteSlug, state ), limit );
-}
+		return filterListBySearchTerm( searchTerm, adminSections( siteId, siteSlug, state ), limit );
+	},
+	[ getSelectedSiteId ]
+);
+
+export default getAdminHelpResults;
