@@ -153,6 +153,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-config@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@automattic/calypso-config@npm:1.1.0"
+  checksum: 0e6a6090491715ddc341a8761854b52c6d62cf74aac258a86b2ffc971621e64fdd809f977cb5f5c951a85849051b06f019987208af9d6836b0719d995eebf722
+  languageName: node
+  linkType: hard
+
 "@automattic/calypso-doctor@^0.1.0, @automattic/calypso-doctor@workspace:packages/calypso-doctor":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-doctor@workspace:packages/calypso-doctor"
@@ -1222,6 +1229,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/calypso-build": ^9.0.0
+    "@automattic/calypso-config": ^1.1.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/composite-checkout": ^1.0.0
     "@automattic/data-stores": ^2.0.0

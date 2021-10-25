@@ -4,6 +4,7 @@
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
+const clientData = require( '@automattic/calypso-config' ).clientData;
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const webpack = require( 'webpack' );
 
@@ -77,6 +78,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			),
 			new webpack.DefinePlugin( {
 				__i18n_text_domain__: JSON.stringify( 'full-site-editing' ),
+				__calypso_config_data_as_json__: JSON.stringify( clientData ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,

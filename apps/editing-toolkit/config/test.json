@@ -1,0 +1,7 @@
+{
+	"env": "development",
+	"env_id": "test",
+	"features": {
+		"democratized-publishing": false
+	}
+}

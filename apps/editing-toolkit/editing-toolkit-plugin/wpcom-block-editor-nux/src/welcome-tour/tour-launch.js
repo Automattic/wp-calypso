@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config/client';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -79,6 +80,8 @@ function WelcomeTourFrame() {
 	const steps = getTourSteps( localeSlug );
 	const lastStepIndex = steps.length - 1;
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
+
+	console.log( config.isEnabled( 'foobar' ) );
 
 	const handleDismiss = ( source ) => {
 		return () => {
