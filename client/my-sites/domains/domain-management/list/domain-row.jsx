@@ -76,7 +76,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">{ domain.domain }</div>
-				{ domainTypeText && <div>{ domainTypeText }</div> }
+				{ domainTypeText && <div className="domain-row__domain-type-text">{ domainTypeText }</div> }
 				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
 		);
@@ -101,7 +101,27 @@ class DomainRow extends PureComponent {
 	renderExpiryDate() {
 		const { domain, domainDetails } = this.props;
 		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry ).format( 'LL' );
-		return <div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>;
+
+		return [
+			<div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>,
+			<div className="domain-row__mobile-extra-info-cell">
+				{ this.renderMobileExtraInfo( expiryDate ) }
+			</div>,
+		];
+	}
+
+	renderMobileExtraInfo( expiryDate ) {
+		const { domain, domainDetails, isManagingAllSites, translate } = this.props;
+		const domainTypeText = getDomainTypeText(
+			domainDetails,
+			translate,
+			domainInfoContext.DOMAIN_ROW
+		);
+
+		if ( domainTypeText ) {
+			return domainTypeText;
+		}
+		return 'Expires on ' + expiryDate;
 	}
 
 	renderAutoRenew() {

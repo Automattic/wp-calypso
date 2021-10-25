@@ -122,6 +122,14 @@
 			font-size: $font-body-small;
 		}
 	}
+
+	.domain-row__domain-type-text {
+		display: none;
+
+		@include break-mobile {
+			display: block;
+		}
+	}
 }
 
 .domain-row__status-cell {
@@ -132,12 +140,23 @@
 	}
 }
 
-.domain-row__registered-until-cell {
+.domain-row__registered-until-cell,
+.domain-row__mobile-extra-info-cell {
+	display: none;
 	margin-left: 16px;
 
 	@include break-mobile {
 		flex: 50 50 0;
 		margin: 0;
+		display: inline;
+	}
+}
+
+.domain-row__mobile-extra-info-cell {
+	display: inline;
+
+	@include break-mobile {
+		display: none;
 	}
 }
 
