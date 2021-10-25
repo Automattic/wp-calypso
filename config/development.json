@@ -156,7 +156,7 @@
 		"signup/social": true,
 		"signup/design-picker-categories": true,
 		"signup/setup-site-after-checkout": true,
-		"signup/hero-flow": false,
+		"signup/hero-flow": true,
 		"site-indicator": true,
 		"support-user": true,
 		"titan/iframe-control-panel": false,
