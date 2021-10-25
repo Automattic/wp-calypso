@@ -8,8 +8,15 @@ const withBlockEditorSettings = createHigherOrderComponent(
 	( Wrapped ) => ( props ) => {
 		const siteId = useSelector( getSelectedSiteId );
 		const userLoggedIn = useSelector( isUserLoggedIn );
-		const { data } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
-		return <Wrapped { ...props } blockEditorSettings={ data } />;
+		const { data, isLoading } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
+
+		return (
+			<Wrapped
+				{ ...props }
+				blockEditorSettings={ data }
+				areBlockEditorSettingsLoading={ isLoading }
+			/>
+		);
 	},
 	'withBlockEditorSettings'
 );

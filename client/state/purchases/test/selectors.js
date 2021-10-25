@@ -88,7 +88,6 @@ describe( 'selectors', () => {
 				introductoryOffer: null,
 				isCancelable: false,
 				isDomainRegistration: false,
-				isLocked: false,
 				isRechargeable: true,
 				isRefundable: false,
 				isRenewable: false,

@@ -365,6 +365,24 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	} );
 }
 
+export function setIntentOnSite( callback, { siteSlug, intent } ) {
+	if ( ! intent ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/site-intent`,
+			apiNamespace: 'wpcom/v2',
+			body: { site_intent: intent },
+		} )
+		.then( () => callback() )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.

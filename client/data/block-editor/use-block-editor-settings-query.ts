@@ -1,15 +1,20 @@
 import { useQuery, UseQueryResult } from 'react-query';
+import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
 
 export type BlockEditorSettings = {
 	is_fse_eligible: boolean;
+	is_fse_active: boolean;
 };
 
 export const useBlockEditorSettingsQuery = (
-	siteId: string,
+	siteId: number,
 	userLoggedIn = false
 ): UseQueryResult< BlockEditorSettings > => {
-	const queryKey = [ 'blockEditorSettings', siteId ];
+	const themeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
+
+	const queryKey = [ 'blockEditorSettings', siteId, themeId ];
 
 	return useQuery< BlockEditorSettings >(
 		queryKey,

@@ -153,7 +153,8 @@ export default function getThankYouPageUrl( {
 			productSlug ?? 'no_product'
 		}`;
 
-		const isValidReceiptId = ! isNaN( parseInt( pendingOrReceiptId ) );
+		const isValidReceiptId =
+			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,

@@ -4,11 +4,7 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	logStashLoadErrorEventAction,
-	logStashEventAction,
-	recordCompositeCheckoutErrorDuringAnalytics,
-} from './lib/analytics';
+import { logStashEventAction, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
@@ -24,36 +20,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
-				case 'STEP_LOAD_ERROR':
-					reduxDispatch(
-						logStashLoadErrorEventAction( 'step_load', String( action.payload.message ), {
-							stepId: action.payload.stepId,
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_step_load_error', {
-							error_message: String( action.payload.message ),
-							step_id: String( action.payload.stepId ),
-						} )
-					);
-				case 'SUBMIT_BUTTON_LOAD_ERROR':
-					reduxDispatch(
-						logStashLoadErrorEventAction( 'submit_button_load', String( action.payload ) )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_submit_button_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
-				case 'PAYMENT_METHOD_LOAD_ERROR':
-					reduxDispatch(
-						logStashLoadErrorEventAction( 'payment_method_load', String( action.payload ) )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_payment_method_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
 				case 'PAYMENT_METHOD_SELECT': {
 					reduxDispatch(
 						logStashEventAction( 'payment_method_select', {
@@ -69,13 +35,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug )
 					);
 				}
-				case 'PAGE_LOAD_ERROR':
-					reduxDispatch( logStashLoadErrorEventAction( 'page_load', String( action.payload ) ) );
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_page_load_error', {
-							error_message: String( action.payload ),
-						} )
-					);
 				case 'STORED_CARD_ERROR':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {

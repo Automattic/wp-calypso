@@ -783,17 +783,17 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		.design-picker__preview .step-wrapper__header {
 			margin-top: 40px;
 
-			@include break-mobile {
-				margin-top: 11px;
+			.formatted-header__title {
+				font-size: 2rem; /* stylelint-disable-line */
 			}
 
-			@include break-xlarge {
-				margin-top: 6px;
+			@include break-mobile {
+				margin-top: 12px;
 			}
 		}
 	}
 
-	button.is-primary {
+	button.is-borderless {
 		box-shadow: none;
 		border: 0;
 	}

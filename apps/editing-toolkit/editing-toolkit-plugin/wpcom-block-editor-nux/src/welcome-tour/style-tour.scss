@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
@@ -129,7 +130,17 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 
 	.components-card__media {
-		min-height: 260px;
+		height: 0;
+		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
+		position: relative;
+		width: 100%;
+
+		img {
+			left: 0;
+			position: absolute;
+			top: 0;
+			width: 100%;
+		}
 	}
 
 	.components-guide__page-control {
@@ -158,6 +169,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
+	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
 
 	.components-button {
 		width: 32px;

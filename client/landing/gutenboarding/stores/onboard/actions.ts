@@ -54,7 +54,7 @@ export function* createSite( {
 		siteTitle,
 		siteVertical,
 		selectedFeatures,
-		shouldEnrollInFseBeta,
+		isEnrollingInFseBeta,
 	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
@@ -79,7 +79,7 @@ export function* createSite( {
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
-			enable_fse: shouldEnrollInFseBeta,
+			enable_fse: isEnrollingInFseBeta,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),

@@ -43,6 +43,7 @@ export async function assignNewCardProcessor(
 		stripeConfiguration,
 		cardNumberElement,
 		reduxDispatch,
+		eventSource,
 	}: {
 		purchase: Purchase | undefined;
 		translate: ReturnType< typeof useTranslate >;
@@ -50,6 +51,7 @@ export async function assignNewCardProcessor(
 		stripeConfiguration: StripeConfiguration | null;
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: ReturnType< typeof useDispatch >;
+		eventSource?: string;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
@@ -94,6 +96,7 @@ export async function assignNewCardProcessor(
 				token,
 				stripeConfiguration,
 				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+				eventSource,
 			} );
 
 			return makeSuccessResponse( result );
@@ -103,6 +106,7 @@ export async function assignNewCardProcessor(
 			token,
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+			eventSource,
 		} );
 
 		return makeSuccessResponse( result );

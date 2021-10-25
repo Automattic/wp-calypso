@@ -21,6 +21,7 @@ import flows from 'calypso/signup/config/flows';
 import untypedSteps from 'calypso/signup/config/steps';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import {
 	resetSignup,
 	updateDependencies,
@@ -411,7 +412,8 @@ export default class SignupFlowController {
 
 	_destination( dependencies: Dependencies ): string {
 		if ( typeof this._flow.destination === 'function' ) {
-			return this._flow.destination( dependencies );
+			const localeSlug = getCurrentLocaleSlug( this._reduxStore.getState() );
+			return this._flow.destination( dependencies, localeSlug );
 		}
 
 		return this._flow.destination;
