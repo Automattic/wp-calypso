@@ -1,7 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { connect, useDispatch } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -10,11 +9,12 @@ import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizatio
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { SECTION_P2_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 
-const P2Following = ( props ) => {
-	const { translate } = props;
+export default function P2Following( props ) {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const feedsInfo = useSelector( ( state ) => getReaderOrganizationFeedsInfo( state, P2_ORG_ID ) );
 
-	const markAllAsSeen = ( feedsInfo ) => {
+	const markAllAsSeen = () => {
 		const { feedIds, feedUrls } = feedsInfo;
 		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_P2_FOLLOWING, feedIds, feedUrls } ) );
@@ -23,20 +23,10 @@ const P2Following = ( props ) => {
 	return (
 		<Stream { ...props } shouldCombineCards={ false }>
 			<SectionHeader label={ translate( 'Followed P2 Sites' ) }>
-				{ config.isEnabled( 'reader/seen-posts' ) && (
-					<Button
-						compact
-						onClick={ () => markAllAsSeen( props.feedsInfo ) }
-						disabled={ ! props.feedsInfo.unseenCount }
-					>
-						{ translate( 'Mark all as seen' ) }
-					</Button>
-				) }
+				<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
+					{ translate( 'Mark all as seen' ) }
+				</Button>
 			</SectionHeader>
 		</Stream>
 	);
-};
-
-export default connect( ( state ) => ( {
-	feedsInfo: getReaderOrganizationFeedsInfo( state, P2_ORG_ID ),
-} ) )( localize( P2Following ) );
+}
