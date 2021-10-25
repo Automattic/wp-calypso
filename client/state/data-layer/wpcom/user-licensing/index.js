@@ -28,7 +28,7 @@ export const requestLicenses = ( action ) =>
 		{
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/licenses/user',
+			path: '/jetpack-licensing/user/licenses',
 			query: {
 				// Do not apply filters during search as search takes over (matches Calypso Blue Post search behavior).
 				...( action.search
@@ -76,7 +76,7 @@ export const requestCounts = ( action ) =>
 		{
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/licenses/user/counts',
+			path: '/jetpack-licensing/user/licenses/counts',
 		},
 		action
 	);
