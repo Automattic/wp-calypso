@@ -3,6 +3,7 @@ import { translate } from 'i18n-calypso';
 import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type {
 	DomainThankYouParams,
 	DomainThankYouProps,
@@ -35,15 +36,14 @@ const domainTransferThankYouProps = ( {
 						}
 					),
 					stepCta: (
-						<Button
+						<FullWidthButton
 							href={ domainManagementList( selectedSiteSlug ) }
-							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
 							primary
 							busy={ false }
 							disabled={ false }
 						>
 							{ translate( 'View site domains' ) }
-						</Button>
+						</FullWidthButton>
 					),
 				},
 				{
@@ -58,7 +58,7 @@ const domainTransferThankYouProps = ( {
 						}
 					),
 					stepCta: (
-						<Button
+						<FullWidthButton
 							href={ localizeUrl(
 								'https://wordpress.com/support/move-domain/incoming-domain-transfer/#changing-the-dns-records-after-a-successful-transfer'
 							) }
@@ -67,7 +67,7 @@ const domainTransferThankYouProps = ( {
 							disabled={ false }
 						>
 							{ translate( 'Learn more' ) }
-						</Button>
+						</FullWidthButton>
 					),
 				},
 				{
