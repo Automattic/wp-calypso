@@ -12,6 +12,7 @@
 	& .use-my-domain__page-heading {
 		padding-left: 24px;
 		padding-right: 24px;
+		text-align: center;
 	}
 
 	& .use-my-domain,
@@ -189,6 +190,10 @@ body.is-section-signup.is-white-signup {
 
 		.search-component .search-component__icon-navigation {
 			padding: 0 7px;
+		}
+
+		.use-my-domain__page-heading {
+			text-align: left;
 		}
 	}
 
