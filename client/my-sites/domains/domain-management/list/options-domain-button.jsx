@@ -94,7 +94,7 @@ class AddDomainButton extends Component {
 		);
 	};
 
-	getLabel() {
+	getDesktopViewLabel() {
 		const { translate } = this.props;
 
 		if ( this.props.ellipsisButton ) {
@@ -111,17 +111,31 @@ class AddDomainButton extends Component {
 	}
 
 	render() {
+		const { specificSiteActions, ellipsisButton } = this.props;
+
 		return (
 			<Fragment>
 				<Button
-					primary={ this.props.specificSiteActions }
+					primary={ specificSiteActions }
 					compact
 					className="options-domain-button"
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
 				>
-					{ this.getLabel() }
-					{ ! this.props.ellipsisButton && <Gridicon icon="chevron-down" /> }
+					{ this.getDesktopViewLabel() }
+					{ ! ellipsisButton && <Gridicon icon="chevron-down" /> }
+				</Button>
+				<Button
+					primary={ specificSiteActions }
+					className="options-domain-button options-domain-button__mobile"
+					onClick={ this.toggleAddMenu }
+					ref={ this.addDomainButtonRef }
+					borderless={ ellipsisButton }
+				>
+					{ ! ellipsisButton && <Gridicon icon="plus" /> }
+					{ ellipsisButton && (
+						<Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />
+					) }
 				</Button>
 				<PopoverMenu
 					className="options-domain-button__popover"
