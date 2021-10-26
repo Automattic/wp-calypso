@@ -71,8 +71,8 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		const frame = await this.getEditorFrame();
 		await this.page.waitForLoadState( 'load' );
+		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
 		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
 		await frame.waitForSelector( selectors.editorTitle );
@@ -85,7 +85,9 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
+		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
+			timeout: 60 * 1000,
+		} );
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
 
