@@ -19,7 +19,6 @@ import {
 	domainManagementEdit,
 	domainManagementNameServers,
 	domainManagementList,
-	domainManagementDns,
 } from 'calypso/my-sites/domains/paths';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -65,7 +64,6 @@ class Dns extends Component {
 
 	renderBreadcrumbs() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
-		const previousPath = domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute );
 
 		const items = [
 			{
@@ -74,14 +72,14 @@ class Dns extends Component {
 			},
 			{
 				label: selectedDomainName,
-				href: previousPath,
+				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
 			},
 			{ label: translate( 'DNS records' ) },
 		];
 
 		const mobileItem = {
 			label: translate( 'Back' ),
-			href: previousPath,
+			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
