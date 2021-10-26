@@ -90,7 +90,13 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	renderDomainStatus( status, statusClass ) {
+	renderDomainStatus() {
+		const { domain, domainDetails, site } = this.props;
+		const { status, statusClass } = resolveDomainStatus( domainDetails || domain, null, {
+			siteSlug: site?.slug,
+			hasMappingError: this.hasMappingError( domain ),
+		} );
+
 		return (
 			<div className="domain-row__status-cell">
 				<span className={ `domain-row__${ statusClass }-dot` }></span> { status }
@@ -327,18 +333,12 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, domainDetails, site } = this.props;
-		const { status, statusClass } = resolveDomainStatus( domainDetails || domain, null, {
-			siteSlug: site?.slug,
-			hasMappingError: this.hasMappingError( domain ),
-		} );
-
 		return (
 			<div className="domain-row" onClick={ this.handleClick }>
 				<div className="domain-row__mobile-container">
 					{ this.renderDomainName() }
 					<div className="domain-row__mobile-status-container">
-						{ this.renderDomainStatus( status, statusClass ) }
+						{ this.renderDomainStatus() }
 						{ this.renderExpiryDateOrExtraInfo() }
 					</div>
 					{ this.renderAutoRenew() }
