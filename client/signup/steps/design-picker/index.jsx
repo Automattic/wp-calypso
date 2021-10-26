@@ -16,6 +16,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
+import DoItForMeThemes from '../difm-design-picker/themes';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
