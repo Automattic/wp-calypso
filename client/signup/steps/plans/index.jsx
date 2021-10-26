@@ -236,7 +236,12 @@ export class PlansStep extends Component {
 			};
 
 			backUrl =
-				getStepUrl( this.props.flowName, 'domains', 'use-your-domain' ) +
+				getStepUrl(
+					this.props.flowName,
+					'domains',
+					'use-your-domain',
+					! this.props.userLoggedIn ? this.props.locale : ''
+				) +
 				'?' +
 				stringify( queryParams );
 			backLabelText = translate( 'Back' );
