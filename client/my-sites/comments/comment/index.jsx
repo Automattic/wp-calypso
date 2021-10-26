@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -9,7 +8,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import QueryComment from 'calypso/components/data/query-comment';
 import scrollTo from 'calypso/lib/scroll-to';
-import CommentRepliesList from 'calypso/my-sites/comments/comment-replies-list';
 import CommentActions from 'calypso/my-sites/comments/comment/comment-actions';
 import CommentContent from 'calypso/my-sites/comments/comment/comment-content';
 import CommentEdit from 'calypso/my-sites/comments/comment/comment-edit';
@@ -201,10 +199,6 @@ export class Comment extends Component {
 
 				{ isEditMode && ! isLoading && (
 					<CommentEdit { ...{ commentId } } toggleEditMode={ this.toggleEditMode } />
-				) }
-
-				{ isPostView && isEnabled( 'comments/management/threaded-view' ) && (
-					<CommentRepliesList { ...{ siteId, commentParentId: commentId } } />
 				) }
 			</Card>
 		);

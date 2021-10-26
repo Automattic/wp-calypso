@@ -1,7 +1,15 @@
 const contextLinks = {
+	autorenewal: {
+		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
+		post_id: 111349,
+	},
 	billing: {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
+	},
+	cancel_purchase: {
+		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
+		post_id: 111349,
 	},
 	comments: {
 		link: 'https://wordpress.com/support/comments/',
@@ -83,6 +91,10 @@ const contextLinks = {
 	},
 	payment_methods: {
 		link: 'https://wordpress.com/support/payment/',
+		post_id: 76237,
+	},
+	payment_method_all_subscriptions: {
+		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,
 	},
 	plugins: {

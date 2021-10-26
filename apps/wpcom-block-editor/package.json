@@ -16,13 +16,11 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"bundle": "BROWSERSLIST_ENV=wpcom calypso-build --env WP",
-		"build:dev": "yarn run bundle",
-		"build:prod": "NODE_ENV=production yarn run bundle",
-		"build": "yarn clean && npm-run-all --parallel \"build:* {@}\" --",
+		"build:wpcom-block-editor-no-minify": "NODE_ENV=development calypso-build",
+		"build:wpcom-block-editor": "calypso-build",
 		"clean": "npx rimraf dist",
-		"dev": "node bin/npm-run-build.js --dev",
-		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
+		"dev": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/wpcom-block-editor",
+		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
 		"@wordpress/block-editor": "^7.0.2",

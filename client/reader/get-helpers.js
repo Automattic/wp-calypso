@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
@@ -101,7 +100,6 @@ export const getRoutesWithoutSeenSupport = () => {
  * Get default seen value given a route. FALSE if the route does not support seen functionality, TRUE otherwise.
  *
  * @param {string} currentRoute given route
- *
  * @returns {boolean} default seen value for given route
  */
 export const getDefaultSeenValue = ( currentRoute ) => {
@@ -115,14 +113,9 @@ export const getDefaultSeenValue = ( currentRoute ) => {
  * @param {object} flags eligibility data
  * @param {Array} flags.teams list of reader teams
  * @param {boolean} flags.isWPForTeamsItem id if exists
- *
  * @returns {boolean} whether or not the user can use the feature for the given site
  */
 export const isEligibleForUnseen = ( { teams, isWPForTeamsItem = false } ) => {
-	if ( ! config.isEnabled( 'reader/seen-posts' ) ) {
-		return false;
-	}
-
 	if ( isAutomatticTeamMember( teams ) ) {
 		return true;
 	}
@@ -137,7 +130,6 @@ export const isEligibleForUnseen = ( { teams, isWPForTeamsItem = false } ) => {
  * @param {Object} params.post object
  * @param {Array} params.posts list
  * @param {string} params.currentRoute given route
- *
  * @returns {boolean} whether or not the post can be marked as seen
  */
 export const canBeMarkedAsSeen = ( { post = null, posts = [], currentRoute = '' } ) => {
@@ -165,7 +157,6 @@ export const canBeMarkedAsSeen = ( { post = null, posts = [], currentRoute = '' 
  * Return Featured image alt text.
  *
  * @param {Object} post object containing post information
- *
  * @returns {string} Featured image alt text
  */
 export const getFeaturedImageAlt = ( post ) => {

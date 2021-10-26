@@ -24,6 +24,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
+import { PaginationVariant } from 'calypso/components/pagination/constants';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -220,6 +221,7 @@ export class PluginsBrowser extends Component {
 							pageClick={ ( page ) => {
 								fetchPlugins( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH );
 							} }
+							variant={ PaginationVariant.minimal }
 						/>
 					) }
 				</>

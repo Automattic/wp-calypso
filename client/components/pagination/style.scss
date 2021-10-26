@@ -1,6 +1,11 @@
 // Stats Pagination
 // I like lamp.
 
+$minimal-active: var( --studio-black );
+$minimal-inactive: var( --studio-gray-30 );
+$minimal-arrow-color: var( --studio-gray-50 );
+$minimal-arrow-size: 24px;
+
 .pagination {
 	width: 100%;
 
@@ -15,6 +20,58 @@
 
 		&.pagination__arrow .pagination__list-button.button.is-borderless {
 			padding: 6px;
+		}
+	}
+
+	&.is-minimal {
+		.pagination__list-item,
+		.pagination__list-item:first-child,
+		.pagination__list-item:last-child {
+			.pagination__list-button.button {
+				padding: 8px 16px;
+				background-color: transparent;
+				border: none;
+				color: $minimal-inactive;
+
+				&:hover {
+					color: $minimal-active;
+				}
+
+				&:disabled {
+					visibility: hidden;
+				}
+			}
+
+			&.pagination__ellipsis span {
+				padding: 8px 16px;
+				background-color: transparent;
+				border: none;
+				color: $minimal-inactive;
+			}
+
+
+			&.is-selected {
+				.pagination__list-button.button {
+					background-color: transparent;
+					color: $minimal-active;
+	
+					&:hover {
+						color: $minimal-active;
+					}
+				}
+			}
+
+			&.pagination__arrow {
+				.pagination__list-button {
+					color: $minimal-arrow-color;
+					line-height: $minimal-arrow-size;
+				}
+
+				.gridicon {
+					width: $minimal-arrow-size;
+					height: $minimal-arrow-size;
+				}
+			}
 		}
 	}
 }

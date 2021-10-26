@@ -4,7 +4,7 @@ import {
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
-} from 'calypso/state/reader/action-types';
+} from 'calypso/state/reader-ui/action-types';
 
 import 'calypso/state/reader-ui/init';
 

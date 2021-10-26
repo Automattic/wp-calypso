@@ -12,9 +12,10 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
+import ProgressLine from 'calypso/my-sites/email/inbox/mailbox-selection-list/progress-line';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -82,6 +83,9 @@ const InboxManagement = () => {
 		canCurrentUser( state, selectedSiteId, 'manage_options' )
 	);
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
+	const isLoadingDomains = useSelector(
+		( state ) => ! hasLoadedSiteDomains( state, selectedSiteId )
+	);
 	const translate = useTranslate();
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
@@ -92,6 +96,10 @@ const InboxManagement = () => {
 
 	if ( ! canManageSite ) {
 		return <NoAccessCard />;
+	}
+
+	if ( isLoadingDomains ) {
+		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
 	}
 
 	const nonWPCOMDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );

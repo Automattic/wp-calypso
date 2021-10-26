@@ -17,7 +17,6 @@ import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { attachLogmein } from 'calypso/lib/logmein';
 import { getToken } from 'calypso/lib/oauth-token';
 import { checkFormHandler } from 'calypso/lib/protect-form';
@@ -42,7 +41,6 @@ import { getInitialState, persistOnChange } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import { createQueryClient } from 'calypso/state/query-client';
-import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
@@ -362,10 +360,6 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 
 	const state = reduxStore.getState();
-	// get reader unread status
-	if ( config.isEnabled( 'reader/seen-posts' ) ) {
-		reduxStore.dispatch( requestUnseenStatus() );
-	}
 
 	if ( config.isEnabled( 'happychat' ) ) {
 		reduxStore.dispatch( requestHappychatEligibility() );
@@ -375,7 +369,9 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		setupGlobalKeyboardShortcuts();
+		asyncRequire( 'calypso/lib/keyboard-shortcuts/global', ( setupGlobalKeyboardShortcuts ) => {
+			setupGlobalKeyboardShortcuts();
+		} );
 	}
 
 	if ( window.electron ) {

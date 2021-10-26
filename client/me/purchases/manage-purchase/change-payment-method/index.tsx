@@ -106,6 +106,7 @@ function ChangePaymentMethod( {
 						purchase={ purchase }
 						paymentMethods={ paymentMethods }
 						successCallback={ successCallback }
+						eventContext={ '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' }
 					/>
 				</Column>
 				<Column type="sidebar">

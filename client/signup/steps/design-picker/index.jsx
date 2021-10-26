@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
 import { compose } from '@wordpress/compose';
 import { withViewportMatch } from '@wordpress/viewport';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,6 +11,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
@@ -185,7 +186,7 @@ class DesignPickerStep extends Component {
 	}
 
 	render() {
-		const { isReskinned, isMobile, translate } = this.props;
+		const { flowName, stepName, userLoggedIn, isReskinned, isMobile, translate } = this.props;
 		const { selectedDesign } = this.state;
 		const headerText = this.headerText();
 		const subHeaderText = this.subHeaderText();
@@ -194,6 +195,7 @@ class DesignPickerStep extends Component {
 			const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 			const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 			const defaultDependencies = { selectedDesign };
+			const locale = ! userLoggedIn ? getLocaleSlug() : '';
 
 			return (
 				<StepWrapper
@@ -211,6 +213,7 @@ class DesignPickerStep extends Component {
 						args: { designTitle },
 					} ) }
 					defaultDependencies={ defaultDependencies }
+					backUrl={ getStepUrl( flowName, stepName, '', locale ) }
 					goToNextStep={ this.submitDesign }
 				/>
 			);
@@ -236,6 +239,7 @@ export default compose(
 		( state ) => {
 			return {
 				themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
+				userLoggedIn: isUserLoggedIn( state ),
 			};
 		},
 		{ fetchRecommendedThemes, saveSignupStep, submitSignupStep }

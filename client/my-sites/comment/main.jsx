@@ -5,7 +5,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import ModerateComment from 'calypso/components/data/moderate-comment';
-import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -48,7 +47,6 @@ export class CommentView extends Component {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="comments" wideLayout>
 				<PageViewTracker path="/comment/:site/:commentId" title="Comments" />
-				<QuerySiteCommentsTree siteId={ siteId } status={ 'all' } />
 				<DocumentHead title={ translate( 'Comment' ) } />
 				{ canModerateComments && (
 					<ModerateComment

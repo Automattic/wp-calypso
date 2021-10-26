@@ -10,7 +10,6 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_DELETE,
-	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
 	COMMENTS_CHANGE_STATUS,
 } from '../../action-types';
@@ -24,7 +23,6 @@ import {
 	totalCommentsCount,
 	fetchStatus,
 	fetchStatusInitialState,
-	treesInitialized,
 	activeReplies,
 } from '../reducer';
 
@@ -306,42 +304,6 @@ describe( 'reducer', () => {
 			);
 
 			expect( response[ '1-1' ] ).toEqual( 2 );
-		} );
-	} );
-
-	describe( '#treesInitialized()', () => {
-		test( 'should track when a tree is initialized for a given query', () => {
-			const state = treesInitialized( undefined, {
-				type: COMMENTS_TREE_SITE_ADD,
-				siteId: 77203074,
-				status: 'unapproved',
-			} );
-			expect( state ).toEqual( {
-				77203074: { unapproved: true },
-			} );
-		} );
-		test( 'can track init status of many states', () => {
-			const initState = deepFreeze( { 77203074: { unapproved: true } } );
-			const state = treesInitialized( initState, {
-				type: COMMENTS_TREE_SITE_ADD,
-				siteId: 77203074,
-				status: 'spam',
-			} );
-			expect( state ).toEqual( {
-				77203074: { unapproved: true, spam: true },
-			} );
-		} );
-		test( 'can track init status of many sites', () => {
-			const initState = deepFreeze( { 77203074: { unapproved: true } } );
-			const state = treesInitialized( initState, {
-				type: COMMENTS_TREE_SITE_ADD,
-				siteId: 2916284,
-				status: 'unapproved',
-			} );
-			expect( state ).toEqual( {
-				77203074: { unapproved: true },
-				2916284: { unapproved: true },
-			} );
 		} );
 	} );
 

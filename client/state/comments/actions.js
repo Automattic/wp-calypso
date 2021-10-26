@@ -12,7 +12,6 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_REQUEST,
 	COMMENTS_SET_ACTIVE_REPLY,
-	COMMENTS_TREE_SITE_REQUEST,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 } from 'calypso/state/action-types';
@@ -22,7 +21,6 @@ import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 import 'calypso/state/data-layer/wpcom/comments';
 import 'calypso/state/data-layer/wpcom/sites/comment-counts';
-import 'calypso/state/data-layer/wpcom/sites/comments-tree';
 import 'calypso/state/data-layer/wpcom/sites/comments';
 import 'calypso/state/data-layer/wpcom/sites/posts/replies';
 
@@ -125,19 +123,6 @@ export function requestPostComments( {
  */
 export const requestCommentsList = ( query ) => ( {
 	type: COMMENTS_LIST_REQUEST,
-	query,
-} );
-
-/**
- * Creates an action that requests the comments tree for a given site.
- *
- * @param {object} query API call parameters
- * @param {number} query.siteId Site identifier
- * @param {string} query.status Status filter
- * @returns {object} Action that requests a comment tree
- */
-export const requestCommentsTreeForSite = ( query ) => ( {
-	type: COMMENTS_TREE_SITE_REQUEST,
 	query,
 } );
 

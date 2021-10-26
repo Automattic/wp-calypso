@@ -1,4 +1,4 @@
-import { READER_VIEW_STREAM } from 'calypso/state/reader/action-types';
+import { READER_VIEW_STREAM } from 'calypso/state/reader-ui/action-types';
 
 import 'calypso/state/reader-ui/init';
 
