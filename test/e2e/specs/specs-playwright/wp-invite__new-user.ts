@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		prefix: username,
 	} );
 	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
-	const invitingUser = 'privateSiteUser';
+	const invitingUser = 'calypsoPreReleaseUser';
 
 	let adjustedInviteLink: string;
 	let page: Page;
@@ -54,6 +54,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			await peoplePage.clickInviteUser();
 
 			const invitePeoplePage = new InvitePeoplePage( page );
+			console.log( email );
 			await invitePeoplePage.invite( {
 				email: email,
 				role: role as Roles,
@@ -98,8 +99,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			// Raw method call & selector used because `PostsPage` is not yet implemented.
 			// TODO: Once PostsPage is implemented, call a method from that
 			// POM instead.
-			const bannerText = `You're now an ${ role } of: e2eflowtestingprivate`;
-			await page.waitForSelector( `:text("${ bannerText }")` );
+			const bannerText = `You're now an ${ role } of: `;
+			await page.waitForSelector( `:has-text("${ bannerText }")` );
 		} );
 	} );
 
