@@ -9,7 +9,6 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 class ActionHeader extends Component {
 	static propTypes = {
 		breadcrumbs: PropTypes.node,
-		primaryLabel: PropTypes.string,
 		setLayoutFocus: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};

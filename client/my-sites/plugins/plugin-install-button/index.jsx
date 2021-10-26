@@ -192,7 +192,7 @@ export class PluginInstallButton extends Component {
 
 		if ( siteIsConnected === false ) {
 			return (
-				<Notice warningText={ translate( 'Site unreachable' ) } isEmbed={ isEmbed }>
+				<PluginInstallNotice warningText={ translate( 'Site unreachable' ) } isEmbed={ isEmbed }>
 					<div>
 						<p>
 							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
@@ -200,18 +200,18 @@ export class PluginInstallButton extends Component {
 						<ExternalLink
 							key="external-link"
 							onClick={ this.clickSupportLink }
-							href={ 'http://jetpack.me/support/debug/?url=' + selectedSite.URL }
+							href={ 'https://jetpack.me/support/debug/?url=' + selectedSite.URL }
 						>
 							{ translate( 'Debug site!' ) }
 						</ExternalLink>
 					</div>
-				</Notice>
+				</PluginInstallNotice>
 			);
 		}
 
 		if ( ! isCompatiblePlugin( plugin.slug ) && siteIsWpcomAtomic ) {
 			return (
-				<Notice warningText={ translate( 'Incompatible Plugin' ) } isEmbed={ isEmbed }>
+				<PluginInstallNotice warningText={ translate( 'Incompatible Plugin' ) } isEmbed={ isEmbed }>
 					<div>
 						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
 						<ExternalLink
@@ -221,16 +221,16 @@ export class PluginInstallButton extends Component {
 							{ translate( 'Learn more.' ) }
 						</ExternalLink>
 					</div>
-				</Notice>
+				</PluginInstallNotice>
 			);
 		}
 
 		if ( ! selectedSite.canUpdateFiles ) {
 			const disabledInfo = this.getDisabledInfo();
 			return disabledInfo ? (
-				<Notice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
+				<PluginInstallNotice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
 					{ disabledInfo }
-				</Notice>
+				</PluginInstallNotice>
 			) : null;
 		}
 
@@ -249,7 +249,7 @@ export class PluginInstallButton extends Component {
 	}
 }
 
-const Notice = ( { isEmbed, warningText, children } ) => {
+const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
 	const disabledInfoLabel = useRef();
 	const infoPopover = useRef();
 	const togglePopover = ( event ) => {
@@ -266,7 +266,7 @@ const Notice = ( { isEmbed, warningText, children } ) => {
 			</span>
 			<InfoPopover
 				position="bottom left"
-				popoverName={ 'Plugin Action Disabled Install' }
+				popoverName="Plugin Action Disabled Install"
 				gaEventCategory="Plugins"
 				ref={ infoPopover }
 				ignoreContext={ disabledInfoLabel.current }
