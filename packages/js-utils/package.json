@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/js-utils",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "General purpose Javascript utility functions",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
