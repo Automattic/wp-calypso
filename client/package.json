@@ -56,7 +56,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "^1.0.0",
 		"@automattic/wpcom-checkout": "^1.0.0",
 		"@babel/core": "^7.15.0",
-		"@emotion/jest": "^11.3.0",
+		"@emotion/jest": "^11.5.0",
 		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
 		"@github/webauthn-json": "^0.4.1",

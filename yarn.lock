@@ -3143,24 +3143,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/jest@npm:^11.3.0":
-  version: 11.3.0
-  resolution: "@emotion/jest@npm:11.3.0"
+"@emotion/jest@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "@emotion/jest@npm:11.5.0"
   dependencies:
     "@babel/runtime": ^7.13.10
     "@emotion/css-prettifier": ^1.0.0
     chalk: ^4.1.0
     specificity: ^0.4.1
-    stylis: ^4.0.3
+    stylis: ^4.0.10
   peerDependencies:
-    "@types/jest": ^26.0.14
+    "@types/jest": ^26.0.14 || ^27.0.0
     enzyme-to-json: ^3.2.1
   peerDependenciesMeta:
     "@types/jest":
       optional: true
     enzyme-to-json:
       optional: true
-  checksum: 652019ec11f75ead8d36375f04cd916985fc21884d5fbf9ebf2a2b66c61d24ef818ef7b3e76418f7d496fc18cab032c3449c4a3f9304e8dff463c08e5ce43b63
+  checksum: 0e759cc00253b949f0ab375edac3c99c25a1ac25c19bdce420b78c176682c064cec2ca139fd943965b2d5615cc2edccb1767658d1e238d7d082500fec32191d7
   languageName: node
   linkType: hard
 
@@ -11447,7 +11447,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": ^1.0.0
     "@automattic/wpcom-checkout": ^1.0.0
     "@babel/core": ^7.15.0
-    "@emotion/jest": ^11.3.0
+    "@emotion/jest": ^11.5.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
@@ -34086,7 +34086,7 @@ resolve@~1.1.0:
   languageName: node
   linkType: hard
 
-"stylis@npm:^4.0.3":
+"stylis@npm:^4.0.10, stylis@npm:^4.0.3":
   version: 4.0.10
   resolution: "stylis@npm:4.0.10"
   checksum: 68725d44d35657a09eb6b823c121b04773fe127921d19bd8f801603285a41e87808050ab9ac4ae001e737208fd48f5fbb5f23e030e3adc1f00af38c29d6bab1a
