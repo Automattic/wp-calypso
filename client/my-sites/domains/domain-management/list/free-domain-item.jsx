@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, edit, home, moreVertical } from '@wordpress/icons';
@@ -49,13 +51,11 @@ export default function FreeDomainItem( {
 				<EllipsisMenu
 					disabled={ isBusy || disabled }
 					toggleTitle={ __( 'Free WordPress address options' ) }
-					icon={ <Icon icon={ moreVertical } size={ 28 } /> }
+					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 				>
 					{ canMakePrimary && (
 						<PopoverMenuItem onClick={ handleMakePrimary }>
-							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 							{ __( 'Make primary site address' ) }
 						</PopoverMenuItem>
 					) }
@@ -63,9 +63,7 @@ export default function FreeDomainItem( {
 						<PopoverMenuItem
 							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
 						>
-							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 							<Icon icon={ edit } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
-							{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 							{ __( 'Change site address' ) }
 						</PopoverMenuItem>
 					) }
