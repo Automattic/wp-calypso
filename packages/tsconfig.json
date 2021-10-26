@@ -6,6 +6,7 @@
 
 	// Reference all TS packages
 	"references": [
+		{ "path": "./js-utils" }, // define js-utils first so that it will be build before packages that depend on it
 		{ "path": "./accessible-focus" },
 		{ "path": "./browser-data-collector" },
 		{ "path": "./calypso-analytics" },
@@ -23,7 +24,6 @@
 		{ "path": "./explat-client-react-helpers" },
 		{ "path": "./explat-client" },
 		{ "path": "./i18n-utils" },
-		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
 		{ "path": "./launch" },
