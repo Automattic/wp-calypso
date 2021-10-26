@@ -363,7 +363,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": ^1.0.0-alpha.0
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@automattic/js-utils": ^0.2.0
+    "@automattic/js-utils": ^0.1.0
     "@automattic/onboarding": ^1.0.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.1
@@ -574,7 +574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/js-utils@^0.2.0, @automattic/js-utils@workspace:packages/js-utils":
+"@automattic/js-utils@^0.1.0, @automattic/js-utils@workspace:packages/js-utils":
   version: 0.0.0-use.local
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
   dependencies:
@@ -11436,7 +11436,7 @@ __metadata:
     "@automattic/format-currency": ^1.0.0-alpha.0
     "@automattic/i18n-utils": ^1.0.0
     "@automattic/isolated-block-editor": ^2.3.0
-    "@automattic/js-utils": ^0.2.0
+    "@automattic/js-utils": ^0.1.0
     "@automattic/language-picker": ^1.0.0
     "@automattic/languages": ^1.0.0
     "@automattic/lasagna": ^0.6.1
