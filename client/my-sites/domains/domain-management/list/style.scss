@@ -391,6 +391,10 @@
 		}
 	}
 
+	&.domain-table-header__mobile.hide-when-one-domain {
+		display: none;
+	}
+
 	@include break-mobile {
 		&.domain-table-header__desktop {
 			display: flex;

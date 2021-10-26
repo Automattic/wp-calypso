@@ -25,8 +25,8 @@ class DomainsTable extends PureComponent {
 	};
 
 	state = {
-		sortKey: 'status', // column to sort by - should match the header columns
-		sortOrder: -1, // sort order where 1 = ascending and -1 = descending
+		sortKey: 'status', // initial column to sort by - should match the header columns
+		sortOrder: -1, // initial sort order where 1 = ascending and -1 = descending
 	};
 
 	changeTableSort = ( selectedColumn, sortOrder = null ) => {
@@ -129,6 +129,7 @@ class DomainsTable extends PureComponent {
 					onChangeSortOrder={ this.changeTableSort }
 					activeSortKey={ sortKey }
 					activeSortOrder={ sortOrder }
+					domainItemsCount={ domainItems.length }
 				/>
 			),
 			...domainListItems,

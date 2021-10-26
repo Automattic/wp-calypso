@@ -23,6 +23,7 @@ class DomainsTableHeader extends PureComponent {
 		onChangeSortOrder: PropTypes.func,
 		activeSortKey: PropTypes.string,
 		activeSortOrder: PropTypes.number,
+		domainItemsCount: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -95,7 +96,7 @@ class DomainsTableHeader extends PureComponent {
 	}
 
 	renderHeaderContent() {
-		const { headerClasses, activeSortKey, activeSortOrder, columns } = this.props;
+		const { headerClasses, activeSortKey, activeSortOrder, columns, domainItemsCount } = this.props;
 		const listHeaderClasses = classNames(
 			'domain-table-header',
 			'domain-table-header__desktop',
@@ -104,6 +105,7 @@ class DomainsTableHeader extends PureComponent {
 		const listHeaderMobileClasses = classNames(
 			'domain-table-header',
 			'domain-table-header__mobile',
+			{ 'hide-when-one-domain': domainItemsCount <= 1 },
 			headerClasses
 		);
 
