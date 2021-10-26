@@ -1,4 +1,5 @@
 import {
+	JETPACK_CRM_FREE_PRODUCTS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
@@ -221,28 +222,43 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
 				<ul className="product-grid__product-grid">
-					{ otherItems.map( ( product ) => (
-						<li key={ product.iconSlug }>
-							<ProductCard
-								item={ product }
-								onClick={ onSelectProduct }
-								siteId={ siteId }
-								currencyCode={ currencyCode }
-								selectedTerm={ duration }
-								scrollCardIntoView={ scrollCardIntoView }
-								createButtonURL={ createButtonURL }
-							/>
-						</li>
-					) ) }
+					{ otherItems.map( ( product ) => {
+						// if ( PLAN_JETPACK_FREE === product.productSlug ) {
+						// 	return showFreeCard ? (
+						// 		<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+						// 	) : null;
+						// }
+
+						if ( JETPACK_CRM_FREE_PRODUCTS.includes( product.productSlug ) ) {
+							return (
+								<JetpackCrmFreeCard
+									fullWidth={ ! showFreeCard }
+									siteId={ siteId }
+									duration={ duration }
+								/>
+							);
+						}
+
+						return (
+							<li key={ product.iconSlug }>
+								<ProductCard
+									item={ product }
+									onClick={ onSelectProduct }
+									siteId={ siteId }
+									currencyCode={ currencyCode }
+									selectedTerm={ duration }
+									scrollCardIntoView={ scrollCardIntoView }
+									createButtonURL={ createButtonURL }
+								/>
+							</li>
+						);
+					} ) }
 				</ul>
-				<div className="product-grid__free">
-					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
-					<JetpackCrmFreeCard
-						fullWidth={ ! showFreeCard }
-						siteId={ siteId }
-						duration={ duration }
-					/>
-				</div>
+				{
+					<div className="product-grid__free">
+						{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+					</div>
+				}
 			</ProductGridSection>
 			<StoreFooter />
 			<FootnotesList />

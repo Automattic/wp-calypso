@@ -56,6 +56,9 @@ export const getPlansToDisplay = ( {
 				! currentPlanTerms.includes( product.productSlug )
 		);
 
+	// // Add a placeholder for the free plan
+	// plansToDisplay.push( { productSlug: PLAN_JETPACK_FREE } );
+
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
