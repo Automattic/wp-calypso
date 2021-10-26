@@ -99,7 +99,7 @@ class Dns extends Component {
 		} );
 
 		return (
-			<Main className="dns">
+			<Main wideLayout className="dns">
 				{ config.isEnabled( 'domains/dns-records-redesign' )
 					? this.renderBreadcrumbs()
 					: this.renderHeader() }

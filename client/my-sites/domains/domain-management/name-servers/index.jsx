@@ -175,7 +175,7 @@ class NameServers extends Component {
 		} );
 
 		return (
-			<Main className={ classes }>
+			<Main wideLayout className={ classes }>
 				{ config.isEnabled( 'domains/dns-records-redesign' )
 					? this.renderBreadcrumbs()
 					: this.header() }
