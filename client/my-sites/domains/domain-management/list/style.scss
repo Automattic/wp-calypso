@@ -2,6 +2,12 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.breadcrumbs svg.options-domain-button__ellipsis {
+	transform: rotate( 90deg ) translateX( -2px );
+	height: 14px;
+	margin-left: 0;
+}
+
 .domain-management-list__notice {
 	margin-bottom: 0;
 }
