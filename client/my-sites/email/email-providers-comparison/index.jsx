@@ -333,7 +333,6 @@ class EmailProvidersComparison extends Component {
 			isGSuiteSupported,
 			onSkipClick,
 			selectedDomainName,
-			selectedSite,
 			showSkipButton,
 			skipButtonLabel,
 			translate,
@@ -454,7 +453,6 @@ class EmailProvidersComparison extends Component {
 			skipButtonLabel,
 			titanMailProduct,
 			translate,
-			selectedSite,
 		} = this.props;
 
 		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
