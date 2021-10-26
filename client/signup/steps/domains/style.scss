@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
 
 .domains__step-section-wrapper {
 	margin: 0 auto;
@@ -226,4 +227,59 @@ body.is-section-signup.is-white-signup {
 			display: none;
 		}
 	}
+}
+
+// blue signup flow-specific styles
+body.is-section-signup:not( .is-white-signup ) {
+	
+    .domains__step-content {
+	
+		a {
+			text-decoration: underline;
+			color: var( --color-text-inverted );
+		}
+
+        .domain-transfer-or-connect {
+
+			&__content {
+				
+				.option-content {
+		
+					&__illustration, &__main, &__action, &__header, &__top-text, &__pricing-text {
+						color: var( --color-text-inverted );
+					}
+
+					&__benefits-item-text, &__pricing-cost {
+						filter: brightness( 0.9 );
+					}
+
+					&__benefits-item .gridicon {
+						fill: var( --studio-green-20 );
+					}
+
+					& + .option-content {
+						border-color: var( --studio-gray-40 );
+					}
+		
+				}
+
+			}
+
+			&__support-link {
+				color: var( --color-text-inverted );
+				filter: brightness( 0.9 );
+			}
+
+		}
+
+		.use-my-domain {
+
+			.form-input-validation.is-error {
+				color: var( --color-error-30 );
+			}
+
+		}
+
+	}
+
 }
