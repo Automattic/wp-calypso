@@ -66,13 +66,8 @@ class DomainRow extends PureComponent {
 		onClick( domainDetails );
 	};
 
-	renderDomainName() {
-		const { domain, domainDetails, isManagingAllSites, translate } = this.props;
-		const domainTypeText = getDomainTypeText(
-			domainDetails,
-			translate,
-			domainInfoContext.DOMAIN_ROW
-		);
+	renderDomainName( domainTypeText ) {
+		const { domain, domainDetails, isManagingAllSites } = this.props;
 		return (
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">{ domain.domain }</div>
@@ -104,38 +99,27 @@ class DomainRow extends PureComponent {
 		);
 	}
 
-	renderExpiryDateOrExtraInfo() {
-		const { domain, domainDetails } = this.props;
-		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry ).format( 'LL' );
-
+	renderExpiryDate( expiryDate ) {
 		return (
-			<>
-				<div className="domain-row__registered-until-cell">{ expiryDate || '-' }</div>
-				<div className="domain-row__mobile-extra-info-cell">{ this.renderMobileExtraInfo() }</div>
-			</>
+			<div className="domain-row__registered-until-cell">{ expiryDate.format( 'LL' ) || '-' }</div>
 		);
 	}
 
-	renderMobileExtraInfo() {
-		const { domain, domainDetails, translate } = this.props;
-		const domainTypeText = getDomainTypeText(
-			domainDetails,
-			translate,
-			domainInfoContext.DOMAIN_ROW
-		);
+	renderMobileExtraInfo( expiryDate, domainTypeText ) {
+		const { domain } = this.props;
 
+		let extraInfo = '';
 		if ( domainTypeText ) {
-			return domainTypeText;
+			extraInfo = domainTypeText;
+		} else if ( domain.expired ) {
+			extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
+			extraInfo = 'Renews on ' + moment.utc( domain.autoRenewalDate ).format( 'LL' );
+		} else {
+			extraInfo = 'Expires on ' + expiryDate.format( 'LL' );
 		}
 
-		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry );
-		if ( domain.expired ) {
-			return 'Expired on ' + expiryDate.format( 'LL' );
-		}
-		if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
-			return 'Renews on ' + moment.utc( domain.autoRenewalDate ).format( 'LL' );
-		}
-		return 'Expires on ' + expiryDate.format( 'LL' );
+		return <div className="domain-row__mobile-extra-info">{ extraInfo }</div>;
 	}
 
 	renderAutoRenew() {
@@ -333,13 +317,22 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
+		const { domain, domainDetails, translate } = this.props;
+		const domainTypeText = getDomainTypeText(
+			domainDetails,
+			translate,
+			domainInfoContext.DOMAIN_ROW
+		);
+		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry );
+
 		return (
 			<div className="domain-row" onClick={ this.handleClick }>
 				<div className="domain-row__mobile-container">
-					{ this.renderDomainName() }
+					{ this.renderDomainName( domainTypeText ) }
 					<div className="domain-row__mobile-status-container">
 						{ this.renderDomainStatus() }
-						{ this.renderExpiryDateOrExtraInfo() }
+						{ this.renderExpiryDate( expiryDate ) }
+						{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 					</div>
 					{ this.renderAutoRenew() }
 					{ this.renderEmail() }

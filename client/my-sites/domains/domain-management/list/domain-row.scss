@@ -141,7 +141,7 @@
 }
 
 .domain-row__registered-until-cell,
-.domain-row__mobile-extra-info-cell {
+.domain-row__mobile-extra-info {
 	display: none;
 	margin-left: 16px;
 
@@ -152,7 +152,7 @@
 	}
 }
 
-.domain-row__mobile-extra-info-cell {
+.domain-row__mobile-extra-info {
 	display: inline;
 
 	@include break-mobile {
