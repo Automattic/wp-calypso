@@ -139,7 +139,7 @@ const useHandleSetupAction = (
 	return { handleSetup, isBusy };
 };
 
-const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName, siteId } ) => {
+const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) => {
 	const [ mailboxes, setMailboxes ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
@@ -170,7 +170,6 @@ const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName, site
 				mailboxes={ mailboxes }
 				onMailboxesChange={ onMailboxesChange }
 				showAddAnotherMailboxButton={ false }
-				siteId={ siteId }
 				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
@@ -189,7 +188,6 @@ const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName, site
 TitanSetUpMailboxForm.propType = {
 	areSiteDomainsLoaded: PropTypes.object.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
-	siteId: PropTypes.number.isRequired,
 };
 
 export default TitanSetUpMailboxForm;

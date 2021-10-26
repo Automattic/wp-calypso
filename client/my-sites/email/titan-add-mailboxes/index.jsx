@@ -198,13 +198,7 @@ class TitanAddMailboxes extends Component {
 	};
 
 	renderForm() {
-		const {
-			isLoadingDomains,
-			selectedDomainName,
-			selectedSite,
-			titanMonthlyProduct,
-			translate,
-		} = this.props;
+		const { isLoadingDomains, selectedDomainName, titanMonthlyProduct, translate } = this.props;
 
 		if ( isLoadingDomains || ! titanMonthlyProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
@@ -220,7 +214,6 @@ class TitanAddMailboxes extends Component {
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
 						validatedMailboxUuids={ this.state.validatedMailboxUuids }
-						siteId={ selectedSite.ID }
 					>
 						<Button className="titan-add-mailboxes__action-cancel" onClick={ this.handleCancel }>
 							{ translate( 'Cancel' ) }

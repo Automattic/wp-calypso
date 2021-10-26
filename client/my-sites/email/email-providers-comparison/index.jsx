@@ -399,7 +399,6 @@ class EmailProvidersComparison extends Component {
 						domains={ domainList }
 						onUsersChange={ this.onGoogleUsersChange }
 						selectedDomainName={ selectedDomainName }
-						siteId={ selectedSite.ID }
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
@@ -505,7 +504,6 @@ class EmailProvidersComparison extends Component {
 				onReturnKeyPress={ this.onTitanFormReturnKeyPress }
 				showLabels={ true }
 				validatedMailboxUuids={ this.state.validatedTitanMailboxUuids }
-				siteId={ selectedSite.ID }
 			>
 				<Button
 					className="email-providers-comparison__titan-mailbox-action-continue"
