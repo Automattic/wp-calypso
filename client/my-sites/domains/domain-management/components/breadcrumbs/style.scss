@@ -32,15 +32,27 @@
 		align-items: center;
 		font-size: 13px; /* stylelint-disable-line */
 		font-weight: 500; /* stylelint-disable-line */
-		color: var( --color-neutral-50 );
-
-		& .breadcrumbs__item-link {
-			color: var( --color-neutral-50 );
-		}
-		& .breadcrumbs__item:first-child {
-			font-size: $font-body;
-			font-weight: 600;
+		color: var( --color-neutral-80 );
+		
+		& .breadcrumbs__item {
 			color: var( --color-neutral-80 );
+			
+			& .breadcrumbs__item-label {
+				color: var( --color-neutral-80 );
+			}
+			
+			&:first-child {
+				.breadcrumbs__item-label {
+					font-size: $font-body;
+					font-weight: 600;
+				}
+			}
+
+			&:last-child {
+				.breadcrumbs__item-label {
+					color: var( --color-neutral-50 );
+				}
+			}
 		}
 	}
 }
