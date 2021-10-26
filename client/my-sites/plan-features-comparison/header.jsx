@@ -55,7 +55,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			disabledClasses,
 		} = this.props;
 
-		if ( disabledClasses[ 'plan-monthly-disabled-experiment' ] ) {
+		if ( disabledClasses ) {
 			return null;
 		}
 
@@ -85,7 +85,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			translate,
 		} = this.props;
 
-		if ( disabledClasses[ 'plan-monthly-disabled-experiment' ] ) {
+		if ( disabledClasses ) {
 			return (
 				<div className="plan-features-comparison__not-available-with-monthly-disclaimer">
 					This plan is only available with annual billing
@@ -106,9 +106,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			return (
 				<div
 					className={ classNames( {
-						'plan-features-comparison__header-annual-discount': ! disabledClasses[
-							'plan-monthly-disabled-experiment'
-						],
+						'plan-features-comparison__header-annual-discount': ! disabledClasses,
 						'plan-features-comparison__header-annual-discount-is-loading': isLoading,
 					} ) }
 				>
@@ -131,7 +129,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 
 	renderPriceGroup() {
 		const { currencyCode, disabledClasses, rawPrice, discountPrice } = this.props;
-		const displayNotation = ! disabledClasses[ 'plan-monthly-disabled-experiment' ];
+		const displayNotation = ! disabledClasses;
 
 		if ( discountPrice ) {
 			return (
