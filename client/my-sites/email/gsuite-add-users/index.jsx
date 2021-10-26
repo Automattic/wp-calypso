@@ -183,6 +183,7 @@ class GSuiteAddUsers extends Component {
 			gsuiteUsers,
 			isRequestingDomains,
 			selectedDomainName,
+			selectedSite,
 			translate,
 			userCanPurchaseGSuite,
 		} = this.props;
@@ -211,6 +212,7 @@ class GSuiteAddUsers extends Component {
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
+							siteId={ selectedSite.ID }
 							users={ users }
 							onReturnKeyPress={ this.handleReturnKeyPress }
 						>
