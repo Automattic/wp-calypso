@@ -152,7 +152,7 @@
 		"percentage-regex": "^3.0.0",
 		"phone": "^2.4.2",
 		"photon": "^4.0.0",
-		"postcss": "^8.2.6",
+		"postcss": "^8.3.11",
 		"prismjs": "^1.17.1",
 		"prop-types": "^15.7.2",
 		"qrcode.react": "^1.0.1",
