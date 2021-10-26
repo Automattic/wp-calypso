@@ -177,7 +177,7 @@ __metadata:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@types/config": ^0.0.39
     "@types/jest": ^27.0.2
-    "@types/node": ^15.0.2
+    "@types/node": ^16.11.6
     asana-phrase: ^0.0.8
     config: ^3.3.6
     mailosaur: ^7.3.1
@@ -686,7 +686,7 @@ __metadata:
   resolution: "@automattic/mocha-debug-reporter@workspace:packages/mocha-debug-reporter"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@types/mocha": ^8.2.3
+    "@types/mocha": ^9.0.0
     typescript: ^4.4.3
   peerDependencies:
     mocha: ">=8.0.0"
@@ -1259,7 +1259,8 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.1
-    "@types/wordpress__plugins": ^2.3.7
+    "@types/node": ^15.0.2
+    "@types/wordpress__plugins": ^3.0.0
     "@wordpress/a11y": ^3.2.2
     "@wordpress/api-fetch": ^5.2.2
     "@wordpress/base-styles": ^4.0.0
@@ -3143,24 +3144,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/jest@npm:^11.3.0":
-  version: 11.3.0
-  resolution: "@emotion/jest@npm:11.3.0"
+"@emotion/jest@npm:^11.5.0":
+  version: 11.5.0
+  resolution: "@emotion/jest@npm:11.5.0"
   dependencies:
     "@babel/runtime": ^7.13.10
     "@emotion/css-prettifier": ^1.0.0
     chalk: ^4.1.0
     specificity: ^0.4.1
-    stylis: ^4.0.3
+    stylis: ^4.0.10
   peerDependencies:
-    "@types/jest": ^26.0.14
+    "@types/jest": ^26.0.14 || ^27.0.0
     enzyme-to-json: ^3.2.1
   peerDependenciesMeta:
     "@types/jest":
       optional: true
     enzyme-to-json:
       optional: true
-  checksum: 652019ec11f75ead8d36375f04cd916985fc21884d5fbf9ebf2a2b66c61d24ef818ef7b3e76418f7d496fc18cab032c3449c4a3f9304e8dff463c08e5ce43b63
+  checksum: 0e759cc00253b949f0ab375edac3c99c25a1ac25c19bdce420b78c176682c064cec2ca139fd943965b2d5615cc2edccb1767658d1e238d7d082500fec32191d7
   languageName: node
   linkType: hard
 
@@ -6146,23 +6147,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^27.0.1, @types/jest@npm:^27.0.2":
+"@types/jest@npm:*, @types/jest@npm:^27.0.2":
   version: 27.0.2
   resolution: "@types/jest@npm:27.0.2"
   dependencies:
     jest-diff: ^27.0.0
     pretty-format: ^27.0.0
   checksum: 5fa123f05bf003fd5fea92878168ea720fbc6dab5ae9648fa883d0b2d427a1dd70a288c1a10e431df83ab4ff8b03e08e2aa4e77b0238c506d044567c994ad72b
-  languageName: node
-  linkType: hard
-
-"@types/jest@npm:^26.0.24":
-  version: 26.0.24
-  resolution: "@types/jest@npm:26.0.24"
-  dependencies:
-    jest-diff: ^26.0.0
-    pretty-format: ^26.0.0
-  checksum: 1085ac96af43566518daf3aca60cb7881bfe2ffe1f5343738933e386ebf909095fde15273c3e99c685854dfc833b05b156fb5daf68707c0daa1c0c0db13a665b
   languageName: node
   linkType: hard
 
@@ -6244,10 +6235,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mocha@npm:^8.2.3":
-  version: 8.2.3
-  resolution: "@types/mocha@npm:8.2.3"
-  checksum: a0faabd12456a51d2dae4b978b8c053517331ac23aa8874c3a35d95253fa9adfccd78b9f1cdae5cac2501aa1e7c6414ed65dc34c717867d86c09d88fda42a19c
+"@types/mocha@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@types/mocha@npm:9.0.0"
+  checksum: 82501aa1453ffe204d94f0a975e2ff266bfe38fb66a788a6c1fd72db3b7707534fb28f60b99eee128b22df7efa2b3064c57e749ec5f142d294854bb43f3da82d
   languageName: node
   linkType: hard
 
@@ -6275,10 +6266,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^15.0.2":
-  version: 15.0.3
-  resolution: "@types/node@npm:15.0.3"
-  checksum: 8d49a4832d8132e50fc2df8c593bbe5998c7a72af51ceeb618ef942b8f92cdb74ffc51a94992a3db2593ee156e0c623a99f987fce499600cd75e972b2e4e15c3
+"@types/node@npm:*, @types/node@npm:^16.11.6":
+  version: 16.11.6
+  resolution: "@types/node@npm:16.11.6"
+  checksum: b1ca8b5d011fea9364b1795b2217713d9c34576b92d2dcd9197fc8dc14f8495eca901a9008c5cb7c161177532f2efdea2f78a5f0feac7172e9598f4e19b98481
   languageName: node
   linkType: hard
 
@@ -6300,6 +6291,13 @@ __metadata:
   version: 14.17.14
   resolution: "@types/node@npm:14.17.14"
   checksum: 52d8d863fb771dbd667176b3c7c4bf6a2d55e4b4196ee0df4f36383584f2466794ed30da2b030d993d0aeb6fac0a39a4d373105ade6169c320028dfa3718b617
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^15.0.2":
+  version: 15.14.9
+  resolution: "@types/node@npm:15.14.9"
+  checksum: fe5b69cffd20f97c814d568c1d791b3c367f9efa6567a18d2c15cd73c5437f47bcff73a2e10bdfe59f90ce7df47e6cc3c6d431c76d2213bf6099e8ab5d16d355
   languageName: node
   linkType: hard
 
@@ -6771,14 +6769,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__plugins@npm:^2.3.7":
-  version: 2.3.7
-  resolution: "@types/wordpress__plugins@npm:2.3.7"
+"@types/wordpress__plugins@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@types/wordpress__plugins@npm:3.0.0"
   dependencies:
     "@types/react": "*"
     "@types/wordpress__components": "*"
-    "@wordpress/element": ^2.14.0
-  checksum: ae7a81fc0232a4fbb775085eb9b527daaa33b2c143521c95f21ae2386be51472085e67d32d09aa4c804904363f5cedbd57912b43daec6d7196cf08d69821466e
+    "@wordpress/element": ^3.0.0
+  checksum: 3b9003ed8eaa003b8ca8df3120bfe0895736c1608f86590459e5872f7ac3d4e69313d2024c67b0c5fce8660545db4e8524a6cbf6a2f44e5c9b86da97df4cf025
   languageName: node
   linkType: hard
 
@@ -11457,7 +11455,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": ^1.0.0
     "@automattic/wpcom-checkout": ^1.0.0
     "@babel/core": ^7.15.0
-    "@emotion/jest": ^11.3.0
+    "@emotion/jest": ^11.5.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
@@ -11466,7 +11464,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.1
     "@testing-library/react-hooks": 7.0.2
-    "@types/jest": ^26.0.24
+    "@types/jest": ^27.0.2
     "@wordpress/a11y": ^3.2.2
     "@wordpress/api-fetch": ^5.2.2
     "@wordpress/base-styles": ^4.0.0
@@ -21354,7 +21352,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^26.0.0, jest-diff@npm:^26.6.2":
+"jest-diff@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-diff@npm:26.6.2"
   dependencies:
@@ -22305,7 +22303,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest@npm:^27.0.6, jest@npm:^27.2.4":
+"jest@npm:^27.2.4":
   version: 27.2.4
   resolution: "jest@npm:27.2.4"
   dependencies:
@@ -28700,7 +28698,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^26.0.0, pretty-format@npm:^26.5.2, pretty-format@npm:^26.6.2":
+"pretty-format@npm:^26.5.2, pretty-format@npm:^26.6.2":
   version: 26.6.2
   resolution: "pretty-format@npm:26.6.2"
   dependencies:
@@ -34096,7 +34094,7 @@ resolve@~1.1.0:
   languageName: node
   linkType: hard
 
-"stylis@npm:^4.0.3":
+"stylis@npm:^4.0.10, stylis@npm:^4.0.3":
   version: 4.0.10
   resolution: "stylis@npm:4.0.10"
   checksum: 68725d44d35657a09eb6b823c121b04773fe127921d19bd8f801603285a41e87808050ab9ac4ae001e737208fd48f5fbb5f23e030e3adc1f00af38c29d6bab1a
@@ -37213,7 +37211,7 @@ typescript@^4.4.3:
     "@types/enzyme": ^3.10.9
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/lodash": ^4.14.175
-    "@types/node": ^15.0.2
+    "@types/node": ^16.11.6
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.24
@@ -37379,7 +37377,7 @@ typescript@^4.4.3:
     "@babel/register": ^7.0.0
     "@babel/runtime": ^7.3.1
     "@testim/chrome-version": ^1.0.7
-    "@types/jest": ^27.0.1
+    "@types/jest": ^27.0.2
     "@wordpress/i18n": ^3.20.0
     "@xmpp/plugins": ^0.3.0
     asana-phrase: ^0.0.8
@@ -37405,7 +37403,7 @@ typescript@^4.4.3:
     grunt-cli: ^1.2.0
     grunt-concurrent: ^2.3.0
     grunt-shell: ^1.1.2
-    jest: ^27.0.6
+    jest: ^27.2.4
     jest-docblock: ^27.0.6
     jest-environment-node: ^26.6.2
     jest-runner: ^27.0.6

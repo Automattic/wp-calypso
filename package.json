@@ -157,7 +157,7 @@
 		"@types/enzyme": "^3.10.9",
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/lodash": "^4.14.175",
-		"@types/node": "^15.0.2",
+		"@types/node": "^16.11.6",
 		"@types/page": "^1.11.5",
 		"@types/qs": "^6.9.7",
 		"@types/react": "^17.0.24",
