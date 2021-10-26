@@ -32,9 +32,16 @@ import './style.scss';
 const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } ) => {
 	const renderItemLabel = ( item ) => {
 		if ( item.href ) {
-			return <a href={ item.href }>{ item.label }</a>;
+			return (
+				<a
+					className="breadcrumbs__item-label breadcrumbs__item-label--clickable"
+					href={ item.href }
+				>
+					{ item.label }
+				</a>
+			);
 		}
-		return item.label || item;
+		return <span className="breadcrumbs__item-label">{ item.label || item }</span>;
 	};
 
 	const renderHelpBubble = ( item ) => {
@@ -64,7 +71,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 
 	const renderItem = ( item, index ) => (
 		<React.Fragment key={ `breadcrumb${ index }` }>
-			<span>{ renderItemLabel( item ) }</span>
+			<span className="breadcrumbs__item">{ renderItemLabel( item ) }</span>
 			{ renderHelpBubble( item ) }
 			{ renderSeparator( index ) }
 		</React.Fragment>
@@ -87,7 +94,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 		return (
 			<>
 				{ renderBackArrow() }
-				<span>{ renderItemLabel( mobileItem ) }</span>
+				<span className="breadcrumbs__item--mobile">{ renderItemLabel( mobileItem ) }</span>
 				{ renderHelpBubble( mobileItem ) }
 			</>
 		);

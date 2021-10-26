@@ -34,10 +34,10 @@
 		font-weight: 500; /* stylelint-disable-line */
 		color: var( --color-neutral-50 );
 
-		& a {
+		& .breadcrumbs__item-link {
 			color: var( --color-neutral-50 );
 		}
-		& span:first-child {
+		& .breadcrumbs__item:first-child {
 			font-size: $font-body;
 			font-weight: 600;
 			color: var( --color-neutral-80 );
@@ -49,8 +49,13 @@
 	display: flex;
 	align-items: center;
 
-	& a {
+	& .breadcrumbs__item-link {
 		color: var( --color-neutral-50 );
+	}
+	& .breadcrumbs__item:first-child {
+		font-size: $font-body;
+		font-weight: 600;
+		color: var( --color-neutral-80 );
 	}
 
 	@include break-mobile {
