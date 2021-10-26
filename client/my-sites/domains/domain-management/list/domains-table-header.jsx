@@ -1,10 +1,11 @@
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import { Icon, arrowDown, arrowUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import MaterialIcon from 'calypso/components/material-icon';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 import './style.scss';
@@ -109,9 +110,8 @@ class DomainsTableHeader extends PureComponent {
 			<>
 				<div className={ listHeaderMobileClasses }>
 					<SelectDropdown
-						compact
 						onSelect={ this.handleSelectChange }
-						selectedIcon={ <Gridicon icon="filter" width="16" height="16" /> }
+						selectedIcon={ <MaterialIcon icon="sort" /> }
 						options={ this.prepareSortOptions( columns ) }
 						initialSelected={ activeSortKey + ( activeSortOrder === 1 ? '+' : '-' ) }
 					/>
