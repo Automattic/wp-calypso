@@ -1,6 +1,6 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, edit, home } from '@wordpress/icons';
+import { Icon, edit, home, moreVertical } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
 import Badge from 'calypso/components/badge';
@@ -49,6 +49,7 @@ export default function FreeDomainItem( {
 				<EllipsisMenu
 					disabled={ isBusy || disabled }
 					toggleTitle={ __( 'Free WordPress address options' ) }
+					icon={ <Icon icon={ moreVertical } size={ 28 } /> }
 				>
 					{ canMakePrimary && (
 						<PopoverMenuItem onClick={ handleMakePrimary }>
