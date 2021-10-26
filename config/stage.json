@@ -129,8 +129,7 @@
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": true,
 		"wordpress-action-search": false,
-		"redirect-fallback-browsers": true,
-		"onboarding-video-ui": false
+		"redirect-fallback-browsers": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

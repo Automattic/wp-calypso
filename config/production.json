@@ -128,8 +128,7 @@
 		"woocommerce/extension-referrers": false,
 		"wpcom-user-bootstrap": true,
 		"wordpress-action-search": false,
-		"redirect-fallback-browsers": true,
-		"onboarding-video-ui": false
+		"redirect-fallback-browsers": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

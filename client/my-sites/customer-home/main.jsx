@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,7 +12,6 @@ import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
-import OnboardingVideoUi from 'calypso/my-sites/customer-home/cards/education/onboarding-video-ui';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -96,7 +94,6 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 							<Tertiary cards={ layout.tertiary } />
 						</div>
 					</div>
-					{ config.isEnabled( 'onboarding-video-ui' ) && <OnboardingVideoUi /> }
 				</>
 			) }
 		</Main>
