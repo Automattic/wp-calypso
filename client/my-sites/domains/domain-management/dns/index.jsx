@@ -8,7 +8,6 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import VerticalNav from 'calypso/components/vertical-nav';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
@@ -19,6 +18,7 @@ import Header from 'calypso/my-sites/domains/domain-management/components/header
 import {
 	domainManagementEdit,
 	domainManagementNameServers,
+	domainManagementList,
 	domainManagementDns,
 } from 'calypso/my-sites/domains/paths';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
@@ -70,14 +70,7 @@ class Dns extends Component {
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				helpBubble: translate(
-					'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-						},
-					}
-				),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
 			},
 			{
 				label: selectedDomainName,

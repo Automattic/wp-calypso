@@ -6,7 +6,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -18,7 +17,11 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
-import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementDns,
+} from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -224,14 +227,7 @@ class NameServers extends Component {
 		const items = [
 			{
 				label: translate( 'Domains' ),
-				helpBubble: translate(
-					'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-						},
-					}
-				),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
 			},
 			{
 				label: selectedDomainName,
