@@ -702,7 +702,12 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		const basePath = getStepUrl( this.props.flowName, this.props.stepName, 'use-your-domain' );
+		const basePath = getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.getLocale()
+		);
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
 
@@ -745,7 +750,7 @@ class DomainsStep extends Component {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
 		} else {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName );
+			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
 			if ( backUrl === this.props.path ) {
 				backUrl = '/sites/';
