@@ -26,7 +26,7 @@ const getAdminHelpResults = createSelector(
 
 		return filterListBySearchTerm( searchTerm, adminSections( siteId, siteSlug, state ), limit );
 	},
-	[ getSelectedSiteId ]
+	( state ) => [ getSelectedSiteId( state ) ]
 );
 
 export default getAdminHelpResults;
