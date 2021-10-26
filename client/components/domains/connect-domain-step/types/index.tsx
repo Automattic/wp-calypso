@@ -2,7 +2,7 @@ import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { stepSlug, useMyDomainInputMode } from '../constants';
 
 type ValueOf< T > = T[ keyof T ];
-type Maybe< T > = T | null;
+export type Maybe< T > = T | null;
 
 type PossibleSlugs = ValueOf< typeof stepSlug >;
 type PossibleInitialModes = ValueOf< typeof useMyDomainInputMode >;
@@ -56,6 +56,7 @@ export type StartStepProps = {
 	progressStepList: Record< PossibleSlugs, string >;
 	domainInboundTransferStatusInfo: Partial< InboundTransferStatusInfo >;
 	initialMode: PossibleInitialModes;
+	selectedSite: Maybe< SiteData >;
 	setPage: ( page: PossibleSlugs ) => void;
 };
 
