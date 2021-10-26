@@ -72,7 +72,7 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
 	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
-const handler = ( dispatch, action, getState ) => {
+const handler = async ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ROUTE_SET:
 			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
@@ -83,16 +83,14 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SELECTED_SITE_SET:
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
-			// Wait a tick for the reducer to update the state tree
-			setTimeout( async () => {
-				const { fetchAutomatedTransferStatusForSelectedSite } = await import(
-					/* webpackChunkName: "automated-transfer-state-middleware" */
-					'calypso/state/lib/automated-transfer-middleware'
-				);
-				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
-			}, 0 );
+		case SITES_RECEIVE: {
+			const { fetchAutomatedTransferStatusForSelectedSite } = await import(
+				/* webpackChunkName: "automated-transfer-state-middleware" */
+				'calypso/state/lib/automated-transfer-middleware'
+			);
+			fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			return;
+		}
 	}
 };
 
