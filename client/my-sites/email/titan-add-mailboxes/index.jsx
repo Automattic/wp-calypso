@@ -198,7 +198,13 @@ class TitanAddMailboxes extends Component {
 	};
 
 	renderForm() {
-		const { isLoadingDomains, selectedDomainName, selectedSite, titanMonthlyProduct, translate } = this.props;
+		const {
+			isLoadingDomains,
+			selectedDomainName,
+			selectedSite,
+			titanMonthlyProduct,
+			translate,
+		} = this.props;
 
 		if ( isLoadingDomains || ! titanMonthlyProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
