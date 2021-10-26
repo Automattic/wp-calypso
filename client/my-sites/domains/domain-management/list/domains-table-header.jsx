@@ -65,22 +65,31 @@ class DomainsTableHeader extends PureComponent {
 		return <Icon icon={ columnSortOrder === 1 ? arrowDown : arrowUp } size={ 16 } />;
 	}
 
-	prepareSortOptions( columns ) {
+	getSingleSortOption( column, sortOrder ) {
 		const { translate } = this.props;
+		if ( sortOrder === 1 ) {
+			return {
+				value: `${ column.name }+`,
+				label: translate( '%(column)s ascending', { args: { column: column.label } } ),
+			};
+		}
+		return {
+			value: `${ column.name }-`,
+			label: translate( '%(column)s descending', { args: { column: column.label } } ),
+		};
+	}
 
+	prepareSortOptions( columns ) {
 		return columns
-			.filter( ( column ) => column.label )
+			.filter( ( column ) => column.label && column.isSortable )
 			.map( ( column ) => {
-				return [
-					{
-						value: `${ column.name }+`,
-						label: translate( '%(column)s ascending', { args: { column: column.label } } ),
-					},
-					{
-						value: `${ column.name }-`,
-						label: translate( '%(column)s descending', { args: { column: column.label } } ),
-					},
-				];
+				if ( column.supportsOrderSwitching ) {
+					return [
+						this.getSingleSortOption( column, column.initialSortOrder ),
+						this.getSingleSortOption( column, column.initialSortOrder * -1 ),
+					];
+				}
+				return [ this.getSingleSortOption( column, column.initialSortOrder ) ];
 			} )
 			.flat();
 	}
