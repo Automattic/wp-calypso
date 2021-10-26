@@ -9,7 +9,8 @@ import './style.scss';
 const DraftPostModal = () => {
 	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
-	const closeEditor = () => doAction( 'a8c.wpcom-block-editor.closeEditor' );
+	const closeEditor = () =>
+		doAction( 'a8c.wpcom-block-editor.closeEditor', `/home/${ window.location.hostname }` );
 
 	return (
 		<NuxModal
