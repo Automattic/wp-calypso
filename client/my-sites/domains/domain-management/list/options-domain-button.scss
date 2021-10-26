@@ -1,26 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-
-.options-domain-button,
-.options-domain-button__mobile {
-	display: none;
+.options-domain-button {
+	& > .gridicon {
+		margin-left: 5px;
+	}
 
 	&__popover {
 		margin-top: 5px;
-	}
-
-	@include break-mobile {
-		display: inline;
-
-		& > .gridicon {
-			margin-left: 5px;
-		}
-	}
-}
-
-.options-domain-button__mobile {
-	display: initial;
-	@include break-mobile {
-		display: none;
 	}
 }
