@@ -43,16 +43,25 @@
 			margin-bottom: 20px;
 		}
 
+		.onboarding-subtitle {
+			font-size: 1.125rem; /* stylelint-disable-line */
+			line-height: 1.4444em;
+
+			@include break-small {
+				width: 600px;
+			}
+		}
+
 		.import__buttons-group {
 			margin: 28px 0;
 		}
 
 		.action-buttons__next {
-			margin-bottom: 10px;
+			margin-bottom: 20px;
 		}
 
 		.action-buttons__back {
-			color: var( --studio-gray-100 );
+			color: var( --studio-gray-100 ) !important;
 			font-weight: 500; /* stylelint-disable-line */
 
 			&:hover {

@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { GoToStep } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -12,7 +13,7 @@ const validateUrl = ( url: string ): boolean => {
 };
 
 interface Props {
-	goToStep: ( name: string ) => void;
+	goToStep: GoToStep;
 }
 
 const CaptureStep: React.FunctionComponent< Props > = ( { goToStep } ) => {

@@ -1,20 +1,30 @@
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import { GoToStep } from '../types';
 import type * as React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
-	goToStep: ( name: string ) => void;
+	goToStep: GoToStep;
 }
 
 const ScanningStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
 	const { __ } = useI18n();
 
-	// temp peace of code
+	/**
+	 * Temp piece of code
+	 * goToStep is a function for redirecting users to
+	 * the next step depending on the scanning result
+	 *
+	 * It can be:
+	 * - goToStep( 'ready' );
+	 * - goToStep( 'ready', 'not' );
+	 * - goToStep( 'ready', 'preview' );
+	 */
 	setTimeout( () => {
-		goToStep( 'list' );
+		goToStep( 'ready', 'preview' );
 	}, 3000 );
 
 	return (

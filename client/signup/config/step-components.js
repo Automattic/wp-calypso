@@ -80,6 +80,7 @@ const stepNameToModuleName = {
 	list: 'import',
 	capture: 'import',
 	scanning: 'import',
+	ready: 'import',
 };
 
 export function getStepModuleName( stepName ) {
