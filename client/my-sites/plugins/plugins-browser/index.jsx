@@ -10,6 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { flow, get } from 'lodash';
@@ -84,12 +85,23 @@ export class PluginsBrowser extends Component {
 		trackPageViews: true,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isMobile: isWithinBreakpoint( '<660px' ),
+		};
+	}
+
 	reinitializeSearch() {
 		this.WrappedSearch = ( props ) => <Search { ...props } />;
 	}
 
 	UNSAFE_componentWillMount() {
 		this.reinitializeSearch();
+
+		if ( typeof this.unsubscribe === 'function' ) {
+			this.unsubscribe();
+		}
 	}
 
 	componentDidMount() {
@@ -98,6 +110,11 @@ export class PluginsBrowser extends Component {
 				search_query: this.props.search,
 			} );
 		}
+
+		// Change the isMobile state when the size of the browser changes.
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<660px', ( isMobile ) => {
+			this.setState( { isMobile } );
+		} );
 	}
 
 	getVisibleCategories() {
@@ -320,11 +337,13 @@ export class PluginsBrowser extends Component {
 
 	recordSearchEvent = ( eventName ) => this.props.recordGoogleEvent( 'PluginsBrowser', eventName );
 
-	getSearchBox() {
+	getSearchBox( isMobile ) {
 		const { WrappedSearch } = this;
 
 		return (
 			<WrappedSearch
+				pinned={ isMobile }
+				fitsContainer={ isMobile }
 				onSearch={ this.props.doSearch }
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Try searching ‘ecommerce’' ) }
@@ -439,6 +458,7 @@ export class PluginsBrowser extends Component {
 
 	render() {
 		const { category, search } = this.props;
+
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
@@ -470,11 +490,13 @@ export class PluginsBrowser extends Component {
 							align="left"
 						/>
 
-						<div className="plugins-browser__searchbox">{ this.getSearchBox() }</div>
-
 						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
 							{ this.renderUploadPluginButton() }
+						</div>
+
+						<div className="plugins-browser__searchbox">
+							{ this.getSearchBox( this.state.isMobile ) }
 						</div>
 					</div>
 				) }

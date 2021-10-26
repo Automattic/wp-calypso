@@ -4,6 +4,7 @@
 	justify-content: flex-start;
 	align-items: center;
 	border-bottom: 1px solid var( --studio-gray-5 );
+	position: relative;
 
 	.plugins-browser__page-heading {
 		margin-bottom: 24px;
@@ -16,19 +17,33 @@
 	flex-direction: column;
 	justify-content: flex-end;
 	align-items: stretch;
-	margin: auto;
-	margin-right: 15px;
+	margin-bottom: 20px;
 
 	.search-component {
-		height: 40px;
+		height: 30px;
 		box-shadow: 0 0 0 1px var( --studio-gray-10 );
+
+		.search-component__open-icon, .search-component__close-icon {
+			color: var( --studio-black );
+		}
+
+		&.is-open input.search-component__input[type=search] {
+			font-size: $font-body-extra-small;
+		}
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 		align-items: flex-end;
-		margin-bottom: 17px;
 	}
+
+	@media screen and ( max-width: 660px ) {
+		width: 50px;
+		.search-component {
+			width: 50px;
+		}
+	}
+
 }
 
 .plugins-browser__main-buttons {
@@ -36,19 +51,24 @@
 	flex-direction: column;
 	justify-content: flex-end;
 	align-items: stretch;
+	margin: auto;
 	margin-right: 15px;
+	margin-bottom: 20px;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 		align-items: flex-end;
-		margin-right: 0;
-		margin-bottom: 17px;
+	}
+
+	@media screen and ( max-width: 660px ) {
+		margin-bottom: 13px;
 	}
 
 	.plugins-browser__button {
 		white-space: nowrap;
 		display: flex;
 		align-items: center;
+		height: 32px;
 
 		.plugins-browser__button-icon {
 			margin-right: 5px;
