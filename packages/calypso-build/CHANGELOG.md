@@ -12,7 +12,7 @@
 - Set `quietDeps: true` in dart sass options. This avoids printing deprecation
   warnings for stylesheets imported from node_modules.
 - Stopped defaulting `publicPath` option to `/` in `webpack/file-loader`, using the global default that treats paths as relative to the importing script URL.
-- Fixed an issue where the default calypso-build PostCSS config was not being resolved. PostCSS will now process CSS files using a default config file if you do not specify your own config file. This was previously broken. (see https://github.com/Automattic/wp-calypso/pull/56600)
+- Fixed an issue where the default calypso-build PostCSS config was not being resolved. PostCSS will now process CSS files using a default config file if you do not specify your own config file. This was previously broken. ([More info here](https://github.com/Automattic/wp-calypso/pull/56600).)
 
 ## 9.0.0
 
