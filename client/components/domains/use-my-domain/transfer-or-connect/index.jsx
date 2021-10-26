@@ -122,12 +122,14 @@ function DomainTransferOrConnect( {
 						{ ...optionProps }
 					/>
 				) ) }
-				<div className={ baseClassName + '__support-link' }>
-					{ createInterpolateElement(
-						__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
-						{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
-					) }
-				</div>
+				{ ! isFetching && (
+					<div className={ baseClassName + '__support-link' }>
+						{ createInterpolateElement(
+							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
+							{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
+						) }
+					</div>
+				) }
 			</Card>
 		</>
 	);
