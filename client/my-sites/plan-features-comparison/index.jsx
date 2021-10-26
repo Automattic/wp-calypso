@@ -107,9 +107,7 @@ export class PlanFeaturesComparison extends Component {
 				'has-border-top': ! isReskinned,
 			} );
 			const audience = planConstantObj.getAudience?.();
-			const billingTimeFrame = ! disabledClasses[ 'plan-monthly-disabled-experiment' ]
-				? planConstantObj.getBillingTimeFrame()
-				: null;
+			const billingTimeFrame = ! disabledClasses ? planConstantObj.getBillingTimeFrame() : null;
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
@@ -178,7 +176,7 @@ export class PlanFeaturesComparison extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						isDisabled={ disabledClasses[ 'plan-monthly-disabled-experiment' ] }
+						isDisabled={ disabledClasses }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
@@ -193,11 +191,11 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 	getDisabledClasses( planName ) {
-		return {
+		return classNames( {
 			'plan-monthly-disabled-experiment':
 				this.props.monthlyDisabled &&
 				[ 'personal-bundle-monthly', 'value_bundle_monthly' ].includes( planName ),
-		};
+		} );
 	}
 
 	getLongestFeaturesList() {

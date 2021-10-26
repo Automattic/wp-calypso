@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import MarketingMessage from 'calypso/components/marketing-message';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -28,7 +28,14 @@ import './style.scss';
 export class PlansStep extends Component {
 	state = {
 		isDesktop: isDesktop(),
+		experiment: null,
 	};
+
+	componentWillMount() {
+		loadExperimentAssignment( 'disabled_monthly_personal_premium' ).then( ( experimentName ) => {
+			this.setState( { experiment: experimentName } );
+		} );
+	}
 
 	componentDidMount() {
 		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
@@ -128,12 +135,6 @@ export class PlansStep extends Component {
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 		} = this.props;
-		let experiment;
-		try {
-			experiment = dangerouslyGetExperimentAssignment( 'disabled_monthly_personal_premium' );
-		} catch {
-			experiment = false;
-		}
 
 		return (
 			<div>
@@ -157,7 +158,7 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					disableMonthlyExperiment={ experiment?.variationName !== null }
+					disableMonthlyExperiment={ this.state.experiment?.variationName !== null }
 				/>
 			</div>
 		);
