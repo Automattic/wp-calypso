@@ -1,6 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-
 import ScanningStep from '../scanning';
 import { GoToStep } from '../types';
 import './style.scss';
