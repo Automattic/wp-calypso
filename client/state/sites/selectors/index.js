@@ -66,4 +66,4 @@ export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-w
 export { default as getSiteWordPressSeoWizardUrl } from './get-site-wordpress-seo-wizard-url';
 export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-customize-url';
 export { default as getJetpackVersion } from './get-jetpack-version';
-export { default as withSelectedSite } from './with-selected-site';
+export { default as useSelectedSiteSelector } from './use-selected-site-selector';

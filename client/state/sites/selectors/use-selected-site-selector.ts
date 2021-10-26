@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -11,13 +12,13 @@ export type SelectedSiteSelector< Result > = (
  *
  * Usage:
  *
- *   useSelector( withSelectedSite( isJetpackSite ) );
+ *   useSelectedSiteSelector( isJetpackSite );
  *
  * @param selector A selector that takes both state and a site id.
  * @returns A selector that only takes application state for use in useSelector.
  */
-export default function withSelectedSite< Result >(
+export default function useSelectedSiteSelector< Result >(
 	selector: SelectedSiteSelector< Result >
-): ( state: AppState ) => Result {
-	return ( state ) => selector( state, getSelectedSiteId( state ) );
+): Result {
+	return useSelector( ( state ) => selector( state, getSelectedSiteId( state ) ) );
 }
