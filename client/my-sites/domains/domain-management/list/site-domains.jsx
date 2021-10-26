@@ -190,7 +190,7 @@ export class SiteDomains extends Component {
 		const { translate } = this.props;
 
 		const item = {
-			label: 'Domains',
+			label: translate( 'Domains' ),
 			helpBubble: translate(
 				'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{
