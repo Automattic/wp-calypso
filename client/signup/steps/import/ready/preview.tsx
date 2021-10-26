@@ -9,7 +9,7 @@ interface Props {
 const protocolRgx = /(?<protocol>https?:\/\/)?(?<address>.*)/i;
 
 const ImportPreview: React.FunctionComponent< Props > = ( { website } ) => {
-	const mShotUrl = `https://s0.wp.com/mshots/v1/${ website }`;
+	const mShotUrl = `https://s0.wp.com/mshots/v1/${ website }?scale=2`;
 	const websiteMatch = website.match( protocolRgx );
 
 	return (
