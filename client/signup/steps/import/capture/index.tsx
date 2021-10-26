@@ -1,5 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import ScanningStep from '../scanning';
 import { GoToStep } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
@@ -14,17 +15,36 @@ const validateUrl = ( url: string ): boolean => {
 
 interface Props {
 	goToStep: GoToStep;
+	isScanning: boolean;
+	setIsScanning: ( inProgress: boolean ) => void;
 }
 
-const CaptureStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
+const CaptureStep: React.FunctionComponent< Props > = ( {
+	goToStep,
+	isScanning,
+	setIsScanning,
+} ) => {
 	const { __ } = useI18n();
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
 	const [ isValid, setIsValid ] = React.useState( true );
 
 	const runProcess = (): void => {
-		// Redirect to the next step!
-		goToStep( 'scanning' );
+		setIsScanning( true );
+
+		/**
+		 * Temp piece of code
+		 * goToStep is a function for redirecting users to
+		 * the next step depending on the scanning result
+		 *
+		 * It can be:
+		 * - goToStep( 'ready' );
+		 * - goToStep( 'ready', 'not' );
+		 * - goToStep( 'ready', 'preview' );
+		 */
+		setTimeout( () => {
+			goToStep( 'ready', 'preview' );
+		}, 3000 );
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
@@ -39,25 +59,31 @@ const CaptureStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
 	};
 
 	return (
-		<div className="import-layout__center">
-			<div className="capture__content">
-				<input
-					className="capture__input"
-					autoComplete="off"
-					autoCorrect="off"
-					spellCheck="false"
-					placeholder={ __( 'Enter your site address' ) }
-					onKeyDown={ onKeyDown }
-					onChange={ onInputChange }
-					value={ urlValue }
-				/>
-				{ ! isValid && (
-					<div className="capture__input-error-msg">
-						{ __( 'The address you entered is not valid. Please try again.' ) }
+		<>
+			{ ! isScanning && (
+				<div className="import-layout__center">
+					<div className="capture__content">
+						<input
+							className="capture__input"
+							autoComplete="off"
+							autoCorrect="off"
+							spellCheck="false"
+							placeholder={ __( 'Enter your site address' ) }
+							onKeyDown={ onKeyDown }
+							onChange={ onInputChange }
+							value={ urlValue }
+						/>
+						{ ! isValid && (
+							<div className="capture__input-error-msg">
+								{ __( 'The address you entered is not valid. Please try again.' ) }
+							</div>
+						) }
 					</div>
-				) }
-			</div>
-		</div>
+				</div>
+			) }
+
+			{ isScanning && <ScanningStep /> }
+		</>
 	);
 };
 
