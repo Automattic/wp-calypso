@@ -1,23 +1,18 @@
-/**
- * @group calypso-release
- */
-
 import {
 	DataHelper,
 	EmailClient,
+	LoginFlow,
 	SidebarComponent,
 	InvitePeoplePage,
 	PeoplePage,
-	LoginPage,
 	setupHooks,
 	UserSignupPage,
 	Roles,
 	BrowserManager,
-	CloseAccountFlow,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
+describe.skip( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const role = 'Editor';
 	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
@@ -39,9 +34,9 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		let peoplePage: PeoplePage;
 		let sidebarComponent: SidebarComponent;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: invitingUser } );
+		it( 'Log in as inviting user', async function () {
+			const loginFlow = new LoginFlow( page, invitingUser );
+			await loginFlow.logIn();
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -95,10 +90,10 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		} );
 
 		it( 'User sees welcome banner after signup', async function () {
-			// Raw method call & selector used because `PostsPage` is not yet implemented.
+			// Raw method call & selector used because PostsPage is not yet implemented.
 			// TODO: Once PostsPage is implemented, call a method from that
 			// POM instead.
-			const bannerText = `You're now an ${ role } of: e2eflowtestingprivate`;
+			const bannerText = "You're now an Editor of: e2eflowtestingprivate";
 			await page.waitForSelector( `:text("${ bannerText }")` );
 		} );
 	} );
@@ -107,9 +102,13 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		let peoplePage: PeoplePage;
 		let sidebarComponent: SidebarComponent;
 
+		it( 'Clear authenticated state', async function () {
+			await BrowserManager.clearAuthenticationState( page );
+		} );
+
 		it( 'Log in as inviting user', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: invitingUser } );
+			const loginFlow = new LoginFlow( page, invitingUser );
+			await loginFlow.logIn();
 		} );
 
 		it( 'Navigate to Users > All Users', async function () {
@@ -124,21 +123,6 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 		it( 'Remove invited user from site', async function () {
 			await peoplePage.deleteUser();
-		} );
-	} );
-
-	describe( 'Close account', function () {
-		it( 'Log in as invited user', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login(
-				{ username: email, password: signupPassword },
-				{ landingUrl: '**/read' }
-			);
-		} );
-
-		it( 'Close account', async function () {
-			const closeAccountFlow = new CloseAccountFlow( page );
-			await closeAccountFlow.closeAccount();
 		} );
 	} );
 } );
