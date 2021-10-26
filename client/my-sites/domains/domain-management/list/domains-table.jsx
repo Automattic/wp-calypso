@@ -14,6 +14,7 @@ class DomainsTable extends PureComponent {
 		isLoading: PropTypes.bool,
 		currentRoute: PropTypes.string,
 		domains: PropTypes.array,
+		domainsTableColumns: PropTypes.array,
 		selectedSite: PropTypes.object,
 		settingPrimaryDomain: PropTypes.bool,
 		primaryDomainIndex: PropTypes.number,
@@ -25,17 +26,32 @@ class DomainsTable extends PureComponent {
 
 	state = {
 		sortKey: 'status', // column to sort by - should match the header columns
-		sortOrder: 1, // sort order where 1 = ascending and -1 = descending
+		sortOrder: -1, // sort order where 1 = ascending and -1 = descending
 	};
 
-	changeTableSort = ( column, sortOrder = null ) => {
+	changeTableSort = ( selectedColumn, sortOrder = null ) => {
+		const { domainsTableColumns } = this.props;
+
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === selectedColumn
+		);
+
 		this.setState( ( prevState ) => {
 			let newSortOrder = sortOrder;
+
 			if ( ! sortOrder ) {
-				newSortOrder = column === prevState.sortKey ? prevState.sortOrder * -1 : 1;
+				if ( selectedColumnDefinition?.supportsOrderSwitching ) {
+					newSortOrder =
+						selectedColumn === prevState.sortKey
+							? prevState.sortOrder * -1
+							: selectedColumnDefinition.initialSortOrder;
+				} else {
+					newSortOrder = selectedColumnDefinition.initialSortOrder;
+				}
 			}
+
 			return {
-				sortKey: column,
+				sortKey: selectedColumn,
 				sortOrder: newSortOrder,
 			};
 		} );
@@ -45,6 +61,7 @@ class DomainsTable extends PureComponent {
 		const {
 			isLoading,
 			currentRoute,
+			domainsTableColumns,
 			domains,
 			selectedSite,
 			settingPrimaryDomain,
@@ -107,6 +124,7 @@ class DomainsTable extends PureComponent {
 			domains.length > 0 && (
 				<DomainsTableHeader
 					key="domains-header"
+					columns={ domainsTableColumns }
 					isManagingAllSites={ false }
 					onChangeSortOrder={ this.changeTableSort }
 					activeSortKey={ sortKey }

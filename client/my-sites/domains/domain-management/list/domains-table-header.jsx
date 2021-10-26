@@ -13,6 +13,7 @@ import './style.scss';
 class DomainsTableHeader extends PureComponent {
 	static propTypes = {
 		action: PropTypes.string,
+		columns: PropTypes.array,
 		headerClasses: PropTypes.object,
 		isChecked: PropTypes.bool,
 		disabled: PropTypes.bool,
@@ -53,16 +54,15 @@ class DomainsTableHeader extends PureComponent {
 		this.props.onChangeSortOrder( sortKey, sortOrder );
 	};
 
-	renderSortIcon( sortOrder ) {
-		if ( sortOrder === 1 ) {
-			return <Icon icon={ arrowDown } size={ 16 } />;
+	renderSortIcon( column, sortKey, sortOrder ) {
+		if ( ! column?.isSortable ) {
+			return null;
 		}
 
-		if ( sortOrder === -1 ) {
-			return <Icon icon={ arrowUp } size={ 16 } />;
-		}
+		const isActiveColumn = sortKey === column.name;
+		const columnSortOrder = isActiveColumn ? sortOrder : column.initialSortOrder;
 
-		return null;
+		return <Icon icon={ columnSortOrder === 1 ? arrowDown : arrowUp } size={ 16 } />;
 	}
 
 	prepareSortOptions( columns ) {
@@ -86,7 +86,7 @@ class DomainsTableHeader extends PureComponent {
 	}
 
 	renderHeaderContent() {
-		const { headerClasses, activeSortKey, activeSortOrder, translate } = this.props;
+		const { headerClasses, activeSortKey, activeSortOrder, columns } = this.props;
 		const listHeaderClasses = classNames(
 			'domain-table-header',
 			'domain-table-header__desktop',
@@ -97,14 +97,6 @@ class DomainsTableHeader extends PureComponent {
 			'domain-table-header__mobile',
 			headerClasses
 		);
-		const columns = [
-			{ name: 'domain', label: translate( 'Domain' ) },
-			{ name: 'status', label: translate( 'Status' ) },
-			{ name: 'registered-until', label: translate( 'Registered until' ) },
-			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
-			{ name: 'email', label: translate( 'Email' ) },
-			{ name: 'action', label: null },
-		];
 
 		return (
 			<>
@@ -122,11 +114,12 @@ class DomainsTableHeader extends PureComponent {
 							plain
 							key={ `item-${ index }` }
 							onClick={ this.handleHeaderClick }
-							className={ classNames( 'list__header-column', `list__${ column.name }-cell` ) }
+							className={ classNames( 'list__header-column', `list__${ column.name }-cell`, {
+								'is-sorted-by': activeSortKey === column.name,
+							} ) }
 							data-column={ column.name }
 						>
-							{ column.label }{ ' ' }
-							{ activeSortKey === column.name && this.renderSortIcon( activeSortOrder ) }
+							{ column.label } { this.renderSortIcon( column, activeSortKey, activeSortOrder ) }
 						</Button>
 					) ) }
 				</div>

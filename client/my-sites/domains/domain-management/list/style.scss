@@ -366,6 +366,13 @@
 		align-items: center;
 		svg {
 			margin-left: 4px;
+			fill: transparent;
+		}
+		&.is-sorted-by > svg,
+		&.is-sorted-by:hover > svg {
+			fill: var( --color-neutral-50 );
+		}
+		&:hover > svg {
 			fill: var( --color-neutral-10 );
 		}
 	}

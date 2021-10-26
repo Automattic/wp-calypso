@@ -107,6 +107,27 @@ export class SiteDomains extends Component {
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
 
+		const domainsTableColumns = [
+			{
+				name: 'domain',
+				label: translate( 'Domain' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+			},
+			{ name: 'status', label: translate( 'Status' ), isSortable: true, initialSortOrder: -1 },
+			{
+				name: 'registered-until',
+				label: translate( 'Registered until' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+			},
+			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
+			{ name: 'email', label: translate( 'Email' ) },
+			{ name: 'action', label: null },
+		];
+
 		return (
 			<>
 				<div className="domains__header">
@@ -149,6 +170,7 @@ export class SiteDomains extends Component {
 						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
 						domains={ domains }
+						domainsTableColumns={ domainsTableColumns }
 						selectedSite={ selectedSite }
 						primaryDomainIndex={ primaryDomainIndex }
 						settingPrimaryDomain={ settingPrimaryDomain }
