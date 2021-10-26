@@ -18,7 +18,6 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { type } from 'calypso/lib/domains/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
@@ -186,35 +185,6 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	renderBreadcrumbs() {
-		const { translate } = this.props;
-
-		const item = {
-			label: translate( 'Domains' ),
-			helpBubble: translate(
-				'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-					},
-				}
-			),
-		};
-		const buttons = [
-			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<OptionsDomainButton key="breadcrumb_button_2" ellipsisButton />,
-		];
-
-		return (
-			<Breadcrumbs
-				items={ [ item ] }
-				mobileItem={ item }
-				buttons={ buttons }
-				mobileButtons={ buttons }
-			/>
-		);
-	}
-
 	render() {
 		if ( ! this.props.userCanManageOptions ) {
 			if ( this.props.renderAllSites ) {
@@ -264,7 +234,6 @@ export class SiteDomains extends Component {
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				{ this.renderBreadcrumbs() }
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
 				{ this.renderNewDesign() }

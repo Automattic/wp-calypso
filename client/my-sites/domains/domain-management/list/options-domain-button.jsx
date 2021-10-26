@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -21,12 +20,10 @@ class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
 		specificSiteActions: PropTypes.bool,
-		ellipsisButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
-		ellipsisButton: false,
 	};
 
 	state = {
@@ -64,10 +61,10 @@ class AddDomainButton extends Component {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 			return (
 				<Fragment>
-					<PopoverMenuItem icon="search" onClick={ this.clickAddDomain }>
+					<PopoverMenuItem onClick={ this.clickAddDomain }>
 						{ translate( 'Search for a domain' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="domains" href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
+					<PopoverMenuItem href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
 						{ translate( 'Use a domain I own' ) }
 					</PopoverMenuItem>
 				</Fragment>
@@ -76,66 +73,40 @@ class AddDomainButton extends Component {
 
 		return (
 			<Fragment>
-				{ ! config.isEnabled( 'domains/management-list-redesign' ) && (
-					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
-						{ translate( 'Manage all domains' ) }
-					</PopoverMenuItem>
-				) }
-				<PopoverMenuItem icon="plus" href="/new" onClick={ this.trackMenuClick }>
+				<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
+					{ translate( 'Manage all domains' ) }
+				</PopoverMenuItem>
+				<PopoverMenuItem href="/new" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain to a new site' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem icon="create" href="/domains/add" onClick={ this.trackMenuClick }>
+				<PopoverMenuItem href="/domains/add" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain to a different site' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
+				<PopoverMenuItem href="/start/domain" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain without a site' ) }
 				</PopoverMenuItem>
 			</Fragment>
 		);
 	};
 
-	getDesktopViewLabel() {
+	render() {
 		const { translate } = this.props;
 
-		if ( this.props.ellipsisButton ) {
-			return <Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />;
-		}
-
-		if ( this.props.specificSiteActions ) {
-			if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-				return translate( 'Add a domain' );
-			}
-			return translate( 'Add a domain to this site' );
-		}
-		return translate( 'Other domain options' );
-	}
-
-	render() {
-		const { specificSiteActions, ellipsisButton } = this.props;
+		const label = this.props.specificSiteActions
+			? translate( 'Add a domain to this site' )
+			: translate( 'Other domain options' );
 
 		return (
 			<Fragment>
 				<Button
-					primary={ specificSiteActions }
+					primary={ this.props.specificSiteActions }
 					compact
 					className="options-domain-button"
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
 				>
-					{ this.getDesktopViewLabel() }
-					{ ! ellipsisButton && <Gridicon icon="chevron-down" /> }
-				</Button>
-				<Button
-					primary={ specificSiteActions }
-					className="options-domain-button options-domain-button__mobile"
-					onClick={ this.toggleAddMenu }
-					ref={ this.addDomainButtonRef }
-					borderless={ ellipsisButton }
-				>
-					{ ! ellipsisButton && <Gridicon icon="plus" /> }
-					{ ellipsisButton && (
-						<Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />
-					) }
+					{ label }
+					<Gridicon icon="chevron-down" />
 				</Button>
 				<PopoverMenu
 					className="options-domain-button__popover"
