@@ -170,8 +170,8 @@ const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName, site
 				mailboxes={ mailboxes }
 				onMailboxesChange={ onMailboxesChange }
 				showAddAnotherMailboxButton={ false }
-				validatedMailboxUuids={ validatedMailboxUuids }
 				siteId={ siteId }
+				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
 					className="titan-set-up-mailbox-form__button"
