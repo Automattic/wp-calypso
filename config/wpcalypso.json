@@ -18,7 +18,6 @@
 		"ad-tracking": false,
 		"async-payments": false,
 		"automated-transfer": true,
-		"comments/management/threaded-view": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
