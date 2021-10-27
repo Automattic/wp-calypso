@@ -84,18 +84,20 @@ class DomainsTable extends PureComponent {
 
 		const domainItems = filterOutWpcomDomains( domains );
 
+		const selectedColumnDefinition = domainsTableColumns.find(
+			( column ) => column.name === sortKey
+		);
+
 		if ( sortKey && sortOrder ) {
 			domainItems.sort( ( first, second ) => {
-				const firstValue = first?.[ sortKey ];
-				const secondValue = second?.[ sortKey ];
-
-				if ( firstValue > secondValue ) {
-					return sortOrder;
+				let result = 0;
+				for ( const sortFunction of selectedColumnDefinition.sortFunctions ) {
+					result = sortFunction( first, second, sortOrder );
+					if ( 0 !== result ) {
+						break;
+					}
 				}
-				if ( firstValue < secondValue ) {
-					return -1 * sortOrder;
-				}
-				return 0;
+				return result;
 			} );
 		}
 

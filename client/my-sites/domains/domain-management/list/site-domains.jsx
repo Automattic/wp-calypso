@@ -15,6 +15,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
@@ -46,6 +47,7 @@ import {
 	getDomainManagementPath,
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
+	getSimpleSortFunctionBy,
 } from './utils';
 
 import './style.scss';
@@ -114,14 +116,33 @@ export class SiteDomains extends Component {
 				isSortable: true,
 				initialSortOrder: 1,
 				supportsOrderSwitching: true,
+				sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
 			},
-			{ name: 'status', label: translate( 'Status' ), isSortable: true, initialSortOrder: -1 },
+			{
+				name: 'status',
+				label: translate( 'Status' ),
+				isSortable: true,
+				initialSortOrder: -1,
+				sortFunctions: [
+					( first, second, sortOrder ) => {
+						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus( first, null, {
+							getMappingErrors: true,
+						} );
+						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus( second, null, {
+							getMappingErrors: true,
+						} );
+						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
+					},
+					getSimpleSortFunctionBy( 'domain' ),
+				],
+			},
 			{
 				name: 'registered-until',
 				label: translate( 'Registered until' ),
 				isSortable: true,
 				initialSortOrder: 1,
 				supportsOrderSwitching: true,
+				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
 			},
 			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'email', label: translate( 'Email' ) },

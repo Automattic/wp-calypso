@@ -18,8 +18,8 @@ export function resolveDomainStatus(
 		isJetpackSite = null,
 		isSiteAutomatedTransfer = null,
 		isDomainOnlySite = false,
-		hasMappingError = false,
 		siteSlug = null,
+		getMappingErrors = false,
 	} = {}
 ) {
 	const transferOptions = {
@@ -58,6 +58,7 @@ export function resolveDomainStatus(
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: 'alert',
+						listStatusWeight: 1000,
 					};
 				}
 
@@ -67,43 +68,54 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
+					listStatusWeight: 800,
 				};
 			}
 
-			if ( hasMappingError ) {
-				const setupStep =
-					domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
-				const options = {
-					components: {
-						strong: <strong />,
-						a: (
-							<a
-								href={ domainMappingSetup( siteSlug, domain.domain, setupStep ) }
-								onClick={ ( e ) => e.stopPropagation() }
-							/>
-						),
-					},
-				};
+			if ( getMappingErrors ) {
+				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
-				let status;
-				if ( domain?.connectionMode === 'advanced' ) {
-					status = translate(
-						'{{strong}}Connection error:{{/strong}} The A records are incorrect. Please {{a}}try this step{{/a}} again.',
-						options
-					);
-				} else {
-					status = translate(
-						'{{strong}}Connection error:{{/strong}} The name servers are incorrect. Please {{a}}try this step{{/a}} again.',
-						options
-					);
+				const hasMappingError =
+					domain.type === domainTypes.MAPPED &&
+					! domain.pointsToWpcom &&
+					moment.utc().isAfter( registrationDatePlus3Days );
+
+				if ( hasMappingError ) {
+					const setupStep =
+						domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+					const options = {
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ domainMappingSetup( siteSlug, domain.domain, setupStep ) }
+									onClick={ ( e ) => e.stopPropagation() }
+								/>
+							),
+						},
+					};
+
+					let status;
+					if ( domain?.connectionMode === 'advanced' ) {
+						status = translate(
+							'{{strong}}Connection error:{{/strong}} The A records are incorrect. Please {{a}}try this step{{/a}} again.',
+							options
+						);
+					} else {
+						status = translate(
+							'{{strong}}Connection error:{{/strong}} The name servers are incorrect. Please {{a}}try this step{{/a}} again.',
+							options
+						);
+					}
+					return {
+						statusText: translate( 'Connection error' ),
+						statusClass: 'status-alert',
+						icon: 'info',
+						listStatusText: status,
+						listStatusClass: 'alert',
+						listStatusWeight: 1000,
+					};
 				}
-				return {
-					statusText: translate( 'Connection error' ),
-					statusClass: 'status-alert',
-					icon: 'info',
-					listStatusText: status,
-					listStatusClass: 'alert',
-				};
 			}
 
 			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
@@ -121,6 +133,7 @@ export function resolveDomainStatus(
 					icon: 'verifying',
 					listStatusText: status,
 					listStatusClass: 'verifying',
+					listStatusWeight: 200,
 				};
 			}
 
@@ -147,6 +160,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: pendingRenewalMessage,
 					listStatusClass: 'warning',
+					listStatusWeight: 800,
 				};
 			}
 
@@ -187,6 +201,7 @@ export function resolveDomainStatus(
 							'timeSinceExpiry is of the form "[number] [time-period] ago" e.g. "3 days ago"',
 					} ),
 					listStatusClass: 'alert',
+					listStatusWeight: 1000,
 				};
 			}
 
@@ -202,6 +217,7 @@ export function resolveDomainStatus(
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: 'alert',
+						listStatusWeight: 1000,
 					};
 				}
 
@@ -211,6 +227,7 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
+					listStatusWeight: 800,
 				};
 			}
 
@@ -221,6 +238,7 @@ export function resolveDomainStatus(
 					icon: 'cloud_upload',
 					listStatusText: translate( 'Activating' ),
 					listStatusClass: 'info',
+					listStatusWeight: 400,
 				};
 			}
 
@@ -269,6 +287,7 @@ export function resolveDomainStatus(
 						}
 					),
 					listStatusClass: 'transfer-warning',
+					listStatusWeight: 600,
 				};
 			}
 
@@ -326,6 +345,7 @@ export function resolveDomainStatus(
 						}
 					),
 					listStatusClass: 'transfer-warning',
+					listStatusWeight: 600,
 				};
 			} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
 				return {
@@ -337,6 +357,7 @@ export function resolveDomainStatus(
 						transferOptions
 					),
 					listStatusClass: 'alert',
+					listStatusWeight: 1000,
 				};
 			} else if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
 				if ( domain.transferEndDate ) {
@@ -349,6 +370,7 @@ export function resolveDomainStatus(
 							transferOptions
 						),
 						listStatusClass: 'verifying',
+						listStatusWeight: 200,
 					};
 				}
 				return {
@@ -360,6 +382,7 @@ export function resolveDomainStatus(
 						transferOptions
 					),
 					listStatusClass: 'verifying',
+					listStatusWeight: 200,
 				};
 			}
 
@@ -372,6 +395,7 @@ export function resolveDomainStatus(
 					transferOptions
 				),
 				listStatusClass: 'verifying',
+				listStatusWeight: 200,
 			};
 
 		default:
