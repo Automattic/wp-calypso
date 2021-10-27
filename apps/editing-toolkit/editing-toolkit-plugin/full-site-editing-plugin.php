@@ -66,6 +66,15 @@ function load_full_site_editing() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_full_site_editing' );
 
 /**
+ * Load Global Config.
+ */
+function load_global_config() {
+	require_once __DIR__ . '/config/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_global_config' );
+
+
+/**
  * Load Posts List Block.
  */
 function load_posts_list_block() {

@@ -36,6 +36,8 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	// which enables dynamic file names
 	const sources = env.source.split( ',' );
 
+	console.log( sources );
+
 	// Output path
 	let packageName;
 	const entry = sources.reduce( ( accumulator, source ) => {

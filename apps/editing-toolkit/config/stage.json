@@ -1,5 +1,5 @@
 {
-	"env": "development",
+	"env": "stage",
 	"env_id": "stage",
 	"features": {
 		"democratized-publishing": true
