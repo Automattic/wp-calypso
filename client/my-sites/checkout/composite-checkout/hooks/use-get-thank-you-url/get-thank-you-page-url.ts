@@ -11,7 +11,6 @@ import {
 	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
 import debugFactory from 'debug';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -34,9 +33,9 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
+import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-redirector';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import type { Domain } from '@automattic/data-stores';
-import type { ExperimentAssignment } from '@automattic/explat-client';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
@@ -64,7 +63,6 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
-	postCheckoutEmailExperimentAssignment,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -85,7 +83,6 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains: Domain[] | undefined;
-	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -231,7 +228,6 @@ export default function getThankYouPageUrl( {
 		siteSlug,
 		hideUpsell: Boolean( hideNudge ),
 		domains,
-		postCheckoutEmailExperimentAssignment,
 	} );
 
 	if ( redirectUrlForPostCheckoutUpsell ) {
@@ -434,7 +430,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug,
 	hideUpsell,
 	domains,
-	postCheckoutEmailExperimentAssignment,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
@@ -442,7 +437,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: Domain[] | undefined;
-	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -454,7 +448,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		orderId,
 		siteSlug,
 		domains,
-		postCheckoutEmailExperimentAssignment,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -493,14 +486,12 @@ function getProfessionalEmailUpsellUrl( {
 	siteSlug,
 	orderId,
 	domains,
-	postCheckoutEmailExperimentAssignment,
 }: {
 	pendingOrReceiptId: string;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
 	domains: Domain[] | undefined;
-	postCheckoutEmailExperimentAssignment: ExperimentAssignment | null;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;
@@ -542,18 +533,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	recordTracksEvent( 'calypso_post_checkout_upsell_exposure_trigger', {
-		upsell: 'professional-email-2021-10',
-	} );
-
-	if (
-		! postCheckoutEmailExperimentAssignment ||
-		postCheckoutEmailExperimentAssignment.variationName !== 'treatment'
-	) {
-		return;
-	}
-
-	return `/checkout/offer-professional-email/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
+	return `/checkout/offer/${ PROFESSIONAL_EMAIL_OFFER }/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {

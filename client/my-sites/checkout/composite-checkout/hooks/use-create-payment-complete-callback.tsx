@@ -44,7 +44,6 @@ import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
-import type { ExperimentAssignment } from '@automattic/explat-client';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
 
@@ -62,7 +61,6 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug,
 	isJetpackCheckout = false,
 	checkoutFlow,
-	postCheckoutEmailExperimentAssignment = null,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
@@ -75,7 +73,6 @@ export default function useCreatePaymentCompleteCallback( {
 	siteSlug: string | undefined;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
-	postCheckoutEmailExperimentAssignment?: ExperimentAssignment | null;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
@@ -133,7 +130,6 @@ export default function useCreatePaymentCompleteCallback( {
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
-				postCheckoutEmailExperimentAssignment,
 			};
 
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
@@ -267,7 +263,6 @@ export default function useCreatePaymentCompleteCallback( {
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
-			postCheckoutEmailExperimentAssignment,
 		]
 	);
 }

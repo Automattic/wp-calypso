@@ -26,7 +26,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { useExperiment } from 'calypso/lib/explat';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -237,11 +236,6 @@ export default function CompositeCheckout( {
 
 	const domains = useSiteDomains( siteId );
 
-	const [
-		isLoadingPostCheckoutEmailUpsellExperiment,
-		postCheckoutEmailExperimentAssignment,
-	] = useExperiment( 'promote_professional_email_post_checkout_2021_10' );
-
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug: updatedSiteSlug,
 		redirectTo,
@@ -254,7 +248,6 @@ export default function CompositeCheckout( {
 		isInEditor,
 		isJetpackCheckout,
 		domains,
-		postCheckoutEmailExperimentAssignment,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
@@ -514,15 +507,13 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
-		responseCart.products.length < 1 ||
-		isLoadingPostCheckoutEmailUpsellExperiment;
+		responseCart.products.length < 1;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
-			isLoadingPostCheckoutEmailUpsellExperiment,
 		} );
 	} else {
 		debug( 'no longer loading' );
@@ -578,7 +569,6 @@ export default function CompositeCheckout( {
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
-		postCheckoutEmailExperimentAssignment,
 	} );
 
 	const handlePaymentComplete = useCallback(
