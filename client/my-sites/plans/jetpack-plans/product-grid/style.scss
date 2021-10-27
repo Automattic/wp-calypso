@@ -92,6 +92,15 @@
 		flex: 1 1 0;
 		min-width: 300px;
 	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		.jetpack-free-card {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 32px;
+			align-items: center;
+		}
+	}
 }
 
 .product-grid__more.is-detached {
