@@ -229,6 +229,8 @@ export class SiteAddressChanger extends Component {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
 		const serverValidationMessage = get( validationError, 'message' );
+		//const serverValidationErrorStatus = get( validationError, 'errorStatus' );
+		// if status is 404, return better error message
 
 		if ( this.isUnsyncedAtomicSite() ) {
 			return translate( 'wpcomstaging.com addresses cannot be changed.' );
