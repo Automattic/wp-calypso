@@ -69,8 +69,11 @@
 }
 
 .plugins-browser-item__link {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 	padding: 30px;
+	box-sizing: border-box;
 }
 
 .plugins-browser-item__title,
@@ -102,6 +105,7 @@
 }
 
 .plugins-browser-item__pricing {
+	margin-top: auto;
 	font-weight: 600;
 	font-size: $font-body;
 	color: $studio-black;
