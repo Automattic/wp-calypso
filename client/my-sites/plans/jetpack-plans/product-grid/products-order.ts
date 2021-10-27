@@ -1,4 +1,5 @@
 import {
+	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
@@ -46,6 +47,7 @@ const ONLY_REALTIME_PRODUCT_POSITION_IN_GRID: Record< string, number > = {
 	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 50 ),
 	...setProductsInPosition( JETPACK_VIDEOPRESS_PRODUCTS, 60 ),
 	...setProductsInPosition( JETPACK_CRM_FREE_PRODUCTS, 70 ),
+	[ PLAN_JETPACK_FREE ]: 80,
 };
 
 const PRODUCT_POSITION_IN_GRID: Record< string, number > = {

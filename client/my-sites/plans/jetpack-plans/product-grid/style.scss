@@ -86,19 +86,18 @@
 	gap: 16px;
 	flex-wrap: wrap;
 
-	margin-block-start: 16px;
-
 	.product-without-price {
 		flex: 1 1 0;
 		min-width: 300px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	&.horizontal-layout {
 		.jetpack-free-card {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			grid-gap: 32px;
 			align-items: center;
+			margin-block-start: 16px;
 		}
 	}
 }

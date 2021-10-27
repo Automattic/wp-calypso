@@ -1,4 +1,5 @@
 import {
+	PLAN_JETPACK_FREE,
 	JETPACK_CRM_FREE_PRODUCTS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
@@ -179,6 +180,18 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
 	const getOtherItemsProductCard = ( product: SelectorProduct ) => {
+		if ( PLAN_JETPACK_FREE === product.productSlug ) {
+			return (
+				<div
+					className={ classNames( 'product-grid__free', {
+						[ 'horizontal-layout' ]: ! shouldWrapOtherItems,
+					} ) }
+				>
+					<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+				</div>
+			);
+		}
+
 		if ( JETPACK_CRM_FREE_PRODUCTS.includes( product.productSlug ) ) {
 			return (
 				<JetpackCrmFreeCard fullWidth={ ! showFreeCard } siteId={ siteId } duration={ duration } />
@@ -253,15 +266,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						.map( getOtherItemsProductCard ) }
 				</ul>
 				{ ! shouldWrapOtherItems && (
-					<ul className="product-grid__product-grid second-grid">
-						{ otherItems.slice( 3 ).map( getOtherItemsProductCard ) }
-					</ul>
+					<>
+						<ul className="product-grid__product-grid second-grid">
+							{ otherItems.slice( 3, 5 ).map( getOtherItemsProductCard ) }
+						</ul>
+						{ otherItems.slice( 5 ).map( getOtherItemsProductCard ) }
+					</>
 				) }
-				{
-					<div className="product-grid__free">
-						{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
-					</div>
-				}
 			</ProductGridSection>
 			<StoreFooter />
 			<FootnotesList />
