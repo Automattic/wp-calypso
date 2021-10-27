@@ -14,6 +14,7 @@ interface DetailsProps {
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
 	const { platform, onClose } = data;
+	const learnMoreHref = 'https://wordpress.com/support/import';
 
 	const getTitle = ( _platform: string ): string => {
 		switch ( _platform ) {
@@ -68,7 +69,12 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			<div className="import__details-modal-content">
 				<p>{ getInfo( platform ) }</p>
 
-				<a className="import__details-learn-more" href="#link-to-doc">
+				<a
+					className="import__details-learn-more"
+					href={ learnMoreHref }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					{ __( 'Learn more' ) }
 				</a>
 
