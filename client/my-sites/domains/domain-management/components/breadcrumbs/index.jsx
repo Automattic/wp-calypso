@@ -81,7 +81,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 		if ( mobileItem.showBackArrow && mobileItem.href ) {
 			/* eslint-disable wpcalypso/jsx-gridicon-size */
 			return (
-				<a href={ mobileItem.href }>
+				<a className="breadcrumbs__item" href={ mobileItem.href }>
 					<Gridicon className="breadcrumbs__back-arrow" icon="chevron-left" size={ 14 } />
 				</a>
 			);
