@@ -114,7 +114,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ), function 
 		} );
 
 		it( 'Make purchase', async function () {
-			await cartCheckoutPage.purchase( { timeout: 60 * 1000 } );
+			await cartCheckoutPage.purchase();
 		} );
 	} );
 
