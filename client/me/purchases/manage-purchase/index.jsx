@@ -86,7 +86,6 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
-	shouldRevertAtomicSiteBeforeDeactivation,
 } from 'calypso/state/purchases/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -920,9 +919,5 @@ export default connect( ( state, props ) => {
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
-		shouldRevertAtomicSiteBeforeCancel: shouldRevertAtomicSiteBeforeDeactivation(
-			state,
-			purchase?.id
-		),
 	};
 } )( localize( ManagePurchase ) );

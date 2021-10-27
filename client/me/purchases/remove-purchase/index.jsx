@@ -9,14 +9,13 @@ import {
 	isPlan,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { Dialog, Button, CompactCard, Gridicon } from '@automattic/components';
+import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
@@ -328,44 +327,6 @@ class RemovePurchase extends Component {
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
 			</div>
-		);
-	}
-
-	renderAtomicDialog( purchase ) {
-		const { translate } = this.props;
-		const supportButton = this.props.isChatAvailable
-			? this.getChatButton()
-			: this.getContactUsButton();
-
-		const buttons = [
-			supportButton,
-			{
-				action: 'cancel',
-				disabled: this.state.isRemoving,
-				isPrimary: true,
-				label: translate( "I'll Keep It" ),
-			},
-		];
-		const productName = getName( purchase );
-
-		return (
-			<Dialog
-				buttons={ buttons }
-				className="remove-purchase__dialog"
-				isVisible={ this.state.isDialogVisible }
-				onClose={ this.closeDialog }
-			>
-				<FormSectionHeading />
-				<p>
-					{ translate(
-						'To cancel your %(productName)s plan, please contact our support team' +
-							' — a Happiness Engineer will take care of it.',
-						{
-							args: { productName },
-						}
-					) }
-				</p>
-			</Dialog>
 		);
 	}
 
