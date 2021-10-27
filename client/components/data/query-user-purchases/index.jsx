@@ -21,7 +21,7 @@ function QueryUserPurchases( { userId } ) {
 
 	useEffect( () => {
 		dispatch( request( userId ) );
-	}, [ dispatch, userId ] );
+	} );
 
 	return null;
 }
