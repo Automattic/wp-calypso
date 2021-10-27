@@ -127,7 +127,11 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	// Show Jetpack CRM free products
-	availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
+	doForCurrentCROIteration( ( key ) => {
+		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
+			availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
+		}
+	} );
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],

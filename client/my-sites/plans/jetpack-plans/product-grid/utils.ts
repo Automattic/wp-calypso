@@ -58,7 +58,11 @@ export const getPlansToDisplay = ( {
 		);
 
 	// Add a placeholder for the free plan
-	plansToDisplay.push( { productSlug: PLAN_JETPACK_FREE } );
+	doForCurrentCROIteration( ( key ) => {
+		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
+			plansToDisplay.push( { productSlug: PLAN_JETPACK_FREE } );
+		}
+	} );
 
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );

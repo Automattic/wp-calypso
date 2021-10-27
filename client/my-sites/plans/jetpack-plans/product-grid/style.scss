@@ -91,6 +91,10 @@
 		min-width: 300px;
 	}
 
+	&.add-top-margin {
+		margin-block-start: 16px;
+	}
+
 	&.horizontal-layout {
 		.jetpack-free-card {
 			display: grid;

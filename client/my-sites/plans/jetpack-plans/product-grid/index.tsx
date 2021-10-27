@@ -259,21 +259,51 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</ProductGridSection>
-			<ProductGridSection title={ translate( 'More Products' ) }>
-				<ul className="product-grid__product-grid" ref={ otherItemsGridRef }>
-					{ otherItems
-						.slice( 0, shouldWrapOtherItems ? undefined : 3 )
-						.map( getOtherItemsProductCard ) }
-				</ul>
-				{ ! shouldWrapOtherItems && (
-					<>
-						<ul className="product-grid__product-grid second-grid">
-							{ otherItems.slice( 3, 5 ).map( getOtherItemsProductCard ) }
+			{ getForCurrentCROIteration( {
+				[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
+					<ProductGridSection title={ translate( 'More Products' ) }>
+						<ul className="product-grid__product-grid" ref={ otherItemsGridRef }>
+							{ otherItems
+								.slice( 0, shouldWrapOtherItems ? undefined : 3 )
+								.map( getOtherItemsProductCard ) }
 						</ul>
-						{ otherItems.slice( 5 ).map( getOtherItemsProductCard ) }
-					</>
-				) }
-			</ProductGridSection>
+						{ ! shouldWrapOtherItems && (
+							<>
+								<ul className="product-grid__product-grid second-grid">
+									{ otherItems.slice( 3, 5 ).map( getOtherItemsProductCard ) }
+								</ul>
+								{ otherItems.slice( 5 ).map( getOtherItemsProductCard ) }
+							</>
+						) }
+					</ProductGridSection>
+				),
+			} ) ?? (
+				<>
+					<ul className="product-grid__product-grid">
+						{ otherItems.map( ( product ) => (
+							<li key={ product.iconSlug }>
+								<ProductCard
+									item={ product }
+									onClick={ onSelectProduct }
+									siteId={ siteId }
+									currencyCode={ currencyCode }
+									selectedTerm={ duration }
+									scrollCardIntoView={ scrollCardIntoView }
+									createButtonURL={ createButtonURL }
+								/>
+							</li>
+						) ) }
+					</ul>
+					<div className="product-grid__free add-top-margin">
+						{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+						<JetpackCrmFreeCard
+							fullWidth={ ! showFreeCard }
+							siteId={ siteId }
+							duration={ duration }
+						/>
+					</div>
+				</>
+			) }
 			<StoreFooter />
 			<FootnotesList />
 		</>
