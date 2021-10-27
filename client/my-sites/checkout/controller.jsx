@@ -275,14 +275,14 @@ export function upsellNudge( context, next ) {
 }
 
 export function upsellRedirect( context, next ) {
-	const { receiptId, siteSlug, upsellMeta, upsellType } = context.params;
+	const { receiptId, site, upsellMeta, upsellType } = context.params;
 
 	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
 
 	context.primary = (
 		<PostCheckoutUpsellRedirector
 			receiptId={ receiptId }
-			siteSlug={ siteSlug }
+			siteSlug={ site }
 			upsellMeta={ upsellMeta }
 			upsellType={ upsellType }
 		/>
