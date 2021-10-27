@@ -1,7 +1,8 @@
-import { useExperiment } from 'lib/explat';
-import getThankYouPageUrl from 'my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
-import { useCallback } from 'react';
-import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
+import page from 'page';
+import { useCallback, useEffect } from 'react';
+import { useExperiment } from 'calypso/lib/explat';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 
 export const PROFESSIONAL_EMAIL_OFFER = 'professional-email-offer';
 export type SupportedUpsellType = typeof PROFESSIONAL_EMAIL_OFFER;
@@ -73,25 +74,28 @@ export default function PostCheckoutUpsellRedirector( {
 	}, [ isEligibleForSignupDestinationResult, receiptId, siteSlug ] );
 
 	const getUpsellUrl = useCallback( () => {
-		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
+		if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
 			return `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ siteSlug }`;
 		}
 
 		return null;
 	}, [ receiptId, siteSlug, upsellMeta, upsellType ] );
 
-	if ( isLoadingExperimentAssignment ) {
-		return null;
-	}
-
-	if ( isInExperiment ) {
-		const upsellUrl = getUpsellUrl();
-		if ( null !== upsellUrl ) {
-			page( upsellUrl );
-			return null;
+	useEffect( () => {
+		if ( isLoadingExperimentAssignment ) {
+			return;
 		}
-	}
 
-	page( getThankYouUrl() );
+		if ( isInExperiment ) {
+			const upsellUrl = getUpsellUrl();
+			if ( null !== upsellUrl ) {
+				page( upsellUrl );
+				return;
+			}
+		}
+
+		page( getThankYouUrl() );
+	} );
+
 	return null;
 }
