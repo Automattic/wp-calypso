@@ -85,6 +85,64 @@
 			font-size: 0.875rem;
 			flex-basis: auto;
 			width: 33%;
+			overflow: auto;
+
+			.videos-ui__chapter {
+				padding: 14px 20px;
+				border-bottom: 1px solid #343c3f;
+
+				&:last-child {
+					border-bottom: none;
+				}
+
+				&.active {
+					height: auto;
+				}
+
+				.videos-ui__duration {
+					color: rgba( 255, 255, 255, 0.5 );
+				}
+
+				.videos-ui__completed {
+					display: block;
+					width: 24px;
+					height: 24px;
+					/* stylelint-disable-next-line scales/radii */
+					border-radius: 24px;
+					float: right;
+					background: #00a32a;
+					text-align: center;
+					line-height: 24px;
+					margin-left: 10px;
+				}
+
+				.videos-ui__active-video-content {
+					margin-top: 26px;
+
+					.videos-ui__play-button {
+						display: block;
+						width: 100%;
+						background: #263135;
+						color: rgba( 255, 255, 255, 0.5 );
+						text-align: center;
+						height: 40px;
+						line-height: 40px;
+						/* stylelint-disable-next-line scales/radii */
+						border-radius: 4px;
+						cursor: pointer;
+
+						svg {
+							margin-right: 10px;
+							vertical-align: middle;
+						}
+
+						&:hover {
+							background: rgba( 255, 255, 255, 0.5 );
+							color: #263135;
+						}
+					}
+				}
+			}
 		}
 	}
 }
