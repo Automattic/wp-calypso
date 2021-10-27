@@ -5,6 +5,7 @@
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
+	removeExpiredExperimentAssignments,
 } from '../experiment-assignment-store';
 import localStorage from '../local-storage';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
@@ -54,5 +55,33 @@ describe( 'experiment-assignment-store', () => {
 				experimentName: undefined,
 			} )
 		).toThrowErrorMatchingInlineSnapshot( `"Invalid ExperimentAssignment"` );
+	} );
+
+	it( 'should remove all stored ExperimentAssignments that are past their ttl', () => {
+		storeExperimentAssignment( {
+			...validExperimentAssignment,
+			retrievedTimestamp: Date.now() - 1000 * 60,
+		} );
+		storeExperimentAssignment( {
+			...validExperimentAssignment,
+			experimentName: 'experiment2',
+			retrievedTimestamp: Date.now() - 1000 * 61,
+		} );
+		storeExperimentAssignment( {
+			...validExperimentAssignment,
+			experimentName: 'experiment3',
+			retrievedTimestamp: Date.now() - 1000 * 65,
+		} );
+		removeExpiredExperimentAssignments();
+		expect( localStorage.length ).toBe( 0 );
+
+		storeExperimentAssignment( {
+			...validExperimentAssignment,
+			experimentName: 'experiment4',
+			retrievedTimestamp: Date.now() - 1000 * 60,
+		} );
+		storeExperimentAssignment( validExperimentAssignment );
+		removeExpiredExperimentAssignments();
+		expect( localStorage.length ).toBe( 1 );
 	} );
 } );

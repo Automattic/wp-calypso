@@ -1,3 +1,4 @@
+import * as ExperimentAssignments from './experiment-assignments';
 import localStorage from './local-storage';
 import * as Validations from './validations';
 import type { ExperimentAssignment } from '../types';
@@ -49,4 +50,27 @@ export function retrieveExperimentAssignment(
 	}
 
 	return Validations.validateExperimentAssignment( JSON.parse( maybeExperimentAssignmentJson ) );
+}
+
+/**
+ * Removes all expired and invalid experiment assignments in LocalStorage.
+ */
+export function removeExpiredExperimentAssignments(): void {
+	for ( let i = localStorage.length - 1; i >= 0; i-- ) {
+		const key = localStorage.key( i );
+
+		if ( key?.startsWith( localStorageExperimentAssignmentKeyPrefix ) ) {
+			const experimentName = key.slice( localStorageExperimentAssignmentKeyPrefix.length + 1 );
+			const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
+
+			// Remove the assignment if it is expired or undefined
+			if (
+				( storedExperimentAssignment &&
+					! ExperimentAssignments.isAlive( storedExperimentAssignment ) ) ||
+				typeof storedExperimentAssignment === 'undefined'
+			) {
+				localStorage.removeItem( key );
+			}
+		}
+	}
 }

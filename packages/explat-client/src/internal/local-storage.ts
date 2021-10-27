@@ -20,6 +20,13 @@ const localStorage =
 				clear: function () {
 					this._data = {};
 				},
+				get length() {
+					return Object.keys( this._data ).length;
+				},
+				key: function ( index: number ): string | undefined {
+					const arr = this._data.keys;
+					return arr[ index ];
+				},
 		  };
 
 export default localStorage;
