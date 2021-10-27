@@ -740,7 +740,7 @@ class Signup extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
-		const siteId = getSiteId( state, signupDependencies.siteSlug );
+		const siteId = getSiteId( state, ownProps.siteIdOrSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const shouldStepShowSitePreview = get(
 			steps[ ownProps.stepName ],
