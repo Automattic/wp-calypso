@@ -19,7 +19,6 @@ interface Props {
 	selectedDomainName: string;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	siteId: number;
 	users: NewUser[];
 }
 
@@ -31,7 +30,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	onUsersChange,
 	onReturnKeyPress,
 	selectedDomainName,
-	siteId,
 	users,
 } ) => {
 	const translate = useTranslate();
@@ -80,7 +78,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserRemove={ onUserRemove( user.uuid ) }
 						onReturnKeyPress={ onReturnKeyPress }
 						selectedDomainName={ selectedDomainName }
-						siteId={ siteId }
 						showTrashButton={ index > 0 }
 					/>
 

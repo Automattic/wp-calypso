@@ -3,16 +3,13 @@ import classNames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 import './style.scss';
 
@@ -32,15 +29,9 @@ const TitanNewMailbox = ( {
 	selectedDomainName,
 	showAllErrors = false,
 	showLabels = true,
-	siteId,
 } ) => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
-
-	const domainsForSite = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
-	const selectedDomain = useSelector( () =>
-		getSelectedDomain( { domains: domainsForSite, selectedDomainName: selectedDomainName } )
-	);
 
 	const hasBeenValidated =
 		[ alternativeEmail, mailbox, name, password ].some( ( value ) => '' !== value ) ||
@@ -108,8 +99,8 @@ const TitanNewMailbox = ( {
 								setMailboxFieldTouched( hasBeenValidated );
 							} }
 							onKeyUp={ onReturnKeyPress }
-							prefix={ isRtl ? `\u200e@${ selectedDomain?.name }\u202c` : null }
-							suffix={ isRtl ? null : `\u200e@${ selectedDomain?.name }\u202c` }
+							prefix={ isRtl ? `\u200e@${ selectedDomainName }\u202c` : null }
+							suffix={ isRtl ? null : `\u200e@${ selectedDomainName }\u202c` }
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
