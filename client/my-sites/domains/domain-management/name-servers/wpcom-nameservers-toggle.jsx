@@ -31,6 +31,7 @@ class NameserversToggle extends PureComponent {
 						onChange={ this.handleToggle }
 						checked={ this.props.enabled }
 						value="active"
+						label={ this.props.translate( 'On' ) }
 					/>
 				</form>
 				{ this.renderExplanation() }
