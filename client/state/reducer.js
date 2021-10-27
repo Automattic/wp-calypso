@@ -5,7 +5,6 @@
     "patterns": ["./*\/reducer*", "state/*\/reducer*"]
 }]*/
 
-import { reducer as httpData } from 'calypso/state/data-layer/http-data';
 import { combineReducers } from 'calypso/state/utils';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -17,7 +16,6 @@ import sites from './sites/reducer';
 const reducers = {
 	currentUser,
 	dataRequests,
-	httpData,
 	sites,
 };
 
