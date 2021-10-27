@@ -84,8 +84,7 @@ class EllipsisMenu extends Component {
 					disabled={ disabled }
 					className="ellipsis-menu__toggle"
 				>
-					{ ! icon && <Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" /> }
-					{ icon }
+					{ icon ? icon : <Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" /> }
 				</Button>
 				{ isMenuVisible && (
 					<PopoverMenu
