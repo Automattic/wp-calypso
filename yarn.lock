@@ -14151,17 +14151,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.10.0":
+"dayjs@npm:^1.10.0, dayjs@npm:^1.8.15":
   version: 1.10.7
   resolution: "dayjs@npm:1.10.7"
   checksum: 2ce908776ea5b383dba2c01c72290ff12ad97cafa81b9c72a9cc4f801d736d592f20bd992ea1dff083ab80e807080b5af21f634bb09e67f89f66582a9059053a
-  languageName: node
-  linkType: hard
-
-"dayjs@npm:^1.8.15":
-  version: 1.10.6
-  resolution: "dayjs@npm:1.10.6"
-  checksum: 97d6b68edda28995f7ab98298635057f5e610408294b492d47f197903db5cca99a5d8974d38b93dd4457bb25bcceb044aacda5507dfbe1e3408fa359b09589d9
   languageName: node
   linkType: hard
 
