@@ -3,8 +3,11 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import ImportPlatformDetails from './platform-details';
 import ImportPreview from './preview';
+
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -12,11 +15,19 @@ import './style.scss';
 interface Props {
 	website: string;
 	platform: string;
+	signupDependencies: ReturnType< typeof getSignupDependencyStore >;
 }
 
-const ReadyPreviewStep: React.FunctionComponent< Props > = ( { website, platform } ) => {
+const ReadyPreviewStep2: React.FunctionComponent< Props > = ( {
+	website,
+	platform,
+	signupDependencies,
+} ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+
+	// eslint-disable-next-line no-console
+	console.log( 'data', signupDependencies );
 
 	const convertToFrendlyWebsiteName = ( website: string ): string => {
 		return website.replace( 'https://', '' ).replace( 'http://', '' ).replace( 'www.', '' );
@@ -127,5 +138,12 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 		</div>
 	);
 };
+
+const ReadyPreviewStep = connect( ( state ) => {
+	const signupDependencies = getSignupDependencyStore( state );
+	return {
+		signupDependencies,
+	};
+} )( ReadyPreviewStep2 );
 
 export { ReadyPreviewStep, ReadyNotStep, ReadyStep };

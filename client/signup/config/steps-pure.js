@@ -762,7 +762,7 @@ export function generateSteps( {
 			dependencies: [ 'url' ],
 			apiRequestFunction: function ( callback, { url } ) {
 				wpcom.undocumented().analyzeUrl( url, function ( errors, response ) {
-					callback( errors, { urlData: response.data } );
+					callback( errors, { urlData: response } );
 				} );
 			},
 		},
