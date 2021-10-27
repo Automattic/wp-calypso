@@ -159,6 +159,7 @@ const makeRequest = ( originalParams, fn ) => {
 
 	if ( 'function' === typeof params.onStreamRecord ) {
 		// remove onStreamRecord param, which can’t be cloned
+		//console.log( 'params.onStreamRecord contains: ', params.onStreamRecord );
 		delete params.onStreamRecord;
 
 		// FIXME @azabani implement stream mode processing
@@ -430,6 +431,7 @@ function onmessage( e ) {
 
 		// FIXME @azabani remove once stream mode processing is implemented
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
+			//console.log( 'the xhr request contains: ', xhr );
 			const error = new Error(
 				'stream mode processing is not yet implemented for wpcom-proxy-request'
 			);
