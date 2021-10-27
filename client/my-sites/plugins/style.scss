@@ -1,3 +1,7 @@
+.is-section-plugins .main {
+	padding-top: 70px; // Compensate for the fixed header.
+}
+
 .is-section-plugins.color-scheme.is-nav-unification {
 	--color-surface-backdrop: --studio-white;
 }

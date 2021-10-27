@@ -21,7 +21,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
-import FormattedHeader from 'calypso/components/formatted-header';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
@@ -484,25 +484,16 @@ export class PluginsBrowser extends Component {
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<SidebarNavigation />
 				{ ! this.props.hideHeader && (
-					<div className="plugins-browser__header">
-						<FormattedHeader
-							brandFont
-							className="plugins-browser__page-heading"
-							headerText={ this.props.translate( 'Plugins' ) }
-							align="left"
-						/>
-
-						<div className="plugins-browser__main-buttons manage-plugins-button">
+					<FixedNavigationHeader brandFont headerText={ this.props.translate( 'Plugins' ) }>
+						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
-						</div>
-						<div className="plugins-browser__main-buttons upload-plugin-button">
-							{ this.renderUploadPluginButton( this.state.isMobile ) }
+							{ this.renderUploadPluginButton() }
 						</div>
 
 						<div className="plugins-browser__searchbox">
 							{ this.getSearchBox( this.state.isMobile ) }
 						</div>
-					</div>
+					</FixedNavigationHeader>
 				) }
 				{ this.renderUpgradeNudge() }
 				{ this.getPluginBrowserContent() }

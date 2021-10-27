@@ -7,8 +7,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
-import InlineSupportLink from 'calypso/components/inline-support-link';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
@@ -402,29 +401,16 @@ export class PluginsMain extends Component {
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
+				<FixedNavigationHeader
+					brandFont
+					className="plugins__page-heading"
+					headerText={ this.props.translate( 'Plugins' ) }
+				>
+					{ this.renderAddPluginButton() }
+					{ this.renderUploadPluginButton() }
+				</FixedNavigationHeader>
 				<div className="plugins__main">
-					<div className="plugins__header">
-						<FormattedHeader
-							brandFont
-							className="plugins__page-heading"
-							headerText={ this.props.translate( 'Plugins' ) }
-							align="left"
-							subHeaderText={ this.props.translate(
-								'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="plugins" showIcon={ false } />
-										),
-									},
-								}
-							) }
-						/>
-						<div className="plugins__main-buttons">
-							{ this.renderAddPluginButton() }
-							{ this.renderUploadPluginButton() }
-						</div>
-					</div>
+					<div className="plugins__header"></div>
 					<div className="plugins__main-header">
 						<SectionNav selectedText={ this.getSelectedText() }>
 							<NavTabs>{ navItems }</NavTabs>
