@@ -1,5 +1,4 @@
-import { LOGSTASH } from 'calypso/state/action-types';
-import 'calypso/state/data-layer/wpcom/logstash';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Parameters sent to logstash endpoint.
@@ -26,9 +25,6 @@ interface LogToLogstashParams {
  * @param params wpcom log2logstash params.
  * @returns      Action object
  */
-export function logToLogstash( params: LogToLogstashParams ) {
-	return {
-		type: LOGSTASH,
-		params: { params: JSON.stringify( params ) },
-	};
-}
+export const logToLogstash = ( params: LogToLogstashParams ) => {
+	return () => wpcom.req.post( '/logstash', { params: JSON.stringify( params ) } );
+};
