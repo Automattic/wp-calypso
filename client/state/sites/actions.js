@@ -23,7 +23,6 @@ import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
-import 'calypso/state/data-layer/wpcom/sites/homepage';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -252,11 +251,43 @@ export const sitePluginUpdated = ( siteId ) => ( {
  * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
  * @returns {object} Action object
  */
-export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( {
-	type: SITE_FRONT_PAGE_UPDATE,
-	siteId,
-	frontPageOptions,
-} );
+export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( { dispatch } ) => {
+	dispatch( { type: SITE_FRONT_PAGE_UPDATE, siteId, frontPageOptions } );
+
+	wpcom.req
+		.post(
+			`/sites/${ siteId }/homepage`,
+			{ apiVersion: '1.1' },
+			{
+				is_page_on_front: isPageOnFront( frontPageOptions.show_on_front ),
+				page_on_front_id: frontPageOptions.page_on_front,
+				page_for_posts_id: frontPageOptions.page_for_posts,
+			}
+		)
+		.then( ( response ) =>
+			dispatch( {
+				type: SITE_FRONT_PAGE_UPDATE,
+				siteId,
+				frontPageOptions: {
+					show_on_front: response.is_page_on_front ? 'page' : 'posts',
+					page_on_front: parseInt( response.page_on_front_id, 10 ),
+					page_for_posts: parseInt( response.page_for_posts_id, 10 ),
+				},
+			} )
+		)
+		.catch( () => {} );
+};
+
+function isPageOnFront( show_on_front ) {
+	switch ( show_on_front ) {
+		case 'page':
+			return true;
+		case 'posts':
+			return false;
+		default:
+			return undefined;
+	}
+}
 
 /**
  * Returns an action object to be used to update the site migration status.
