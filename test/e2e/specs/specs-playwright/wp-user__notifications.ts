@@ -75,7 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
 		} );
 
-		it( `See notification for the comment left by ${ commentingUser }`, async function () {
+		it( `See and click notification for the comment left by ${ commentingUser }`, async function () {
 			notificationsComponent = new NotificationsComponent( notificationsPage );
 			await notificationsComponent.clickNotification( comment );
 		} );
