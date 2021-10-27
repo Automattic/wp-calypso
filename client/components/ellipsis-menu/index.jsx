@@ -66,7 +66,6 @@ class EllipsisMenu extends Component {
 			icon,
 			className,
 			popoverClassName,
-			icon,
 		} = this.props;
 		const { isMenuVisible } = this.state;
 		const classes = classnames( 'ellipsis-menu', className, {
