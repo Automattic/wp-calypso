@@ -410,10 +410,6 @@ class RemovePurchase extends Component {
 			);
 		}
 
-		if ( this.props.shouldRevertAtomicSite && ! config.isEnabled( 'atomic/automated-revert' ) ) {
-			return this.renderAtomicDialog( purchase );
-		}
-
 		// Jetpack Plan or Product Cancellation
 		if ( this.props.isJetpack ) {
 			return this.renderJetpackDialog();

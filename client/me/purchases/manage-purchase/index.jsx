@@ -69,7 +69,6 @@ import {
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
@@ -432,7 +431,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, shouldRevertAtomicSiteBeforeCancel, translate } = this.props;
+		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
 		if ( ! isCancelable( purchase ) ) {
@@ -440,12 +439,9 @@ class ManagePurchase extends Component {
 		}
 
 		let text;
-		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
-		if ( shouldRevertAtomicSiteBeforeCancel && ! config.isEnabled( 'atomic/automated-revert' ) ) {
-			text = translate( 'Contact Support to Cancel your Subscription' );
-			link = CALYPSO_CONTACT;
-		} else if ( hasAmountAvailableToRefund( purchase ) ) {
+		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain and Refund' );
 			}
