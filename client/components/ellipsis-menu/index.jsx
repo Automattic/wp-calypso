@@ -18,7 +18,6 @@ class EllipsisMenu extends Component {
 		onClick: PropTypes.func,
 		onToggle: PropTypes.func,
 		popoverClassName: PropTypes.string,
-		icon: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -63,7 +62,6 @@ class EllipsisMenu extends Component {
 			position,
 			children,
 			disabled,
-			icon,
 			className,
 			popoverClassName,
 		} = this.props;
@@ -84,7 +82,7 @@ class EllipsisMenu extends Component {
 					disabled={ disabled }
 					className="ellipsis-menu__toggle"
 				>
-					{ icon ? icon : <Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" /> }
+					<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
 				</Button>
 				{ isMenuVisible && (
 					<PopoverMenu
