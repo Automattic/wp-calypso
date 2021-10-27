@@ -132,7 +132,6 @@ class ManagePurchase extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -827,7 +826,7 @@ class ManagePurchase extends Component {
 				{ this.props.siteId ? (
 					<QuerySitePurchases siteId={ this.props.siteId } />
 				) : (
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
@@ -920,7 +919,6 @@ export default connect( ( state, props ) => {
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
-		userId,
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
 		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),

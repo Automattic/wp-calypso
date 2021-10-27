@@ -47,7 +47,7 @@ export default function UltimateTrafficGuide() {
 
 	return (
 		<CompactCard className="ultimate-traffic-guide">
-			{ ! purchases && <QueryUserPurchases userId={ userId } /> }
+			<QueryUserPurchases />
 			{ isLoading || ! purchases ? <Placeholder num={ 5 } /> : renderContent() }
 		</CompactCard>
 	);

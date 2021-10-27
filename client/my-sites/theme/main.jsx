@@ -670,7 +670,7 @@ class ThemeSheet extends Component {
 
 		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
 
-		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
+		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
 			themeName &&
 			translate( '%(themeName)s Theme', {
@@ -757,7 +757,7 @@ class ThemeSheet extends Component {
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
-				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<QueryUserPurchases />
 				{
 					siteId && (
 						<QuerySitePurchases siteId={ siteId } />
@@ -859,7 +859,6 @@ export default connect(
 			siteId,
 			siteSlug,
 			backPath,
-			currentUserId,
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isLoggedIn: !! currentUserId,

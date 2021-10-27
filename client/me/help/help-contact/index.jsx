@@ -732,7 +732,7 @@ class HelpContact extends Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				{ ! this.props.compact && <QuerySupportHistory email={ this.props.currentUser.email } /> }
 				<QueryTicketSupportConfiguration />
-				<QueryUserPurchases userId={ this.props.currentUser.ID } />
+				<QueryUserPurchases />
 				<QueryLanguageNames />
 			</Fragment>
 		);
