@@ -67,7 +67,7 @@
 		"jetpack/only-realtime-products": false,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,
-		"jetpack/user-licensing-m1": false,
+		"jetpack/user-licensing": false,
 		"jetpack/userless-checkout": true,
 		"jitms": true,
 		"lasagna": true,
