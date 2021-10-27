@@ -60,6 +60,7 @@ export const requestSiteAddressAvailability = (
 		.then( ( data ) => {
 			const errorType = get( data, 'error' );
 			const message = get( data, 'message' );
+			const errorStatus = get( data, 'status' );
 
 			if ( errorType ) {
 				dispatch( {
@@ -67,6 +68,7 @@ export const requestSiteAddressAvailability = (
 					siteId,
 					errorType,
 					message,
+					errorStatus,
 				} );
 
 				return;
@@ -81,12 +83,14 @@ export const requestSiteAddressAvailability = (
 		.catch( ( error ) => {
 			const errorType = get( error, 'error' );
 			const message = get( error, 'message' );
+			const errorStatus = get( error, 'status' );
 
 			dispatch( {
 				type: SITE_ADDRESS_AVAILABILITY_ERROR,
 				siteId,
 				errorType,
 				message,
+				errorStatus,
 			} );
 		} );
 };
