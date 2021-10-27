@@ -1925,4 +1925,18 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 	);
 };
 
+Undocumented.prototype.analyzeUrl = function ( url, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: '/imports/analyze-url',
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			site_url: url,
+		},
+		fn
+	);
+};
+
 export default Undocumented;

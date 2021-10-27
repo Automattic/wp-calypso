@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { GoToStep } from '../types';
+import { GoToStep, submitSignupStep } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -14,9 +14,10 @@ const validateUrl = ( url: string ): boolean => {
 
 interface Props {
 	goToStep: GoToStep;
+	submitSignupStep: submitSignupStep;
 }
 
-const CaptureStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
+const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, submitSignupStep } ) => {
 	const { __ } = useI18n();
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
@@ -24,6 +25,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( { goToStep } ) => {
 
 	const runProcess = (): void => {
 		// Redirect to the next step!
+		submitSignupStep( { stepName: 'capture' }, { url: urlValue } );
 		goToStep( 'scanning' );
 	};
 

@@ -3,11 +3,12 @@ import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
 import ScanningStep from './scanning';
-import { GoToStep } from './types';
+import { GoToStep, submitSignupStep } from './types';
 import './style.scss';
 
 interface Props {
 	goToStep: GoToStep;
+	submitSignupStep: submitSignupStep;
 	stepName: string;
 	stepSectionName: string;
 }
@@ -20,7 +21,13 @@ const MOCK_DATA = {
 export default function ImportOnboarding( props: Props ): React.ReactNode {
 	return (
 		<div className="import__onboarding-page">
-			{ props.stepName === 'capture' && <CaptureStep goToStep={ props.goToStep } /> }
+			{ props.stepName === 'capture' && (
+				<CaptureStep
+					goToNextStep={ props.goToNextStep }
+					submitSignupStep={ props.submitSignupStep }
+					goToStep={ props.goToStep }
+				/>
+			) }
 			{ props.stepName === 'scanning' && <ScanningStep goToStep={ props.goToStep } /> }
 			{ props.stepName === 'list' && <ListStep /> }
 
