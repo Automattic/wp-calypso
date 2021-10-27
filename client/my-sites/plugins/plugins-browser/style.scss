@@ -13,10 +13,6 @@
 
 .plugins-browser__searchbox {
 	width: 250px;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: stretch;
 	margin-bottom: 20px;
 
 	.search-component {
@@ -32,16 +28,10 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-		align-items: flex-end;
-	}
-
 	@media screen and ( max-width: 660px ) {
 		width: 30px;
 
 		.search-component {
-			width: 50px;
 			box-shadow: none;
 		}
 	}
