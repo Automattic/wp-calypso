@@ -90,7 +90,7 @@
 		"bunyan": "^1.8.15",
 		"chai": "^4.3.4",
 		"chalk": "^4.0.0",
-		"chrono-node": "^1.3.5",
+		"chrono-node": "^2.3.2",
 		"circular-dependency-plugin": "^5.2.0",
 		"classnames": "^2.3.1",
 		"clipboard": "^2.0.6",
