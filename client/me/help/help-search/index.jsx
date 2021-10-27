@@ -10,7 +10,7 @@ import NoResults from 'calypso/my-sites/no-results';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-export function HelpSearch( props ) {
+export default function HelpSearch( props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ searchQuery, setQuery ] = useState( '' );
@@ -22,7 +22,7 @@ export function HelpSearch( props ) {
 		dispatch( recordTracksEvent( 'calypso_help_search', { query } ) );
 	};
 
-	const displaySearchResults = () => {
+	function renderSearchResults() {
 		if ( ! searchQuery ) {
 			return null;
 		}
@@ -96,20 +96,18 @@ export function HelpSearch( props ) {
 				/>
 			</div>
 		);
-	};
+	}
 
 	return (
 		<div className="help-search">
 			<SearchCard
 				analyticsGroup="Help"
-				delaySearch={ true }
+				delaySearch
 				initialValue=""
 				onSearch={ onSearch }
 				placeholder={ translate( 'How can we help?' ) }
 			/>
-			{ displaySearchResults() }
+			{ renderSearchResults() }
 		</div>
 	);
 }
-
-export default HelpSearch;
