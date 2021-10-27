@@ -379,13 +379,7 @@ module.exports = {
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',
 			{
-				'@wordpress/block-editor': [
-					'__experimentalBlock',
-					// InserterMenuExtension has been made unstable in this PR: https://github.com/WordPress/gutenberg/pull/31417 / Gutenberg v10.7.0-rc.1.
-					// We need to support both symbols until we're sure Gutenberg < v10.7.x is not used anymore in WPCOM.
-					'__unstableInserterMenuExtension',
-					'__experimentalInserterMenuExtension',
-				],
+				'@wordpress/block-editor': [ '__experimentalBlock', '__unstableInserterMenuExtension' ],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
 				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
