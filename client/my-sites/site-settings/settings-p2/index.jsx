@@ -23,6 +23,7 @@ export class P2GeneralSettingsForm extends Component {
 
 	state = {
 		isDomainsToggledOn: false,
+		isValidating: false,
 		success: [],
 		errors: {},
 		errorToDisplay: '',
@@ -43,6 +44,12 @@ export class P2GeneralSettingsForm extends Component {
 			return { isDomainsToggledOn: true };
 		}
 	}
+
+	handleSubmitForm = ( event ) => {
+		if ( ! this.state.isValidating ) {
+			this.props.handleSubmitForm( event );
+		}
+	};
 
 	getPreapprovedDomains = () => {
 		const { fields } = this.props;
@@ -82,6 +89,8 @@ export class P2GeneralSettingsForm extends Component {
 	};
 
 	async validateDomains( domains ) {
+		this.setState( { isValidating: true } );
+
 		if ( domains.length < 1 ) {
 			this.refreshDomainsValidation( [], {} );
 			return;
@@ -102,6 +111,8 @@ export class P2GeneralSettingsForm extends Component {
 			// this.props.recordTracksEvent( 'calypso_p2_preapproved_domain_validation_success' );
 		} catch ( error ) {
 			// this.props.recordTracksEvent( 'calypso_p2_preapproved_domain_validation_failed' );
+		} finally {
+			this.setState( { isValidating: false } );
 		}
 	}
 
@@ -188,7 +199,7 @@ export class P2GeneralSettingsForm extends Component {
 						isRequestingSettings || isSavingSettings || Object.keys( this.state.errors ).length > 0
 					}
 					isSaving={ isSavingSettings }
-					onButtonClick={ this.props.handleSubmitForm }
+					onButtonClick={ this.handleSubmitForm }
 					showButton
 					title={ translate( 'Joining this workspace' ) }
 				/>
