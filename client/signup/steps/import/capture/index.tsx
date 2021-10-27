@@ -28,6 +28,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
 	const [ isValid, setIsValid ] = React.useState( true );
+	const [ showError, setShowError ] = React.useState( false );
 
 	const runProcess = (): void => {
 		setIsScanning( true );
@@ -54,6 +55,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 
 	const onKeyDown = ( e: KeyboardEvent< HTMLInputElement > ) => {
 		if ( e.key === 'Enter' ) {
+			setShowError( true );
 			isValid && urlValue && runProcess();
 		}
 	};
@@ -73,7 +75,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 							onChange={ onInputChange }
 							value={ urlValue }
 						/>
-						{ ! isValid && (
+						{ ! isValid && showError && (
 							<div className="capture__input-error-msg">
 								{ __( 'The address you entered is not valid. Please try again.' ) }
 							</div>
