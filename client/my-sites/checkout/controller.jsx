@@ -7,6 +7,7 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import PostCheckoutUpsellRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
 	retrieveSignupDestination,
@@ -268,6 +269,23 @@ export function upsellNudge( context, next ) {
 				upgradeItem={ upgradeItem }
 			/>
 		</CalypsoShoppingCartProvider>
+	);
+
+	next();
+}
+
+export function upsellRedirect( context, next ) {
+	const { receiptId, siteSlug, upsellMeta, upsellType } = context.params;
+
+	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
+
+	context.primary = (
+		<PostCheckoutUpsellRedirector
+			receiptId={ receiptId }
+			siteSlug={ siteSlug }
+			upsellMeta={ upsellMeta }
+			upsellType={ upsellType }
+		/>
 	);
 
 	next();
