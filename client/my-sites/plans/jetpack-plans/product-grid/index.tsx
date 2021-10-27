@@ -124,6 +124,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, currentPlanSlug, translate ] );
 
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
+	const {
+		shouldWrap: shouldWrapOtherItems,
+		gridRef: otherItemsGridRef,
+	} = useWrapGridForSmallScreens( 3 );
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
 	);
@@ -174,6 +178,28 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		],
 	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
+	const getOtherItemsProductCard = ( product: SelectorProduct ) => {
+		if ( JETPACK_CRM_FREE_PRODUCTS.includes( product.productSlug ) ) {
+			return (
+				<JetpackCrmFreeCard fullWidth={ ! showFreeCard } siteId={ siteId } duration={ duration } />
+			);
+		}
+
+		return (
+			<li key={ product.iconSlug }>
+				<ProductCard
+					item={ product }
+					onClick={ onSelectProduct }
+					siteId={ siteId }
+					currencyCode={ currencyCode }
+					selectedTerm={ duration }
+					scrollCardIntoView={ scrollCardIntoView }
+					createButtonURL={ createButtonURL }
+				/>
+			</li>
+		);
+	};
+
 	return (
 		<>
 			{ planRecommendation && (
@@ -221,39 +247,16 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</div>
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
-				<ul className="product-grid__product-grid">
-					{ otherItems.map( ( product ) => {
-						// if ( PLAN_JETPACK_FREE === product.productSlug ) {
-						// 	return showFreeCard ? (
-						// 		<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-						// 	) : null;
-						// }
-
-						if ( JETPACK_CRM_FREE_PRODUCTS.includes( product.productSlug ) ) {
-							return (
-								<JetpackCrmFreeCard
-									fullWidth={ ! showFreeCard }
-									siteId={ siteId }
-									duration={ duration }
-								/>
-							);
-						}
-
-						return (
-							<li key={ product.iconSlug }>
-								<ProductCard
-									item={ product }
-									onClick={ onSelectProduct }
-									siteId={ siteId }
-									currencyCode={ currencyCode }
-									selectedTerm={ duration }
-									scrollCardIntoView={ scrollCardIntoView }
-									createButtonURL={ createButtonURL }
-								/>
-							</li>
-						);
-					} ) }
+				<ul className="product-grid__product-grid" ref={ otherItemsGridRef }>
+					{ otherItems
+						.slice( 0, shouldWrapOtherItems ? undefined : 3 )
+						.map( getOtherItemsProductCard ) }
 				</ul>
+				{ ! shouldWrapOtherItems && (
+					<ul className="product-grid__product-grid second-grid">
+						{ otherItems.slice( 3 ).map( getOtherItemsProductCard ) }
+					</ul>
+				) }
 				{
 					<div className="product-grid__free">
 						{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
