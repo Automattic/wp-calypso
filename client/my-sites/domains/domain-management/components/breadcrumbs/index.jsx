@@ -94,7 +94,9 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 		return (
 			<>
 				{ renderBackArrow() }
-				<span className="breadcrumbs__item--mobile">{ renderItemLabel( mobileItem ) }</span>
+				<span className="breadcrumbs__item breadcrumbs__item--mobile">
+					{ renderItemLabel( mobileItem ) }
+				</span>
 				{ renderHelpBubble( mobileItem ) }
 			</>
 		);
