@@ -13,7 +13,7 @@ import {
 	NewPostFlow,
 	setupHooks,
 	PublishedPostPage,
-	itif,
+	itSkipIf,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -89,7 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// On mobile web, preview button opens a new tab.
 
 		// TODO: step skipped for non-mobile due to https://github.com/Automattic/wp-calypso/issues/57128.
-		itif( targetDevice === 'mobile' )( 'Launch preview', async function () {
+		itSkipIf( targetDevice === 'mobile' )( 'Launch preview', async function () {
 			if ( BrowserHelper.getTargetDeviceName() === 'mobile' ) {
 				previewPage = await gutenbergEditorPage.openPreviewAsMobile();
 			} else {
@@ -98,7 +98,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 
 		// TODO: step skipped for non-mobile due to https://github.com/Automattic/wp-calypso/issues/57128.
-		itif( targetDevice === 'mobile' )( 'Close preview', async function () {
+		itSkipIf( targetDevice === 'mobile' )( 'Close preview', async function () {
 			// Mobile path.
 			if ( previewPage ) {
 				await previewPage.close();
@@ -109,7 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 
 		// TODO: step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
-		itif( targetDevice !== 'mobile' )( 'Save draft', async function () {
+		itSkipIf( targetDevice !== 'mobile' )( 'Save draft', async function () {
 			await gutenbergEditorPage.saveDraft();
 		} );
 	} );
