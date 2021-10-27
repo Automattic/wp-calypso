@@ -1,7 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import wpcom from 'calypso/lib/wp';
 import ScanningStep from '../scanning';
-import { GoToStep } from '../types';
+import { GoToStep, urlData } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -17,12 +18,14 @@ interface Props {
 	goToStep: GoToStep;
 	isScanning: boolean;
 	setIsScanning: ( inProgress: boolean ) => void;
+	setUrlData: ( data: urlData ) => void;
 }
 
 const CaptureStep: React.FunctionComponent< Props > = ( {
 	goToStep,
 	isScanning,
 	setIsScanning,
+	setUrlData,
 } ) => {
 	const { __ } = useI18n();
 
@@ -33,19 +36,26 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const runProcess = (): void => {
 		setIsScanning( true );
 
-		/**
-		 * Temp piece of code
-		 * goToStep is a function for redirecting users to
-		 * the next step depending on the scanning result
-		 *
-		 * It can be:
-		 * - goToStep( 'ready' );
-		 * - goToStep( 'ready', 'not' );
-		 * - goToStep( 'ready', 'preview' );
-		 */
-		setTimeout( () => {
+		wpcom.undocumented().analyzeUrl( urlValue, function ( errors: any, response: urlData ) {
+			setIsScanning( false );
+
+			if ( errors ) {
+				return;
+			}
+
+			setUrlData( response );
+			/**
+			 * Temp piece of code
+			 * goToStep is a function for redirecting users to
+			 * the next step depending on the scanning result
+			 *
+			 * It can be:
+			 * - goToStep( 'ready' );
+			 * - goToStep( 'ready', 'not' );
+			 * - goToStep( 'ready', 'preview' );
+			 */
 			goToStep( 'ready', 'preview' );
-		}, 3000 );
+		} );
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {

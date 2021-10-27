@@ -3,20 +3,21 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { urlData } from '../types';
 import ImportPlatformDetails from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
-	website: string;
-	platform: string;
+	data: urlData;
 }
 
-const ReadyPreviewStep: React.FunctionComponent< Props > = ( { website, platform } ) => {
+const ReadyPreviewStep: React.FunctionComponent< Props > = ( { data } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+
+	const { url: website, platform } = data;
 
 	const convertToFrendlyWebsiteName = ( website: string ): string => {
 		return website.replace( 'https://', '' ).replace( 'http://', '' ).replace( 'www.', '' );

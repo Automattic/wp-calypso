@@ -33,6 +33,10 @@ const shouldHideNextBtn = ( stepName: string, isScanning = false ): boolean => {
 export default function ImportOnboarding( props: Props ): React.ReactNode {
 	const { __ } = useI18n();
 	const [ isScanning, setIsScanning ] = React.useState( false );
+	const [ data, setUrlData ] = React.useState( {
+		platform: '',
+		url: '',
+	} );
 
 	return (
 		<StepWrapper
@@ -50,6 +54,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 							goToStep={ props.goToStep }
 							isScanning={ isScanning }
 							setIsScanning={ setIsScanning }
+							setUrlData={ setUrlData }
 						/>
 					) }
 					{ props.stepName === 'list' && <ListStep /> }
@@ -59,7 +64,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 					) }
 					{ props.stepName === 'ready' && props.stepSectionName === 'not' && <ReadyNotStep /> }
 					{ props.stepName === 'ready' && props.stepSectionName === 'preview' && (
-						<ReadyPreviewStep website={ MOCK_DATA.website } platform={ MOCK_DATA.platform } />
+						<ReadyPreviewStep data={ data } />
 					) }
 				</div>
 			}

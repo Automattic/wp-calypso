@@ -15,7 +15,6 @@ import {
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
-import wpcom from 'calypso/lib/wp';
 
 const noop = () => {};
 
@@ -758,13 +757,6 @@ export function generateSteps( {
 		},
 		capture: {
 			stepName: 'capture',
-			providesDependencies: [ 'url', 'urlData' ],
-			dependencies: [ 'url' ],
-			apiRequestFunction: function ( callback, { url } ) {
-				wpcom.undocumented().analyzeUrl( url, function ( errors, response ) {
-					callback( errors, { urlData: response.data } );
-				} );
-			},
 		},
 		ready: {
 			dependencies: [ 'urlData' ],
