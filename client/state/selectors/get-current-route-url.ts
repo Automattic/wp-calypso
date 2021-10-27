@@ -1,10 +1,12 @@
 /**
+ * External dependencies
+ */
+import { createSelector } from '@automattic/state-utils';
+/**
  * Internal dependencies
  */
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { createSelector } from '@automattic/state-utils';
-
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 /**
  * Type dependencies
  */
