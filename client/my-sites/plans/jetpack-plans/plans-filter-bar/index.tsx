@@ -34,18 +34,20 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 				toggleChecked,
 			} ) }
 		>
-			{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
-			<span className="plans-filter-bar__discount-message-text">
-				{ isMobile
-					? translate( 'Get %(discount)s%% off by billing yearly', {
-							args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-							comment: 'Discount is a percentage',
-					  } )
-					: translate( 'Get %(discount)s%% off*', {
-							args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
-							comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
-					  } ) }
-			</span>
+			<div>
+				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
+				<span className="plans-filter-bar__discount-message-text">
+					{ isMobile
+						? translate( 'Get %(discount)s%% off by billing yearly', {
+								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Discount is a percentage',
+						  } )
+						: translate( 'Get %(discount)s%% off*', {
+								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
+						  } ) }
+				</span>
+			</div>
 		</div>
 	) : null;
 };
@@ -59,8 +61,6 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 
 	const CALYPSO_MASTERBAR_HEIGHT = 47;
 	const CLOUD_MASTERBAR_HEIGHT = 0;
-
-	const isMobile: boolean = useMobileBreakpoint();
 
 	const windowBoundaryOffset = useMemo( () => {
 		if ( isJetpackCloud() || isConnectStore() ) {
@@ -91,28 +91,19 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 							checked: durationChecked,
 						} ) }
 					>
-						<div className="plans-filter-bar__toggle-left-hand-side">
-							<span className="plans-filter-bar__toggle-off-label">
-								{ translate( 'Bill monthly' ) }
-							</span>
-						</div>
+						<span className="plans-filter-bar__toggle-off-label">
+							{ translate( 'Bill monthly' ) }
+						</span>
 						<ToggleControl
 							className="plans-filter-bar__toggle-control"
 							checked={ durationChecked }
 							onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
 						/>
-						<div className="plans-filter-bar__toggle-right-hand-side">
-							<span className="plans-filter-bar__toggle-on-label">
-								{ translate( 'Bill yearly' ) }
-							</span>
-							{ ! isMobile && showDiscountMessage && (
-								<DiscountMessage toggleChecked={ durationChecked } />
-							) }
-						</div>
+						<span className="plans-filter-bar__toggle-on-label">
+							{ translate( 'Bill yearly' ) }
+						</span>
 					</div>
-					{ isMobile && showDiscountMessage && (
-						<DiscountMessage toggleChecked={ durationChecked } />
-					) }
+					{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 				</div>
 			</div>
 		</>
