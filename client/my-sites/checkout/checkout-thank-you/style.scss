@@ -990,17 +990,3 @@
 		@include placeholder( --color-neutral-20 );
 	}
 }
-
-.checkout-thank-you__domains .thank-you__body {
-	& > div {
-		width: 690px;
-	}
-
-	div {
-		justify-content: space-between;
-	}
-
-	.domain-mapping-thank-you__button {
-		width: 100%;
-	}
-}
