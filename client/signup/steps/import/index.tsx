@@ -22,11 +22,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 	return (
 		<div className="import__onboarding-page">
 			{ props.stepName === 'capture' && (
-				<CaptureStep
-					goToNextStep={ props.goToNextStep }
-					submitSignupStep={ props.submitSignupStep }
-					goToStep={ props.goToStep }
-				/>
+				<CaptureStep submitSignupStep={ props.submitSignupStep } goToStep={ props.goToStep } />
 			) }
 			{ props.stepName === 'scanning' && <ScanningStep goToStep={ props.goToStep } /> }
 			{ props.stepName === 'list' && <ListStep /> }
