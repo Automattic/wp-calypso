@@ -25,15 +25,29 @@ const translations = {
 				],
 				blockPanelTitle: 'Image',
 			},
+			{
+				blockName: 'Spacer',
+				blockEditorSelector: '[data-type="core/spacer"]',
+				blockEditorContent: [],
+				blockPanelTitle: 'Spacer',
+			},
+			{
+				blockName: 'Cover',
+				blockEditorSelector: '[data-type="core/cover"]',
+				blockEditorContent: [ '.block-editor-media-placeholder__upload-button:has-text("Upload")' ],
+				blockPanelTitle: 'Cover',
+			},
 
 			// Jetpack
 			{
+				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Contact Form',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
 				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
 				blockPanelTitle: 'Form',
 			},
 			{
+				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Business Hours',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
@@ -73,15 +87,31 @@ const translations = {
 				],
 				blockPanelTitle: 'Image',
 			},
+			{
+				blockName: 'Espacement',
+				blockEditorSelector: '[data-type="core/spacer"]',
+				blockEditorContent: [],
+				blockPanelTitle: 'Espacement',
+			},
+			{
+				blockName: 'Bannière',
+				blockEditorSelector: '[data-type="core/cover"]',
+				blockEditorContent: [
+					'.block-editor-media-placeholder__upload-button:has-text("Téléverser")',
+				],
+				blockPanelTitle: 'Bannière',
+			},
 
 			// Jetpack
 			{
+				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Contact Form',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
 				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
 				blockPanelTitle: 'Form',
 			},
 			{
+				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Business Hours',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
@@ -121,15 +151,29 @@ const translations = {
 				],
 				blockPanelTitle: 'תמונה',
 			},
+			{
+				blockName: 'מרווח',
+				blockEditorSelector: '[data-type="core/spacer"]',
+				blockEditorContent: [],
+				blockPanelTitle: 'מרווח',
+			},
+			{
+				blockName: 'כיסוי',
+				blockEditorSelector: '[data-type="core/cover"]',
+				blockEditorContent: [ '.block-editor-media-placeholder__upload-button:has-text("העלאה")' ],
+				blockPanelTitle: 'כיסוי',
+			},
 
 			// Jetpack
 			{
+				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Contact Form',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
 				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
 				blockPanelTitle: 'Form',
 			},
 			{
+				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Business Hours',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
