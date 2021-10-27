@@ -393,7 +393,7 @@ export class PluginsBrowser extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
-	renderUploadPluginButton() {
+	renderUploadPluginButton( isMobile ) {
 		const { siteSlug, translate } = this.props;
 		const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 
@@ -403,8 +403,10 @@ export class PluginsBrowser extends Component {
 				onClick={ this.handleUploadPluginButtonClick }
 				href={ uploadUrl }
 			>
-				<Icon className="plugins-browser__button-icon" icon={ upload } width={ 16 } height={ 16 } />
-				<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
+				<Icon className="plugins-browser__button-icon" icon={ upload } width={ 18 } height={ 18 } />
+				{ ! isMobile && (
+					<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
+				) }
 			</Button>
 		);
 	}
@@ -490,9 +492,11 @@ export class PluginsBrowser extends Component {
 							align="left"
 						/>
 
-						<div className="plugins-browser__main-buttons">
+						<div className="plugins-browser__main-buttons manage-plugins-button">
 							{ this.renderManageButton() }
-							{ this.renderUploadPluginButton() }
+						</div>
+						<div className="plugins-browser__main-buttons upload-plugin-button">
+							{ this.renderUploadPluginButton( this.state.isMobile ) }
 						</div>
 
 						<div className="plugins-browser__searchbox">

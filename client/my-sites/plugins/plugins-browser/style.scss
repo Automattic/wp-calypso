@@ -38,9 +38,11 @@
 	}
 
 	@media screen and ( max-width: 660px ) {
-		width: 50px;
+		width: 30px;
+
 		.search-component {
 			width: 50px;
+			box-shadow: none;
 		}
 	}
 
@@ -51,9 +53,12 @@
 	flex-direction: column;
 	justify-content: flex-end;
 	align-items: stretch;
-	margin: auto;
 	margin-right: 15px;
 	margin-bottom: 20px;
+
+	&.manage-plugins-button {
+		margin-left: auto;
+	}
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
@@ -61,7 +66,12 @@
 	}
 
 	@media screen and ( max-width: 660px ) {
-		margin-bottom: 13px;
+		margin-bottom: 0;
+
+		&.upload-plugin-button .plugins-browser__button {
+			border: none;
+			margin-right: 0;
+		}
 	}
 
 	.plugins-browser__button {
