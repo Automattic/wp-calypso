@@ -1,7 +1,8 @@
 {
 	"env": "development",
-	"env_id": "stage",
+	"env_id": "development",
 	"features": {
-		"democratized-publishing": true
+		"democratized-publishing": true,
+		"welcome-tour-next": true
 	}
 }

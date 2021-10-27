@@ -81,8 +81,6 @@ function WelcomeTourFrame() {
 	const lastStepIndex = steps.length - 1;
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 
-	console.log( config.isEnabled( 'foobar' ) );
-
 	const handleDismiss = ( source ) => {
 		return () => {
 			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
@@ -121,6 +119,8 @@ function WelcomeTourFrame() {
 		} );
 	};
 
+	const isWelcomeTourNext = config.isEnabled( 'welcome-tour-next' );
+
 	useEffect( () => {
 		// focus the Next/Begin button as the first interactive element when tour loads
 		setTimeout( () => initialFocusedElement?.focus() );
@@ -134,12 +134,13 @@ function WelcomeTourFrame() {
 		popperElementRef
 	);
 
-	const stepRepositionProps = ! isMinimized
-		? {
-				style: styles?.popper,
-				...attributes?.popper,
-		  }
-		: null;
+	const stepRepositionProps =
+		! isMinimized && isWelcomeTourNext
+			? {
+					style: styles?.popper,
+					...attributes?.popper,
+			  }
+			: null;
 
 	return (
 		<>
@@ -153,7 +154,9 @@ function WelcomeTourFrame() {
 			/>
 			<div className="wpcom-editor-welcome-tour__container" ref={ tourContainerRef }>
 				{ /* @todo: Rethink the design here a bit - idealy split between minimized and step-tour components */ }
-				{ ! isMinimized && <div className="wpcom-editor-welcome-tour__screen-overlay" /> }
+				{ ! isMinimized && isWelcomeTourNext && (
+					<div className="wpcom-editor-welcome-tour__screen-overlay" />
+				) }
 				<div
 					className="wpcom-editor-welcome-tour-frame"
 					ref={ popperElementRef }
