@@ -58,38 +58,38 @@ const VideosUi = () => {
 					</div>
 					<div className="videos-ui__chapters">
 						<div className="videos-ui__chapter">
+							<span className="videos-ui__completed">
+								<Gridicon icon="checkmark" size={ 12 } />
+							</span>
 							1. { translate( 'Set up your blog in 5 steps' ) }{ ' ' }
 							<span className="videos-ui__duration">01:45</span>{ ' ' }
+						</div>
+						<div className="videos-ui__chapter">
 							<span className="videos-ui__completed">
 								<Gridicon icon="checkmark" size={ 12 } />
 							</span>
-						</div>
-						<div className="videos-ui__chapter">
 							2. { translate( 'Write a blog post' ) }{ ' ' }
 							<span className="videos-ui__duration">02:55</span>{ ' ' }
+						</div>
+						<div className="videos-ui__chapter">
 							<span className="videos-ui__completed">
 								<Gridicon icon="checkmark" size={ 12 } />
 							</span>
-						</div>
-						<div className="videos-ui__chapter">
 							3. { translate( 'How to edit in Wordpress' ) }{ ' ' }
 							<span className="videos-ui__duration">01:14</span>{ ' ' }
+						</div>
+						<div className="videos-ui__chapter">
 							<span className="videos-ui__completed">
 								<Gridicon icon="checkmark" size={ 12 } />
 							</span>
-						</div>
-						<div className="videos-ui__chapter">
 							4. { translate( 'Social icons' ) } <span className="videos-ui__duration">03:18</span>{ ' ' }
+						</div>
+						<div className="videos-ui__chapter active">
 							<span className="videos-ui__completed">
 								<Gridicon icon="checkmark" size={ 12 } />
 							</span>
-						</div>
-						<div className="videos-ui__chapter">
 							5. { translate( 'Add images to your posts' ) }{ ' ' }
 							<span className="videos-ui__duration">02:20</span>{ ' ' }
-							<span className="videos-ui__completed">
-								<Gridicon icon="checkmark" size={ 12 } />
-							</span>
 							<div className="videos-ui__active-video-content">
 								<p>
 									{ translate(
@@ -97,7 +97,7 @@ const VideosUi = () => {
 									) }{ ' ' }
 								</p>
 								<button type="button" className="videos-ui__play-button">
-									<Gridicon icon="play" size={ 12 } />
+									<Gridicon icon="play" size={ 24 } />
 									{ translate( 'Play video' ) }
 								</button>
 							</div>
