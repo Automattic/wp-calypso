@@ -1,5 +1,6 @@
 export { connectDomainAction } from './connect-domain-action';
 export { getAvailabilityErrorMessage } from './get-availability-error-message';
+export { getDomainInboundTransferStatusInfo } from './get-domain-inbound-transfer-status-info';
 export { getDomainNameValidationErrorMessage } from './get-domain-name-validation-error-message';
 export { getMappingFreeText } from './get-mapping-free-text';
 export { getMappingPriceText } from './get-mapping-price-text';

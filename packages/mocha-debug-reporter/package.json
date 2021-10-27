@@ -16,7 +16,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@types/mocha": "^8.2.3"
+		"@types/mocha": "^9.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "^1.0.0",

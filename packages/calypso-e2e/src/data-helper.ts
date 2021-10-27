@@ -164,8 +164,7 @@ export function getTestEmailAddress( {
 	prefix: string;
 } ): string {
 	const domain = 'mailosaur.io';
-	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
-	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+	return `${ prefix }.${ inboxId }@${ domain }`;
 }
 
 /**

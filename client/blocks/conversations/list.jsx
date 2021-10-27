@@ -63,6 +63,10 @@ export class ConversationCommentList extends Component {
 		setActiveReply: noop,
 	};
 
+	state = {
+		commentText: null,
+	};
+
 	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
 
 	onReplyClick = ( commentId ) => {

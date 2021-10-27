@@ -11,6 +11,8 @@ import './style.scss';
  */
 const PostPublishedModal: React.FC = () => {
 	const { link } = useSelect( ( select ) => select( 'core/editor' ).getCurrentPost() );
+	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() );
+
 	const isCurrentPostPublished = useSelect( ( select ) =>
 		select( 'core/editor' ).isCurrentPostPublished()
 	);
@@ -27,14 +29,14 @@ const PostPublishedModal: React.FC = () => {
 	useEffect( () => {
 		fetchSiteHasNeverPublishedPost();
 	}, [ fetchSiteHasNeverPublishedPost ] );
-
 	useEffect( () => {
 		// If the user never published any post before and the current post status changed to publish,
 		// open the post publish modal
 		if (
 			siteHasNeverPublishedPost &&
 			! previousIsCurrentPostPublished.current &&
-			isCurrentPostPublished
+			isCurrentPostPublished &&
+			postType === 'post'
 		) {
 			previousIsCurrentPostPublished.current = isCurrentPostPublished;
 			setSiteHasNeverPublishedPost( false );
@@ -46,7 +48,12 @@ const PostPublishedModal: React.FC = () => {
 				setIsOpen( true );
 			} );
 		}
-	}, [ siteHasNeverPublishedPost, isCurrentPostPublished, setSiteHasNeverPublishedPost ] );
+	}, [
+		postType,
+		siteHasNeverPublishedPost,
+		isCurrentPostPublished,
+		setSiteHasNeverPublishedPost,
+	] );
 
 	return (
 		<NuxModal

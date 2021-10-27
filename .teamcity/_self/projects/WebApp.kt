@@ -18,6 +18,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object WebApp : Project({
 	id("WebApp")
@@ -659,6 +660,14 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					-:pull*
 					-:trunk
 				""".trimIndent()
+			}
+			schedule {
+				schedulingPolicy = cron {
+					minutes = "0/30"
+				}
+				branchFilter = "+:trunk"
+				triggerBuild = always()
+				withPendingChangesOnly = false
 			}
 		}
 

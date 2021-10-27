@@ -16,6 +16,10 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -81,6 +85,17 @@ const ScanUpsellBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const postCheckoutUrl = window.location.pathname + window.location.search;
 
+	const nonAdminNoticeText =
+		getForCurrentCROIteration( {
+			[ Iterations.ONLY_REALTIME_PRODUCTS ]: translate(
+				'Only site administrators can upgrade to access security scanning.'
+			),
+		} ) ?? translate( 'Only site administrators can upgrade to access daily scanning.' );
+	const buttonText =
+		getForCurrentCROIteration( {
+			[ Iterations.ONLY_REALTIME_PRODUCTS ]: translate( 'Get Jetpack Scan' ),
+		} ) ?? translate( 'Get daily scanning' );
+
 	return (
 		<PromoCard
 			title={ translate( 'We guard your site. You run your business.' ) }
@@ -95,17 +110,13 @@ const ScanUpsellBody: FunctionComponent = () => {
 			</p>
 
 			{ ! isAdmin && (
-				<Notice
-					status="is-warning"
-					text={ translate( 'Only site administrators can upgrade to access daily scanning.' ) }
-					showDismiss={ false }
-				/>
+				<Notice status="is-warning" text={ nonAdminNoticeText } showDismiss={ false } />
 			) }
 
 			{ isAdmin && (
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Get daily scanning' ),
+						text: buttonText,
 						action: {
 							url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
 								redirect_to: postCheckoutUrl,

@@ -187,14 +187,15 @@ class EditorMediaModalDetailFields extends Component {
 				label: 'R',
 				value: 'R-17',
 			},
-			{
-				label: 'X',
-				value: 'X-18',
-			},
 		];
-		const rating = this.getItemValue( 'rating' );
+		let rating = this.getItemValue( 'rating' );
 		if ( ! rating ) {
 			return;
+		}
+
+		// X-18 was previously supported but is now removed to better comply with our TOS.
+		if ( 'X-18' === rating ) {
+			rating = 'R-17';
 		}
 
 		return (

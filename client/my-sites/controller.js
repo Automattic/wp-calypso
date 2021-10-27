@@ -37,6 +37,7 @@ import {
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -171,6 +172,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
 		emailManagementNewTitanAccount,
+		emailManagementPurchaseNewEmailAccount,
 		emailManagementTitanControlPanelRedirect,
 	];
 

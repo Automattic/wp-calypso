@@ -4,15 +4,15 @@ import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
-import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
@@ -58,10 +58,9 @@ function HelpSearchResults( {
 	const hasPurchases = useSelector( ( state ) =>
 		hasCancelableUserPurchases( state, currentUserId )
 	);
-	const isPurchasesSection = useSelector( ( state ) =>
-		[ 'purchases', 'site-purchases' ].includes( getSectionName( state ) )
-	);
-	const rawContextualResults = useSelector( getContextualHelpResults );
+	const sectionName = useSelector( getSectionName );
+	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
+	const rawContextualResults = useMemo( () => getContextResults( sectionName ), [ sectionName ] );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(

@@ -6,6 +6,12 @@
 				font-size: 1.75em; /* stylelint-disable-line */
 				margin-bottom: 0.5em /* stylelint-disable-line */;
 			}
+
+			.onboarding-subtitle {
+				font-size: 1rem;
+				line-height: 1.5em;
+				color: var( --studio-gray-50 );
+			}
 		}
 	}
 }

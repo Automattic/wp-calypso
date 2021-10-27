@@ -766,9 +766,6 @@ export function generateSteps( {
 				} );
 			},
 		},
-		scanning: {
-			stepName: 'scanning',
-		},
 		ready: {
 			dependencies: [ 'urlData' ],
 			stepName: 'ready',
