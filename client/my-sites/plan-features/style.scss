@@ -359,7 +359,6 @@ $plan-features-sidebar-width: 272px;
 	width: 56px;
 	height: 56px;
 	margin-right: 15px;
-	border-radius: 50%;
 }
 
 .is-section-plans .plan-features__header-figure {
@@ -1235,5 +1234,19 @@ button.plan-features__scroll-button {
 				color: var( --color-neutral-30 );
 			}
 		}
+	}
+}
+
+.plan-features__mobile-disabled {
+	.plan-features__header, .plan-features__pricing, .plan-features__description, .foldable-card {
+		opacity: 0.4;
+	}
+
+	.plan-features__not-available {
+		color: var( --studio-orange-40 );
+		font-weight: 600;
+		margin: auto;
+		padding-top: 10px;
+		text-align: center;
 	}
 }
