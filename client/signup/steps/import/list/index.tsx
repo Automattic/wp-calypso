@@ -8,7 +8,23 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const ListStep: React.FunctionComponent = () => {
+const getWpComImporterUrl = ( siteSlug: string, importer: string ): string => {
+	const wpComBase = 'https://wordpress.com/import/{siteSlug}?engine={importer}';
+
+	return wpComBase.replace( '{siteSlug}', siteSlug ).replace( '{importer}', importer );
+};
+
+const getWpAdminImporterUrl = ( siteSlug: string, importer: string ): string => {
+	const wpAdminBase = 'https://{siteSlug}/wp-admin/admin.php?import={importer}';
+
+	return wpAdminBase.replace( '{siteSlug}', siteSlug ).replace( '{importer}', importer );
+};
+
+interface Props {
+	siteSlug: string;
+}
+
+const ListStep: React.FunctionComponent< Props > = ( { siteSlug } ) => {
 	const { __ } = useI18n();
 	const history = useHistory();
 
@@ -30,6 +46,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'WordPress' }
 							mainText={ 'www.wordpress.org' }
 							buttonIcon={ 'chevron-right' }
+							buttonHref={ getWpComImporterUrl( siteSlug, 'wordpress' ) }
 						/>
 						<ImporterLogo icon={ 'blogger-alt' } />
 						<ActionCard
@@ -37,6 +54,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Blogger' }
 							mainText={ 'www.blogger.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonHref={ getWpComImporterUrl( siteSlug, 'blogger' ) }
 						/>
 						<ImporterLogo icon={ 'medium' } />
 						<ActionCard
@@ -44,6 +62,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Medium' }
 							mainText={ 'www.medium.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonHref={ getWpComImporterUrl( siteSlug, 'medium' ) }
 						/>
 						<ImporterLogo icon={ 'squarespace' } />
 						<ActionCard
@@ -51,6 +70,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Squarespace' }
 							mainText={ 'www.squarespace.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonHref={ getWpComImporterUrl( siteSlug, 'squarespace' ) }
 						/>
 						<ImporterLogo icon={ 'wix' } />
 						<ActionCard
@@ -59,6 +79,7 @@ const ListStep: React.FunctionComponent = () => {
 							mainText={ 'www.wix.com' }
 							buttonIcon={ 'chevron-right' }
 							buttonOnClick={ () => history.push( '/import?step=capture' ) }
+							buttonHref={ getWpComImporterUrl( siteSlug, 'wix' ) }
 						/>
 					</div>
 
@@ -66,22 +87,22 @@ const ListStep: React.FunctionComponent = () => {
 						<h3>Other platforms</h3>
 						<ul>
 							<li>
-								<a href={ '#temp' }>Blogroll</a>
+								<a href={ getWpAdminImporterUrl( siteSlug, 'opml' ) }>Blogroll</a>
 							</li>
 							<li>
-								<a href={ '#temp' }>Ghost</a>
+								<a href={ getWpAdminImporterUrl( siteSlug, 'ghost_import' ) }>Ghost</a>
 							</li>
 							<li>
-								<a href={ '#temp' }>Tumblr</a>
+								<a href={ getWpAdminImporterUrl( siteSlug, 'tumblr' ) }>Tumblr</a>
 							</li>
 							<li>
-								<a href={ '#temp' }>LiveJournal</a>
+								<a href={ getWpAdminImporterUrl( siteSlug, 'livejournal' ) }>LiveJournal</a>
 							</li>
 							<li>
-								<a href={ '#temp' }>Movable Type & TypePad</a>
+								<a href={ getWpAdminImporterUrl( siteSlug, 'mt' ) }>Movable Type & TypePad</a>
 							</li>
 							<li>
-								<a href={ '#temp' }>Xanga</a>
+								<a href={ getWpAdminImporterUrl( siteSlug, 'xanga-wxr' ) }>Xanga</a>
 							</li>
 						</ul>
 					</div>

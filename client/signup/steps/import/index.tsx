@@ -11,6 +11,9 @@ interface Props {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
+	queryObject: {
+		siteSlug?: string;
+	};
 }
 
 const MOCK_DATA = {
@@ -52,7 +55,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 							setIsScanning={ setIsScanning }
 						/>
 					) }
-					{ props.stepName === 'list' && <ListStep /> }
+					{ props.stepName === 'list' && <ListStep siteSlug={ props.queryObject.siteSlug } /> }
 
 					{ props.stepName === 'ready' && ! props.stepSectionName && (
 						<ReadyStep platform={ MOCK_DATA.platform } />
