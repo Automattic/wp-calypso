@@ -445,7 +445,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 	return BuildType {
 		id("Calypso_E2E_Playwright_$targetDevice")
 		uuid = buildUuid
-		name = "Calypso E2E Tests ($targetDevice)"
+		name = "E2E Tests ($targetDevice)"
 		description = "Runs Calypso e2e tests on $targetDevice size"
 
 		artifactRules = """
