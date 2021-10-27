@@ -80,7 +80,6 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 				<TitanSetUpMailboxForm
 					areSiteDomainsLoaded={ areSiteDomainsLoaded }
 					selectedDomainName={ selectedDomainName }
-					siteId={ siteId }
 				/>
 			</Main>
 		</>
