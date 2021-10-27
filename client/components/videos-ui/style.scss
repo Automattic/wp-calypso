@@ -1,11 +1,11 @@
-.onboarding-video-ui {
+.videos-ui {
 	background: #101517;
 	color: #fff;
-	.onboarding-video-ui__header {
+	.videos-ui__header {
 		background: #151b1e;
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
 
-		.onboarding-video-ui__header-links {
+		.videos-ui__header-links {
 			padding: 24px;
 			display: flex;
 			flex-direction: row;
@@ -18,18 +18,33 @@
 				color: #fff;
 				align-items: center;
 			}
-			.onboarding-video-ui__back-link {
+			.videos-ui__back-link {
 				margin-left: 24px;
 			}
-			.onboarding-video-ui__skip-link {
+			.videos-ui__skip-link {
 				text-decoration: underline;
 			}
 		}
 
-		.onboarding-video-ui__header-content {
+		.videos-ui__header-content {
 			display: flex;
-			justify-content: space-around;
-			padding: 80px 30px;
+			padding: 80px;
+			justify-content: space-between;
+
+			.videos-ui__titles {
+				flex-basis: auto;
+				width: 60%;
+			}
+
+			.videos-ui__summary {
+				flex-basis: auto;
+				width: 33%;
+			}
+
+			ul {
+				margin: 0;
+			}
+
 			li {
 				list-style: none;
 				margin-bottom: 14px;
@@ -46,26 +61,30 @@
 		}
 	}
 
-	.onboarding-video-ui__body {
-		padding: 80px 140px;
+	.videos-ui__body {
 
 		h3 {
 			font-size: 1.5rem;
-			margin-bottom: 30px;
+			margin: 80px 80px 30px;
 		}
 
-		.onboarding-video-ui__video-content {
+
+		.videos-ui__video-content {
 			display: flex;
-			gap: 30px;
-		}
-		.onboarding-video-ui__video {
-			flex: 2 1 66%;
+			padding: 0 80px 80px;
+			justify-content: space-between;
 		}
 
-		.onboarding-video-ui__chapters {
-			flex: 1 1 33%;
+		.videos-ui__video {
+			flex-basis: auto;
+			width: 60%;
+		}
+
+		.videos-ui__chapters {
 			background: #1d262a;
 			font-size: 0.875rem;
+			flex-basis: auto;
+			width: 33%;
 		}
 	}
 }

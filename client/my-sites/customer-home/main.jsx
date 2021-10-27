@@ -8,6 +8,7 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import OnboardingVideoUi from 'calypso/components/videos-ui';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
@@ -94,6 +95,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 							<Tertiary cards={ layout.tertiary } />
 						</div>
 					</div>
+					<OnboardingVideoUi />
 				</>
 			) }
 		</Main>
