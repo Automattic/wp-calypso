@@ -17,6 +17,9 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 
 	test( 'should return an empty array because there are no purchases', () => {
 		const state = {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: [],
 				error: null,
@@ -27,11 +30,14 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state, targetUserId ) ).toEqual( [] );
+		expect( getUserPurchasedPremiumThemes( state ) ).toEqual( [] );
 	} );
 
 	test( 'should return false because the data is not ready', () => {
 		const state = {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -42,11 +48,14 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state, targetUserId ) ).toBe( false );
+		expect( getUserPurchasedPremiumThemes( state ) ).toBe( false );
 	} );
 
 	test( 'should return an array of themes because there is a theme purchase for the specified user', () => {
 		const state = {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -57,7 +66,7 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, targetUserId );
+		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state );
 		expect( purchasedPremiumThemes.length ).toBe( 1 );
 		expect( purchasedPremiumThemes[ 0 ] ).toMatchObject( {
 			id: 3,

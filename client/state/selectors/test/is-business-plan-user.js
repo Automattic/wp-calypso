@@ -72,14 +72,6 @@ describe( 'isBusinessPlanUser()', () => {
 		expect( isBusinessPlanUser( state ) ).toBe( false );
 	} );
 
-	test( 'should return false if current user id is null.', () => {
-		const state = deepFreeze( {
-			currentUser: {},
-		} );
-
-		expect( isBusinessPlanUser( state ) ).toBe( false );
-	} );
-
 	test( 'should return false if purchasing data is null.', () => {
 		const state = deepFreeze( {
 			currentUser: {

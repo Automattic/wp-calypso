@@ -12,7 +12,6 @@ import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -54,10 +53,7 @@ function HelpSearchResults( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const currentUserId = useSelector( getCurrentUserId );
-	const hasPurchases = useSelector( ( state ) =>
-		hasCancelableUserPurchases( state, currentUserId )
-	);
+	const hasPurchases = useSelector( hasCancelableUserPurchases );
 	const sectionName = useSelector( getSectionName );
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const rawContextualResults = useMemo( () => getContextResults( sectionName ), [ sectionName ] );

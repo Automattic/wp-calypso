@@ -25,7 +25,6 @@ import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -208,19 +207,16 @@ PurchasesList.propTypes = {
 };
 
 export default connect(
-	( state ) => {
-		const userId = getCurrentUserId( state );
-		return {
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isBusinessPlanUser: isBusinessPlanUser( state ),
-			isFetchingUserPurchases: isFetchingUserPurchases( state ),
-			purchases: getUserPurchases( state, userId ),
-			subscriptions: getAllSubscriptions( state ),
-			sites: getSites( state ),
-			nextAppointment: getConciergeNextAppointment( state ),
-			scheduleId: getConciergeScheduleId( state ),
-			isUserBlocked: getConciergeUserBlocked( state ),
-		};
-	},
+	( state ) => ( {
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		isBusinessPlanUser: isBusinessPlanUser( state ),
+		isFetchingUserPurchases: isFetchingUserPurchases( state ),
+		purchases: getUserPurchases( state ),
+		subscriptions: getAllSubscriptions( state ),
+		sites: getSites( state ),
+		nextAppointment: getConciergeNextAppointment( state ),
+		scheduleId: getConciergeScheduleId( state ),
+		isUserBlocked: getConciergeUserBlocked( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( PurchasesList ) );

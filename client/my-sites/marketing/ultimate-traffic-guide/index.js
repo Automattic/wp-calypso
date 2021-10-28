@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { isFetchingUserPurchases, getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -15,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export const hasTrafficGuidePurchase = ( purchases ) =>
-	!! ( purchases && purchases.find( ( purchase ) => isTrafficGuide( purchase ) ) );
+	!! ( purchases && purchases.some( isTrafficGuide ) );
 
 export const downloadTrafficGuide = () => {
 	window.location.href = 'https://public-api.wordpress.com/wpcom/v2/traffic-guide-download';
@@ -23,9 +22,8 @@ export const downloadTrafficGuide = () => {
 
 export default function UltimateTrafficGuide() {
 	const translate = useTranslate();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const isLoading = useSelector( ( state ) => isFetchingUserPurchases( state ) );
-	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
+	const isLoading = useSelector( isFetchingUserPurchases );
+	const purchases = useSelector( getUserPurchases );
 	const hasPurchase = hasTrafficGuidePurchase( purchases );
 
 	const renderContent = () => {

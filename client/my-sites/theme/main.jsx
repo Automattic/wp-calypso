@@ -37,7 +37,7 @@ import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -844,8 +844,7 @@ export default connect(
 		const siteSlug = getSiteSlug( state, siteId );
 		const isWpcomTheme = isThemeWpcom( state, id );
 		const backPath = getBackPath( state );
-		const currentUserId = getCurrentUserId( state );
-		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, id );
 		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
@@ -861,7 +860,7 @@ export default connect(
 			backPath,
 			isCurrentUserPaid,
 			isWpcomTheme,
-			isLoggedIn: !! currentUserId,
+			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isVip: isVipSite( state, siteId ),
