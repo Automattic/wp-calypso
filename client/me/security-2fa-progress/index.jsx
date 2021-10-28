@@ -31,7 +31,7 @@ class Security2faProgress extends Component {
 			<div className="security-2fa-progress__container">
 				<div className="security-2fa-progress__inner-container">
 					<ProgressItem
-						label={ this.props.translate( 'Enter Phone Number' ) }
+						label={ this.props.translate( 'Authentication Method' ) }
 						icon="phone"
 						step={ this.stepClass( 1 ) }
 					/>

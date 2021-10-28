@@ -23,8 +23,12 @@ class Security2faSetup extends Component {
 		this.setState( { step: 'initial-setup' } );
 	};
 
-	onInitialSetupSuccess = () => {
-		this.setState( { step: 'sms-settings' } );
+	onInitialSetupSuccess = ( event, authMethod ) => {
+		if ( authMethod === 'sms-based' ) {
+			this.setState( { step: 'sms-settings' } );
+		} else {
+			this.setState( { step: 'app-based' } );
+		}
 	};
 
 	onSetupSuccess = () => {

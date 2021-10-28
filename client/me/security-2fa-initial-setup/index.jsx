@@ -1,9 +1,14 @@
+import { Gridicon } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+
+import './style.scss';
 
 const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 
@@ -14,12 +19,24 @@ class Security2faInitialSetup extends Component {
 		onSuccess: PropTypes.func.isRequired,
 	};
 
+	state = {
+		authMethod: 'app-based',
+	};
+
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 	}
 
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
+	}
+	setAuth( event ) {
+		this.setState( { authMethod: event.currentTarget.value } );
+	}
+
+	handleClick( event ) {
+		gaRecordEvent( 'Me', 'Clicked On 2fa Get Started Button' );
+		this.props.onSuccess( event, this.state.authMethod );
 	}
 
 	render() {
@@ -35,12 +52,38 @@ class Security2faInitialSetup extends Component {
 					) }
 				</p>
 
-				<FormButton
-					onClick={ ( event ) => {
-						gaRecordEvent( 'Me', 'Clicked On 2fa Get Started Button' );
-						this.props.onSuccess( event );
-					} }
-				>
+				<div>
+					<FormLabel className="security-2fa-initial-setup__label">
+						<FormRadio
+							name="auth_method"
+							value="app-based"
+							defaultChecked={ true }
+							onChange={ this.setAuth.bind( this ) }
+						/>
+						<Gridicon icon="phone" />
+						<span>Set up using an app</span>
+						<p>
+							Use an application on your phone to get two-factor authentication codes when you log
+							in.
+						</p>
+					</FormLabel>
+
+					<FormLabel className="security-2fa-initial-setup__label">
+						<FormRadio
+							name="auth_method"
+							value="sms-based"
+							onChange={ this.setAuth.bind( this ) }
+						/>
+						<Gridicon icon="chat" />
+						<span>Set up using SMS</span>
+						<p>
+							WordPress.com will send you a SMS with a two-factor authentication codes when you log
+							in.
+						</p>
+					</FormLabel>
+				</div>
+
+				<FormButton onClick={ this.handleClick.bind( this ) }>
 					{ this.props.translate( 'Get Started' ) }
 				</FormButton>
 			</div>
