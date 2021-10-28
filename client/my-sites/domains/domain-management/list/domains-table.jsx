@@ -74,6 +74,7 @@ class DomainsTable extends PureComponent {
 			shouldUpgradeToMakeDomainPrimary,
 			goToEditDomainRoot,
 			handleUpdatePrimaryDomainOptionClick,
+			purchases,
 		} = this.props;
 
 		const { sortKey, sortOrder } = this.state;
@@ -106,10 +107,8 @@ class DomainsTable extends PureComponent {
 		}
 
 		const domainListItems = domainItems.map( ( domain, index ) => {
-			const purchase = this.props.purchases
-				? this.props.purchases.find(
-						( purchase ) => purchase.id === parseInt( domain.subscriptionId, 10 )
-				  )
+			const purchase = purchases
+				? purchases.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) )
 				: null;
 			return (
 				<DomainRow
