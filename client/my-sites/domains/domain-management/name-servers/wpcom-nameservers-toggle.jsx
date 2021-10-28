@@ -25,14 +25,16 @@ class NameserversToggle extends PureComponent {
 				</span>
 
 				<form className="name-servers__toggle">
-					<ToggleControl
-						id="wp-nameservers"
-						name="wp-nameservers"
-						onChange={ this.handleToggle }
-						checked={ this.props.enabled }
-						value="active"
-						label={ this.props.translate( 'On' ) }
-					/>
+					<label>
+						<ToggleControl
+							id="wp-nameservers"
+							name="wp-nameservers"
+							git
+							onChange={ this.handleToggle }
+							checked={ this.props.enabled }
+							value="active"
+						/>
+					</label>
 				</form>
 				{ this.renderExplanation() }
 			</Card>
