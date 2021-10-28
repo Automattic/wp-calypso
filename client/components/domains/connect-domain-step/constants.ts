@@ -52,27 +52,27 @@ export const domainLockStatusType = {
 	UNKNOWN: 'unknown',
 } as const;
 
-const stepsHeadingLabels = {
-	SUGGESTED: () => __( 'Suggested setup' ),
-	ADVANCED: () => __( 'Advanced setup' ),
-	OWNERSHIP_VERIFICATION: () => __( 'Verify domain ownership' ),
-	TRANSFER: () => __( 'Initial setup' ),
-};
-
 export const stepsHeading = {
-	SUGGESTED: stepsHeadingLabels.SUGGESTED(),
-	ADVANCED: stepsHeadingLabels.ADVANCED(),
-	OWNERSHIP_VERIFICATION: stepsHeadingLabels.OWNERSHIP_VERIFICATION(),
-	TRANSFER: stepsHeadingLabels.TRANSFER(),
+	get SUGGESTED() {
+		return __( 'Suggested setup' );
+	},
+	get ADVANCED() {
+		return __( 'Advanced setup' );
+	},
+	get OWNERSHIP_VERIFICATION() {
+		return __( 'Verify domain ownership' );
+	},
+	get TRANSFER() {
+		return __( 'Initial setup' );
+	},
 } as const;
 
-const authCodeStepDefaultDescriptionLabel = () =>
-	__(
-		'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
-	);
-
 export const authCodeStepDefaultDescription = {
-	label: authCodeStepDefaultDescriptionLabel(),
+	get label() {
+		return __(
+			'A domain authorization code is a unique code linked only to your domain, it might also be called a secret code, auth code, or EPP code. You can usually find this in your domain settings page.'
+		);
+	},
 } as const;
 
 export const useMyDomainInputMode = {
@@ -82,50 +82,14 @@ export const useMyDomainInputMode = {
 	transferDomain: 'transfer-domain',
 } as const;
 
-const transferDomainErrorLabels = {
-	AUTH_CODE: () => __( 'Invalid auth code. Please check the specified code and try again.' ),
-	NO_SELECTED_SITE: () => __( 'Please specify a site.' ),
-	GENERIC_ERROR: () => __( 'We were unable to start the transfer.' ),
-};
-
 export const transferDomainError = {
-	AUTH_CODE: transferDomainErrorLabels.AUTH_CODE(),
-	NO_SELECTED_SITE: transferDomainErrorLabels.NO_SELECTED_SITE(),
-	GENERIC_ERROR: transferDomainErrorLabels.GENERIC_ERROR(),
+	get AUTH_CODE() {
+		return __( 'Invalid auth code. Please check the specified code and try again.' );
+	},
+	get NO_SELECTED_SITE() {
+		return __( 'Please specify a site.' );
+	},
+	get GENERIC_ERROR() {
+		return __( 'We were unable to start the transfer.' );
+	},
 } as const;
-
-/**
- * Define properties with translatable strings getters.
- */
-Object.defineProperties( stepsHeading, {
-	SUGGESTED: {
-		get: () => stepsHeadingLabels.SUGGESTED(),
-	},
-	ADVANCED: {
-		get: () => stepsHeadingLabels.ADVANCED(),
-	},
-	OWNERSHIP_VERIFICATION: {
-		get: () => stepsHeadingLabels.OWNERSHIP_VERIFICATION(),
-	},
-	TRANSFER: {
-		get: () => stepsHeadingLabels.TRANSFER(),
-	},
-} );
-
-Object.defineProperties( transferDomainError, {
-	AUTH_CODE: {
-		get: () => transferDomainErrorLabels.AUTH_CODE(),
-	},
-	NO_SELECTED_SITE: {
-		get: () => transferDomainErrorLabels.NO_SELECTED_SITE(),
-	},
-	GENERIC_ERROR: {
-		get: () => transferDomainErrorLabels.GENERIC_ERROR(),
-	},
-} );
-
-Object.defineProperties( authCodeStepDefaultDescription, {
-	label: {
-		get: () => authCodeStepDefaultDescriptionLabel(),
-	},
-} );
