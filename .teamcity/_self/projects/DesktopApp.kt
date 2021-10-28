@@ -102,6 +102,12 @@ object E2ETests : BuildType({
 					exit 1
 				fi
 
+				# Update Chrome
+				# This needs to be done again as TeamCity kills the container between builds, and we need an updated Chrome before running the tests
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_91.0.4472.77-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_91.0.4472.77-1_amd64.deb
+				rm ./google-chrome-stable_91.0.4472.77-1_amd64.deb
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
