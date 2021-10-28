@@ -119,6 +119,11 @@ class DesignPickerStep extends Component {
 	};
 
 	previewDesign = ( selectedDesign ) => {
+		recordTracksEvent( 'calypso_signup_select_preview_design', {
+			theme: `pub/${ selectedDesign.theme }`,
+			template: selectedDesign.template,
+		} );
+
 		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme ) );
 	};
 
