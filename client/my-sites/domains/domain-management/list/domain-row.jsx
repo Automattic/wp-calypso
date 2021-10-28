@@ -51,6 +51,10 @@ class DomainRow extends PureComponent {
 		showDomainDetails: true,
 	};
 
+	stopPropagation = ( event ) => {
+		event.stopPropagation();
+	};
+
 	hasMappingError( domain ) {
 		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 		return (
@@ -145,7 +149,7 @@ class DomainRow extends PureComponent {
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
-			<div className="domain-row__auto-renew-cell" onClick={ ( e ) => e.stopPropagation() }>
+			<div className="domain-row__auto-renew-cell" onClick={ this.stopPropagation }>
 				<AutoRenewToggle
 					planName={ site.plan.product_name_short }
 					siteDomain={ site.domain }
@@ -293,7 +297,7 @@ class DomainRow extends PureComponent {
 			<div className="domain-row__action-cell">
 				<EllipsisMenu
 					disabled={ disabled || isBusy }
-					onClick={ ( e ) => e.stopPropagation() }
+					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="domain-row__popover"
