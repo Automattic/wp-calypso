@@ -104,7 +104,8 @@
 	color: $studio-blue-40;
 }
 
-.plugins-browser-item__pricing {
+.plugins-browser-item__pricing,
+.plugins-browser-item__installed {
 	margin-top: auto;
 	font-weight: 600;
 	font-size: $font-body;
@@ -114,16 +115,13 @@
 .plugins-browser-item__installed {
 	display: flex;
 	align-items: center;
-	position: absolute;
-	bottom: 16px;
-	right: 16px;
 	color: var( --color-success );
-	font-size: $font-body-extra-small;
-	font-weight: 600;
 	animation: appear 0.15s ease-in;
 
 	.gridicon {
 		margin-right: 3px;
+		border: 2px solid var( --color-success );
+		border-radius: 50%; /* stylelint-disable-line */
 	}
 }
 

@@ -54,8 +54,8 @@ class PluginsBrowserListElement extends Component {
 		return ! this.props.isJetpackSite && includes( PREINSTALLED_PLUGINS, this.props.plugin.name );
 	}
 
-	renderInstalledIn() {
-		const { sitesWithPlugin } = this.props;
+	renderInstalledInOrPricing() {
+		const { sitesWithPlugin, translate } = this.props;
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
@@ -64,7 +64,8 @@ class PluginsBrowserListElement extends Component {
 				</div>
 			);
 		}
-		return null;
+
+		return <div className="plugins-browser-item__pricing">{ translate( 'Free' ) }</div>;
 	}
 
 	renderUpgradeButton() {
@@ -122,12 +123,8 @@ class PluginsBrowserListElement extends Component {
 							</div>
 						) }
 						<div className="plugins-browser-item__description">{ plugin.short_description }</div>
-						{ variant === PluginsBrowserElementVariant.Extended && this.renderInstalledIn() }
 					</div>
-
-					{ variant === PluginsBrowserElementVariant.Extended && (
-						<div className="plugins-browser-item__pricing">{ translate( 'Free' ) }</div>
-					) }
+					{ variant === PluginsBrowserElementVariant.Extended && this.renderInstalledInOrPricing() }
 				</a>
 				{ this.renderUpgradeButton() }
 			</li>
