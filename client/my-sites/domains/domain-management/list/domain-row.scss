@@ -182,10 +182,9 @@
 
 	@include break-mobile {
 		display: flex;
-		padding-top: 2px;
 
 		.components-base-control__field {
-			margin-bottom: 0;
+			margin: 4px 0;
 		}
 	}
 }
