@@ -1,5 +1,13 @@
 .is-section-plugins .main {
-	padding-top: 70px; // Compensate for the fixed header.
+	padding-top: 35px; // Compensate for the fixed header.
+
+	@media ( max-width: 782px ) {
+		padding-top: 50px;
+	}
+
+	@media ( max-width: 660px ) {
+		padding-top: 70px;
+	}
 }
 
 .is-section-plugins.color-scheme.is-nav-unification {

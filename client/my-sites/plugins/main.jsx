@@ -406,8 +406,10 @@ export class PluginsMain extends Component {
 					className="plugins__page-heading"
 					headerText={ this.props.translate( 'Plugins' ) }
 				>
-					{ this.renderAddPluginButton() }
-					{ this.renderUploadPluginButton() }
+					<div className="plugins__main-buttons">
+						{ this.renderAddPluginButton() }
+						{ this.renderUploadPluginButton() }
+					</div>
 				</FixedNavigationHeader>
 				<div className="plugins__main">
 					<div className="plugins__header"></div>

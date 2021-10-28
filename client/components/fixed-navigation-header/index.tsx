@@ -12,11 +12,15 @@ const Header = styled.header`
 	padding: 0 32px;
 	box-sizing: border-box;
 	border-bottom: 1px solid var( --studio-gray-5 );
-	background-color: var( --color-surface-backdrop );
+	background-color: #fff;
 
 	@media ( max-width: 782px ) {
 		width: 100%;
 		left: 0;
+	}
+
+	@media ( max-width: 660px ) {
+		padding: 0 16px;
 	}
 `;
 
@@ -26,6 +30,10 @@ const Container = styled.div`
 	align-items: center;
 	min-height: 70px;
 
+	@media ( max-width: 660px ) {
+		min-height: 60px;
+	}
+
 	.main.is-wide-layout & {
 		max-width: 1040px;
 		margin: auto;
@@ -34,7 +42,10 @@ const Container = styled.div`
 
 const H1 = styled.h1``;
 
-const ActionsContainer = styled.div``;
+const ActionsContainer = styled.div`
+	display: flex;
+	align-items: center;
+`;
 
 interface Props {
 	brandFont?: boolean;

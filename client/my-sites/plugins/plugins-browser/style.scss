@@ -1,6 +1,9 @@
 .plugins-browser__searchbox {
 	width: 250px;
-	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: stretch;
 
 	.search-component {
 		height: 30px;
@@ -38,11 +41,8 @@
 	}
 
 	@media screen and ( max-width: 660px ) {
-		margin-bottom: 0;
-
-		&.upload-plugin-button .plugins-browser__button {
+		.plugins-browser__button {
 			border: none;
-			margin-right: 0;
 		}
 	}
 
