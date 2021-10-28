@@ -80,7 +80,8 @@ class DomainRow extends PureComponent {
 	renderPrimaryBadge() {
 		return (
 			<Badge className="domain-row__primary-badge" type="info-green">
-				<Icon icon={ home } size={ 14 } /> { this.props.translate( 'Primary site address' ) }
+				<Icon icon={ home } size={ 14 } />
+				{ this.props.translate( 'Primary site address' ) }
 			</Badge>
 		);
 	}

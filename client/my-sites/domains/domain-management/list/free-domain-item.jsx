@@ -42,7 +42,8 @@ export default function FreeDomainItem( {
 				) }
 				{ domain.isPrimary && (
 					<Badge className="free-domain-item__primary-badge" type="info-green">
-						<Icon icon={ home } size={ 14 } /> { __( 'Primary site address' ) }
+						<Icon icon={ home } size={ 14 } />
+						{ __( 'Primary site address' ) }
 					</Badge>
 				) }
 			</span>
