@@ -48,9 +48,11 @@ function TransferDomainStepStart( {
 	useEffect( () => {
 		( async () => {
 			if ( initialValidation.current ) return;
-			setIsFetching( true );
+			if ( isFetching ) return;
 
 			if ( ! inboundTransferStatusInfo ) {
+				setIsFetching( true );
+
 				try {
 					const inboundTransferStatusResult = await getDomainInboundTransferStatusInfo( domain );
 
@@ -61,13 +63,15 @@ function TransferDomainStepStart( {
 			}
 
 			try {
+				setIsFetching( true );
+
 				const availabilityData = await wpcom.domain( domain ).isAvailable( {
 					apiVersion: '1.3',
 					is_cart_pre_check: false,
 					blog_id: selectedSite?.ID,
 				} );
 
-				if ( domainAvailability.TRANSFER_PENDING_SAME_SITE !== availabilityData.status ) {
+				if ( domainAvailability.TRANSFER_PENDING_SAME_USER !== availabilityData.status ) {
 					const availabilityErrorMessage = getAvailabilityErrorMessage( {
 						availabilityData,
 						domainName: domain,
@@ -85,7 +89,7 @@ function TransferDomainStepStart( {
 				setIsFetching( false );
 			}
 		} )();
-	} );
+	}, [ domain, inboundTransferStatusInfo, selectedSite, isFetching ] );
 
 	const stepContent = (
 		<>

@@ -57,7 +57,6 @@ export const domainAvailability = {
 	TLD_NOT_SUPPORTED_TEMPORARILY: 'tld_not_supported_temporarily',
 	TRANSFER_PENDING: 'transfer_pending',
 	TRANSFER_PENDING_SAME_USER: 'transfer_pending_same_user',
-	TRANSFER_PENDING_SAME_SITE: 'transfer_pending_same_site',
 	TRANSFERRABLE: 'transferrable',
 	TRANSFERRABLE_PREMIUM: 'transferrable_premium',
 	UNKNOWN: 'unknown',
