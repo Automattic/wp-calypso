@@ -130,6 +130,10 @@
 		@include break-mobile {
 			font-size: $font-body-small;
 		}
+
+		&:hover {
+			color: var( --color-link );
+		}
 	}
 
 	.domain-row__domain-type-text {
