@@ -484,7 +484,11 @@ export class PluginsBrowser extends Component {
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<SidebarNavigation />
 				{ ! this.props.hideHeader && (
-					<FixedNavigationHeader brandFont headerText={ this.props.translate( 'Plugins' ) }>
+					<FixedNavigationHeader
+						brandFont
+						className="plugins-browser__header"
+						headerText={ this.props.translate( 'Plugins' ) }
+					>
 						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
 							{ this.renderUploadPluginButton() }

@@ -60,7 +60,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 	const headerClasses = classNames( { 'wp-brand-font': brandFont } );
 
 	return (
-		<Header id={ id } classNames={ className }>
+		<Header id={ id } className={ className }>
 			<Container>
 				<H1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</H1>
 				<ActionsContainer>{ children }</ActionsContainer>
