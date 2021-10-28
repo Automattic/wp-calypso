@@ -1,6 +1,9 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { Icon, plus, search } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -64,7 +67,8 @@ class AddDomainButton extends Component {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 			return (
 				<Fragment>
-					<PopoverMenuItem icon="search" onClick={ this.clickAddDomain }>
+					<PopoverMenuItem onClick={ this.clickAddDomain }>
+						<Icon icon={ search } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 						{ translate( 'Search for a domain' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem icon="domains" href={ useYourDomainUrl } onClick={ this.trackMenuClick }>
@@ -101,13 +105,18 @@ class AddDomainButton extends Component {
 			return <Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />;
 		}
 
+		let label = translate( 'Other domain options' );
 		if ( this.props.specificSiteActions ) {
-			if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-				return translate( 'Add a domain' );
-			}
-			return translate( 'Add a domain to this site' );
+			label = config.isEnabled( 'domains/management-list-redesign' )
+				? translate( 'Add a domain' )
+				: translate( 'Add a domain to this site' );
 		}
-		return translate( 'Other domain options' );
+		return (
+			<>
+				<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+				{ label }
+			</>
+		);
 	}
 
 	render() {
