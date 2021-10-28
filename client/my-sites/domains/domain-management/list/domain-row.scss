@@ -134,6 +134,7 @@
 
 	.domain-row__domain-type-text {
 		display: none;
+		font-size: $font-body-extra-small;
 
 		@include break-mobile {
 			display: block;
