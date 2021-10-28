@@ -121,7 +121,7 @@ class DomainsStep extends Component {
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
-			currentStep: inputMode.domainInput,
+			currentStep: null,
 		};
 	}
 
@@ -663,6 +663,12 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
+	resetState() {
+		if ( inputMode.domainInput === this.state?.step ) {
+			this.setState( {} );
+		}
+	}
+
 	renderContent() {
 		let content;
 		let sideContent;
@@ -672,6 +678,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
+			this.resetState();
 			content = this.domainForm();
 		}
 
@@ -702,6 +709,7 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
+		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
 		const basePath = getStepUrl(
 			this.props.flowName,
 			this.props.stepName,
@@ -713,6 +721,7 @@ class DomainsStep extends Component {
 
 		let mode = inputMode.domainInput;
 		switch ( currentStep ) {
+			case null:
 			case inputMode.domainInput:
 				return null;
 
@@ -729,6 +738,10 @@ class DomainsStep extends Component {
 			`${ basePath }?step=${ mode }` +
 			( Object.keys( queryValues ).length ? `&${ stringify( { ...queryValues } ) }` : '' )
 		);
+	}
+
+	removeQueryParam( url ) {
+		return url.split( '?' )[ 0 ];
 	}
 
 	render() {
@@ -752,7 +765,7 @@ class DomainsStep extends Component {
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
-			if ( backUrl === this.props.path ) {
+			if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
 				backLabelText = translate( 'Back to My Sites' );
 			}

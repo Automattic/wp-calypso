@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
-import { parse as parseQs, stringify } from 'qs';
+import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -16,7 +16,6 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
@@ -211,6 +210,7 @@ export class PlansStep extends Component {
 			positionInFlow,
 			translate,
 			hasInitializedSitesBackUrl,
+			steps,
 		} = this.props;
 
 		const headerText = this.getHeaderText();
@@ -226,25 +226,20 @@ export class PlansStep extends Component {
 			backLabelText = translate( 'Back to My Sites' );
 		}
 
-		const isComingFromUseYourDomainStep =
-			'use-your-domain' === this.props.progress?.domains?.stepSectionName;
+		let queryParams;
+		if ( 0 !== this.props.positionInFlow ) {
+			const previousStepName = steps[ this.props.positionInFlow - 1 ];
+			const previousStep = this.props.progress?.[ previousStepName ];
 
-		if ( 0 !== this.props.positionInFlow && isComingFromUseYourDomainStep ) {
-			const queryParams = {
-				step: 'transfer-or-connect',
-				initialQuery: this.props.progress?.domains?.siteUrl,
-			};
+			const isComingFromUseYourDomainStep = 'use-your-domain' === previousStep?.stepSectionName;
 
-			backUrl =
-				getStepUrl(
-					this.props.flowName,
-					'domains',
-					'use-your-domain',
-					! this.props.userLoggedIn ? this.props.locale : ''
-				) +
-				'?' +
-				stringify( queryParams );
-			backLabelText = translate( 'Back' );
+			if ( isComingFromUseYourDomainStep ) {
+				queryParams = {
+					...this.props.queryParams,
+					step: 'transfer-or-connect',
+					initialQuery: previousStep?.siteUrl,
+				};
+			}
 		}
 
 		return (
@@ -262,6 +257,7 @@ export class PlansStep extends Component {
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
 					backLabelText={ backLabelText }
+					queryParams={ queryParams }
 				/>
 			</>
 		);
