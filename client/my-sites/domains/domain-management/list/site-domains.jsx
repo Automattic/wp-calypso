@@ -9,7 +9,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -279,9 +278,6 @@ export class SiteDomains extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
-				{ this.props.selectedSite.ID && ! this.props.purchases && (
-					<QuerySitePurchases siteId={ this.props.selectedSite.ID } />
-				) }
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
