@@ -48,7 +48,7 @@ function DomainTransferOrConnect( {
 	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState(
 		domainInboundTransferStatusInfo
 	);
-	const [ isFetching, setIsFetching ] = useState( availabilityData === null );
+	const [ isFetching, setIsFetching ] = useState( false );
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -82,7 +82,8 @@ function DomainTransferOrConnect( {
 	// retrieves the availability data by itself if not provided by the parent component
 	useEffect( () => {
 		( async () => {
-			if ( availabilityData && inboundTransferStatusInfo ) return;
+			if ( ( availabilityData && inboundTransferStatusInfo ) || isFetching ) return;
+
 			try {
 				setIsFetching( true );
 				if ( ! availabilityData ) {
@@ -94,19 +95,22 @@ function DomainTransferOrConnect( {
 
 					setAvailabilityData( retrievedAvailabilityData );
 				}
+			} catch {
+				setAvailabilityData( {} );
+			}
 
+			try {
 				if ( ! inboundTransferStatusInfo ) {
 					const inboundTransferStatusResult = await getDomainInboundTransferStatusInfo( domain );
 					setInboundTransferStatusInfo( inboundTransferStatusResult );
 				}
-				setIsFetching( false );
 			} catch {
-				setIsFetching( false );
-				setAvailabilityData( {} );
 				setInboundTransferStatusInfo( {} );
+			} finally {
+				setIsFetching( false );
 			}
 		} )();
-	} );
+	}, [ availabilityData, domain, inboundTransferStatusInfo, isFetching, selectedSite?.ID ] );
 
 	const baseClassName = 'domain-transfer-or-connect';
 
