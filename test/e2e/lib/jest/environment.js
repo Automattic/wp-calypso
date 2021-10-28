@@ -9,7 +9,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 
 	constructor( config, context ) {
 		super( config, context );
-		this.testPath = context.testPath;
+		this.fileName = path.parse( context.testPath ).name;
 	}
 
 	/**
@@ -22,9 +22,8 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 		const resultsPath = path.join( process.cwd(), 'results' );
 		// Create the directory if necessary.
 		await fs.mkdir( resultsPath, { recursive: true } );
-		const testPath = path.basename( this.testPath, path.extname( this.testPath ) );
-		// Create a unique artifact directory.
-		const artifactPath = await fs.mkdtemp( path.join( resultsPath, testPath + '-' ) );
+		// Generate a unique name by appending a random string after the file name.
+		const artifactPath = await fs.mkdtemp( path.join( resultsPath, this.fileName + '-' ) );
 		this.global.artifactPath = artifactPath;
 	}
 
@@ -36,32 +35,34 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 	async handleTestEvent( event ) {
 		switch ( event.name ) {
 			case 'setup':
-				this.global.__CURRENT_TEST_NAME__ = null;
-				this.global.__CURRENT_TEST_FAILED__ = false;
-				break;
+				this.global.__FAILED_STEP_NAME__ = null;
+				this.global.__STEP_FAILED__ = false;
+				this.global.__FILE_NAME__ = this.fileName;
 
 			case 'test_start':
-				this.global.__CURRENT_TEST_NAME__ = event.test.name;
-
+				// If a test has failed, skip rest of the steps.
 				if ( this.testFailed ) {
 					event.test.mode = 'skip';
 				}
-				// With this flag enabled, all test cases in the describe
-				// block will be marked as failed.
-				// This way all other hooks (screenshot/recording) are run,
-				// and Jest correctly exits after those hooks are run.
+
+				/* If a hook has failed, mark all subsequent test
+				steps as failed.
+				Handling is different compared to test steps because
+				*/
 				if ( this.hookFailed ) {
 					event.test.mode = 'fail';
 				}
 				break;
 
 			case 'hook_failure':
-				this.global.__CURRENT_TEST_FAILED__ = true;
+				this.global.__FAILED_STEP_NAME__ = event.hook.type;
+				this.global.__STEP_FAILED__ = true;
 				this.hookFailed = true;
 				break;
 
 			case 'test_fn_failure':
-				this.global.__CURRENT_TEST_FAILED__ = true;
+				this.global.__FAILED_STEP_NAME__ = event.test.name;
+				this.global.__STEP_FAILED__ = true;
 				this.testFailed = true;
 				break;
 		}

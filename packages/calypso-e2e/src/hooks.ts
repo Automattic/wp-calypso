@@ -4,11 +4,11 @@ import { beforeAll, afterAll } from '@jest/globals';
 import { BrowserContext, chromium, Page, Video } from 'playwright';
 import { getDefaultLoggerConfiguration } from './browser-helper';
 import { closeBrowser, startBrowser, newBrowserContext, browser } from './browser-manager';
-import { getDateString } from './data-helper';
 
-// These are defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
-declare const __CURRENT_TEST_FAILED__: boolean;
-declare const __CURRENT_TEST_NAME__: string;
+// Global values defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
+declare const __STEP_FAILED__: boolean;
+declare const __FAILED_STEP_NAME__: string;
+declare const __FILE_NAME__: string;
 declare const artifactPath: string;
 
 /**
@@ -17,12 +17,10 @@ declare const artifactPath: string;
  * @param {string} testName The test name.
  * @returns The filename.
  */
-function getTestNameWithTime( testName: string ): string {
-	// Clean up the test name to be entirely lowercase and removing whitespace.
-	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	// Obtain the ISO date string and replace non-supported filename chars with hyphens.
-	const dateTime = getDateString( 'ISO' )!.split( '.' )[ 0 ].replace( /:/g, '-' );
-	return `${ currentTestName }-${ dateTime }`;
+function getFileName( testName: string ): string {
+	// Clean up the test name to remove all non-alphanumeric characters.
+	const sanitizedTestStepName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	return `${ __FILE_NAME__ }-${ sanitizedTestStepName }`;
 }
 
 /**
@@ -61,14 +59,12 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			throw new Error( 'No browser instance found.' );
 		}
 
-		const testName = __CURRENT_TEST_NAME__;
-
 		// Take screenshot for failed tests
-		if ( __CURRENT_TEST_FAILED__ ) {
+		if ( __STEP_FAILED__ ) {
 			const fileName = path.join(
 				artifactPath,
 				'screenshots',
-				`${ getTestNameWithTime( testName ) }.png`
+				`${ getFileName( __FAILED_STEP_NAME__ ) }.png`
 			);
 			await mkdir( path.dirname( fileName ), { recursive: true } );
 			await page.screenshot( { path: fileName } );
@@ -78,17 +74,20 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		await page.close();
 
 		// Stop tracing and remove the trace output if the test did not fail.
-		const traceOutputPath = path.join( artifactPath, `${ getTestNameWithTime( testName ) }.zip` );
+		const traceOutputPath = path.join(
+			artifactPath,
+			`${ getFileName( __FAILED_STEP_NAME__ ) }.zip`
+		);
 		await context.tracing.stop( { path: traceOutputPath } );
-		if ( ! __CURRENT_TEST_FAILED__ ) {
+		if ( ! __STEP_FAILED__ ) {
 			await unlink( traceOutputPath );
 		}
 
-		if ( __CURRENT_TEST_FAILED__ ) {
+		if ( __STEP_FAILED__ ) {
 			const destination = path.join(
 				artifactPath,
 				'screenshots',
-				`${ getTestNameWithTime( testName ) }.webm`
+				`${ getFileName( __FAILED_STEP_NAME__ ) }.webm`
 			);
 			try {
 				// Save the failing test case with a specific name.
