@@ -1,8 +1,10 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import wpcom from 'calypso/lib/wp';
+import { connect } from 'react-redux';
+import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
+import { isAnalyzing } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep, urlData } from '../types';
+import { GoToStep } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -16,17 +18,11 @@ const validateUrl = ( url: string ): boolean => {
 
 interface Props {
 	goToStep: GoToStep;
-	isScanning: boolean;
-	setIsScanning: ( inProgress: boolean ) => void;
-	setUrlData: ( data: urlData ) => void;
+	analyzeUrl: ReturnType< Promise< any > >;
+	isAnalyzing: boolean;
 }
 
-const CaptureStep: React.FunctionComponent< Props > = ( {
-	goToStep,
-	isScanning,
-	setIsScanning,
-	setUrlData,
-} ) => {
+const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, isAnalyzing } ) => {
 	const { __ } = useI18n();
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
@@ -34,16 +30,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const [ showError, setShowError ] = React.useState( false );
 
 	const runProcess = (): void => {
-		setIsScanning( true );
-
-		wpcom.undocumented().analyzeUrl( urlValue, function ( errors: any, response: urlData ) {
-			setIsScanning( false );
-
-			if ( errors ) {
-				return;
-			}
-
-			setUrlData( response );
+		analyzeUrl( urlValue ).then( () => {
 			/**
 			 * Temp piece of code
 			 * goToStep is a function for redirecting users to
@@ -72,7 +59,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			{ ! isScanning && (
+			{ ! isAnalyzing && (
 				<div className="import-layout__center">
 					<div className="capture__content">
 						<input
@@ -94,9 +81,16 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 				</div>
 			) }
 
-			{ isScanning && <ScanningStep /> }
+			{ isAnalyzing && <ScanningStep /> }
 		</>
 	);
 };
 
-export default CaptureStep;
+export default connect(
+	( state ) => ( {
+		isAnalyzing: isAnalyzing( state ),
+	} ),
+	{
+		analyzeUrl,
+	}
+)( CaptureStep );
