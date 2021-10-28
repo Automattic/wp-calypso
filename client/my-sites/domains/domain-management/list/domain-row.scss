@@ -115,6 +115,7 @@
 	@include break-mobile {
 		flex: 83 83 0;
 		font-size: $font-body-small;
+		padding-top: 2px;
 	}
 
 	.domain-row__domain-name {
