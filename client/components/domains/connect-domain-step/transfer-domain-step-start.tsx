@@ -14,6 +14,7 @@ import {
 } from 'calypso/components/domains/use-my-domain/utilities';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -60,18 +61,22 @@ function TransferDomainStepStart( {
 			}
 
 			try {
-				const availabilityData = await wpcom
-					.domain( domain )
-					.isAvailable( { apiVersion: '1.3', is_cart_pre_check: false } );
-
-				const availabilityErrorMessage = getAvailabilityErrorMessage( {
-					availabilityData,
-					domainName: domain,
-					selectedSite,
+				const availabilityData = await wpcom.domain( domain ).isAvailable( {
+					apiVersion: '1.3',
+					is_cart_pre_check: false,
+					blog_id: selectedSite?.ID,
 				} );
 
-				if ( availabilityErrorMessage ) {
-					setInboundTransferStatusInfo( null );
+				if ( domainAvailability.TRANSFER_PENDING_SAME_SITE !== availabilityData.status ) {
+					const availabilityErrorMessage = getAvailabilityErrorMessage( {
+						availabilityData,
+						domainName: domain,
+						selectedSite,
+					} );
+
+					if ( availabilityErrorMessage ) {
+						setInboundTransferStatusInfo( null );
+					}
 				}
 			} catch {
 				setInboundTransferStatusInfo( {} );
