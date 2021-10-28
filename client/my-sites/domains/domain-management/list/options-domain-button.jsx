@@ -4,6 +4,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { Icon, plus, search } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -129,17 +130,16 @@ class AddDomainButton extends Component {
 	}
 
 	render() {
-		const { specificSiteActions } = this.props;
+		const { specificSiteActions, ellipsisButton } = this.props;
+		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
 
 		return (
 			<Fragment>
 				<Button
 					primary={ specificSiteActions }
-					compact // only on not mobile
-					className="options-domain-button"
+					className={ classes }
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
-					// borderless={ ellipsisButton } mobile
 				>
 					{ this.renderLabel() }
 				</Button>
