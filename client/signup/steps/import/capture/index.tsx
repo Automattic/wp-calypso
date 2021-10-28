@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
@@ -16,11 +16,18 @@ const validateUrl = ( url: string ): boolean => {
 	return urlRgx.test( url );
 };
 
-interface Props {
+const connector = connect(
+	( state ) => ( {
+		isAnalyzing: isAnalyzing( state ),
+	} ),
+	{
+		analyzeUrl,
+	}
+);
+
+type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
-	analyzeUrl: ReturnType< Promise< any > >;
-	isAnalyzing: boolean;
-}
+};
 
 const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, isAnalyzing } ) => {
 	const { __ } = useI18n();
@@ -86,11 +93,4 @@ const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, 
 	);
 };
 
-export default connect(
-	( state ) => ( {
-		isAnalyzing: isAnalyzing( state ),
-	} ),
-	{
-		analyzeUrl,
-	}
-)( CaptureStep );
+export default connector( CaptureStep );
