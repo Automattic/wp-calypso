@@ -7,7 +7,9 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
-import PostCheckoutUpsellRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-redirector';
+import PostCheckoutUpsellRedirector, {
+	PROFESSIONAL_EMAIL_OFFER,
+} from 'calypso/my-sites/checkout/post-checkout-upsell-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
 	retrieveSignupDestination,
@@ -279,14 +281,27 @@ export function upsellRedirect( context, next ) {
 
 	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
 
-	context.primary = (
-		<PostCheckoutUpsellRedirector
-			receiptId={ receiptId }
-			siteSlug={ site }
-			upsellMeta={ upsellMeta }
-			upsellType={ upsellType }
-		/>
-	);
+	let upsellExperimentName;
+	let upsellExperimentAssignmentName;
+	let upsellUrl;
+
+	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
+		upsellExperimentName = 'promote_professional_email_post_checkout_2021_10';
+		upsellExperimentAssignmentName = 'treatment';
+		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
+	}
+
+	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
+		context.primary = (
+			<PostCheckoutUpsellRedirector
+				receiptId={ receiptId }
+				siteSlug={ site }
+				upsellExperimentName={ upsellExperimentName }
+				upsellExperimentAssignmentName={ upsellExperimentAssignmentName }
+				upsellUrl={ upsellUrl }
+			/>
+		);
+	}
 
 	next();
 }
