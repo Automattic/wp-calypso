@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { doAction, hasAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +10,12 @@ import './style.scss';
 const CLOSE_EDITOR_ACTION = 'a8c.wpcom-block-editor.closeEditor';
 
 const DraftPostModal = () => {
-	const homeUrl = `/home/${ window.location.hostname }`;
+	const siteId = window._currentSiteId;
+	const primaryDomain = useSelect( ( select ) =>
+		select( 'automattic/site' ).getPrimarySiteDomain( siteId )
+	);
+
+	const homeUrl = `/home/${ primaryDomain?.domain || window.location.hostname }`;
 	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
 	const closeEditor = () => {
