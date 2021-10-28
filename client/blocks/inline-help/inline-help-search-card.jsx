@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
+import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
-import { useInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 
 /**
  * Module variables
@@ -22,7 +22,7 @@ const InlineHelpSearchCard = ( {
 	const cardRef = useRef();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { isLoading: isSearching } = useInlineHelpSearchQuery( query );
+	const { isLoading: isSearching } = useHelpSearchQuery( query );
 
 	// Focus in the input element.
 	useEffect( () => {

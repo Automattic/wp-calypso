@@ -8,6 +8,7 @@ import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,7 +21,6 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
-import { useInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 
 const noop = () => {};
@@ -68,9 +68,9 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchResults = [], isLoading: isSearching } = useInlineHelpSearchQuery(
-		searchQuery
-	);
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
+
+	const searchResults = searchData?.wordpress_support_links ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
