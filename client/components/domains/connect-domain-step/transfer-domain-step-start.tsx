@@ -68,7 +68,6 @@ function TransferDomainStepStart( {
 				const availabilityData = await wpcom.domain( domain ).isAvailable( {
 					apiVersion: '1.3',
 					is_cart_pre_check: false,
-					blog_id: selectedSite?.ID,
 				} );
 
 				if ( domainAvailability.TRANSFER_PENDING_SAME_USER !== availabilityData.status ) {
