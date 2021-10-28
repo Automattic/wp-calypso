@@ -13,7 +13,7 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
@@ -50,7 +50,6 @@ function ChangePaymentMethod( {
 		( state ) => getByPurchaseId( state, purchaseId )?.payment
 	);
 	const selectedSite = useSelector( getSelectedSite );
-	const userId = useSelector( getCurrentUserId );
 
 	const { isStripeLoading } = useStripe();
 
@@ -74,7 +73,7 @@ function ChangePaymentMethod( {
 		return (
 			<Fragment>
 				<QueryStoredCards />
-				{ userId && <QueryUserPurchases userId={ userId } /> }
+				<QueryUserPurchases />
 				<PaymentMethodLoader title={ changePaymentMethodTitle } />
 			</Fragment>
 		);

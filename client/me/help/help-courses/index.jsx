@@ -38,7 +38,7 @@ class Courses extends Component {
 	}
 
 	render() {
-		const { courses, isBusinessPlanUser, isLoading, translate, userId } = this.props;
+		const { courses, isBusinessPlanUser, isLoading, translate } = this.props;
 
 		return (
 			<Main className="help-courses">
@@ -52,7 +52,7 @@ class Courses extends Component {
 					<CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } />
 				) }
 
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases />
 			</Main>
 		);
 	}
@@ -73,7 +73,6 @@ export function mapStateToProps( state ) {
 	return {
 		isLoading,
 		isBusinessPlanUser,
-		userId,
 		courses,
 	};
 }

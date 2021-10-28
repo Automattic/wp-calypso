@@ -21,7 +21,6 @@ import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { cancelPurchase, purchasesRoot } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -52,7 +51,6 @@ class ConfirmCancelDomain extends Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string.isRequired,
-		userId: PropTypes.number,
 	};
 
 	state = {
@@ -257,7 +255,7 @@ class ConfirmCancelDomain extends Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ this.props.userId } />
+					<QueryUserPurchases />
 					<ConfirmCancelDomainLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						selectedSite={ this.props.selectedSite }
@@ -331,7 +329,6 @@ export default connect(
 			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
 			purchase: getByPurchaseId( state, props.purchaseId ),
 			selectedSite,
-			userId: getCurrentUserId( state ),
 		};
 	},
 	{

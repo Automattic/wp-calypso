@@ -106,7 +106,7 @@ class PurchasesList extends Component {
 	}
 
 	render() {
-		const { purchases, sites, translate, userId, subscriptions } = this.props;
+		const { purchases, sites, translate, subscriptions } = this.props;
 		let content;
 
 		if ( this.isDataLoading() ) {
@@ -171,7 +171,7 @@ class PurchasesList extends Component {
 
 		return (
 			<Main wideLayout className="purchases-list">
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
@@ -204,7 +204,6 @@ PurchasesList.propTypes = {
 	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
 	subscriptions: PropTypes.array,
 	sites: PropTypes.array.isRequired,
-	userId: PropTypes.number.isRequired,
 	name: PropTypes.string,
 };
 
@@ -220,7 +219,6 @@ export default connect(
 			sites: getSites( state ),
 			nextAppointment: getConciergeNextAppointment( state ),
 			scheduleId: getConciergeScheduleId( state ),
-			userId,
 			isUserBlocked: getConciergeUserBlocked( state ),
 		};
 	},

@@ -219,7 +219,7 @@ function HelpSearchResults( {
 
 	return (
 		<>
-			{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+			<QueryUserPurchases />
 			{ renderSearchResults() }
 		</>
 	);

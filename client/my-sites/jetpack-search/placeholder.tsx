@@ -1,12 +1,10 @@
 import { ReactElement } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchLogo from './logo';
 
@@ -18,10 +16,9 @@ interface Props {
 }
 
 export default function JetpackSearchPlaceholder( { siteId, isJetpack }: Props ): ReactElement {
-	const currentUserId = useSelector( getCurrentUserId );
 	return (
 		<Main className="jetpack-search__placeholder">
-			<QueryUserPurchases userId={ currentUserId } />
+			<QueryUserPurchases />
 			{ ! isJetpack && <QuerySiteSettings siteId={ siteId } /> }
 			{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
