@@ -412,7 +412,6 @@ export class PluginsMain extends Component {
 					</div>
 				</FixedNavigationHeader>
 				<div className="plugins__main">
-					<div className="plugins__header"></div>
 					<div className="plugins__main-header">
 						<SectionNav selectedText={ this.getSelectedText() }>
 							<NavTabs>{ navItems }</NavTabs>

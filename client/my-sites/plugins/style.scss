@@ -30,17 +30,6 @@
 	white-space: nowrap;
 }
 
-.plugins__header {
-	display: flex;
-	flex: 1 1 auto;
-	justify-content: flex-start;
-	align-items: center;
-
-	.plugins__page-heading {
-		width: 100%;
-	}
-}
-
 .plugins__main-header {
 	background: var( --color-surface );
 	flex-direction: column;
@@ -99,12 +88,6 @@
 			}
 		}
 	}
-}
-
-.plugins__header-navigation {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
-	width: 100%;
 }
 
 .plugins__more-header {
