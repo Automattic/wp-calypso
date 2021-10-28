@@ -972,7 +972,7 @@ describe( 'CompositeCheckout', () => {
 		);
 		await waitFor( async () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -989,7 +989,7 @@ describe( 'CompositeCheckout', () => {
 		await waitFor( () => {
 			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 5 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
 		} );
 	} );
 
