@@ -1,8 +1,13 @@
-import { get } from 'lodash';
-import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
-
+import config from '@automattic/calypso-config';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import 'calypso/state/selected-editor/init';
 
+const VALID_EDITORS = [
+	'gutenberg-iframe',
+	'gutenberg-redirect',
+	'gutenberg-redirect-and-style',
+	'classic',
+];
 /**
  * Returns the editor of the selected site
  *
@@ -12,19 +17,23 @@ import 'calypso/state/selected-editor/init';
  * have no data yet
  */
 export const getSelectedEditor = ( state, siteId ) => {
-	const selectedEditor = get( state, [ 'selectedEditor', siteId ], null );
+	const selectedEditor = state.selectedEditor[ siteId ] ?? null;
 
-	const validEditors = [
-		'gutenberg-iframe',
-		'gutenberg-redirect',
-		'gutenberg-redirect-and-style',
-		'classic',
-	];
-	if ( ! validEditors.includes( selectedEditor ) ) {
+	if ( ! VALID_EDITORS.includes( selectedEditor ) ) {
 		return null;
 	}
 
-	if ( isClassicEditorForced( state, siteId ) ) {
+	// Since the desktop app will open WP Admin pages in the browser, we force the classic editor if the site is not
+	// eligible for Gutenframe in order to keep the user in the app.
+	if (
+		config.isEnabled( 'desktop' ) &&
+		[ 'gutenberg-redirect', 'gutenberg-redirect-and-style' ].includes( selectedEditor )
+	) {
+		return 'classic';
+	}
+
+	// We don't support Gutenberg on VIP sites.
+	if ( isVipSite( state, siteId ) ) {
 		return 'classic';
 	}
 
