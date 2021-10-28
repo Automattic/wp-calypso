@@ -38,6 +38,7 @@ function UseMyDomain( {
 	transferDomainUrl,
 	initialMode,
 } ) {
+	const { __ } = useI18n();
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( null );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( null );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
@@ -305,7 +306,7 @@ function UseMyDomain( {
 				/* translators: %s - the name of the domain the user will add to their site */
 				return sprintf( __( 'Use a domain I own: %s' ), domainName );
 		}
-	}, [ domainName, mode, inputMode, __ ] );
+	}, [ domainName, mode, __ ] );
 
 	return (
 		<>
