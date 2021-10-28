@@ -27,14 +27,17 @@ class Security2faProgress extends Component {
 	};
 
 	render() {
+		const doSMSFlow = this.props.doSMSFlow ?? false;
 		return (
 			<div className="security-2fa-progress__container">
 				<div className="security-2fa-progress__inner-container">
-					<ProgressItem
-						label={ this.props.translate( 'Authentication Method' ) }
-						icon="phone"
-						step={ this.stepClass( 1 ) }
-					/>
+					{ doSMSFlow && (
+						<ProgressItem
+							label={ this.props.translate( 'Enter Phone Number' ) }
+							icon="chat"
+							step={ this.stepClass( 1 ) }
+						/>
+					) }
 
 					<ProgressItem
 						label={ this.props.translate( 'Verify Code' ) }
