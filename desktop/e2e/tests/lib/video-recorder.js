@@ -5,15 +5,6 @@ const ffmpeg = require( 'ffmpeg-static' );
 
 const E2E_DIR = path.resolve( __dirname, '../../' );
 
-// Helper to get device/display identifier (Linux)
-function getFreeDisplay() {
-	let i = 0;
-	while ( ! fs.existsSync( `/tmp/.X${ i }-lock` ) && i < 200 ) {
-		i++;
-	}
-	return i;
-}
-
 let file;
 let ffVideo;
 let ffDisplay;
@@ -29,7 +20,7 @@ switch ( process.platform ) {
 		ffFileExt = 'mpg';
 		break;
 	case 'linux':
-		ffDisplay = `:${ getFreeDisplay() }`;
+		ffDisplay = `:99`;
 		ffVideoSize = '1280x1024';
 		ffFramework = 'x11grab';
 		ffFileExt = 'mp4';
@@ -65,27 +56,30 @@ exports.startVideo = function () {
 	const fileName = `e2e-test-run-${ dateTime }.${ ffFileExt }`;
 	file = path.join( E2E_DIR, 'screenshots', 'videos', fileName );
 	this.createDir( path.dirname( file ) );
-	ffVideo = child_process.spawn(
-		ffmpeg.path,
-		[
-			'-f',
-			ffFramework,
-			'-video_size',
-			ffVideoSize,
-			'-r',
-			30,
-			'-i',
-			ffDisplay,
-			'-pix_fmt',
-			'yuv420p',
-			'-loglevel',
-			'error',
-			file,
-		],
+	const logging = fs.createWriteStream(
+		path.join( E2E_DIR, 'screenshots', 'videos', 'ffmpeg.log' ),
 		{
-			stdio: 'inherit',
+			flags: 'a',
 		}
 	);
+
+	ffVideo = child_process.spawn( ffmpeg.path, [
+		'-f',
+		ffFramework,
+		'-video_size',
+		ffVideoSize,
+		'-r',
+		30,
+		'-i',
+		ffDisplay,
+		'-pix_fmt',
+		'yuv420p',
+		'-loglevel',
+		'info',
+		file,
+	] );
+	ffVideo.stdout.pipe( logging );
+	ffVideo.stderr.pipe( logging );
 };
 
 exports.stopVideo = function () {

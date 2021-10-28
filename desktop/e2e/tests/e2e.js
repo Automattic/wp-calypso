@@ -14,20 +14,15 @@ const LoginPage = require( './lib/pages/login-page' );
 // const dataHelper = require( './lib/data-helper' );
 const options = new chrome.Options();
 options.addArguments(
-	'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.128 Electron/8.3.0 Safari/537.36'
+	'user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) WordPressDesktop/7.2.0 Chrome/91.0.4472.69 Electron/12.2.2 Safari/537.36'
 );
+options.addArguments( `--display=:99` );
+options.debuggerAddress( '127.0.0.1:9222' );
+
 const driverConfig = new webdriver.Builder()
 	.usingServer( 'http://localhost:9515' )
 	.setChromeOptions( options )
-	.withCapabilities( {
-		chromeOptions: {
-			// Here is the path to your Electron binary.
-			binary: process.env.BINARY_PATH,
-			args: [ '--disable-renderer-backgrounding', '--disable-http-cache', '--start-maximized' ],
-			debuggerAddress: '127.0.0.1:9222',
-		},
-	} )
-	.forBrowser( 'electron' );
+	.forBrowser( 'chrome' );
 
 // let loggedInUrl;
 let driver;
