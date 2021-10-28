@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
 
 /**
  * Module variables
@@ -14,15 +13,16 @@ import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
 const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpSearchCard = ( {
-	query = '',
+	searchQuery = '',
 	location = 'inline-help-popover',
 	isVisible = true,
 	placeholder,
+	onSearch,
 } ) => {
 	const cardRef = useRef();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { isLoading: isSearching } = useHelpSearchQuery( query );
+	const { isLoading: isSearching } = useHelpSearchQuery( searchQuery );
 
 	// Focus in the input element.
 	useEffect( () => {
@@ -37,8 +37,8 @@ const InlineHelpSearchCard = ( {
 		return () => window.clearTimeout( timerId );
 	}, [ cardRef, location, isVisible ] );
 
-	const searchHelperHandler = ( searchQuery ) => {
-		const inputQuery = searchQuery.trim();
+	const searchHelperHandler = ( query ) => {
+		const inputQuery = query.trim();
 
 		if ( inputQuery?.length ) {
 			debug( 'search query received: ', searchQuery );
@@ -51,23 +51,24 @@ const InlineHelpSearchCard = ( {
 		}
 
 		// Set the query search
-		dispatch( setInlineHelpSearchQuery( searchQuery ) );
+		onSearch?.( query );
 	};
 
 	return (
 		<SearchCard
 			ref={ cardRef }
 			searching={ isSearching }
-			initialValue={ query }
+			initialValue={ searchQuery }
 			onSearch={ searchHelperHandler }
 			placeholder={ placeholder || translate( 'Search for help…' ) }
-			delaySearch={ true }
+			delaySearch
 		/>
 	);
 };
 
 InlineHelpSearchCard.propTypes = {
-	query: PropTypes.string,
+	searchQuery: PropTypes.string,
+	onSearch: PropTypes.func,
 	placeholder: PropTypes.string,
 	location: PropTypes.string,
 };
