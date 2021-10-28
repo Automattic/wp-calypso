@@ -4,8 +4,9 @@ import {
 	URL_ANALYZER_ANALYZE_DONE,
 	URL_ANALYZER_ANALYZE_SUCCESS,
 } from '../../action-types';
+import type { AnyAction } from 'redux';
 
-const isAnalyzing = ( state = false, action ) => {
+const isAnalyzing = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case URL_ANALYZER_ANALYZE:
 			return true;
@@ -16,18 +17,22 @@ const isAnalyzing = ( state = false, action ) => {
 	return state;
 };
 
-const urlData = ( state = null, action ) => {
+const urlData = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
 		case URL_ANALYZER_ANALYZE_SUCCESS: {
-			const { data } = action;
-			return data;
+			const { payload } = action;
+			return payload;
 		}
 		default:
 			return state;
 	}
 };
 
-export default combineReducers( {
+const reducer = combineReducers( {
 	isAnalyzing,
 	urlData,
 } );
+
+export type State = ReturnType< typeof reducer >;
+
+export default reducer;

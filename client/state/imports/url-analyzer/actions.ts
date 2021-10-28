@@ -5,8 +5,12 @@ import {
 	URL_ANALYZER_ANALYZE,
 	URL_ANALYZER_ANALYZE_SUCCESS,
 } from '../../action-types';
+import type { urlData } from 'calypso/signup/steps/import/types';
+import type { AnyAction, Dispatch } from 'redux';
 
-export const analyzeUrl = ( url ) => ( dispatch ) => {
+export const analyzeUrl = ( url: string ) => (
+	dispatch: Dispatch< AnyAction >
+): Promise< void > => {
 	dispatch( {
 		type: URL_ANALYZER_ANALYZE,
 	} );
@@ -14,11 +18,11 @@ export const analyzeUrl = ( url ) => ( dispatch ) => {
 	return wpcom
 		.undocumented()
 		.analyzeUrl( url )
-		.then( ( response ) => {
+		.then( ( response: urlData ) => {
 			// Update the state
 			dispatch( {
 				type: URL_ANALYZER_ANALYZE_SUCCESS,
-				data: response,
+				payload: response,
 			} );
 		} )
 		.finally( () => {

@@ -16,15 +16,6 @@ const validateUrl = ( url: string ): boolean => {
 	return urlRgx.test( url );
 };
 
-const connector = connect(
-	( state ) => ( {
-		isAnalyzing: isAnalyzing( state ),
-	} ),
-	{
-		analyzeUrl,
-	}
-);
-
 type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
 };
@@ -92,5 +83,14 @@ const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, 
 		</>
 	);
 };
+
+const connector = connect(
+	( state ) => ( {
+		isAnalyzing: isAnalyzing( state ),
+	} ),
+	{
+		analyzeUrl,
+	}
+);
 
 export default connector( CaptureStep );
