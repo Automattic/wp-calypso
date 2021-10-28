@@ -145,6 +145,7 @@ class DomainRow extends PureComponent {
 		}
 
 		return (
+			/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 			<div className="domain-row__auto-renew-cell" onClick={ ( e ) => e.stopPropagation() }>
 				<AutoRenewToggle
 					planName={ site.plan.product_name_short }
@@ -154,6 +155,7 @@ class DomainRow extends PureComponent {
 					toggleSource="registered-domain-status"
 				/>
 			</div>
+			/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 		);
 	}
 
@@ -265,6 +267,7 @@ class DomainRow extends PureComponent {
 			);
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="domain-row__action-cell">
 				<EllipsisMenu
@@ -288,6 +291,7 @@ class DomainRow extends PureComponent {
 				</EllipsisMenu>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	canSetAsPrimary() {
