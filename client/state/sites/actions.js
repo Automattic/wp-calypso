@@ -251,7 +251,7 @@ export const sitePluginUpdated = ( siteId ) => ( {
  * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
  * @returns {object} Action object
  */
-export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( { dispatch } ) => {
+export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( dispatch ) => {
 	dispatch( { type: SITE_FRONT_PAGE_UPDATE, siteId, frontPageOptions } );
 
 	wpcom.req
