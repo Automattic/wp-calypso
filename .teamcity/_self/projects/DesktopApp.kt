@@ -59,6 +59,11 @@ object E2ETests : BuildType({
 				# Decript certs
 				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
 
+				# Update Chrome
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_91.0.4472.77-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_91.0.4472.77-1_amd64.deb
+				rm ./google-chrome-stable_91.0.4472.77-1_amd64.deb
+
 				# Install modules
 				${_self.yarn_install_cmd}
 				cd desktop && yarn install --frozen-lockfile
@@ -71,6 +76,12 @@ object E2ETests : BuildType({
 			scriptContent = """
 				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 				export USE_HARD_LINKS=false
+
+				# Update Chrome
+				# This needs to be done again as TeamCity kills the container between builds, and we need an updated Chrome before running the tests
+				wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_91.0.4472.77-1_amd64.deb
+				sudo apt-get install -y ./google-chrome-stable_91.0.4472.77-1_amd64.deb
+				rm ./google-chrome-stable_91.0.4472.77-1_amd64.deb
 
 				# Build app
 				cd desktop && yarn run build
