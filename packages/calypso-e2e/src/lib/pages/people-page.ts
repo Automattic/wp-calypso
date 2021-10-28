@@ -55,9 +55,7 @@ export class PeoplePage {
 		// For Invites tab, wait for the full request to be completed.
 		if ( name === 'Invites' ) {
 			await Promise.all( [
-				this.page.waitForResponse(
-					( response ) => response.url().includes( 'invites?' ) && response.status() === 200
-				),
+				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
 				clickNavTab( this.page, name ),
 			] );
 			return;
