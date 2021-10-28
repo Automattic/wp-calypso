@@ -227,7 +227,7 @@ export class PlansStep extends Component {
 		}
 
 		let queryParams;
-		if ( 0 !== this.props.positionInFlow ) {
+		if ( ! isNaN( Number( positionInFlow ) ) && 0 !== positionInFlow ) {
 			const previousStepName = steps[ this.props.positionInFlow - 1 ];
 			const previousStep = this.props.progress?.[ previousStepName ];
 
