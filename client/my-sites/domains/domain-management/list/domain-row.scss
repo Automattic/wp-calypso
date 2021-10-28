@@ -2,14 +2,15 @@
 
 .domain-row {
 	position: relative;
-	display: flex;
-	align-items: flex-start;
+	display: block;
 	padding: 16px;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
 
 	@include break-mobile {
+		display: flex;
+		align-items: flex-start;
 		padding: 20px 0;
 	}
 
@@ -71,21 +72,19 @@
 .domain-row__mobile-container {
 	flex: 233 233 0;
 	overflow: hidden;
-
-	@include break-mobile {
-		display: flex;
-	}
+	display: flex;
 }
 
-.domain-row__mobile-status-container {
-	display: flex;
+.domain-row__mobile-container2 {
+	display: block;
 	margin-top: 4px;
 
+	.domain-row__status-cell {
+		display: inline;
+	}
+
 	@include break-mobile {
-		flex: 90 90 0;
-		flex-direction: row;
-		margin-top: 0;
-		padding-top: 2px;
+		display: none;
 	}
 }
 
@@ -111,6 +110,7 @@
 
 .domain-row__domain-cell {
 	overflow: hidden;
+	flex: 1;
 
 	@include break-mobile {
 		flex: 83 83 0;
@@ -148,10 +148,13 @@
 }
 
 .domain-row__status-cell {
+	display: none;
+
 	@include break-mobile {
 		flex: 40 40 0;
 		display: block;
 		align-items: center;
+		padding-top: 2px;
 		font-size: $font-body-small;
 	}
 }
@@ -164,6 +167,7 @@
 	@include break-mobile {
 		flex: 50 50 0;
 		margin: 0;
+		padding-top: 2px;
 		display: inline;
 		font-size: $font-body-small;
 	}
@@ -209,7 +213,6 @@
 }
 
 .domain-row__action-cell {
-	flex: 1 1 0;
 	height: 20px;
 	margin-left: 20px;
 

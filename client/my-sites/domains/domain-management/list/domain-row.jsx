@@ -369,15 +369,16 @@ class DomainRow extends PureComponent {
 			<div className="domain-row">
 				<div className="domain-row__mobile-container">
 					{ this.renderDomainName( domainTypeText ) }
-					<div className="domain-row__mobile-status-container">
-						{ this.renderDomainStatus() }
-						{ this.renderExpiryDate( expiryDate ) }
-						{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
-					</div>
+					{ this.renderDomainStatus() }
+					{ this.renderExpiryDate( expiryDate ) }
 					{ this.renderAutoRenew() }
 					{ this.renderEmail() }
+					{ this.renderEllipsisMenu() }
 				</div>
-				{ this.renderEllipsisMenu() }
+				<div className="domain-row__mobile-container2">
+					{ this.renderDomainStatus() }
+					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
+				</div>
 				{ this.renderOverlay() }
 			</div>
 		);
