@@ -1,42 +1,27 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { isRequestingActiveTheme } from 'calypso/state/themes/selectors';
 
-class QueryActiveTheme extends Component {
-	static propTypes = {
-		siteId: PropTypes.number,
-		// Connected props
-		isRequesting: PropTypes.bool.isRequired,
-		requestActiveTheme: PropTypes.func.isRequired,
-	};
-
-	componentDidMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( siteId && ! isRequestingActiveTheme( getState(), siteId ) ) {
+		dispatch( requestActiveTheme( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
-		}
-		this.request( nextProps );
-	}
+function QueryActiveTheme( { siteId } ) {
+	const dispatch = useDispatch();
 
-	request( props ) {
-		if ( props.siteId && ! props.isRequesting ) {
-			props.requestActiveTheme( props.siteId );
-		}
-	}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		isRequesting: isRequestingActiveTheme( state, siteId ),
-	} ),
-	{ requestActiveTheme }
-)( QueryActiveTheme );
+QueryActiveTheme.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
+export default QueryActiveTheme;

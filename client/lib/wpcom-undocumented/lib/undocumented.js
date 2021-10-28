@@ -1168,11 +1168,6 @@ Undocumented.prototype.deleteThemeFromJetpack = function ( siteId, themeId, fn )
 	);
 };
 
-Undocumented.prototype.activeTheme = function ( siteId, fn ) {
-	debug( '/sites/:site_id/themes/mine' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
-};
-
 Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeHomepage, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post(
