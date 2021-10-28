@@ -48,6 +48,7 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 				/* If a hook has failed, mark all subsequent test
 				steps as failed.
 				Handling is different compared to test steps because
+				Jest treats failed hooks differently from tests.
 				*/
 				if ( this.hookFailed ) {
 					event.test.mode = 'fail';
