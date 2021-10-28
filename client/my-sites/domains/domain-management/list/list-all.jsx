@@ -53,7 +53,6 @@ class ListAll extends Component {
 		domainsList: PropTypes.array.isRequired,
 		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
-		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
