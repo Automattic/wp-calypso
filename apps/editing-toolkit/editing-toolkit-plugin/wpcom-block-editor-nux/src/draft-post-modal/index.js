@@ -1,16 +1,24 @@
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { doAction } from '@wordpress/hooks';
+import { doAction, hasAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import NuxModal from '../nux-modal';
 import draftPostImage from './images/draft-post.svg';
 import './style.scss';
 
+const CLOSE_EDITOR_ACTION = 'a8c.wpcom-block-editor.closeEditor';
+
 const DraftPostModal = () => {
+	const homeUrl = `/home/${ window.location.hostname }`;
 	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
-	const closeEditor = () =>
-		doAction( 'a8c.wpcom-block-editor.closeEditor', `/home/${ window.location.hostname }` );
+	const closeEditor = () => {
+		if ( hasAction( CLOSE_EDITOR_ACTION ) ) {
+			doAction( CLOSE_EDITOR_ACTION, homeUrl );
+		} else {
+			window.location.href = `https://wordpress.com${ homeUrl }`;
+		}
+	};
 
 	return (
 		<NuxModal
