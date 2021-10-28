@@ -1,4 +1,4 @@
-import { mkdir, unlink } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import path from 'path';
 import { beforeAll, afterAll } from '@jest/globals';
 import { BrowserContext, chromium, Page, Video } from 'playwright';
@@ -74,13 +74,12 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		await page.close();
 
 		// Stop tracing and remove the trace output if the test did not fail.
-		const traceOutputPath = path.join(
-			artifactPath,
-			`${ getFileName( __FAILED_STEP_NAME__ ) }.zip`
-		);
-		await context.tracing.stop( { path: traceOutputPath } );
-		if ( ! __STEP_FAILED__ ) {
-			await unlink( traceOutputPath );
+		if ( __STEP_FAILED__ ) {
+			const traceOutputPath = path.join(
+				artifactPath,
+				`${ getFileName( __FAILED_STEP_NAME__ ) }.zip`
+			);
+			await context.tracing.stop( { path: traceOutputPath } );
 		}
 
 		if ( __STEP_FAILED__ ) {
