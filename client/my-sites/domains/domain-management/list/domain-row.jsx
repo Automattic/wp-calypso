@@ -170,13 +170,17 @@ class DomainRow extends PureComponent {
 	};
 
 	renderEmail() {
+		return <span className="domain-row__email-cell">{ this.renderEmailLabel() }</span>;
+	}
+
+	/* eslint-disable jsx-a11y/anchor-is-valid */
+	renderEmailLabel = () => {
 		const { domainDetails, translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
-			return <span className="domain-row__email-cell">-</span>;
+			return null;
 		}
 
-		/* eslint-disable jsx-a11y/anchor-is-valid */
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
 
@@ -192,11 +196,9 @@ class DomainRow extends PureComponent {
 				}
 			);
 			return (
-				<span className="domain-row__email-cell">
-					<a href="#" onClick={ this.goToEmailPage }>
-						{ text }
-					</a>
-				</span>
+				<a href="#" onClick={ this.goToEmailPage }>
+					{ text }
+				</a>
 			);
 		}
 
@@ -211,11 +213,9 @@ class DomainRow extends PureComponent {
 				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
 			} );
 			return (
-				<span className="domain-row__email-cell">
-					<a href="#" onClick={ this.goToEmailPage }>
-						{ text }
-					</a>
-				</span>
+				<a href="#" onClick={ this.goToEmailPage }>
+					{ text }
+				</a>
 			);
 		}
 
@@ -230,27 +230,23 @@ class DomainRow extends PureComponent {
 				comment: 'The number of email forwards active for the current domain',
 			} );
 			return (
-				<span className="domain-row__email-cell">
-					<a href="#" onClick={ this.goToEmailPage }>
-						{ text }
-					</a>
-				</span>
+				<a href="#" onClick={ this.goToEmailPage }>
+					{ text }
+				</a>
 			);
 		}
 
 		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
-			return <span className="domain-row__email-cell">-</span>;
+			return null;
 		}
 
 		return (
-			<span className="domain-row__email-cell">
-				<a href="#" onClick={ this.addEmailClick }>
-					{ translate( 'Add +', { context: 'Button label' } ) }
-				</a>
-			</span>
+			<a href="#" onClick={ this.addEmailClick }>
+				{ translate( 'Add +', { context: 'Button label' } ) }
+			</a>
 		);
-		/* eslint-enable jsx-a11y/anchor-is-valid */
-	}
+	};
+	/* eslint-enable jsx-a11y/anchor-is-valid */
 
 	addEmailClick = ( event ) => {
 		const { trackAddEmailClick, domain } = this.props;
