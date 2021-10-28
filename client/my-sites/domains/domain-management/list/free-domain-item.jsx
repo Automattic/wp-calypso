@@ -53,6 +53,7 @@ export default function FreeDomainItem( {
 					disabled={ isBusy || disabled }
 					toggleTitle={ __( 'Free WordPress address options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
+					popoverClassName="free-domain-item__popover"
 				>
 					{ canMakePrimary && (
 						<PopoverMenuItem onClick={ handleMakePrimary }>

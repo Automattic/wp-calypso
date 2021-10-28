@@ -59,6 +59,14 @@
 	&__status-error-dot {
 		background-color: var( --studio-orange-40 );
 	}
+
+	.popover__menu-item {
+		color: var( --studio-gray-90 );
+
+		& svg {
+			color: var( --studio-gray-90 );
+		}
+	}
 }
 
 .domain-row__mobile-container {
@@ -214,5 +222,22 @@
 	@include break-mobile {
 		flex: 6 6 0;
 		margin: 0;
+	}
+}
+
+.domain-row__popover {
+	.popover__menu-item {
+		color: var( --studio-gray-90 );
+		svg {
+			fill: var( --studio-gray-90 );
+		}
+	}
+
+	.popover__menu-item.is-selected,
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		svg {
+			fill: var( --studio-white );
+		}
 	}
 }

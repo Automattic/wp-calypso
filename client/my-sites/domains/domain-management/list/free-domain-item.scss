@@ -76,3 +76,20 @@
 		padding: 0;
 	}
 }
+
+.free-domain-item__popover {
+	.popover__menu-item {
+		color: var( --studio-gray-90 );
+		svg {
+			fill: var( --studio-gray-90 );
+		}
+	}
+
+	.popover__menu-item.is-selected,
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		svg {
+			fill: var( --studio-white );
+		}
+	}
+}

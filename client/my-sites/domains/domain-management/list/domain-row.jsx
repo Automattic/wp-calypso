@@ -266,6 +266,7 @@ class DomainRow extends PureComponent {
 					onClick={ ( e ) => e.stopPropagation() }
 					toggleTitle={ translate( 'Options' ) }
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
+					popoverClassName="domain-row__popover"
 				>
 					<PopoverMenuItem icon="domains">{ translate( 'View settings' ) }</PopoverMenuItem>
 					{ this.canSetAsPrimary() && (
