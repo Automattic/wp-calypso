@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, home } from '@wordpress/icons';
+import { Icon, home, moreVertical } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
@@ -264,6 +264,7 @@ class DomainRow extends PureComponent {
 					disabled={ disabled || isBusy }
 					onClick={ ( e ) => e.stopPropagation() }
 					toggleTitle={ translate( 'Options' ) }
+					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 				>
 					<PopoverMenuItem icon="domains">{ translate( 'View settings' ) }</PopoverMenuItem>
 					{ this.canSetAsPrimary() && (
