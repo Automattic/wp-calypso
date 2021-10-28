@@ -8,7 +8,6 @@
 	border-bottom: 1px solid var( --studio-gray-5 );
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
-	cursor: pointer;
 
 	@include break-mobile {
 		padding: 20px 0;
@@ -122,17 +121,18 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-
-		color: var( --studio-gray-90 );
 		font-size: $font-body-large;
 		font-weight: 500; /* stylelint-disable-line */
 
-		@include break-mobile {
-			font-size: $font-body-small;
+		a {
+			color: var( --studio-gray-90 );
+		}
+		a:hover {
+			color: var( --color-link );
 		}
 
-		&:hover {
-			color: var( --color-link );
+		@include break-mobile {
+			font-size: $font-body-small;
 		}
 	}
 

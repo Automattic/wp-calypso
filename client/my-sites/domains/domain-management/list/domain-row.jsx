@@ -70,7 +70,13 @@ class DomainRow extends PureComponent {
 		const { domain, domainDetails, isManagingAllSites } = this.props;
 		return (
 			<div className="domain-row__domain-cell">
-				<div className="domain-row__domain-name">{ domain.domain }</div>
+				<div className="domain-row__domain-name">
+					{ /* eslint-disable jsx-a11y/anchor-is-valid */ }
+					<a href="#" onClick={ this.handleClick }>
+						{ domain.domain }
+					</a>
+					{ /* eslint-enable jsx-a11y/anchor-is-valid */ }
+				</div>
 				{ domainTypeText && <div className="domain-row__domain-type-text">{ domainTypeText }</div> }
 				{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 			</div>
@@ -268,7 +274,9 @@ class DomainRow extends PureComponent {
 					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="domain-row__popover"
 				>
-					<PopoverMenuItem icon="domains">{ translate( 'View settings' ) }</PopoverMenuItem>
+					<PopoverMenuItem icon="domains" onClick={ this.handleClick }>
+						{ translate( 'View settings' ) }
+					</PopoverMenuItem>
 					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem onClick={ this.makePrimary }>
 							{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
@@ -329,7 +337,7 @@ class DomainRow extends PureComponent {
 		const expiryDate = moment.utc( domainDetails?.expiry || domain?.expiry );
 
 		return (
-			<div className="domain-row" onClick={ this.handleClick }>
+			<div className="domain-row">
 				<div className="domain-row__mobile-container">
 					{ this.renderDomainName( domainTypeText ) }
 					<div className="domain-row__mobile-status-container">
