@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -10,7 +9,6 @@ import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -80,7 +78,7 @@ export class SiteDomains extends Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, translate, isAtomicSite } = this.props;
+		const { selectedSite, domains, currentRoute, isAtomicSite } = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
@@ -132,27 +130,12 @@ export class SiteDomains extends Component {
 		return (
 			<>
 				<div className="domains__header">
-					{ /* TODO: remove this as it'll be handled by the new breadcrumbs component */ }
-					<FormattedHeader
-						brandFont
-						className="domain-management__page-heading"
-						headerText={ translate( 'Site Domains' ) }
-						subHeaderText={ translate(
-							'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-								},
-							}
-						) }
-						align="left"
-					/>
+					{ /* TODO: we need to decide where the HeaderCart will appear in the new design */ }
 					<div className="domains__header-buttons">
 						<HeaderCart
 							selectedSite={ this.props.selectedSite }
 							currentRoute={ this.props.currentRoute }
 						/>
-						{ this.optionsDomainButton() }
 					</div>
 				</div>
 
@@ -307,14 +290,6 @@ export class SiteDomains extends Component {
 				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
-	}
-
-	optionsDomainButton() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
-		}
-
-		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {
