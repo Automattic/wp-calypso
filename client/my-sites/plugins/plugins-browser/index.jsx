@@ -491,7 +491,7 @@ export class PluginsBrowser extends Component {
 					>
 						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
-							{ this.renderUploadPluginButton() }
+							{ this.renderUploadPluginButton( this.state.isMobile ) }
 						</div>
 
 						<div className="plugins-browser__searchbox">
