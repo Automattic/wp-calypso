@@ -224,6 +224,11 @@
 	@include break-mobile {
 		flex: 6 6 0;
 		margin: 0;
+
+		.ellipsis-menu {
+			position: relative;
+			right: 16px;
+		}
 	}
 }
 
