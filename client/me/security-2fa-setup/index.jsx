@@ -86,7 +86,7 @@ class Security2faSetup extends Component {
 
 				{ 'backup-codes' === this.state.step ? (
 					<Security2faSetupBackupCodes
-						doSMSFlow={ this.state.currentAuthMethod !== 'app-based' }
+						doSMSFlow={ this.state.authMethod !== 'app-based' }
 						onFinished={ this.onFinished }
 					/>
 				) : null }
