@@ -189,8 +189,8 @@ const mapState = ( state ) => {
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
 		userEmail:
 			getLastCheckedUsernameOrEmail( state ) ||
-			getCurrentQueryArguments( state ).email_address ||
-			getInitialQueryArguments( state ).email_address,
+			getCurrentQueryArguments( state )?.email_address ||
+			getInitialQueryArguments( state )?.email_address,
 	};
 };
 

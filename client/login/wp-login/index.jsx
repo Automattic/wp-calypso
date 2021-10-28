@@ -313,8 +313,8 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
 		emailQueryParam:
-			getCurrentQueryArguments( state ).email_address ||
-			getInitialQueryArguments( state ).email_address,
+			getCurrentQueryArguments( state )?.email_address ||
+			getInitialQueryArguments( state )?.email_address,
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
