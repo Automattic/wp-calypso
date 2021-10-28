@@ -198,18 +198,12 @@
 		padding-top: 2px;
 	}
 
-	button.domain-row__email-button {
-		color: var( --color-text );
-		background: none;
-		border: none;
-		padding: 0;
-		line-height: 1.5;
-		box-shadow: none;
+	a {
 		font-size: $font-body-small;
-
-		&:hover {
-			color: var( --color-link );
-		}
+		color: var( --studio-gray-90 );
+	}
+	a:hover {
+		color: var( --color-link );
 	}
 }
 

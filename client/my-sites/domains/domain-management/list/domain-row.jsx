@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { Icon, home, moreVertical } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -177,6 +176,7 @@ class DomainRow extends PureComponent {
 			return <span className="domain-row__email-cell">-</span>;
 		}
 
+		/* eslint-disable jsx-a11y/anchor-is-valid */
 		if ( hasGSuiteWithUs( domainDetails ) ) {
 			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
 
@@ -191,7 +191,13 @@ class DomainRow extends PureComponent {
 					comment: 'The number of GSuite mailboxes active for the current domain',
 				}
 			);
-			return <span className="domain-row__email-cell">{ text }</span>;
+			return (
+				<span className="domain-row__email-cell">
+					<a href="#" onClick={ this.goToEmailPage }>
+						{ text }
+					</a>
+				</span>
+			);
 		}
 
 		if ( hasTitanMailWithUs( domainDetails ) ) {
@@ -204,7 +210,13 @@ class DomainRow extends PureComponent {
 				count: titanMailboxCount,
 				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
 			} );
-			return <span className="domain-row__email-cell">{ text }</span>;
+			return (
+				<span className="domain-row__email-cell">
+					<a href="#" onClick={ this.goToEmailPage }>
+						{ text }
+					</a>
+				</span>
+			);
 		}
 
 		if ( hasEmailForwards( domainDetails ) ) {
@@ -217,7 +229,13 @@ class DomainRow extends PureComponent {
 				},
 				comment: 'The number of email forwards active for the current domain',
 			} );
-			return <span className="domain-row__email-cell">{ text }</span>;
+			return (
+				<span className="domain-row__email-cell">
+					<a href="#" onClick={ this.goToEmailPage }>
+						{ text }
+					</a>
+				</span>
+			);
 		}
 
 		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
@@ -226,18 +244,25 @@ class DomainRow extends PureComponent {
 
 		return (
 			<span className="domain-row__email-cell">
-				<Button compact onClick={ this.addEmailClick } className="domain-row__email-button">
+				<a href="#" onClick={ this.addEmailClick }>
 					{ translate( 'Add +', { context: 'Button label' } ) }
-				</Button>
+				</a>
 			</span>
 		);
+		/* eslint-enable jsx-a11y/anchor-is-valid */
 	}
 
 	addEmailClick = ( event ) => {
-		const { trackAddEmailClick, currentRoute, disabled, domain, site } = this.props;
+		const { trackAddEmailClick, domain } = this.props;
 		event.stopPropagation();
 
 		trackAddEmailClick( domain ); // analytics/tracks
+		this.goToEmailPage( event );
+	};
+
+	goToEmailPage = ( event ) => {
+		const { currentRoute, disabled, domain, site } = this.props;
+		event.stopPropagation();
 
 		if ( disabled ) {
 			return;
