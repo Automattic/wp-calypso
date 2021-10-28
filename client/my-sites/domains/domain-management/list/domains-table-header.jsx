@@ -127,6 +127,7 @@ class DomainsTableHeader extends PureComponent {
 							onClick={ this.handleHeaderClick }
 							className={ classNames( 'list__header-column', `list__${ column.name }-cell`, {
 								'is-sorted-by': activeSortKey === column.name,
+								'is-sortable': column?.isSortable,
 							} ) }
 							data-column={ column.name }
 						>

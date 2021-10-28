@@ -364,6 +364,9 @@
 	.list__header-column {
 		display: flex;
 		align-items: center;
+		&.is-sortable {
+			cursor: pointer;
+		}
 		svg {
 			margin-left: 4px;
 			fill: transparent;

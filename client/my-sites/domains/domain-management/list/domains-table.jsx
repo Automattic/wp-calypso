@@ -36,6 +36,10 @@ class DomainsTable extends PureComponent {
 			( column ) => column.name === selectedColumn
 		);
 
+		if ( ! selectedColumnDefinition?.isSortable ) {
+			return;
+		}
+
 		this.setState( ( prevState ) => {
 			let newSortOrder = sortOrder;
 
