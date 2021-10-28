@@ -59,7 +59,7 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			throw new Error( 'No browser instance found.' );
 		}
 
-		// Take screenshot for failed tests
+		// Take screenshot for failed test.
 		if ( __STEP_FAILED__ ) {
 			const fileName = path.join(
 				artifactPath,
@@ -73,7 +73,7 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 		// the video recording.
 		await page.close();
 
-		// Stop tracing and remove the trace output if the test did not fail.
+		// Save trace for failed test.
 		if ( __STEP_FAILED__ ) {
 			const traceOutputPath = path.join(
 				artifactPath,
@@ -82,6 +82,7 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 			await context.tracing.stop( { path: traceOutputPath } );
 		}
 
+		// Save video for failed test.
 		if ( __STEP_FAILED__ ) {
 			const destination = path.join(
 				artifactPath,
