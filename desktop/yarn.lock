@@ -3944,10 +3944,10 @@ electron-builder@^22.11.7:
     update-notifier "^5.1.0"
     yargs "^17.0.1"
 
-electron-chromedriver@~12.0.0:
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/electron-chromedriver/-/electron-chromedriver-12.0.0.tgz#55bdc451b938b384642d613a05eadacb1fe476ee"
-  integrity sha512-zOs98o9+20Er8Q44z06h90VldwrJaoRCieW3Q8WkdDjA3cMRU5mlmm1kGDhPLMeYNuhq6e39aGMVH/IBFD97HQ==
+electron-chromedriver@~13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/electron-chromedriver/-/electron-chromedriver-13.0.0.tgz#a553af7743215ac463e1e40e0db14d4a542ef762"
+  integrity sha512-fID1ms8wT7qNfoKkXHNpH0ZE8/Nclb5YmkF3O0w57OxsR8S9PxgE9CJAgaSGroxBgZ+ge1i2OU0Aq/WE/e/Neg==
   dependencies:
     "@electron/get" "^1.12.4"
     extract-zip "^2.0.0"
