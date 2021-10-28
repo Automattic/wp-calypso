@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { ReactNode } from 'react';
@@ -59,16 +60,29 @@ interface Props {
 	headerText: string | ReactNode;
 	className?: string;
 	children?: ReactNode;
+	navigationItems?: { text: string; path: string }[];
 }
 
+const renderBreadcrumb = ( items ) => {
+	return items.map( ( item ) => (
+		<span>
+			<Gridicon icon="chevron-right" size={ 18 } />
+			{ item.text }
+		</span>
+	) );
+};
+
 const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { brandFont, id, headerText, className, children } = props;
+	const { brandFont, id, headerText, className, children, navigationItems } = props;
 	const headerClasses = classNames( { 'wp-brand-font': brandFont } );
 
 	return (
 		<Header id={ id } className={ className }>
 			<Container>
-				<H1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</H1>
+				<H1 className={ headerClasses }>
+					{ preventWidows( headerText, 2 ) }
+					{ renderBreadcrumb( navigationItems ) }
+				</H1>
 				<ActionsContainer>{ children }</ActionsContainer>
 			</Container>
 		</Header>
@@ -79,6 +93,7 @@ FixedNavigationHeader.defaultProps = {
 	id: '',
 	className: '',
 	brandFont: false,
+	navigationItems: [],
 };
 
 export default FixedNavigationHeader;

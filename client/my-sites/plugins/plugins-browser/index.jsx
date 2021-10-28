@@ -460,6 +460,11 @@ export class PluginsBrowser extends Component {
 
 	render() {
 		const { category, search } = this.props;
+		const headerText = this.props.translate( 'Plugins' );
+		const navigationItems = [];
+		if ( search ) {
+			navigationItems.push( { text: this.props.translate( 'Search Results' ), path: '' } );
+		}
 
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
@@ -481,13 +486,14 @@ export class PluginsBrowser extends Component {
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
+				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
 				{ ! this.props.hideHeader && (
 					<FixedNavigationHeader
 						brandFont
 						className="plugins-browser__header"
-						headerText={ this.props.translate( 'Plugins' ) }
+						headerText={ headerText }
+						navigationItems={ navigationItems }
 					>
 						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
