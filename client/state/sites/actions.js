@@ -278,8 +278,8 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( dispatch ) 
 		.catch( () => {} );
 };
 
-function isPageOnFront( show_on_front ) {
-	switch ( show_on_front ) {
+function isPageOnFront( showOnFront ) {
+	switch ( showOnFront ) {
 		case 'page':
 			return true;
 		case 'posts':
