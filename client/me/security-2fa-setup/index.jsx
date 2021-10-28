@@ -16,6 +16,7 @@ class Security2faSetup extends Component {
 
 	state = {
 		step: 'initial-setup',
+		authMethod: 'app-based',
 	};
 
 	onCancelSetup = ( event ) => {
@@ -24,11 +25,7 @@ class Security2faSetup extends Component {
 	};
 
 	onInitialSetupSuccess = ( event, authMethod ) => {
-		if ( authMethod === 'sms-based' ) {
-			this.setState( { step: 'sms-settings' } );
-		} else {
-			this.setState( { step: 'app-based' } );
-		}
+		this.setState( { step: authMethod, authMethod } );
 	};
 
 	onSetupSuccess = () => {
@@ -57,7 +54,10 @@ class Security2faSetup extends Component {
 		return (
 			<div className="security-2fa-setup__steps-container">
 				{ 'initial-setup' === this.state.step ? (
-					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
+					<Security2faInitialSetup
+						onSuccess={ this.onInitialSetupSuccess }
+						currentAuthMethod={ this.state.authMethod }
+					/>
 				) : null }
 
 				{ 'sms-settings' === this.state.step ? (

@@ -363,7 +363,7 @@ class Security2faEnable extends Component {
 						  } ) }
 				</FormButton>
 
-				{ 'sms' === this.state.method ? (
+				{ 'sms' === this.state.method && (
 					<FormButton
 						disabled={ ! this.state.smsRequestsAllowed }
 						isPrimary={ false }
@@ -374,18 +374,6 @@ class Security2faEnable extends Component {
 					>
 						{ this.props.translate( 'Resend Code', {
 							context: 'A button label to let a user get the SMS code sent again.',
-						} ) }
-					</FormButton>
-				) : (
-					<FormButton
-						isPrimary={ false }
-						onClick={ ( event ) => {
-							gaRecordEvent( 'Me', 'Clicked On Enable SMS Use SMS Button' );
-							this.onVerifyBySMS( event );
-						} }
-					>
-						{ this.props.translate( 'Use SMS', {
-							context: 'A button label to let a user switch to enabling Two-Step by SMS.',
 						} ) }
 					</FormButton>
 				) }

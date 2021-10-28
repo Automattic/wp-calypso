@@ -17,6 +17,7 @@ class Security2faInitialSetup extends Component {
 
 	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
+		currentAuthMethod: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -40,6 +41,7 @@ class Security2faInitialSetup extends Component {
 	}
 
 	render() {
+		const isAppSelected = this.props.currentAuthMethod === 'app-based';
 		return (
 			<div>
 				<p>
@@ -57,7 +59,7 @@ class Security2faInitialSetup extends Component {
 						<FormRadio
 							name="auth_method"
 							value="app-based"
-							defaultChecked={ true }
+							defaultChecked={ isAppSelected }
 							onChange={ this.setAuth.bind( this ) }
 						/>
 						<Gridicon icon="phone" />
@@ -71,7 +73,8 @@ class Security2faInitialSetup extends Component {
 					<FormLabel className="security-2fa-initial-setup__label">
 						<FormRadio
 							name="auth_method"
-							value="sms-based"
+							value="sms-settings"
+							defaultChecked={ ! isAppSelected }
 							onChange={ this.setAuth.bind( this ) }
 						/>
 						<Gridicon icon="chat" />
