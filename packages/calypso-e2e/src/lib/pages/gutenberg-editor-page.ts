@@ -72,6 +72,8 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		await this.page.waitForLoadState( 'load' );
+		await this.dismissWelcomeTourIfPresent();
+
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
 		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
