@@ -7,10 +7,10 @@ import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-select
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
-import PluginComponent from './plugin';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
+import SinglePluginComponent from './single-plugin';
 /**
  * Module variables
  */
@@ -28,9 +28,9 @@ function renderSinglePlugin( context, siteUrl ) {
 	} else if ( context.prevPath ) {
 		prevPath = sectionify( context.prevPath );
 	}
-
 	// Render single plugin component
-	context.primary = createElement( PluginComponent, {
+	context.primary = createElement( SinglePluginComponent, {
+		// TODO: add a feature flag check
 		path: context.path,
 		prevQuerystring: lastPluginsQuerystring,
 		prevPath,
