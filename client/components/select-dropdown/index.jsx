@@ -4,6 +4,7 @@ import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import Count from 'calypso/components/count';
+import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import DropdownItem from './item';
 import DropdownLabel from './label';
@@ -203,7 +204,9 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text">
-							{ selectedIcon && selectedIcon.type === Gridicon ? selectedIcon : null }
+							{ selectedIcon && [ Gridicon, MaterialIcon ].includes( selectedIcon.type )
+								? selectedIcon
+								: null }
 							{ selectedText }
 						</span>
 						{ 'number' === typeof this.props.selectedCount && (
