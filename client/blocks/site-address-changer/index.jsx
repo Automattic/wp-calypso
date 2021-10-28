@@ -27,6 +27,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ConfirmationDialog from './dialog';
 
 import './style.scss';
+import { isAtomicSiteLogAccessEnabled } from '../../state/selectors/is-atomic-site-log-access-enabled';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
@@ -214,12 +215,27 @@ export class SiteAddressChanger extends Component {
 		return currentDomainName.replace( currentDomainSuffix, '' );
 	}
 
+	/**
+	 * Github Issue: #55306
+	 * This is an edge case scenario where user have the site address changer opened and the user transfers
+	 * the site to atomic on other tab/window, losing sync between client and server. Client will try to
+	 * check availability against wordpress.com and will receive 404s because site is transfered to wpcomstaging.com
+	 */
+	isUnsyncedAtomicSite() {
+		const { validationError, isAtomicSite } = this.props;
+		const serverValidationErrorStatus = get( validationError, 'errorStatus' );
+
+		return serverValidationErrorStatus === 404 && ! isAtomicSite;
+	}
+
 	getValidationMessage() {
 		const { isAvailable, validationError, translate } = this.props;
 		const { validationMessage } = this.state;
 		const serverValidationMessage = get( validationError, 'message' );
-		//const serverValidationErrorStatus = get( validationError, 'errorStatus' );
-		// if status is 404, return better error message
+
+		if ( this.isUnsyncedAtomicSite() ) {
+			return translate( 'wpcomstaging.com addresses cannot be changed.' );
+		}
 
 		return isAvailable
 			? translate( 'Good news, that site address is available!' )
@@ -280,9 +296,12 @@ export class SiteAddressChanger extends Component {
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
 		const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
+
 		const isDisabled =
 			( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
-			! isAvailable;
+			! isAvailable ||
+			this.isUnsyncedAtomicSite();
+
 		const addDomainPath = '/domains/add/' + selectedSiteSlug;
 
 		if ( ! currentDomain.currentUserCanManage ) {
