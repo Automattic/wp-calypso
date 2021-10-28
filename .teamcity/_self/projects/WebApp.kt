@@ -560,6 +560,8 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 		failureConditions {
 			executionTimeoutMin = 20
+			// Do not fail on non-zero exit code to permit passing builds with muted tests.
+			nonZeroExitCode = false
 		}
 
 		dependencies {
