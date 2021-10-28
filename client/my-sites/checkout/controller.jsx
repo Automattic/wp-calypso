@@ -7,9 +7,9 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
-import PostCheckoutUpsellRedirector, {
+import PostCheckoutUpsellExperimentRedirector, {
 	PROFESSIONAL_EMAIL_OFFER,
-} from 'calypso/my-sites/checkout/post-checkout-upsell-redirector';
+} from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
 	retrieveSignupDestination,
@@ -293,7 +293,7 @@ export function upsellRedirect( context, next ) {
 
 	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
 		context.primary = (
-			<PostCheckoutUpsellRedirector
+			<PostCheckoutUpsellExperimentRedirector
 				receiptId={ receiptId }
 				siteSlug={ site }
 				upsellExperimentName={ upsellExperimentName }

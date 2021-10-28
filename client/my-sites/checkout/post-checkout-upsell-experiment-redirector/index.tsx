@@ -14,7 +14,7 @@ export interface PostCheckoutUpsellRedirectorProps {
 	upsellUrl: string;
 }
 
-export default function PostCheckoutUpsellRedirector( {
+export default function PostCheckoutUpsellExperimentRedirector( {
 	receiptId,
 	siteSlug,
 	upsellExperimentAssignmentName,

@@ -33,7 +33,7 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-redirector';
+import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
