@@ -18,7 +18,6 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
@@ -77,27 +76,6 @@ export class SiteDomains extends Component {
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
-	}
-
-	domainWarnings() {
-		// TODO: We should remove this
-		if ( ! this.isLoading() ) {
-			return (
-				<DomainWarnings
-					domains={ this.props.domains }
-					position="domain-list"
-					selectedSite={ this.props.selectedSite }
-					allowedRules={ [
-						'unverifiedDomainsCanManage',
-						'pendingGSuiteTosAcceptanceDomains',
-						'unverifiedDomainsCannotManage',
-						'transferStatus',
-						'newTransfersWrongNS',
-						'pendingConsent',
-					] }
-				/>
-			);
-		}
 	}
 
 	renderNewDesign() {
@@ -176,8 +154,6 @@ export class SiteDomains extends Component {
 						{ this.optionsDomainButton() }
 					</div>
 				</div>
-
-				{ this.domainWarnings() }
 
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
 					<EmptyDomainsListCard
