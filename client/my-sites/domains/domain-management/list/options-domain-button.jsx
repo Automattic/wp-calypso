@@ -98,53 +98,50 @@ class AddDomainButton extends Component {
 		);
 	};
 
-	getDesktopViewLabel() {
-		const { translate } = this.props;
+	renderLabel() {
+		const { ellipsisButton, specificSiteActions, translate } = this.props;
+		const isRedesign = config.isEnabled( 'domains/management-list-redesign' );
 
-		if ( this.props.ellipsisButton ) {
+		if ( ellipsisButton ) {
 			return <Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />;
 		}
 
 		let label = translate( 'Other domain options' );
-		if ( this.props.specificSiteActions ) {
-			label = config.isEnabled( 'domains/management-list-redesign' )
-				? translate( 'Add a domain' )
-				: translate( 'Add a domain to this site' );
+		if ( specificSiteActions ) {
+			label = isRedesign ? translate( 'Add a domain' ) : translate( 'Add a domain to this site' );
 		}
+
+		if ( isRedesign ) {
+			return (
+				<>
+					<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+					<span className="options-domain-button__desktop">{ label }</span>
+				</>
+			);
+		}
+
 		return (
 			<>
-				<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 				{ label }
+				{ <Gridicon icon="chevron-down" /> }
 			</>
 		);
 	}
 
 	render() {
-		const { specificSiteActions, ellipsisButton } = this.props;
+		const { specificSiteActions } = this.props;
 
 		return (
 			<Fragment>
 				<Button
 					primary={ specificSiteActions }
-					compact
+					compact // only on not mobile
 					className="options-domain-button"
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
+					// borderless={ ellipsisButton } mobile
 				>
-					{ this.getDesktopViewLabel() }
-					{ ! ellipsisButton && <Gridicon icon="chevron-down" /> }
-				</Button>
-				<Button
-					primary={ specificSiteActions }
-					className="options-domain-button options-domain-button__mobile"
-					onClick={ this.toggleAddMenu }
-					ref={ this.addDomainButtonRef }
-					borderless={ ellipsisButton }
-				>
-					{ ! ellipsisButton && <Gridicon icon="plus" /> }
-					{ ellipsisButton && (
-						<Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />
-					) }
+					{ this.renderLabel() }
 				</Button>
 				<PopoverMenu
 					className="options-domain-button__popover"
