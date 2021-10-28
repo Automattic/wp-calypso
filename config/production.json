@@ -18,6 +18,7 @@
 	"difm_signup_typeform_id": "m3s2pdgI",
 	"features": {
 		"ad-tracking": true,
+		"activity-log/display-rules": false,
 		"async-payments": false,
 		"automated-transfer": true,
 		"bilmur-script": true,
