@@ -40,8 +40,7 @@ object E2ETests : BuildType({
 
 	artifactRules = """
 		desktop/release => release
-		desktop/e2e/logs => logs
-		desktop/e2e/screenshots => screenshots
+		desktop/test/e2e/results => results
 	""".trimIndent()
 
 	vcs {
@@ -101,24 +100,12 @@ object E2ETests : BuildType({
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
-				cd desktop && node ./e2e/run.js
+				cd desktop && yarn run test:e2e --reporters=jest-teamcity --reporters=default
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
 			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
-		}
-
-		bashNodeScript {
-			name = "Clean up artifacts"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-			scriptContent = """
-				# Delete artifacts if branch is not trunk
-				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
-					rm -fr desktop/release/*
-				fi
-			"""
-			dockerImage = "%docker_image_desktop%"
 		}
 	}
 
@@ -127,11 +114,6 @@ object E2ETests : BuildType({
 	}
 
 	features {
-		feature {
-			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "junit")
-			param("xmlReportParsing.reportDirs", "desktop/e2e/result.xml")
-		}
 		perfmon {
 		}
 		pullRequests {

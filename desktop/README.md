@@ -38,7 +38,7 @@ Refer to the [development guide](docs/development.md) for help with how the app 
 ## Running The End-To-End Test Suite
 
 1. Set the environment variables `E2EUSERNAME` and `E2EPASSWORD`.
-2. Use `npm run e2e` or `make e2e` to invoke the test suite.
+2. Use `yarn run test:e2e` or `make e2e` to invoke the test suite.
 
 To manually start each platform's _pre-packaged_ executable used for end-to-end testing:
 
