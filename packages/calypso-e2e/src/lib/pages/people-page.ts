@@ -98,9 +98,9 @@ export class PeoplePage {
 		// Native `page.check` sometimes fails here. Instead, click on the radio and wait for the
 		// Delete user button to become enabled.
 		await this.page.click( selectors.deletedUserContentAction( 'delete' ) );
-		await this.page.waitForSelector( `${ selectors.deleteUserButton }[disabled=""]`, {
-			state: 'detached',
-		} );
+		await this.page.waitForSelector(
+			`${ selectors.deletedUserContentAction( 'delete' ) }:checked`
+		);
 
 		await Promise.all( [
 			this.page.waitForNavigation(),
