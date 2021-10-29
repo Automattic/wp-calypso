@@ -39,7 +39,7 @@ object E2ETests : BuildType({
 	}
 
 	artifactRules = """
-		desktop/release => release
+		desktop/release/wordpress.com-* => release
 		desktop/test/e2e/results => results
 	""".trimIndent()
 
