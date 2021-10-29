@@ -1,5 +1,5 @@
 import CreditCardFields from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields';
-import CreditCardPayButton from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-pay-button';
+import CreditCardSubmitButton from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-submit-button';
 
 export function createStoredCreditCardMethod( {
 	store,
@@ -13,7 +13,7 @@ export function createStoredCreditCardMethod( {
 			<CreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
 		),
 		submitButton: (
-			<CreditCardPayButton
+			<CreditCardSubmitButton
 				store={ store }
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
@@ -21,5 +21,7 @@ export function createStoredCreditCardMethod( {
 			/>
 		),
 		getAriaLabel: ( __ ) => __( 'Credit Card' ),
+		inactiveContent: ( __ ) => __( 'Credit Card' ),
+		label: ( __ ) => __( 'Credit Card' ),
 	};
 }

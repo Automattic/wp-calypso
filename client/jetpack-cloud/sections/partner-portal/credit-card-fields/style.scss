@@ -1,0 +1,134 @@
+.credit-card-fields {
+	display: none;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+
+	&--is-loaded, &--placeholder {
+		display: flex;
+	}
+
+	&__form,
+	&__image {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 100%;
+		flex: 1;
+	}
+
+	&__image {
+		align-self: center;
+	}
+
+	&__grid-row,
+	&__field-row,
+	&__field-block {
+		display: -ms-grid;
+		display: grid;
+		width: 100%;
+		grid-column-gap: 4%;
+		justify-items: stretch;
+	}
+
+	&__grid-row {
+		-ms-grid-columns: 67% 4% 29%;
+		grid-template-columns: 67% 29%;
+	}
+
+	&__field-row {
+		-ms-grid-columns: 48% 4% 48%;
+		grid-template-columns: 48% 48%;
+		margin-top: 16px;
+	}
+
+	&__field-block {
+		-ms-grid-columns: inherit;
+		grid-template-columns: none;
+		margin-top: 16px;
+	}
+
+	&__input-field {
+		margin-top: 16px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+
+		input {
+			font-size: $font-body-small;
+			padding: 11px 16px;
+		}
+	}
+
+	&__wrapper {
+		padding: 16px;
+		position: relative;
+		display: block;
+	}
+
+	&__label {
+		display: block;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	&__label-text,
+	&__input-field label {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 1.125rem; /* stylelint-disable-line */
+		font-weight: 400;
+		color: var( --studio-gray-80 );
+	}
+
+	&__stripe-error {
+		display: block;
+		margin-top: 0.5rem;
+		color: var( --color-scary-50 );
+		font-size: $font-body-small;
+		font-style: italic;
+		font-weight: 400;
+	}
+
+	&__stripe-element {
+		position: relative;
+		display: block;
+
+		& .StripeElement {
+			display: block;
+			width: 100%;
+			font-size: 0.875rem;
+			box-sizing: border-box;
+			border: 1px solid var( --color-accent-10 );
+			padding: 11px 16px;
+			line-height: 1.2;
+		}
+
+		&--has-error .StripeElement {
+			border-color: var( --color-scary-50 );
+		}
+
+		& .StripeElement--focus {
+			outline: var( --studio-blue-30 ) solid 2px;
+		}
+
+		& .StripeElement--focus.StripeElement--invalid {
+			outline: var( --color-scary-50 ) solid 2px;
+		}
+	}
+
+	&--placeholder &__field {
+		margin-top: 1rem;
+		width: 100%;
+		height: 40px;
+		@include placeholder( --color-neutral-10 );
+
+		&::before {
+			content: '';
+			width: 30%;
+			height: 25px;
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}

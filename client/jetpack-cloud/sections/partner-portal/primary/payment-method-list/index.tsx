@@ -14,7 +14,9 @@ import './style.scss';
 export default function PaymentMethodList(): ReactElement {
 	const translate = useTranslate();
 	const storedCards = useSelector( getAllStoredCards );
-	const cards = storedCards.map( ( card ) => <StoredCreditCard key={ card.card } card={ card } /> );
+	const cards = storedCards.map( ( card ) => (
+		<StoredCreditCard key={ card.stored_details_id } card={ card } />
+	) );
 
 	return (
 		<Main wideLayout className="payment-method-list">

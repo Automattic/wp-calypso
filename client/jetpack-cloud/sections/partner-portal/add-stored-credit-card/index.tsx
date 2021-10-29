@@ -10,17 +10,15 @@ export default function AddStoredCreditCard(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const navigateToCreateMethod = () => {
-		dispatch(
-			recordTracksEvent( 'calypso_partner_portal_license_list_empty_issue_license_click' )
-		);
+	const navigateToCreateAddCard = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_payment_method_add_new_card_click' ) );
 	};
 
 	return (
 		<a
 			className="add-stored-credit-card"
-			href="/partner-portal/payment-method/add"
-			onClick={ navigateToCreateMethod }
+			href="/partner-portal/payment-method/card"
+			onClick={ navigateToCreateAddCard }
 		>
 			<div className="add-stored-credit-card__content">
 				<CardHeading className="add-stored-credit-card__title" tagName="h3">

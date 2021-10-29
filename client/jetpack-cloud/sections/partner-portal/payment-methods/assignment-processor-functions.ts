@@ -17,15 +17,21 @@ interface Props {
 	dispatch: ReturnType< typeof useDispatch >;
 }
 
+export interface NewCardSubmitData {
+	name: string;
+	email: string;
+	phone: string;
+}
+
 export async function assignNewCardProcessor(
 	{ useAsPrimaryPaymentMethod, translate, stripe, stripeConfiguration, dispatch, element }: Props,
-	submitData: unknown
+	submitData: NewCardSubmitData
 ): Promise< PaymentProcessorResponse > {
 	recordFormSubmitEvent( { dispatch } );
 
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
-			throw new Error( 'Credit Card data is missing your full name.' );
+			throw new Error( 'Credit Card data is missing required information.' );
 		}
 		if ( ! stripe || ! stripeConfiguration ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
@@ -34,10 +40,12 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name } = submitData;
+		const { name, email, phone } = submitData;
 
 		const formFieldValues = {
 			name,
+			email,
+			phone,
 		};
 		const tokenResponse = await createStripeSetupIntentAsync(
 			formFieldValues,
@@ -66,8 +74,12 @@ export async function assignNewCardProcessor(
 async function createStripeSetupIntentAsync(
 	{
 		name,
+		email,
+		phone,
 	}: {
 		name: string;
+		email: string;
+		phone: string;
 	},
 	stripe: Stripe,
 	element: StripeCardNumberElement,
@@ -75,17 +87,14 @@ async function createStripeSetupIntentAsync(
 ): Promise< StripeSetupIntent > {
 	const paymentDetailsForStripe = {
 		name,
+		email,
+		phone,
 	};
 	return createStripeSetupIntent( stripe, element, stripeConfiguration, paymentDetailsForStripe );
 }
 
-function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
-	const newCardData = data as NewCardSubmitData;
-	return !! newCardData.name;
-}
-
-interface NewCardSubmitData {
-	name: string;
+function isNewCardDataValid( data: NewCardSubmitData ): boolean {
+	return !! data.name && !! data.email && !! data.phone;
 }
 
 function recordFormSubmitEvent( { dispatch }: { dispatch: ReturnType< typeof useDispatch > } ) {
