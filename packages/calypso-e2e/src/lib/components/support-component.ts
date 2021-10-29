@@ -70,7 +70,7 @@ export class SupportComponent {
 			this.waitForQueryComplete(),
 			// Waits for one of the network request (triggered by the opening of the popover) to complete.
 			this.page.waitForResponse(
-				( response ) => response.status() === 200 && response.url().includes( 'language-names?' )
+				( response ) => response.status() === 200 && response.url().includes( 'kayako/mine?' )
 			),
 			this.page.click( selectors.supportPopoverButton ),
 		] );
