@@ -12,6 +12,7 @@ module.exports = async () => {
 	const browser = await chromium.launch();
 	const calypsoBaseURL = config.get( 'calypsoBaseURL' );
 	const cookieBasePath = path.join( process.cwd(), 'cookies' );
+	process.env.COOKIES_PATH = cookieBasePath;
 	await mkdir( cookieBasePath, { recursive: true } );
 
 	const userList = [ 'gutenbergSimpleSiteUser', 'wooCommerceUser', 'defaultUser' ];
