@@ -3,16 +3,15 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import './style.scss';
 
 export default function PopUpSearch( { onClose } ) {
 	const translate = useTranslate();
-	const searchQuery = useSelector( getSearchQuery );
+	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const { data } = useHelpSearchQuery( searchQuery );
 	const searchResults = data?.wordpress_support_links ?? [];
 
@@ -39,7 +38,8 @@ export default function PopUpSearch( { onClose } ) {
 		<div role="button" className="popup-search__mask" onClick={ onClose }>
 			<div className="popup-search__container" onClick={ onChildClick }>
 				<HelpSearchCard
-					query={ searchQuery }
+					searchQuery={ searchQuery }
+					onSearch={ setSearchQuery }
 					placeholder={ translate( 'Search wordpress actions' ) }
 				/>
 				{ searchResults.length > 0 && (
