@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed unused dependency cssnano.
 - Update documentation to match code.
 - Allow for assets with query strings.
+- Drop unused dependency on `async`.
 
 ## 5.0.0 - 2021-03-26
 
