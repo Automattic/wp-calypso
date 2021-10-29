@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import FormLabel from 'calypso/components/forms/form-label';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
@@ -25,16 +26,15 @@ class NameserversToggle extends PureComponent {
 				</span>
 
 				<form className="name-servers__toggle">
-					<label>
+					<FormLabel className="name-servers__toggle">
 						<ToggleControl
 							id="wp-nameservers"
 							name="wp-nameservers"
-							git
 							onChange={ this.handleToggle }
 							checked={ this.props.enabled }
 							value="active"
 						/>
-					</label>
+					</FormLabel>
 				</form>
 				{ this.renderExplanation() }
 			</Card>
