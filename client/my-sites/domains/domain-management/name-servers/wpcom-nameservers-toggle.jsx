@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, ScreenReaderText } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -26,7 +26,7 @@ class NameserversToggle extends PureComponent {
 				</span>
 
 				<form className="name-servers__toggle">
-					<FormLabel className="name-servers__toggle">
+					<FormLabel>
 						<ToggleControl
 							id="wp-nameservers"
 							name="wp-nameservers"
@@ -34,6 +34,9 @@ class NameserversToggle extends PureComponent {
 							checked={ this.props.enabled }
 							value="active"
 						/>
+						<ScreenReaderText>
+							{ this.props.translate( 'Use WordPress.com Name Servers' ) }
+						</ScreenReaderText>
 					</FormLabel>
 				</form>
 				{ this.renderExplanation() }
