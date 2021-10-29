@@ -9,7 +9,7 @@ const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
 
 describe( 'User Can log in', () => {
-	jest.setTimeout( 30000 );
+	jest.setTimeout( 60000 );
 
 	let mainWindow;
 	let electronApp;
