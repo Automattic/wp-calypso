@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginFlow,
+	LoginPage,
 	NewPostFlow,
 	ChangeUILanguageFlow,
 	GutenbergEditorPage,
@@ -220,8 +220,8 @@ describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, 'i18nUser' ); // @todo: Login with i18n testing account.
-		await loginFlow.logIn();
+		const loginPage = new LoginPage( page );
+		await loginPage.login( { account: 'i18nUser' } );
 	} );
 
 	describe.each( locales )( 'Editor translations (%s)', ( locale ) => {
