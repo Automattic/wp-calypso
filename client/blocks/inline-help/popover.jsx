@@ -34,6 +34,10 @@ class InlineHelpPopover extends Component {
 
 	secondaryViewRef = createRef();
 
+	setSearchQuery = ( searchQuery ) => {
+		this.setState( { searchQuery } );
+	};
+
 	openResultView = ( event, result ) => {
 		event.preventDefault();
 		this.setState( { selectedResult: result } );
@@ -122,7 +126,7 @@ class InlineHelpPopover extends Component {
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						searchQuery={ this.state.searchQuery }
-						onSearch={ ( searchQuery ) => this.setState( { searchQuery } ) }
+						onSearch={ this.setSearchQuery }
 						isVisible={ ! this.state.activeSecondaryView }
 					/>
 					<InlineHelpSearchResults
