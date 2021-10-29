@@ -4,19 +4,28 @@ const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );
 const { _electron: electron } = require( 'playwright' );
 
-// Linux:
-const APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
-// Mac:
-// const APP_PATH = path.join(
-// 	__dirname,
-// 	'../../../',
-// 	'release',
-// 	'mac',
-// 	'WordPress.com.app',
-// 	'Contents',
-// 	'MacOS',
-// 	'WordPress.com'
-// );
+let APP_PATH;
+
+switch ( process.platform ) {
+	case 'linux':
+		APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
+		break;
+	case 'darwin':
+		APP_PATH = path.join(
+			__dirname,
+			'../../../',
+			'release',
+			'mac',
+			'WordPress.com.app',
+			'Contents',
+			'MacOS',
+			'WordPress.com'
+		);
+		break;
+	default:
+		throw 'unsupported platform';
+}
+
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
 const HAR_PATH = path.join( __dirname, '../results/network.har' );
