@@ -1,3 +1,5 @@
+@import './grid-mixins.scss';
+
 .plugin__installed-on, .single-plugin__installed-on {
 	margin-bottom: 16px;
 }
@@ -112,5 +114,26 @@ body.is-section-plugins:not( .is-nav-unification ) {
 
 	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
+	}
+}
+
+.single-plugin__layout {
+	@include grid-row( 4, 1 );
+	@include breakpoint-deprecated( '>1040px' ) {
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+		grid-gap: 24px;
+	}
+
+	.single-plugin__layout-col-left {
+		@include breakpoint-deprecated( '>1040px' ) {
+			@include grid-column( 1, 8 );
+		}
+	}
+
+	.single-plugin__layout-col-right {
+		@include breakpoint-deprecated( '>1040px' ) {
+			@include grid-column( 9, 4 );
+		}
 	}
 }

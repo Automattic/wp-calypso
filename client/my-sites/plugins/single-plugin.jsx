@@ -141,7 +141,7 @@ function SinglePlugin( props ) {
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
 	return (
-		<MainComponent>
+		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<QueryJetpackPlugins siteIds={ siteIds } />
@@ -149,22 +149,27 @@ function SinglePlugin( props ) {
 			<PluginNotices pluginId={ fullPlugin.id } sites={ props.sites } plugins={ [ fullPlugin ] } />
 
 			<div className="single-plugin__page">
-				<Header { ...props } />
-				<PluginMeta
-					plugin={ fullPlugin }
-					siteUrl={ props.siteUrl }
-					sites={ sitesWithPlugin }
-					selectedSite={ selectedSite }
-					isInstalledOnSite={ isPluginInstalledOnsite }
-					isInstalling={ props.isInstallingPlugin }
-					allowedActions={ allowedPluginActions }
-				/>
-				{ fullPlugin.wporg ? (
-					<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } />
-				) : (
-					<PluginSectionsCustom plugin={ fullPlugin } />
-				) }
-				<SitesList fullPlugin={ fullPlugin } isFetching={ isFetching } { ...props } />
+				<div className="single-plugin__layout">
+					<div className="single-plugin__layout-col single-plugin__layout-col-left">
+						<Header { ...props } />
+						<PluginMeta
+							plugin={ fullPlugin }
+							siteUrl={ props.siteUrl }
+							sites={ sitesWithPlugin }
+							selectedSite={ selectedSite }
+							isInstalledOnSite={ isPluginInstalledOnsite }
+							isInstalling={ props.isInstallingPlugin }
+							allowedActions={ allowedPluginActions }
+						/>
+						{ fullPlugin.wporg ? (
+							<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } />
+						) : (
+							<PluginSectionsCustom plugin={ fullPlugin } />
+						) }
+						<SitesList fullPlugin={ fullPlugin } isFetching={ isFetching } { ...props } />
+					</div>
+					<div className="single-plugin__layout-col single-plugin__layout-col-right"></div>
+				</div>
 			</div>
 		</MainComponent>
 	);
@@ -209,7 +214,7 @@ function PluginDoesNotExistView( { selectedSite, translate } ) {
 	const action = translate( 'Browse all plugins' );
 
 	return (
-		<MainComponent>
+		<MainComponent wideLayout>
 			<EmptyContent
 				title={ translate( "Oops! We can't find this plugin!" ) }
 				line={ translate( "The plugin you are looking for doesn't exist." ) }
@@ -223,7 +228,7 @@ function PluginDoesNotExistView( { selectedSite, translate } ) {
 
 function PluginPlaceholder( props ) {
 	return (
-		<MainComponent>
+		<MainComponent wideLayout>
 			<SidebarNavigation />
 			<div className="single-plugin__page">
 				<Header { ...props } />
