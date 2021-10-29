@@ -3,7 +3,6 @@ import { useState } from '@wordpress/element';
 import { doAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import NuxModal from '../nux-modal';
-import draftPostImage from './images/draft-post.svg';
 import './style.scss';
 
 const DraftPostModal = () => {
@@ -20,7 +19,6 @@ const DraftPostModal = () => {
 				'It’s time to flex those writing muscles and start drafting your first post!',
 				'full-site-editing'
 			) }
-			imageSrc={ draftPostImage }
 			actionButtons={
 				<>
 					<Button isPrimary onClick={ closeModal }>

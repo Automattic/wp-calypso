@@ -34,17 +34,18 @@
 	.wpcom-block-editor-nux-modal__image-container {
 		display: flex;
 		justify-content: center;
+		margin-bottom: 34px;
+
+		@include break-mobile {
+			margin-bottom: 24px;
+		}
 	}
 
 	.wpcom-block-editor-nux-modal__title {
-		margin: 34px 0 0;
+		margin: 0;
 		font-size: $font-headline-small;
 		font-weight: 500; // stylelint-disable-line scales/font-weights
 		line-height: 1.2;
-
-		@include break-mobile {
-			margin-top: 24px;
-		}
 	}
 
 	.wpcom-block-editor-nux-modal__description {

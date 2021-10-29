@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -50,7 +49,6 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 			{ ...props }
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
-			headerImageUrl={ startingPointImageUrl }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <StartingPoint onSelect={ submitStartingPoint } /> }

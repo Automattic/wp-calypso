@@ -3,7 +3,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import NuxModal from '../nux-modal';
-import postPublishedImage from './images/post-published.svg';
 import './style.scss';
 
 /**
@@ -64,7 +63,6 @@ const PostPublishedModal: React.FC = () => {
 				'Congratulations! You did it. View your post to see how it will look on your site.',
 				'full-site-editing'
 			) }
-			imageSrc={ postPublishedImage }
 			actionButtons={
 				<Button isPrimary href={ link }>
 					{ __( 'View Post', 'full-site-editing' ) }

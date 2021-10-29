@@ -8,7 +8,7 @@ interface Props {
 	className?: string;
 	title: string;
 	description: string;
-	imageSrc: string;
+	imageSrc?: string;
 	actionButtons: React.ReactElement;
 	onRequestClose: () => void;
 }
@@ -33,9 +33,11 @@ const NuxModal: React.FC< Props > = ( {
 			title=""
 			onRequestClose={ onRequestClose }
 		>
-			<div className="wpcom-block-editor-nux-modal__image-container">
-				<img src={ imageSrc } alt={ title } />
-			</div>
+			{ imageSrc && (
+				<div className="wpcom-block-editor-nux-modal__image-container">
+					<img src={ imageSrc } alt={ title } />
+				</div>
+			) }
 			<h1 className="wpcom-block-editor-nux-modal__title">{ title }</h1>
 			<p className="wpcom-block-editor-nux-modal__description">{ description }</p>
 			<div className="wpcom-block-editor-nux-modal__buttons">{ actionButtons }</div>

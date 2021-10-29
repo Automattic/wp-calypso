@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -45,7 +44,6 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
-			headerImageUrl={ intentImageUrl }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <IntentScreen onSelect={ submitIntent } /> }
