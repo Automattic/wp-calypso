@@ -78,7 +78,7 @@ export class SiteDomains extends Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, isAtomicSite } = this.props;
+		const { selectedSite, domains, currentRoute, isAtomicSite, translate } = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
