@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { stepsHeadingOwnershipVerification } from './constants';
+import { stepsHeading } from './constants';
 import { DomainStepAuthCodeProps } from './types';
 
 import './style.scss';
@@ -28,7 +28,7 @@ const DomainStepAuthCode = ( {
 	const [ connectInProgress, setConnectInProgress ] = useState( false );
 	const [ authCodeError, setAuthCodeError ] = useState< ( string | undefined ) | null >( null );
 
-	const heading = customHeading ?? stepsHeadingOwnershipVerification;
+	const heading = customHeading ?? stepsHeading.OWNERSHIP_VERIFICATION;
 
 	const getVerificationData = () => {
 		return {

@@ -6,7 +6,7 @@ import page from 'page';
 import { useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import { stepsHeadingTransfer } from 'calypso/components/domains/connect-domain-step/constants';
+import { stepsHeading } from 'calypso/components/domains/connect-domain-step/constants';
 import {
 	getAvailabilityErrorMessage,
 	getDomainInboundTransferStatusInfo,
@@ -148,7 +148,7 @@ function TransferDomainStepStart( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeadingTransfer }
+			heading={ stepsHeading.TRANSFER }
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }
 			stepContent={ stepContent }

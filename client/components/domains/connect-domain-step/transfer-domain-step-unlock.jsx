@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import ConnectDomainStepWrapper from 'calypso/components/domains/connect-domain-step/connect-domain-step-wrapper';
 import {
-	stepsHeadingTransfer,
+	stepsHeading,
 	domainLockStatusType,
 } from 'calypso/components/domains/connect-domain-step/constants';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -93,7 +93,7 @@ const TransferDomainStepUnlock = ( {
 
 	return (
 		<ConnectDomainStepWrapper
-			heading={ stepsHeadingTransfer }
+			heading={ stepsHeading.TRANSFER }
 			className={ className }
 			stepContent={ stepContent }
 			{ ...props }
