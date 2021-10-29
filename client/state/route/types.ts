@@ -1,7 +1,7 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
-import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
+import { Action } from 'redux';
 
 export type Query = {
 	[ key: string ]: string | number | undefined;
@@ -14,32 +14,18 @@ export type QueryState = {
 	previous: Query | false;
 };
 
-export type Path = string;
-
 export type PathState = {
-	initial: Path;
-	current: Path;
-	previous: Path;
+	initial: string;
+	current: string;
+	previous: string;
 };
 
 export type RouteState = {
+	lastNonEditorRoute: string;
 	path: PathState;
 	query: QueryState;
 };
 
-type RouteClearAction = {
-	type: typeof ROUTE_CLEAR_LAST_NON_EDITOR;
-};
+export type RouteClearActionCreator = () => Action;
 
-type RouteSetAction = {
-	path: Path;
-	query: Query;
-	type: typeof ROUTE_SET;
-};
-
-export type RouteClearActionCreator = () => RouteClearAction;
-
-export type RouteSetActionCreator = (
-	path: RouteSetAction[ 'path' ],
-	query: RouteSetAction[ 'query' ]
-) => RouteSetAction;
+export type RouteSetActionCreator = ( path: string, query: Query ) => Action;

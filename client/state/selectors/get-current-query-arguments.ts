@@ -8,6 +8,7 @@ import 'calypso/state/route/init';
 /**
  * Type dependencies
  */
+import type { Query } from 'calypso/state/route/types';
 import type { IAppState } from 'calypso/state/types';
 
 /**
@@ -17,9 +18,7 @@ import type { IAppState } from 'calypso/state/types';
  * Kept for backwards compatibility in case any null checks.
  * Investigate and refactor.
  */
-export function getCurrentQueryArguments(
-	state: IAppState
-): IAppState[ 'route' ][ 'query' ][ 'current' ] | null {
+export function getCurrentQueryArguments( state: IAppState ): Query | false | null {
 	return state?.route?.query?.current || null;
 }
 

@@ -3,7 +3,6 @@
  */
 import { isEqual, omit } from 'lodash';
 import { Reducer, AnyAction } from 'redux';
-
 /**
  * Internal dependencies
  */
@@ -24,10 +23,10 @@ const initialReducer = ( state: QueryState[ 'initial' ], query: Query ) =>
 const currentReducer = ( state: QueryState[ 'current' ], query: Query ) =>
 	! isEqualQuery( state, query ) ? timestamped( query ) : state;
 
-const initialState = {
-	initial: false as const,
-	current: false as const,
-	previous: false as const,
+const initialState: QueryState = {
+	initial: false,
+	current: false,
+	previous: false,
 };
 
 export const queryReducer: Reducer< QueryState, AnyAction > = ( state = initialState, action ) => {
