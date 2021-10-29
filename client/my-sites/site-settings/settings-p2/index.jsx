@@ -193,7 +193,6 @@ export class P2GeneralSettingsForm extends Component {
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
 
 				<SettingsSectionHeader
-					data-tip-target="settings-site-profile-save"
 					disabled={
 						isRequestingSettings || isSavingSettings || Object.keys( this.state.errors ).length > 0
 					}
