@@ -97,8 +97,7 @@ export class P2GeneralSettingsForm extends Component {
 		}
 
 		try {
-			// TODO Should this be GET? Technically we are not creating anything.
-			const { success, errors } = await wpcom.req.post(
+			const { success, errors } = await wpcom.req.get(
 				{
 					path: `/p2/hub-settings/domains/validate`,
 					apiNamespace: 'wpcom/v2',
