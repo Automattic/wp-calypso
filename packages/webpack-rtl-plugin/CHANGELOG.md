@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - rtlcss to ^3.1.2
 - Removed unused dependency cssnano.
 - Update documentation to match code.
+- Allow for assets with query strings.
 
 ## 5.0.0 - 2021-03-26
 
