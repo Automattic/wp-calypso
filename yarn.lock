@@ -11511,7 +11511,7 @@ __metadata:
     bunyan: ^1.8.15
     chai: ^4.3.4
     chalk: ^4.0.0
-    chrono-node: ^1.3.5
+    chrono-node: ^2.3.2
     circular-dependency-plugin: ^5.2.0
     classnames: ^2.3.1
     clipboard: ^2.0.6
@@ -12109,12 +12109,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chrono-node@npm:^1.3.5":
-  version: 1.3.5
-  resolution: "chrono-node@npm:1.3.5"
+"chrono-node@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "chrono-node@npm:2.3.2"
   dependencies:
-    moment: ^2.10.3
-  checksum: b5b9923d32955d87b6027db034466fc5807693114947250e283a56a6ff156d45d9a025d9c0e1ec11c754044002af5befbc39623f9e5b51d31a55adaa2d7a56e8
+    dayjs: ^1.10.0
+  checksum: c6669ddf1489e2e925d3dd522859bacfc43c9ed371257c031cb82fe701173d24ae9ec1b91503de2ce7742a48b1682fc160ff8f3c24f3e716e86177ae9f26f0b5
   languageName: node
   linkType: hard
 
@@ -14161,10 +14161,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.8.15":
-  version: 1.10.6
-  resolution: "dayjs@npm:1.10.6"
-  checksum: 97d6b68edda28995f7ab98298635057f5e610408294b492d47f197903db5cca99a5d8974d38b93dd4457bb25bcceb044aacda5507dfbe1e3408fa359b09589d9
+"dayjs@npm:^1.10.0, dayjs@npm:^1.8.15":
+  version: 1.10.7
+  resolution: "dayjs@npm:1.10.7"
+  checksum: 2ce908776ea5b383dba2c01c72290ff12ad97cafa81b9c72a9cc4f801d736d592f20bd992ea1dff083ab80e807080b5af21f634bb09e67f89f66582a9059053a
   languageName: node
   linkType: hard
 
@@ -25355,7 +25355,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"moment@npm:>= 2.9.0, moment@npm:>=1.6.0, moment@npm:^2.10.3, moment@npm:^2.19.3, moment@npm:^2.22.1, moment@npm:^2.26.0":
+"moment@npm:>= 2.9.0, moment@npm:>=1.6.0, moment@npm:^2.19.3, moment@npm:^2.22.1, moment@npm:^2.26.0":
   version: 2.27.0
   resolution: "moment@npm:2.27.0"
   checksum: ea5b2fd73c8ad9070fc82c21ccb6226f7556c27a6a305e64371a3d1223729e9f9e75da59c3114160f21f9181e74f6d245534093179825eb20bf0f40ec7495d92
