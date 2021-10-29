@@ -7,6 +7,8 @@ const { _electron: electron } = require( 'playwright' );
 const APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
+const HAR_PATH = path.join( __dirname, '../results/network.har' );
+const VIDEO_PATH = path.join( __dirname, '../results/video.webm' );
 
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
@@ -16,16 +18,23 @@ describe( 'User Can log in', () => {
 	let consoleStream;
 
 	beforeAll( async () => {
+		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
+		consoleStream = await createWriteStream( CONSOLE_PATH );
+
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
 			args: [ '--disable-http-cache', '--start-maximized' ],
+			recordVideo: {
+				dir: path.dirname( SCREENSHOT_PATH ),
+			},
+			timeout: 0,
+			recordHar: {
+				path: HAR_PATH,
+			},
 		} );
+		electronApp.context().tracing.start( { screenshots: true } );
 
 		mainWindow = await electronApp.firstWindow();
-
-		consoleStream = await createWriteStream( CONSOLE_PATH );
-
-		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
 		mainWindow.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
@@ -70,10 +79,18 @@ describe( 'User Can log in', () => {
 
 		if ( mainWindow ) {
 			await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
+			const video = mainWindow.video();
+			if ( video ) {
+				console.log( await video.path() );
+				console.log( await video.saveAs( VIDEO_PATH ) );
+			}
 		}
 
 		if ( electronApp ) {
-			await electronApp.close();
+			try {
+				await electronApp.context().close();
+				await electronApp.close();
+			} catch {}
 		}
 	} );
 } );
