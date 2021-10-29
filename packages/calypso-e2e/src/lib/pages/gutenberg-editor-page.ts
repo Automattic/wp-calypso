@@ -39,7 +39,7 @@ const selectors = {
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
 	// Welcome tour
-	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
+	welcomeTourCloseButton: 'button:text("Skip")',
 
 	// Block editor sidebar
 	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
@@ -72,13 +72,26 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		await this.page.waitForLoadState( 'load' );
-		await this.dismissWelcomeTourIfPresent();
 
 		const frame = await this.getEditorFrame();
 		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
 		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
 		await frame.waitForSelector( selectors.editorTitle );
+
+		await this.dismissWelcomeTourIfPresent();
 		return frame;
+	}
+
+	/**
+	 * Dismisses the Welcome Tour (card) if it is present.
+	 */
+	async dismissWelcomeTourIfPresent(): Promise< void > {
+		const frame = await this.getEditorFrame();
+		try {
+			await frame.click( selectors.welcomeTourCloseButton, { timeout: 5 * 1000 } );
+		} catch ( err ) {
+			// noop - welcome tour was not found, which is great.
+		}
 	}
 
 	/**
@@ -89,6 +102,7 @@ export class GutenbergEditorPage {
 	async getEditorFrame(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
 			timeout: 60 * 1000,
+			state: 'attached',
 		} );
 		return ( await elementHandle.contentFrame() ) as Frame;
 	}
@@ -199,16 +213,6 @@ export class GutenbergEditorPage {
 
 		// Strip out falsey values.
 		return lines.filter( Boolean ).join( '\n' );
-	}
-
-	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
-	 */
-	async dismissWelcomeTourIfPresent(): Promise< void > {
-		const frame = await this.waitUntilLoaded();
-		if ( await frame.isVisible( selectors.welcomeTourCloseButton ) ) {
-			await frame.click( selectors.welcomeTourCloseButton );
-		}
 	}
 
 	/**
