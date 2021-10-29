@@ -29,13 +29,17 @@ export function getDomainTypeText(
 				return __( 'Connected Domain' );
 			}
 
-			return __( 'Managed by external provider' );
+			return __( 'Registered with an external provider' );
 
 		case domainTypes.REGISTERED:
 			if ( domain?.isPremium ) {
 				return __( 'Premium Domain' );
 			}
 
+			// Registered domains don't show any type text in the domain row component
+			if ( context === domainInfoContext.DOMAIN_ROW ) {
+				return null;
+			}
 			return __( 'Registered Domain' );
 
 		case domainTypes.SITE_REDIRECT:

@@ -32,6 +32,7 @@
 		margin-top: 8px;
 
 		svg {
+			fill: var( --studio-green-80 );
 			transform: translateY( 2px );
 			margin-right: 4px;
 		}
@@ -73,5 +74,22 @@
 
 	& .ellipsis-menu__toggle {
 		padding: 0;
+	}
+}
+
+.free-domain-item__popover {
+	.popover__menu-item {
+		color: var( --studio-gray-90 );
+		svg {
+			fill: var( --studio-gray-90 );
+		}
+	}
+
+	.popover__menu-item.is-selected,
+	.popover__menu-item:hover,
+	.popover__menu-item:focus {
+		svg {
+			fill: var( --studio-white );
+		}
 	}
 }

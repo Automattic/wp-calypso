@@ -55,6 +55,7 @@ export function resolveDomainStatus(
 					return {
 						statusText: expiresMessage,
 						statusClass: 'status-error',
+						status: translate( 'Expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: 'alert',
@@ -65,6 +66,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: expiresMessage,
 					statusClass: 'status-warning',
+					status: translate( 'Expiring soon' ),
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
@@ -110,6 +112,7 @@ export function resolveDomainStatus(
 					return {
 						statusText: translate( 'Connection error' ),
 						statusClass: 'status-alert',
+						status: translate( 'Verifying' ),
 						icon: 'info',
 						listStatusText: status,
 						listStatusClass: 'alert',
@@ -130,6 +133,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Verifying connection' ),
 					statusClass: 'status-verifying',
+					status: translate( 'Verifying' ),
 					icon: 'verifying',
 					listStatusText: status,
 					listStatusClass: 'verifying',
@@ -141,6 +145,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
+					status: translate( 'Action required' ),
 					icon: 'info',
 				};
 			}
@@ -148,6 +153,7 @@ export function resolveDomainStatus(
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',
+				status: translate( 'Active' ),
 				icon: 'check_circle',
 			};
 
@@ -157,6 +163,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: pendingRenewalMessage,
 					statusClass: 'status-warning',
+					status: translate( 'Renewing' ),
 					icon: 'info',
 					listStatusText: pendingRenewalMessage,
 					listStatusClass: 'warning',
@@ -168,6 +175,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Outbound transfer initiated' ),
 					statusClass: 'status-error',
+					status: translate( 'In progress' ),
 					icon: 'cached',
 				};
 			}
@@ -176,6 +184,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
+					status: translate( 'Action required' ),
 					icon: 'info',
 				};
 			}
@@ -184,6 +193,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
+					status: translate( 'Action required' ),
 					icon: 'info',
 				};
 			}
@@ -192,6 +202,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
+					status: translate( 'Expired' ),
 					icon: 'info',
 					listStatusText: translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
@@ -214,6 +225,7 @@ export function resolveDomainStatus(
 					return {
 						statusText: expiresMessage,
 						statusClass: 'status-error',
+						status: translate( 'Expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: 'alert',
@@ -224,6 +236,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: expiresMessage,
 					statusClass: 'status-warning',
+					status: translate( 'Expiring soon' ),
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
@@ -235,6 +248,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Activating' ),
 					statusClass: 'status-success',
+					status: translate( 'Activating' ),
 					icon: 'cloud_upload',
 					listStatusText: translate( 'Activating' ),
 					listStatusClass: 'info',
@@ -246,6 +260,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
+					status: translate( 'Action required' ),
 					icon: 'info',
 				};
 			}
@@ -254,6 +269,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Parked' ),
 					statusClass: 'status-neutral',
+					status: translate( 'Parked' ),
 					icon: 'download_done',
 				};
 			}
@@ -262,6 +278,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Active' ),
 					statusClass: 'status-premium',
+					status: translate( 'Active' ),
 					icon: 'check_circle',
 					listStatusClass: 'premium',
 				};
@@ -271,6 +288,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-warning',
+					status: translate( 'Complete setup' ),
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Point to WordPress.com:{{/strong}} To point this domain to your WordPress.com site, you need to update the name servers. {{a}}Update now{{/a}} or do this later.',
@@ -294,6 +312,7 @@ export function resolveDomainStatus(
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',
+				status: translate( 'Active' ),
 				icon: 'check_circle',
 			};
 
@@ -302,6 +321,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-error',
+					status: translate( 'Action required' ),
 					icon: 'info',
 				};
 			}
@@ -309,6 +329,7 @@ export function resolveDomainStatus(
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',
+				status: translate( 'Active' ),
 				icon: 'check_circle',
 			};
 
@@ -316,6 +337,7 @@ export function resolveDomainStatus(
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',
+				status: translate( 'Active' ),
 				icon: 'check_circle',
 			};
 
@@ -324,6 +346,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-warning',
+					status: translate( 'Action required' ),
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Transfer waiting:{{/strong}} Follow {{a}}these steps{{/a}} by %(beginTransferUntilDate)s to start the transfer.',
@@ -351,6 +374,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Transfer failed' ),
 					statusClass: 'status-error',
+					status: translate( 'Failed' ),
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Transfer failed:{{/strong}} this transfer has failed. {{a}}Learn more{{/a}}',
@@ -364,6 +388,7 @@ export function resolveDomainStatus(
 					return {
 						statusText: translate( 'Transfer in progress' ),
 						statusClass: 'status-success',
+						status: translate( 'In progress' ),
 						icon: 'info',
 						listStatusText: translate(
 							'{{strong}}Transfer in progress:{{/strong}} the transfer should be completed by %(transferFinishDate)s. We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
@@ -376,6 +401,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: translate( 'Transfer in progress' ),
 					statusClass: 'status-success',
+					status: translate( 'In progress' ),
 					icon: 'info',
 					listStatusText: translate(
 						'{{strong}}Transfer in progress:{{/strong}} We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
@@ -389,6 +415,7 @@ export function resolveDomainStatus(
 			return {
 				statusText: translate( 'Transfer in progress' ),
 				statusClass: 'status-success',
+				status: translate( 'In progress' ),
 				icon: 'cached',
 				listStatusText: translate(
 					'{{strong}}Transfer in progress.{{/strong}} {{a}}Learn more{{/a}}',

@@ -18,7 +18,6 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
@@ -32,6 +31,7 @@ import {
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getPurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -76,27 +76,6 @@ export class SiteDomains extends Component {
 
 	isLoading() {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
-	}
-
-	domainWarnings() {
-		// TODO: We should remove this
-		if ( ! this.isLoading() ) {
-			return (
-				<DomainWarnings
-					domains={ this.props.domains }
-					position="domain-list"
-					selectedSite={ this.props.selectedSite }
-					allowedRules={ [
-						'unverifiedDomainsCanManage',
-						'pendingGSuiteTosAcceptanceDomains',
-						'unverifiedDomainsCannotManage',
-						'transferStatus',
-						'newTransfersWrongNS',
-						'pendingConsent',
-					] }
-				/>
-			);
-		}
 	}
 
 	renderNewDesign() {
@@ -176,8 +155,6 @@ export class SiteDomains extends Component {
 					</div>
 				</div>
 
-				{ this.domainWarnings() }
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
@@ -198,6 +175,7 @@ export class SiteDomains extends Component {
 						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						goToEditDomainRoot={ this.goToEditDomainRoot }
 						handleUpdatePrimaryDomainOptionClick={ this.handleUpdatePrimaryDomainOptionClick }
+						purchases={ this.props.purchases }
 					/>
 				</div>
 
@@ -434,6 +412,7 @@ export default connect(
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
 		const siteCount = getSites( state )?.length || 0;
+		const purchases = getPurchases( state );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
@@ -447,6 +426,7 @@ export default connect(
 			isOnFreePlan,
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+			purchases,
 		};
 	},
 	( dispatch ) => {
