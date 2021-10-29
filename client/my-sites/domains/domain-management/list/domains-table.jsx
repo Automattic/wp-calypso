@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import DomainItem from './domain-item';
+import DomainRow from './domain-row';
 import DomainsTableHeader from './domains-table-header';
 import ListItemPlaceholder from './item-placeholder';
 import { filterOutWpcomDomains } from './utils';
@@ -74,6 +74,7 @@ class DomainsTable extends PureComponent {
 			shouldUpgradeToMakeDomainPrimary,
 			goToEditDomainRoot,
 			handleUpdatePrimaryDomainOptionClick,
+			purchases,
 		} = this.props;
 
 		const { sortKey, sortOrder } = this.state;
@@ -105,25 +106,31 @@ class DomainsTable extends PureComponent {
 			} );
 		}
 
-		const domainListItems = domainItems.map( ( domain, index ) => (
-			<DomainItem
-				key={ `${ domain.name }-${ index }` }
-				currentRoute={ currentRoute }
-				domain={ domain }
-				domainDetails={ domain }
-				site={ selectedSite }
-				isManagingAllSites={ false }
-				onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
-				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
-				busyMessage={ translate( 'Setting Primary Domain…', {
-					context: 'Shows up when the primary domain is changing and the user is waiting',
-				} ) }
-				disabled={ settingPrimaryDomain }
-				selectionIndex={ index }
-				onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
-				shouldUpgradeToMakePrimary={ shouldUpgradeToMakeDomainPrimary( domain ) }
-			/>
-		) );
+		const domainListItems = domainItems.map( ( domain, index ) => {
+			const purchase = purchases
+				? purchases.find( ( p ) => p.id === parseInt( domain.subscriptionId, 10 ) )
+				: null;
+			return (
+				<DomainRow
+					key={ `${ domain.name }-${ index }` }
+					currentRoute={ currentRoute }
+					domain={ domain }
+					domainDetails={ domain }
+					site={ selectedSite }
+					isManagingAllSites={ false }
+					onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
+					isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
+					busyMessage={ translate( 'Setting primary site address…', {
+						context: 'Shows up when the primary domain is changing and the user is waiting',
+					} ) }
+					disabled={ settingPrimaryDomain }
+					selectionIndex={ index }
+					onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
+					shouldUpgradeToMakePrimary={ shouldUpgradeToMakeDomainPrimary( domain ) }
+					purchase={ purchase }
+				/>
+			);
+		} );
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
