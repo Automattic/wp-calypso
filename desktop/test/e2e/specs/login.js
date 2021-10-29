@@ -4,11 +4,26 @@ const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );
 const { _electron: electron } = require( 'playwright' );
 
+// Linux:
 const APP_PATH = path.join( __dirname, '../../../release/linux-unpacked/wpcom' );
+// Mac:
+// const APP_PATH = path.join(
+// 	__dirname,
+// 	'../../../',
+// 	'release',
+// 	'mac',
+// 	'WordPress.com.app',
+// 	'Contents',
+// 	'MacOS',
+// 	'WordPress.com'
+// );
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
 const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const VIDEO_PATH = path.join( __dirname, '../results/video.webm' );
+
+const timestamp = new Date().toJSON().replace( /:/g, '-' );
+const appLogPath = path.resolve( __dirname, '..', 'results', `app-${ timestamp }.log` );
 
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
@@ -20,6 +35,7 @@ describe( 'User Can log in', () => {
 	beforeAll( async () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
 		consoleStream = await createWriteStream( CONSOLE_PATH );
+		const parentEnv = process.env;
 
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
@@ -30,6 +46,14 @@ describe( 'User Can log in', () => {
 			timeout: 0,
 			recordHar: {
 				path: HAR_PATH,
+			},
+			// FIXME: For some reason env variables are not visible from the Electron application. Strange. 🤔
+			env: {
+				WP_DEBUG_LOG: `${ appLogPath }`, // This will override logging path from the Electron main process.
+				// Ensure other CI-specific overrides (such as disabling the auto-updater)
+				DEBUG: true,
+				CI: true,
+				...parentEnv,
 			},
 		} );
 		electronApp.context().tracing.start( { screenshots: true } );
