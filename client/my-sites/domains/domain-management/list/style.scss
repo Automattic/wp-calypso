@@ -2,10 +2,33 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.breadcrumbs svg.options-domain-button__ellipsis {
-	transform: rotate( 90deg ) translateX( -2px );
-	height: 14px;
-	margin-left: 0;
+.breadcrumbs {
+	svg.options-domain-button__add {
+		margin-left: 4px;
+
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+
+	button.options-domain-button.ellipsis {
+		padding: 4px 0;
+
+		@include break-mobile {
+			padding: 7px;
+		}
+	}
+
+	svg.options-domain-button__ellipsis {
+		width: 28px;
+		height: 28px;
+		margin-left: 0;
+
+		@include break-mobile {
+			width: 18px;
+			height: 18px;
+		}
+	}
 }
 
 .domain-management-list__notice {

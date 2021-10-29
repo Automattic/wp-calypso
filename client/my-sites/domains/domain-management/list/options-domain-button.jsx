@@ -3,7 +3,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
-import { Icon, plus, search } from '@wordpress/icons';
+import { Icon, moreVertical, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -104,7 +104,7 @@ class AddDomainButton extends Component {
 		const isRedesign = config.isEnabled( 'domains/management-list-redesign' );
 
 		if ( ellipsisButton ) {
-			return <Gridicon icon="ellipsis" className="options-domain-button__ellipsis" />;
+			return <Icon icon={ moreVertical } className="options-domain-button__ellipsis gridicon" />;
 		}
 
 		let label = translate( 'Other domain options' );
@@ -115,7 +115,7 @@ class AddDomainButton extends Component {
 		if ( isRedesign ) {
 			return (
 				<>
-					<Icon icon={ plus } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
+					<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
 					<span className="options-domain-button__desktop">{ label }</span>
 				</>
 			);
