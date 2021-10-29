@@ -3,6 +3,7 @@ import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
+import { COOKIES_PATH } from './environment';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -187,7 +188,7 @@ export async function setStoreCookie(
  */
 export async function setLoginCookie( page: Page, user: string ) {
 	const browserContext = page.context();
-	const cookiePath = path.join( process.cwd(), 'cookies', `${ user }.json` );
+	const cookiePath = path.join( COOKIES_PATH, `${ user }.json` );
 	try {
 		await access( cookiePath );
 	} catch {
