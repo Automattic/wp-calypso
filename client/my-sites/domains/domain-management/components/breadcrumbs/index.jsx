@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { Icon, chevronLeft } from '@wordpress/icons';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -82,7 +83,7 @@ const Breadcrumbs = ( { items, mobileItem, buttons, mobileButtons, className } )
 			/* eslint-disable wpcalypso/jsx-gridicon-size */
 			return (
 				<a className="breadcrumbs__item" href={ mobileItem.href }>
-					<Gridicon className="breadcrumbs__back-arrow" icon="chevron-left" size={ 14 } />
+					<Icon className="breadcrumbs__back-arrow" icon={ chevronLeft } size={ 20 } />
 				</a>
 			);
 			/* eslint-enable wpcalypso/jsx-gridicon-size */
