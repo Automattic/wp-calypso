@@ -109,6 +109,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 							emailAddress,
 						},
 					} ),
+					'...',
 				] }
 			</h3>
 		</EmptyContent>
