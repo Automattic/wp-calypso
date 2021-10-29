@@ -1,7 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
+import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
 import { GoToStep } from '../types';
@@ -23,6 +23,7 @@ type Props = ConnectedProps< typeof connector > & {
 const CaptureStep: React.FunctionComponent< Props > = ( {
 	goToStep,
 	analyzeUrl,
+	resetError,
 	isAnalyzing,
 	analyzerError,
 } ) => {
@@ -49,6 +50,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	};
 
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
+		resetError();
 		setUrlValue( e.target.value );
 		setIsValid( validateUrl( e.target.value ) );
 	};
@@ -97,6 +99,7 @@ const connector = connect(
 	} ),
 	{
 		analyzeUrl,
+		resetError,
 	}
 );
 

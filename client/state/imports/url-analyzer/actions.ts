@@ -5,6 +5,7 @@ import {
 	URL_ANALYZER_ANALYZE,
 	URL_ANALYZER_ANALYZE_SUCCESS,
 	URL_ANALYZER_ANALYZE_ERROR,
+	URL_ANALYZER_RESET_ERROR,
 } from '../../action-types';
 import type { urlData } from 'calypso/signup/steps/import/types';
 import type { AnyAction, Dispatch } from 'redux';
@@ -39,4 +40,10 @@ export const analyzeUrl = ( url: string ) => (
 				type: URL_ANALYZER_ANALYZE_DONE,
 			} );
 		} );
+};
+
+export const resetError = () => ( dispatch: Dispatch< AnyAction > ): void => {
+	dispatch( {
+		type: URL_ANALYZER_RESET_ERROR,
+	} );
 };

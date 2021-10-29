@@ -4,6 +4,7 @@ import {
 	URL_ANALYZER_ANALYZE_DONE,
 	URL_ANALYZER_ANALYZE_SUCCESS,
 	URL_ANALYZER_ANALYZE_ERROR,
+	URL_ANALYZER_RESET_ERROR,
 } from '../../action-types';
 import type { AnyAction } from 'redux';
 
@@ -24,6 +25,8 @@ const analyzerError = ( state = null, action: AnyAction ) => {
 			const { payload } = action;
 			return payload;
 		}
+		case URL_ANALYZER_RESET_ERROR:
+			return null;
 		default:
 			return state;
 	}
