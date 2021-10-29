@@ -30,7 +30,7 @@
 		"build:secrets": "node bin/build-desktop-secrets.js",
 		"ci:github:add-review": "node bin/github/add-review.js",
 		"ci:github:dismiss-review": "node bin/github/dismiss-review.js",
-		"test:e2e": "yarn jest test/e2e"
+		"test:e2e": "jest -c test/e2e/config/jest.config.js"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^9.0.0",
