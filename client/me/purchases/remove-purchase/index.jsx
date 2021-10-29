@@ -115,7 +115,7 @@ class RemovePurchase extends Component {
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
 
-		const response = await this.props.removePurchase( purchase.id, this.props.userId );
+		await this.props.removePurchase( purchase.id, this.props.userId );
 
 		const productName = getName( purchase );
 		const { purchasesError, purchaseListUrl } = this.props;
@@ -128,46 +128,20 @@ class RemovePurchase extends Component {
 			return;
 		}
 
-		if ( response.status === 'completed' ) {
-			if ( isDomainRegistration( purchase ) ) {
-				if ( isDomainOnlySite ) {
-					this.props.receiveDeletedSite( purchase.siteId );
-					this.props.setAllSitesSelected();
-				}
+		if ( isDomainRegistration( purchase ) ) {
+			if ( isDomainOnlySite ) {
+				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.setAllSitesSelected();
+			}
 
-				successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
-					components: { domain: <em>{ productName }</em> },
-				} );
-			} else {
-				successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-					args: { productName },
-					components: { siteName: <em>{ purchase.domain }</em> },
-				} );
-			}
-		} else if ( response.status === 'queued' ) {
-			if ( isDomainRegistration( purchase ) ) {
-				successMessage = translate(
-					'We are removing the domain {{domain/}} from your account.{{br/}}' +
-						'Please give it some time for changes to take effect. ' +
-						'An email will be sent once the process is complete.',
-					{ components: { br: <br />, domain: <em>{ productName }</em> } }
-				);
-			} else {
-				successMessage = translate(
-					'We are removing %(productName)s from {{siteName/}}.{{br/}}' +
-						'Please give it some time for changes to take effect. ' +
-						'An email will be sent once the process is complete.',
-					{
-						args: { productName },
-						components: { br: <br />, siteName: <em>{ purchase.domain }</em> },
-					}
-				);
-			}
+			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+				components: { domain: <em>{ productName }</em> },
+			} );
 		} else {
-			this.setState( { isRemoving: false } );
-			this.closeDialog();
-			this.props.errorNotice( translate( 'There was an error removing the purchase.' ) );
-			return;
+			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+				args: { productName },
+				components: { siteName: <em>{ purchase.domain }</em> },
+			} );
 		}
 
 		this.props.successNotice( successMessage, { isPersistent: true } );
