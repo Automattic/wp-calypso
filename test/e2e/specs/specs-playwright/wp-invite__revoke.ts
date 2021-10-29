@@ -78,7 +78,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	} );
 
 	it( `Ensure invite link is no longer valid`, async function () {
-		const testPage = await BrowserManager.newPage( { newContext: true } );
+		const testContext = await BrowserManager.newBrowserContext();
+		const testPage = await BrowserManager.newPage( { context: testContext } );
 		await testPage.goto( adjustedInviteLink );
 
 		await testPage.waitForSelector( `:text("Oops, that invite is not valid")` );
