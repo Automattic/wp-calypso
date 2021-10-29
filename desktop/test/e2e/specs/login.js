@@ -69,6 +69,12 @@ describe( 'User Can log in', () => {
 		electronApp.context().tracing.start( { screenshots: true } );
 
 		mainWindow = await electronApp.firstWindow();
+		await mainWindow.waitForLoadState();
+		// eslint-disable-next-line no-unused-vars
+		for ( const [ _, frame ] of mainWindow.frames().entries() ) {
+			// Wait for all "frames" to load before proceeding with the tests
+			await frame.waitForLoadState();
+		}
 		mainWindow.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
