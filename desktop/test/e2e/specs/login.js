@@ -25,6 +25,13 @@ const VIDEO_PATH = path.join( __dirname, '../results/video.webm' );
 const timestamp = new Date().toJSON().replace( /:/g, '-' );
 const appLogPath = path.resolve( __dirname, '..', 'results', `app-${ timestamp }.log` );
 
+function cleanBaseURL( url ) {
+	if ( url.endsWith( '/' ) ) {
+		return cleanBaseURL( url.replace( /\/$/, '' ) );
+	}
+	return url;
+}
+
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
 
@@ -54,6 +61,9 @@ describe( 'User Can log in', () => {
 				DEBUG: true,
 				CI: true,
 				...parentEnv,
+				...( process.env.WP_DESKTOP_BASE_URL !== undefined && {
+					WP_DESKTOP_BASE_URL: cleanBaseURL( process.env.WP_DESKTOP_BASE_URL ),
+				} ),
 			},
 		} );
 		electronApp.context().tracing.start( { screenshots: true } );
