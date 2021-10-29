@@ -23,7 +23,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "^1.0.0",
 		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@types/config": "^0.0.39",
+		"@types/config": "^0.0.40",
 		"@types/jest": "^27.0.2",
 		"@types/node": "^16.11.6",
 		"asana-phrase": "^0.0.8",
