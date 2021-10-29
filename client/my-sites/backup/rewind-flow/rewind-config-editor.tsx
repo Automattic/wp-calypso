@@ -42,11 +42,17 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		},
 		{
 			name: 'uploads',
-			label: translate( '{{strong}}Media Uploads{{/strong}}', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+			label: translate(
+				'{{strong}}Media Uploads{{/strong}} (check {{em}}Site database{{/em}} to ensure uploads are visible in the restored site)',
+				{
+					components: {
+						strong: <strong />,
+						em: <em />,
+					},
+					comment:
+						'"Site database" is another item of the list, at the same level as "Media Uploads"',
+				}
+			),
 		},
 		{
 			name: 'roots',
@@ -72,7 +78,7 @@ const BackupRewindConfigEditor: FunctionComponent< Props > = ( {
 		},
 		{
 			name: 'sqls',
-			label: translate( '{{strong}}Site database{{/strong}} (SQL)', {
+			label: translate( '{{strong}}Site database{{/strong}} (includes pages, and posts)', {
 				components: {
 					strong: <strong />,
 				},
