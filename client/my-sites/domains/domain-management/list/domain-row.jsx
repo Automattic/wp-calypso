@@ -55,15 +55,6 @@ class DomainRow extends PureComponent {
 		event.stopPropagation();
 	};
 
-	hasMappingError( domain ) {
-		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
-		return (
-			domain.type === domainTypes.MAPPED &&
-			! domain.pointsToWpcom &&
-			moment.utc().isAfter( registrationDatePlus3Days )
-		);
-	}
-
 	handleClick = () => {
 		const { onClick, domainDetails } = this.props;
 		onClick( domainDetails );
@@ -99,7 +90,7 @@ class DomainRow extends PureComponent {
 		const { domain, domainDetails, site } = this.props;
 		const { status, statusClass } = resolveDomainStatus( domainDetails || domain, null, {
 			siteSlug: site?.slug,
-			hasMappingError: this.hasMappingError( domain ),
+			getMappingErrors: true,
 		} );
 
 		return (
