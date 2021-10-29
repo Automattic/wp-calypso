@@ -18,7 +18,7 @@ export const analyzeUrl = ( url: string ) => (
 
 	return wpcom
 		.undocumented()
-		.analyzeUrl( url )
+		.ImportsAnalyzeUrl( url )
 		.then( ( response: urlData ) => {
 			// Update the state
 			dispatch( {

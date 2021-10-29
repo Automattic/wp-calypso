@@ -1925,7 +1925,14 @@ Undocumented.prototype.getMatchingAnchorSite = function (
 	);
 };
 
-Undocumented.prototype.analyzeUrl = function ( url, fn ) {
+/**
+ * Analyze a URL and return various pieces of information about it (platform, colors, meta).
+ *
+ * @param url {string} Example: www.example.com
+ * @param fn {function} Callback function to run when the request completes.
+ * @returns {Promise} A promise
+ */
+Undocumented.prototype.ImportsAnalyzeUrl = function ( url, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: '/imports/analyze-url',
