@@ -1,3 +1,5 @@
+import { readFile, access } from 'fs/promises';
+import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
@@ -176,4 +178,23 @@ export async function setStoreCookie(
 			},
 		] );
 	}
+}
+
+/**
+ *
+ * @param page
+ * @param user
+ */
+export async function setLoginCookie( page: Page, user: string ) {
+	const browserContext = page.context();
+	const cookiePath = path.join( process.cwd(), 'cookies', `${ user }.json` );
+	try {
+		await access( cookiePath );
+	} catch {
+		throw new Error( `Cookie file ${ cookiePath } not found on disk.` );
+	}
+
+	const cookie = JSON.parse( await readFile( cookiePath, 'utf8' ) );
+
+	await browserContext.addCookies( cookie.cookies );
 }
