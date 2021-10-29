@@ -251,31 +251,24 @@ export const sitePluginUpdated = ( siteId ) => ( {
  * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
  * @returns {object} Action object
  */
-export const updateSiteFrontPage = ( siteId, frontPageOptions ) => ( dispatch ) => {
-	dispatch( { type: SITE_FRONT_PAGE_UPDATE, siteId, frontPageOptions } );
+export const updateSiteFrontPage = ( siteId, frontPageOptions ) => async ( dispatch ) => {
+	try {
+		const response = await wpcom.req.post( `/sites/${ siteId }/homepage`, {
+			is_page_on_front: isPageOnFront( frontPageOptions.show_on_front ),
+			page_on_front_id: frontPageOptions.page_on_front,
+			page_for_posts_id: frontPageOptions.page_for_posts,
+		} );
 
-	wpcom.req
-		.post(
-			`/sites/${ siteId }/homepage`,
-			{ apiVersion: '1.1' },
-			{
-				is_page_on_front: isPageOnFront( frontPageOptions.show_on_front ),
-				page_on_front_id: frontPageOptions.page_on_front,
-				page_for_posts_id: frontPageOptions.page_for_posts,
-			}
-		)
-		.then( ( response ) =>
-			dispatch( {
-				type: SITE_FRONT_PAGE_UPDATE,
-				siteId,
-				frontPageOptions: {
-					show_on_front: response.is_page_on_front ? 'page' : 'posts',
-					page_on_front: parseInt( response.page_on_front_id, 10 ),
-					page_for_posts: parseInt( response.page_for_posts_id, 10 ),
-				},
-			} )
-		)
-		.catch( () => {} );
+		dispatch( {
+			type: SITE_FRONT_PAGE_UPDATE,
+			siteId,
+			frontPageOptions: {
+				show_on_front: response.is_page_on_front ? 'page' : 'posts',
+				page_on_front: parseInt( response.page_on_front_id, 10 ),
+				page_for_posts: parseInt( response.page_for_posts_id, 10 ),
+			},
+		} );
+	} catch {}
 };
 
 function isPageOnFront( showOnFront ) {
