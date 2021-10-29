@@ -576,7 +576,7 @@ const saveContactEmailClick = () =>
 		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
 	);
 
-const getPurchasesByCurrentUserId = ( state ) =>
+const getPurchasesById = ( state ) =>
 	( getUserPurchases( state ) || [] ).reduce( ( result, purchase ) => {
 		result[ purchase.id ] = purchase;
 		return result;
@@ -628,7 +628,7 @@ const getFilteredDomainsList = ( state, context ) => {
 export default connect(
 	( state, { context } ) => {
 		const sites = getSitesById( state );
-		const purchases = getPurchasesByCurrentUserId( state );
+		const purchases = getPurchasesById( state );
 		const action = parse( context.querystring )?.action;
 
 		return {

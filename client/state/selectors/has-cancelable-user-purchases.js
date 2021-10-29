@@ -11,10 +11,6 @@ import 'calypso/state/purchases/init';
  * @returns {boolean} if the user currently has any purchases that can be canceled.
  */
 export const hasCancelableUserPurchases = ( state ) => {
-	if ( ! state.purchases.hasLoadedUserPurchasesFromServer ) {
-		return false;
-	}
-
 	const purchases = getUserPurchases( state );
 	return (
 		purchases &&

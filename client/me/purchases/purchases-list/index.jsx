@@ -112,7 +112,7 @@ class PurchasesList extends Component {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && purchases.length ) {
+		if ( purchases && purchases.length ) {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
@@ -133,11 +133,7 @@ class PurchasesList extends Component {
 			);
 		}
 
-		if (
-			this.props.hasLoadedUserPurchasesFromServer &&
-			! purchases.length &&
-			! subscriptions.length
-		) {
+		if ( purchases && ! purchases.length && ! subscriptions.length ) {
 			if ( ! sites.length ) {
 				return (
 					<Main wideLayout className="purchases-list">

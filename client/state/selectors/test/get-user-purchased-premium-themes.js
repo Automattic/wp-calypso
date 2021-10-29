@@ -33,7 +33,7 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 		expect( getUserPurchasedPremiumThemes( state ) ).toEqual( [] );
 	} );
 
-	test( 'should return false because the data is not ready', () => {
+	test( 'should return null because the data is not ready', () => {
 		const state = {
 			currentUser: {
 				id: targetUserId,
@@ -48,7 +48,7 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			},
 		};
 
-		expect( getUserPurchasedPremiumThemes( state ) ).toBe( false );
+		expect( getUserPurchasedPremiumThemes( state ) ).toBeNull();
 	} );
 
 	test( 'should return an array of themes because there is a theme purchase for the specified user', () => {

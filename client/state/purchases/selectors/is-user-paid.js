@@ -8,5 +8,7 @@ import 'calypso/state/purchases/init';
  * @param   {object}  state       global state
  * @returns {boolean} if the user currently has any purchases.
  */
-export const isUserPaid = ( state ) =>
-	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state ).length;
+export const isUserPaid = ( state ) => {
+	const purchases = getUserPurchases( state );
+	return purchases && purchases.length > 0;
+};

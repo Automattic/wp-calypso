@@ -375,7 +375,7 @@ describe( 'selectors', () => {
 			expect( isUserPaid( state ) ).toBe( false );
 		} );
 
-		test( 'should return false because the data is not ready.', () => {
+		test( 'should return null because the data is not ready.', () => {
 			const state = {
 				currentUser: {
 					id: targetUserId,
@@ -390,7 +390,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state ) ).toBe( false );
+			expect( isUserPaid( state ) ).toBeNull();
 		} );
 	} );
 } );

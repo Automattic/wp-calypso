@@ -9,13 +9,8 @@ import 'calypso/state/purchases/init';
  * @returns {Array} Details of any premium themes the user has purchased
  */
 export const getUserPurchasedPremiumThemes = ( state ) => {
-	if ( ! state.purchases.hasLoadedUserPurchasesFromServer ) {
-		return false;
-	}
-
-	return getUserPurchases( state ).filter(
-		( purchase ) => purchase.productSlug === 'premium_theme'
-	);
+	const purchases = getUserPurchases( state );
+	return purchases && purchases.filter( ( purchase ) => purchase.productSlug === 'premium_theme' );
 };
 
 export default getUserPurchasedPremiumThemes;
