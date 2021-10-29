@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
@@ -9,12 +9,11 @@ import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
 import { GoToStep } from './types';
 import './style.scss';
 
-interface Props {
+type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
-	isAnalyzing: boolean;
-}
+};
 
 const MOCK_DATA = {
 	website: 'https://openweb.com',
@@ -64,9 +63,11 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 	);
 };
 
-export default connect(
+const connector = connect(
 	( state ) => ( {
 		isAnalyzing: isAnalyzing( state ),
 	} ),
 	{}
-)( ImportOnboarding );
+);
+
+export default connector( ImportOnboarding );
