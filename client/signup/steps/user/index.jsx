@@ -33,6 +33,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRouteUrl from 'calypso/state/selectors/get-current-route-url';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
@@ -86,6 +87,7 @@ export class UserStep extends Component {
 		subHeaderText: PropTypes.string,
 		isSocialSignupEnabled: PropTypes.bool,
 		initialContext: PropTypes.object,
+		currentRouteUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -148,6 +150,7 @@ export class UserStep extends Component {
 			sectionName,
 			from,
 			locale,
+			currentRouteUrl,
 		} = props;
 
 		let subHeaderText = props.subHeaderText;
@@ -215,7 +218,7 @@ export class UserStep extends Component {
 					oauth2ClientId: oauth2Client?.id,
 					wccomFrom,
 					isWhiteLogin: isReskinned,
-					signupUrl: window.location.pathname + window.location.search,
+					signupUrl: currentRouteUrl,
 				} );
 
 				subHeaderText = translate(
@@ -519,6 +522,7 @@ export default connect(
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		userLoggedIn: isUserLoggedIn( state ),
+		currentRouteUrl: getCurrentRouteUrl( state ),
 	} ),
 	{
 		errorNotice,
