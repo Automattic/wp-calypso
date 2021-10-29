@@ -2,7 +2,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
-import { isAnalyzing } from 'calypso/state/imports/url-analyzer/selectors';
+import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
 import { GoToStep } from '../types';
 import './style.scss';
@@ -20,7 +20,12 @@ type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
 };
 
-const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, isAnalyzing } ) => {
+const CaptureStep: React.FunctionComponent< Props > = ( {
+	goToStep,
+	analyzeUrl,
+	isAnalyzing,
+	analyzerError,
+} ) => {
 	const { __ } = useI18n();
 
 	const [ urlValue, setUrlValue ] = React.useState( '' );
@@ -70,11 +75,12 @@ const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, 
 							onChange={ onInputChange }
 							value={ urlValue }
 						/>
-						{ ! isValid && showError && (
-							<div className="capture__input-error-msg">
-								{ __( 'The address you entered is not valid. Please try again.' ) }
-							</div>
-						) }
+						{ ( ! isValid && showError ) ||
+							( analyzerError && (
+								<div className="capture__input-error-msg">
+									{ __( 'The address you entered is not valid. Please try again.' ) }
+								</div>
+							) ) }
 					</div>
 				</div>
 			) }
@@ -87,6 +93,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( { goToStep, analyzeUrl, 
 const connector = connect(
 	( state ) => ( {
 		isAnalyzing: isAnalyzing( state ),
+		analyzerError: getAnalyzerError( state ),
 	} ),
 	{
 		analyzeUrl,
