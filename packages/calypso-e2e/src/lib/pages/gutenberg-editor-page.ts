@@ -39,7 +39,7 @@ const selectors = {
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
 	// Welcome tour
-	welcomeTourCloseButton: 'button:text("Skip")',
+	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 
 	// Block editor sidebar
 	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
@@ -101,7 +101,7 @@ export class GutenbergEditorPage {
 	 */
 	async getEditorFrame(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.editorFrame, {
-			timeout: 60 * 1000,
+			timeout: 105 * 1000,
 			state: 'attached',
 		} );
 		return ( await elementHandle.contentFrame() ) as Frame;
