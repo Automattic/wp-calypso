@@ -80,22 +80,26 @@ class DesignPickerStep extends Component {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		return shuffle(
-			this.props.themes
-				.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-				.map( ( { id, name, taxonomies } ) => ( {
-					categories: taxonomies?.theme_subject ?? [
-						{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
-					],
-					features: [],
-					is_premium: false,
-					slug: id,
-					template: id,
-					theme: id,
-					title: name,
-					...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-				} ) )
-		);
+		const allThemes = this.props.themes
+			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
+			.map( ( { id, name, taxonomies } ) => ( {
+				categories: taxonomies?.theme_subject ?? [
+					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
+				],
+				features: [],
+				is_premium: false,
+				slug: id,
+				template: id,
+				theme: id,
+				title: name,
+				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+			} ) );
+
+		if ( allThemes.length === 0 ) {
+			return [];
+		}
+
+		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
 	}
 
 	updateSelectedDesign() {
