@@ -41,7 +41,7 @@ class ChangeSiteAddress extends Component {
 
 		return (
 			<Main className="change-site-address">
-				<Header onClick={ this.goBack } selectedDomainName={ domain.name }>
+				<Header onClick={ this.goBack } selectedDomainName={ get( domain, 'name', '' ) }>
 					{ translate( 'Change Site Address' ) }
 				</Header>
 
