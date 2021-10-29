@@ -92,7 +92,7 @@ export class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 
 		return (
-			<div>
+			<>
 				<div className="site-settings__site-options">
 					<div className="site-settings__site-title-tagline">
 						<FormFieldset>
@@ -153,7 +153,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</Button>
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	}
 
