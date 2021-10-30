@@ -4,7 +4,7 @@ import config from 'config';
 import { chromium } from 'playwright';
 
 // Save cookies for defaultUser.
-module.exports = async () => {
+export default async (): Promise< void > => {
 	if ( process.env.SAVE_AUTH_COOKIES !== 'true' ) {
 		return;
 	}
