@@ -184,11 +184,11 @@ export async function setStoreCookie(
 /**
  *
  * @param page
- * @param user
+ * @param accountType
  */
-export async function setLoginCookie( page: Page, user: string ) {
+export async function setLoginCookie( page: Page, accountType: string ): Promise< void > {
 	const browserContext = page.context();
-	const cookiePath = path.join( COOKIES_PATH, `${ user }.json` );
+	const cookiePath = path.join( COOKIES_PATH, `${ accountType }.json` );
 	try {
 		await access( cookiePath );
 	} catch {

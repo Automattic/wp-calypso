@@ -1,5 +1,7 @@
 import { Page } from 'playwright';
+import { setLoginCookie } from '../../browser-manager';
 import { getCalypsoURL, getAccountCredential } from '../../data-helper';
+import { COOKIES_PATH } from '../../environment';
 
 const selectors = {
 	loginContainer: '.wp-login__container',
@@ -29,6 +31,7 @@ interface LoginCredentials {
 	username: string;
 	password: string;
 }
+
 interface TestAccount {
 	account: string;
 }
@@ -148,6 +151,8 @@ export class LoginPage {
 	 * Log in to WordPress.com from the `/log-in` endpoint.
 	 *
 	 * This is the 'normal' or 'standard' way of performing log ins.
+	 * If a pre-generated cookie file for the accountType is found, the cookie is set for the
+	 * BrowserContext, thereby rendering the login process unnecessary.
 	 *
 	 * @param {LoginCredentials | TestAccount} credentials Credentials of the user. Specify either an username/password pair or name of a test account in the configuration.
 	 * @param {LoginOptions} options Options for the login method.
@@ -156,18 +161,42 @@ export class LoginPage {
 		credentials: LoginCredentials | TestAccount,
 		options?: LoginOptions
 	): Promise< void > {
-		await this.visit();
-		await this.revealLoginForm();
-
-		// Obtain sanitized username/password combination.
-		const { username, password } = await this.resolveUserCredentials( credentials );
-
 		// The `waitForNavigation` method triggered after clicking on the Log In button will wait for a
 		// customn URL if `options.landingUrl` is specified.
 		// This is useful if after logging into Calypso the redirect takes user away from the default
 		// redirect of `<host>/home/<blogUrl>.
 		const landingUrl = options?.landingUrl ? options.landingUrl : `**/home/**`;
 
+		// If there is a stored cookie for the user, try that first.
+		if ( COOKIES_PATH && 'account' in credentials ) {
+			console.log( 'cookies path in login!' );
+			await setLoginCookie( this.page, credentials.account );
+			try {
+				await Promise.all( [
+					// Shorter than usual timoout, because with a cookie file the login process
+					// shoiuld not take more than a few seconds.
+					this.page.waitForNavigation( { url: landingUrl, waitUntil: 'load', timeout: 15 * 1000 } ),
+					this.page.goto( getCalypsoURL( '/' ) ),
+				] );
+				return;
+			} catch {
+				console.log( 'Failed to log in using cookie file, retrying a normal login.' );
+				// noop
+			}
+		}
+
+		// If a stored cookie is not found for a given accountType, or the cookie was
+		// rejected, try a traditional login.
+		// Since `credentials` can be one of two types, sanitize username/password combination.
+		const { username, password } = await this.resolveUserCredentials( credentials );
+
+		// Navigate to the login endpoint and if required, click on `Switch Account`.
+		await this.visit();
+		await this.revealLoginForm();
+
+		// Trigger a login by filling out the form.
+		// Only wait until `load` as on Simple sites the use of `networkidle` adds approx. 30s
+		// to the test execution.
 		await Promise.all( [
 			this.page.waitForNavigation( { url: landingUrl, waitUntil: 'load' } ),
 			this.baseflow( { username, password } ),
