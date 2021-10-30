@@ -89,3 +89,13 @@ ul.email-forwarding__list {
 	line-height: 3em;
 	margin-bottom: 15px;
 }
+
+.email-forwarding-add-new-compact-list__actions {
+	flex-direction: row;
+	display: flex;
+	justify-content: space-between;
+}
+
+.gridicon.gridicons-trash {
+	margin-right: 4px;
+}

@@ -7,24 +7,26 @@ import { connect } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import Main from 'calypso/components/main';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import EmailForwardingAddNew from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new';
+import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
+import EmailForwardingCustomMxList from 'calypso/my-sites/email/email-forwarding/email-forwarding-custom-mx-list';
+import EmailForwardingDetails from 'calypso/my-sites/email/email-forwarding/email-forwarding-details';
+import EmailForwardingGSuiteDetails from 'calypso/my-sites/email/email-forwarding/email-forwarding-gsuite-details';
+import EmailForwardingGSuiteDetailsAnotherProvider from 'calypso/my-sites/email/email-forwarding/email-forwarding-gsuite-details-another-provider';
+import EmailForwardingList from 'calypso/my-sites/email/email-forwarding/email-forwarding-list';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
 import getEmailForwardingType from 'calypso/state/selectors/get-email-forwarding-type';
 import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import EmailForwardingAddNew from './email-forwarding-add-new';
-import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
-import EmailForwardingDetails from './email-forwarding-details';
-import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
-import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
-import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingPlaceholder from './email-forwarding-placeholder';
 
 import './style.scss';
 
 class EmailForwarding extends Component {
 	static propTypes = {
+		compact: PropTypes.bool,
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		emailForwardingType: PropTypes.string,
@@ -34,7 +36,10 @@ class EmailForwarding extends Component {
 	};
 
 	render() {
-		const { selectedDomainName, translate } = this.props;
+		const { compact = false, selectedDomainName, translate } = this.props;
+		if ( compact ) {
+			return this.renderContent();
+		}
 		return (
 			<Main>
 				<QueryEmailForwards domainName={ selectedDomainName } />
@@ -77,13 +82,22 @@ class EmailForwarding extends Component {
 	}
 
 	renderForwards() {
-		const { emailForwards, emailForwardingLimit, selectedDomainName } = this.props;
+		const { compact, emailForwards, emailForwardingLimit, selectedDomainName } = this.props;
+
+		if ( compact ) {
+			return (
+				<EmailForwardingAddNewCompactList
+					emailForwards={ emailForwards }
+					emailForwardingLimit={ emailForwardingLimit }
+					selectedDomainName={ selectedDomainName }
+				/>
+			);
+		}
+
 		return (
 			<Card className="email-forwarding__card">
 				<EmailForwardingDetails selectedDomainName={ selectedDomainName } />
-
 				<EmailForwardingList emailForwards={ emailForwards } />
-
 				<EmailForwardingAddNew
 					emailForwards={ emailForwards }
 					emailForwardingLimit={ emailForwardingLimit }

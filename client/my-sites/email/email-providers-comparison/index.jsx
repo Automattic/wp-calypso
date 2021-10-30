@@ -53,6 +53,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
+import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
@@ -251,14 +252,46 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
+	onForwardsMailboxesChange = ( changedMailboxes ) => {
+		this.setState( { forwardingMailboxes: changedMailboxes } );
+	};
+
 	onGoogleUsersChange = ( changedUsers ) => {
 		this.setState( { googleUsers: changedUsers } );
+	};
+
+	onForwardsFormReturnKeyPress = ( event ) => {
+		// Simulate form submission
+		if ( event.key === 'Enter' ) {
+			this.onForwardingConfirmNewMailboxes();
+		}
 	};
 
 	onGoogleFormReturnKeyPress = ( event ) => {
 		// Simulate form submission
 		if ( event.key === 'Enter' ) {
 			this.onGoogleConfirmNewUsers();
+		}
+	};
+
+	onForwardingConfirmNewMailboxes = () => {
+		const { comparisonContext, domain, hasCartDomain, source } = this.props;
+		const { forwardingMailboxes } = this.state;
+
+		const usersAreValid = areAllUsersValid( forwardingMailboxes );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+
+		recordTracksEvent( 'calypso_email_providers_add_click', {
+			context: comparisonContext,
+			mailbox_count: forwardingMailboxes.length,
+			mailboxes_valid: usersAreValid ? 1 : 0,
+			provider: 'email-forwarding',
+			source,
+			user_can_add_email: userCanAddEmail ? 1 : 0,
+		} );
+
+		if ( ! usersAreValid || ! userCanAddEmail ) {
+			return;
 		}
 	};
 
@@ -310,11 +343,19 @@ class EmailProvidersComparison extends Component {
 	};
 
 	renderEmailForwardingCard() {
-		const { domain, translate } = this.props;
+		const { domain, selectedDomainName, translate } = this.props;
 
 		if ( this.isUpgrading() ) {
 			return null;
 		}
+
+		const formFields = (
+			<EmailForwarding
+				selectedDomainName={ selectedDomainName }
+				compact={ true }
+				onButtonClick={ this.goToEmailForwarding }
+			/>
+		);
 
 		return (
 			<EmailProviderCard
@@ -325,11 +366,10 @@ class EmailProvidersComparison extends Component {
 					'Use your custom domain in your email address and forward all your mail to another address.'
 				) }
 				detailsExpanded={ this.state.expanded.forwarding }
+				formFields={ formFields }
 				onExpandedChange={ this.onExpandedStateChange }
-				buttonLabel={ translate( 'Add email forwarding' ) }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ translate( 'Add email forwarding' ) }
-				onButtonClick={ this.goToEmailForwarding }
 				features={ getEmailForwardingFeatures() }
 			/>
 		);
