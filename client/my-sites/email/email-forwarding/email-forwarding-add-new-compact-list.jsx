@@ -17,31 +17,9 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	state = {
-		forwards: [ { destination: '', mailbox: '' } ],
+		forwards: [ { destination: '', mailbox: '', valid: false } ],
+		formSubmitting: false,
 	};
-
-	getInitialFields() {
-		return [ { destination: '', mailbox: '' } ];
-	}
-
-	getInitialFormState() {
-		return {
-			formSubmitting: false,
-			forwards: [ { destination: '', mailbox: '' } ],
-		};
-	}
-
-	UNSAFE_componentWillMount() {
-		this.formStateController = formState.Controller( {
-			initialFields: this.getInitialFields(),
-			onNewState: this.setFormState,
-			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues ) );
-			},
-		} );
-
-		this.setFormState( this.formStateController.getInitialState() );
-	}
 
 	hasForwards() {
 		return this.props.emailForwards.length > 0;
@@ -49,6 +27,10 @@ class EmailForwardingAddNewCompactList extends Component {
 
 	hasReachedLimit() {
 		return this.props.emailForwards.length >= this.props.emailForwardingLimit;
+	}
+
+	validForwards() {
+		return ! this.state.forwards.some( ( t ) => ! t.valid );
 	}
 
 	addNewEmailForwardsClick = ( event ) => {
@@ -59,6 +41,8 @@ class EmailForwardingAddNewCompactList extends Component {
 		}
 
 		this.setState( { formSubmitting: true } );
+
+
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			if ( hasErrors ) {
@@ -78,10 +62,6 @@ class EmailForwardingAddNewCompactList extends Component {
 		} );
 	};
 
-	setFormState = ( fields ) => {
-		this.setState( { fields } );
-	};
-
 	onForwardAdd = () => {
 		this.setState( { forwards: [ ...this.state.forwards, { destination: '', mailbox: '' } ] } );
 		//onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
@@ -99,7 +79,7 @@ class EmailForwardingAddNewCompactList extends Component {
 					<span>{ translate( 'Add another forward' ) }</span>
 				</Button>
 
-				<Button primary onClick={ this.addNewEmailForwardsClick }>
+				<Button primary onClick={ this.addNewEmailForwardsClick } disabled={ ! this.validForwards() }>
 					{ translate( 'Add' ) }
 				</Button>
 			</div>
@@ -128,12 +108,9 @@ class EmailForwardingAddNewCompactList extends Component {
 	updateHandler = ( index, name, value ) => {
 		const array = this.state.forwards;
 		array[ index ][ name ] = value;
-		debugger;
-		const field = `${ name }${ index }`;
-		this.formStateController.handleFieldChange( {
-			name: field,
-			value,
-		} );
+
+		const valid = validateAllFields( array[ index ] );
+		array[ index ].valid = valid.mailbox.length === 0 && valid.destination.length === 0;
 
 		this.setState( { forwards: array } );
 	};

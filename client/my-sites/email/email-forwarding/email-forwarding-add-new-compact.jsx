@@ -185,12 +185,12 @@ class EmailForwardingAddNewCompact extends Component {
 			value = value.replace( /@.*$/, '' );
 		}
 
-		this.props.updateHandler( index, name, value );
-
 		this.formStateController.handleFieldChange( {
 			name,
 			value,
 		} );
+
+		this.props.updateHandler( index, name, value );
 	};
 
 	isValid( fieldName ) {
