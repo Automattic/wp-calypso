@@ -1,14 +1,16 @@
 import emailValidator from 'email-validator';
 import { mapValues } from 'lodash';
 
-function validateAllFields( fieldValues ) {
+function validateAllFields( fieldValues, existingForwards = [] ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			value,
 			name: fieldName,
 		} );
 
-		return isValid ? [] : [ 'Invalid' ];
+		return isValid
+			? validateDuplicatedForward( { value, name: fieldName }, existingForwards )
+			: [ 'Invalid' ];
 	} );
 }
 
@@ -20,6 +22,17 @@ function validateField( { name, value } ) {
 			return emailValidator.validate( value );
 		default:
 			return true;
+	}
+}
+
+function validateDuplicatedForward( { name, value }, existingForwards ) {
+	switch ( name ) {
+		case 'mailbox':
+			return existingForwards?.filter( ( t ) => t.mailbox === value ).length > 1
+				? [ 'Repeated' ]
+				: [];
+		default:
+			return [];
 	}
 }
 

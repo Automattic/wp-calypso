@@ -18,6 +18,7 @@ class EmailForwardingAddNewCompact extends Component {
 		removeHandler: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		updateHandler: PropTypes.func.isRequired,
+		emailForwards: PropTypes.array,
 	};
 
 	state = {
@@ -41,7 +42,7 @@ class EmailForwardingAddNewCompact extends Component {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues ) );
+				onComplete( null, validateAllFields( fieldValues, this.props.emailForwards ?? [] ) );
 			},
 		} );
 
@@ -123,6 +124,8 @@ class EmailForwardingAddNewCompact extends Component {
 		const isValidMailbox = this.isValid( 'mailbox' );
 		const isValidDestination = this.isValid( 'destination' );
 		const { mailbox, destination } = fields;
+		const mailboxError = this.getError( 'mailbox' );
+		const destinationError = this.getError( 'destination' );
 
 		return (
 			<div className="email-forwarding__form-content">
@@ -137,12 +140,7 @@ class EmailForwardingAddNewCompact extends Component {
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
-					{ ! isValidMailbox && (
-						<FormInputValidation
-							text={ translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' ) }
-							isError={ true }
-						/>
-					) }
+					{ ! isValidMailbox && <FormInputValidation text={ mailboxError } isError={ true } /> }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -156,10 +154,7 @@ class EmailForwardingAddNewCompact extends Component {
 						value={ destination }
 					/>
 					{ ! isValidDestination && (
-						<FormInputValidation
-							text={ translate( 'Invalid destination address' ) }
-							isError={ true }
-						/>
+						<FormInputValidation text={ destinationError } isError={ true } />
 					) }
 				</FormFieldset>
 			</div>
@@ -195,6 +190,29 @@ class EmailForwardingAddNewCompact extends Component {
 
 	isValid( fieldName ) {
 		return ! formState.isFieldInvalid( this.state.fields, fieldName );
+	}
+
+	getError( fieldName ) {
+		const { translate } = this.props;
+		const errorMessage = formState.getFieldErrorMessages( this.state.fields, fieldName );
+		if ( ! errorMessage ) {
+			return null;
+		}
+		if ( fieldName === 'mailbox' ) {
+			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
+				return translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' );
+			}
+			if ( errorMessage.filter( ( t ) => t === 'Repeated' ).length === 1 ) {
+				return translate( 'Invalid mailbox - Duplicated' );
+			}
+		}
+		if ( fieldName === 'destination' ) {
+			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
+				return translate( 'Invalid destination address' );
+			}
+		}
+
+		return null;
 	}
 }
 

@@ -1,12 +1,22 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
-import formState from 'calypso/lib/form-state';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
+import { addEmailForward } from 'calypso/state/email-forwarding/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmailForwardingLimit from './email-forwarding-limit';
 
 class EmailForwardingAddNewCompactList extends Component {
@@ -33,7 +43,29 @@ class EmailForwardingAddNewCompactList extends Component {
 		return ! this.state.forwards.some( ( t ) => ! t.valid );
 	}
 
+	addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) =>
+		withAnalytics(
+			composeAnalytics(
+				recordGoogleEvent(
+					'Domain Management',
+					'Clicked "Add New Email Forward" Button in Email Forwarding',
+					'Domain Name',
+					domainName
+				),
+				recordTracksEvent(
+					'calypso_domain_management_email_forwarding_add_new_email_forward_click',
+					{
+						destination,
+						domain_name: domainName,
+						mailbox,
+					}
+				)
+			)
+		);
+
 	addNewEmailForwardsClick = ( event ) => {
+		const { selectedSiteSlug } = this.props;
+
 		event.preventDefault();
 
 		if ( this.state.formSubmitting ) {
@@ -42,29 +74,19 @@ class EmailForwardingAddNewCompactList extends Component {
 
 		this.setState( { formSubmitting: true } );
 
+		this.state.forwards.map( ( t ) => {
+			const { mailbox, destination } = t;
 
-
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			if ( hasErrors ) {
-				this.setState( { formSubmitting: false } );
-				return;
-			}
-
-			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
-
-			this.props.addNewEmailForwardWithAnalytics(
-				this.props.selectedDomainName,
-				mailbox,
-				destination
-			);
-			this.formStateController.resetFields( this.getInitialFields() );
-			this.setState( { formSubmitting: false, showForm: true } );
+			this.addNewEmailForwardWithAnalytics( this.props.selectedDomainName, mailbox, destination );
+			this.props.addEmailForward( this.props.selectedDomainName, mailbox, destination );
 		} );
+
+		this.setState( { formSubmitting: false } );
+		page( emailManagement( selectedSiteSlug, this.props.selectedDomainName ) );
 	};
 
 	onForwardAdd = () => {
 		this.setState( { forwards: [ ...this.state.forwards, { destination: '', mailbox: '' } ] } );
-		//onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
 	};
 
 	addButton() {
@@ -79,7 +101,11 @@ class EmailForwardingAddNewCompactList extends Component {
 					<span>{ translate( 'Add another forward' ) }</span>
 				</Button>
 
-				<Button primary onClick={ this.addNewEmailForwardsClick } disabled={ ! this.validForwards() }>
+				<Button
+					primary
+					onClick={ this.addNewEmailForwardsClick }
+					disabled={ ! this.validForwards() }
+				>
 					{ translate( 'Add' ) }
 				</Button>
 			</div>
@@ -127,19 +153,20 @@ class EmailForwardingAddNewCompactList extends Component {
 					/>
 				) : null }
 				{ this.state.forwards.map( ( fields, index ) => (
-					<>
-						<form className="email-forwarding__add-new">
+					<Fragment key={ `fragment-${ index }` }>
+						<form className="email-forwarding__add-new" key={ `form-${ index }` }>
 							<EmailForwardingAddNewCompact
+								key={ `forward-${ index }` }
 								fields={ fields }
 								index={ index }
-								emailForwards={ emailForwards }
+								emailForwards={ this.state.forwards }
 								selectedDomainName={ selectedDomainName }
 								removeHandler={ this.removeHandler }
 								updateHandler={ this.updateHandler }
 							/>
 						</form>
-						<hr />
-					</>
+						<hr key={ `hr-${ index }` } />
+					</Fragment>
 				) ) }
 				{ this.formFooter() }
 			</>
@@ -147,4 +174,12 @@ class EmailForwardingAddNewCompactList extends Component {
 	}
 }
 
-export default connect( null, {} )( localize( EmailForwardingAddNewCompactList ) );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			selectedSiteSlug: getSiteSlug( state, siteId ),
+		};
+	},
+	{ addEmailForward }
+)( localize( EmailForwardingAddNewCompactList ) );
