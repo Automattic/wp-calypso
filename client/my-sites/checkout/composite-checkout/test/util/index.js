@@ -1,5 +1,29 @@
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
+import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+
+export const stripeConfiguration = {
+	processor_id: 'IE',
+	js_url: 'https://stripe-js-url',
+	public_key: 'stripe-public-key',
+	setup_intent_id: null,
+};
+
+export const processorOptions = {
+	includeDomainDetails: false,
+	includeGSuiteDetails: false,
+	createUserAndSiteBeforeTransaction: false,
+	stripeConfiguration,
+	recordEvent: () => null,
+	reduxDispatch: () => null,
+	responseCart: getEmptyResponseCart(),
+	getThankYouUrl: () => '',
+	siteSlug: undefined,
+	siteId: undefined,
+	contactDetails: undefined,
+	stripe: undefined,
+};
 
 export const countryList = [
 	{
@@ -674,3 +698,23 @@ export function createTestReduxStore() {
 		};
 	} );
 }
+
+export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
+	const transactionsEndpoint = jest.fn();
+	transactionsEndpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/transactions', ( body ) => {
+			return transactionsEndpoint( body );
+		} )
+		.reply( transactionsEndpointResponse );
+
+	return transactionsEndpoint;
+}
+
+export const mockTransactionsRedirectResponse = () => [
+	200,
+	{ redirect_url: 'https://test-redirect-url' },
+];
+
+export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
