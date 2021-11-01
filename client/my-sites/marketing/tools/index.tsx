@@ -100,7 +100,7 @@ export const MarketingTools: FunctionComponent = () => {
 
 	return (
 		<Fragment>
-			{ ! purchases && <QueryUserPurchases userId={ userId } /> }
+			<QueryUserPurchases />
 			{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 

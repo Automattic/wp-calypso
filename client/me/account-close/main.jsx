@@ -17,7 +17,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
 import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
@@ -70,7 +70,6 @@ class AccountSettingsClose extends Component {
 	render() {
 		const {
 			translate,
-			currentUserId,
 			hasAtomicSites,
 			hasCancelablePurchases,
 			isLoading,
@@ -84,7 +83,7 @@ class AccountSettingsClose extends Component {
 
 		return (
 			<div className={ containerClasses } role="main">
-				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<QueryUserPurchases />
 				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
 
 				<HeaderCake onClick={ this.goBack }>
@@ -262,8 +261,7 @@ class AccountSettingsClose extends Component {
 
 export default connect(
 	( state ) => {
-		const user = getCurrentUser( state );
-		const currentUserId = user && user.ID;
+		const currentUserId = getCurrentUserId( state );
 		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );
 		const isLoading =
 			! purchasedPremiumThemes ||
@@ -271,14 +269,12 @@ export default connect(
 			! hasLoadedUserPurchasesFromServer( state );
 
 		return {
-			currentUserId: user && user.ID,
 			isLoading,
 			hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
 			purchasedPremiumThemes,
 			hasAtomicSites: userHasAnyAtomicSites( state ),
 			isAccountClosed: isAccountClosed( state ),
 			sitesToBeDeleted: getAccountClosureSites( state ),
-			user,
 		};
 	},
 	{

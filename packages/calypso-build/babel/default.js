@@ -45,7 +45,7 @@ module.exports = ( api, opts ) => ( {
 				version: require( '@babel/helpers/package.json' ).version,
 			},
 		],
-		require.resolve( './babel-plugin-optimize-i18n' ),
+		require.resolve( '@automattic/babel-plugin-optimize-i18n' ),
 		require.resolve( '@emotion/babel-plugin' ),
 	],
 } );

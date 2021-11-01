@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { connect } from 'react-redux';
@@ -37,6 +38,7 @@ function UseMyDomain( {
 	transferDomainUrl,
 	initialMode,
 } ) {
+	const { __ } = useI18n();
 	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( null );
 	const [ domainInboundTransferStatusInfo, setDomainInboundTransferStatusInfo ] = useState( null );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
@@ -304,7 +306,7 @@ function UseMyDomain( {
 				/* translators: %s - the name of the domain the user will add to their site */
 				return sprintf( __( 'Use a domain I own: %s' ), domainName );
 		}
-	}, [ domainName, mode, inputMode ] );
+	}, [ domainName, mode, __ ] );
 
 	return (
 		<>

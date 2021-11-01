@@ -53,7 +53,6 @@ class ListAll extends Component {
 		domainsList: PropTypes.array.isRequired,
 		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
-		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
@@ -520,7 +519,7 @@ class ListAll extends Component {
 	}
 
 	renderContent() {
-		const { domainsList, translate, user } = this.props;
+		const { domainsList, translate } = this.props;
 
 		if (
 			this.props.isContactEmailEditContext &&
@@ -547,7 +546,7 @@ class ListAll extends Component {
 				<div className="list-all__form">{ this.renderActionForm() }</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
-					<QueryUserPurchases userId={ user.ID } />
+					<QueryUserPurchases />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
@@ -632,7 +631,6 @@ const getFilteredDomainsList = ( state, context ) => {
 export default connect(
 	( state, { context } ) => {
 		const sites = getSitesById( state );
-		const user = getCurrentUser( state );
 		const purchases = getPurchasesByCurrentUserId( state );
 		const action = parse( context.querystring )?.action;
 
@@ -649,7 +647,6 @@ export default connect(
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			user,
 		};
 	},
 	{

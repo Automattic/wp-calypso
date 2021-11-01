@@ -26,6 +26,7 @@
 	"oauth_client_id": 69041,
 	"features": {
 		"ad-tracking": true,
+		"activity-log/display-rules": false,
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,

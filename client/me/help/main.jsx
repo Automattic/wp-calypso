@@ -300,7 +300,7 @@ class Help extends PureComponent {
 	};
 
 	render() {
-		const { isEmailVerified, userId, isLoading, translate } = this.props;
+		const { isEmailVerified, isLoading, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.getPlaceholders();
@@ -335,7 +335,7 @@ class Help extends PureComponent {
 				) }
 				{ this.getContactUs() }
 				<QueryConciergeInitial />
-				<QueryUserPurchases userId={ userId } />
+				<QueryUserPurchases />
 			</Main>
 		);
 	}
@@ -357,7 +357,6 @@ export const mapStateToProps = ( state ) => {
 	const showCoursesTeaser = isBusinessPlanUser;
 
 	return {
-		userId,
 		isBusinessPlanUser,
 		showCoursesTeaser,
 		isLoading,

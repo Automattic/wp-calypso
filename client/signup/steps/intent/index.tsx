@@ -31,7 +31,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 
 	const submitIntent = ( intent: IntentFlag ) => {
 		branchSteps( EXCLUDE_STEPS[ intent ] );
-		recordTracksEvent( 'calypso_signup_select_intent', { intent } );
+		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
 		dispatch( submitSignupStep( { stepName }, { intent } ) );
 		goToNextStep();
 	};

@@ -23,7 +23,9 @@ export const connectADomainStepsDefinition = {
 	[ stepSlug.SUGGESTED_LOGIN ]: {
 		mode: modeType.SUGGESTED,
 		step: stepType.LOG_IN_TO_PROVIDER,
-		name: __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepLogin,
 		next: stepSlug.SUGGESTED_UPDATE,
 		prev: stepSlug.SUGGESTED_START,
@@ -31,7 +33,9 @@ export const connectADomainStepsDefinition = {
 	[ stepSlug.SUGGESTED_UPDATE ]: {
 		mode: modeType.SUGGESTED,
 		step: stepType.UPDATE_NAME_SERVERS,
-		name: __( 'Update name servers' ),
+		get name() {
+			return __( 'Update name servers' );
+		},
 		component: ConnectDomainStepSuggestedRecords,
 		prev: stepSlug.SUGGESTED_LOGIN,
 	},
@@ -59,7 +63,9 @@ export const connectADomainStepsDefinition = {
 	[ stepSlug.ADVANCED_LOGIN ]: {
 		mode: modeType.ADVANCED,
 		step: stepType.LOG_IN_TO_PROVIDER,
-		name: __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepLogin,
 		next: stepSlug.ADVANCED_UPDATE,
 		prev: stepSlug.ADVANCED_START,
@@ -67,7 +73,9 @@ export const connectADomainStepsDefinition = {
 	[ stepSlug.ADVANCED_UPDATE ]: {
 		mode: modeType.ADVANCED,
 		step: stepType.UPDATE_A_RECORDS,
-		name: __( 'Update root A records & CNAME record' ),
+		get name() {
+			return __( 'Update root A records & CNAME record' );
+		},
 		component: ConnectDomainStepAdvancedRecords,
 		prev: stepSlug.ADVANCED_LOGIN,
 	},
@@ -94,14 +102,18 @@ export const connectADomainOwnershipVerificationStepsDefinition = {
 	[ stepSlug.OWNERSHIP_VERIFICATION_LOGIN ]: {
 		mode: modeType.OWNERSHIP_VERIFICATION,
 		step: stepType.LOG_IN_TO_PROVIDER,
-		name: __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: ConnectDomainStepLogin,
 		next: stepSlug.OWNERSHIP_VERIFICATION_AUTH_CODE,
 	},
 	[ stepSlug.OWNERSHIP_VERIFICATION_AUTH_CODE ]: {
 		mode: modeType.OWNERSHIP_VERIFICATION,
 		step: stepType.ENTER_AUTH_CODE,
-		name: __( 'Verify ownership' ),
+		get name() {
+			return __( 'Verify ownership' );
+		},
 		component: ConnectDomainStepOwnershipAuthCode,
 		prev: stepSlug.OWNERSHIP_VERIFICATION_LOGIN,
 	},
@@ -117,7 +129,9 @@ export const transferLockedDomainStepsDefinition = {
 	[ stepSlug.TRANSFER_LOGIN ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.LOG_IN_TO_PROVIDER,
-		name: __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: TransferDomainStepLogin,
 		next: stepSlug.TRANSFER_UNLOCK,
 		prev: stepSlug.TRANSFER_START,
@@ -125,7 +139,9 @@ export const transferLockedDomainStepsDefinition = {
 	[ stepSlug.TRANSFER_UNLOCK ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.UNLOCK_DOMAIN,
-		name: __( 'Unlock domain' ),
+		get name() {
+			return __( 'Unlock domain' );
+		},
 		component: TransferDomainStepUnlock,
 		next: stepSlug.TRANSFER_AUTH_CODE,
 		prev: stepSlug.TRANSFER_LOGIN,
@@ -133,7 +149,9 @@ export const transferLockedDomainStepsDefinition = {
 	[ stepSlug.TRANSFER_AUTH_CODE ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.ENTER_AUTH_CODE,
-		name: __( 'Authorize the transfer' ),
+		get name() {
+			return __( 'Authorize the transfer' );
+		},
 		component: TransferDomainStepAuthCode,
 		next: 'unused transfer domain step',
 		prev: stepSlug.TRANSFER_UNLOCK,
@@ -141,7 +159,9 @@ export const transferLockedDomainStepsDefinition = {
 	[ 'unused transfer domain step' ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.FINALIZE,
-		name: __( 'Finalize transfer' ),
+		get name() {
+			return __( 'Finalize transfer' );
+		},
 	},
 };
 
@@ -155,7 +175,9 @@ export const transferUnlockedDomainStepsDefinition = {
 	[ stepSlug.TRANSFER_LOGIN ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.LOG_IN_TO_PROVIDER,
-		name: __( 'Log in to provider' ),
+		get name() {
+			return __( 'Log in to provider' );
+		},
 		component: TransferDomainStepLogin,
 		next: stepSlug.TRANSFER_AUTH_CODE,
 		prev: stepSlug.TRANSFER_START,
@@ -163,7 +185,9 @@ export const transferUnlockedDomainStepsDefinition = {
 	[ stepSlug.TRANSFER_AUTH_CODE ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.ENTER_AUTH_CODE,
-		name: __( 'Authorize the transfer' ),
+		get name() {
+			return __( 'Authorize the transfer' );
+		},
 		component: TransferDomainStepAuthCode,
 		next: 'unused transfer domain step',
 		prev: stepSlug.TRANSFER_LOGIN,
@@ -171,7 +195,9 @@ export const transferUnlockedDomainStepsDefinition = {
 	[ 'unused transfer domain step' ]: {
 		mode: modeType.TRANSFER,
 		step: stepType.FINALIZE,
-		name: __( 'Finalize transfer' ),
+		get name() {
+			return __( 'Finalize transfer' );
+		},
 	},
 };
 

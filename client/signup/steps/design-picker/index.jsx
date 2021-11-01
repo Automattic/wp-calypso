@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
+import { shuffle } from '@automattic/js-utils';
 import { compose } from '@wordpress/compose';
 import { withViewportMatch } from '@wordpress/viewport';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -79,7 +80,7 @@ class DesignPickerStep extends Component {
 		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
 		// component itself. The `/new` environment needs helpers for making authenticated requests to
 		// the theme API before we can do this.
-		return this.props.themes
+		const allThemes = this.props.themes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
 			.filter(
 				( { id } ) => ! ( this.props.excludeBlankCanvas && isBlankCanvasDesign( { slug: id } ) )
@@ -96,6 +97,12 @@ class DesignPickerStep extends Component {
 				title: name,
 				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
 			} ) );
+
+		if ( allThemes.length === 0 ) {
+			return [];
+		}
+
+		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
 	}
 
 	updateSelectedDesign() {
@@ -123,6 +130,12 @@ class DesignPickerStep extends Component {
 
 	previewDesign = ( selectedDesign ) => {
 		const locale = ! this.props.userLoggedIn ? getLocaleSlug() : '';
+
+		recordTracksEvent( 'calypso_signup_design_preview_select', {
+			theme: `pub/${ selectedDesign.theme }`,
+			template: selectedDesign.template,
+		} );
+
 		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme, locale ) );
 	};
 

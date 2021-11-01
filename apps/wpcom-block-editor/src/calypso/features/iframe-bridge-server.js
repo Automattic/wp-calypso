@@ -465,20 +465,25 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleCloseEditor( calypsoPort ) {
-	addAction( 'a8c.wpcom-block-editor.closeEditor', 'a8c/wpcom-block-editor/closeEditor', () => {
-		const { port2 } = new MessageChannel();
-		calypsoPort.postMessage(
-			{
-				action: 'closeEditor',
-				payload: {
-					unsavedChanges:
-						select( 'core' ).__experimentalGetDirtyEntityRecords?.().length > 0 ||
-						select( 'core/editor' ).isEditedPostDirty(),
+	addAction(
+		'a8c.wpcom-block-editor.closeEditor',
+		'a8c/wpcom-block-editor/closeEditor',
+		( destinationUrl ) => {
+			const { port2 } = new MessageChannel();
+			calypsoPort.postMessage(
+				{
+					action: 'closeEditor',
+					payload: {
+						unsavedChanges:
+							select( 'core' ).__experimentalGetDirtyEntityRecords?.().length > 0 ||
+							select( 'core/editor' ).isEditedPostDirty(),
+						destinationUrl,
+					},
 				},
-			},
-			[ port2 ]
-		);
-	} );
+				[ port2 ]
+			);
+		}
+	);
 
 	const dispatchAction = ( e ) => {
 		e.preventDefault();

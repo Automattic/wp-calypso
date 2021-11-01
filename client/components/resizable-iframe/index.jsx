@@ -1,8 +1,7 @@
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import ReactDom from 'react-dom';
+import { Component, createRef } from 'react';
 
 /**
  * Globals
@@ -26,11 +25,8 @@ export default class extends Component {
 		onResize: noop,
 	};
 
+	iframeRef = createRef();
 	state = { width: 0, height: 0 };
-
-	UNSAFE_componentWillMount() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-	}
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.checkMessageForResize, false );
@@ -46,7 +42,7 @@ export default class extends Component {
 	}
 
 	getFrameBody = () => {
-		return ReactDom.findDOMNode( this.refs.iframe ).contentDocument.body;
+		return this.iframeRef.current.contentDocument.body;
 	};
 
 	maybeConnect = () => {
@@ -122,7 +118,7 @@ export default class extends Component {
 	};
 
 	checkMessageForResize = ( event ) => {
-		const iframe = ReactDom.findDOMNode( this.refs.iframe );
+		const iframe = this.iframeRef.current;
 
 		// Attempt to parse the message data as JSON if passed as string
 		let data = event.data || {};
@@ -159,7 +155,7 @@ export default class extends Component {
 		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
-				ref="iframe"
+				ref={ this.iframeRef }
 				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }
 				width={ this.props.width || this.state.width }

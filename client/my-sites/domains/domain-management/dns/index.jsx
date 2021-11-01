@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
@@ -11,9 +12,14 @@ import Main from 'calypso/components/main';
 import VerticalNav from 'calypso/components/vertical-nav';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import { domainConnect } from 'calypso/lib/domains/constants';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementNameServers,
+	domainManagementList,
+} from 'calypso/my-sites/domains/paths';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -49,8 +55,39 @@ class Dns extends Component {
 		);
 	}
 
+	renderHeader() {
+		const { translate, selectedDomainName } = this.props;
+		<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
+			{ translate( 'DNS Records' ) }
+		</Header>;
+	}
+
+	renderBreadcrumbs() {
+		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+
+		const items = [
+			{
+				label: translate( 'Domains' ),
+				href: domainManagementList( selectedSite.slug, selectedDomainName ),
+			},
+			{
+				label: selectedDomainName,
+				href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
+			},
+			{ label: translate( 'DNS records' ) },
+		];
+
+		const mobileItem = {
+			label: translate( 'Back' ),
+			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
+			showBackArrow: true,
+		};
+
+		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+	}
+
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const hasWpcomNameservers = domain?.hasWpcomNameservers ?? false;
 		const domainConnectEnabled = some( dns.records, {
@@ -60,10 +97,10 @@ class Dns extends Component {
 		} );
 
 		return (
-			<Main className="dns">
-				<Header onClick={ this.goBack } selectedDomainName={ selectedDomainName }>
-					{ translate( 'DNS Records' ) }
-				</Header>
+			<Main wideLayout className="dns">
+				{ config.isEnabled( 'domains/dns-records-redesign' )
+					? this.renderBreadcrumbs()
+					: this.renderHeader() }
 				<Card>
 					<DnsDetails />
 					<DnsList

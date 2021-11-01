@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -10,17 +9,17 @@ import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
+import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -31,6 +30,7 @@ import {
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getPurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -46,6 +46,7 @@ import {
 	getDomainManagementPath,
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
+	getSimpleSortFunctionBy,
 } from './utils';
 
 import './style.scss';
@@ -76,29 +77,8 @@ export class SiteDomains extends Component {
 		return this.props.isRequestingSiteDomains && this.props.domains.length === 0;
 	}
 
-	domainWarnings() {
-		// TODO: We should remove this
-		if ( ! this.isLoading() ) {
-			return (
-				<DomainWarnings
-					domains={ this.props.domains }
-					position="domain-list"
-					selectedSite={ this.props.selectedSite }
-					allowedRules={ [
-						'unverifiedDomainsCanManage',
-						'pendingGSuiteTosAcceptanceDomains',
-						'unverifiedDomainsCannotManage',
-						'transferStatus',
-						'newTransfersWrongNS',
-						'pendingConsent',
-					] }
-				/>
-			);
-		}
-	}
-
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, translate, isAtomicSite } = this.props;
+		const { selectedSite, domains, currentRoute, isAtomicSite, translate } = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
@@ -107,34 +87,57 @@ export class SiteDomains extends Component {
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
 
+		const domainsTableColumns = [
+			{
+				name: 'domain',
+				label: translate( 'Domain' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+				sortFunctions: [ getSimpleSortFunctionBy( 'domain' ) ],
+			},
+			{
+				name: 'status',
+				label: translate( 'Status' ),
+				isSortable: true,
+				initialSortOrder: -1,
+				sortFunctions: [
+					( first, second, sortOrder ) => {
+						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus( first, null, {
+							getMappingErrors: true,
+						} );
+						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus( second, null, {
+							getMappingErrors: true,
+						} );
+						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
+					},
+					getSimpleSortFunctionBy( 'domain' ),
+				],
+			},
+			{
+				name: 'registered-until',
+				label: translate( 'Registered until' ),
+				isSortable: true,
+				initialSortOrder: 1,
+				supportsOrderSwitching: true,
+				sortFunctions: [ getSimpleSortFunctionBy( 'expiry' ), getSimpleSortFunctionBy( 'domain' ) ],
+			},
+			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
+			{ name: 'email', label: translate( 'Email' ) },
+			{ name: 'action', label: null },
+		];
+
 		return (
 			<>
 				<div className="domains__header">
-					{ /* TODO: remove this as it'll be handled by the new breadcrumbs component */ }
-					<FormattedHeader
-						brandFont
-						className="domain-management__page-heading"
-						headerText={ translate( 'Site Domains' ) }
-						subHeaderText={ translate(
-							'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
-								},
-							}
-						) }
-						align="left"
-					/>
+					{ /* TODO: we need to decide where the HeaderCart will appear in the new design */ }
 					<div className="domains__header-buttons">
 						<HeaderCart
 							selectedSite={ this.props.selectedSite }
 							currentRoute={ this.props.currentRoute }
 						/>
-						{ this.optionsDomainButton() }
 					</div>
 				</div>
-
-				{ this.domainWarnings() }
 
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
 					<EmptyDomainsListCard
@@ -149,12 +152,14 @@ export class SiteDomains extends Component {
 						isLoading={ this.isLoading() }
 						currentRoute={ currentRoute }
 						domains={ domains }
+						domainsTableColumns={ domainsTableColumns }
 						selectedSite={ selectedSite }
 						primaryDomainIndex={ primaryDomainIndex }
 						settingPrimaryDomain={ settingPrimaryDomain }
 						shouldUpgradeToMakeDomainPrimary={ this.shouldUpgradeToMakeDomainPrimary }
 						goToEditDomainRoot={ this.goToEditDomainRoot }
 						handleUpdatePrimaryDomainOptionClick={ this.handleUpdatePrimaryDomainOptionClick }
+						purchases={ this.props.purchases }
 					/>
 				</div>
 
@@ -170,7 +175,7 @@ export class SiteDomains extends Component {
 				<DomainToPlanNudge />
 
 				{ wpcomDomain && (
-					<WpcomDomainItem
+					<FreeDomainItem
 						key="wpcom-domain-item"
 						isAtomicSite={ isAtomicSite }
 						currentRoute={ currentRoute }
@@ -182,6 +187,35 @@ export class SiteDomains extends Component {
 					/>
 				) }
 			</>
+		);
+	}
+
+	renderBreadcrumbs() {
+		const { translate } = this.props;
+
+		const item = {
+			label: translate( 'Domains' ),
+			helpBubble: translate(
+				'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="domains" showIcon={ false } />,
+					},
+				}
+			),
+		};
+		const buttons = [
+			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
+			<OptionsDomainButton key="breadcrumb_button_2" ellipsisButton />,
+		];
+
+		return (
+			<Breadcrumbs
+				items={ [ item ] }
+				mobileItem={ item }
+				buttons={ buttons }
+				mobileButtons={ buttons }
+			/>
 		);
 	}
 
@@ -234,6 +268,7 @@ export class SiteDomains extends Component {
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
+				{ this.renderBreadcrumbs() }
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
 				{ this.renderNewDesign() }
@@ -255,14 +290,6 @@ export class SiteDomains extends Component {
 				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
-	}
-
-	optionsDomainButton() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
-		}
-
-		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {
@@ -391,6 +418,7 @@ export default connect(
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
 		const siteCount = getSites( state )?.length || 0;
+		const purchases = getPurchases( state );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
@@ -404,6 +432,7 @@ export default connect(
 			isOnFreePlan,
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+			purchases,
 		};
 	},
 	( dispatch ) => {

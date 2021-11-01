@@ -1,4 +1,3 @@
-/* eslint-disable react/no-string-refs */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
@@ -6,7 +5,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
@@ -81,10 +80,6 @@ export class PluginInstallButton extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked How do I fix disabled plugin installs' );
 	};
 
-	togglePopover = ( event ) => {
-		this.refs.infoPopover._onClick( event );
-	};
-
 	getDisabledInfo() {
 		const { translate, selectedSite, siteId } = this.props;
 		if ( ! selectedSite ) {
@@ -152,105 +147,6 @@ export class PluginInstallButton extends Component {
 		return null;
 	}
 
-	renderUnreachableNotice() {
-		const { translate, selectedSite, isEmbed } = this.props;
-		return (
-			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-				<span
-					onClick={ this.togglePopover }
-					ref="disabledInfoLabel"
-					className="plugin-install-button__warning"
-				>
-					{ translate( 'Site unreachable' ) }
-				</span>
-				<InfoPopover
-					position="bottom left"
-					popoverName={ 'Plugin Action Disabled Install' }
-					gaEventCategory="Plugins"
-					ref="infoPopover"
-					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-				>
-					<div>
-						<p>
-							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
-						</p>
-						<ExternalLink
-							key="external-link"
-							onClick={ this.clickSupportLink }
-							href={ 'http://jetpack.me/support/debug/?url=' + selectedSite.URL }
-						>
-							{ translate( 'Debug site!' ) }
-						</ExternalLink>
-					</div>
-				</InfoPopover>
-			</div>
-		);
-	}
-
-	renderIncompatiblePluginNotice() {
-		const { translate, isEmbed } = this.props;
-		return (
-			<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-				<span
-					onClick={ this.togglePopover }
-					ref="disabledInfoLabel"
-					className="plugin-install-button__warning"
-				>
-					{ translate( 'Incompatible Plugin' ) }
-				</span>
-				<InfoPopover
-					position="bottom left"
-					popoverName={ 'Plugin Action Disabled Install' }
-					gaEventCategory="Plugins"
-					ref="infoPopover"
-					ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-				>
-					<div>
-						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
-						<ExternalLink
-							key="external-link"
-							href={ localizeUrl( 'https://en.support.wordpress.com/incompatible-plugins' ) }
-						>
-							{ translate( 'Learn more.' ) }
-						</ExternalLink>
-					</div>
-				</InfoPopover>
-			</div>
-		);
-	}
-
-	renderDisabledNotice() {
-		const { translate, selectedSite, isEmbed } = this.props;
-
-		if ( ! selectedSite.canUpdateFiles ) {
-			if ( this.getDisabledInfo() ) {
-				return (
-					<div
-						className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }
-					>
-						<span
-							onClick={ this.togglePopover }
-							ref="disabledInfoLabel"
-							className="plugin-install-button__warning"
-						>
-							{ translate( 'Install Disabled' ) }
-						</span>
-						<InfoPopover
-							position="bottom left"
-							popoverName={ 'Plugin Action Disabled Install' }
-							gaEventCategory="Plugins"
-							ref="infoPopover"
-							ignoreContext={ this.refs && this.refs.disabledInfoLabel }
-						>
-							{ this.getDisabledInfo() }
-						</InfoPopover>
-					</div>
-				);
-			}
-			return null;
-		}
-	}
-
 	renderButton() {
 		const { translate, isInstalling, isEmbed, disabled } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
@@ -285,18 +181,57 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { plugin, selectedSite, siteIsConnected, siteIsWpcomAtomic } = this.props;
+		const {
+			plugin,
+			isEmbed,
+			selectedSite,
+			siteIsConnected,
+			siteIsWpcomAtomic,
+			translate,
+		} = this.props;
 
 		if ( siteIsConnected === false ) {
-			return this.renderUnreachableNotice();
+			return (
+				<PluginInstallNotice warningText={ translate( 'Site unreachable' ) } isEmbed={ isEmbed }>
+					<div>
+						<p>
+							{ translate( '%(site)s is unresponsive.', { args: { site: selectedSite.title } } ) }
+						</p>
+						<ExternalLink
+							key="external-link"
+							onClick={ this.clickSupportLink }
+							href={ 'https://jetpack.me/support/debug/?url=' + selectedSite.URL }
+						>
+							{ translate( 'Debug site!' ) }
+						</ExternalLink>
+					</div>
+				</PluginInstallNotice>
+			);
 		}
 
 		if ( ! isCompatiblePlugin( plugin.slug ) && siteIsWpcomAtomic ) {
-			return this.renderIncompatiblePluginNotice();
+			return (
+				<PluginInstallNotice warningText={ translate( 'Incompatible Plugin' ) } isEmbed={ isEmbed }>
+					<div>
+						<p>{ translate( 'This plugin is not supported on WordPress.com.' ) }</p>
+						<ExternalLink
+							key="external-link"
+							href={ localizeUrl( 'https://en.support.wordpress.com/incompatible-plugins' ) }
+						>
+							{ translate( 'Learn more.' ) }
+						</ExternalLink>
+					</div>
+				</PluginInstallNotice>
+			);
 		}
 
 		if ( ! selectedSite.canUpdateFiles ) {
-			return this.renderDisabledNotice();
+			const disabledInfo = this.getDisabledInfo();
+			return disabledInfo ? (
+				<PluginInstallNotice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
+					{ disabledInfo }
+				</PluginInstallNotice>
+			) : null;
 		}
 
 		return this.renderButton();
@@ -313,6 +248,34 @@ export class PluginInstallButton extends Component {
 		);
 	}
 }
+
+const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
+	const disabledInfoLabel = useRef();
+	const infoPopover = useRef();
+	const togglePopover = ( event ) => {
+		infoPopover.current._onClick( event );
+	};
+	return (
+		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+			<span
+				onClick={ togglePopover }
+				ref={ disabledInfoLabel }
+				className="plugin-install-button__warning"
+			>
+				{ warningText }
+			</span>
+			<InfoPopover
+				position="bottom left"
+				popoverName="Plugin Action Disabled Install"
+				gaEventCategory="Plugins"
+				ref={ infoPopover }
+				ignoreContext={ disabledInfoLabel.current }
+			>
+				{ children }
+			</InfoPopover>
+		</div>
+	);
+};
 
 PluginInstallButton.propTypes = {
 	selectedSite: PropTypes.object.isRequired,

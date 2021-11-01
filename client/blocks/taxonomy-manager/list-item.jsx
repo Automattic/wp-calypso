@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -40,6 +40,8 @@ class TaxonomyManagerListItem extends Component {
 	static defaultProps = {
 		onClick: () => {},
 	};
+
+	countRef = createRef();
 
 	state = {
 		showDeleteDialog: false,
@@ -157,7 +159,7 @@ class TaxonomyManagerListItem extends Component {
 				{ typeof term.post_count !== 'undefined' && (
 					<div className="taxonomy-manager__count">
 						<Count
-							ref="count"
+							ref={ this.countRef }
 							count={ term.post_count }
 							onMouseEnter={ this.showTooltip }
 							onMouseLeave={ this.hideTooltip }
@@ -165,7 +167,7 @@ class TaxonomyManagerListItem extends Component {
 					</div>
 				) }
 				<Tooltip
-					context={ this.refs && this.refs.count }
+					context={ this.countRef.current }
 					isVisible={ this.state.showTooltip }
 					position="left"
 				>

@@ -8,14 +8,7 @@ import Notice from 'calypso/components/notice';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import {
-	modeType,
-	stepsHeadingAdvanced,
-	stepsHeadingOwnershipVerification,
-	stepsHeadingSuggested,
-	stepsHeadingTransfer,
-	stepSlug,
-} from './constants';
+import { modeType, stepsHeading, stepSlug } from './constants';
 
 import './style.scss';
 
@@ -38,16 +31,16 @@ export default function ConnectDomainStepLogin( {
 	useEffect( () => {
 		switch ( mode ) {
 			case modeType.TRANSFER:
-				setHeading( stepsHeadingTransfer );
+				setHeading( stepsHeading.TRANSFER );
 				return;
 			case modeType.SUGGESTED:
-				setHeading( stepsHeadingSuggested );
+				setHeading( stepsHeading.SUGGESTED );
 				return;
 			case modeType.ADVANCED:
-				setHeading( stepsHeadingAdvanced );
+				setHeading( stepsHeading.ADVANCED );
 				return;
 			case modeType.OWNERSHIP_VERIFICATION:
-				setHeading( stepsHeadingOwnershipVerification );
+				setHeading( stepsHeading.OWNERSHIP_VERIFICATION );
 				return;
 		}
 	}, [ mode ] );
