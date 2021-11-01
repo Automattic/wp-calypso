@@ -72,8 +72,10 @@ function preventWidowsInPart( part, spacesToSubstitute ) {
 	if ( isValidElement( part ) && part.props.children ) {
 		const result = preventWidowsInPart( part.props.children, spacesToSubstitute );
 		if ( result.substituted > 0 ) {
+			// pass children as spread arguments to prevent missing array key warnings
+			const partArray = Array.isArray( result.part ) ? result.part : [ result.part ];
 			return {
-				part: cloneElement( part, part.props, result.part ),
+				part: cloneElement( part, part.props, ...partArray ),
 				substituted: result.substituted,
 			};
 		}
