@@ -1,3 +1,6 @@
+@import '@automattic/typography/styles/variables';
+@import '@automattic/onboarding/styles/mixins.scss';
+
 .videos-ui {
 	background: #101517;
 	color: #fff;
@@ -11,7 +14,7 @@
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-between;
-			font-size: 0.875rem;
+			font-size: $font-body-small;
 			div,
 			a {
 				display: flex;
@@ -48,11 +51,11 @@
 			li {
 				list-style: none;
 				margin-bottom: 14px;
-				font-size: 0.875rem;
+				font-size: $font-body-small;
 			}
 			h2 {
-				font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
-				font-size: 2rem;
+				@include onboarding-font-recoleta;
+				font-size: $font-title-large;
 
 				&:first-child {
 					color: rgba( 255, 255, 255, 0.5 );
@@ -64,10 +67,9 @@
 	.videos-ui__body {
 
 		h3 {
-			font-size: 1.5rem;
+			font-size: $font-title-medium;
 			margin: 80px 80px 30px;
 		}
-
 
 		.videos-ui__video-content {
 			display: flex;
@@ -82,7 +84,7 @@
 
 		.videos-ui__chapters {
 			background: #1d262a;
-			font-size: 0.875rem;
+			font-size: $font-body-small;
 			flex-basis: auto;
 			width: 33%;
 			overflow: auto;
