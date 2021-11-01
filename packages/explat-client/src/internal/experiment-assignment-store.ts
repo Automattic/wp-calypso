@@ -3,9 +3,9 @@ import localStorage from './local-storage';
 import * as Validations from './validations';
 import type { ExperimentAssignment } from '../types';
 
-const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
+export const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 
-const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
+export const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
 	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
 
 /**
@@ -53,24 +53,52 @@ export function retrieveExperimentAssignment(
 }
 
 /**
+ * Returns all keys in localStorage as an array.
+ */
+export function getAllLocalStorageKeys(): string[] {
+	const range = ( i: number ) => [ ...Array( i ).keys() ];
+
+	return range( localStorage.length ).map( ( i ) => localStorage.key( i ) as string );
+}
+
+/**
+ * Checks to see if the key is an experiment assignment key, or more
+ * accurately, if it starts with the localStorage experiment assignment key prefix.
+ *
+ * @param key the key to check
+ */
+export function isLocalStorageExperimentAssignmentKey( key: string ): boolean {
+	return key.startsWith( localStorageExperimentAssignmentKeyPrefix );
+}
+
+/**
+ * Returns the experiment name from a localStorage key assuming that the key begins with
+ * the localStorage experiment assignment key prefix.
+ *
+ * @param key the key from which to retrieve the experiment name
+ */
+export function experimentNameFromLocalStorageExperimentAssignmentKey( key: string ): string {
+	return key.slice( localStorageExperimentAssignmentKeyPrefix.length + 1 );
+}
+
+/**
  * Removes all expired and invalid experiment assignments in LocalStorage.
  */
 export function removeExpiredExperimentAssignments(): void {
-	for ( let i = localStorage.length - 1; i >= 0; i-- ) {
-		const key = localStorage.key( i );
-
-		if ( key?.startsWith( localStorageExperimentAssignmentKeyPrefix ) ) {
-			const experimentName = key.slice( localStorageExperimentAssignmentKeyPrefix.length + 1 );
-			const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
-
-			// Remove the assignment if it is expired or undefined
-			if (
-				( storedExperimentAssignment &&
-					! ExperimentAssignments.isAlive( storedExperimentAssignment ) ) ||
-				typeof storedExperimentAssignment === 'undefined'
-			) {
-				localStorage.removeItem( key );
-			}
-		}
-	}
+	getAllLocalStorageKeys()
+		.filter( isLocalStorageExperimentAssignmentKey )
+		.map( experimentNameFromLocalStorageExperimentAssignmentKey )
+		.filter( ( experimentName ) => {
+			try {
+				if (
+					ExperimentAssignments.isAlive(
+						retrieveExperimentAssignment( experimentName ) as ExperimentAssignment
+					)
+				)
+					return false;
+			} catch ( _ ) {}
+			return true;
+		} )
+		.map( localStorageExperimentAssignmentKey )
+		.map( ( key ) => localStorage.removeItem( key ) );
 }

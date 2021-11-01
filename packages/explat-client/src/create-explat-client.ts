@@ -95,7 +95,14 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 	};
 
 	// Clean up LocalStorage on start up
-	removeExpiredExperimentAssignments();
+	try {
+		removeExpiredExperimentAssignments();
+	} catch ( error ) {
+		safeLogError( {
+			message: ( error as Error ).message,
+			source: 'removeExpiredExperimentAssignments-error',
+		} );
+	}
 
 	return {
 		loadExperimentAssignment: async ( experimentName: string ): Promise< ExperimentAssignment > => {
