@@ -749,8 +749,8 @@ export function generateSteps( {
 			optionalDependencies: [ 'selectedDesign' ],
 			props: {
 				hideSkip: true,
-				excludeBlankCanvas: true,
 				hideExternalPreview: true,
+				useDIFMThemes: true,
 			},
 		},
 		'difm-design': {

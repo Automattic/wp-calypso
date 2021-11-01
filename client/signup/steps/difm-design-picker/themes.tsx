@@ -1,436 +1,340 @@
 export default [
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'russell',
-		template: 'russell',
-		theme: 'russell',
-		title: 'Russell',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'russell',
+		name: 'Russell',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'zoologist',
-		template: 'zoologist',
-		theme: 'zoologist',
-		title: 'Zoologist',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'zoologist',
+		name: 'Zoologist',
 	},
 	{
-		categories: [ { name: 'Professional Services', slug: 'professional-services' } ],
-		features: [],
-		is_premium: false,
-		slug: 'quadrat',
-		template: 'quadrat',
-		theme: 'quadrat',
-		title: 'Quadrat',
+		taxonomies: {
+			theme_subject: [ { name: 'Professional Services', slug: 'professional-services' } ],
+		},
+		id: 'quadrat',
+		name: 'Quadrat',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'geologist',
-		template: 'geologist',
-		theme: 'geologist',
-		title: 'Geologist',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'geologist',
+		name: 'Geologist',
 	},
 	{
-		categories: [
-			{
-				name: 'Professional Services',
-				slug: 'professional-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'bantry',
-		template: 'bantry',
-		theme: 'bantry',
-		title: 'Bantry',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Professional Services',
+					slug: 'professional-services',
+				},
+			],
+		},
+		id: 'bantry',
+		name: 'Bantry',
 	},
 	{
-		categories: [
-			{
-				name: 'Professional Services',
-				slug: 'professional-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'laporte',
-		template: 'laporte',
-		theme: 'laporte',
-		title: 'Laporte',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Professional Services',
+					slug: 'professional-services',
+				},
+			],
+		},
+		id: 'laporte',
+		name: 'Laporte',
 	},
 	{
-		categories: [ { name: 'Professional Services', slug: 'professional-services' } ],
-		features: [],
-		is_premium: false,
-		slug: 'sigler',
-		template: 'sigler',
-		theme: 'sigler',
-		title: 'Sigler',
+		taxonomies: {
+			theme_subject: [ { name: 'Professional Services', slug: 'professional-services' } ],
+		},
+		id: 'sigler',
+		name: 'Sigler',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'antin',
-		template: 'antin',
-		theme: 'antin',
-		title: 'Antin',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'antin',
+		name: 'Antin',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'bingley',
-		template: 'bingley',
-		theme: 'bingley',
-		title: 'Bingley',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'bingley',
+		name: 'Bingley',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'glen',
-		template: 'glen',
-		theme: 'glen',
-		title: 'Glen',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'glen',
+		name: 'Glen',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'miller',
-		template: 'miller',
-		theme: 'miller',
-		title: 'Miller',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'miller',
+		name: 'Miller',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'pollard',
-		template: 'pollard',
-		theme: 'pollard',
-		title: 'Pollard',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'pollard',
+		name: 'Pollard',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'paxton',
-		template: 'paxton',
-		theme: 'paxton',
-		title: 'Paxton',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'paxton',
+		name: 'Paxton',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'jones',
-		template: 'jones',
-		theme: 'jones',
-		title: 'Jones',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'jones',
+		name: 'Jones',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'bradford',
-		template: 'bradford',
-		theme: 'bradford',
-		title: 'Bradford',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'bradford',
+		name: 'Bradford',
 	},
 	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'baker',
-		template: 'baker',
-		theme: 'baker',
-		title: 'Baker',
+		taxonomies: { theme_subject: [ { name: 'Creative Arts', slug: 'creative-arts' } ] },
+		id: 'baker',
+		name: 'Baker',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'blockbase',
-		template: 'blockbase',
-		theme: 'blockbase',
-		title: 'Blockbase',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'blockbase',
+		name: 'Blockbase',
 	},
 	{
-		categories: [
-			{
-				name: 'Professional Services',
-				slug: 'professional-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'twentytwentyone',
-		template: 'twentytwentyone',
-		theme: 'twentytwentyone',
-		title: 'Twenty Twenty-One',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Professional Services',
+					slug: 'professional-services',
+				},
+			],
+		},
+		id: 'twentytwentyone',
+		name: 'Twenty Twenty-One',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'spearhead',
-		template: 'spearhead',
-		theme: 'spearhead',
-		title: 'Spearhead',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'spearhead',
+		name: 'Spearhead',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'seedlet',
-		template: 'seedlet',
-		theme: 'seedlet',
-		title: 'Seedlet',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'seedlet',
+		name: 'Seedlet',
 	},
 	{
-		categories: [
-			{
-				name: 'Professional Services',
-				slug: 'professional-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'twentytwenty',
-		template: 'twentytwenty',
-		theme: 'twentytwenty',
-		title: 'Twenty Twenty',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Professional Services',
+					slug: 'professional-services',
+				},
+			],
+		},
+		id: 'twentytwenty',
+		name: 'Twenty Twenty',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'barnsbury',
-		template: 'barnsbury',
-		theme: 'barnsbury',
-		title: 'Barnsbury',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'barnsbury',
+		name: 'Barnsbury',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'rivington',
-		template: 'rivington',
-		theme: 'rivington',
-		title: 'Rivington',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'rivington',
+		name: 'Rivington',
 	},
 	{
-		categories: [ { name: 'Restaurant', slug: 'restaurant' } ],
-		features: [],
-		is_premium: false,
-		slug: 'maywood',
-		template: 'maywood',
-		theme: 'maywood',
-		title: 'Maywood',
+		taxonomies: { theme_subject: [ { name: 'Restaurant', slug: 'restaurant' } ] },
+		id: 'maywood',
+		name: 'Maywood',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'shawburn',
-		template: 'shawburn',
-		theme: 'shawburn',
-		title: 'Shawburn',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'shawburn',
+		name: 'Shawburn',
 	},
 	{
-		categories: [ { name: 'Local Services', slug: 'local-services' } ],
-		features: [],
-		is_premium: false,
-		slug: 'alves',
-		template: 'alves',
-		theme: 'alves',
-		title: 'Alves',
+		taxonomies: { theme_subject: [ { name: 'Local Services', slug: 'local-services' } ] },
+		id: 'alves',
+		name: 'Alves',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'exford',
-		template: 'exford',
-		theme: 'exford',
-		title: 'Exford',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'exford',
+		name: 'Exford',
 	},
 	{
-		categories: [ { name: 'Restaurant', slug: 'restaurant' } ],
-		features: [],
-		is_premium: false,
-		slug: 'rockfield',
-		template: 'rockfield',
-		theme: 'rockfield',
-		title: 'Rockfield',
+		taxonomies: { theme_subject: [ { name: 'Restaurant', slug: 'restaurant' } ] },
+		id: 'rockfield',
+		name: 'Rockfield',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'coutoire',
-		template: 'coutoire',
-		theme: 'coutoire',
-		title: 'Coutoire',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'coutoire',
+		name: 'Coutoire',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'morden',
-		template: 'morden',
-		theme: 'morden',
-		title: 'Morden',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'morden',
+		name: 'Morden',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'stow',
-		template: 'stow',
-		theme: 'stow',
-		title: 'Stow',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'stow',
+		name: 'Stow',
 	},
 	{
-		categories: [
-			{
-				name: 'Professional Services',
-				slug: 'professional-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'hever',
-		template: 'hever',
-		theme: 'hever',
-		title: 'Hever',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Professional Services',
+					slug: 'professional-services',
+				},
+			],
+		},
+		id: 'hever',
+		name: 'Hever',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'independent-publisher-2',
-		template: 'independent-publisher-2',
-		theme: 'independent-publisher-2',
-		title: 'Independent Publisher 2',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'independent-publisher-2',
+		name: 'Independent Publisher 2',
 	},
 	{
-		categories: [
-			{
-				name: 'Local Services',
-				slug: 'local-services',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'twentysixteen',
-		template: 'twentysixteen',
-		theme: 'twentysixteen',
-		title: 'Twenty Sixteen',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Local Services',
+					slug: 'local-services',
+				},
+			],
+		},
+		id: 'twentysixteen',
+		name: 'Twenty Sixteen',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'twentyfifteen',
-		template: 'twentyfifteen',
-		theme: 'twentyfifteen',
-		title: 'Twenty Fifteen',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'twentyfifteen',
+		name: 'Twenty Fifteen',
 	},
 	{
-		categories: [
-			{
-				name: 'Creative Arts',
-				slug: 'creative-arts',
-			},
-		],
-		features: [],
-		is_premium: false,
-		slug: 'hemingway-rewritten',
-		template: 'hemingway-rewritten',
-		theme: 'hemingway-rewritten',
-		title: 'Hemingway Rewritten',
+		taxonomies: {
+			theme_subject: [
+				{
+					name: 'Creative Arts',
+					slug: 'creative-arts',
+				},
+			],
+		},
+		id: 'hemingway-rewritten',
+		name: 'Hemingway Rewritten',
 	},
 ];
