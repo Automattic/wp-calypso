@@ -1,4 +1,3 @@
-const path = require( 'path' );
 const cssDiff = require( '@romainberger/css-diff' );
 const rtlcss = require( 'rtlcss' );
 const { ConcatSource } = require( 'webpack' ).sources;
@@ -20,13 +19,14 @@ class WebpackRTLPlugin {
 			compilation.hooks.processAssets.tapPromise(
 				{ name: pluginName, stage: compilation.PROCESS_ASSETS_STAGE_DERIVED },
 				async ( assets ) => {
+					const cssRe = /\.css(?:$|\?)/;
 					return Promise.all(
 						Array.from( compilation.chunks )
 							.flatMap( ( chunk ) =>
 								// Collect all files form all chunks, and generate an array of {chunk, file} objects
 								Array.from( chunk.files ).map( ( asset ) => ( { chunk, asset } ) )
 							)
-							.filter( ( { asset } ) => path.extname( asset ) === '.css' )
+							.filter( ( { asset } ) => cssRe.test( asset ) )
 							.map( async ( { chunk, asset } ) => {
 								if ( this.options.test ) {
 									const re = new RegExp( this.options.test );
@@ -36,8 +36,7 @@ class WebpackRTLPlugin {
 								}
 
 								// Compute the filename
-								const baseName = path.basename( asset, '.css' );
-								const filename = asset.replace( baseName, `${ baseName }.rtl` );
+								const filename = asset.replace( cssRe, '.rtl$&' );
 								const assetInstance = assets[ asset ];
 								chunk.files.add( filename );
 

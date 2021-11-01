@@ -329,4 +329,66 @@ describe( 'Webpack RTL Plugin', () => {
 			expect( contentRrlCss ).toBe( expected );
 		} );
 	} );
+
+	describe( 'Asset with query string', () => {
+		const config = {
+			...baseConfig,
+			entry: path.join( __dirname, 'src/indirect.js' ),
+			output: {
+				path: path.resolve( __dirname, 'dist-querystring' ),
+				filename: '[name].js',
+				chunkFilename: '[name].js?ver=[contenthash]',
+			},
+			plugins: [
+				new MiniCssExtractPlugin( {
+					filename: '[name].css',
+					chunkFilename: '[name].css?ver=[contenthash]',
+				} ),
+				new WebpackRTLPlugin(),
+			],
+		};
+
+		const mainBundlePath = path.join( __dirname, 'dist-querystring/main.js' );
+		const ondemandBundlePath = path.join( __dirname, 'dist-querystring/ondemand.js' );
+		const cssMainBundlePath = path.join( __dirname, 'dist-querystring/main.css' );
+		const cssOndemandBundlePath = path.join( __dirname, 'dist-querystring/ondemand.css' );
+		const rtlCssMainBundlePath = path.join( __dirname, 'dist-querystring/main.rtl.css' );
+		const rtlCssOndemandBundlePath = path.join( __dirname, 'dist-querystring/ondemand.rtl.css' );
+
+		beforeAll(
+			() =>
+				new Promise( ( resolve, reject ) => {
+					webpack( config, ( err, stats ) => {
+						if ( err ) {
+							return reject( err );
+						}
+
+						if ( stats.hasErrors() ) {
+							return reject( new Error( stats.toString() ) );
+						}
+						resolve();
+					} );
+				} )
+		);
+
+		it( 'should create a second bundle', () => {
+			expect( fs.existsSync( mainBundlePath ) ).toBe( true );
+			expect( fs.existsSync( ondemandBundlePath ) ).toBe( true );
+			expect( fs.existsSync( cssMainBundlePath ) ).toBe( false );
+			expect( fs.existsSync( cssOndemandBundlePath ) ).toBe( true );
+			expect( fs.existsSync( rtlCssMainBundlePath ) ).toBe( false );
+			expect( fs.existsSync( rtlCssOndemandBundlePath ) ).toBe( true );
+		} );
+
+		it( 'should contain the correct content', () => {
+			const contentJs = fs.readFileSync( mainBundlePath, 'utf-8' );
+			const contentCss = fs.readFileSync( cssOndemandBundlePath, 'utf-8' );
+			const contentRtlCss = fs.readFileSync( rtlCssOndemandBundlePath, 'utf-8' );
+
+			expect( contentCss ).toContain( 'padding-left: 10px;' );
+			expect( contentRtlCss ).toContain( 'padding-right: 10px;' );
+			expect( contentJs ).toContain( '".js?ver="' );
+			expect( contentJs ).toContain( '".css?ver="' );
+		} );
+	} );
 } );
