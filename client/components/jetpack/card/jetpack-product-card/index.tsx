@@ -20,7 +20,7 @@ type OwnProps = {
 	// Disallow h6, so it can be used for a sub-header if needed
 	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
-	originalPrice: number;
+	originalPrice?: number;
 	discountedPrice?: number;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
