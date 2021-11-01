@@ -167,7 +167,7 @@ class Site extends Component {
 						) }
 						{ site.options && site.options.is_difm_lite_in_progress && (
 							<span className="site__badge site__badge-domain-only">
-								{ translate( 'Do It For Me' ) }
+								{ translate( 'Do It For Me (Lite)' ) }
 							</span>
 						) }
 						{ shouldShowPublicComingSoonSiteBadge && (
