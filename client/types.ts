@@ -22,11 +22,7 @@ export type PostType = 'page' | 'post' | string;
 export interface Theme {
 	author: string;
 	author_uri: string;
-	cost: {
-		currency: string;
-		number: number;
-		display: string;
-	};
+	cost: ThemeCost;
 	date_launched: string;
 	date_updated: string;
 	demo_uri: string;
@@ -48,12 +44,24 @@ export interface Theme {
 	supportDocumentation: string;
 	tags: string[];
 	taxonomies?: {
-		theme_feature?: { name: string; slug: string; term_id: string }[];
+		theme_feature?: ThemeFeature[];
 	};
 	template: string;
 	theme_uri: string;
 	trending_rank: number;
 	version: string;
+}
+
+interface ThemeCost {
+	currency: string;
+	number: number;
+	display: string;
+}
+
+interface ThemeFeature {
+	name: string;
+	slug: string;
+	term_id: string;
 }
 
 // Comment stuff
