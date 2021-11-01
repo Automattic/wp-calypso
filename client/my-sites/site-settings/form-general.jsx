@@ -591,7 +591,7 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 			isWPForTeamsSite,
 		} = this.props;
-		//problem is likely in implementation of handleSubmitForm
+
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
