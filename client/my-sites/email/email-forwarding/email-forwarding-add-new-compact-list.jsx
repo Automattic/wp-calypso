@@ -76,7 +76,12 @@ class EmailForwardingAddNewCompactList extends Component {
 		this.state.forwards.map( ( t ) => {
 			const { mailbox, destination } = t;
 
-			this.addNewEmailForwardWithAnalytics( this.props.selectedDomainName, mailbox, destination, selectedSiteSlug );
+			this.addNewEmailForwardWithAnalytics(
+				this.props.selectedDomainName,
+				mailbox,
+				destination,
+				selectedSiteSlug
+			);
 		} );
 
 		this.setState( { formSubmitting: false } );
