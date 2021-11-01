@@ -1,13 +1,16 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import wp from 'calypso/lib/wp';
 import webPayProcessor from '../lib/web-pay-processor';
-import {
-	mockTransactionsEndpoint,
-	mockTransactionsSuccessResponse,
-	processorOptions,
-	stripeConfiguration,
-} from './util';
+
+jest.mock( 'calypso/lib/wp' );
 
 describe( 'webPayProcessor', () => {
+	const stripeConfiguration = {
+		processor_id: 'IE',
+		js_url: 'https://stripe-js-url',
+		public_key: 'stripe-public-key',
+		setup_intent_id: null,
+	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -16,8 +19,17 @@ describe( 'webPayProcessor', () => {
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
-		...processorOptions,
+		includeDomainDetails: false,
+		includeGSuiteDetails: false,
+		createUserAndSiteBeforeTransaction: false,
+		stripeConfiguration,
+		recordEvent: () => null,
+		reduxDispatch: () => null,
 		responseCart: cart,
+		getThankYouUrl: () => '',
+		siteSlug: undefined,
+		siteId: undefined,
+		contactDetails: undefined,
 	};
 
 	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
@@ -39,31 +51,31 @@ describe( 'webPayProcessor', () => {
 			},
 			temporary: false,
 		},
-		domain_details: undefined,
+		domainDetails: undefined,
 		payment: {
 			address: undefined,
 			cancelUrl: undefined,
 			city: undefined,
 			country: 'US',
-			country_code: 'US',
-			device_id: undefined,
+			countryCode: 'US',
+			deviceId: undefined,
 			document: undefined,
 			email: undefined,
 			gstin: undefined,
-			ideal_bank: undefined,
+			idealBank: undefined,
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			payment_key: 'web-pay-token',
-			payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
-			payment_partner: 'IE',
-			phone_number: undefined,
-			postal_code: '10001',
+			paymentKey: 'web-pay-token',
+			paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
+			paymentPartner: 'IE',
+			phoneNumber: undefined,
+			postalCode: '10001',
 			state: undefined,
-			stored_details_id: undefined,
-			street_number: undefined,
-			success_url: undefined,
-			tef_bank: undefined,
+			storedDetailsId: undefined,
+			streetNumber: undefined,
+			successUrl: undefined,
+			tefBank: undefined,
 			zip: '10001',
 		},
 	};
@@ -71,9 +83,9 @@ describe( 'webPayProcessor', () => {
 	const basicExpectedDomainDetails = {
 		address1: undefined,
 		address2: undefined,
-		alternate_email: undefined,
+		alternateEmail: undefined,
 		city: undefined,
-		country_code: 'US',
+		countryCode: 'US',
 		email: undefined,
 		extra: {
 			ca: null,
@@ -81,13 +93,24 @@ describe( 'webPayProcessor', () => {
 			uk: null,
 		},
 		fax: undefined,
-		first_name: undefined,
-		last_name: undefined,
+		firstName: undefined,
+		lastName: undefined,
 		organization: undefined,
 		phone: undefined,
-		postal_code: '10001',
+		postalCode: '10001',
 		state: undefined,
 	};
+
+	const transactionsEndpoint = jest.fn();
+	const undocumentedFunctions = {
+		transactions: transactionsEndpoint,
+	};
+	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
+
+	beforeEach( () => {
+		transactionsEndpoint.mockClear();
+		transactionsEndpoint.mockReturnValue( Promise.resolve( 'test success' ) );
+	} );
 
 	it( 'throws an error if there is no stripe object', async () => {
 		const submitData = { paymentPartner: 'stripe' };
@@ -104,14 +127,13 @@ describe( 'webPayProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
 			stripe,
 			stripeConfiguration,
 			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
-		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
 			webPayProcessor( 'apple-pay', submitData, {
 				...options,
@@ -125,19 +147,13 @@ describe( 'webPayProcessor', () => {
 	} );
 
 	it( 'returns an explicit error response if the transaction fails', async () => {
-		mockTransactionsEndpoint( () => [
-			400,
-			{
-				error: 'test_error',
-				message: 'test error',
-			},
-		] );
 		const submitData = {
 			stripe,
 			stripeConfiguration,
 			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
+		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			webPayProcessor( 'apple-pay', submitData, {
@@ -151,14 +167,13 @@ describe( 'webPayProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
 			stripe,
 			stripeConfiguration,
 			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
-		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
 			webPayProcessor( 'apple-pay', submitData, {
 				...options,
@@ -183,14 +198,13 @@ describe( 'webPayProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
 			stripe,
 			stripeConfiguration,
 			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
-		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
 			webPayProcessor( 'apple-pay', submitData, {
 				...options,
@@ -226,14 +240,13 @@ describe( 'webPayProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
-		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 		const submitData = {
 			stripe,
 			stripeConfiguration,
 			paymentMethodToken: 'web-pay-token',
 			name: 'test name',
 		};
-		const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+		const expected = { payload: 'test success', type: 'SUCCESS' };
 		await expect(
 			webPayProcessor( 'apple-pay', submitData, {
 				...options,
@@ -257,7 +270,7 @@ describe( 'webPayProcessor', () => {
 				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domain_details: basicExpectedDomainDetails,
+			domainDetails: basicExpectedDomainDetails,
 		} );
 	} );
 } );

@@ -830,6 +830,26 @@ Undocumented.prototype.updateConnection = function ( siteId, connectionId, data,
 };
 
 /**
+ * POST create a payment transaction
+ *
+ * @param {object} [data] The REQUEST data
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ *
+ * The post data format is: {
+ *		payment_method: {string} The payment gateway,
+ *		payment_key: {string} Either the cc token from the gateway, or the mp_ref from /me/stored_cards,
+ *		payment: {object} Payment details, including payment_method and payment_key,
+ *		cart: {object>shopping_cart} A Shopping cart object
+ *		domain_details: {object>contact_information} Optional set of domain contact information
+ *		locale: {string} Locale for translating strings in response data,
+ * }
+ */
+Undocumented.prototype.transactions = function ( data, fn ) {
+	return this.wpcom.req.post( '/me/transactions', mapKeysRecursively( data, snakeCase ), fn );
+};
+
+/**
  * GET paypal_express_url
  *
  * @param {object} [data] The GET data

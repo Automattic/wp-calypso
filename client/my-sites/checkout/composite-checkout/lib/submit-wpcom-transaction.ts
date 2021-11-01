@@ -1,4 +1,3 @@
-import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/wpcom-checkout';
 import wp from 'calypso/lib/wp';
 import { createAccount } from '../payment-method-helpers';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
@@ -35,12 +34,9 @@ export default async function submitWpcomTransaction(
 					cart_key: siteId || 'no-site',
 				},
 			};
-			return wp.req.post(
-				'/me/transactions',
-				mapRecordKeysRecursively( newPayload, camelToSnakeCase )
-			);
+			return wp.undocumented().transactions( newPayload );
 		} );
 	}
 
-	return wp.req.post( '/me/transactions', mapRecordKeysRecursively( payload, camelToSnakeCase ) );
+	return wp.undocumented().transactions( payload );
 }
