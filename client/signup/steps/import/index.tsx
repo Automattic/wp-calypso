@@ -45,6 +45,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 			hideNext={ shouldHideNextBtn( props.stepName, isScanning ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
+			backUrl={ '/start/setup-site/intent' }
 			hideFormattedHeader={ true }
 			stepContent={
 				<div className="import__onboarding-page">
