@@ -1,3 +1,15 @@
+.is-section-plugins .main {
+	padding-top: 35px; // Compensate for the fixed header.
+
+	@media ( max-width: 782px ) {
+		padding-top: 50px;
+	}
+
+	@media ( max-width: 660px ) {
+		padding-top: 70px;
+	}
+}
+
 .is-section-plugins.color-scheme.is-nav-unification {
 	--color-surface-backdrop: --studio-white;
 }
@@ -16,17 +28,6 @@
 
 .plugins__plugin-list-state {
 	white-space: nowrap;
-}
-
-.plugins__header {
-	display: flex;
-	flex: 1 1 auto;
-	justify-content: flex-start;
-	align-items: center;
-
-	.plugins__page-heading {
-		width: 100%;
-	}
 }
 
 .plugins__main-header {
@@ -87,12 +88,6 @@
 			}
 		}
 	}
-}
-
-.plugins__header-navigation {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
-	width: 100%;
 }
 
 .plugins__more-header {

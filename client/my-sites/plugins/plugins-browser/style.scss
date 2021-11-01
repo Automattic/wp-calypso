@@ -1,29 +1,20 @@
-.plugins-browser__header {
-	display: flex;
-	flex: 1 1 auto;
-	justify-content: flex-start;
-	align-items: center;
-	border-bottom: 1px solid var( --studio-gray-5 );
-	position: relative;
-
-	.plugins-browser__page-heading {
-		margin-bottom: 24px;
-	}
-}
-
 .plugins-browser__searchbox {
 	width: 250px;
-	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: stretch;
 
 	.search-component {
 		height: 30px;
 		box-shadow: 0 0 0 1px var( --studio-gray-10 );
 
-		.search-component__open-icon, .search-component__close-icon {
+		.search-component__open-icon,
+		.search-component__close-icon {
 			color: var( --studio-black );
 		}
 
-		&.is-open input.search-component__input[type=search] {
+		&.is-open input.search-component__input[type='search'] {
 			font-size: $font-body-extra-small;
 		}
 	}
@@ -35,20 +26,11 @@
 			box-shadow: none;
 		}
 	}
-
 }
 
 .plugins-browser__main-buttons {
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: stretch;
 	margin-right: 15px;
-	margin-bottom: 20px;
-
-	&.manage-plugins-button {
-		margin-left: auto;
-	}
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
@@ -56,11 +38,8 @@
 	}
 
 	@media screen and ( max-width: 660px ) {
-		margin-bottom: 0;
-
-		&.upload-plugin-button .plugins-browser__button {
+		.plugins-browser__button {
 			border: none;
-			margin-right: 0;
 		}
 	}
 
@@ -75,10 +54,7 @@
 		}
 
 		&:not( :last-child ) {
-			margin-bottom: 8px;
-
 			@include breakpoint-deprecated( '>480px' ) {
-				margin-bottom: 0;
 				margin-right: 10px;
 			}
 		}
