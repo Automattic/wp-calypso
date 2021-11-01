@@ -8,6 +8,7 @@ import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -18,9 +19,7 @@ import { connectOptions } from '../theme-options';
 import './style.scss';
 
 interface CurrentThemeProps {
-	blockEditorSettings: {
-		is_fse_eligible: boolean;
-	};
+	blockEditorSettings: BlockEditorSettings;
 	currentTheme: Theme | null;
 	currentThemeId: string | null;
 	name: string;
