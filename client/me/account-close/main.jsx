@@ -17,7 +17,6 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
 import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
@@ -261,8 +260,7 @@ class AccountSettingsClose extends Component {
 
 export default connect(
 	( state ) => {
-		const currentUserId = getCurrentUserId( state );
-		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );
+		const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state );
 		const isLoading =
 			! purchasedPremiumThemes ||
 			! hasLoadedSites( state ) ||
@@ -270,7 +268,7 @@ export default connect(
 
 		return {
 			isLoading,
-			hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
+			hasCancelablePurchases: hasCancelableUserPurchases( state ),
 			purchasedPremiumThemes,
 			hasAtomicSites: userHasAnyAtomicSites( state ),
 			isAccountClosed: isAccountClosed( state ),

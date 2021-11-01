@@ -25,7 +25,6 @@ import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -36,7 +35,6 @@ import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-n
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
-import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
@@ -113,7 +111,7 @@ class PurchasesList extends Component {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && purchases.length ) {
+		if ( purchases && purchases.length ) {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
@@ -134,11 +132,7 @@ class PurchasesList extends Component {
 			);
 		}
 
-		if (
-			this.props.hasLoadedUserPurchasesFromServer &&
-			! purchases.length &&
-			! subscriptions.length
-		) {
+		if ( purchases && ! purchases.length && ! subscriptions.length ) {
 			if ( ! sites.length ) {
 				return (
 					<Main wideLayout className="purchases-list">
@@ -199,28 +193,22 @@ class PurchasesList extends Component {
 }
 
 PurchasesList.propTypes = {
-	isBusinessPlanUser: PropTypes.bool.isRequired,
 	noticeType: PropTypes.string,
-	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	purchases: PropTypes.array,
 	subscriptions: PropTypes.array,
-	sites: PropTypes.array.isRequired,
-	name: PropTypes.string,
+	sites: PropTypes.array,
 };
 
 export default connect(
-	( state ) => {
-		const userId = getCurrentUserId( state );
-		return {
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-			isBusinessPlanUser: isBusinessPlanUser( state ),
-			isFetchingUserPurchases: isFetchingUserPurchases( state ),
-			purchases: getUserPurchases( state, userId ),
-			subscriptions: getAllSubscriptions( state ),
-			sites: getSites( state ),
-			nextAppointment: getConciergeNextAppointment( state ),
-			scheduleId: getConciergeScheduleId( state ),
-			isUserBlocked: getConciergeUserBlocked( state ),
-		};
-	},
+	( state ) => ( {
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		isFetchingUserPurchases: isFetchingUserPurchases( state ),
+		purchases: getUserPurchases( state ),
+		subscriptions: getAllSubscriptions( state ),
+		sites: getSites( state ),
+		nextAppointment: getConciergeNextAppointment( state ),
+		scheduleId: getConciergeScheduleId( state ),
+		isUserBlocked: getConciergeUserBlocked( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( PurchasesList ) );
