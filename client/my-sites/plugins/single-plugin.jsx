@@ -41,6 +41,8 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { Button } from '@automattic/components';
 
 function SinglePlugin( props ) {
 	const {
@@ -50,9 +52,12 @@ function SinglePlugin( props ) {
 		wporgPlugin,
 		selectedSite,
 		siteIds,
+		translate,
 		sitesWithPlugin,
 		requestingPluginsForSites,
 	} = props;
+
+	const moment = useLocalizedMoment();
 
 	useEffect( () => {
 		if ( ! isFetched ) {
@@ -140,6 +145,7 @@ function SinglePlugin( props ) {
 	const isWpcom = selectedSite && ! props.isJetpackSite;
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
+	console.log({ fullPlugin });
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
@@ -149,30 +155,52 @@ function SinglePlugin( props ) {
 			<PluginNotices pluginId={ fullPlugin.id } sites={ props.sites } plugins={ [ fullPlugin ] } />
 
 			<div className="single-plugin__page">
-				<div className="single-plugin__layout">
+				<div className="single-plugin__layout single-plugin__top-section">
 					<div className="single-plugin__layout-col single-plugin__layout-col-left">
-						<Header { ...props } />
-						<PluginMeta
-							plugin={ fullPlugin }
-							siteUrl={ props.siteUrl }
-							sites={ sitesWithPlugin }
-							selectedSite={ selectedSite }
-							isInstalledOnSite={ isPluginInstalledOnsite }
-							isInstalling={ props.isInstallingPlugin }
-							allowedActions={ allowedPluginActions }
-						/>
-						{ fullPlugin.wporg ? (
-							<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } />
-						) : (
-							<PluginSectionsCustom plugin={ fullPlugin } />
-						) }
-						<SitesList fullPlugin={ fullPlugin } isFetching={ isFetching } { ...props } />
+						<div className="single-plugin__header">
+							<div className="single-plugin__name">{fullPlugin.name}</div>
+							<div className="single-plugin__description">{fullPlugin.description}</div>
+							<div className="single-plugin__additional-info">
+								<table>
+									<thead>
+										<tr>
+											<th>{ translate( 'Developer' ) }</th>
+											<th>{ translate( 'Ratings' ) }</th>
+											<th>{ translate( 'Last updated' ) }</th>
+										</tr>
+									</thead>
+
+									<tbody>
+										<tr>
+											<td><a href={fullPlugin.author_url}>{fullPlugin.author_name}</a></td>
+											<td><Rating rating={ fullPlugin.rating } /></td>
+											<td>{ moment.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'YYYY-MM-DD' ) }</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
-					<div className="single-plugin__layout-col single-plugin__layout-col-right"></div>
+					<div className="single-plugin__layout-col single-plugin__layout-col-right">
+						<div className="single-plugin__header">
+							<div className="single-plugin__price">{ translate( 'Free' ) }</div>
+							<div className="single-plugin__install"><Button className="single-plugin__install-button">{ translate( 'Install and activate' ) }</Button></div>
+							<div className="single-plugin__t-and-c">{ translate( 'By installing, you agree to WordPress.com’s Terms of Service and the Third-Party plug-in Terms.' ) }</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</MainComponent>
 	);
+}
+
+
+/* TODO: add the stars icons */
+function Rating ({ rating }) {
+	const inverseRating = 100 - Math.round( rating / 10 ) * 10;
+	const noFillOutlineCount = Math.floor( inverseRating / 20 ); // (5 - noFillOutlineCount) gives the number of stars to add
+
+	return rating/20;
 }
 
 function SitesList( { fullPlugin: plugin, ...props } ) {

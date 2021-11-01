@@ -117,6 +117,10 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
+.layout__content {
+	background: var( --studio-white );
+}
+
 .single-plugin__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {
@@ -135,5 +139,58 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		@include breakpoint-deprecated( '>1040px' ) {
 			@include grid-column( 9, 4 );
 		}
+	}
+}
+
+.single-plugin__top-section {
+	border-bottom: 1px solid var( --studio-gray-5);
+}
+
+.single-plugin__header {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: 400px;
+
+	.single-plugin__name, .single-plugin__price {
+		font-family: Recoleta;
+		font-size: $font-title-large;
+		color: var( --studio-gray-100 );
+		padding: 16px 0;
+	}
+
+	.single-plugin__description {
+		font-size: $font-title-small;
+		color: var( --studio-gray-70 );
+		padding-bottom: 30px;
+	}
+
+	.single-plugin__additional-info {
+		th {
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			color: var( --studio-gray-40 );
+		}
+
+		td {
+			font-size: $font-body;
+			color: var( --studio-gray-70 );
+		}
+	}
+
+	.single-plugin__install {
+		padding-bottom: 20px;
+
+		.single-plugin__install-button {
+			width: 100%;
+			padding: 12px 16px;
+			background-color: var( --studio-pink-50 );
+			color: var( --studio-white );
+		}
+	}
+	
+	.single-plugin__t-and-c {
+		font-size: $font-body-extra-small;
+		color: var( --studio-gray-50 );
 	}
 }
