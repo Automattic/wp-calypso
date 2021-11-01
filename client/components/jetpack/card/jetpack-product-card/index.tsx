@@ -38,6 +38,7 @@ type OwnProps = {
 	aboveButtonText?: TranslateResult | ReactNode;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
+	showStartingAt?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 };
 
@@ -71,6 +72,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	tooltipText,
 	featuredLabel,
 	hideSavingLabel,
+	showStartingAt,
 	aboveButtonText = null,
 	scrollCardIntoView,
 } ) => {
@@ -125,6 +127,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					currencyCode={ item.displayCurrency }
 					originalPrice={ originalPrice }
 					displayFrom={ displayFrom }
+					showStartingAt={ showStartingAt }
 					belowPriceText={ item.belowPriceText }
 					expiryDate={ expiryDate }
 					billingTerm={ item.displayTerm || item.term }

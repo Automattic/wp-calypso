@@ -1,3 +1,17 @@
+.jetpack-crm-free-card.with-price {
+	.display-price__above-price-text {
+		display: block;
+		margin-inline-start: 2px;
+
+		font-size: 1rem;
+		font-weight: 700;
+
+		// Adjust leading margin so that different UI fonts
+		// still align to the price the same way
+		&.is-jetpack-cloud {
+			margin-inline-start: 4px;
+		}
+	}
 .jetpack-crm-free-card.product-without-price--full-width {
 	display: flex;
 	column-gap: 64px;
