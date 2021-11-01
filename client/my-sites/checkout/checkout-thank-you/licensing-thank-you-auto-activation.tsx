@@ -4,6 +4,7 @@ import { find } from 'lodash';
 import page from 'page';
 import { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import footerCardBackground from 'calypso/assets/images/jetpack/jetpack-licensing-checkout-bg1.svg';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -75,7 +76,7 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 					},
 					`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
 				);
-				page.redirect( manualActivationUrl );
+				return page( manualActivationUrl );
 			}
 			dispatch(
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
@@ -216,7 +217,10 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 							: translate( 'Continue' ) }
 					</Button>
 				</div>
-				<div className="licensing-thank-you-auto-activation__card-footer">
+				<div
+					className="licensing-thank-you-auto-activation__card-footer"
+					style={ { backgroundImage: `url(${ footerCardBackground })` } }
+				>
 					<div className="licensing-thank-you-auto-activation__card-footer-image">
 						<img src={ footerCardImg } alt="Checkout Thank you" />
 					</div>

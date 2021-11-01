@@ -2,6 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import footerCardBackground from 'calypso/assets/images/jetpack/jetpack-licensing-checkout-bg1.svg';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -67,7 +68,10 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 						{ translate( 'Continue ' ) }
 					</Button>
 				</div>
-				<div className="licensing-thank-you-manual-activation__card-footer">
+				<div
+					className="licensing-thank-you-manual-activation__card-footer"
+					style={ { backgroundImage: `url(${ footerCardBackground })` } }
+				>
 					<div className="licensing-thank-you-manual-activation__card-footer-image">
 						<img src={ footerCardImg } alt="Checkout Thank you" />
 					</div>
