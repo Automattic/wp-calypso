@@ -1123,7 +1123,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
     "@romainberger/css-diff": ^1.0.3
-    async: ^2.0.0
     css-loader: ^5.2.4
     mini-css-extract-plugin: ^1.6.0
     rtlcss: ^3.1.2
@@ -10046,7 +10045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^2.0.0, async@npm:^2.1.4, async@npm:^2.4.0, async@npm:^2.6.0, async@npm:^2.6.2":
+"async@npm:^2.1.4, async@npm:^2.4.0, async@npm:^2.6.0, async@npm:^2.6.2":
   version: 2.6.3
   resolution: "async@npm:2.6.3"
   dependencies:
