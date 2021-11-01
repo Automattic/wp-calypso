@@ -10,6 +10,7 @@ const Free: React.FC< OwnProps > = ( { showStartingAt, hideSavingLabel, belowPri
 	const translate = useTranslate();
 
 	return (
+		<>
 			{ showStartingAt && (
 				<span className="display-price__above-price-text">{ translate( 'Start for' ) }</span>
 			) }
@@ -18,8 +19,9 @@ const Free: React.FC< OwnProps > = ( { showStartingAt, hideSavingLabel, belowPri
 				<span className="display-price__billing-time-frame">{ belowPriceText }</span>
 			) }
 			{ ! hideSavingLabel && (
-			<span className="display-price__get-started">{ translate( 'Get started for free' ) }</span>
+				<span className="display-price__get-started">{ translate( 'Get started for free' ) }</span>
 			) }
+		</>
 	);
 };
 
