@@ -22,7 +22,6 @@ import {
 } from 'calypso/my-sites/marketing/paths';
 import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -37,12 +36,9 @@ export const MarketingTools: FunctionComponent = () => {
 	const dispatch = useDispatch();
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) ) || 0;
-	const selectedSiteSlug: T.SiteSlug | null = useSelector( ( state ) =>
-		getSelectedSiteSlug( state )
-	);
-	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
+	const purchases = useSelector( getUserPurchases );
+	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) || '';
 	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
 		sitePlan

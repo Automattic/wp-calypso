@@ -24,7 +24,6 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
@@ -577,13 +576,11 @@ const saveContactEmailClick = () =>
 		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
 	);
 
-const getPurchasesByCurrentUserId = ( state ) => {
-	const user = getCurrentUser( state );
-	return ( getUserPurchases( state, user?.ID ) || [] ).reduce( ( result, purchase ) => {
+const getPurchasesById = ( state ) =>
+	( getUserPurchases( state ) || [] ).reduce( ( result, purchase ) => {
 		result[ purchase.id ] = purchase;
 		return result;
 	}, {} );
-};
 
 const getSitesById = ( state ) => {
 	return ( getSites( state ) ?? [] ).reduce( ( result, site ) => {
@@ -631,7 +628,7 @@ const getFilteredDomainsList = ( state, context ) => {
 export default connect(
 	( state, { context } ) => {
 		const sites = getSitesById( state );
-		const purchases = getPurchasesByCurrentUserId( state );
+		const purchases = getPurchasesById( state );
 		const action = parse( context.querystring )?.action;
 
 		return {

@@ -20,7 +20,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
@@ -347,8 +347,7 @@ function planHasOnboarding( { productSlug } ) {
 
 export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
-	const userId = getCurrentUserId( state );
-	const purchases = getUserPurchases( state, userId );
+	const purchases = getUserPurchases( state );
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
 	const hasAppointment = getConciergeNextAppointment( state );
