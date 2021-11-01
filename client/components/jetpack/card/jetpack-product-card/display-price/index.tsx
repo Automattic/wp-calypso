@@ -22,7 +22,7 @@ type OwnProps = {
 	isFree?: boolean;
 	isIncludedInPlan?: boolean;
 	isOwned?: boolean;
-	showStartingAt?: boolean;
+	showAbovePriceText?: boolean;
 	originalPrice: number;
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
@@ -39,7 +39,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	isFree,
 	isIncludedInPlan,
 	isOwned,
-	showStartingAt,
+	showAbovePriceText,
 	hideSavingLabel,
 	originalPrice,
 	productName,
@@ -60,7 +60,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	if ( isFree ) {
 		return (
 			<Free
-				showStartingAt={ showStartingAt }
+				showAbovePriceText={ showAbovePriceText }
 				hideSavingLabel={ hideSavingLabel }
 				belowPriceText={ belowPriceText }
 			/>

@@ -1,17 +1,17 @@
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 type OwnProps = {
-	showStartingAt?: boolean;
+	showAbovePriceText?: boolean;
 	hideSavingLabel?: boolean;
 	belowPriceText?: TranslateResult;
 };
 
-const Free: React.FC< OwnProps > = ( { showStartingAt, hideSavingLabel, belowPriceText } ) => {
+const Free: React.FC< OwnProps > = ( { showAbovePriceText, hideSavingLabel, belowPriceText } ) => {
 	const translate = useTranslate();
 
 	return (
 		<>
-			{ showStartingAt && (
+			{ showAbovePriceText && (
 				<span className="display-price__above-price-text">{ translate( 'Start for' ) }</span>
 			) }
 			<span className="display-price__price-free">{ translate( 'Free' ) }</span>

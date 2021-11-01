@@ -73,7 +73,7 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { duration, siteId } ) =
 				'is-jetpack-cloud': isJetpackCloud(),
 			} ) }
 			hideSavingLabel
-			showStartingAt
+			showAbovePriceText
 			buttonPrimary
 			item={ crmFreeProduct }
 			headerLevel={ 3 }
