@@ -1,13 +1,11 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
-import { emailManagement } from 'calypso/my-sites/email/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -43,7 +41,7 @@ class EmailForwardingAddNewCompactList extends Component {
 		return ! this.state.forwards.some( ( t ) => ! t.valid );
 	}
 
-	addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) =>
+	addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination, siteSlug ) =>
 		withAnalytics(
 			composeAnalytics(
 				recordGoogleEvent(
@@ -59,7 +57,8 @@ class EmailForwardingAddNewCompactList extends Component {
 						domain_name: domainName,
 						mailbox,
 					}
-				)
+				),
+				this.props.addEmailForward( domainName, mailbox, destination, siteSlug )
 			)
 		);
 
@@ -77,29 +76,29 @@ class EmailForwardingAddNewCompactList extends Component {
 		this.state.forwards.map( ( t ) => {
 			const { mailbox, destination } = t;
 
-			this.addNewEmailForwardWithAnalytics( this.props.selectedDomainName, mailbox, destination );
-			this.props.addEmailForward( this.props.selectedDomainName, mailbox, destination );
+			this.addNewEmailForwardWithAnalytics( this.props.selectedDomainName, mailbox, destination, selectedSiteSlug );
 		} );
 
 		this.setState( { formSubmitting: false } );
-		page( emailManagement( selectedSiteSlug, this.props.selectedDomainName ) );
 	};
 
 	onForwardAdd = () => {
 		this.setState( { forwards: [ ...this.state.forwards, { destination: '', mailbox: '' } ] } );
 	};
 
-	addButton() {
+	addButton( addMoreButton = false ) {
 		const { translate } = this.props;
 		return (
 			<div className="email-forwarding-add-new-compact-list__actions">
-				<Button
-					className="email-forwarding-add-new-compact-list__add-another-forward-button"
-					onClick={ this.onForwardAdd }
-				>
-					<Gridicon icon="plus" />
-					<span>{ translate( 'Add another forward' ) }</span>
-				</Button>
+				{ addMoreButton && (
+					<Button
+						className="email-forwarding-add-new-compact-list__add-another-forward-button"
+						onClick={ this.onForwardAdd }
+					>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another forward' ) }</span>
+					</Button>
+				) }
 
 				<Button
 					primary

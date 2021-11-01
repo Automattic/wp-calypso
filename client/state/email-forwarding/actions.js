@@ -42,12 +42,13 @@ export const receiveGetEmailForwardsFailure = ( domainName, error ) => {
 	};
 };
 
-export const addEmailForward = ( domainName, mailbox, destination ) => {
+export const addEmailForward = ( domainName, mailbox, destination, siteSlug = null ) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST,
 		domainName,
 		mailbox,
 		destination,
+		siteSlug,
 	};
 };
 
