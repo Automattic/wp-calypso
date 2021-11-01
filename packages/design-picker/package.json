@@ -32,6 +32,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "^1.0.0-alpha.0",
+		"@automattic/js-utils": "^0.1.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@wordpress/components": "^17.0.0",
 		"@wordpress/react-i18n": "^3.0.1",
