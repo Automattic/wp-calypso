@@ -6,6 +6,7 @@ import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
@@ -283,6 +284,7 @@ export default {
 		const stepName = getStepName( params );
 		const stepSectionName = getStepSectionName( params );
 		const signupDependencies = getSignupDependencyStore( getState() );
+		const { providesDependenciesInQuery } = flows.getFlow( flowName, userLoggedIn );
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
@@ -294,7 +296,11 @@ export default {
 		dispatch( setLayoutFocus( 'content' ) );
 		dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! [ 'launch-site' ].includes( flowName ) ) {
+		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		if (
+			! providesDependenciesInQuery?.includes( 'siteId' ) &&
+			! providesDependenciesInQuery?.includes( 'siteSlug' )
+		) {
 			dispatch( setSelectedSiteId( null ) );
 		}
 
