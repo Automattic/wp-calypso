@@ -86,7 +86,7 @@ registerBlockType( 'a8c/spoiler', {
 	icon: 'warning',
 	category: 'a8c',
 	description: __( 'Hide content until the reader wants to see it.' ),
-	keywords: [ __( 'spoiler' ), __( 'accordion' ), __( 'dropdown' ) ],
+	keywords: [ __( 'spoiler' ), __( 'accordion' ), __( 'Dropdown' ) ],
 	attributes: blockAttributes,
 	edit,
 	save,
