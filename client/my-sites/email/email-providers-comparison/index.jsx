@@ -350,21 +350,31 @@ class EmailProvidersComparison extends Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const discount = hasDiscount( gSuiteProduct )
-			? translate( 'First year %(discountedPrice)s', {
-					args: {
-						discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-					},
-					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
-			  } )
+		const productIsDiscounted = hasDiscount( gSuiteProduct );
+		const discount = productIsDiscounted
+			? translate(
+					'First year %(discountedPrice)s - %(monthlyPrice)s /user /month billed annually',
+					{
+						args: {
+							discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+							monthlyPrice: getMonthlyPrice( gSuiteProduct.sale_cost, currencyCode ),
+						},
+						comment:
+							'%(discountedPrice)s is a formatted price, e.g. $72; %(monthlyPrice)s is also a formatted price, e.g. $6',
+					}
+			  )
 			: null;
 
-		const additionalPriceInformation = translate( '%(price)s billed annually', {
+		const annualPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
+		const annualPriceTranslateArgs = {
 			args: {
-				price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
+				price: annualPrice,
 			},
 			comment: "Annual price formatted with the currency (e.g. '$99.99')",
-		} );
+		};
+		const additionalPriceInformation = productIsDiscounted
+			? translate( 'Renews annually at %(price)s', annualPriceTranslateArgs )
+			: translate( '%(price)s billed annually', annualPriceTranslateArgs );
 
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
