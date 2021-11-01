@@ -180,9 +180,8 @@ class EmailForwardingAddNewCompactList extends Component {
 
 export default connect(
 	( state ) => {
-		const siteId = getSelectedSiteId( state );
 		return {
-			selectedSiteSlug: getSiteSlug( state, siteId ),
+			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 		};
 	},
 	{ addEmailForward }
