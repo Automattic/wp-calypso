@@ -17,7 +17,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -597,23 +596,20 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">
-						{ preventWidows(
-							this.props.translate(
-								// To make any changes to this copy please speak to the legal team
-								'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-								{
-									components: {
-										tosLink: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							),
-							5
+						{ this.props.translate(
+							// To make any changes to this copy please speak to the legal team
+							'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+							{
+								components: {
+									tosLink: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
 						) }
 					</p>
 
