@@ -27,8 +27,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ConfirmationDialog from './dialog';
 
 import './style.scss';
-import { isAtomicSiteLogAccessEnabled } from '../../state/selectors/is-atomic-site-log-access-enabled';
-
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 const VALIDATION_DEBOUNCE_MS = 800;
@@ -216,16 +214,15 @@ export class SiteAddressChanger extends Component {
 	}
 
 	/**
-	 * Github Issue: #55306
 	 * This is an edge case scenario where user have the site address changer opened and the user transfers
 	 * the site to atomic on other tab/window, losing sync between client and server. Client will try to
 	 * check availability against wordpress.com and will receive 404s because site is transfered to wpcomstaging.com
 	 */
 	isUnsyncedAtomicSite() {
-		const { validationError, isAtomicSite } = this.props;
+		const { validationError } = this.props;
 		const serverValidationErrorStatus = get( validationError, 'errorStatus' );
 
-		return serverValidationErrorStatus === 404 && ! isAtomicSite;
+		return serverValidationErrorStatus === 404;
 	}
 
 	getValidationMessage() {
