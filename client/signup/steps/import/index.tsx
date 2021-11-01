@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
@@ -45,7 +46,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 			hideNext={ shouldHideNextBtn( props.stepName, isScanning ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
-			backUrl={ '/start/setup-site/intent' }
+			backUrl={ getStepUrl( 'setup-site', 'intent' ) }
 			hideFormattedHeader={ true }
 			stepContent={
 				<div className="import__onboarding-page">
