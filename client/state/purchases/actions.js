@@ -83,9 +83,7 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 					userId,
 				} );
 
-				if ( data.status === 'completed' ) {
-					dispatch( requestHappychatEligibility() );
-				}
+				dispatch( requestHappychatEligibility() );
 
 				resolve( data );
 			} )

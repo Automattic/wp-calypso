@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { transferDomainAction } from 'calypso/components/domains/use-my-domain/utilities';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { authCodeStepDefaultDescription, stepsHeadingTransfer } from './constants';
+import { authCodeStepDefaultDescription, stepsHeading } from './constants';
 import DomainStepAuthCode from './domain-step-auth-code';
 
 import './style.scss';
@@ -24,13 +24,13 @@ const TransferDomainStepAuthCode = ( {
 		[ domain ]
 	);
 	const authCodeDescription = (
-		<p className={ 'connect-domain-step__text' }>{ authCodeStepDefaultDescription }</p>
+		<p className={ 'connect-domain-step__text' }>{ authCodeStepDefaultDescription.label }</p>
 	);
 	return (
 		<DomainStepAuthCode
 			{ ...props }
 			buttonMessage={ __( 'Check readiness for transfer' ) }
-			customHeading={ stepsHeadingTransfer }
+			customHeading={ stepsHeading.TRANSFER }
 			authCodeDescription={ authCodeDescription }
 			className={ className }
 			domain={ domain }

@@ -13,6 +13,7 @@ import {
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
+	upsellRedirect,
 } from './controller';
 import { noop } from './utils';
 
@@ -165,6 +166,15 @@ export default function () {
 		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer/:upsellType/:upsellMeta/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellRedirect,
 		makeLayout,
 		clientRender
 	);

@@ -56,6 +56,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Click and visit first support article', async function () {
 			await supportComponent.clickResult( 'article', 1 );
+			await supportComponent.clickReadMore();
 			// Obtain handle to the popup page.
 			supportArticlePage = await supportComponent.visitArticle();
 		} );

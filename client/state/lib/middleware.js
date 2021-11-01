@@ -8,8 +8,6 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
 import {
@@ -17,9 +15,7 @@ import {
 	createPathWithoutImmediateLoginInformation,
 } from 'calypso/state/immediate-login/utils';
 import { successNotice } from 'calypso/state/notices/actions';
-import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -76,17 +72,7 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
 	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
-const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
-	const state = getState();
-	const siteId = getSelectedSiteId( state );
-	const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
-
-	if ( ! isFetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
-		dispatch( fetchAutomatedTransferStatus( siteId ) );
-	}
-};
-
-const handler = ( dispatch, action, getState ) => {
+const handler = async ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ROUTE_SET:
 			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
@@ -97,12 +83,14 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SELECTED_SITE_SET:
 		case SITE_RECEIVE:
-		case SITES_RECEIVE:
-			// Wait a tick for the reducer to update the state tree
-			setTimeout( () => {
-				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
-			}, 0 );
+		case SITES_RECEIVE: {
+			const { fetchAutomatedTransferStatusForSelectedSite } = await import(
+				/* webpackChunkName: "automated-transfer-state-middleware" */
+				'calypso/state/lib/automated-transfer-middleware'
+			);
+			fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			return;
+		}
 	}
 };
 

@@ -107,7 +107,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	removePurchase = async () => {
 		const { domain, productName, purchase, translate, userId } = this.props;
 
-		const response = await this.props.removePurchase( purchase.id, userId );
+		await this.props.removePurchase( purchase.id, userId );
 
 		const { purchasesError } = this.props;
 
@@ -116,27 +116,10 @@ class GSuiteCancelPurchaseDialog extends Component {
 			return false;
 		}
 
-		let successMessage;
-		if ( response.status === 'completed' ) {
-			successMessage = translate( '%(productName)s was removed from {{domain/}}.', {
-				args: { productName },
-				components: { domain: <em>{ domain }</em> },
-			} );
-		} else if ( response.status === 'queued' ) {
-			successMessage = translate(
-				'We are removing %(productName)s from {{domain/}}.{{br/}}' +
-					'Please give it some time for changes to take effect. ' +
-					'An email will be sent once the process is complete.',
-				{
-					args: { productName },
-					components: { br: <br />, domain: <em>{ domain }</em> },
-				}
-			);
-		} else {
-			this.props.errorNotice( translate( 'There was an error removing the purchase.' ) );
-			return false;
-		}
-
+		const successMessage = translate( '%(productName)s was removed from {{domain/}}.', {
+			args: { productName },
+			components: { domain: <em>{ domain }</em> },
+		} );
 		this.props.successNotice( successMessage, { isPersistent: true } );
 
 		return true;

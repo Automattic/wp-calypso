@@ -58,7 +58,6 @@ export class FormPhoneInput extends Component {
 						countriesList={ this.props.countriesList }
 						disabled={ this.props.isDisabled }
 						name="country_code"
-						ref="countryCode"
 						value={ this.state.countryCode }
 						onChange={ this.handleCountryChange }
 					/>

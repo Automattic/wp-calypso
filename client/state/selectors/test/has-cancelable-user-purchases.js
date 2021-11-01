@@ -17,6 +17,9 @@ describe( 'hasCancelableUserPurchases', () => {
 
 	test( 'should return false because there are no purchases', () => {
 		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: [],
 				error: null,
@@ -27,11 +30,14 @@ describe( 'hasCancelableUserPurchases', () => {
 			},
 		} );
 
-		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
+		expect( hasCancelableUserPurchases( state ) ).toBe( false );
 	} );
 
 	test( 'should return true because there are purchases from the target user', () => {
 		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -42,11 +48,14 @@ describe( 'hasCancelableUserPurchases', () => {
 			},
 		} );
 
-		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( true );
+		expect( hasCancelableUserPurchases( state ) ).toBe( true );
 	} );
 
 	test( 'should return false because there are no purchases from this user', () => {
 		const state = deepFreeze( {
+			currentUser: {
+				id: 65535,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -57,11 +66,14 @@ describe( 'hasCancelableUserPurchases', () => {
 			},
 		} );
 
-		expect( hasCancelableUserPurchases( state, 65535 ) ).toBe( false );
+		expect( hasCancelableUserPurchases( state ) ).toBe( false );
 	} );
 
-	test( 'should return false because the data is not ready', () => {
+	test( 'should return null because the data is not ready', () => {
 		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -72,11 +84,14 @@ describe( 'hasCancelableUserPurchases', () => {
 			},
 		} );
 
-		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
+		expect( hasCancelableUserPurchases( state ) ).toBeNull();
 	} );
 
 	test( 'should return false because the only purchase is a non-refundable theme', () => {
 		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: [
 					{
@@ -96,11 +111,14 @@ describe( 'hasCancelableUserPurchases', () => {
 			},
 		} );
 
-		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
+		expect( hasCancelableUserPurchases( state ) ).toBe( false );
 	} );
 
 	test( 'should return true because one of the purchases is a refundable theme', () => {
 		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
 			purchases: {
 				data: [
 					{
@@ -120,6 +138,6 @@ describe( 'hasCancelableUserPurchases', () => {
 			},
 		} );
 
-		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( true );
+		expect( hasCancelableUserPurchases( state ) ).toBe( true );
 	} );
 } );

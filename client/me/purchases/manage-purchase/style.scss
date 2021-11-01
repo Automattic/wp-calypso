@@ -333,3 +333,54 @@
 .manage-purchase__savings-badge {
 	margin-left: 12px;
 }
+
+.manage-purchase__jetpack-user-license {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	margin-bottom: 0;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-wrap: nowrap;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding: 16px;
+
+		box-shadow: none;
+	}
+
+	strong {
+		color: var( --color-neutral-60 );
+	}
+}
+
+.manage-purchase__jetpack-user-license-clipboard {
+	display: flex;
+
+	margin-top: 16px;
+
+	input.form-text-input.manage-purchase__jetpack-user-license-input {
+		font-size: $font-body-small;
+
+		margin-right: 16px;
+
+		background-color: var( --studio-gray-0 );
+
+		border: none;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin: 0 16px;
+		}
+	}
+
+	.button {
+		min-width: 70px;
+	}
+
+	@include breakpoint-deprecated( '>480px' ) {
+		margin-top: 0;
+	}
+}
+

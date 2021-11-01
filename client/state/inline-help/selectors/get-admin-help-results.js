@@ -1,10 +1,12 @@
 import { createSelector } from '@automattic/state-utils';
-import { adminSections, filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	getAdminSections,
+	filterListBySearchTerm,
+} from 'calypso/blocks/inline-help/admin-sections';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
- * Returns a filtered site admin collection using the memoized adminSections.
+ * Returns a filtered site admin collection using the memoized getAdminSections.
  *
  * Note that the first argument `state` is not used,
  * because the admin sections are store in the admin-sections.js,
@@ -22,9 +24,8 @@ const getAdminHelpResults = createSelector(
 		}
 
 		const siteId = getSelectedSiteId( state );
-		const siteSlug = getSiteSlug( state, siteId );
 
-		return filterListBySearchTerm( searchTerm, adminSections( siteId, siteSlug, state ), limit );
+		return filterListBySearchTerm( searchTerm, getAdminSections( state, siteId ), limit );
 	},
 	( state ) => [ getSelectedSiteId( state ) ]
 );

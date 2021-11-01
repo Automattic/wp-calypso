@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - mini-css-extract-plugin to ^1.6.0
   - rtlcss to ^3.1.2
 - Removed unused dependency cssnano.
+- Update documentation to match code.
+- Allow for assets with query strings.
+- Drop unused dependency on `async`.
 
 ## 5.0.0 - 2021-03-26
 

@@ -8,6 +8,13 @@
 		padding: 10px;
 		border-bottom: 0;
 
+		// Fix styles when Gutenberg is deactivated
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin: 0;
+		background-color: transparent;
+
 		button {
 			left: unset;
 

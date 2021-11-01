@@ -4,7 +4,6 @@
  * @jest-environment jsdom
  */
 
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -828,10 +827,6 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	describe( 'Professional Email upsell', () => {
-		beforeEach( () => {
-			isEnabled.mockImplementation( ( flag ) => flag === 'upsell/professional-email' );
-		} );
-
 		const domains = [
 			{
 				name: 'domain-with-gsuite.com',
@@ -887,7 +882,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -909,7 +904,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -931,7 +926,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -953,7 +948,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -979,7 +974,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer-professional-email/domain-from-cart.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email-offer/domain-from-cart.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -1052,6 +1047,27 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+		} );
+
+		it( 'Is not displayed if nudges should be hidden and site has eligible domain and Personal plan is in the cart', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: PLAN_PERSONAL,
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				hideNudge: true,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 		} );
 	} );
 

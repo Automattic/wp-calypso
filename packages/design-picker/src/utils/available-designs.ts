@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { availableDesignsConfig } from './available-designs-config';
-import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
@@ -78,7 +78,7 @@ export function getAvailableDesigns( {
 	};
 
 	if ( randomize ) {
-		designs.featured = shuffleArray( designs.featured );
+		designs.featured = shuffle( designs.featured );
 	}
 
 	// Force blank canvas design to always be first in the list

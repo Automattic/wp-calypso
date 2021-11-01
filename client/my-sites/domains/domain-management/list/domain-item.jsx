@@ -1,7 +1,6 @@
 import { Button, CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
@@ -417,15 +416,6 @@ class DomainItem extends PureComponent {
 		);
 	}
 
-	hasMappingError( domain ) {
-		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
-		return (
-			domain.type === domainTypes.MAPPED &&
-			! domain.pointsToWpcom &&
-			moment.utc().isAfter( registrationDatePlus3Days )
-		);
-	}
-
 	render() {
 		const {
 			domain,
@@ -440,7 +430,7 @@ class DomainItem extends PureComponent {
 		const { listStatusText, listStatusClass } = resolveDomainStatus(
 			domainDetails || domain,
 			null,
-			{ siteSlug: site?.slug, hasMappingError: this.hasMappingError( domain ) }
+			{ siteSlug: site?.slug, getMappingErrors: true }
 		);
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }` );

@@ -51,3 +51,19 @@ export const showUpdatePrimaryDomainErrorNotice = ( errorMessage ) => {
 export const filterOutWpcomDomains = ( domains ) => {
 	return domains.filter( ( domain ) => domain.type !== type.WPCOM );
 };
+
+export const getSimpleSortFunctionBy = ( column ) => ( first, second, sortOrder ) => {
+	if ( ! first.hasOwnProperty( column ) || ! second.hasOwnProperty( column ) ) {
+		return -1;
+	}
+	if ( first?.[ column ] === null || second?.[ column ] === null ) {
+		return -1;
+	}
+	if ( first?.[ column ] > second?.[ column ] ) {
+		return 1 * sortOrder;
+	}
+	if ( first?.[ column ] < second?.[ column ] ) {
+		return -1 * sortOrder;
+	}
+	return 0;
+};

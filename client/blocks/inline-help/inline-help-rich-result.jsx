@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import { RESULT_ARTICLE, RESULT_TOUR, RESULT_VIDEO } from './constants';
 
@@ -104,14 +103,10 @@ class InlineHelpRichResult extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ( {
-	searchQuery: getSearchQuery( state ),
-} );
-
 const mapDispatchToProps = {
 	recordTracksEvent,
 	requestGuidedTour,
 	openSupportArticleDialog,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect( null, mapDispatchToProps )( localize( InlineHelpRichResult ) );

@@ -31,9 +31,11 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 		return null;
 	}
 
-	const availabilityStatus = [ domainAvailability.MAPPABLE, domainAvailability.MAPPED ].includes(
-		mappable
-	)
+	const availabilityStatus = [
+		domainAvailability.MAPPABLE,
+		domainAvailability.MAPPED,
+		domainAvailability.TRANSFER_PENDING,
+	].includes( mappable )
 		? status
 		: mappable;
 	const maintenanceEndTime = maintenance_end_time ?? null;

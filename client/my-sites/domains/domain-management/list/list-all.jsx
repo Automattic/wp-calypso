@@ -24,7 +24,6 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
@@ -53,7 +52,6 @@ class ListAll extends Component {
 		domainsList: PropTypes.array.isRequired,
 		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
-		user: PropTypes.object.isRequired,
 		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
@@ -520,7 +518,7 @@ class ListAll extends Component {
 	}
 
 	renderContent() {
-		const { domainsList, translate, user } = this.props;
+		const { domainsList, translate } = this.props;
 
 		if (
 			this.props.isContactEmailEditContext &&
@@ -547,7 +545,7 @@ class ListAll extends Component {
 				<div className="list-all__form">{ this.renderActionForm() }</div>
 				<div className="list-all__container">
 					<QueryAllDomains />
-					<QueryUserPurchases userId={ user.ID } />
+					<QueryUserPurchases />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
@@ -578,13 +576,11 @@ const saveContactEmailClick = () =>
 		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
 	);
 
-const getPurchasesByCurrentUserId = ( state ) => {
-	const user = getCurrentUser( state );
-	return ( getUserPurchases( state, user?.ID ) || [] ).reduce( ( result, purchase ) => {
+const getPurchasesById = ( state ) =>
+	( getUserPurchases( state ) || [] ).reduce( ( result, purchase ) => {
 		result[ purchase.id ] = purchase;
 		return result;
 	}, {} );
-};
 
 const getSitesById = ( state ) => {
 	return ( getSites( state ) ?? [] ).reduce( ( result, site ) => {
@@ -632,8 +628,7 @@ const getFilteredDomainsList = ( state, context ) => {
 export default connect(
 	( state, { context } ) => {
 		const sites = getSitesById( state );
-		const user = getCurrentUser( state );
-		const purchases = getPurchasesByCurrentUserId( state );
+		const purchases = getPurchasesById( state );
 		const action = parse( context.querystring )?.action;
 
 		return {
@@ -649,7 +644,6 @@ export default connect(
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			user,
 		};
 	},
 	{
