@@ -32,8 +32,10 @@ function SiteInformationCollection( {
 } ) {
 	const dispatch = useDispatch();
 
-	const { selectedVertical, username: signupUsername } = useSelector( getSignupDependencyStore );
+	const { selectedDesign, username: signupUsername } = useSelector( getSignupDependencyStore );
 	const loggedInUsername = useSelector( getCurrentUserName );
+
+	const selectedVertical = selectedDesign?.categories[ 0 ]?.name;
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
