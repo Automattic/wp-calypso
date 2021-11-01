@@ -194,3 +194,40 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		color: var( --studio-gray-50 );
 	}
 }
+
+.single-plugin__body {
+	.plugin-sections {
+		margin-top: 20px;
+
+		.section-nav {
+			box-shadow: none;
+		}
+
+		.card {
+			box-shadow: none;
+		}
+	}
+
+	.section-nav-tab {
+		&.is-selected,
+		&:hover:not(.is-selected) {
+			border-bottom-color: transparent;
+		}
+
+		.section-nav-tab__link {
+			font-size: $font-body-small;
+			color: var( --studio-gray-60 );
+
+			&:hover {
+				background-color: transparent;
+				color: var( --studio-black );
+			}
+		}
+
+		&.is-selected .section-nav-tab__link {
+			color: var( --studio-black );
+			font-weight: bold;
+			border-bottom: none;
+		}
+	}
+}
