@@ -1,7 +1,12 @@
 .jetpack-crm-free-card.with-price {
+	.display-price {
+		min-height: 133px;
+	}
+
 	.display-price__above-price-text {
 		display: block;
 		margin-inline-start: 2px;
+		margin-block-start: 38px;
 
 		font-size: 1rem;
 		font-weight: 700;
@@ -12,6 +17,13 @@
 			margin-inline-start: 4px;
 		}
 	}
+
+	.display-price__price-free {
+		line-height: $font-headline-medium;
+		letter-spacing: -2px;
+	}
+}
+
 .jetpack-crm-free-card.product-without-price--full-width {
 	display: flex;
 	column-gap: 64px;
