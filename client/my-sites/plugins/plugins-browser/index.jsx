@@ -88,7 +88,7 @@ export class PluginsBrowser extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			isMobile: isWithinBreakpoint( '<660px' ),
+			isMobile: isWithinBreakpoint( '<960px' ),
 		};
 	}
 
@@ -112,7 +112,7 @@ export class PluginsBrowser extends Component {
 		}
 
 		// Change the isMobile state when the size of the browser changes.
-		this.unsubscribe = subscribeIsWithinBreakpoint( '<660px', ( isMobile ) => {
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
 			this.setState( { isMobile } );
 		} );
 	}

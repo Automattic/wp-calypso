@@ -19,7 +19,7 @@
 		}
 	}
 
-	@media screen and ( max-width: 660px ) {
+	@media screen and ( max-width: 960px ) {
 		width: 30px;
 
 		.search-component {
@@ -32,15 +32,15 @@
 	display: flex;
 	margin-right: 15px;
 
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-		align-items: flex-end;
-	}
-
-	@media screen and ( max-width: 660px ) {
+	@media screen and ( max-width: 960px ) {
 		.plugins-browser__button {
 			border: none;
 		}
+	}
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+		align-items: flex-end;
 	}
 
 	.plugins-browser__button {
