@@ -119,8 +119,6 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
-				// We don't need to record tracks event for next button
-				recordTracksEvent={ () => {} }
 			/>
 		);
 	}
