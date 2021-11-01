@@ -12,7 +12,7 @@ const Header = styled.header`
 	padding: 0 32px;
 	box-sizing: border-box;
 	border-bottom: 1px solid var( --studio-gray-5 );
-	background-color: #fff;
+	background-color: var( --studio-white );
 
 	@media ( max-width: 782px ) {
 		width: 100%;
