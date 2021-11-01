@@ -70,7 +70,7 @@ class Security2faSetup extends Component {
 
 				{ 'app-based' === this.state.step ? (
 					<Security2faEnable
-						doSMSFlow={ false }
+						isSmsFlow={ false }
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
 					/>
@@ -78,7 +78,7 @@ class Security2faSetup extends Component {
 
 				{ 'sms-based' === this.state.step ? (
 					<Security2faEnable
-						doSMSFlow
+						isSmsFlow
 						onCancel={ this.onCancelSetup }
 						onSuccess={ this.onSetupSuccess }
 					/>
@@ -86,7 +86,7 @@ class Security2faSetup extends Component {
 
 				{ 'backup-codes' === this.state.step ? (
 					<Security2faSetupBackupCodes
-						doSMSFlow={ this.state.authMethod !== 'app-based' }
+						isSmsFlow={ this.state.authMethod !== 'app-based' }
 						onFinished={ this.onFinished }
 					/>
 				) : null }

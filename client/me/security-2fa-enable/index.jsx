@@ -21,11 +21,11 @@ class Security2faEnable extends Component {
 	static displayName = 'Security2faEnable';
 
 	static defaultProps = {
-		doSMSFlow: false,
+		isSmsFlow: false,
 	};
 
 	static propTypes = {
-		doSMSFlow: PropTypes.bool,
+		isSmsFlow: PropTypes.bool,
 		onCancel: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 	};
@@ -33,7 +33,7 @@ class Security2faEnable extends Component {
 	state = {
 		lastError: false,
 		lastErrorType: false,
-		method: this.props.doSMSFlow ? 'sms' : 'scan',
+		method: this.props.isSmsFlow ? 'sms' : 'scan',
 		otpAuthUri: false,
 		smsRequestsAllowed: true,
 		smsRequestPerformed: false,
@@ -47,7 +47,7 @@ class Security2faEnable extends Component {
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 		twoStepAuthorization.getAppAuthCodes( this.onAppAuthCodesRequestResponse );
-		if ( this.props.doSMSFlow ) {
+		if ( this.props.isSmsFlow ) {
 			this.requestSMS();
 		}
 	}
@@ -400,7 +400,7 @@ class Security2faEnable extends Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 2 } doSMSFlow={ this.props.doSMSFlow } />
+				<Security2faProgress step={ 2 } isSmsFlow={ this.props.isSmsFlow } />
 				<form className="security-2fa-enable" onSubmit={ this.onCodeSubmit }>
 					<div className="security-2fa-enable__inner">
 						{ this.renderCodeBlock() }

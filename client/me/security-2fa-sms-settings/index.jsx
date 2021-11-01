@@ -140,7 +140,7 @@ class Security2faSMSSettings extends Component {
 		return (
 			<div className="security-2fa-sms-settings__container">
 				<form className="security-2fa-sms-settings">
-					<Security2faProgress step={ 1 } doSMSFlow />
+					<Security2faProgress step={ 1 } isSmsFlow />
 
 					<p>
 						{ this.props.translate(
