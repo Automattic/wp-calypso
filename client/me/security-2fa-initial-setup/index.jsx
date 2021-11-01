@@ -73,7 +73,7 @@ class Security2faInitialSetup extends Component {
 						</span>
 						<span className="security-2fa-initial-setup__description">
 							{ this.props.translate(
-								'WordPress.com will send you a SMS with a two-step authentication codes when you log in.'
+								'WordPress.com will send you a SMS with a two-step authentication code when you log in.'
 							) }
 						</span>
 					</FormLabel>
