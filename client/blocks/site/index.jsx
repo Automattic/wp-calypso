@@ -11,7 +11,6 @@ import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 
 import './style.scss';
@@ -52,7 +51,6 @@ class Site extends React.Component {
 		isHighlighted: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
-		siteSettings: PropTypes.object,
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
 		compact: PropTypes.bool,
@@ -92,7 +90,8 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { isSiteUnlaunched, site, translate, siteSettings } = this.props;
+		const { isSiteUnlaunched, site, translate } = this.props;
+
 		if ( ! site ) {
 			// we could move the placeholder state here
 			return null;
@@ -119,7 +118,6 @@ class Site extends React.Component {
 		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
 		const shouldShowPrivateByDefaultComingSoonBadge =
 			this.props.site.is_coming_soon || isPrivateAndUnlaunched;
-		const siteTitle = siteSettings && siteSettings.blogname ? siteSettings.blogname : site.title;
 
 		return (
 			<div className={ siteClass }>
@@ -148,7 +146,7 @@ class Site extends React.Component {
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
-						<div className="site__title">{ siteTitle }</div>
+						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">
 							{ /* eslint-disable-next-line no-nested-ternary */ }
 							{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
@@ -197,11 +195,11 @@ class Site extends React.Component {
 function mapStateToProps( state, ownProps ) {
 	const siteId = ownProps.siteId || ownProps.site.ID;
 	const site = siteId ? getSite( state, siteId ) : ownProps.site;
+
 	return {
 		siteId,
 		site,
 		isPreviewable: isSitePreviewable( state, siteId ),
-		siteSettings: getSiteSettings( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isNavUnificationEnabled: isNavUnificationEnabled( state ),
