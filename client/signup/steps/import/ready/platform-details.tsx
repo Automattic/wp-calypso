@@ -53,7 +53,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				);
 			case 'Medium':
 				return __(
-					"Our Mediun content importer is the quickest way to move your content. Simply export the contents from Medium as a .ZIP file, then click 'Import your content' and upload it to our importer."
+					"Our Medium content importer is the quickest way to move your content. Simply export the contents from Medium as a .ZIP file, then click 'Import your content' and upload it to our importer."
 				);
 			default:
 				return '';
