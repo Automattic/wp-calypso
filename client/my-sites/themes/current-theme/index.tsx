@@ -18,22 +18,22 @@ import { connectOptions } from '../theme-options';
 
 import './style.scss';
 
+interface Option {
+	action?: () => void;
+	extendedLabel?: string;
+	getUrl?: ( currentThemeId: string | null ) => string;
+	header?: string;
+	hideForTheme?: ( currentThemeId: string | null, siteId: number ) => boolean;
+	label: string;
+	icon?: string;
+}
+
 interface CurrentThemeProps {
 	blockEditorSettings: BlockEditorSettings;
 	currentTheme: Theme | null;
 	currentThemeId: string | null;
 	name: string;
-	options: {
-		[ key: string ]: {
-			action?: () => void;
-			extendedLabel?: string;
-			getUrl?: ( currentThemeId: string | null ) => string;
-			header?: string;
-			hideForTheme?: ( currentThemeId: string | null, siteId: number ) => boolean;
-			label: string;
-			icon?: string;
-		};
-	};
+	options: Record< string, Option >;
 	siteId: number;
 	translate: ( original: string ) => TranslateResult;
 }
