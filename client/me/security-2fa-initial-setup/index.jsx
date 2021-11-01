@@ -30,11 +30,9 @@ class Security2faInitialSetup extends Component {
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	}
-	setAuth( event ) {
-		this.setState( { authMethod: event.currentTarget.value } );
-	}
 
 	render() {
+		const setAuth = ( event ) => this.setState( { authMethod: event.currentTarget.value } );
 		return (
 			<div>
 				<p>
@@ -53,7 +51,7 @@ class Security2faInitialSetup extends Component {
 							name="auth_method"
 							value="app-based"
 							defaultChecked={ true }
-							onChange={ this.setAuth.bind( this ) }
+							onChange={ setAuth }
 						/>
 						<Gridicon icon="phone" />
 						<span className="security-2fa-initial-setup__item-title">
@@ -68,11 +66,7 @@ class Security2faInitialSetup extends Component {
 				</p>
 				<p>
 					<FormLabel className="security-2fa-initial-setup__label">
-						<FormRadio
-							name="auth_method"
-							value="sms-settings"
-							onChange={ this.setAuth.bind( this ) }
-						/>
+						<FormRadio name="auth_method" value="sms-settings" onChange={ setAuth } />
 						<Gridicon icon="chat" />
 						<span className="security-2fa-initial-setup__item-title">
 							{ this.props.translate( 'Set up using SMS' ) }
