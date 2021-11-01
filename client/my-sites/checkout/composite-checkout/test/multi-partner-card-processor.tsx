@@ -1,7 +1,11 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
-import wp from 'calypso/lib/wp';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsSuccessResponse,
+	processorOptions,
+} from './util';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	Stripe,
@@ -10,7 +14,6 @@ import type {
 	PaymentMethod,
 } from '@stripe/stripe-js';
 
-jest.mock( 'calypso/lib/wp' );
 jest.mock( 'calypso/lib/store-transactions', () => ( {
 	createEbanxToken: jest.fn(),
 } ) );
@@ -121,31 +124,31 @@ describe( 'multiPartnerCardProcessor', () => {
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
+		domain_details: undefined,
 		payment: {
 			address: undefined,
-			cancelUrl: undefined,
+			cancel_url: undefined,
 			city: undefined,
 			country: 'US',
-			countryCode: 'US',
-			deviceId: undefined,
+			country_code: 'US',
+			device_id: undefined,
 			document: undefined,
 			email: undefined,
 			gstin: undefined,
-			idealBank: undefined,
+			ideal_bank: undefined,
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: 'stripe-token',
-			paymentMethod: 'WPCOM_Billing_Stripe_Payment_Method',
-			paymentPartner: 'IE',
-			phoneNumber: undefined,
-			postalCode: '10001',
+			payment_key: 'stripe-token',
+			payment_method: 'WPCOM_Billing_Stripe_Payment_Method',
+			payment_partner: 'IE',
+			phone_number: undefined,
+			postal_code: '10001',
 			state: undefined,
-			storedDetailsId: undefined,
-			streetNumber: undefined,
-			successUrl: undefined,
-			tefBank: undefined,
+			stored_details_id: undefined,
+			street_number: undefined,
+			success_url: undefined,
+			tef_bank: undefined,
 			zip: '10001',
 		},
 	};
@@ -154,28 +157,28 @@ describe( 'multiPartnerCardProcessor', () => {
 		...basicExpectedStripeRequest,
 		payment: {
 			address: '100 Main Street',
-			cancelUrl: undefined,
+			cancel_url: undefined,
 			city: 'New York',
 			country: 'US',
-			countryCode: 'US',
-			deviceId: 'mock-ebanx-device',
+			country_code: 'US',
+			device_id: 'mock-ebanx-device',
 			document: 'ebanx-document-code',
 			email: undefined,
 			gstin: undefined,
-			idealBank: undefined,
+			ideal_bank: undefined,
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: 'ebanx-token',
-			paymentMethod: 'WPCOM_Billing_Ebanx',
-			paymentPartner: undefined,
-			phoneNumber: '1111111111',
-			postalCode: '10001',
+			payment_key: 'ebanx-token',
+			payment_method: 'WPCOM_Billing_Ebanx',
+			payment_partner: undefined,
+			phone_number: '1111111111',
+			postal_code: '10001',
 			state: 'NY',
-			storedDetailsId: undefined,
-			streetNumber: '100',
-			successUrl: undefined,
-			tefBank: undefined,
+			stored_details_id: undefined,
+			street_number: '100',
+			success_url: undefined,
+			tef_bank: undefined,
 			zip: '10001',
 		},
 	};
@@ -183,9 +186,9 @@ describe( 'multiPartnerCardProcessor', () => {
 	const basicExpectedDomainDetails = {
 		address1: undefined,
 		address2: undefined,
-		alternateEmail: undefined,
+		alternate_email: undefined,
 		city: undefined,
-		countryCode: 'US',
+		country_code: 'US',
 		email: undefined,
 		extra: {
 			ca: null,
@@ -193,43 +196,24 @@ describe( 'multiPartnerCardProcessor', () => {
 			uk: null,
 		},
 		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
+		first_name: undefined,
+		last_name: undefined,
 		organization: undefined,
 		phone: undefined,
-		postalCode: '10001',
+		postal_code: '10001',
 		state: undefined,
 	};
-
-	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
 
 	const stripe = {
 		createPaymentMethod: createMockStripeToken,
 	} as Stripe;
 
 	const options: PaymentProcessorOptions = {
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
+		...processorOptions,
 		stripe,
 		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
 		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
 	};
-
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue( Promise.resolve( 'test success' ) );
-	} );
 
 	it( 'throws an error if there is no paymentPartner', async () => {
 		const submitData = {};
@@ -328,6 +312,7 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with no site and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'stripe',
 				stripe,
@@ -335,7 +320,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				name: 'test name',
 				cardNumberElement: mockCardNumberElement,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
@@ -348,7 +333,14 @@ describe( 'multiPartnerCardProcessor', () => {
 			expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 		} );
 
-		it( 'returns an explicit error response if the transaction fails', async () => {
+		it( 'returns an explicit error response if the transaction fails with a non-200 error', async () => {
+			mockTransactionsEndpoint( () => [
+				400,
+				{
+					error: 'test_error',
+					message: 'test error',
+				},
+			] );
 			const submitData = {
 				paymentPartner: 'stripe',
 				stripe,
@@ -356,7 +348,6 @@ describe( 'multiPartnerCardProcessor', () => {
 				name: 'test name',
 				cardNumberElement: mockCardNumberElement,
 			};
-			transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 			const expected = { payload: 'test error', type: 'ERROR' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
@@ -370,6 +361,7 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with a site and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'stripe',
 				stripe,
@@ -377,7 +369,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				name: 'test name',
 				cardNumberElement: mockCardNumberElement,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
@@ -402,6 +394,7 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with tax information', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'stripe',
 				stripe,
@@ -409,7 +402,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				name: 'test name',
 				cardNumberElement: mockCardNumberElement,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
@@ -445,6 +438,7 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'stripe',
 				stripe,
@@ -452,7 +446,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				name: 'test name',
 				cardNumberElement: mockCardNumberElement,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
@@ -476,7 +470,7 @@ describe( 'multiPartnerCardProcessor', () => {
 					create_new_blog: false,
 					products: [ domainProduct ],
 				},
-				domainDetails: basicExpectedDomainDetails,
+				domain_details: basicExpectedDomainDetails,
 			} );
 		} );
 	} );
@@ -559,11 +553,12 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with no site and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'ebanx',
 				...ebanxCardTransactionRequest,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
 				expected
 			);
@@ -571,11 +566,17 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'returns an explicit error response if the transaction fails', async () => {
+			mockTransactionsEndpoint( () => [
+				400,
+				{
+					error: 'test_error',
+					message: 'test error',
+				},
+			] );
 			const submitData = {
 				paymentPartner: 'ebanx',
 				...ebanxCardTransactionRequest,
 			};
-			transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
 			const expected = { payload: 'test error', type: 'ERROR' };
 			await expect( multiPartnerCardProcessor( submitData, options ) ).resolves.toStrictEqual(
 				expected
@@ -583,11 +584,12 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with a site and one product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'ebanx',
 				...ebanxCardTransactionRequest,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
@@ -613,11 +615,12 @@ describe( 'multiPartnerCardProcessor', () => {
 		} );
 
 		it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+			const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
 			const submitData = {
 				paymentPartner: 'ebanx',
 				...ebanxCardTransactionRequest,
 			};
-			const expected = { payload: 'test success', type: 'SUCCESS' };
+			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
@@ -641,7 +644,7 @@ describe( 'multiPartnerCardProcessor', () => {
 					create_new_blog: false,
 					products: [ domainProduct ],
 				},
-				domainDetails: basicExpectedDomainDetails,
+				domain_details: basicExpectedDomainDetails,
 			} );
 		} );
 	} );
