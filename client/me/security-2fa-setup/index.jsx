@@ -55,10 +55,7 @@ class Security2faSetup extends Component {
 		return (
 			<div className="security-2fa-setup__steps-container">
 				{ 'initial-setup' === this.state.step ? (
-					<Security2faInitialSetup
-						onSuccess={ this.onInitialSetupSuccess }
-						currentAuthMethod={ this.state.authMethod }
-					/>
+					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
 				) : null }
 
 				{ 'sms-settings' === this.state.step ? (
