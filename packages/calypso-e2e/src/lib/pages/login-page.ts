@@ -168,10 +168,11 @@ export class LoginPage {
 		const landingUrl = options?.landingUrl ? options.landingUrl : `**/home/**`;
 
 		// If there is a stored cookie for the user, try that first.
-		if ( COOKIES_PATH && 'account' in credentials ) {
-			console.log( 'cookies path in login!' );
-			await setLoginCookie( this.page, credentials.account );
+		if ( 'account' in credentials ) {
 			try {
+				// Set the cookie file with matching name to the accountType.
+				await setLoginCookie( this.page, credentials.account );
+
 				await Promise.all( [
 					// Shorter than usual timoout, because with a cookie file the login process
 					// shoiuld not take more than a few seconds.
@@ -180,7 +181,7 @@ export class LoginPage {
 				] );
 				return;
 			} catch {
-				console.log( 'Failed to log in using cookie file, retrying a normal login.' );
+				console.log( 'Unable to log in using cookie file, retrying a normal login.' );
 				// noop
 			}
 		}
