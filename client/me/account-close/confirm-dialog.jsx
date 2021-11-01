@@ -154,6 +154,7 @@ class AccountCloseConfirmDialog extends Component {
 							value={ this.state.inputValue }
 							aria-required="true"
 							id="confirmAccountCloseInput"
+							spellCheck={ false }
 						/>
 					</>
 				) }
