@@ -35,7 +35,6 @@ import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-n
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
-import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
@@ -194,18 +193,15 @@ class PurchasesList extends Component {
 }
 
 PurchasesList.propTypes = {
-	isBusinessPlanUser: PropTypes.bool.isRequired,
 	noticeType: PropTypes.string,
-	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	purchases: PropTypes.array,
 	subscriptions: PropTypes.array,
-	sites: PropTypes.array.isRequired,
-	name: PropTypes.string,
+	sites: PropTypes.array,
 };
 
 export default connect(
 	( state ) => ( {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		isBusinessPlanUser: isBusinessPlanUser( state ),
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
 		purchases: getUserPurchases( state ),
 		subscriptions: getAllSubscriptions( state ),
