@@ -51,6 +51,7 @@ class Security2faSetup extends Component {
 	};
 
 	render() {
+		const isSmsFlow = [ 'sms-based', 'sms-settings' ].includes( this.state.authMethod );
 		return (
 			<div className="security-2fa-setup__steps-container">
 				{ 'initial-setup' === this.state.step ? (
@@ -85,10 +86,7 @@ class Security2faSetup extends Component {
 				) : null }
 
 				{ 'backup-codes' === this.state.step ? (
-					<Security2faSetupBackupCodes
-						isSmsFlow={ this.state.authMethod !== 'app-based' }
-						onFinished={ this.onFinished }
-					/>
+					<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
 				) : null }
 			</div>
 		);
