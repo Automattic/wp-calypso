@@ -15,6 +15,7 @@ import type { Moment } from 'moment';
 import './style.scss';
 
 type OwnProps = {
+	className?: string;
 	item: SelectorProduct;
 	// Disallow h6, so it can be used for a sub-header if needed
 	headerLevel: 1 | 2 | 3 | 4 | 5;
@@ -51,6 +52,7 @@ const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) 
 	createElement( `h${ level }`, headerProps, children );
 
 const JetpackProductCard: React.FC< OwnProps > = ( {
+	className,
 	item,
 	headerLevel,
 	description,
@@ -89,7 +91,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 
 	return (
 		<div
-			className={ classNames( 'jetpack-product-card', {
+			className={ classNames( 'jetpack-product-card', className, {
 				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
