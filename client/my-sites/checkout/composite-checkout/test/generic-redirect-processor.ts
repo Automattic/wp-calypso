@@ -4,6 +4,10 @@ import {
 	mockTransactionsEndpoint,
 	mockTransactionsRedirectResponse,
 	processorOptions,
+	basicExpectedDomainDetails,
+	countryCode,
+	postalCode,
+	contactDetailsForDomain,
 } from './util';
 
 describe( 'genericRedirectProcessor', () => {
@@ -18,9 +22,6 @@ describe( 'genericRedirectProcessor', () => {
 		...processorOptions,
 		responseCart: cart,
 	};
-
-	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
-	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
 
 	const basicExpectedStripeRequest = {
 		cart: {
@@ -65,27 +66,6 @@ describe( 'genericRedirectProcessor', () => {
 			tef_bank: undefined,
 			zip: '10001',
 		},
-	};
-
-	const basicExpectedDomainDetails = {
-		address1: undefined,
-		address2: undefined,
-		alternate_email: undefined,
-		city: undefined,
-		country_code: 'US',
-		email: undefined,
-		extra: {
-			ca: null,
-			fr: null,
-			uk: null,
-		},
-		fax: undefined,
-		first_name: undefined,
-		last_name: undefined,
-		organization: undefined,
-		phone: undefined,
-		postal_code: '10001',
-		state: undefined,
 	};
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
@@ -324,10 +304,7 @@ describe( 'genericRedirectProcessor', () => {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
+				contactDetails: contactDetailsForDomain,
 				responseCart: { ...cart, products: [ domainProduct ] },
 				includeDomainDetails: true,
 			} )

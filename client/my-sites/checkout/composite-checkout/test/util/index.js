@@ -718,3 +718,52 @@ export const mockTransactionsRedirectResponse = () => [
 ];
 
 export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
+
+function getManagedValueFromString( value ) {
+	return { isTouched: true, value, errors: [], isRequired: true };
+}
+
+function getStringFromManagedValue( managedValue ) {
+	return managedValue.value;
+}
+
+export const countryCode = getManagedValueFromString( 'US' );
+export const postalCode = getManagedValueFromString( '10001' );
+export const address1 = getManagedValueFromString( '100 Main Street' );
+export const city = getManagedValueFromString( 'Rando city' );
+export const state = getManagedValueFromString( 'NY' );
+export const firstName = getManagedValueFromString( 'Human' );
+export const lastName = getManagedValueFromString( 'Person' );
+export const phone = getManagedValueFromString( '+1.5555555555' );
+
+export const contactDetailsForDomain = {
+	countryCode,
+	postalCode,
+	address1,
+	city,
+	state,
+	firstName,
+	lastName,
+	phone,
+};
+
+export const basicExpectedDomainDetails = {
+	address_1: getStringFromManagedValue( address1 ),
+	address_2: undefined,
+	alternate_email: undefined,
+	city: getStringFromManagedValue( city ),
+	country_code: getStringFromManagedValue( countryCode ),
+	email: undefined,
+	extra: {
+		ca: null,
+		fr: null,
+		uk: null,
+	},
+	fax: undefined,
+	first_name: getStringFromManagedValue( firstName ),
+	last_name: getStringFromManagedValue( lastName ),
+	organization: undefined,
+	phone: getStringFromManagedValue( phone ),
+	postal_code: getStringFromManagedValue( postalCode ),
+	state: getStringFromManagedValue( state ),
+};
