@@ -1,5 +1,5 @@
 {
-	"calypsoBaseURL": "https://wordpress.com",
+	"calypsoBaseURL": "https://container-vigorous-curie.calypso.live",
 	"explicitWaitMS": 20000,
 	"emailWaitMS": 60000,
 	"mochaTimeoutMS": 160000,

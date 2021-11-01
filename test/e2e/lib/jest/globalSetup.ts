@@ -20,7 +20,9 @@ export default async (): Promise< void > => {
 	for await ( const user of userList ) {
 		const [ username, password ] = config.get( 'testAccounts' )[ user ];
 
-		const browserContext = await browser.newContext();
+		const browserContext = await browser.newContext( {
+			userAgent: `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ browser.version() } Safari/537.36`,
+		} );
 		const page = await browserContext.newPage();
 
 		await page.goto( `${ calypsoBaseURL }/log-in` );
@@ -30,7 +32,7 @@ export default async (): Promise< void > => {
 
 		// Wait for the login to complete.
 		await Promise.all( [
-			page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+			page.waitForURL( `${ calypsoBaseURL }/home/**`, { waitUntil: 'load' } ),
 			page.click( 'button:has-text("Log In")' ),
 		] );
 
