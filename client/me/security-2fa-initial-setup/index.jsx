@@ -17,7 +17,7 @@ class Security2faInitialSetup extends Component {
 
 	static propTypes = {
 		onSuccess: PropTypes.func.isRequired,
-		currentAuthMethod: PropTypes.func.isRequired,
+		currentAuthMethod: PropTypes.string.isRequired,
 	};
 
 	state = {
