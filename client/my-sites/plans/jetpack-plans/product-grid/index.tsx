@@ -1,4 +1,6 @@
 import {
+	PLAN_JETPACK_FREE,
+	JETPACK_CRM_FREE_PRODUCTS,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
@@ -123,6 +125,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, currentPlanSlug, translate ] );
 
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
+	const {
+		shouldWrap: shouldWrapOtherItems,
+		gridRef: otherItemsGridRef,
+	} = useWrapGridForSmallScreens( 3 );
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
 	);
@@ -173,6 +179,56 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		],
 	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
+	const getJetpackFreeCard = () => {
+		if ( ! showFreeCard ) {
+			return undefined;
+		}
+
+		return (
+			<div
+				className={ classNames( 'product-grid__free', {
+					[ 'horizontal-layout' ]: ! shouldWrapOtherItems,
+				} ) }
+			>
+				<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+			</div>
+		);
+	};
+
+	const getOtherItemsProductCard = ( product: SelectorProduct ) => {
+		if ( PLAN_JETPACK_FREE === product.productSlug ) {
+			return showFreeCard ? (
+				<li key={ product.productSlug }>{ getJetpackFreeCard() }</li>
+			) : undefined;
+		}
+
+		if ( JETPACK_CRM_FREE_PRODUCTS.includes( product.productSlug ) ) {
+			return (
+				<li key={ product.productSlug }>
+					<JetpackCrmFreeCard
+						fullWidth={ ! showFreeCard }
+						siteId={ siteId }
+						duration={ duration }
+					/>
+				</li>
+			);
+		}
+
+		return (
+			<li key={ product.iconSlug }>
+				<ProductCard
+					item={ product }
+					onClick={ onSelectProduct }
+					siteId={ siteId }
+					currencyCode={ currencyCode }
+					selectedTerm={ duration }
+					scrollCardIntoView={ scrollCardIntoView }
+					createButtonURL={ createButtonURL }
+				/>
+			</li>
+		);
+	};
+
 	return (
 		<>
 			{ planRecommendation && (
@@ -220,29 +276,53 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</div>
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
-				<ul className="product-grid__product-grid">
-					{ otherItems.map( ( product ) => (
-						<li key={ product.iconSlug }>
-							<ProductCard
-								item={ product }
-								onClick={ onSelectProduct }
+				{ getForCurrentCROIteration( {
+					[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
+						<>
+							<ul className="product-grid__product-grid" ref={ otherItemsGridRef }>
+								{ otherItems
+									.slice( 0, shouldWrapOtherItems ? undefined : 3 )
+									.map( getOtherItemsProductCard ) }
+							</ul>
+							{ ! shouldWrapOtherItems && (
+								<>
+									<ul className="product-grid__product-grid second-grid">
+										{ otherItems.slice( 3, 5 ).map( getOtherItemsProductCard ) }
+									</ul>
+									{ getJetpackFreeCard() }
+								</>
+							) }
+						</>
+					),
+				} ) ?? (
+					<>
+						<ul className="product-grid__product-grid">
+							{ otherItems.map( ( product ) => (
+								<li key={ product.iconSlug }>
+									<ProductCard
+										item={ product }
+										onClick={ onSelectProduct }
+										siteId={ siteId }
+										currencyCode={ currencyCode }
+										selectedTerm={ duration }
+										scrollCardIntoView={ scrollCardIntoView }
+										createButtonURL={ createButtonURL }
+									/>
+								</li>
+							) ) }
+						</ul>
+						<div className="product-grid__free add-top-margin">
+							{ showFreeCard && (
+								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+							) }
+							<JetpackCrmFreeCard
+								fullWidth={ ! showFreeCard }
 								siteId={ siteId }
-								currencyCode={ currencyCode }
-								selectedTerm={ duration }
-								scrollCardIntoView={ scrollCardIntoView }
-								createButtonURL={ createButtonURL }
+								duration={ duration }
 							/>
-						</li>
-					) ) }
-				</ul>
-				<div className="product-grid__free">
-					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
-					<JetpackCrmFreeCard
-						fullWidth={ ! showFreeCard }
-						siteId={ siteId }
-						duration={ duration }
-					/>
-				</div>
+						</div>
+					</>
+				) }
 			</ProductGridSection>
 			<StoreFooter />
 			<FootnotesList />
