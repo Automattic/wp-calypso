@@ -16,6 +16,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
+import DIFMThemes from '../difm-design-picker/themes';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
@@ -82,9 +83,6 @@ class DesignPickerStep extends Component {
 		// the theme API before we can do this.
 		const allThemes = this.props.themes
 			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-			.filter(
-				( { id } ) => ! ( this.props.excludeBlankCanvas && isBlankCanvasDesign( { slug: id } ) )
-			)
 			.map( ( { id, name, taxonomies } ) => ( {
 				categories: taxonomies?.theme_subject ?? [
 					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
@@ -256,9 +254,11 @@ class DesignPickerStep extends Component {
 
 export default compose(
 	connect(
-		( state ) => {
+		( state, ownProps ) => {
 			return {
-				themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
+				themes: ownProps.useDIFMThemes
+					? DIFMThemes
+					: getRecommendedThemes( state, 'auto-loading-homepage' ),
 				userLoggedIn: isUserLoggedIn( state ),
 			};
 		},
