@@ -27,7 +27,7 @@ class Security2faProgress extends Component {
 	};
 
 	render() {
-		const doSMSFlow = this.props.doSMSFlow ?? false;
+		const { doSMSFlow } = this.props;
 		return (
 			<div className="security-2fa-progress__container">
 				<div className="security-2fa-progress__inner-container">
