@@ -61,6 +61,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 		return (
 			<Free
 				showStartingAt={ showStartingAt }
+				hideSavingLabel={ hideSavingLabel }
 				belowPriceText={ belowPriceText }
 			/>
 		);
