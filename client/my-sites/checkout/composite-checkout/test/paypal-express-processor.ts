@@ -5,17 +5,16 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import wp from 'calypso/lib/wp';
 import payPalExpressProcessor from '../lib/paypal-express-processor';
-import {
-	processorOptions,
-	countryCode,
-	postalCode,
-	basicExpectedDomainDetails,
-	contactDetailsForDomain,
-} from './util';
 
 jest.mock( 'calypso/lib/wp' );
 
 describe( 'payPalExpressProcessor', () => {
+	const stripeConfiguration = {
+		processor_id: 'IE',
+		js_url: 'https://stripe-js-url',
+		public_key: 'stripe-public-key',
+		setup_intent_id: null,
+	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -24,9 +23,21 @@ describe( 'payPalExpressProcessor', () => {
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
-		...processorOptions,
+		includeDomainDetails: false,
+		includeGSuiteDetails: false,
+		createUserAndSiteBeforeTransaction: false,
+		stripeConfiguration,
+		recordEvent: () => null,
+		reduxDispatch: () => null,
 		responseCart: cart,
+		getThankYouUrl: () => '',
+		siteSlug: undefined,
+		siteId: undefined,
+		contactDetails: undefined,
 	};
+
+	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
+	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
 
 	const basicExpectedRequest = {
 		cancelUrl: 'https://example.com/',
@@ -48,6 +59,27 @@ describe( 'payPalExpressProcessor', () => {
 		domainDetails: null,
 		postalCode: '',
 		successUrl: 'https://example.com',
+	};
+
+	const basicExpectedDomainDetails = {
+		address1: undefined,
+		address2: undefined,
+		alternateEmail: undefined,
+		city: undefined,
+		countryCode: 'US',
+		email: undefined,
+		extra: {
+			ca: null,
+			fr: null,
+			uk: null,
+		},
+		fax: undefined,
+		firstName: undefined,
+		lastName: undefined,
+		organization: undefined,
+		phone: undefined,
+		postalCode: '10001',
+		state: undefined,
 	};
 
 	const transactionsEndpoint = jest.fn();
@@ -159,7 +191,10 @@ describe( 'payPalExpressProcessor', () => {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
-				contactDetails: contactDetailsForDomain,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
 				responseCart: { ...cart, products: [ domainProduct ] },
 				includeDomainDetails: true,
 			} )
