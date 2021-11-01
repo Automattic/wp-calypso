@@ -166,8 +166,9 @@ class Site extends Component {
 							</span>
 						) }
 						{ site.options && site.options.is_difm_lite_in_progress && (
-							// TODO: Change name
-							<span className="site__badge site__badge-domain-only">{ translate( 'DIFM' ) }</span>
+							<span className="site__badge site__badge-domain-only">
+								{ translate( 'Do It For Me' ) }
+							</span>
 						) }
 						{ shouldShowPublicComingSoonSiteBadge && (
 							<span className="site__badge site__badge-coming-soon">
