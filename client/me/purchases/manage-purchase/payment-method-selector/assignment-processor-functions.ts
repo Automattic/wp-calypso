@@ -76,7 +76,7 @@ export async function assignNewCardProcessor(
 
 		const formFieldValues = {
 			country: countryCode,
-			postal_code: postalCode,
+			postal_code: postalCode ?? '',
 			name,
 		};
 		const tokenResponse = await createStripeSetupIntentAsync(
@@ -146,13 +146,13 @@ async function createStripeSetupIntentAsync(
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
 	const newCardData = data as NewCardSubmitData;
-	return !! ( newCardData.name && newCardData.countryCode && newCardData.postalCode );
+	return !! ( newCardData.name && newCardData.countryCode );
 }
 
 interface NewCardSubmitData {
 	name: string;
 	countryCode: string;
-	postalCode: string;
+	postalCode?: string;
 	useForAllSubscriptions: boolean;
 }
 
