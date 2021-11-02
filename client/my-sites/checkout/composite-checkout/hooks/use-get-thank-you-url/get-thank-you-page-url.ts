@@ -1,4 +1,5 @@
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -149,9 +150,9 @@ export default function getThankYouPageUrl( {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		const thankYouUrlSiteLess = `/checkout/jetpack/thank-you/no-site/${
-			productSlug ?? 'no_product'
-		}`;
+		const thankYouUrl = isEnabled( 'jetpack/user-licensing' )
+			? `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug ?? 'no_product' }`
+			: `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
 
 		const isValidReceiptId =
 			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
@@ -160,7 +161,7 @@ export default function getThankYouPageUrl( {
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
-			thankYouUrlSiteLess
+			thankYouUrl
 		);
 	}
 

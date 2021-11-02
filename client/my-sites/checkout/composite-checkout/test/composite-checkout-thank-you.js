@@ -4,6 +4,7 @@
  * @jest-environment jsdom
  */
 
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -26,10 +27,11 @@ jest.mock( '@automattic/calypso-products', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => {
-	const mock = () => 'development';
+	const mock = jest.fn();
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
+const configMock = ( values ) => ( key ) => values[ key ];
 
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
@@ -40,6 +42,7 @@ describe( 'getThankYouPageUrl', () => {
 	beforeEach( () => {
 		isJetpackCloud.mockImplementation( () => false );
 		redirectCheckoutToWpAdmin.mockImplementation( () => false );
+		config.isEnabled.mockImplementation( configMock( { 'jetpack/user-licensing': false } ) );
 	} );
 
 	it( 'redirects to the root page when no site is set', () => {
@@ -1271,6 +1274,26 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=%3AreceiptId'
+			);
+		} );
+
+		it( 'redirects to the "user-licensing" thank-you page when enabled in Calypso config', () => {
+			config.isEnabled.mockImplementation( configMock( { 'jetpack/user-licensing': true } ) );
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
 			);
 		} );
 

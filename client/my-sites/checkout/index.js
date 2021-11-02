@@ -8,6 +8,8 @@ import {
 	checkoutPending,
 	checkoutSiteless,
 	checkoutThankYou,
+	licensingThankYouManualActivation,
+	licensingThankYouAutoActivation,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
@@ -40,6 +42,20 @@ export default function () {
 			'/checkout/jetpack/thank-you/no-site/:product',
 			noSite,
 			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
+			noSite,
+			licensingThankYouAutoActivation,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
+			noSite,
+			licensingThankYouManualActivation,
 			makeLayout,
 			clientRender
 		);
