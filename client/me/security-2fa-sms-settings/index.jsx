@@ -144,7 +144,7 @@ class Security2faSMSSettings extends Component {
 
 					<p>
 						{ this.props.translate(
-							'We need your Mobile Phone number to send you two-step verification codes when you log in.'
+							'We need your mobile phone number to send you two-step verification codes when you log in.'
 						) }
 					</p>
 

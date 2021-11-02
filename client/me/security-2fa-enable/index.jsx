@@ -189,7 +189,7 @@ class Security2faEnable extends Component {
 			<div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
 					{ this.props.translate(
-						"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
+						"Scan this QR code with the authenticator app on your mobile. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
