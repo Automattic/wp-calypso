@@ -51,7 +51,7 @@ class Security2faInitialSetup extends Component {
 						<FormRadio
 							name="auth_method"
 							value="app-based"
-							defaultChecked={ true }
+							defaultChecked
 							onChange={ this.setAuth }
 						/>
 						<Gridicon icon="phone" />
