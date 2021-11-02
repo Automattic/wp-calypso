@@ -140,6 +140,7 @@ class Security2faEnable extends Component {
 		const args = {
 			code: this.state.verificationCode,
 			action: 'enable-two-step',
+			returnBackupCodes: true,
 		};
 
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
@@ -147,7 +148,6 @@ class Security2faEnable extends Component {
 
 	onValidationResponseReceived = ( error, data ) => {
 		this.setState( { submittingCode: false } );
-
 		if ( error ) {
 			this.setState( {
 				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
@@ -159,7 +159,7 @@ class Security2faEnable extends Component {
 				lastErrorType: 'is-error',
 			} );
 		} else {
-			this.props.onSuccess();
+			this.props.onSuccess( data.backup_codes );
 		}
 	};
 

@@ -17,6 +17,7 @@ class Security2faSetup extends Component {
 	state = {
 		step: 'initial-setup',
 		authMethod: 'app-based',
+		backupCodes: [],
 	};
 
 	onCancelSetup = ( event ) => {
@@ -28,8 +29,8 @@ class Security2faSetup extends Component {
 		this.setState( { step: authMethod, authMethod } );
 	};
 
-	onSetupSuccess = () => {
-		this.setState( { step: 'backup-codes' } );
+	onSetupSuccess = ( backupCodes ) => {
+		this.setState( { step: 'backup-codes', backupCodes } );
 	};
 
 	onFinished = () => {
@@ -83,7 +84,11 @@ class Security2faSetup extends Component {
 				) : null }
 
 				{ 'backup-codes' === this.state.step ? (
-					<Security2faSetupBackupCodes isSmsFlow={ isSmsFlow } onFinished={ this.onFinished } />
+					<Security2faSetupBackupCodes
+						backupCodes={ this.state.backupCodes }
+						isSmsFlow={ isSmsFlow }
+						onFinished={ this.onFinished }
+					/>
 				) : null }
 			</div>
 		);

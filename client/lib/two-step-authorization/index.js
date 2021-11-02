@@ -200,8 +200,8 @@ TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
 /*
  * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
  */
-TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
-	wpcom.me().backupCodes( ( error, data ) => {
+TwoStepAuthorization.prototype.backupCodes = function ( userPassword, callback ) {
+	wpcom.me().backupCodes( userPassword, ( error, data ) => {
 		if ( error ) {
 			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
 		} else {

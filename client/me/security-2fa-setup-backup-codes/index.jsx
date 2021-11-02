@@ -3,52 +3,26 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faProgress from 'calypso/me/security-2fa-progress';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Security2faSetupBackupCodes extends Component {
-	state = {
-		backupCodes: [],
-		lastError: false,
-	};
-
 	static propTypes = {
 		onFinished: PropTypes.func.isRequired,
+		backupCodes: PropTypes.array.isRequired,
 	};
-
-	componentDidMount() {
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	}
 
 	getClickHandler = ( action ) => {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	};
-
-	onRequestComplete = ( error, data ) => {
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
-			} );
-			return;
-		}
-
-		this.setState( {
-			backupCodes: data.codes,
-		} );
 	};
 
 	onFinished = () => {
 		this.props.onFinished();
 	};
 
-	possiblyRenderError() {
-		if ( ! this.state.lastError ) {
-			return;
-		}
-
+	renderError() {
 		const errorMessage = this.props.translate(
 			'There was an error retrieving back up codes. Please {{supportLink}}contact support{{/supportLink}}',
 			{
@@ -67,13 +41,14 @@ class Security2faSetupBackupCodes extends Component {
 	}
 
 	renderList() {
-		if ( this.state.lastError ) {
-			return null;
+		const { backupCodes } = this.props;
+		if ( ! backupCodes || backupCodes.length === 0 ) {
+			return this.renderError();
 		}
 
 		return (
 			<Security2faBackupCodesList
-				backupCodes={ this.state.backupCodes }
+				backupCodes={ backupCodes }
 				onNextStep={ this.onFinished }
 				showList
 			/>
@@ -92,7 +67,6 @@ class Security2faSetupBackupCodes extends Component {
 					) }
 				</p>
 
-				{ this.possiblyRenderError() }
 				{ this.renderList() }
 			</div>
 		);

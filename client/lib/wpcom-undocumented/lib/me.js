@@ -90,10 +90,11 @@ UndocumentedMe.prototype.setPeerReferralLinkEnable = function ( enable, callback
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.backupCodes = function ( callback ) {
+UndocumentedMe.prototype.backupCodes = function ( userPassword, callback ) {
 	const args = {
 		apiVersion: '1.1',
 		path: '/me/two-step/backup-codes/new',
+		userPassword: userPassword,
 	};
 
 	return this.wpcom.req.post( args, callback );

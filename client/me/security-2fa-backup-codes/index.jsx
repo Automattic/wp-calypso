@@ -9,6 +9,7 @@ import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-lis
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import Security2faBackupCodesPasswordPromt from './password-prompt';
 
 import './style.scss';
 
@@ -24,19 +25,31 @@ class Security2faBackupCodes extends Component {
 			showPrompt: ! printed,
 			backupCodes: [],
 			generatingCodes: false,
+			addingPassword: false,
 		};
 	}
 
 	handleGenerateButtonClick = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
 
+		this.setState( { addingPassword: true, showPrompt: false } );
+		return;
+	};
+
+	handleGenerateButton = ( userPassword ) => {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
 			showPrompt: true,
+			addingPassword: false,
 		} );
 
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
+		twoStepAuthorization.backupCodes( userPassword, this.onRequestComplete );
+	};
+
+	toggleBackupCodePassword = ( event ) => {
+		event.preventDefault();
+		this.setState( { addingPassword: ! this.state.addingPassword } );
 	};
 
 	onRequestComplete = ( error, data ) => {
@@ -96,6 +109,15 @@ class Security2faBackupCodes extends Component {
 		);
 	}
 
+	renderPasswordPrompt() {
+		return (
+			<Security2faBackupCodesPasswordPromt
+				onCancel={ this.toggleBackupCodePassword }
+				onSubmit={ this.handleGenerateButton }
+			/>
+		);
+	}
+
 	renderList() {
 		return (
 			<Security2faBackupCodesList
@@ -135,9 +157,11 @@ class Security2faBackupCodes extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					{ this.state.generatingCodes || this.state.backupCodes.length
-						? this.renderList()
-						: this.renderPrompt() }
+					{ this.state.addingPassword && this.renderPasswordPrompt() }
+					{ ! this.state.addingPassword &&
+						( this.state.generatingCodes || this.state.backupCodes.length
+							? this.renderList()
+							: this.renderPrompt() ) }
 				</Card>
 			</div>
 		);
