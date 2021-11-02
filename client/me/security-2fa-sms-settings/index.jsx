@@ -174,7 +174,7 @@ class Security2faSMSSettings extends Component {
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
-							isPrimary={ true }
+							isPrimary
 							onClick={ ( event ) => {
 								gaRecordEvent( 'Me', 'Clicked On 2fa Use SMS Button' );
 								this.onVerifyBySMS( event );
