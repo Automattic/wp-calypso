@@ -1,12 +1,20 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
 
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
+
+	const onVideoPlayClick = ( video ) => {
+		recordTracksEvent( 'calypso_courses_play_click', {
+			course,
+			video,
+		} );
+	};
 
 	return (
 		<div className="videos-ui">
@@ -77,7 +85,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
 										</div>
-										<Button>
+										<Button onClick={ () => onVideoPlayClick( data[ 0 ] ) }>
 											<Gridicon icon="play" />
 											<span>{ translate( 'Play video' ) }</span>
 										</Button>
