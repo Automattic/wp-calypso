@@ -173,12 +173,12 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		if (
-			! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) &&
+			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
 			! includes( EVENT_NAME_EXCEPTIONS, eventName )
 		) {
 			// eslint-disable-next-line no-console
 			console.error(
-				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/ and is ' +
+				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z0-9]+){2,}$/ and is ' +
 					'not a listed exception. Please use a compliant event name.',
 				eventName
 			);
