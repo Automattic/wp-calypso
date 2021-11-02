@@ -13,33 +13,18 @@ switch ( process.platform ) {
 	case 'darwin':
 		APP_PATH = path.join(
 			__dirname,
-			'../../../',
-			'release',
-			'mac',
-			'WordPress.com.app',
-			'Contents',
-			'MacOS',
-			'WordPress.com'
+			'../../../release/mac/WordPress.com.app/Contents/MacOS/WordPress.com'
 		);
 		break;
 	default:
-		throw 'unsupported platform';
+		throw new Error( 'unsupported platform' );
 }
 
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
 const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const VIDEO_PATH = path.join( __dirname, '../results/video.webm' );
-
-const timestamp = new Date().toJSON().replace( /:/g, '-' );
-const appLogPath = path.resolve( __dirname, '..', 'results', `app-${ timestamp }.log` );
-
-function cleanBaseURL( url ) {
-	if ( url.endsWith( '/' ) ) {
-		return cleanBaseURL( url.replace( /\/$/, '' ) );
-	}
-	return url;
-}
+const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
@@ -51,7 +36,6 @@ describe( 'User Can log in', () => {
 	beforeAll( async () => {
 		await mkdir( path.dirname( CONSOLE_PATH ), { recursive: true } );
 		consoleStream = await createWriteStream( CONSOLE_PATH );
-		const parentEnv = process.env;
 
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
@@ -63,30 +47,25 @@ describe( 'User Can log in', () => {
 			recordHar: {
 				path: HAR_PATH,
 			},
-			// FIXME: For some reason env variables are not visible from the Electron application. Strange. 🤔
 			env: {
-				WP_DEBUG_LOG: `${ appLogPath }`, // This will override logging path from the Electron main process.
+				WP_DEBUG_LOG, // This will override logging path from the Electron main process.
 				// Ensure other CI-specific overrides (such as disabling the auto-updater)
 				DEBUG: true,
 				CI: true,
-				...parentEnv,
-				...( process.env.WP_DESKTOP_BASE_URL !== undefined && {
-					WP_DESKTOP_BASE_URL: cleanBaseURL( process.env.WP_DESKTOP_BASE_URL ),
-				} ),
+				...process.env,
 			},
 		} );
 		electronApp.context().tracing.start( { screenshots: true } );
 
 		mainWindow = await electronApp.firstWindow();
-		await mainWindow.waitForLoadState();
-		// eslint-disable-next-line no-unused-vars
-		for ( const [ _, frame ] of mainWindow.frames().entries() ) {
-			// Wait for all "frames" to load before proceeding with the tests
-			await frame.waitForLoadState();
-		}
 		mainWindow.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
+
+		await mainWindow.waitForLoadState();
+		for ( const [ , frame ] of mainWindow.frames().entries() ) {
+			await frame.waitForLoadState();
+		}
 
 		console.log( 'Main Window:' );
 		console.log( 'Title: ', await mainWindow.title() );
