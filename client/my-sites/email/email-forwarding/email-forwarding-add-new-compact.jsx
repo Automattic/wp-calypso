@@ -30,13 +30,6 @@ class EmailForwardingAddNewCompact extends Component {
 		return this.props.fields;
 	}
 
-	getInitialFormState() {
-		return {
-			formSubmitting: false,
-			fields: this.props.fields,
-		};
-	}
-
 	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialFields(),
@@ -48,33 +41,6 @@ class EmailForwardingAddNewCompact extends Component {
 
 		this.setFormState( this.formStateController.getInitialState() );
 	}
-
-	addNewEmailForwardClick = ( event ) => {
-		event.preventDefault();
-
-		if ( this.state.formSubmitting ) {
-			return;
-		}
-
-		this.setState( { formSubmitting: true } );
-
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			if ( hasErrors ) {
-				this.setState( { formSubmitting: false } );
-				return;
-			}
-
-			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
-
-			this.props.addNewEmailForwardWithAnalytics(
-				this.props.selectedDomainName,
-				mailbox,
-				destination
-			);
-			this.formStateController.resetFields( this.getInitialFields() );
-			this.setState( { formSubmitting: false, showForm: true } );
-		} );
-	};
 
 	setFormState = ( fields ) => {
 		this.setState( { fields } );

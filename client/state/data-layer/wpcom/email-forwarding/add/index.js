@@ -1,7 +1,5 @@
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { emailManagement } from 'calypso/my-sites/email/paths';
 import { EMAIL_FORWARDING_ADD_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -64,7 +62,7 @@ export const addEmailForwardFailure = ( action, error ) => {
 };
 
 export const addEmailForwardSuccess = ( action, response ) => {
-	const { domainName, mailbox, destination, siteSlug } = action;
+	const { domainName, mailbox, destination, onSuccessRedirectTarget } = action;
 
 	if ( response && response.created ) {
 		let successMessage = translate( '%(email)s has been successfully added!', {
@@ -87,9 +85,7 @@ export const addEmailForwardSuccess = ( action, response ) => {
 			);
 		}
 
-		if ( siteSlug ) {
-			page( emailManagement( siteSlug, domainName ) );
-		}
+		onSuccessRedirectTarget();
 
 		return [
 			successNotice( successMessage, {
