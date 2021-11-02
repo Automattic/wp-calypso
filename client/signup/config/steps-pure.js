@@ -759,7 +759,6 @@ export function generateSteps( {
 			stepName: 'capture',
 		},
 		ready: {
-			dependencies: [ 'urlData' ],
 			stepName: 'ready',
 		},
 	};
