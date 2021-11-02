@@ -1,5 +1,5 @@
-import { translate } from 'i18n-calypso';
-import { createElement } from 'react';
+import { translate, useTranslate } from 'i18n-calypso';
+import { createElement, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -288,85 +288,53 @@ export const getJetpackProductsDescriptions = () => {
 	};
 };
 
-export const getJetpackStorageAmountDisplays = () => ( {
-	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate(
-		'%(numberOfGigabytes)dGB',
-		'%(numberOfGigabytes)dGB',
-		{
-			comment:
-				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 10,
-			args: { numberOfGigabytes: 10 },
-		}
-	),
-	[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate(
-		'%(numberOfGigabytes)dGB',
-		'%(numberOfGigabytes)dGB',
-		{
-			comment:
-				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 10,
-			args: { numberOfGigabytes: 10 },
-		}
-	),
-	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate(
-		'%(numberOfTerabytes)dTB',
-		'%(numberOfTerabytes)dTB',
-		{
-			comment:
-				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
-			count: 1,
-			args: { numberOfTerabytes: 1 },
-		}
-	),
-	[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate(
-		'%(numberOfTerabytes)dTB',
-		'%(numberOfTerabytes)dTB',
-		{
-			comment:
-				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
-			count: 1,
-			args: { numberOfTerabytes: 1 },
-		}
-	),
-	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: translate(
-		'%(numberOfGigabytes)dGB',
-		'%(numberOfGigabytes)dGB',
-		{
-			comment:
-				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 10,
-			args: { numberOfGigabytes: 10 },
-		}
-	),
-	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: translate(
-		'%(numberOfGigabytes)dGB',
-		'%(numberOfGigabytes)dGB',
-		{
-			comment:
-				'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
-			count: 10,
-			args: { numberOfGigabytes: 10 },
-		}
-	),
-	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: translate(
-		'%(numberOfTerabytes)dTB',
-		'%(numberOfTerabytes)dTB',
-		{
-			comment:
-				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
-			count: 1,
-			args: { numberOfTerabytes: 1 },
-		}
-	),
-	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: translate(
-		'%(numberOfTerabytes)dTB',
-		'%(numberOfTerabytes)dTB',
-		{
-			comment:
-				'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
-			count: 1,
-			args: { numberOfTerabytes: 1 },
-		}
-	),
-} );
+export const useJetpack10GbStorageAmountText = () => {
+	const _translate = useTranslate();
+
+	return useMemo(
+		() =>
+			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+				comment:
+					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+				count: 10,
+				args: { numberOfGigabytes: 10 },
+			} ),
+		[ _translate ]
+	);
+};
+
+export const useJetpack1TbStorageAmountText = () => {
+	const _translate = useTranslate();
+
+	return useMemo(
+		() =>
+			_translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+				comment:
+					'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+				count: 1,
+				args: { numberOfTerabytes: 1 },
+			} ),
+		[ _translate ]
+	);
+};
+
+export const useJetpackStorageAmountTextByProductSlug = ( productSlug ) => {
+	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
+	const ONE_TERABYTE = useJetpack1TbStorageAmountText();
+
+	return useMemo(
+		() =>
+			( {
+				[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: TEN_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: TEN_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: ONE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: ONE_TERABYTE,
+
+				[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: TEN_GIGABYTES,
+				[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: TEN_GIGABYTES,
+				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
+				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
+			}[ productSlug ] ),
+		[ TEN_GIGABYTES, ONE_TERABYTE, productSlug ]
+	);
+};

@@ -1,7 +1,4 @@
-import {
-	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-	getJetpackStorageAmountDisplays,
-} from '@automattic/calypso-products';
+import { useJetpack1TbStorageAmountText } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -23,7 +20,7 @@ const useStatusText = ( usageLevel: StorageUsageLevels ) => {
 			case StorageUsageLevels.Warning:
 				return translate( 'You will reach your storage limit soon.' );
 			case StorageUsageLevels.Critical:
-				return translate( 'You’re running out of storage space.' );
+				return translate( "You're running out of storage space." );
 			case StorageUsageLevels.Full:
 				return translate( 'You ran out of storage space.' );
 		}
@@ -68,12 +65,7 @@ export const BackupStorageSpaceUpsell: React.FC< OwnProps > = ( {
 
 	const statusText = preventWidows( useStatusText( usageLevel ) );
 
-	// For now, Backup and Security both have the same two tiers,
-	// so it's okay to statically reference one of them to retrieve
-	// our upgraded storage amount.
-	const upgradeStorageAmount = getJetpackStorageAmountDisplays()[
-		PRODUCT_JETPACK_BACKUP_T2_YEARLY
-	];
+	const upgradeStorageAmount = useJetpack1TbStorageAmountText();
 	const actionText = preventWidows(
 		translate( 'Upgrade your backup storage to %(upgradeStorageAmount)s', {
 			args: { upgradeStorageAmount },

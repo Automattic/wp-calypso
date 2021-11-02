@@ -1,7 +1,6 @@
 import {
-	getJetpackStorageAmountDisplays,
-	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	useJetpack10GbStorageAmountText,
+	useJetpack1TbStorageAmountText,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -15,7 +14,7 @@ export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
 
 	// Security and Backup share the same per-tier storage limits
-	const storageAmount = getJetpackStorageAmountDisplays()[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ];
+	const storageAmount = useJetpack10GbStorageAmountText();
 
 	return useCallback(
 		( slug: string ): SelectorProduct =>
@@ -56,7 +55,7 @@ export const useGetTier2UpgradeProduct = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
 
 	// Security and Backup share the same per-tier storage limits
-	const storageAmount = getJetpackStorageAmountDisplays()[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ];
+	const storageAmount = useJetpack1TbStorageAmountText();
 
 	return useCallback(
 		( slug: string ): SelectorProduct =>
