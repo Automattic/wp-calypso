@@ -120,29 +120,10 @@
 
 				.videos-ui__active-video-content {
 					margin-top: 26px;
+				}
 
-					.videos-ui__play-button {
-						display: block;
-						width: 100%;
-						background: #263135;
-						color: rgba( 255, 255, 255, 0.5 );
-						text-align: center;
-						height: 40px;
-						line-height: 40px;
-						/* stylelint-disable-next-line scales/radii */
-						border-radius: 4px;
-						cursor: pointer;
-
-						svg {
-							margin-right: 10px;
-							vertical-align: middle;
-						}
-
-						&:hover {
-							background: rgba( 255, 255, 255, 0.5 );
-							color: #263135;
-						}
-					}
+				button {
+					width: 100%;
 				}
 			}
 		}
