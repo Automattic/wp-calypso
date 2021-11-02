@@ -111,9 +111,7 @@ class Security2faBackupCodes extends Component {
 			<div>
 				<p>
 					{ this.props.translate(
-						'Backup codes let you access your account if your phone is ' +
-							'lost, stolen, or if you run it through the washing ' +
-							"machine and the bag of rice trick doesn't work."
+						'Backup codes let you access your account if your phone is lost or stolen, or even just accidentally run through the washing machine!'
 					) }
 				</p>
 
