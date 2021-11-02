@@ -5,17 +5,17 @@ import * as SlackNotifier from '../slack-notifier';
 
 export default class PluginsBrowserPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.plugins-browser__main-header' ) );
+		super( driver, By.css( '.plugins-browser__header' ) );
 	}
 
 	async searchForPlugin( searchTerm ) {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.plugins-browser__main-header .search-component__icon-navigation' )
+			By.css( '.plugins-browser__header .search-component__icon-navigation' )
 		);
 		return await driverHelper.setWhenSettable(
 			this.driver,
-			By.css( '.plugins-browser__main-header input[type="search"]' ),
+			By.css( '.plugins-browser__header input[type="search"]' ),
 			searchTerm,
 			{ pauseBetweenKeysMS: 100 }
 		);

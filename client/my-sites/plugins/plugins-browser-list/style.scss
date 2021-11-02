@@ -1,44 +1,52 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
-	background: var( --color-surface );
-	box-shadow: 0 1px 2px var( --color-neutral-0 );
 
 	.feature-example & {
 		margin: 0;
 	}
+
+	.plugins-browser-list__header {
+		overflow: hidden; // lazy clearfix
+	}
+
+	.section-header {
+		background: none;
+		box-shadow: none;
+		padding: 24px 0;
+
+		.section-header__label {
+			font-size: $font-title-small;
+			line-height: 28px;
+			/* stylelint-disable-next-line scales/font-weights */
+			font-weight: 500;
+			color: var( --studio-gray-80 );
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding: 0 16px;
+	}
 }
 
 .plugins-browser-list__header {
-	background: var( --color-neutral-0 );
-	border-bottom: 1px solid var( --color-neutral-0 );
-	overflow: hidden; // lazy clearfix
-}
+	color: var( --color-gray-90 );
+	padding-top: 34px;
+	padding-bottom: 30px;
 
-.button.plugins-browser-list__select-all,
-.plugins-browser-list__title {
-	display: inline-block;
-	padding: 5px 0;
-	color: var( --color-neutral-70 );
-	font-size: $font-body-extra-small;
-	line-height: 1.5;
-
-	&.is-expanded {
-		padding-left: 24px;
-		padding-right: 24px;
+	.plugins-browser-list__subtitle {
+		font-size: $font-body-small;
 	}
-	.gridicon {
-		float: right;
-		top: 2px;
-		margin-left: 3px;
-	}
-}
-
-.button.plugins-browser-list__select-all {
-	float: right;
 }
 
 .plugins-browser-list__elements {
 	display: flex;
 	flex-wrap: wrap;
+	justify-content: space-between;
 	padding: 0;
+	box-shadow: none;
+	background: none;
+
+	&::after {
+		display: none;
+	}
 }

@@ -22,6 +22,7 @@ const props = {
 	plugins,
 	listName: 'woocommerce',
 	title: 'woocommerce',
+	subtitle: '100 plugins',
 	site: {
 		plan: PLAN_FREE,
 	},
@@ -29,9 +30,14 @@ const props = {
 };
 
 describe( 'PluginsBrowserList basic tests', () => {
-	test( 'should render the section header', () => {
+	test( 'should render the section header with title', () => {
 		const comp = shallow( <PluginsBrowserList { ...props } /> );
-		expect( comp.find( 'SectionHeader[label="woocommerce"]' ).length ).toBe( 1 );
+		expect( comp.find( '.plugins-browser-list__title' ).text() ).toBe( 'woocommerce' );
+	} );
+
+	test( 'should render the section header with subtitle', () => {
+		const comp = shallow( <PluginsBrowserList { ...props } /> );
+		expect( comp.find( '.plugins-browser-list__subtitle' ).text() ).toBe( '100 plugins' );
 	} );
 
 	test( 'should render a given number of list items when the size prop is set', () => {

@@ -31,6 +31,7 @@ export default localize( MyPluginsList );
 - `size`: a number, the amount of plugins to be shown
 - `site`: a string containing the slug of the selected site
 - `addPlaceholders`: if present, indicates that there should placeholders inserted after the real components list
+- `extended`: if present, the PluginBrowserElement will contain extended info. Else, it will default to compact
 - `variant`: the component can be used with pagination or infinite scroll. This prop controls how to show placeholders when fetching additional data. Defaults to `Fixed`.
 
   | variant        | behavior                                                                  |
