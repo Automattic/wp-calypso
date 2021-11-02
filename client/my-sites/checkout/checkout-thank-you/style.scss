@@ -833,10 +833,14 @@
 				padding: 76px;
 			}
 		}
-		.jetpack-checkout-siteless-thank-you__card-main,
+		.jetpack-checkout-siteless-thank-you__card-main {
+			max-width: 744px;
+		}
 		.licensing-thank-you-auto-activation__card-main,
 		.licensing-thank-you-manual-activation__card-main {
-			flex: 1 1 648px;
+			@include break-large {
+				flex: 1 1 648px;
+			}
 		}
 
 		.jetpack-checkout-siteless-thank-you__step {
@@ -950,7 +954,6 @@
 		.licensing-thank-you-auto-activation__card-footer,
 		.licensing-thank-you-manual-activation__card-footer {
 			position: relative;
-			flex: 1 1 552px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -958,6 +961,9 @@
 			background-repeat: no-repeat;
 			background-position: top left;
 			background-size: cover;
+			@include break-large {
+				flex: 1 1 552px;
+			}
 			.licensing-thank-you-auto-activation__card-footer-text {
 				position: absolute;
 				width: 100%;
