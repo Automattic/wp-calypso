@@ -26,6 +26,8 @@ const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const VIDEO_PATH = path.join( __dirname, '../results/video.webm' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
+const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
+
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
 
@@ -49,20 +51,36 @@ describe( 'User Can log in', () => {
 			},
 			env: {
 				...process.env,
-				WP_DESKTOP_BASE_URL: process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? undefined,
+				WP_DESKTOP_BASE_URL: BASE_URL,
 				WP_DEBUG_LOG, // This will override logging path from the Electron main process.
 				// Ensure other CI-specific overrides (such as disabling the auto-updater)
 				DEBUG: true,
 				CI: true,
 			},
 		} );
+
+		// Find main window. Playwright has problems identifying the main window when using `firstWindow`, so we
+		// iterate over all windows and find it by URL.
+		for ( const window of await electronApp.windows() ) {
+			const windowUrl = await window.url();
+			if ( windowUrl.startsWith( BASE_URL ) ) {
+				mainWindow = window;
+				break;
+			}
+		}
+		if ( ! mainWindow ) {
+			mainWindow = await electronApp.firstWindow();
+		}
+
+		// Tracing
 		electronApp.context().tracing.start( { screenshots: true } );
 
-		mainWindow = await electronApp.firstWindow();
+		// Capture console
 		mainWindow.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
 		);
 
+		// Wait for everythingm to be loaded before starting
 		await mainWindow.waitForLoadState();
 		for ( const [ , frame ] of mainWindow.frames().entries() ) {
 			await frame.waitForLoadState();
