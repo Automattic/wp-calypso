@@ -197,6 +197,17 @@ class DesignPickerStep extends Component {
 		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
 	}
 
+	skipLabelText() {
+		const { signupDependencies, translate } = this.props;
+
+		if ( signupDependencies?.intent === 'write' ) {
+			return translate( 'Skip and draft first post' );
+		}
+
+		// Fall back to the default skip label used by <StepWrapper>
+		return undefined;
+	}
+
 	render() {
 		const { flowName, stepName, userLoggedIn, isReskinned, isMobile, translate } = this.props;
 		const { selectedDesign } = this.state;
@@ -241,6 +252,7 @@ class DesignPickerStep extends Component {
 				stepContent={ this.renderDesignPicker() }
 				align={ isReskinned ? 'left' : 'center' }
 				skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+				skipLabelText={ this.skipLabelText() }
 			/>
 		);
 	}
