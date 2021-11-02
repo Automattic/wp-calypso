@@ -11,6 +11,7 @@ import { getMonthlyPrice, hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -22,13 +23,10 @@ type GoogleSaleBannerProps = {
 	domains: Array< ResponseDomain >;
 };
 
-const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( {
-	domains,
-}: {
-	domains: Array< ResponseDomain >;
-} ) => {
+const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains } ) => {
 	const translate = useTranslate();
 
+	const canCurrentUserPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentRoute = useSelector( getCurrentRoute );
 	const googleWorkspaceProduct = useSelector( ( state ) =>
@@ -47,7 +45,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( {
 				return false;
 			}
 			if ( ! hasGSuiteSupportedDomain( [ domain ] ) ) {
-				//return false;
+				return false;
 			}
 
 			return true;
@@ -59,6 +57,10 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( {
 	const siteForSale = useSelector( ( state ) =>
 		domainForSale?.blogId ? getSite( state, domainForSale.blogId ) : getSelectedSite( state )
 	);
+
+	if ( ! canCurrentUserPurchaseGSuite ) {
+		return null;
+	}
 
 	if ( 0 === domainsEligibleForGoogleWorkspaceSale.length ) {
 		return null;
