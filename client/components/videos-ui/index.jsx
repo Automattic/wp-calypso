@@ -6,7 +6,7 @@ import './style.scss';
 const VideosUi = () => {
 	const translate = useTranslate();
 
-	const { data: course } = useCourseQuery( 'onboarding', { retry: false } );
+	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 
 	return (
 		<div className="videos-ui">
