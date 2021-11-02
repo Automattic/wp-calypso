@@ -61,7 +61,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( design );
 
 	const defaultTitle = design.title;
-	const blankCanvasTitle = __( 'Start with an empty page', __i18n_text_domain__ );
+	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
 	return (
@@ -90,7 +90,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			>
 				{ isBlankCanvas ? (
 					<div className="design-picker__image-frame-blank-canvas__title">
-						{ __( 'Blank Canvas' ) }
+						{ __( 'Start from scratch', __i18n_text_domain__ ) }
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
