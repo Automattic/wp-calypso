@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep } from '../types';
+import { GoToStep, urlData } from '../types';
 import './style.scss';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -34,18 +34,10 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	const [ showError, setShowError ] = React.useState( false );
 
 	const runProcess = (): void => {
-		analyzeUrl( urlValue ).then( () => {
-			/**
-			 * Temp piece of code
-			 * goToStep is a function for redirecting users to
-			 * the next step depending on the scanning result
-			 *
-			 * It can be:
-			 * - goToStep( 'ready' );
-			 * - goToStep( 'ready', 'not' );
-			 * - goToStep( 'ready', 'preview' );
-			 */
-			goToStep( 'ready', 'preview' );
+		// Analyze the URL and when we receive the urlData, decide where to go next.
+		analyzeUrl( urlValue ).then( ( response: urlData ) => {
+			const stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+			goToStep( 'ready', stepSectionName );
 		} );
 	};
 

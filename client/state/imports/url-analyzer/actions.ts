@@ -12,7 +12,7 @@ import type { AnyAction, Dispatch } from 'redux';
 
 export const analyzeUrl = ( url: string ) => (
 	dispatch: Dispatch< AnyAction >
-): Promise< void > => {
+): Promise< urlData > => {
 	dispatch( {
 		type: URL_ANALYZER_ANALYZE,
 	} );
@@ -26,6 +26,8 @@ export const analyzeUrl = ( url: string ) => (
 				type: URL_ANALYZER_ANALYZE_SUCCESS,
 				payload: response,
 			} );
+
+			return response;
 		} )
 		.catch( ( error: Error ) => {
 			dispatch( {

@@ -33,7 +33,7 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
-	const convertToFrendlyWebsiteName = ( website: string ): string => {
+	const convertToFriendlyWebsiteName = ( website: string ): string => {
 		const { hostname, pathname } = new URL( website );
 		return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
 	};
@@ -51,7 +51,7 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 									'It looks like <strong>%(website)s</strong> is hosted by %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 								),
 								{
-									website: convertToFrendlyWebsiteName( urlData.url ),
+									website: convertToFriendlyWebsiteName( urlData.url ),
 									platform: convertPlatformName( urlData.platform ),
 								}
 							),
