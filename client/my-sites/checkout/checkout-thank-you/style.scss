@@ -981,6 +981,9 @@
 		.licensing-thank-you-auto-activation__dropdown-item-flex-container {
 			display: flex;
 			justify-content: space-between;
+			&.has-seperator {
+				border-top: 1px solid var( --color-neutral-10 );
+			}
 			> span {
 				display: block;
 			}

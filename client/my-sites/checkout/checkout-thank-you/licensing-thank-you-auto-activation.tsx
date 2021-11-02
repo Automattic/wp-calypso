@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
 import { FC, useState, useCallback, useEffect } from 'react';
@@ -189,13 +190,22 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 					>
 						{ selectDropdownItems.map( ( option ) => (
 							<SelectDropdown.Item { ...option.props }>
-								<div className="licensing-thank-you-auto-activation__dropdown-item-flex-container">
+								<div
+									className={ classnames(
+										'licensing-thank-you-auto-activation__dropdown-item-flex-container',
+										{
+											'has-seperator': option.value === 'activate-license-manually',
+										}
+									) }
+								>
 									<span className="licensing-thank-you-auto-activation__dropdown-item-text">
 										{ option.label }
 									</span>
-									<span>
-										<Gridicon icon="link" size={ 18 } />
-									</span>
+									{ option.value !== 'activate-license-manually' && (
+										<span>
+											<Gridicon icon="link" size={ 18 } />
+										</span>
+									) }
 								</div>
 							</SelectDropdown.Item>
 						) ) }
