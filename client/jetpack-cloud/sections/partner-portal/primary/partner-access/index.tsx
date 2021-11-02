@@ -37,7 +37,7 @@ export default function PartnerAccess(): ReactElement | null {
 		<Main className="partner-access">
 			<QueryJetpackPartnerPortalPartner />
 
-			<CardHeading size={ 36 }>{ translate( 'Partner Portal' ) }</CardHeading>
+			<CardHeading size={ 36 }>{ translate( 'Licensing' ) }</CardHeading>
 
 			{ isFetching && <Spinner /> }
 
