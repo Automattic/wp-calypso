@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
 type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
@@ -42,8 +43,9 @@ const selectors = {
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 
 	// Block editor sidebar
-	openSidebarButton: 'button[aria-label="Block editor sidebar"]',
-	dashboardLink: 'a[aria-description="Returns to the dashboard"]',
+	desktopEditorSidebarButton: 'button[aria-label="Block editor sidebar"]:visible',
+	desktopDashboardLink: 'a[aria-description="Returns to the dashboard"]:visible',
+	mobileDashboardLink: 'a[aria-current="page"]:visible',
 
 	// Preview
 	previewMenuItem: ( target: PreviewOptions ) => `button[role="menuitem"] span:text("${ target }")`,
@@ -355,18 +357,40 @@ export class GutenbergEditorPage {
 
 	/**
 	 * Opens the Nav Sidebar on the left hand side.
+	 *
+	 * On desktop sized viewport, this will open the editor block sidebar listing recently edited posts and drafts.
+	 *
+	 * On mobile sized viewport, this method will pass through.
+	 *
 	 */
 	async openNavSidebar(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		await frame.click( selectors.openSidebarButton );
+		if ( getTargetDeviceName() === 'desktop' ) {
+			await frame.click( selectors.desktopEditorSidebarButton );
+		}
 	}
 
 	/**
-	 * Clicks on the Dashboard link within the Block Editor Sidebar.
+	 * Returns to the Posts > All Posts view in Calypso.
+	 *
+	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
+	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
+	 *
+	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
+	 *
+	 * For both cases the esulting page will be the `My Home` page.
 	 */
-	async returnToDashboard(): Promise< void > {
+	async returnToHomeDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		await frame.click( selectors.dashboardLink );
+		if ( getTargetDeviceName() === 'desktop' ) {
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				frame.click( selectors.desktopDashboardLink ),
+			] );
+		} else {
+			const navbarComponent = new NavbarComponent( this.page );
+			await Promise.all( [ this.page.waitForNavigation(), navbarComponent.clickMySites() ] );
+		}
 	}
 
 	/* Previews */
