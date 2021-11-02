@@ -1037,6 +1037,26 @@
 	}
 }
 
+.licensing-thank-you-manual-activation__card-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	margin-bottom: 45px;
+}
+
+.licensing-thank-you-manual-activation .licensing-thank-you-manual-activation__card-top .jetpack-logo {
+	margin-bottom: 0;
+}
+
+.licensing-thank-you-manual-activation__progress-bar {
+	width: 60px;
+
+	.progress-bar__progress {
+		background-color: var( --studio-jetpack-green-40 );
+	}
+}
+
 .jetpack-checkout-siteless-thank-you {
 	.jetpack-checkout-siteless-thank-you__card {
 		@include break-medium {
