@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { omit, mapValues } from 'lodash';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -54,9 +54,14 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 			silent,
 		} );
 
-		return wp
-			.undocumented()
-			.jetpackModuleActivate( siteId, moduleSlug )
+		return wpcom.req
+			.post(
+				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+				{
+					path: '/jetpack/v4/module/' + moduleSlug + '/active/',
+					body: JSON.stringify( { active: true } ),
+				}
+			)
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -88,9 +93,14 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 			silent,
 		} );
 
-		return wp
-			.undocumented()
-			.jetpackModuleDeactivate( siteId, moduleSlug )
+		return wpcom.req
+			.post(
+				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+				{
+					path: '/jetpack/v4/module/' + moduleSlug + '/active/',
+					body: JSON.stringify( { active: false } ),
+				}
+			)
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -136,9 +146,11 @@ export const fetchModuleList = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp
-			.undocumented()
-			.getJetpackModules( siteId )
+		return wpcom.req
+			.get(
+				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+				{ path: '/jetpack/v4/module/all/' }
+			)
 			.then( ( { data } ) => {
 				const modules = mapValues( data, ( module ) => ( {
 					active: module.activated,
