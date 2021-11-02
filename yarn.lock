@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 4
+  version: 5
   cacheKey: 8c0
 
 "5to6-codemod@npm:^1.8.0":
@@ -1418,7 +1418,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:7.15.5, @babel/core@npm:>=7.9.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.8, @babel/core@npm:^7.15.0, @babel/core@npm:^7.2.2, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.5":
+"@babel/core@npm:>=7.9.0, @babel/core@npm:^7.1.0, @babel/core@npm:^7.1.6, @babel/core@npm:^7.12.10, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.10, @babel/core@npm:^7.14.0, @babel/core@npm:^7.14.8, @babel/core@npm:^7.15.0, @babel/core@npm:^7.2.2, @babel/core@npm:^7.7.2, @babel/core@npm:^7.7.5":
   version: 7.15.5
   resolution: "@babel/core@npm:7.15.5"
   dependencies:
@@ -17877,6 +17877,7 @@ __metadata:
     bindings: ^1.5.0
     nan: ^2.12.1
   checksum: 4427ff08db9ee7327f2c3ad58ec56f9096a917eed861bfffaa2e2be419479cdf37d00750869ab9ecbf5f59f32ad999bd59577d73fc639193e6c0ce52bb253e02
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
@@ -17886,34 +17887,35 @@ __metadata:
   dependencies:
     node-gyp: latest
   checksum: be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@^1.2.11#~builtin<compat/fsevents>, fsevents@patch:fsevents@^1.2.7#~builtin<compat/fsevents>":
   version: 1.2.13
-  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=1cc4b2"
+  resolution: "fsevents@patch:fsevents@npm%3A1.2.13#~builtin<compat/fsevents>::version=1.2.13&hash=18f3a7"
   dependencies:
     bindings: ^1.5.0
     nan: ^2.12.1
-  checksum: 095717c9c807d88e8e91dfa72be24ecdf1f96714f3373aacd0fc412c986a6972ceac08aa714bb56094d759520a518e63a6fe023bbbd827def47a6ee2243fe8cc
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@^2.1.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@^2.3.2#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.1#~builtin<compat/fsevents>, fsevents@patch:fsevents@~2.3.2#~builtin<compat/fsevents>":
   version: 2.3.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=1cc4b2"
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"
   dependencies:
     node-gyp: latest
-  checksum: 4b78a80be181018da0475c82f57707ae0b2bf5fd9c11e70eb60b0ee5fb488aa02cea69269d979eadfb9a67e82be6e0e2bfef8af693d9d85de3842e9b8c25016a
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
 "fsevents@patch:fsevents@~2.1.2#~builtin<compat/fsevents>":
   version: 2.1.2
-  resolution: "fsevents@patch:fsevents@npm%3A2.1.2#~builtin<compat/fsevents>::version=2.1.2&hash=1cc4b2"
+  resolution: "fsevents@patch:fsevents@npm%3A2.1.2#~builtin<compat/fsevents>::version=2.1.2&hash=18f3a7"
   dependencies:
     node-gyp: latest
-  checksum: 929ca73d5940b45cc2156e3bdc19c46137e69d86eb02130983afb1f84a2908758d4bfadf6fb14e98283bdd4c5c9408ed4d98b12ad2ce65651947ab1940a6612e
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
@@ -17923,6 +17925,7 @@ fsevents@~2.1.2:
   dependencies:
     node-gyp: latest
   checksum: d46fdec727a0caed98aa4155d624520d1625068bfce929be67d70a5268b0fd002ae179fafdfe4a1b15d6961c62201bb504e943e9651afc97c231ed134e23a31c
+  conditions: os=darwin
   languageName: node
   linkType: hard
 
@@ -21922,7 +21925,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest-resolve@npm:26.6.2, jest-resolve@npm:^26.6.2":
+"jest-resolve@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-resolve@npm:26.6.2"
   dependencies:
@@ -21938,7 +21941,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest-resolve@npm:27.2.4, jest-resolve@npm:^27.2.4":
+"jest-resolve@npm:^27.2.4":
   version: 27.2.4
   resolution: "jest-resolve@npm:27.2.4"
   dependencies:
@@ -31891,28 +31894,28 @@ resolve@^2.0.0-next.3:
 
 "resolve@patch:resolve@^1.1.6#~builtin<compat/resolve>, resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.11.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.17.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.18.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.9.0#~builtin<compat/resolve>":
   version: 1.20.0
-  resolution: "resolve@patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=00b1ff"
+  resolution: "resolve@patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"
   dependencies:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
-  checksum: 881ad00c9d8569e1c37a3d32d5a5c5c16e7fd5e6af2a893a77af370635e952de5c433c03b2fe2001a1c850f1d06fdc0c5f8b54ce95471608a6d1c3be4e434055
+  checksum: b6a5345d1f015cebba11dffa6a1982b39fe9ef42ed86ed832e51bd01c10817666df6d7b11579bc88664f5d57f2a5fe073a7f46b4e72a3efe7ed0cb450ee786da
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@^2.0.0-next.3#~builtin<compat/resolve>":
   version: 2.0.0-next.3
-  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=00b1ff"
+  resolution: "resolve@patch:resolve@npm%3A2.0.0-next.3#~builtin<compat/resolve>::version=2.0.0-next.3&hash=07638b"
   dependencies:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
-  checksum: 8b882e60619978bc2705b71a6d1b01ee87185d78670eda468648de99f75a731c2b6de2f6fbd7fdc10344a2b53175010d9ec53b416cf3f16507473ab5854f3817
+  checksum: ecd5da8e5f3042952bd9fd46725ef850144e7c3d707d963039df677809716660ccf5efa66742fbc6796d280c23d18915384fada76869a9c554e15cf1e6df9278
   languageName: node
   linkType: hard
 
 "resolve@patch:resolve@~1.1.0#~builtin<compat/resolve>":
   version: 1.1.7
-  resolution: "resolve@patch:resolve@npm%3A1.1.7#~builtin<compat/resolve>::version=1.1.7&hash=00b1ff"
-  checksum: a8e9a9ed6df52a790c7c2dccff4105ed811b16fbcf0d4cfa7b49d4428a3cac9f7d48fb59a368fbef6455c0257c87022023ed389bd5492905a04d715830c49931
+  resolution: "resolve@patch:resolve@npm%3A1.1.7#~builtin<compat/resolve>::version=1.1.7&hash=07638b"
+  checksum: f4f1471423d600a10944785222fa7250237ed8c98aa6b1e1f4dc0bb3dbfbcafcaac69a2ed23cd1f6f485ed23e7c939894ac1978284e4163754fade8a05358823
   languageName: node
   linkType: hard
 
@@ -34386,11 +34389,11 @@ swiper@4.5.1:
 
 "swiper@patch:swiper@4.5.1#.patches/swiper@4.5.1.diff::locator=wp-calypso%40workspace%3A.":
   version: 4.5.1
-  resolution: "swiper@patch:swiper@npm%3A4.5.1#.patches/swiper@4.5.1.diff::version=4.5.1&hash=b69d60&locator=wp-calypso%40workspace%3A."
+  resolution: "swiper@patch:swiper@npm%3A4.5.1#.patches/swiper@4.5.1.diff::version=4.5.1&hash=8e79f6&locator=wp-calypso%40workspace%3A."
   dependencies:
     dom7: ^2.1.3
     ssr-window: ^1.0.1
-  checksum: 9ccef355fb41050e14dc66fdca1aa9258dd3c10b239f600b0308bbe8ef67fa219793e1bc331fc428b96e6fd06c50ee6783a39412979a5a051fbc5be7c861d861
+  checksum: 56fa0ad015ffd6841717de07a67ea4edb9f12204fefed5c339b8263b7383bb87e639f5bb76f7348233269ccb0b5a195e8474a22742a8fa6753e6fd5bc3d75240
   languageName: node
   linkType: hard
 
@@ -34750,7 +34753,7 @@ testarmada-magellan@11.0.10:
 
 "testarmada-magellan@patch:testarmada-magellan@11.0.10#../../.patches/testarmada-magellan@11.0.10.diff::locator=wp-e2e-tests%40workspace%3Atest%2Fe2e":
   version: 11.0.10
-  resolution: "testarmada-magellan@patch:testarmada-magellan@npm%3A11.0.10#../../.patches/testarmada-magellan@11.0.10.diff::version=11.0.10&hash=48e675&locator=wp-e2e-tests%40workspace%3Atest%2Fe2e"
+  resolution: "testarmada-magellan@patch:testarmada-magellan@npm%3A11.0.10#../../.patches/testarmada-magellan@11.0.10.diff::version=11.0.10&hash=29f19e&locator=wp-e2e-tests%40workspace%3Atest%2Fe2e"
   dependencies:
     async: ^2.1.4
     cli-color: ^1.1.0
@@ -34773,7 +34776,7 @@ testarmada-magellan@11.0.10:
   bin:
     magellan: bin/magellan
     magellan_: bin/magellan
-  checksum: b7d7b9c7f1a29e1eb7189771dd8d32e70b83c2fe4c2c91e1f48ae2cfcebcef7fcfb7dd60189d166fd6a13be1aaa4be24a5c184804500d03e69d277406e9d1d46
+  checksum: feba375026fc60c76bb34f1e9a7d9fa289ab1d85774f5c992d3b13755823c89feb573b1f8d57170a7cf55cf3216e302117773a18d54aed8e6069085cb8b39d6d
   languageName: node
   linkType: hard
 
@@ -35539,11 +35542,11 @@ typescript@^4.4.3:
 
 "typescript@patch:typescript@^4.4.3#~builtin<compat/typescript>":
   version: 4.4.3
-  resolution: "typescript@patch:typescript@npm%3A4.4.3#~builtin<compat/typescript>::version=4.4.3&hash=d8b4e7"
+  resolution: "typescript@patch:typescript@npm%3A4.4.3#~builtin<compat/typescript>::version=4.4.3&hash=ddd1e8"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: b829c638ebdfebd003332b8a485538161c66be3f954f7580cfa2f92bfcb3ad2942d1b069bc8bf1b945bc8e50a23f19481ff44539875208d927f7766bfdf541fc
+  checksum: fefddfc08acbb631fcc78b48e5d99b03b388d7edec869c3c8bf95a70970e6abe7117fca6bd39b8d3e09e365736a7cb1fcbe94663d79f195ead59d7b58d19b447
   languageName: node
   linkType: hard
 
