@@ -1,40 +1,18 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
 
 interface Props {
 	productSlug: string | 'no_product';
-	receiptId?: number;
-	source?: string;
-	jetpackTemporarySiteId?: number;
 }
 
-const LicensingThankYouAutoActivation: FC< Props > = ( {
-	productSlug,
-	receiptId = 0,
-	source = 'onboarding-calypso-ui',
-	jetpackTemporarySiteId = 0,
-} ) => {
+const LicensingThankYouAutoActivation: FC< Props > = ( { productSlug } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-
-	const hasProductInfo = productSlug !== 'no_product';
-
-	const productName = useSelector( ( state ) =>
-		hasProductInfo ? getProductName( state, productSlug ) : null
-	);
 
 	const supportContactLink =
 		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
@@ -50,7 +28,6 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 			<Card className="licensing-thank-you-manual-activation__card">
 				<div className="licensing-thank-you-manual-activation__card-main">
 					<JetpackLogo size={ 45 } />
-					{ hasProductInfo && <QueryProducts type="jetpack" /> }
 					<h1 className="licensing-thank-you-manual-activation__main-message">
 						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
