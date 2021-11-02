@@ -210,17 +210,25 @@ class DesignPickerStep extends Component {
 	headerText() {
 		const { translate } = this.props;
 
+		if ( isEnabled( 'signup/design-picker-categories' ) ) {
+			return translate( 'Themes' );
+		}
+
 		return translate( 'Choose a design' );
 	}
 
 	subHeaderText() {
 		const { locale, translate } = this.props;
 
-		const text = translate(
-			'Pick your favorite homepage layout. You can customize or change it later.'
-		);
+		if ( ! isEnabled( 'signup/design-picker-categories' ) ) {
+			return translate(
+				'Pick your favorite homepage layout. You can customize or change it later.'
+			);
+		}
 
-		if ( englishLocales.includes( locale ) && isEnabled( 'signup/design-picker-categories' ) ) {
+		const text = translate( 'Choose a starting theme. You can change it later.' );
+
+		if ( englishLocales.includes( locale ) ) {
 			// An English only trick so the line wraps between sentences.
 			return text
 				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
