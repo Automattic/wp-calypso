@@ -107,9 +107,8 @@ export function fetchPluginsList(
 
 		// The "Featured" category is managed by WP.com instead of WP.org
 		if ( 'featured' === category ) {
-			wpcom
-				.undocumented()
-				.getFeaturedPlugins()
+			wpcom.req
+				.get( '/plugins/featured', { apiNamespace: 'wpcom/v2' } )
 				.then( ( data ) => {
 					dispatch( receivePluginsList( category, page, searchTerm, data, null ) );
 				} )

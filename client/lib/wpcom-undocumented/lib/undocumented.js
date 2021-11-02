@@ -1678,16 +1678,6 @@ Undocumented.prototype.oauth2ClientId = function ( clientId, fn ) {
 };
 
 /**
- * Fetch the curated list of featured plugins.
- *
- * @param {Function}   fn             The callback function
- * @returns {Promise}  A promise
- */
-Undocumented.prototype.getFeaturedPlugins = function ( fn ) {
-	return this.wpcom.req.get( '/plugins/featured', { apiNamespace: 'wpcom/v2' }, fn );
-};
-
-/**
  * Fetch a nonce to use in the `updateSiteAddress` call
  *
  * @param {number}   siteId  The ID of the site for which to get a nonce.
