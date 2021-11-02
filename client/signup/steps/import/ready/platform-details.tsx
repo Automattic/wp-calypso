@@ -24,7 +24,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			case 'Blogger':
 				return __( 'Importing content from Blogger' );
 			case 'Wordpress':
-				return __( 'Importing content from self-hosted WordPress to Wordpress.com' );
+				return __( 'Importing content from self-hosted WordPress to WordPress.com' );
 			case 'Medium':
 				return __( 'Importing content from Medium' );
 			default:
