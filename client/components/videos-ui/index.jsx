@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import './style.scss';
@@ -77,6 +77,10 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
 										</div>
+										<Button>
+											<Gridicon icon="play" />
+											<span>{ translate( 'Play video' ) }</span>
+										</Button>
 									</div>
 								);
 							} ) }
