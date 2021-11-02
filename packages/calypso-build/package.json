@@ -35,7 +35,7 @@
 	],
 	"types": "./typings/calypso-assets/index.d.ts",
 	"dependencies": {
-		"@automattic/babel-plugin-optimize-i18n": "^1.0.0",
+		"@automattic/babel-plugin-preserve-i18n": "^1.0.0",
 		"@automattic/webpack-rtl-plugin": "^5.1.0",
 		"@babel/cli": "^7.14.8",
 		"@babel/compat-data": "^7.15.0",

@@ -38,7 +38,7 @@ module.exports = function ( babel ) {
 	}
 
 	return {
-		name: 'babel-plugin-optimize-i18n',
+		name: 'babel-plugin-preserve-i18n',
 		visitor: {
 			ImportDeclaration( path ) {
 				const aliases = collectAllImportsAndAliasThem( path );
