@@ -48,11 +48,12 @@ describe( 'User Can log in', () => {
 				path: HAR_PATH,
 			},
 			env: {
+				...process.env,
+				WP_DESKTOP_BASE_URL: process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? undefined,
 				WP_DEBUG_LOG, // This will override logging path from the Electron main process.
 				// Ensure other CI-specific overrides (such as disabling the auto-updater)
 				DEBUG: true,
 				CI: true,
-				...process.env,
 			},
 		} );
 		electronApp.context().tracing.start( { screenshots: true } );
