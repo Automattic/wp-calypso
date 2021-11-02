@@ -14,7 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Search from Support Card ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
 

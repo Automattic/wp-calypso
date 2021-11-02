@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
 		let supportArticlePage: Page;
@@ -69,7 +69,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Unsupported search keywords ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
 
