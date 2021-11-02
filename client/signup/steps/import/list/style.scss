@@ -42,9 +42,11 @@
 				line-height: 1.25em;
 			}
 
-			a {
+			a, button {
+				padding: 0;
 				font-size: 0.875em; /* stylelint-disable-line */
 				font-weight: 500; /* stylelint-disable-line */
+				line-height: 20px;
 				text-decoration: underline;
 				color: var( --studio-gray-100 );
 			}

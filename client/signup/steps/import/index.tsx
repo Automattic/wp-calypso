@@ -57,7 +57,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 							setIsScanning={ setIsScanning }
 						/>
 					) }
-					{ props.stepName === 'list' && <ListStep siteSlug={ props.queryObject.siteSlug } /> }
+					{ props.stepName === 'list' && <ListStep goToStep={ props.goToStep } /> }
 
 					{ props.stepName === 'ready' && ! props.stepSectionName && (
 						<ReadyStep platform={ MOCK_DATA.platform } />
