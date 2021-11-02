@@ -37,11 +37,11 @@ class Security2faBackupCodesPasswordPromt extends React.Component {
 		return (
 			<form onSubmit={ this.handleSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="user_password">{ this.props.translate( 'Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 					<FormTextInput
 						autoComplete="off"
-						id="user_password"
-						name="user_password"
+						id="password"
+						name="password"
 						type="password"
 						ref={ ( input ) => ( this.passwordInput = input ) }
 						value={ this.state.userPassword }
