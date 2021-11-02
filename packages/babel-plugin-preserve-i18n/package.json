@@ -1,5 +1,5 @@
 {
-	"name": "@automattic/babel-plugin-optimize-i18n",
+	"name": "@automattic/babel-plugin-preserve-i18n",
 	"version": "1.0.0",
 	"description": "A Babel plugin to preserves translation functions even when minified",
 	"main": "src/index.js",
@@ -9,7 +9,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/babel-plugin-optimize-i18n"
+		"directory": "packages/babel-plugin-preserve-i18n"
 	},
 	"keywords": [],
 	"author": "Automattic Inc.",

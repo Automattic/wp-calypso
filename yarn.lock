@@ -37,9 +37,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/babel-plugin-optimize-i18n@^1.0.0, @automattic/babel-plugin-optimize-i18n@workspace:packages/babel-plugin-optimize-i18n":
+"@automattic/babel-plugin-preserve-i18n@^1.0.0, @automattic/babel-plugin-preserve-i18n@workspace:packages/babel-plugin-preserve-i18n":
   version: 0.0.0-use.local
-  resolution: "@automattic/babel-plugin-optimize-i18n@workspace:packages/babel-plugin-optimize-i18n"
+  resolution: "@automattic/babel-plugin-preserve-i18n@workspace:packages/babel-plugin-preserve-i18n"
   dependencies:
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
@@ -87,7 +87,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-build@workspace:packages/calypso-build"
   dependencies:
-    "@automattic/babel-plugin-optimize-i18n": ^1.0.0
+    "@automattic/babel-plugin-preserve-i18n": ^1.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
     "@automattic/webpack-rtl-plugin": ^5.1.0
