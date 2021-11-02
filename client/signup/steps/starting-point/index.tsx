@@ -27,9 +27,7 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName } = props;
-	const headerText = translate( 'Nice job! Lastly,{{br}}{{/br}}pick a starting point', {
-		components: { br: <br /> },
-	} );
+	const headerText = translate( 'Nice job! Now it’s time to get creative.' );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
 	const branchSteps = useBranchSteps( stepName );
 
