@@ -31,13 +31,16 @@ function renderSinglePlugin( context, siteUrl ) {
 		prevPath = sectionify( context.prevPath );
 	}
 	// Render single plugin component
-	context.primary = createElement( config.isEnabled( 'marketplace' ) ? SinglePluginComponent : PluginComponent, {
-		path: context.path,
-		prevQuerystring: lastPluginsQuerystring,
-		prevPath,
-		pluginSlug,
-		siteUrl,
-	} );
+	context.primary = createElement(
+		config.isEnabled( 'marketplace' ) ? SinglePluginComponent : PluginComponent,
+		{
+			path: context.path,
+			prevQuerystring: lastPluginsQuerystring,
+			prevPath,
+			pluginSlug,
+			siteUrl,
+		}
+	);
 }
 
 function getPathWithoutSiteSlug( context, site ) {

@@ -1,9 +1,5 @@
 @import './grid-mixins.scss';
 
-.plugin__installed-on, .single-plugin__installed-on {
-	margin-bottom: 16px;
-}
-
 .is-section-plugins .main {
 	padding-top: 35px; // Compensate for the fixed header.
 
@@ -18,6 +14,10 @@
 
 body.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
+}
+
+.plugin__installed-on, .single-plugin__installed-on {
+	margin-bottom: 16px;
 }
 
 // Fix for Jetpack not having nav-unification styles yet.
@@ -117,10 +117,6 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
-.layout__content {
-	background: var( --studio-white );
-}
-
 .single-plugin__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {
@@ -143,7 +139,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 }
 
 .single-plugin__top-section {
-	border-bottom: 1px solid var( --studio-gray-5);
+	border-bottom: 1px solid var( --studio-gray-5 );
 }
 
 .single-plugin__header {
@@ -210,7 +206,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 
 	.section-nav-tab {
 		&.is-selected,
-		&:hover:not(.is-selected) {
+		&:hover:not( .is-selected ) {
 			border-bottom-color: transparent;
 		}
 

@@ -1,12 +1,12 @@
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import { useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
@@ -15,7 +15,7 @@ import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
+// import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -42,7 +42,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 function SinglePlugin( props ) {
 	const {
@@ -53,7 +52,6 @@ function SinglePlugin( props ) {
 		selectedSite,
 		siteIds,
 		translate,
-		sitesWithPlugin,
 		requestingPluginsForSites,
 	} = props;
 
@@ -107,23 +105,9 @@ function SinglePlugin( props ) {
 		} );
 	}
 
-	function getAllowedPluginActions() {
-		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
-		const hiddenForAutomatedTransfer =
-			props.isAtomicSite && includes( autoManagedPlugins, fullPlugin.slug );
-
-		return {
-			autoupdate: ! hiddenForAutomatedTransfer,
-			activation: ! hiddenForAutomatedTransfer,
-			remove: ! hiddenForAutomatedTransfer,
-		};
-	}
-
 	if ( ! props.isRequestingSites && ! props.userCanManagePlugins ) {
 		return <NoPermissionsError title={ getPageTitle() } />;
 	}
-
-	const allowedPluginActions = getAllowedPluginActions( fullPlugin );
 
 	if ( existingPlugin === 'unknown' ) {
 		return (
@@ -154,8 +138,8 @@ function SinglePlugin( props ) {
 				<div className="single-plugin__layout single-plugin__top-section">
 					<div className="single-plugin__layout-col single-plugin__layout-col-left">
 						<div className="single-plugin__header">
-							<div className="single-plugin__name">{fullPlugin.name}</div>
-							<div className="single-plugin__description">{fullPlugin.description}</div>
+							<div className="single-plugin__name">{ fullPlugin.name }</div>
+							<div className="single-plugin__description">{ fullPlugin.description }</div>
 							<div className="single-plugin__additional-info">
 								<table>
 									<thead>
@@ -168,9 +152,17 @@ function SinglePlugin( props ) {
 
 									<tbody>
 										<tr>
-											<td><a href={fullPlugin.author_url}>{fullPlugin.author_name}</a></td>
-											<td><Rating rating={ fullPlugin.rating } /></td>
-											<td>{ moment.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'YYYY-MM-DD' ) }</td>
+											<td>
+												<a href={ fullPlugin.author_url }>{ fullPlugin.author_name }</a>
+											</td>
+											<td>
+												<Rating rating={ fullPlugin.rating } />
+											</td>
+											<td>
+												{ moment
+													.utc( fullPlugin.last_updated, 'YYYY-MM-DD hh:mma' )
+													.format( 'YYYY-MM-DD' ) }
+											</td>
 										</tr>
 									</tbody>
 								</table>
@@ -180,8 +172,16 @@ function SinglePlugin( props ) {
 					<div className="single-plugin__layout-col single-plugin__layout-col-right">
 						<div className="single-plugin__header">
 							<div className="single-plugin__price">{ translate( 'Free' ) }</div>
-							<div className="single-plugin__install"><Button className="single-plugin__install-button">{ translate( 'Install and activate' ) }</Button></div>
-							<div className="single-plugin__t-and-c">{ translate( 'By installing, you agree to WordPress.com’s Terms of Service and the Third-Party plug-in Terms.' ) }</div>
+							<div className="single-plugin__install">
+								<Button className="single-plugin__install-button">
+									{ translate( 'Install and activate' ) }
+								</Button>
+							</div>
+							<div className="single-plugin__t-and-c">
+								{ translate(
+									'By installing, you agree to WordPress.com’s Terms of Service and the Third-Party plug-in Terms.'
+								) }
+							</div>
 						</div>
 					</div>
 				</div>
@@ -201,12 +201,24 @@ function SinglePlugin( props ) {
 						) }
 					</div>
 					<div className="single-plugin__layout-col single-plugin__layout-col-right">
-						<div className="single-plugin__downloads-text body-right-text">{ translate( 'Downloads' ) }</div>
-						<div className="single-plugin__downloads-value body-right-value">{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }</div>
-						<div className="single-plugin__version-text body-right-text">{ translate( 'Version' ) }</div>
-						<div className="single-plugin__version-value body-right-value">{ fullPlugin.version }</div>
-						<div className="single-plugin__tested-text body-right-text">{ translate( 'Tested up to' ) }</div>
-						<div className="single-plugin__tested-value body-right-value">{ fullPlugin.version }</div>
+						<div className="single-plugin__downloads-text body-right-text">
+							{ translate( 'Downloads' ) }
+						</div>
+						<div className="single-plugin__downloads-value body-right-value">
+							{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }
+						</div>
+						<div className="single-plugin__version-text body-right-text">
+							{ translate( 'Version' ) }
+						</div>
+						<div className="single-plugin__version-value body-right-value">
+							{ fullPlugin.version }
+						</div>
+						<div className="single-plugin__tested-text body-right-text">
+							{ translate( 'Tested up to' ) }
+						</div>
+						<div className="single-plugin__tested-value body-right-value">
+							{ fullPlugin.version }
+						</div>
 					</div>
 				</div>
 			</div>
@@ -214,48 +226,47 @@ function SinglePlugin( props ) {
 	);
 }
 
-
 /* TODO: add the stars icons */
-function Rating ({ rating }) {
-	const inverseRating = 100 - Math.round( rating / 10 ) * 10;
-	const noFillOutlineCount = Math.floor( inverseRating / 20 ); // (5 - noFillOutlineCount) gives the number of stars to add
+function Rating( { rating } ) {
+	// const inverseRating = 100 - Math.round( rating / 10 ) * 10;
+	// const noFillOutlineCount = Math.floor( inverseRating / 20 ); // (5 - noFillOutlineCount) gives the number of stars to add
 
-	return rating/20;
+	return rating / 20;
 }
 
-function SitesList( { fullPlugin: plugin, ...props } ) {
-	if ( props.siteUrl || props.isFetching ) {
-		return null;
-	}
+// function SitesList( { fullPlugin: plugin, ...props } ) {
+// 	if ( props.siteUrl || props.isFetching ) {
+// 		return null;
+// 	}
 
-	const { translate, sites, sitesWithPlugin, sitesWithoutPlugin } = props;
-	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
-		sites.find( ( site ) => site.ID === siteId )
-	);
+// 	const { translate, sites, sitesWithPlugin, sitesWithoutPlugin } = props;
+// 	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
+// 		sites.find( ( site ) => site.ID === siteId )
+// 	);
 
-	return (
-		<div>
-			<PluginSiteList
-				className="single-plugin__installed-on"
-				title={ translate( 'Installed on', {
-					comment: 'header for list of sites a plugin is installed on',
-				} ) }
-				sites={ sitesWithPlugin }
-				plugin={ plugin }
-			/>
-			{ plugin.wporg && (
-				<PluginSiteList
-					className="single-plugin__not-installed-on"
-					title={ translate( 'Available sites', {
-						comment: 'header for list of sites a plugin can be installed on',
-					} ) }
-					sites={ notInstalledSites }
-					plugin={ plugin }
-				/>
-			) }
-		</div>
-	);
-}
+// 	return (
+// 		<div>
+// 			<PluginSiteList
+// 				className="single-plugin__installed-on"
+// 				title={ translate( 'Installed on', {
+// 					comment: 'header for list of sites a plugin is installed on',
+// 				} ) }
+// 				sites={ sitesWithPlugin }
+// 				plugin={ plugin }
+// 			/>
+// 			{ plugin.wporg && (
+// 				<PluginSiteList
+// 					className="single-plugin__not-installed-on"
+// 					title={ translate( 'Available sites', {
+// 						comment: 'header for list of sites a plugin can be installed on',
+// 					} ) }
+// 					sites={ notInstalledSites }
+// 					plugin={ plugin }
+// 				/>
+// 			) }
+// 		</div>
+// 	);
+// }
 
 function PluginDoesNotExistView( { selectedSite, translate } ) {
 	const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );

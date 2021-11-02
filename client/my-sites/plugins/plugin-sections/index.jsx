@@ -197,7 +197,11 @@ class PluginSections extends Component {
 	};
 
 	renderReadMore = () => {
-		if ( this.props.removeReadMore || this.props.isWpcom || this.state.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
+		if (
+			this.props.removeReadMore ||
+			this.props.isWpcom ||
+			this.state.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT
+		) {
 			return null;
 		}
 		const button = (
@@ -221,35 +225,41 @@ class PluginSections extends Component {
 
 	renderSelectedSection() {
 		const contentClasses = classNames( 'plugin-sections__content', {
-			trimmed: !this.props.removeReadMore && (! this.props.isWpcom && ! this.state.readMore),
+			trimmed: ! this.props.removeReadMore && ! this.props.isWpcom && ! this.state.readMore,
 		} );
 
-		if (!this.props.addBanner || this.getSelected() !== 'description') {
-			return <div
-				ref={ this.descriptionContent }
-				className={ contentClasses }
-				// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
-				dangerouslySetInnerHTML={ {
-					__html: this.props.plugin.sections[ this.getSelected() ],
-				} }
-			/>;
+		/*eslint-disable react/no-danger*/
+		if ( ! this.props.addBanner || this.getSelected() !== 'description' ) {
+			return (
+				<div
+					ref={ this.descriptionContent }
+					className={ contentClasses }
+					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+					dangerouslySetInnerHTML={ {
+						__html: this.props.plugin.sections[ this.getSelected() ],
+					} }
+				/>
+			);
 		}
 
-		return <div ref={ this.descriptionContent } className={ contentClasses }>
-			<div className="plugin-sections__banner">
-				<img
-					className="plugin-sections__banner-image"
-					alt={ this.props.plugin.name }
-					src={ this.props.plugin.banners.high || this.props.plugin.banners.low }
+		return (
+			<div ref={ this.descriptionContent } className={ contentClasses }>
+				<div className="plugin-sections__banner">
+					<img
+						className="plugin-sections__banner-image"
+						alt={ this.props.plugin.name }
+						src={ this.props.plugin.banners.high || this.props.plugin.banners.low }
+					/>
+				</div>
+				<div
+					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+					dangerouslySetInnerHTML={ {
+						__html: this.props.plugin.sections[ this.getSelected() ],
+					} }
 				/>
 			</div>
-			<div
-				// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
-				dangerouslySetInnerHTML={{
-					__html: this.props.plugin.sections[ this.getSelected() ],
-				}}
-			/>
-		</div>;
+		);
+		/*eslint-enable react/no-danger*/
 	}
 
 	render() {
@@ -258,9 +268,8 @@ class PluginSections extends Component {
 			return null;
 		}
 
-		/*eslint-disable react/no-danger*/
 		return (
-			<div className={ classNames( "plugin-sections", this.props.className )}>
+			<div className={ classNames( 'plugin-sections', this.props.className ) }>
 				<div className="plugin-sections__header">
 					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
 						<NavTabs>
@@ -285,7 +294,6 @@ class PluginSections extends Component {
 				</Card>
 			</div>
 		);
-		/*eslint-enable react/no-danger*/
 	}
 }
 
