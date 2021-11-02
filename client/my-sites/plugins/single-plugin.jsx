@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import { useEffect, useMemo } from 'react';
@@ -42,7 +42,6 @@ import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors'
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { Button } from '@automattic/components';
 
 function SinglePlugin( props ) {
 	const {
@@ -65,13 +64,10 @@ function SinglePlugin( props ) {
 		}
 	}, [ isFetched ] );
 
-	const fullPlugin = useMemo( () => {
-		// assign it .org details
-		return {
-			...plugin,
-			...wporgPlugin,
-		};
-	}, [ plugin, wporgPlugin ] );
+	const fullPlugin = {
+		...plugin,
+		...wporgPlugin,
+	};
 
 	const isPluginInstalledOnsite = useMemo( () => {
 		if ( requestingPluginsForSites ) {
@@ -145,7 +141,6 @@ function SinglePlugin( props ) {
 	const isWpcom = selectedSite && ! props.isJetpackSite;
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
-	console.log({ fullPlugin });
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
