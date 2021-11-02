@@ -275,11 +275,11 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onForwardingConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, hasCartDomain, source } = this.props;
+		const { comparisonContext, domain, source } = this.props;
 		const { forwardingMailboxes } = this.state;
 
 		const usersAreValid = areAllUsersValid( forwardingMailboxes );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCanAddEmail = canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
