@@ -14,8 +14,11 @@ interface Props {
 const LicensingThankYouAutoActivation: FC< Props > = ( { productSlug } ) => {
 	const translate = useTranslate();
 
-	const supportContactLink =
-		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
+	// This is the first step of three of the manual activation flow
+	const progressBarProperties = {
+		value: 1,
+		total: 3,
+	};
 
 	return (
 		<Main fullWidthLayout className="licensing-thank-you-manual-activation">
@@ -31,8 +34,7 @@ const LicensingThankYouAutoActivation: FC< Props > = ( { productSlug } ) => {
 						<JetpackLogo size={ 45 } />
 						<ProgressBar
 							className="licensing-thank-you-manual-activation__progress-bar"
-							value={ 1 }
-							total={ 3 }
+							{ ...progressBarProperties }
 						/>
 					</div>
 					<h1 className="licensing-thank-you-manual-activation__main-message">
