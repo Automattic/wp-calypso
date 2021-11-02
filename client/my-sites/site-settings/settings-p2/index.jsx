@@ -107,9 +107,9 @@ export class P2GeneralSettingsForm extends Component {
 
 			this.refreshDomainsValidation( success, errors );
 
-			this.props.recordTracksEvent( 'calypso_p2_preapproved_domains_validation_success' );
+			this.props.recordTracksEvent( 'calypso_p2_settings_validate_preapproved_domains_success' );
 		} catch ( error ) {
-			this.props.recordTracksEvent( 'calypso_p2_preapproved_domains_validation_failed' );
+			this.props.recordTracksEvent( 'calypso_p2_settings_validate_preapproved_domains_failed' );
 		} finally {
 			this.setState( { isValidating: false } );
 		}
