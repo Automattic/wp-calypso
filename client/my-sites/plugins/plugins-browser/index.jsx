@@ -10,6 +10,8 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
+import { Icon, upload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { flow, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -19,15 +21,11 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
-import FormattedHeader from 'calypso/components/formatted-header';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
@@ -87,12 +85,23 @@ export class PluginsBrowser extends Component {
 		trackPageViews: true,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isMobile: isWithinBreakpoint( '<960px' ),
+		};
+	}
+
 	reinitializeSearch() {
 		this.WrappedSearch = ( props ) => <Search { ...props } />;
 	}
 
 	UNSAFE_componentWillMount() {
 		this.reinitializeSearch();
+
+		if ( typeof this.unsubscribe === 'function' ) {
+			this.unsubscribe();
+		}
 	}
 
 	componentDidMount() {
@@ -101,6 +110,11 @@ export class PluginsBrowser extends Component {
 				search_query: this.props.search,
 			} );
 		}
+
+		// Change the isMobile state when the size of the browser changes.
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
+			this.setState( { isMobile } );
+		} );
 	}
 
 	getVisibleCategories() {
@@ -179,6 +193,7 @@ export class PluginsBrowser extends Component {
 					showPlaceholders={ isFetchingPluginsByCategory }
 					currentSites={ this.props.sites }
 					variant={ PluginsBrowserListVariant.InfiniteScroll }
+					extended
 				/>
 			);
 		}
@@ -195,23 +210,38 @@ export class PluginsBrowser extends Component {
 		if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 			const searchTitle =
 				this.props.searchTitle ||
-				this.props.translate( 'Results for: %(searchTerm)s', {
+				this.props.translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
 					textOnly: true,
 					args: {
 						searchTerm,
 					},
+					components: {
+						b: <b />,
+					},
 				} );
+
+			const subtitle =
+				pluginsPagination &&
+				this.props.translate( '%(total)s plugins', {
+					textOnly: true,
+					args: {
+						total: pluginsPagination.results,
+					},
+				} );
+
 			return (
 				<>
 					<PluginsBrowserList
 						plugins={ pluginsBySearchTerm }
 						listName={ searchTerm }
 						title={ searchTitle }
+						subtitle={ subtitle }
 						site={ this.props.siteSlug }
 						showPlaceholders={ isFetchingPluginsBySearchTerm }
 						size={ SEARCH_RESULTS_LIST_LENGTH }
 						currentSites={ this.props.sites }
 						variant={ PluginsBrowserListVariant.Paginated }
+						extended
 					/>
 					{ pluginsPagination && (
 						<Pagination
@@ -265,6 +295,7 @@ export class PluginsBrowser extends Component {
 				showPlaceholders={ isFetching }
 				currentSites={ this.props.sites }
 				variant={ PluginsBrowserListVariant.Fixed }
+				extended
 			/>
 		);
 	}
@@ -286,74 +317,39 @@ export class PluginsBrowser extends Component {
 				size={ SHORT_LIST_LENGTH }
 				title={ this.translateCategory( 'recommended' ) }
 				variant={ PluginsBrowserListVariant.Fixed }
+				extended
 			/>
 		);
 	}
 
 	getShortListsView() {
 		return (
-			<span>
+			<>
 				{ this.isRecommendedPluginsEnabled()
 					? this.getRecommendedPluginListView()
 					: this.getPluginSingleListView( 'featured' ) }
 
 				{ this.getPluginSingleListView( 'popular' ) }
 				{ this.getPluginSingleListView( 'new' ) }
-			</span>
+			</>
 		);
 	}
 
 	recordSearchEvent = ( eventName ) => this.props.recordGoogleEvent( 'PluginsBrowser', eventName );
 
-	getSearchBox() {
+	getSearchBox( isMobile ) {
 		const { WrappedSearch } = this;
 
 		return (
 			<WrappedSearch
-				pinned
-				fitsContainer
+				pinned={ isMobile }
+				fitsContainer={ isMobile }
 				onSearch={ this.props.doSearch }
 				initialValue={ this.props.search }
-				placeholder={ this.props.translate( 'Search Plugins' ) }
+				placeholder={ this.props.translate( 'Try searching ‘ecommerce’' ) }
 				delaySearch={ true }
 				recordEvent={ this.recordSearchEvent }
 			/>
-		);
-	}
-
-	getNavigationBar() {
-		const site = this.props.siteSlug ? '/' + this.props.siteSlug : '';
-		return (
-			<SectionNav
-				selectedText={ this.props.translate( 'Category', {
-					context: 'Category of plugins to be filtered by',
-				} ) }
-			>
-				<NavTabs label="Category">
-					<NavItem path={ '/plugins' + site } selected={ false }>
-						{ this.props.translate( 'All', { context: 'Filter all plugins' } ) }
-					</NavItem>
-					<NavItem
-						path={ '/plugins/featured' + site }
-						selected={ this.props.path === '/plugins/featured' + site }
-					>
-						{ this.props.translate( 'Featured', { context: 'Filter featured plugins' } ) }
-					</NavItem>
-					<NavItem
-						path={ '/plugins/popular' + site }
-						selected={ this.props.path === '/plugins/popular' + site }
-					>
-						{ this.props.translate( 'Popular', { context: 'Filter popular plugins' } ) }
-					</NavItem>
-					<NavItem
-						path={ '/plugins/new' + site }
-						selected={ this.props.path === '/plugins/new' + site }
-					>
-						{ this.props.translate( 'New', { context: 'Filter new plugins' } ) }
-					</NavItem>
-				</NavTabs>
-				{ this.getSearchBox() }
-			</SectionNav>
 		);
 	}
 
@@ -361,32 +357,6 @@ export class PluginsBrowser extends Component {
 		this.reinitializeSearch();
 		this.props.doSearch( term );
 	};
-
-	getSearchBar() {
-		const suggestedSearches = [
-			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
-			this.props.translate( 'Security', { context: 'Plugins suggested search term' } ),
-			this.props.translate( 'Appearance', { context: 'Plugins suggested search term' } ),
-			this.props.translate( 'Writing', { context: 'Plugins suggested search term' } ),
-		];
-
-		return (
-			<SectionNav
-				selectedText={ this.props.translate( 'Suggested Searches', {
-					context: 'Suggested searches for plugins',
-				} ) }
-			>
-				<NavTabs label="Suggested Searches">
-					{ suggestedSearches.map( ( term ) => (
-						<NavItem key={ term } onClick={ this.handleSuggestedSearch( term ) }>
-							{ term }
-						</NavItem>
-					) ) }
-				</NavTabs>
-				{ this.getSearchBox() }
-			</SectionNav>
-		);
-	}
 
 	shouldShowManageButton() {
 		if ( this.props.isJetpackSite ) {
@@ -423,7 +393,7 @@ export class PluginsBrowser extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
-	renderUploadPluginButton() {
+	renderUploadPluginButton( isMobile ) {
 		const { siteSlug, translate } = this.props;
 		const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 
@@ -433,27 +403,12 @@ export class PluginsBrowser extends Component {
 				onClick={ this.handleUploadPluginButtonClick }
 				href={ uploadUrl }
 			>
-				<span className="plugins-browser__button-text">{ translate( 'Install plugin' ) }</span>
+				<Icon className="plugins-browser__button-icon" icon={ upload } width={ 18 } height={ 18 } />
+				{ ! isMobile && (
+					<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
+				) }
 			</Button>
 		);
-	}
-
-	getPageHeaderView() {
-		if ( this.props.hideSearchForm ) {
-			return null;
-		}
-
-		const navigation = this.props.category ? this.getNavigationBar() : this.getSearchBar();
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div className="plugins-browser__main">
-				<div className="plugins-browser__main-header">
-					<div className="plugins__header-navigation">{ navigation }</div>
-				</div>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderUpgradeNudge() {
@@ -505,6 +460,7 @@ export class PluginsBrowser extends Component {
 
 	render() {
 		const { category, search } = this.props;
+
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
@@ -528,31 +484,22 @@ export class PluginsBrowser extends Component {
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<SidebarNavigation />
 				{ ! this.props.hideHeader && (
-					<div className="plugins-browser__header">
-						<FormattedHeader
-							brandFont
-							className="plugins-browser__page-heading"
-							headerText={ this.props.translate( 'Plugins' ) }
-							align="left"
-							subHeaderText={ this.props.translate(
-								'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="plugins" showIcon={ false } />
-										),
-									},
-								}
-							) }
-						/>
+					<FixedNavigationHeader
+						brandFont
+						className="plugins-browser__header"
+						headerText={ this.props.translate( 'Plugins' ) }
+					>
 						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
-							{ this.renderUploadPluginButton() }
+							{ this.renderUploadPluginButton( this.state.isMobile ) }
 						</div>
-					</div>
+
+						<div className="plugins-browser__searchbox">
+							{ this.getSearchBox( this.state.isMobile ) }
+						</div>
+					</FixedNavigationHeader>
 				) }
 				{ this.renderUpgradeNudge() }
-				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
 				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
 			</MainComponent>
