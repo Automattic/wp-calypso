@@ -21,7 +21,8 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
 	const convertToFrendlyWebsiteName = ( website: string ): string => {
-		return website.replace( 'https://', '' ).replace( 'http://', '' ).replace( 'www.', '' );
+		const { hostname, pathname } = new URL( website );
+		return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
 	};
 
 	return (
