@@ -72,12 +72,6 @@ const gutenbergRedirect = function ( flowName, locale ) {
 	window.location.replace( url.toString() );
 };
 
-const getSideIdOrSlug = ( signupDependencies, query ) => {
-	return (
-		signupDependencies?.siteSlug || query?.siteSlug || signupDependencies?.siteId || query?.siteId
-	);
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -276,15 +270,14 @@ export default {
 	},
 
 	async start( context, next ) {
-		const { store: signupStore, query, path, params } = context;
-		const { getState, dispatch } = signupStore;
-		const userLoggedIn = isUserLoggedIn( getState() );
-		const basePath = sectionify( path );
-		const flowName = getFlowName( params, userLoggedIn );
-		const stepName = getStepName( params );
-		const stepSectionName = getStepSectionName( params );
-		const signupDependencies = getSignupDependencyStore( getState() );
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
+		const basePath = sectionify( context.path );
+		const flowName = getFlowName( context.params, userLoggedIn );
+		const stepName = getStepName( context.params );
+		const stepSectionName = getStepSectionName( context.params );
 		const { providesDependenciesInQuery } = flows.getFlow( flowName, userLoggedIn );
+
+		const { query } = initialContext;
 
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
@@ -293,22 +286,22 @@ export default {
 			flow: flowName,
 		} );
 
-		dispatch( setLayoutFocus( 'content' ) );
-		dispatch( setCurrentFlowName( flowName ) );
+		context.store.dispatch( setLayoutFocus( 'content' ) );
+		context.store.dispatch( setCurrentFlowName( flowName ) );
 
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
 			! providesDependenciesInQuery?.includes( 'siteSlug' )
 		) {
-			dispatch( setSelectedSiteId( null ) );
+			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
 		context.primary = createElement( SignupComponent, {
-			store: signupStore,
-			path: path,
+			store: context.store,
+			path: context.path,
 			initialContext,
-			locale: params.lang,
+			locale: context.params.lang,
 			flowName,
 			queryObject: query,
 			refParameter: query && query.ref,
@@ -316,7 +309,6 @@ export default {
 			stepSectionName,
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
-			siteIdOrSlug: getSideIdOrSlug( signupDependencies, query ),
 		} );
 
 		next();
@@ -325,7 +317,11 @@ export default {
 		const { getState, dispatch } = signupStore;
 		const signupDependencies = getSignupDependencyStore( getState() );
 
-		const siteIdOrSlug = getSideIdOrSlug( signupDependencies, query );
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			query?.siteSlug ||
+			signupDependencies?.siteId ||
+			query?.siteId;
 		if ( ! siteIdOrSlug ) {
 			next();
 			return;
