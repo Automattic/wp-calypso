@@ -205,8 +205,12 @@ function hide_fse_blocks( $editor_settings ) {
  * @return array Possibly modified editor settings.
  */
 function hide_template_editing( $editor_settings ) {
-	// this shouldn't even be hooked under this condition, but let's be sure.
-	if ( is_core_fse_active() ) {
+
+	if (
+		// This shouldn't even be hooked under this condition, but let's be sure.
+		is_core_fse_active() ||
+		// If this is not an FSE (or universal) theme, don't mess with the settings for template editing.
+		! is_fse_theme() ) {
 		return $editor_settings;
 	}
 	$editor_settings['supportsTemplateMode'] = false;
