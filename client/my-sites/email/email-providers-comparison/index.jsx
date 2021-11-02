@@ -53,7 +53,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
-import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
+import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	getEmailForwardingFeatures,
@@ -73,7 +73,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EmailProviderCard from './email-provider-card';
 
 import './style.scss';
-import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 
 const identityMap = ( item ) => item;
 
