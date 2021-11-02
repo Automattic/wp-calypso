@@ -1,6 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import {
+	FEATURE_SET_PRIMARY_CUSTOM_DOMAIN,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -8,6 +11,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -21,15 +25,18 @@ import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/lis
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -78,7 +85,14 @@ export class SiteDomains extends Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, isAtomicSite, translate } = this.props;
+		const {
+			currentRoute,
+			domains,
+			hasProductsList,
+			isAtomicSite,
+			selectedSite,
+			translate,
+		} = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
@@ -129,6 +143,8 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
+				{ ! hasProductsList && <QueryProductsList /> }
+
 				<div className="domains__header">
 					{ /* TODO: we need to decide where the HeaderCart will appear in the new design */ }
 					<div className="domains__header-buttons">
@@ -146,6 +162,8 @@ export class SiteDomains extends Component {
 						hasNonWpcomDomains={ false }
 					/>
 				) }
+
+				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">
 					<DomainsTable
@@ -421,10 +439,13 @@ export default connect(
 		const purchases = getPurchases( state );
 
 		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+			googleWorkspaceProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,

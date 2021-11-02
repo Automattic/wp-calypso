@@ -9,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -22,6 +23,7 @@ import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/lis
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
@@ -31,6 +33,7 @@ import {
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -99,7 +102,14 @@ export class List extends Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, translate, isAtomicSite } = this.props;
+		const {
+			currentRoute,
+			domains,
+			hasProductsList,
+			isAtomicSite,
+			selectedSite,
+			translate,
+		} = this.props;
 		const { settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
@@ -110,6 +120,8 @@ export class List extends Component {
 
 		return (
 			<>
+				{ ! hasProductsList && <QueryProductsList /> }
+
 				<div className="domains__header">
 					<FormattedHeader
 						brandFont
@@ -143,6 +155,8 @@ export class List extends Component {
 						hasNonWpcomDomains={ false }
 					/>
 				) }
+
+				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">{ this.listNewItems() }</div>
 
@@ -423,6 +437,7 @@ export default connect(
 		return {
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
