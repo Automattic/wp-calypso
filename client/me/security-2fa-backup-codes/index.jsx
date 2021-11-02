@@ -34,7 +34,6 @@ class Security2faBackupCodes extends Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
 
 		this.setState( { addingPassword: true, showPrompt: false } );
-		return;
 	};
 
 	handleGenerateButton = ( userPassword ) => {
@@ -138,6 +137,7 @@ class Security2faBackupCodes extends Component {
 
 		return (
 			<Security2faBackupCodesPasswordPromt
+				isDisabled={ ! this.state.addingPassword }
 				onCancel={ this.toggleBackupCodePassword }
 				onSubmit={ this.handleGenerateButton }
 			/>

@@ -54,7 +54,7 @@ class Security2faBackupCodesPasswordPromt extends React.Component {
 						) }
 					</FormSettingExplanation>
 				</FormFieldset>
-				<FormButton disabled={ 0 === this.state.userPassword.length }>
+				<FormButton disabled={ 0 === this.state.userPassword.length || this.props.isDisabled }>
 					{ this.props.translate( 'Generate Backup Codes' ) }
 				</FormButton>
 				<FormButton onClick={ this.props.onCancel } isPrimary={ false }>
