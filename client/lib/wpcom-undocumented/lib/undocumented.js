@@ -1635,20 +1635,6 @@ Undocumented.prototype.initiateTransfer = function ( siteId, plugin, theme, onPr
 };
 
 /**
- * Returns a list of media from an external media service. Similar to Site.mediaList in use, but
- * with a more restricted set of query params.
- *
- * @param {object} query - Media query, supports 'path', 'search', 'max', 'page_handle', and 'source'
- * @param {Function} fn - The callback function
- * @returns {Promise} promise for handling result
- */
-Undocumented.prototype.externalMediaList = function ( query, fn ) {
-	debug( `/meta/external-media/${ query.source }` );
-
-	return this.wpcom.req.get( `/meta/external-media/${ query.source }`, query, fn );
-};
-
-/**
  * Fetch the status of an Automated Transfer.
  *
  * @param {number} siteId -- the ID of the site being transferred
