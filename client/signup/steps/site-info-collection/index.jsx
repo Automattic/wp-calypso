@@ -56,8 +56,6 @@ function SiteInformationCollection( {
 
 	return (
 		<Container>
-			{ /* TODO: Remove before merging */ }
-			<button onClick={ nextStep }>Next </button>
 			<Widget
 				hidden={ {
 					username: signupUsername || loggedInUsername,
