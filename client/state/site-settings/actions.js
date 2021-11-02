@@ -9,8 +9,8 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
-import { normalizeSettings } from './utils';
 import { requestSite } from 'calypso/state/sites/actions';
+import { normalizeSettings } from './utils';
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
 
