@@ -1,5 +1,9 @@
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	mapRecordKeysRecursively,
+	camelToSnakeCase,
+	tryToGuessPostalCodeFormat,
+} from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
@@ -87,11 +91,17 @@ async function wpcomPayPalExpress(
 				},
 			};
 
-			return wp.undocumented().paypalExpressUrl( newPayload );
+			return wp.req.post(
+				'/me/paypal-express-url',
+				mapRecordKeysRecursively( newPayload, camelToSnakeCase )
+			);
 		} );
 	}
 
-	return wp.undocumented().paypalExpressUrl( payload );
+	return wp.req.post(
+		'/me/paypal-express-url',
+		mapRecordKeysRecursively( payload, camelToSnakeCase )
+	);
 }
 
 function createPayPalExpressEndpointRequestPayloadFromLineItems( {
