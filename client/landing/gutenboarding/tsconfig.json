@@ -12,7 +12,8 @@
 			// `tsc` will always pick the former by default, even if the project depends on the latter. Hardcoding the
 			// path here works around that limitation.
 			// To be removed when we don't have `@types/history` (brought in by `history@^4`) in our dependency tree.
-			"history": [ "../../../node_modules/@types/history" ]
+			"history": [ "../../../node_modules/@types/history" ],
+			"calypso/*": [ "../..//*" ]
 		}
 	},
 	"files": [ "index.tsx" ],
