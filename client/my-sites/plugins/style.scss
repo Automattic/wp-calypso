@@ -230,4 +230,22 @@ body.is-section-plugins:not( .is-nav-unification ) {
 			border-bottom: none;
 		}
 	}
+
+	.single-plugin__layout-col-right {
+		margin-top: 100px;
+
+		.body-right-text {
+			color: var( --studio-gray-40 );
+			font-size: $font-body-extra-small;
+		}
+
+		.body-right-value {
+			color: var( --studio-gray-70 );
+			font-size: $font-body-small;
+
+			&.single-plugin__downloads-value {
+				font-size: $font-body;
+			}
+		}
+	}
 }

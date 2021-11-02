@@ -9,6 +9,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
@@ -192,6 +193,14 @@ function SinglePlugin( props ) {
 						) : (
 							<PluginSectionsCustom plugin={ fullPlugin } />
 						) }
+					</div>
+					<div className="single-plugin__layout-col single-plugin__layout-col-right">
+						<div className="single-plugin__downloads-text body-right-text">{ translate( 'Downloads' ) }</div>
+						<div className="single-plugin__downloads-value body-right-value">{ formatNumberCompact( fullPlugin.downloaded, 'en' ) }</div>
+						<div className="single-plugin__version-text body-right-text">{ translate( 'Version' ) }</div>
+						<div className="single-plugin__version-value body-right-value">{ fullPlugin.version }</div>
+						<div className="single-plugin__tested-text body-right-text">{ translate( 'Tested up to' ) }</div>
+						<div className="single-plugin__tested-value body-right-value">{ fullPlugin.version }</div>
 					</div>
 				</div>
 			</div>

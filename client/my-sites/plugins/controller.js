@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { includes, some } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
@@ -12,7 +13,6 @@ import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
 import SinglePluginComponent from './single-plugin';
-import config from '@automattic/calypso-config';
 /**
  * Module variables
  */
