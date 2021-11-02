@@ -189,7 +189,13 @@ function SinglePlugin( props ) {
 				<div className="single-plugin__layout single-plugin__body">
 					<div className="single-plugin__layout-col single-plugin__layout-col-left">
 						{ fullPlugin.wporg ? (
-							<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } />
+							<PluginSections
+								className="single-plugin__plugins-sections"
+								plugin={ fullPlugin }
+								isWpcom={ isWpcom }
+								addBanner
+								removeReadMore
+							/>
 						) : (
 							<PluginSectionsCustom plugin={ fullPlugin } />
 						) }

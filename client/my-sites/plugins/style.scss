@@ -242,6 +242,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		.body-right-value {
 			color: var( --studio-gray-70 );
 			font-size: $font-body-small;
+			padding-bottom: 16px;
 
 			&.single-plugin__downloads-value {
 				font-size: $font-body;
