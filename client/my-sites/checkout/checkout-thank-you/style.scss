@@ -2,10 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-.is-section-checkout.is-jetpack-site {
-	min-height: 100vh;
+.layout__content {
+	overflow: visible;
 }
-
 .checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
