@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
-const VideosUi = () => {
+const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -11,15 +11,19 @@ const VideosUi = () => {
 				<div className="videos-ui__header-links">
 					<div>
 						<Gridicon icon="my-sites" size={ 24 } />
-						<a href="/" className="videos-ui__back-link">
-							<Gridicon icon="chevron-left" size={ 24 } />
-							<span>{ translate( 'Back' ) }</span>
-						</a>
+						{ shouldDisplayTopLinks && (
+							<a href="/" className="videos-ui__back-link">
+								<Gridicon icon="chevron-left" size={ 24 } />
+								<span>{ translate( 'Back' ) }</span>
+							</a>
+						) }
 					</div>
 					<div>
-						<a href="/" className="videos-ui__skip-link">
-							{ translate( 'Skip and draft first post' ) }
-						</a>
+						{ shouldDisplayTopLinks && (
+							<a href="/" className="videos-ui__skip-link">
+								{ translate( 'Skip and draft first post' ) }
+							</a>
+						) }
 					</div>
 				</div>
 				<div className="videos-ui__header-content">
