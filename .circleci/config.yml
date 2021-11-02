@@ -305,10 +305,7 @@ jobs:
           path: desktop/release
       - store_artifacts:
           when: always
-          path: desktop/e2e/logs
-      - store_artifacts:
-          when: always
-          path: desktop/e2e/screenshots
+          path: desktop/test/e2e/results/
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
@@ -379,10 +376,7 @@ jobs:
           path: desktop/release
       - store_artifacts:
           when: always
-          path: desktop/e2e/logs
-      - store_artifacts:
-          when: always
-          path: desktop/e2e/screenshots
+          path: desktop/test/e2e/results/
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
