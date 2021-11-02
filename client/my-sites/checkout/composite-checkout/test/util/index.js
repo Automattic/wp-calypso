@@ -699,6 +699,20 @@ export function createTestReduxStore() {
 	} );
 }
 
+export function mockPayPalEndpoint( endpointResponse ) {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/paypal-express-url', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( endpointResponse );
+	return endpoint;
+}
+
+export const mockPayPalRedirectResponse = () => [ 200, 'https://test-redirect-url' ];
+
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	const transactionsEndpoint = jest.fn();
 	transactionsEndpoint.mockReturnValue( true );
