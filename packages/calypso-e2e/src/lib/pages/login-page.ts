@@ -1,7 +1,6 @@
 import { Page } from 'playwright';
 import { setLoginCookie } from '../../browser-manager';
 import { getCalypsoURL, getAccountCredential } from '../../data-helper';
-import { COOKIES_PATH } from '../../environment';
 
 const selectors = {
 	loginContainer: '.wp-login__container',
@@ -175,7 +174,7 @@ export class LoginPage {
 
 				await Promise.all( [
 					// Shorter than usual timoout, because with a cookie file the login process
-					// shoiuld not take more than a few seconds.
+					// should not take more than a few seconds.
 					this.page.waitForNavigation( { url: landingUrl, waitUntil: 'load', timeout: 15 * 1000 } ),
 					this.page.goto( getCalypsoURL( '/' ) ),
 				] );
