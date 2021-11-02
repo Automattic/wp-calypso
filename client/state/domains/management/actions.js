@@ -96,9 +96,8 @@ export function requestWhois( domain ) {
 			domain,
 		} );
 
-		return wpcom
-			.undocumented()
-			.fetchWhois( domain )
+		return wpcom.req
+			.get( `/domains/${ domain }/whois` )
 			.then( ( whoisData ) => {
 				dispatch( receiveWhois( domain, whoisData ) );
 				dispatch( {
@@ -132,9 +131,15 @@ export function saveWhois( domain, whoisData, transferLock ) {
 			domain,
 		} );
 
-		return wpcom
-			.undocumented()
-			.updateWhois( domain, whoisData, transferLock )
+		return wpcom.req
+			.post( {
+				path: `/domains/${ domain }/whois`,
+				apiVersion: '1.1',
+				body: {
+					whois: whoisData,
+					transfer_lock: transferLock,
+				},
+			} )
 			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );
 				dispatch( {
