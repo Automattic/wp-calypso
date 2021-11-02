@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import footerCardBackground from 'calypso/assets/images/jetpack/jetpack-licensing-checkout-bg1.svg';
+import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';

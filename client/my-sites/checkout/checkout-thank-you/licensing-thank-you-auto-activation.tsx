@@ -4,7 +4,7 @@ import { find } from 'lodash';
 import page from 'page';
 import { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import footerCardBackground from 'calypso/assets/images/jetpack/jetpack-licensing-checkout-bg1.svg';
+import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';

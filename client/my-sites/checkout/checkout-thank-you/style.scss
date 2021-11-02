@@ -2,6 +2,10 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
+.is-section-checkout.is-jetpack-site {
+	min-height: 100vh;
+}
+
 .checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
@@ -788,12 +792,6 @@
 		width: 100%;
 		max-width: none;
 
-		@include break-medium {
-			flex-direction: row;
-			width: auto;
-			max-width: 1200px;
-		}
-
 		.jetpack-logo {
 			margin-bottom: 25px;
 		}
@@ -1013,6 +1011,10 @@
 
 		.licensing-thank-you-auto-activation__select {
 			margin-bottom: 58px;
+			.select-dropdown__options {
+				max-height: 220px;
+				overflow-y: scroll;
+			}
 		}
 
 		.select-dropdown__item {
@@ -1026,6 +1028,30 @@
 
 	}
 }
+
+.jetpack-checkout-siteless-thank-you {
+	.jetpack-checkout-siteless-thank-you__card {
+		@include break-medium {
+			flex-direction: row;
+			width: auto;
+			max-width: 1200px;
+		}
+	}
+}
+
+.licensing-thank-you-auto-activation,
+.licensing-thank-you-manual-activation {
+	.licensing-thank-you-auto-activation__card,
+	.licensing-thank-you-manual-activation__card {
+		@include break-large {
+			flex-direction: row;
+			width: auto;
+			max-width: 1200px;
+		}
+	}
+}
+
+
 
 .jetpack-checkout-thank-you {
 	.jetpack-checkout-thank-you__card,
