@@ -53,7 +53,7 @@ const VideosUi = () => {
 			</div>
 			<div className="videos-ui__body">
 				<div className="videos-ui__body-title">
-					<h3>{ translate( 'Blogger Masterclass' ) }</h3>
+					<h3>{ course && course.title }</h3>
 				</div>
 				<div className="videos-ui__video-content">
 					<div className="videos-ui__video">
