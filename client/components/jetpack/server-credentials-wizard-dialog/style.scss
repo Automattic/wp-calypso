@@ -1,4 +1,5 @@
-.dialog.server-credentials-wizard-dialog {
+// Making sure .dialog.card styles are overwritten
+.dialog.card.server-credentials-wizard-dialog {
 	width: 100%;
 
 	@include breakpoint-deprecated( '>660px' ) {

@@ -10,7 +10,8 @@
 		background: initial;
 	}
 
-	&__buttons {
+	// Making sure .dialog__action-buttons are overwritten
+	&__buttons.dialog__action-buttons {
 		background: var( --studio-gray-0 );
 		margin: 0 -24px;
 		padding: 16px 24px;
