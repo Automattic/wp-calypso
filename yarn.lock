@@ -1215,7 +1215,7 @@ __metadata:
     react-native: ^0.65.0
     reakit-utils: ^0.15.1
     redux: ^4.0.5
-    tinymce: ^4.9.6
+    tinymce: ^5.0.0
     webpack: ^5.54.0
   languageName: unknown
   linkType: soft
@@ -34968,10 +34968,10 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"tinymce@npm:^4.9.6":
-  version: 4.9.6
-  resolution: "tinymce@npm:4.9.6"
-  checksum: 9b62d8c9ef6f2adf19f180f0c318e5dbff4593e7e2eb9811c2f3c3be623cb51f2dcc4b62fccb71b533f4bc7bc708250f669a9c221bfe33229393305594e22d62
+"tinymce@npm:^5.0.0":
+  version: 5.10.0
+  resolution: "tinymce@npm:5.10.0"
+  checksum: 3b1f98bc7ec44c1ae3b7a5d7782df963d57d874fa3c1dde5730f040a3ce5377a987f8dc0970bf599ebc6d4778fdfe2d72336034cb10bcd450081f029b1275992
   languageName: node
   linkType: hard
 
