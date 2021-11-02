@@ -521,7 +521,7 @@ __metadata:
     "@automattic/calypso-typescript-config": ^1.0.0
     react-dom: ^17.0.2
   peerDependencies:
-    react: ^17.0.2
+    react: ">=16.2.0"
   languageName: unknown
   linkType: soft
 
@@ -20670,7 +20670,7 @@ fsevents@~2.1.2:
     tannin: ^1.1.1
     use-subscription: ^1.5.1
   peerDependencies:
-    react: ^17.0.2
+    react: ">=16.2.0"
   languageName: unknown
   linkType: soft
 
