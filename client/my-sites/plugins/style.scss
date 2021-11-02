@@ -10,8 +10,19 @@
 	}
 }
 
-.is-section-plugins.color-scheme.is-nav-unification {
+.is-section-plugins.theme-default.color-scheme {
 	--color-surface-backdrop: --studio-white;
+}
+
+// Fix for Jetpack not having nav-unification styles yet.
+body.is-section-plugins:not( .is-nav-unification ) {
+	.plugins-browser__header,
+	.plugins__page-heading {
+		@media ( min-width: 661px ) and ( max-width: 782px ) {
+			left: calc( var( --sidebar-width-min ) + 1px ); // 1px is the sidebar border.
+			width: calc( 100% - var( --sidebar-width-min ) - 1px ); // 1px is the sidebar border.
+		}
+	}
 }
 
 .upsell-nudge {
@@ -34,11 +45,11 @@
 	background: var( --color-surface );
 	flex-direction: column;
 	display: flex;
-	margin-bottom: 9px;
+	margin: 9px 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
-		margin-bottom: 17px;
+		margin: 17px 0;
 	}
 }
 
@@ -63,27 +74,26 @@
 
 .plugins__main-buttons {
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: stretch;
-	margin: auto;
-	margin-right: 15px;
+	align-items: center;
 
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-		align-items: flex-end;
-		margin-right: 0;
-		margin-bottom: 17px;
+	@media screen and ( max-width: 960px ) {
+		.plugins__button {
+			border: none;
+		}
 	}
 
 	.plugins__button {
 		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		height: 32px;
+
+		.plugins__button-icon {
+			margin-right: 5px;
+		}
 
 		&:not( :last-child ) {
-			margin-bottom: 8px;
-
 			@include breakpoint-deprecated( '>480px' ) {
-				margin-bottom: 0;
 				margin-right: 10px;
 			}
 		}

@@ -1,4 +1,6 @@
 import { Button } from '@automattic/components';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
+import { Icon, upload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import page from 'page';
@@ -43,6 +45,13 @@ import PluginsList from './plugins-list';
 import './style.scss';
 
 export class PluginsMain extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isMobile: isWithinBreakpoint( '<960px' ),
+		};
+	}
+
 	componentDidUpdate() {
 		const { currentPlugins } = this.props;
 
@@ -51,6 +60,13 @@ export class PluginsMain extends Component {
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
+		} );
+	}
+
+	componentDidMount() {
+		// Change the isMobile state when the size of the browser changes.
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
+			this.setState( { isMobile } );
 		} );
 	}
 
@@ -358,7 +374,7 @@ export class PluginsMain extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
-	renderUploadPluginButton() {
+	renderUploadPluginButton( isMobile ) {
 		const { selectedSiteSlug, translate } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
@@ -368,7 +384,8 @@ export class PluginsMain extends Component {
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
 			>
-				<span className="plugins__button-text">{ translate( 'Install plugin' ) }</span>
+				<Icon className="plugins__button-icon" icon={ upload } width={ 18 } height={ 18 } />
+				{ ! isMobile && <span className="plugins__button-text">{ translate( 'Upload' ) }</span> }
 			</Button>
 		);
 	}
@@ -408,7 +425,7 @@ export class PluginsMain extends Component {
 				>
 					<div className="plugins__main-buttons">
 						{ this.renderAddPluginButton() }
-						{ this.renderUploadPluginButton() }
+						{ this.renderUploadPluginButton( this.state.isMobile ) }
 					</div>
 				</FixedNavigationHeader>
 				<div className="plugins__main">
