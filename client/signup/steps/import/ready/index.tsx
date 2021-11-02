@@ -16,6 +16,19 @@ interface Props {
 	urlData: urlData;
 }
 
+const platformMap: { [ key: string ]: string } = {
+	wordpress: 'WordPress',
+	wix: 'Wix',
+	blogger: 'Blogger',
+	medium: 'Medium',
+	'godaddy-central': 'GoDaddy Central',
+	tumblr: 'Tumblr',
+};
+
+const convertPlatformName = ( platform: string ): string => {
+	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
+};
+
 const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
@@ -39,7 +52,7 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 								),
 								{
 									website: convertToFrendlyWebsiteName( urlData.url ),
-									platform: urlData.platform,
+									platform: convertPlatformName( urlData.platform ),
 								}
 							),
 							{ strong: createElement( 'strong' ) }
@@ -99,6 +112,7 @@ const ReadyNotStep: React.FunctionComponent = () => {
 interface PropsWithoutUrl {
 	platform: string;
 }
+
 const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
 	const { __ } = useI18n();
 
@@ -114,7 +128,7 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 								'To move your existing %(platform)s hosted content to your newly created WordPress.com site, try our %(platform)s importer.'
 							),
 							{
-								platform,
+								platform: convertPlatformName( platform ),
 							}
 						) }
 					</SubTitle>
