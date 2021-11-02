@@ -59,7 +59,6 @@
 		"jetpack/happychat": true,
 		"jetpack/magic-link-signup": true,
 		"jetpack/only-realtime-products": true,
-		"jetpack/personal-plan": false,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/siteless-checkout": true,
