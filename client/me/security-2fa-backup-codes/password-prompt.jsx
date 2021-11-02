@@ -25,6 +25,7 @@ class Security2faBackupCodesPasswordPromt extends React.Component {
 	handleSubmit = ( e ) => {
 		e.preventDefault();
 		this.props.onSubmit( this.state.userPassword );
+		this.setState( { userPassword: '' } );
 	};
 
 	handleChange = ( e ) => {

@@ -26,6 +26,7 @@ class Security2faBackupCodes extends Component {
 			backupCodes: [],
 			generatingCodes: false,
 			addingPassword: false,
+			lastError: null,
 		};
 	}
 
@@ -40,8 +41,6 @@ class Security2faBackupCodes extends Component {
 		this.setState( {
 			generatingCodes: true,
 			verified: false,
-			showPrompt: true,
-			addingPassword: false,
 		} );
 
 		twoStepAuthorization.backupCodes( userPassword, this.onRequestComplete );
@@ -49,17 +48,26 @@ class Security2faBackupCodes extends Component {
 
 	toggleBackupCodePassword = ( event ) => {
 		event.preventDefault();
-		this.setState( { addingPassword: ! this.state.addingPassword } );
+		this.setState( {
+			addingPassword: ! this.state.addingPassword,
+			generatingCodes: false,
+			lastError: null,
+			showPrompt: true,
+		} );
 	};
 
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
+			this.setState( { lastError: error, generatingCodes: false } );
 			return;
 		}
 
 		this.setState( {
 			backupCodes: data.codes,
 			generatingCodes: false,
+			lastError: null,
+			showPrompt: true,
+			addingPassword: false,
 		} );
 	};
 
@@ -110,6 +118,24 @@ class Security2faBackupCodes extends Component {
 	}
 
 	renderPasswordPrompt() {
+		const { lastError } = this.state;
+		if ( lastError ) {
+			const friendlyMessage =
+				lastError?.error === 'authentication_failed'
+					? this.props.translate( 'Invalid password' )
+					: this.props.translate(
+							'Unable to generate backup codes right now. Please try again later.'
+					  );
+
+			return (
+				<Notice
+					status="is-error"
+					text={ friendlyMessage }
+					onDismissClick={ () => this.setState( { lastError: null } ) }
+				/>
+			);
+		}
+
 		return (
 			<Security2faBackupCodesPasswordPromt
 				onCancel={ this.toggleBackupCodePassword }
