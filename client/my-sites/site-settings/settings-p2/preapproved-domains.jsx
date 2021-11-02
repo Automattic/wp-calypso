@@ -18,11 +18,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wrapSettingsForm from '../wrap-settings-form';
 
 const debug = debugModule( 'calypso:my-sites:settings:p2-settings' );
-export class P2GeneralSettingsForm extends Component {
+export class P2PreapprovedDomainsForm extends Component {
 	SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
 
 	state = {
-		isDomainsToggledOn: false,
+		isToggledOn: false,
 		isValidating: false,
 		success: [],
 		errors: {},
@@ -34,14 +34,14 @@ export class P2GeneralSettingsForm extends Component {
 			return null;
 		}
 
-		if ( state.isDomainsToggledOn === !! props.fields?.p2_preapproved_domains ) {
+		if ( state.isToggledOn === !! props.fields?.p2_preapproved_domains ) {
 			return null;
 		}
 
 		// Domains should always be toggled on if text field is not empty.
 		// The reverse is not true -- can be toggled on even if empty.
 		if ( props.fields?.p2_preapproved_domains?.length > 0 ) {
-			return { isDomainsToggledOn: true };
+			return { isToggledOn: true };
 		}
 	}
 
@@ -72,7 +72,7 @@ export class P2GeneralSettingsForm extends Component {
 		updateFields( { [ this.SETTING_KEY_PREAPPROVED_DOMAINS ]: [] } );
 
 		this.setState( {
-			isDomainsToggledOn: ! this.state.isDomainsToggledOn,
+			isToggledOn: ! this.state.isToggledOn,
 		} );
 	};
 
@@ -184,7 +184,7 @@ export class P2GeneralSettingsForm extends Component {
 			return <></>;
 		}
 
-		const classes = classNames( 'site-settings__p2-settings', {
+		const classes = classNames( 'site-settings__p2-preapproved-domains', {
 			'is-loading': isRequestingSettings,
 		} );
 
@@ -206,14 +206,14 @@ export class P2GeneralSettingsForm extends Component {
 						<div className="settings-p2__preapproved-domains">
 							<FormFieldset>
 								<ToggleControl
-									checked={ this.state.isDomainsToggledOn }
+									checked={ this.state.isToggledOn }
 									disabled={ isRequestingSettings || isSavingSettings }
 									onChange={ this.handleDomainsToggle }
 									label={ translate(
 										'Allow people with an email address from specified domains to join this workspace.'
 									) }
 								></ToggleControl>
-								{ this.state.isDomainsToggledOn && (
+								{ this.state.isToggledOn && (
 									<>
 										<FormLabel htmlFor="blogname">{ translate( 'Approved domains' ) }</FormLabel>
 										<TokenField
@@ -274,4 +274,4 @@ const getFormSettings = ( settings ) => {
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( P2GeneralSettingsForm );
+)( P2PreapprovedDomainsForm );
