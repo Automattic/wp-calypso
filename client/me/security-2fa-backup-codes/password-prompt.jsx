@@ -45,7 +45,7 @@ class Security2faBackupCodesPasswordPromt extends React.Component {
 						type="password"
 						ref={ ( input ) => ( this.passwordInput = input ) }
 						value={ this.state.userPassword }
-						placeholder={ this.props.translate( 'Your WordPress.com password' ) }
+						placeholder={ this.props.translate( 'WordPress.com password' ) }
 						onChange={ this.handleChange }
 					/>
 					<FormSettingExplanation>
