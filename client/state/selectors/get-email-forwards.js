@@ -19,7 +19,7 @@ export function getEmailForwards( state, domainName ) {
  * @returns {boolean}          adding forwards
  */
 export function isAddingForward( state, domainName ) {
-	return state?.emailForwarding?.[ domainName ].addingForward ?? null;
+	return state?.emailForwarding?.[ domainName ]?.addingForward ?? null;
 }
 
 /**
