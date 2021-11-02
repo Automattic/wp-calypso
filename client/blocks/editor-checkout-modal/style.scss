@@ -5,7 +5,22 @@
 .editor-checkout-modal {
 	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
 
+	.components-modal__header {
+		padding: 0 22px;
+
+		.components-modal__icon-container > svg {
+			vertical-align: middle;
+			fill: var( --color-text );
+		}
+
+		// hide border on desktop
+		@include break-medium {
+			border: none;
+		}
+	}
+
 	.components-modal__frame {
+		background: #fdfdfd;
 		top: auto;
 		right: auto;
 		bottom: auto;
@@ -17,12 +32,6 @@
 		transform: none;
 		width: 100%;
 		height: 100%;
-	}
-	.components-modal__header {
-		// hide border on desktop
-		@include break-medium {
-			border: none;
-		}
 	}
 
 	// @TODO: re-use onboarding-screen-reader-text()

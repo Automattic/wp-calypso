@@ -5,7 +5,17 @@
 .help-center-modal {
 	z-index: z-index( 'root', '#header.masterbar' );
 
+	.components-modal__header {
+		padding: 0 22px;
+
+		.components-modal__icon-container > svg {
+			vertical-align: middle;
+			fill: var( --color-text );
+		}
+	}
+
 	.components-modal__frame {
+		background: #fdfdfd;
 		top: auto;
 		right: auto;
 		bottom: auto;
@@ -17,12 +27,6 @@
 		transform: none;
 		width: 100%;
 		height: 100%;
-	}
-	.components-modal__header {
-		// hide border on desktop
-		@include break-medium {
-			border: none;
-		}
 	}
 
 	// @TODO: re-use onboarding-screen-reader-text()
