@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+		{ siteType: 'Atomic', user: 'eCommerceUser' },
 	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
 		let supportComponent: SupportComponent;
 		let gutenboardingFlow: GutenboardingFlow;

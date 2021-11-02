@@ -21,7 +21,7 @@ describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	describe.each`
 		siteType      | user
 		${ 'Simple' } | ${ 'defaultUser' }
-		${ 'Atomic' } | ${ 'wooCommerceUser' }
+		${ 'Atomic' } | ${ 'eCommerceUser' }
 	`( 'View Insights ($siteType)', function ( { user } ) {
 		it( 'Log In', async function () {
 			const loginPage = new LoginPage( page );

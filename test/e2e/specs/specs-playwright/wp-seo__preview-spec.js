@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 
 	it( 'Log in', async function () {
 		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'wooCommerceUser' } );
+		await loginPage.login( { account: 'eCommerceUser' } );
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
