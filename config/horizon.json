@@ -101,7 +101,7 @@
 		"signup/reskin": true,
 		"signup/social": true,
 		"signup/setup-site-after-checkout": true,
-		"signup/hero-flow": false,
+		"signup/hero-flow": true,
 		"site-indicator": true,
 		"support-user": true,
 		"upgrades/checkout": true,
