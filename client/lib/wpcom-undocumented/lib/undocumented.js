@@ -174,30 +174,6 @@ Undocumented.prototype.jetpackIsUserConnected = function ( siteId ) {
 };
 
 /**
- * Gets the current status of a full sync for a Jetpack site.
- *
- * @param {number|string} siteId The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getJetpackSyncStatus = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/sync/status query' );
-	const endpointPath = '/sites/' + siteId + '/sync/status';
-	return this.wpcom.req.get( { path: endpointPath }, fn );
-};
-
-/**
- * Schedules a full sync for a Jetpack site.
- *
- * @param {number|string} siteId The site ID
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
-	debug( '/sites/:site_id:/sync query' );
-	const endpointPath = '/sites/' + siteId + '/sync';
-	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
-};
-
-/**
  * GET/POST site settings
  *
  * @param {number|string} [siteId] The site ID
