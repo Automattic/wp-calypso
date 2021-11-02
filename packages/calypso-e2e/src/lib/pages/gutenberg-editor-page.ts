@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { resolve } from 'path/posix';
 import { Page, Frame, ElementHandle } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
 import { NavbarComponent } from '../components';
@@ -382,15 +383,18 @@ export class GutenbergEditorPage {
 	 */
 	async returnToHomeDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
+		const navbarComponent = new NavbarComponent( this.page );
+		const actions: unknown[] = [
+			this.page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
+		];
+
 		if ( getTargetDeviceName() === 'desktop' ) {
-			await Promise.all( [
-				this.page.waitForNavigation(),
-				frame.click( selectors.desktopDashboardLink ),
-			] );
+			actions.push( frame.click( selectors.desktopDashboardLink ) );
 		} else {
-			const navbarComponent = new NavbarComponent( this.page );
-			await Promise.all( [ this.page.waitForNavigation(), navbarComponent.clickMySites() ] );
+			actions.push( navbarComponent.clickMySites() );
 		}
+
+		await Promise.all( actions );
 	}
 
 	/* Previews */
