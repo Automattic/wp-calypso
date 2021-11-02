@@ -132,7 +132,7 @@ class DesignPickerStep extends Component {
 		recordTracksEvent( 'calypso_signup_design_preview_select', {
 			theme: `pub/${ selectedDesign.theme }`,
 			template: selectedDesign.template,
-			flow_name: this.props.flowName,
+			flow: this.props.flowName,
 		} );
 
 		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme, locale ) );
@@ -142,7 +142,7 @@ class DesignPickerStep extends Component {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			theme: `pub/${ selectedDesign?.theme }`,
 			template: selectedDesign?.template,
-			flow_name: this.props.flowName,
+			flow: this.props.flowName,
 		} );
 
 		this.props.goToNextStep();
