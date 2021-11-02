@@ -1,6 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { find } from 'lodash';
 import page from 'page';
 import { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -145,7 +144,7 @@ const LicensingThankYouAutoActivation: FC< Props > = ( {
 		...siteSelectOptions,
 		...[ lastSelectOption ],
 	];
-	const selectedItem = find( selectDropdownItems, 'props.selected' );
+	const selectedItem = selectDropdownItems.find( ( item ) => item.props.selected );
 
 	return (
 		<Main fullWidthLayout className="licensing-thank-you-auto-activation">
