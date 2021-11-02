@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
@@ -27,7 +27,14 @@ const LicensingThankYouAutoActivation: FC< Props > = ( { productSlug } ) => {
 			/>
 			<Card className="licensing-thank-you-manual-activation__card">
 				<div className="licensing-thank-you-manual-activation__card-main">
-					<JetpackLogo size={ 45 } />
+					<div className="licensing-thank-you-manual-activation__card-top">
+						<JetpackLogo size={ 45 } />
+						<ProgressBar
+							className="licensing-thank-you-manual-activation__progress-bar"
+							value={ 1 }
+							total={ 3 }
+						/>
+					</div>
 					<h1 className="licensing-thank-you-manual-activation__main-message">
 						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
