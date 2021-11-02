@@ -73,6 +73,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EmailProviderCard from './email-provider-card';
 
 import './style.scss';
+import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 
 const identityMap = ( item ) => item;
 
@@ -350,11 +351,7 @@ class EmailProvidersComparison extends Component {
 		}
 
 		const formFields = (
-			<EmailForwarding
-				selectedDomainName={ selectedDomainName }
-				compact={ true }
-				onButtonClick={ this.goToEmailForwarding }
-			/>
+			<EmailForwardingAddNewCompactList selectedDomainName={ selectedDomainName } />
 		);
 
 		return (

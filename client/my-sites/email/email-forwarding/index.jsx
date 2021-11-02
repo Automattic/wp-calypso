@@ -8,7 +8,6 @@ import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import Main from 'calypso/components/main';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import EmailForwardingAddNew from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new';
-import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailForwardingCustomMxList from 'calypso/my-sites/email/email-forwarding/email-forwarding-custom-mx-list';
 import EmailForwardingDetails from 'calypso/my-sites/email/email-forwarding/email-forwarding-details';
 import EmailForwardingGSuiteDetails from 'calypso/my-sites/email/email-forwarding/email-forwarding-gsuite-details';
@@ -26,7 +25,6 @@ import './style.scss';
 
 class EmailForwarding extends Component {
 	static propTypes = {
-		compact: PropTypes.bool,
 		emailForwards: PropTypes.array,
 		emailForwardingLimit: PropTypes.number.isRequired,
 		emailForwardingType: PropTypes.string,
@@ -36,10 +34,7 @@ class EmailForwarding extends Component {
 	};
 
 	render() {
-		const { compact = false, selectedDomainName, translate } = this.props;
-		if ( compact ) {
-			return this.renderContent();
-		}
+		const { selectedDomainName, translate } = this.props;
 		return (
 			<Main>
 				<QueryEmailForwards domainName={ selectedDomainName } />
@@ -82,17 +77,7 @@ class EmailForwarding extends Component {
 	}
 
 	renderForwards() {
-		const { compact, emailForwards, emailForwardingLimit, selectedDomainName } = this.props;
-
-		if ( compact ) {
-			return (
-				<EmailForwardingAddNewCompactList
-					emailForwards={ emailForwards }
-					emailForwardingLimit={ emailForwardingLimit }
-					selectedDomainName={ selectedDomainName }
-				/>
-			);
-		}
+		const { emailForwards, emailForwardingLimit, selectedDomainName } = this.props;
 
 		return (
 			<Card className="email-forwarding__card">

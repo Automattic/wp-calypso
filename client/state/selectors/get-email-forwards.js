@@ -12,6 +12,17 @@ export function getEmailForwards( state, domainName ) {
 }
 
 /**
+ * Retrieves the state of the reducer for adding an email forward
+ *
+ * @param  {object} state    Global state tree
+ * @param  {string} domainName domainName to request email adding forwards state
+ * @returns {boolean}          adding forwards
+ */
+export function isAddingForward( state, domainName ) {
+	return state?.emailForwarding?.[ domainName ].addingForward ?? null;
+}
+
+/**
  * Retrieve a list domains that have forwards
  *
  * @param  {object} state   Global state tree

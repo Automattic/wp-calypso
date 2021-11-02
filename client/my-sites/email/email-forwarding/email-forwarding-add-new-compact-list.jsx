@@ -9,24 +9,25 @@ import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwardin
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import {
 	composeAnalytics,
-	recordGoogleEvent,
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
+import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
+import getEmailForwardingType from 'calypso/state/selectors/get-email-forwarding-type';
+import { getEmailForwards, isAddingForward } from 'calypso/state/selectors/get-email-forwards';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class EmailForwardingAddNewCompactList extends Component {
 	static propTypes = {
 		emailForwards: PropTypes.array,
-		emailForwardingLimit: PropTypes.number.isRequired,
+		emailForwardingLimit: PropTypes.number,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
 	state = {
 		forwards: [ { destination: '', mailbox: '', valid: false } ],
-		formSubmitting: false,
 	};
 
 	hasForwards() {
@@ -48,12 +49,6 @@ class EmailForwardingAddNewCompactList extends Component {
 
 		withAnalytics(
 			composeAnalytics(
-				recordGoogleEvent(
-					'Domain Management',
-					'Clicked "Add New Email Forward" Button in Email Forwarding',
-					'Domain Name',
-					domainName
-				),
 				recordTracksEvent(
 					'calypso_domain_management_email_forwarding_add_new_email_forward_click',
 					{
@@ -68,15 +63,13 @@ class EmailForwardingAddNewCompactList extends Component {
 	};
 
 	addNewEmailForwardsClick = ( event ) => {
-		const { selectedSiteSlug } = this.props;
+		const { selectedSiteSlug, addingForward } = this.props;
 
 		event.preventDefault();
 
-		if ( this.state.formSubmitting ) {
+		if ( addingForward ) {
 			return;
 		}
-
-		this.setState( { formSubmitting: true } );
 
 		this.state.forwards.map( ( t ) => {
 			const { mailbox, destination } = t;
@@ -88,8 +81,6 @@ class EmailForwardingAddNewCompactList extends Component {
 				selectedSiteSlug
 			);
 		} );
-
-		this.setState( { formSubmitting: false } );
 	};
 
 	onForwardAdd = () => {
@@ -169,9 +160,13 @@ class EmailForwardingAddNewCompactList extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		return {
 			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
+			addingForward: isAddingForward( state, ownProps.selectedDomainName ),
+			emailForwards: getEmailForwards( state, ownProps.selectedDomainName ),
+			emailForwardingLimit: getEmailForwardingLimit( state, getSelectedSiteId( state ) ),
+			emailForwardingType: getEmailForwardingType( state, ownProps.selectedDomainName ),
 		};
 	},
 	{ addEmailForward }
