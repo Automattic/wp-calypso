@@ -90,7 +90,7 @@ __metadata:
     "@automattic/babel-plugin-optimize-i18n": ^1.0.0
     "@automattic/calypso-eslint-overrides": ^1.0.0
     "@automattic/calypso-typescript-config": ^1.0.0
-    "@automattic/webpack-rtl-plugin": ^5.0.0
+    "@automattic/webpack-rtl-plugin": ^5.1.0
     "@babel/cli": ^7.14.8
     "@babel/compat-data": ^7.15.0
     "@babel/core": ^7.15.0
@@ -1117,7 +1117,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/webpack-rtl-plugin@^5.0.0, @automattic/webpack-rtl-plugin@workspace:packages/webpack-rtl-plugin":
+"@automattic/webpack-rtl-plugin@^5.1.0, @automattic/webpack-rtl-plugin@workspace:packages/webpack-rtl-plugin":
   version: 0.0.0-use.local
   resolution: "@automattic/webpack-rtl-plugin@workspace:packages/webpack-rtl-plugin"
   dependencies:

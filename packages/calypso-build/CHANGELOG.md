@@ -9,6 +9,7 @@
   - sass-loader to ^12.1.0
   - postcss-loader to ^6.2.0
   - postcss peer requirement to ^8.3.11
+  - @automattic/webpack-rtl-plugin to ^5.1.0
 - Set `quietDeps: true` in dart sass options. This avoids printing deprecation
   warnings for stylesheets imported from node_modules.
 - Stopped defaulting `publicPath` option to `/` in `webpack/file-loader`, using the global default that treats paths as relative to the importing script URL.
