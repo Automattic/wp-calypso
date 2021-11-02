@@ -1,42 +1,49 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, TranslateResult } from 'i18n-calypso';
 import { map, pickBy } from 'lodash';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { Theme } from 'calypso/types';
 import { trackClick } from '../helpers';
 import { connectOptions } from '../theme-options';
 
 import './style.scss';
 
+interface Option {
+	action?: () => void;
+	extendedLabel?: string;
+	getUrl?: ( currentThemeId: string | null ) => string;
+	header?: string;
+	hideForTheme?: ( currentThemeId: string | null, siteId: number ) => boolean;
+	label: string;
+	icon?: string;
+}
+
+interface CurrentThemeProps {
+	blockEditorSettings: BlockEditorSettings;
+	currentTheme: Theme | null;
+	currentThemeId: string | null;
+	name: string;
+	options: Record< string, Option >;
+	siteId: number;
+	translate: ( original: string ) => TranslateResult;
+}
+
 /*
  * Show current active theme for a site, with
  * related actions.
  */
-class CurrentTheme extends Component {
-	static propTypes = {
-		options: PropTypes.objectOf(
-			PropTypes.shape( {
-				label: PropTypes.string,
-				icon: PropTypes.string,
-				getUrl: PropTypes.func,
-			} )
-		),
-		blockEditorSettings: PropTypes.shape( { is_fse_eligible: PropTypes.bool } ),
-		siteId: PropTypes.number.isRequired,
-		// connected props
-		currentTheme: PropTypes.object,
-	};
-
-	trackClick = ( event ) => trackClick( 'current theme', event );
+class CurrentTheme extends Component< CurrentThemeProps > {
+	trackClick = ( event: MouseEvent< HTMLButtonElement > ) => trackClick( 'current theme', event );
 
 	render() {
 		const { currentTheme, currentThemeId, blockEditorSettings, siteId, translate } = this.props;
@@ -92,24 +99,27 @@ class CurrentTheme extends Component {
 										</InlineSupportLink>
 									</p>
 									<div className={ classNames( 'current-theme__actions' ) }>
-										{ map( options, ( option, name ) => (
-											<Button
-												className={ classNames(
-													'current-theme__button',
-													'components-button',
-													'current-theme__' + this.props.name
-												) }
-												primary={ option.label.toLowerCase() === 'customize' }
-												name={ name }
-												key={ name }
-												label={ option.label }
-												href={ currentThemeId && option.getUrl( currentThemeId ) }
-												onClick={ this.trackClick }
-											>
-												{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
-												{ option.label }
-											</Button>
-										) ) }
+										{ map( options, ( option, name ) => {
+											return (
+												<Button
+													className={ classNames(
+														'current-theme__button',
+														'components-button',
+														'current-theme__' + this.props.name
+													) }
+													primary={ option.label.toLowerCase() === 'customize' }
+													name={ name }
+													key={ name }
+													href={
+														currentThemeId && option.getUrl ? option.getUrl( currentThemeId ) : ''
+													}
+													onClick={ this.trackClick }
+												>
+													{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
+													{ option.label }
+												</Button>
+											);
+										} ) }
 									</div>
 								</div>
 							</div>
@@ -124,7 +134,15 @@ class CurrentTheme extends Component {
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
 const CurrentThemeWithEditorSettings = withBlockEditorSettings( ConnectedCurrentTheme );
 
-const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => (
+const CurrentThemeWithOptions = ( {
+	siteId,
+	currentTheme,
+	currentThemeId,
+}: {
+	currentTheme: Theme | null;
+	currentThemeId: string | null;
+	siteId: number;
+} ) => (
 	<CurrentThemeWithEditorSettings
 		currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
@@ -133,7 +151,7 @@ const CurrentThemeWithOptions = ( { siteId, currentTheme, currentThemeId } ) => 
 	/>
 );
 
-export default connect( ( state, { siteId } ) => {
+export default connect( ( state, { siteId }: { siteId: number } ) => {
 	const currentThemeId = getActiveTheme( state, siteId );
 	return {
 		currentThemeId,
