@@ -61,6 +61,7 @@ import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/act
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
@@ -740,7 +741,13 @@ class Signup extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
-		const siteId = getSiteId( state, signupDependencies.siteSlug );
+
+		// Use selectedSiteId which was set by setSelectedSiteForSignup of controller
+		// If we don't have selectedSiteId, then fallback to use getSiteId by siteSlug
+		// Note that siteSlug might not be updated as the value was updated when the Signup component will mount
+		// and we initialized SignupFlowController
+		// See: https://github.com/Automattic/wp-calypso/pull/57386
+		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
 		const shouldStepShowSitePreview = get(
 			steps[ ownProps.stepName ],
