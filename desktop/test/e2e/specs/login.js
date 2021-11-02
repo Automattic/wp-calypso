@@ -23,7 +23,6 @@ switch ( process.platform ) {
 const CONSOLE_PATH = path.join( __dirname, '../results/console.log' );
 const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
 const HAR_PATH = path.join( __dirname, '../results/network.har' );
-const VIDEO_PATH = path.join( __dirname, '../results/video.webm' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
@@ -42,9 +41,6 @@ describe( 'User Can log in', () => {
 		electronApp = await electron.launch( {
 			executablePath: APP_PATH,
 			args: [ '--disable-http-cache', '--start-maximized' ],
-			recordVideo: {
-				dir: path.dirname( SCREENSHOT_PATH ),
-			},
 			timeout: 0,
 			recordHar: {
 				path: HAR_PATH,
@@ -72,9 +68,6 @@ describe( 'User Can log in', () => {
 			mainWindow = await electronApp.firstWindow();
 		}
 
-		// Tracing
-		electronApp.context().tracing.start( { screenshots: true } );
-
 		// Capture console
 		mainWindow.on( 'console', ( data ) =>
 			consoleStream.write( `${ new Date().toUTCString() } [${ data.type() }] ${ data.text() }\n` )
@@ -85,10 +78,6 @@ describe( 'User Can log in', () => {
 		for ( const [ , frame ] of mainWindow.frames().entries() ) {
 			await frame.waitForLoadState();
 		}
-
-		console.log( 'Main Window:' );
-		console.log( 'Title: ', await mainWindow.title() );
-		console.log( 'URL: ', await mainWindow.url() );
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
@@ -126,11 +115,6 @@ describe( 'User Can log in', () => {
 
 		if ( mainWindow ) {
 			await mainWindow.screenshot( { path: SCREENSHOT_PATH } );
-			const video = mainWindow.video();
-			if ( video ) {
-				console.log( await video.path() );
-				console.log( await video.saveAs( VIDEO_PATH ) );
-			}
 		}
 
 		if ( electronApp ) {
