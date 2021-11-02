@@ -59,13 +59,6 @@ const LicensingThankYouAutoActivation: FC< Props > = ( { productSlug } ) => {
 					<div className="licensing-thank-you-manual-activation__card-footer-image">
 						<img src={ footerCardImg } alt="Checkout Thank you" />
 					</div>
-					<div className="licensing-thank-you-manual-activation__card-footer-text">
-						{ translate( 'Do you need help? {{a}}Contact us{{/a}}.', {
-							components: {
-								a: <a href={ supportContactLink } target="_blank" rel="noopener noreferrer" />,
-							},
-						} ) }
-					</div>
 				</div>
 			</Card>
 		</Main>
