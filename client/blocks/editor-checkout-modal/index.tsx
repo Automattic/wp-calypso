@@ -71,7 +71,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			onRequestClose={ onClose }
 			title={ String( translate( 'Checkout modal' ) ) }
 			shouldCloseOnClickOutside={ false }
-			icon={ <Icon icon={ wordpress } size={ 36 } /> }
+			icon={ <Icon icon={ wordpress } size={ 29 } /> }
 		>
 			<CalypsoShoppingCartProvider>
 				<StripeHookProvider

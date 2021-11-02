@@ -21,7 +21,7 @@ const HelpCentertModal = ( { isOpen } ) => {
 				onRequestClose={ onClose }
 				title={ String( translate( 'Help Center' ) ) }
 				shouldCloseOnClickOutside={ false }
-				icon={ <Icon icon={ wordpress } size={ 36 } /> }
+				icon={ <Icon icon={ wordpress } size={ 29 } /> }
 			>
 				<HelpComponent />
 			</Modal>
