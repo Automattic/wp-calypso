@@ -1,5 +1,29 @@
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
+import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+
+export const stripeConfiguration = {
+	processor_id: 'IE',
+	js_url: 'https://stripe-js-url',
+	public_key: 'stripe-public-key',
+	setup_intent_id: null,
+};
+
+export const processorOptions = {
+	includeDomainDetails: false,
+	includeGSuiteDetails: false,
+	createUserAndSiteBeforeTransaction: false,
+	stripeConfiguration,
+	recordEvent: () => null,
+	reduxDispatch: () => null,
+	responseCart: getEmptyResponseCart(),
+	getThankYouUrl: () => '',
+	siteSlug: undefined,
+	siteId: undefined,
+	contactDetails: undefined,
+	stripe: undefined,
+};
 
 export const countryList = [
 	{
@@ -674,3 +698,72 @@ export function createTestReduxStore() {
 		};
 	} );
 }
+
+export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
+	const transactionsEndpoint = jest.fn();
+	transactionsEndpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/transactions', ( body ) => {
+			return transactionsEndpoint( body );
+		} )
+		.reply( transactionsEndpointResponse );
+
+	return transactionsEndpoint;
+}
+
+export const mockTransactionsRedirectResponse = () => [
+	200,
+	{ redirect_url: 'https://test-redirect-url' },
+];
+
+export const mockTransactionsSuccessResponse = () => [ 200, { success: 'true' } ];
+
+function getManagedValueFromString( value ) {
+	return { isTouched: true, value, errors: [], isRequired: true };
+}
+
+function getStringFromManagedValue( managedValue ) {
+	return managedValue.value;
+}
+
+export const countryCode = getManagedValueFromString( 'US' );
+export const postalCode = getManagedValueFromString( '10001' );
+export const address1 = getManagedValueFromString( '100 Main Street' );
+export const city = getManagedValueFromString( 'Rando city' );
+export const state = getManagedValueFromString( 'NY' );
+export const firstName = getManagedValueFromString( 'Human' );
+export const lastName = getManagedValueFromString( 'Person' );
+export const phone = getManagedValueFromString( '+1.5555555555' );
+
+export const contactDetailsForDomain = {
+	countryCode,
+	postalCode,
+	address1,
+	city,
+	state,
+	firstName,
+	lastName,
+	phone,
+};
+
+export const basicExpectedDomainDetails = {
+	address_1: getStringFromManagedValue( address1 ),
+	address_2: undefined,
+	alternate_email: undefined,
+	city: getStringFromManagedValue( city ),
+	country_code: getStringFromManagedValue( countryCode ),
+	email: undefined,
+	extra: {
+		ca: null,
+		fr: null,
+		uk: null,
+	},
+	fax: undefined,
+	first_name: getStringFromManagedValue( firstName ),
+	last_name: getStringFromManagedValue( lastName ),
+	organization: undefined,
+	phone: getStringFromManagedValue( phone ),
+	postal_code: getStringFromManagedValue( postalCode ),
+	state: getStringFromManagedValue( state ),
+};

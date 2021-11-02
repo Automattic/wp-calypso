@@ -1,16 +1,16 @@
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import wp from 'calypso/lib/wp';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
-
-jest.mock( 'calypso/lib/wp' );
+import {
+	mockTransactionsEndpoint,
+	mockTransactionsRedirectResponse,
+	processorOptions,
+	basicExpectedDomainDetails,
+	countryCode,
+	postalCode,
+	contactDetailsForDomain,
+} from './util';
 
 describe( 'genericRedirectProcessor', () => {
-	const stripeConfiguration = {
-		processor_id: 'IE',
-		js_url: 'https://stripe-js-url',
-		public_key: 'stripe-public-key',
-		setup_intent_id: null,
-	};
 	const product = getEmptyResponseCartProduct();
 	const domainProduct = {
 		...getEmptyResponseCartProduct(),
@@ -19,21 +19,9 @@ describe( 'genericRedirectProcessor', () => {
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
 	const options = {
-		includeDomainDetails: false,
-		includeGSuiteDetails: false,
-		createUserAndSiteBeforeTransaction: false,
-		stripeConfiguration,
-		recordEvent: () => null,
-		reduxDispatch: () => null,
+		...processorOptions,
 		responseCart: cart,
-		getThankYouUrl: () => '',
-		siteSlug: undefined,
-		siteId: undefined,
-		contactDetails: undefined,
 	};
-
-	const countryCode = { isTouched: true, value: 'US', errors: [], isRequired: true };
-	const postalCode = { isTouched: true, value: '10001', errors: [], isRequired: true };
 
 	const basicExpectedStripeRequest = {
 		cart: {
@@ -50,71 +38,38 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			temporary: false,
 		},
-		domainDetails: undefined,
+		domain_details: undefined,
 		payment: {
 			address: undefined,
-			cancelUrl: 'https://wordpress.com/',
+			cancel_url: 'https://wordpress.com/',
 			city: undefined,
 			country: 'US',
-			countryCode: 'US',
-			deviceId: undefined,
+			country_code: 'US',
+			device_id: undefined,
 			document: undefined,
 			email: 'test@example.com',
 			gstin: undefined,
-			idealBank: undefined,
+			ideal_bank: undefined,
 			name: 'test name',
 			nik: undefined,
 			pan: undefined,
-			paymentKey: undefined,
-			paymentMethod: 'WPCOM_Billing_Stripe_Source_Bancontact',
-			paymentPartner: 'IE',
-			phoneNumber: undefined,
-			postalCode: '10001',
+			payment_key: undefined,
+			payment_method: 'WPCOM_Billing_Stripe_Source_Bancontact',
+			payment_partner: 'IE',
+			phone_number: undefined,
+			postal_code: '10001',
 			state: undefined,
-			storedDetailsId: undefined,
-			streetNumber: undefined,
-			successUrl:
+			stored_details_id: undefined,
+			street_number: undefined,
+			success_url:
 				'https://wordpress.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fwordpress.com',
-			tefBank: undefined,
+			tef_bank: undefined,
 			zip: '10001',
 		},
 	};
 
-	const basicExpectedDomainDetails = {
-		address1: undefined,
-		address2: undefined,
-		alternateEmail: undefined,
-		city: undefined,
-		countryCode: 'US',
-		email: undefined,
-		extra: {
-			ca: null,
-			fr: null,
-			uk: null,
-		},
-		fax: undefined,
-		firstName: undefined,
-		lastName: undefined,
-		organization: undefined,
-		phone: undefined,
-		postalCode: '10001',
-		state: undefined,
-	};
-
-	const transactionsEndpoint = jest.fn();
-	const undocumentedFunctions = {
-		transactions: transactionsEndpoint,
-	};
-	wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
-
-	beforeEach( () => {
-		transactionsEndpoint.mockClear();
-		transactionsEndpoint.mockReturnValue(
-			Promise.resolve( { redirect_url: 'https://test-redirect-url' } )
-		);
-	} );
-
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -132,12 +87,42 @@ describe( 'genericRedirectProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
-	it( 'returns an explicit error response if the transaction fails', async () => {
+	it( 'returns a generic error response if the transaction fails with a 200 response', async () => {
+		mockTransactionsEndpoint( () => [
+			200,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
 		};
-		transactionsEndpoint.mockReturnValue( Promise.reject( new Error( 'test error' ) ) );
+		const expected = { payload: 'Error during transaction', type: 'ERROR' };
+		await expect(
+			genericRedirectProcessor( 'bancontact', submitData, {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+	} );
+
+	it( 'returns an explicit error response if the transaction fails with a non-200 response', async () => {
+		mockTransactionsEndpoint( () => [
+			400,
+			{
+				error: 'test_error',
+				message: 'test error',
+			},
+		] );
+		const submitData = {
+			name: 'test name',
+			email: 'test@example.com',
+		};
 		const expected = { payload: 'test error', type: 'ERROR' };
 		await expect(
 			genericRedirectProcessor( 'bancontact', submitData, {
@@ -151,6 +136,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -178,13 +164,14 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint a relative thankYouUrl', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -214,7 +201,7 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
 					encodeURIComponent( thankYouUrl ),
 			},
@@ -222,6 +209,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint a fully-qualified thankYouUrl', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -251,7 +239,7 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
 					encodeURIComponent( thankYouUrl ),
 			},
@@ -259,6 +247,7 @@ describe( 'genericRedirectProcessor', () => {
 	} );
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -297,13 +286,14 @@ describe( 'genericRedirectProcessor', () => {
 			},
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
 			},
 		} );
 	} );
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsRedirectResponse );
 		const submitData = {
 			name: 'test name',
 			email: 'test@example.com',
@@ -314,10 +304,7 @@ describe( 'genericRedirectProcessor', () => {
 				...options,
 				siteSlug: 'example.wordpress.com',
 				siteId: 1234567,
-				contactDetails: {
-					countryCode,
-					postalCode,
-				},
+				contactDetails: contactDetailsForDomain,
 				responseCart: { ...cart, products: [ domainProduct ] },
 				includeDomainDetails: true,
 			} )
@@ -332,10 +319,10 @@ describe( 'genericRedirectProcessor', () => {
 				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 			payment: {
 				...basicExpectedStripeRequest.payment,
-				successUrl:
+				success_url:
 					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
 			},
 		} );
