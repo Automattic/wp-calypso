@@ -29,6 +29,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
+		"@automattic/languages": "^1.0.0",
 		"@automattic/search": "^1.0.0",
 		"@babel/runtime": "^7.15.3",
 		"@wordpress/base-styles": "^4.0.0",
