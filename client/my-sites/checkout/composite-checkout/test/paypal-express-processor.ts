@@ -28,7 +28,7 @@ describe( 'payPalExpressProcessor', () => {
 	};
 
 	const basicExpectedRequest = {
-		cancelUrl: 'https://example.com/',
+		cancel_url: 'https://example.com/',
 		cart: {
 			blog_id: '0',
 			cart_key: 'no-site',
@@ -44,9 +44,9 @@ describe( 'payPalExpressProcessor', () => {
 			temporary: false,
 		},
 		country: '',
-		domainDetails: null,
-		postalCode: '',
-		successUrl: 'https://example.com',
+		domain_details: null,
+		postal_code: '',
+		success_url: 'https://example.com',
 	};
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
