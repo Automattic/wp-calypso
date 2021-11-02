@@ -2,8 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import JetpackConnected from 'calypso/assets/images/jetpack/connected.svg';
 import EmptyContent from 'calypso/components/empty-content';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
@@ -96,20 +96,23 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	dispatch( recordTracksEvent( 'calypso_login_email_link_handle_click_view' ) );
 
 	return (
-		<EmptyContent
-			className="magic-login__handle-link jetpack"
-			illustration={ JetpackConnected }
-			illustrationWidth={ 150 }
-			title={ translate( 'Welcome back!' ) }
-			line={ [
-				translate( 'Logging in as %(emailAddress)s', {
-					args: {
-						emailAddress,
-					},
-				} ),
-				'...',
-			] }
-		/>
+		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
+			<JetpackLogo size={ 74 } full />
+
+			<h2 className="magic-login__title empty-content__title">
+				{ translate( 'Email confirmed!' ) }
+			</h2>
+			<h3 className="magic-login__line empty-content__line">
+				{ [
+					translate( 'Logging in as %(emailAddress)s', {
+						args: {
+							emailAddress,
+						},
+					} ),
+					'...',
+				] }
+			</h3>
+		</EmptyContent>
 	);
 };
 
