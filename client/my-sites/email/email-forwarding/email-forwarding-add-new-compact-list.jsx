@@ -4,7 +4,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -17,7 +16,6 @@ import {
 import { addEmailForward } from 'calypso/state/email-forwarding/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import EmailForwardingLimit from './email-forwarding-limit';
 
 class EmailForwardingAddNewCompactList extends Component {
 	static propTypes = {
