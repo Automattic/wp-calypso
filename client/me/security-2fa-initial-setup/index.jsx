@@ -59,7 +59,9 @@ class Security2faInitialSetup extends Component {
 					<FormLabel htmlFor="app-auth">
 						<Gridicon icon="phone" />
 						<span className="security-2fa-initial-setup__item-title">
-							{ this.props.translate( 'Set up using an app' ) }
+							{ this.props.translate( 'Set up using an app', {
+								context: 'A label used during Two-Step setup.',
+							} ) }
 						</span>
 					</FormLabel>
 					<FormSettingExplanation>
@@ -78,7 +80,9 @@ class Security2faInitialSetup extends Component {
 					<FormLabel htmlFor="sms-auth">
 						<Gridicon icon="chat" />
 						<span className="security-2fa-initial-setup__item-title">
-							{ this.props.translate( 'Set up using SMS' ) }
+							{ this.props.translate( 'Set up using SMS', {
+								context: 'A label used during Two-Step setup.',
+							} ) }
 						</span>
 					</FormLabel>
 					<FormSettingExplanation>
