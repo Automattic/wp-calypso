@@ -14,7 +14,7 @@ logged-in.jsx respectively, which pass their items as children to this component
 
 ## logged-out.jsx
 
-Renders a logged-out masterbar with only a "Wordpress.com" link.
+Renders a logged-out masterbar with only a "WordPress.com" link.
 
 ## logged-in.jsx
 

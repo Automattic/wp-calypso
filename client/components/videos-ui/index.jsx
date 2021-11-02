@@ -38,7 +38,7 @@ const VideosUi = () => {
 							</li>
 							<li>
 								<Gridicon icon="checkmark" size={ 12 } />{ ' ' }
-								{ translate( 'Familiarize yourself with Wordpress' ) }
+								{ translate( 'Familiarize yourself with WordPress' ) }
 							</li>
 							<li>
 								<Gridicon icon="checkmark" size={ 12 } /> { translate( 'Upskill and save hours' ) }
