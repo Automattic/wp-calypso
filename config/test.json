@@ -64,6 +64,7 @@
 		"me/account-close": true,
 		"me/vat-details": true,
 		"network-connection": true,
+		"p2/settings/preapproved-domains": false,
 		"perfmon": false,
 		"plans/personal-plan": true,
 		"press-this": true,

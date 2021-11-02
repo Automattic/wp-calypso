@@ -121,6 +121,7 @@
 		"network-connection": true,
 		"oauth": false,
 		"p2/p2-plus": true,
+		"p2/settings/preapproved-domains": true,
 		"page/export": true,
 		"perfmon": false,
 		"plans/personal-plan": true,
