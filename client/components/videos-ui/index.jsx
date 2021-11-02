@@ -1,9 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import useCourseQuery from 'calypso/data/courses/use-course-query';
 import './style.scss';
 
 const VideosUi = () => {
 	const translate = useTranslate();
+
+	const { data: course } = useCourseQuery( 'onboarding', { retry: false } );
 
 	return (
 		<div className="videos-ui">
@@ -57,51 +60,22 @@ const VideosUi = () => {
 						<img src="https://placekitten.com/720/480" alt="placeholder" />
 					</div>
 					<div className="videos-ui__chapters">
-						<div className="videos-ui__chapter">
-							<span className="videos-ui__completed">
-								<Gridicon icon="checkmark" size={ 12 } />
-							</span>
-							1. { translate( 'Set up your blog in 5 steps' ) }{ ' ' }
-							<span className="videos-ui__duration">01:45</span>{ ' ' }
-						</div>
-						<div className="videos-ui__chapter">
-							<span className="videos-ui__completed">
-								<Gridicon icon="checkmark" size={ 12 } />
-							</span>
-							2. { translate( 'Write a blog post' ) }{ ' ' }
-							<span className="videos-ui__duration">02:55</span>{ ' ' }
-						</div>
-						<div className="videos-ui__chapter">
-							<span className="videos-ui__completed">
-								<Gridicon icon="checkmark" size={ 12 } />
-							</span>
-							3. { translate( 'How to edit in Wordpress' ) }{ ' ' }
-							<span className="videos-ui__duration">01:14</span>{ ' ' }
-						</div>
-						<div className="videos-ui__chapter">
-							<span className="videos-ui__completed">
-								<Gridicon icon="checkmark" size={ 12 } />
-							</span>
-							4. { translate( 'Social icons' ) } <span className="videos-ui__duration">03:18</span>{ ' ' }
-						</div>
-						<div className="videos-ui__chapter active">
-							<span className="videos-ui__completed">
-								<Gridicon icon="checkmark" size={ 12 } />
-							</span>
-							5. { translate( 'Add images to your posts' ) }{ ' ' }
-							<span className="videos-ui__duration">02:20</span>{ ' ' }
-							<div className="videos-ui__active-video-content">
-								<p>
-									{ translate(
-										"You're about to embark on the journey of starting a new blog. We'll run through five steps to make sure that you love the way your blog looks so you can feel proud to share it with others."
-									) }{ ' ' }
-								</p>
-								<button type="button" className="videos-ui__play-button">
-									<Gridicon icon="play" size={ 24 } />
-									{ translate( 'Play video' ) }
-								</button>
-							</div>
-						</div>
+						{ course &&
+							Object.entries( course.videos ).map( ( data, i ) => {
+								const video = data[ 1 ];
+								return (
+									<div key={ i } className="videos-ui__chapter">
+										<span className="videos-ui__completed">
+											<Gridicon icon="checkmark" size={ 12 } />
+										</span>
+										{ i + 1 }. { video.title }{ ' ' }
+										<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+										<div className="videos-ui__active-video-content">
+											<p>{ video.description } </p>
+										</div>
+									</div>
+								);
+							} ) }
 					</div>
 				</div>
 			</div>
