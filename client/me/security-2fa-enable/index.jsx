@@ -140,7 +140,6 @@ class Security2faEnable extends Component {
 		const args = {
 			code: this.state.verificationCode,
 			action: 'enable-two-step',
-			returnBackupCodes: true,
 		};
 
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
