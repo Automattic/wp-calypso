@@ -3,8 +3,10 @@ import localStorage from './local-storage';
 import * as Validations from './validations';
 import type { ExperimentAssignment } from '../types';
 
+// Only exported for testing purposes
 export const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 
+// Only exported for testing purposes
 export const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
 	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
 
@@ -52,31 +54,19 @@ export function retrieveExperimentAssignment(
 	return Validations.validateExperimentAssignment( JSON.parse( maybeExperimentAssignmentJson ) );
 }
 
-/**
- * Returns all keys in localStorage as an array.
- */
-export function getAllLocalStorageKeys(): string[] {
-	const range = ( i: number ) => [ ...Array( i ).keys() ];
+const range = ( i: number ) => [ ...Array( i ).keys() ];
 
+// Only exported for testing purposes
+export function getAllLocalStorageKeys(): string[] {
 	return range( localStorage.length ).map( ( i ) => localStorage.key( i ) as string );
 }
 
-/**
- * Checks to see if the key is an experiment assignment key, or more
- * accurately, if it starts with the localStorage experiment assignment key prefix.
- *
- * @param key the key to check
- */
+// Only exported for testing purposes
 export function isLocalStorageExperimentAssignmentKey( key: string ): boolean {
 	return key.startsWith( localStorageExperimentAssignmentKeyPrefix );
 }
 
-/**
- * Returns the experiment name from a localStorage key assuming that the key begins with
- * the localStorage experiment assignment key prefix.
- *
- * @param key the key from which to retrieve the experiment name
- */
+// Only exported for testing purposes
 export function experimentNameFromLocalStorageExperimentAssignmentKey( key: string ): string {
 	return key.slice( localStorageExperimentAssignmentKeyPrefix.length + 1 );
 }
