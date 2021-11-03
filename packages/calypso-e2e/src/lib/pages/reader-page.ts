@@ -7,6 +7,8 @@ const selectors = {
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
+	// Post
+	placeholder: '.is-placeholder',
 	commentTextArea: '.comments__form textarea',
 	commentSubmitButton: '.comments__form button:text("Send")',
 	commentContentLocator: ( commentText: string ) =>
@@ -71,6 +73,7 @@ export class ReaderPage {
 		}
 
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
+		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
 	}
 
 	/**
