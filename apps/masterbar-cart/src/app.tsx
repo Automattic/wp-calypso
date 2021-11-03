@@ -5,8 +5,6 @@ import ReactDom from 'react-dom';
 import authWrapper from './auth-wrapper';
 import type { RequestCart } from '@automattic/shopping-cart';
 
-import 'calypso/layout/masterbar/style.scss';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function App( { siteId, wpcom }: { siteId: string; wpcom: any } ) {
 	const wpcomGetCart = useCallback(
