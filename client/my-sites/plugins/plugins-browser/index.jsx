@@ -458,6 +458,21 @@ export class PluginsBrowser extends Component {
 		return null;
 	}
 
+	getNavigationItems() {
+		const { search, siteSlug } = this.props;
+		const navigationItems = [
+			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` },
+		];
+		if ( search ) {
+			navigationItems.push( {
+				label: this.props.translate( 'Search Results' ),
+				href: `/plugins/${ siteSlug || '' }?s=${ search }`,
+			} );
+		}
+
+		return navigationItems;
+	}
+
 	render() {
 		const { category, search } = this.props;
 
@@ -481,13 +496,12 @@ export class PluginsBrowser extends Component {
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
+				<DocumentHead title={ this.props.translate( 'Plugins' ) } />
 				<SidebarNavigation />
 				{ ! this.props.hideHeader && (
 					<FixedNavigationHeader
-						brandFont
 						className="plugins-browser__header"
-						headerText={ this.props.translate( 'Plugins' ) }
+						navigationItems={ this.getNavigationItems() }
 					>
 						<div className="plugins-browser__main-buttons">
 							{ this.renderManageButton() }
