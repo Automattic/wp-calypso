@@ -114,7 +114,12 @@ export function fetchSiteDomains( siteId ) {
 		return wpcom.req
 			.get( `/sites/${ siteId }/domains`, { apiVersion: '1.2' } )
 			.then( ( data ) => {
-				const { domains = [] } = data;
+				const { domains = [], error, message } = data;
+
+				if ( error ) {
+					throw new Error( message );
+				}
+
 				dispatch( domainsRequestSuccessAction( siteId ) );
 				dispatch( domainsReceiveAction( siteId, domains ) );
 			} )
