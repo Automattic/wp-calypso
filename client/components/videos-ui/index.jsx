@@ -6,7 +6,6 @@ import './style.scss';
 
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
-
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 
 	const onVideoPlayClick = ( video ) => {
@@ -15,6 +14,15 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 			video,
 		} );
 	};
+
+	const skipClickHandler = () =>
+		recordTracksEvent( 'calypso_courses_skip_to_draft', {
+			course: course.slug,
+		} );
+
+	recordTracksEvent( 'calypso_courses_view', {
+		course: course.slug,
+	} );
 
 	return (
 		<div className="videos-ui">
@@ -31,7 +39,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					</div>
 					<div>
 						{ shouldDisplayTopLinks && (
-							<a href="/" className="videos-ui__skip-link">
+							<a href="/" className="videos-ui__skip-link" onClick={ skipClickHandler }>
 								{ translate( 'Skip and draft first post' ) }
 							</a>
 						) }
