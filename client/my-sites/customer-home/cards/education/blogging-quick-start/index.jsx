@@ -49,7 +49,7 @@ const BloggingQuickStart = () => {
 	return (
 		<EducationalContent
 			title="Blog like an expert from day one"
-			description="Learn the fundamentals from our bite-sized video course—you'll be up and running in just nine minutes."
+			description="Learn the fundamentals from our bite-sized video course &mdash; you'll be up and running in just nine minutes."
 			modalLinks={ [
 				{
 					ModalComponent: BloggingQuickStartModal,
