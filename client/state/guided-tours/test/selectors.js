@@ -55,6 +55,7 @@ describe( 'selectors', () => {
 			const tourState = getGuidedTourState( {
 				route: {
 					query: {
+						current: {},
 						initial: {},
 					},
 				},
@@ -84,6 +85,7 @@ describe( 'selectors', () => {
 		} ) => ( {
 			route: {
 				query: {
+					current: queryArguments,
 					initial: queryArguments,
 				},
 				timestamp,
