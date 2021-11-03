@@ -19,12 +19,9 @@ interface LogToLogstashParams {
 }
 
 /**
- * Log to logstash. This method is inefficient because
+ * Log to logstash. This function is inefficient because
  * the data goes over the REST API, so use sparingly.
- *
- * @param params wpcom log2logstash params.
- * @returns      Action object
  */
-export const logToLogstash = ( params: LogToLogstashParams ) => {
-	return () => wpcom.req.post( '/logstash', { params: JSON.stringify( params ) } );
-};
+export async function logToLogstash( params: LogToLogstashParams ): Promise< void > {
+	await wpcom.req.post( '/logstash', { params: JSON.stringify( params ) } );
+}

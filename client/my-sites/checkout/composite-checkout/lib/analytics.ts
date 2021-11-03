@@ -1,29 +1,29 @@
 import config from '@automattic/calypso-config';
 import { useDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	isRedirectPaymentMethod,
 } from '../lib/translate-payment-method-names';
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
-export function logStashLoadErrorEventAction(
+export function logStashLoadErrorEvent(
 	errorType: string,
 	errorMessage: string,
 	additionalData: Record< string, string | number | undefined > = {}
-): ReturnType< typeof logToLogstash > {
-	return logStashEventAction( 'composite checkout load error', {
+): Promise< void > {
+	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
 		message: errorMessage,
 	} );
 }
 
-export function logStashEventAction(
+export function logStashEvent(
 	message: string,
 	dataForLog: Record< string, string > = {}
-): ReturnType< typeof logToLogstash > {
+): Promise< void > {
 	return logToLogstash( {
 		feature: 'calypso_client',
 		message,
@@ -54,11 +54,9 @@ export function recordCompositeCheckoutErrorDuringAnalytics( {
 			action_type: failureDescription,
 		} )
 	);
-	reduxDispatch(
-		logStashLoadErrorEventAction( 'calypso_checkout_composite_error', errorObject.message, {
-			action_type: failureDescription,
-		} )
-	);
+	logStashLoadErrorEvent( 'calypso_checkout_composite_error', errorObject.message, {
+		action_type: failureDescription,
+	} );
 }
 
 export function recordTransactionBeginAnalytics( {

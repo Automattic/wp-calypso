@@ -13,6 +13,7 @@ import {
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
 import stateCache from 'calypso/server/state-cache';
 import {
@@ -20,7 +21,6 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import initialReducer from 'calypso/state/reducer';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
@@ -89,18 +89,16 @@ export function render( element, key = JSON.stringify( element ), req ) {
 				config.isEnabled( 'ssr/always-log-cache-misses' )
 			) {
 				// Log 0.1% of cache misses
-				req.context.store.dispatch(
-					logToLogstash( {
-						feature: 'calypso_ssr',
-						message: 'render cache miss',
-						extra: {
-							key,
-							'existing-keys': markupCache.keys,
-							'user-agent': get( req.headers, 'user-agent', '' ),
-							path: req.context.path,
-						},
-					} )
-				);
+				logToLogstash( {
+					feature: 'calypso_ssr',
+					message: 'render cache miss',
+					extra: {
+						key,
+						'existing-keys': markupCache.keys,
+						'user-agent': get( req.headers, 'user-agent', '' ),
+						path: req.context.path,
+					},
+				} );
 			}
 			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );

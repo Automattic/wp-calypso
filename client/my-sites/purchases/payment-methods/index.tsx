@@ -15,6 +15,7 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
@@ -25,29 +26,24 @@ import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkou
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
 
 function useLogPaymentMethodsError( message: string ) {
-	const reduxDispatch = useDispatch();
-
 	return useCallback(
 		( error ) => {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message,
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						env: config( 'env_id' ),
-						type: 'site_level_payment_methods',
-						message: String( error ),
-					},
-				} )
-			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message,
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					env: config( 'env_id' ),
+					type: 'site_level_payment_methods',
+					message: String( error ),
+				},
+			} );
 		},
-		[ reduxDispatch, message ]
+		[ message ]
 	);
 }
 

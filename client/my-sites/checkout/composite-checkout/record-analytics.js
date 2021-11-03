@@ -4,7 +4,7 @@ import {
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { logStashEventAction, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
+import { logStashEvent, recordCompositeCheckoutErrorDuringAnalytics } from './lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
@@ -21,11 +21,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
 				case 'PAYMENT_METHOD_SELECT': {
-					reduxDispatch(
-						logStashEventAction( 'payment_method_select', {
-							newMethodId: String( action.payload ),
-						} )
-					);
+					logStashEvent( 'payment_method_select', {
+						newMethodId: String( action.payload ),
+					} );
 					// Need to convert to the slug format used in old checkout so events are comparable
 					const rawPaymentMethodSlug = String( action.payload );
 					const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
@@ -43,12 +41,10 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						} )
 					);
 				case 'CART_ERROR':
-					reduxDispatch(
-						logStashEventAction( 'calypso_checkout_composite_cart_error', {
-							type: action.payload.type,
-							message: action.payload.message,
-						} )
-					);
+					logStashEvent( 'calypso_checkout_composite_cart_error', {
+						type: action.payload.type,
+						message: action.payload.message,
+					} );
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_cart_error', {
 							error_type: action.payload.type,
@@ -258,11 +254,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 				}
 				case 'THANK_YOU_URL_GENERATED':
-					return reduxDispatch(
-						logStashEventAction( 'thank you url generated', {
-							url: action.payload.url,
-						} )
-					);
+					return logStashEvent( 'thank you url generated', {
+						url: action.payload.url,
+					} );
 				case 'EMPTY_CART_CTA_CLICKED':
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' )
