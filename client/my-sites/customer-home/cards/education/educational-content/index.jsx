@@ -72,7 +72,7 @@ export default function EducationalContent( {
 						) ) }
 					{ modalLinks &&
 						modalLinks.map( ( { ModalComponent, modalComponentProps, onClick, text } ) => (
-							<div className="educational-content__link" key={ ModalComponent.displayName }>
+							<div className="educational-content__link" key={ text }>
 								<ModalComponent { ...modalComponentProps } />
 								<button onClick={ () => onClick() }>{ text }</button>
 							</div>

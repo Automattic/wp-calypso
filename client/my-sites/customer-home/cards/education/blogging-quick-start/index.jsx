@@ -5,15 +5,15 @@ import { useTranslate } from 'i18n-calypso';
 import coursesLogo from 'calypso/assets/images/customer-home/courses-logo.png';
 import VideosUi from 'calypso/components/videos-ui';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { EDUCATION_BLOGGING_BASICS } from 'calypso/my-sites/customer-home/cards/constants';
+import { EDUCATION_BLOGGING_QUICK_START } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
 
-const BloggingBasicsModal = ( props ) => {
+const BloggingQuickStartModal = ( props ) => {
 	const { isVisible = false, onClose = () => {} } = props;
 
 	return (
 		<Dialog
-			className="blogging-basics__modal"
+			className="blogging-quick-start__modal"
 			isVisible={ isVisible }
 			buttons={ [
 				{
@@ -24,16 +24,20 @@ const BloggingBasicsModal = ( props ) => {
 			] }
 			onClose={ onClose }
 		>
-			<Gridicon icon="cross" className="blogging-basics__modal-close-icon" onClick={ onClose } />
-			<TrackComponentView eventName={ 'calypso_theme_blogging_basics_modal_view' } />
-			<div className="blogging-basics__modal-wrapper">
+			<Gridicon
+				icon="cross"
+				className="blogging-quick-start__modal-close-icon"
+				onClick={ onClose }
+			/>
+			<TrackComponentView eventName={ 'calypso_theme_blogging_quick_start_modal_view' } />
+			<div className="blogging-quick-start__modal-wrapper">
 				<VideosUi />
 			</div>
 		</Dialog>
 	);
 };
 
-const BloggingBasics = () => {
+const BloggingQuickStart = () => {
 	const { localeSlug } = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( localeSlug );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
@@ -48,7 +52,7 @@ const BloggingBasics = () => {
 			description="Learn the fundamentals from our bite-sized video course—you'll be up and running in just nine minutes."
 			modalLinks={ [
 				{
-					ModalComponent: BloggingBasicsModal,
+					ModalComponent: BloggingQuickStartModal,
 					modalComponentProps: {
 						isVisible: isModalVisible,
 						onClose: () => setIsModalVisible( false ),
@@ -58,9 +62,9 @@ const BloggingBasics = () => {
 				},
 			] }
 			illustration={ coursesLogo }
-			cardName={ EDUCATION_BLOGGING_BASICS }
+			cardName={ EDUCATION_BLOGGING_QUICK_START }
 		/>
 	);
 };
 
-export default BloggingBasics;
+export default BloggingQuickStart;

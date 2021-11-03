@@ -11,9 +11,9 @@ import {
 	EDUCATION_WPCOURSES,
 	EDUCATION_FIND_SUCCESS,
 	EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK,
-	EDUCATION_BLOGGING_BASICS,
+	EDUCATION_BLOGGING_QUICK_START,
 } from 'calypso/my-sites/customer-home/cards/constants';
-import BloggingBasics from 'calypso/my-sites/customer-home/cards/education/blogging-basics';
+import BloggingQuickStart from 'calypso/my-sites/customer-home/cards/education/blogging-quick-start';
 import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
 import FindSuccess from 'calypso/my-sites/customer-home/cards/education/find-success';
 import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/free-photo-library';
@@ -31,7 +31,7 @@ const cardComponents = {
 	[ EDUCATION_WPCOURSES ]: WpCourses,
 	[ EDUCATION_FIND_SUCCESS ]: FindSuccess,
 	[ EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK ]: RespondToCustomerFeedback,
-	[ EDUCATION_BLOGGING_BASICS ]: BloggingBasics,
+	[ EDUCATION_BLOGGING_QUICK_START ]: BloggingQuickStart,
 };
 
 const LearnGrow = () => {
