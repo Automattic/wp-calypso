@@ -1,16 +1,16 @@
 import { ROUTE_SET } from 'calypso/state/action-types';
 
 const initialState = {
-	initial: false,
-	current: false,
-	previous: false,
+	initial: null,
+	current: null,
+	previous: null,
 };
 
 export const queryReducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case ROUTE_SET:
 			return {
-				initial: state.initial === false ? action.query : state.initial,
+				initial: state.initial ?? action.query,
 				current: action.query,
 				previous: state.current,
 			};

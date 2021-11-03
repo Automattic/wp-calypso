@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';
@@ -9,11 +10,11 @@ import 'calypso/state/ui/init';
  * @param  {object} [query] Query arguments
  * @returns {object}         Action object
  */
-export function setRoute( path, query = {} ) {
+export function setRoute( path, query = null ) {
 	return {
 		type: ROUTE_SET,
 		path,
-		query,
+		query: isEmpty( query ) ? null : query,
 	};
 }
 

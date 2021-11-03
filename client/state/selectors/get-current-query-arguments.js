@@ -1,5 +1,5 @@
-import { get } from 'lodash';
-
+import { createSelector } from '@automattic/state-utils';
+import { getRouteQueryCurrent } from 'calypso/state/route/query/selectors';
 import 'calypso/state/route/init';
 
 /**
@@ -8,6 +8,9 @@ import 'calypso/state/route/init';
  * @param {object} state - global redux state
  * @returns {object} current state value
  */
-export const getCurrentQueryArguments = ( state ) => get( state, 'route.query.current', null );
+export const getCurrentQueryArguments = createSelector(
+	( state ) => getRouteQueryCurrent( state ) ?? {},
+	[ getRouteQueryCurrent ]
+);
 
 export default getCurrentQueryArguments;
