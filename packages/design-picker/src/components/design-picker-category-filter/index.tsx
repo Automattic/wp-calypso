@@ -24,10 +24,26 @@ export function DesignPickerCategoryFilter( {
 			<VisuallyHidden as="h2" id={ `design-picker__category-heading-${ instanceId }` }>
 				{ __( 'Design categories', __i18n_text_domain__ ) }
 			</VisuallyHidden>
+
+			{ /* Shown on smaller displays */ }
+			<select
+				className="design-picker-category-filter__dropdown"
+				value={ selectedCategory || '' }
+				onChange={ ( e ) => onSelect( e.currentTarget.value ) }
+			>
+				{ categories.map( ( { slug, name } ) => (
+					<option key={ slug } value={ slug }>
+						{ name }
+					</option>
+				) ) }
+			</select>
+
+			{ /* Shown on larger displays */ }
 			<NavigableMenu
 				aria-labelledby={ `design-picker__category-heading-${ instanceId }` }
 				onNavigate={ ( _index, child ) => onSelect( child.dataset.slug ?? null ) }
 				orientation="vertical"
+				className="design-picker-category-filter__sidebar"
 			>
 				{ categories.map( ( { slug, name } ) => (
 					<MenuItem
