@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -7,6 +6,10 @@ import {
 	isRedirectPaymentMethod,
 } from '../lib/translate-payment-method-names';
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+
+type Dispatch = ThunkDispatch< unknown, void, AnyAction >;
 
 export function logStashLoadErrorEvent(
 	errorType: string,
@@ -35,65 +38,62 @@ export function logStashEvent(
 	} );
 }
 
-export function recordCompositeCheckoutErrorDuringAnalytics( {
+export const recordCompositeCheckoutErrorDuringAnalytics = ( {
 	errorObject,
 	failureDescription,
-	reduxDispatch,
 }: {
-	errorObject: Error;
+	errorObject: unknown;
 	failureDescription: string;
-	reduxDispatch: ReturnType< typeof useDispatch >;
-} ): void {
+} ) => ( dispatch: Dispatch ): void => {
 	// This is a fallback to catch any errors caused by the analytics code
 	// Anything in this block should remain very simple and extremely
 	// tolerant of any kind of data. It should make no assumptions about
 	// the data it uses. There's no fallback for the fallback!
-	reduxDispatch(
+	dispatch(
 		recordTracksEvent( 'calypso_checkout_composite_error', {
-			error_message: errorObject.message,
+			error_message: ( errorObject as Error ).message,
 			action_type: failureDescription,
 		} )
 	);
-	logStashLoadErrorEvent( 'calypso_checkout_composite_error', errorObject.message, {
+	logStashLoadErrorEvent( 'calypso_checkout_composite_error', ( errorObject as Error ).message, {
 		action_type: failureDescription,
 	} );
-}
+};
 
-export function recordTransactionBeginAnalytics( {
-	reduxDispatch,
+export const recordTransactionBeginAnalytics = ( {
 	paymentMethodId,
 }: {
-	reduxDispatch: ReturnType< typeof useDispatch >;
 	paymentMethodId: CheckoutPaymentMethodSlug;
-} ): void {
+} ) => ( dispatch: Dispatch ): void => {
 	try {
 		if ( isRedirectPaymentMethod( paymentMethodId ) ) {
-			reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+			dispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
 		}
-		reduxDispatch(
+		dispatch(
 			recordTracksEvent( 'calypso_checkout_form_submit', {
 				credits: null,
 				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
 			} )
 		);
-		reduxDispatch(
+		dispatch(
 			recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 				credits: null,
 				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
 			} )
 		);
 		const paymentMethodIdForTracks = paymentMethodId.replace( /-/, '_' ).toLowerCase();
-		reduxDispatch(
+		dispatch(
 			recordTracksEvent(
 				`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
 				{}
 			)
 		);
 	} catch ( errorObject ) {
-		recordCompositeCheckoutErrorDuringAnalytics( {
-			reduxDispatch,
-			errorObject,
-			failureDescription: `transaction-begin: ${ paymentMethodId }`,
-		} );
+		dispatch(
+			recordCompositeCheckoutErrorDuringAnalytics( {
+				errorObject,
+				failureDescription: `transaction-begin: ${ paymentMethodId }`,
+			} )
+		);
 	}
-}
+};

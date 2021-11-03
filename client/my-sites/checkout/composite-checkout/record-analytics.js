@@ -270,11 +270,12 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 			}
 		} catch ( err ) {
-			recordCompositeCheckoutErrorDuringAnalytics( {
-				reduxDispatch,
-				errorObject: err,
-				failureDescription: String( action?.type ) + ':' + String( action?.payload ),
-			} );
+			reduxDispatch(
+				recordCompositeCheckoutErrorDuringAnalytics( {
+					errorObject: err,
+					failureDescription: String( action?.type ) + ':' + String( action?.payload ),
+				} )
+			);
 		}
 	};
 }
