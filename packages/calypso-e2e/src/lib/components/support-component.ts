@@ -170,12 +170,12 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
-		const visitArticleHandle = await this.page.waitForSelector( selectors.visitArticleButton );
 		await Promise.all( [
-			visitArticleHandle.waitForElementState( 'stable' ),
 			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
 			this.page.click( selectors.readMoreButton ),
 		] );
+		const visitArticleHandle = await this.page.waitForSelector( selectors.visitArticleButton );
+		await visitArticleHandle.waitForElementState( 'stable' );
 
 		const browserContext = this.page.context();
 		// `Visit article` launches a new page.
