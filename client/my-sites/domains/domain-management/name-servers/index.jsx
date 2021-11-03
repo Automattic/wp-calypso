@@ -34,7 +34,7 @@ import {
 	CLOUDFLARE_NAMESERVERS_REGEX,
 } from './constants';
 import CustomNameserversForm from './custom-nameservers-form';
-import DnsTemplates from './dns-templates';
+import EmailSetup from './email-setup';
 import FetchError from './fetch-error';
 import withDomainNameservers from './with-domain-nameservers';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
@@ -162,7 +162,7 @@ class NameServers extends Component {
 
 				<VerticalNav>
 					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
-						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+						<EmailSetup selectedDomainName={ this.props.selectedDomainName } />
 					) }
 				</VerticalNav>
 			</Fragment>

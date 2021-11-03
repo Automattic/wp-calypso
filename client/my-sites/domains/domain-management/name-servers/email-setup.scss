@@ -1,0 +1,20 @@
+.email-setup {
+	.section-nav {
+		box-shadow: none;
+		border-bottom: 1px solid var( --studio-gray-5 );
+	}
+
+	.form-label {
+		font-weight: 400;
+	}
+}
+
+.dns__form {
+	border-top: 1px solid var( --color-neutral-0 );
+	overflow: visible;
+	padding-top: 20px;
+
+	.is-hidden {
+		display: none;
+	}
+}
