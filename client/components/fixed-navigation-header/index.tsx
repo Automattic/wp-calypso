@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
-import { ReactNode } from 'react';
+import { Key, ReactNode } from 'react';
 
 const Header = styled.header`
 	position: fixed;
@@ -61,12 +61,12 @@ interface Props {
 	navigationItems: { label: string; href?: string }[];
 }
 
-const renderBreadcrumb = ( items ) => {
+const renderBreadcrumb = ( items: any[] ) => {
 	return (
 		<ul>
 			{ ' ' }
-			{ items.map( ( item ) => (
-				<li>
+			{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
+				<li key={ index }>
 					<Gridicon icon="chevron-right" size={ 18 } />
 					{ item.href ? <a href={ item.href }>{ item.label }</a> : <span>{ item.label }</span> }
 				</li>
