@@ -31,7 +31,7 @@ export function requestSiteKeyrings( siteId ) {
 		} );
 
 		return wpcom.req
-			.get( `/sites/${ siteId }/keyrings`, { apiVersion: '1.1' } )
+			.get( `/sites/${ siteId }/keyrings` )
 			.then( ( keyrings ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_REQUEST_SUCCESS,
@@ -61,7 +61,7 @@ export function createSiteKeyring( siteId, keyring ) {
 		} );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/keyrings`, { apiVersion: '1.1' }, keyring )
+			.post( `/sites/${ siteId }/keyrings`, {}, keyring )
 			.then( ( body ) => {
 				dispatch( {
 					type: SITE_KEYRINGS_SAVE_SUCCESS,
@@ -95,7 +95,7 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 		return wpcom.req
 			.post(
 				`/sites/${ siteId }/keyrings/${ keyringId }`,
-				{ apiVersion: '1.1' },
+				{},
 				{
 					external_user_id: externalUserId,
 				}
@@ -136,7 +136,7 @@ export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 		return wpcom.req
 			.post(
 				`/sites/${ siteId }/keyrings/${ keyringId }/delete`,
-				{ apiVersion: '1.1' },
+				{},
 				{
 					external_user_id: externalUserId,
 				}
