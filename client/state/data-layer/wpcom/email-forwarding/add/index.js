@@ -10,6 +10,8 @@ import {
 } from 'calypso/state/email-forwarding/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
+const noop = () => {};
+
 export const addEmailForward = ( action ) => {
 	return http(
 		{
@@ -62,7 +64,7 @@ export const addEmailForwardFailure = ( action, error ) => {
 };
 
 export const addEmailForwardSuccess = ( action, response ) => {
-	const { domainName, mailbox, destination, onSuccessRedirectTarget } = action;
+	const { domainName, mailbox, destination, onSuccessRedirectTarget = noop } = action;
 
 	if ( response && response.created ) {
 		let successMessage = translate( '%(email)s has been successfully added!', {
