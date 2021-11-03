@@ -117,7 +117,7 @@
 					overflow: hidden;
 					height: 0;
 					transition:
-						height 0.3s linear;
+						height 0.2s ease-out;
 
 					div {
 						padding: 20px;
