@@ -2,7 +2,6 @@ import { useJetpack1TbStorageAmountText } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
-import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -35,11 +34,7 @@ type OwnProps = {
 	usageLevel: StorageUsageLevels;
 };
 
-export const BackupStorageSpaceUpsell: React.FC< OwnProps > = ( {
-	href,
-	bytesUsed,
-	usageLevel,
-} ) => {
+const UsageWarningUpsell: React.FC< OwnProps > = ( { href, bytesUsed, usageLevel } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -76,21 +71,23 @@ export const BackupStorageSpaceUpsell: React.FC< OwnProps > = ( {
 	return (
 		<>
 			{ usageLevel === StorageUsageLevels.Full && (
-				<div className="backup-storage-space-upsell__title">
+				<div className="usage-warning-upsell__title">
 					{ translate( 'Your Backup storage is full and new backups have been paused' ) }
 				</div>
 			) }
 			<Button
-				className="backup-storage-space-upsell__call-to-action"
+				className="usage-warning-upsell__call-to-action"
 				href={ href }
 				onClick={ onUpsellClick }
 			>
-				<div className="backup-storage-space-upsell__copy">
-					<div className="backup-storage-space-upsell__status">{ statusText }</div>
-					<div className="backup-storage-space-upsell__action-text">{ actionText }</div>
+				<div className="usage-warning-upsell__copy">
+					<div className="usage-warning-upsell__status">{ statusText }</div>
+					<div className="usage-warning-upsell__action-text">{ actionText }</div>
 				</div>
-				<span className="backup-storage-space-upsell__arrow">&#8594;</span>
+				<span className="usage-warning-upsell__arrow">&#8594;</span>
 			</Button>
 		</>
 	);
 };
+
+export default UsageWarningUpsell;
