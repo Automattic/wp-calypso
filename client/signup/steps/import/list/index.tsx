@@ -1,16 +1,25 @@
+import { Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useHistory } from 'react-router-dom';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import { GoToStep } from '../types';
 import type * as React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const ListStep: React.FunctionComponent = () => {
+interface Props {
+	goToStep: GoToStep;
+}
+
+const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const history = useHistory();
+	const { goToStep } = props;
+
+	const onButtonClick = ( platform: string ): void => {
+		goToStep( `ready?platform=${ platform }` );
+	};
 
 	return (
 		<>
@@ -30,6 +39,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'WordPress' }
 							mainText={ 'www.wordpress.org' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'wordpress' ) }
 						/>
 						<ImporterLogo icon={ 'blogger-alt' } />
 						<ActionCard
@@ -37,6 +47,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Blogger' }
 							mainText={ 'www.blogger.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'blogger' ) }
 						/>
 						<ImporterLogo icon={ 'medium' } />
 						<ActionCard
@@ -44,6 +55,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Medium' }
 							mainText={ 'www.medium.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'medium' ) }
 						/>
 						<ImporterLogo icon={ 'squarespace' } />
 						<ActionCard
@@ -51,6 +63,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Squarespace' }
 							mainText={ 'www.squarespace.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'squarespace' ) }
 						/>
 						<ImporterLogo icon={ 'wix' } />
 						<ActionCard
@@ -58,7 +71,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Wix' }
 							mainText={ 'www.wix.com' }
 							buttonIcon={ 'chevron-right' }
-							buttonOnClick={ () => history.push( '/import?step=capture' ) }
+							buttonOnClick={ () => onButtonClick( 'wix' ) }
 						/>
 					</div>
 
@@ -66,22 +79,34 @@ const ListStep: React.FunctionComponent = () => {
 						<h3>Other platforms</h3>
 						<ul>
 							<li>
-								<a href={ '#temp' }>Blogroll</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'blogroll' ) }>
+									Blogroll
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Ghost</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'ghost' ) }>
+									Ghost
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Tumblr</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'tumblr' ) }>
+									Tumblr
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>LiveJournal</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'livejournal' ) }>
+									LiveJournal
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Movable Type & TypePad</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'movabletype' ) }>
+									Movable Type & TypePad
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Xanga</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'xanga' ) }>
+									Xanga
+								</Button>
 							</li>
 						</ul>
 					</div>
