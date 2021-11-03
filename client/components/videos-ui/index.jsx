@@ -8,6 +8,7 @@ import './style.scss';
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
+	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
 
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
@@ -45,6 +46,18 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 				</video>
 			</div>
 		);
+	};
+
+	const isVideoSelected = ( idx ) => {
+		return selectedVideoIndex === idx;
+	};
+
+	const onVideoSelected = ( idx ) => {
+		if ( isVideoSelected( idx ) ) {
+			setSelectedVideoIndex( null );
+		} else {
+			setSelectedVideoIndex( idx );
+		}
 	};
 
 	const skipClickHandler = () =>
@@ -118,19 +131,44 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 							Object.entries( course.videos ).map( ( data, i ) => {
 								const video = data[ 1 ];
 								return (
-									<div key={ i } className="videos-ui__chapter">
-										<span className="videos-ui__completed">
+									<div
+										key={ i }
+										className={ `${ isVideoSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
+									>
+										<button
+											type="button"
+											className="videos-ui__chapter-accordion-toggle"
+											onClick={ () => onVideoSelected( i ) }
+										>
+											{ /* to be restored when completion functionality is implmented */ }
+											{ /* <span className="videos-ui__completed">
 											<Gridicon icon="checkmark" size={ 12 } />
-										</span>
-										{ i + 1 }. { video.title }{ ' ' }
-										<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+										</span> */ }
+											{ isVideoSelected( i ) && (
+												<span className="videos-ui__status-icon">
+													<Gridicon icon="chevron-up" size={ 18 } />
+												</span>
+											) }
+											{ ! isVideoSelected( i ) && (
+												<span className="videos-ui__status-icon">
+													<Gridicon icon="chevron-down" size={ 18 } />
+												</span>
+											) }
+											{ i + 1 }. { video.title }{ ' ' }
+											<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+										</button>
 										<div className="videos-ui__active-video-content">
-											<p>{ video.description } </p>
+											<div>
+												<p>{ video.description } </p>
+												<Button
+													className="videos-ui__play-button"
+													onClick={ () => onVideoPlayClick( data[ 0 ] ) }
+												>
+													<Gridicon icon="play" />
+													<span>{ translate( 'Play video' ) }</span>
+												</Button>
+											</div>
 										</div>
-										<Button onClick={ () => onVideoPlayClick( data[ 0 ] ) }>
-											<Gridicon icon="play" />
-											<span>{ translate( 'Play video' ) }</span>
-										</Button>
 									</div>
 								);
 							} ) }

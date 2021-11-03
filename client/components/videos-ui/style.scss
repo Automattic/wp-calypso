@@ -81,43 +81,56 @@
 		.videos-ui__chapters {
 			background: #1d262a;
 			font-size: $font-body-small;
-			overflow: auto;
 
 			.videos-ui__chapter {
-				padding: 14px 20px;
 				border-bottom: 1px solid #343c3f;
 
 				&:last-child {
 					border-bottom: none;
 				}
 
-				&.active {
-					height: auto;
-				}
-
 				.videos-ui__duration {
 					color: rgba( 255, 255, 255, 0.5 );
 				}
 
-				.videos-ui__completed {
-					display: block;
-					width: 24px;
-					height: 24px;
-					/* stylelint-disable-next-line scales/radii */
-					border-radius: 24px;
+				.videos-ui__status-icon {
+					height: 14px;
 					float: right;
-					background: #00a32a;
 					text-align: center;
-					line-height: 24px;
 					margin-left: 10px;
+
+					svg {
+						vertical-align: middle;
+					}
+				}
+
+				.videos-ui__chapter-accordion-toggle {
+					color: #fff;
+					cursor: pointer;
+					display: block;
+					width: 100%;
+					text-align: left;
+					padding: 20px;
 				}
 
 				.videos-ui__active-video-content {
-					margin-top: 26px;
+					overflow: hidden;
+					height: 0;
+					transition:
+						height 0.2s ease-out;
+
+					div {
+						padding: 20px;
+						overflow-y: auto;
+					}
 				}
 
-				button {
+				.videos-ui__play-button {
 					width: 100%;
+				}
+
+				&.selected .videos-ui__active-video-content {
+					height: 250px;
 				}
 			}
 		}
