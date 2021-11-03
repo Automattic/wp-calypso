@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { urlData } from '../types';
 import { convertPlatformName } from '../util';
-import ImportPlatformDetails from './platform-details';
+import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
 
@@ -49,11 +49,13 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 
 					<div className="import__buttons-group">
 						<NextButton>{ __( 'Import your content' ) }</NextButton>
-						<div>
-							<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
-								{ __( 'What can be imported?' ) }
-							</BackButton>
-						</div>
+						{ coveredPlatforms.includes( platform ) && (
+							<div>
+								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+									{ __( 'What can be imported?' ) }
+								</BackButton>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
@@ -123,9 +125,11 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 
 					<div className="import__buttons-group">
 						<NextButton>{ __( 'Import your content' ) }</NextButton>
-						<div>
-							<BackButton>{ __( 'View the import guide' ) }</BackButton>
-						</div>
+						{ coveredPlatforms.includes( platform ) && (
+							<div>
+								<BackButton>{ __( 'View the import guide' ) }</BackButton>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
