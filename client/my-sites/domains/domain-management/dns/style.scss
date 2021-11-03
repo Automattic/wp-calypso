@@ -1,3 +1,9 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/colors.native';
+
 .dns__form {
 	border-top: 1px solid var( --color-neutral-0 );
 	overflow: visible;
@@ -16,4 +22,102 @@
 .dns__list-remove {
 	text-align: right;
 	width: 100px;
+}
+
+body.dns__body-white {
+	background: var( --studio-white );
+	&.is-nav-unification .sidebar .sidebar__heading::after,
+	&.is-nav-unification .sidebar .sidebar__menu-link::after {
+		border-right-color: var( --studio-white );
+	}
+}
+
+.dns-records {
+	.formatted-header {
+		&.is-left-align,
+		&.is-right-align {
+			margin-bottom: 4px;
+
+			h1.formatted-header__title {
+				color: $gray-900;
+				font-size: $font-title-medium;
+
+				@include break-mobile {
+					font-size: $font-title-large;
+				}
+			}
+		}
+	}
+
+	.dns__details {
+		color: var( --studio-gray-50 );
+		font-size: $font-body-small;
+		margin: 4px 16px;
+		@include break-mobile {
+			margin: 0;
+			max-width: 677px;
+		}
+	}
+
+	.dns-records-list-header {
+		margin-top: 24px;
+	}
+
+	ul.dns-records-list {
+		margin: 24px 0 0;
+
+		li.dns-records__list-item {
+			border-top: none;
+			border-bottom: 1px solid $gray-5;
+			font-size: $font-body-small;
+			color: $gray-50;
+			font-weight: 400;
+
+			&.is-header {
+				border-bottom: 1px solid $gray-20;
+				font-weight: 500; /* stylelint-disable-line */
+			}
+
+			.dns-records-list-item {
+				& + .dns-records-list-item {
+					margin-left: 16px;
+				}
+
+				align-self: center;
+				overflow-wrap: anywhere;
+
+				&.dns-records-list-item__type {
+					color: $gray-900;
+
+					@include break-mobile {
+						flex-basis: 120px;
+					}
+				}
+
+				&.dns-records-list-item__name {
+					@include break-mobile {
+						flex-basis: 240px;
+					}
+				}
+
+				&.dns-records-list-item__value {
+					@include break-mobile {
+						flex-basis: 440px;
+					}
+				}
+
+				&.dns-records-list-item__menu {
+					@include break-mobile {
+						min-width: 24px;
+						flex: 0;
+					}
+				}
+			}
+		}
+	}
+}
+
+.dns-records-list__action-menu-item.gridicon {
+	height: 18px;
+	width: 18px;
 }
