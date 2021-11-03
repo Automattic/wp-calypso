@@ -14,7 +14,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 
 	const onVideoPlayClick = ( video ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
-			course: course.title,
+			course: course.slug,
 			video: video.title,
 		} );
 
@@ -49,13 +49,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 
 	const skipClickHandler = () =>
 		recordTracksEvent( 'calypso_courses_skip_to_draft', {
-			course: course.title,
+			course: course.slug,
 		} );
 
 	useEffect( () => {
 		if ( course ) {
 			recordTracksEvent( 'calypso_courses_view', {
-				course: course.title,
+				course: course.slug,
 			} );
 		}
 	}, [ course ] );
