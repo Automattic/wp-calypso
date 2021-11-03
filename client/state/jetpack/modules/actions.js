@@ -55,13 +55,10 @@ export const activateModule = ( siteId, moduleSlug, silent = false ) => {
 		} );
 
 		return wpcom.req
-			.post(
-				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-				{
-					path: '/jetpack/v4/module/' + moduleSlug + '/active/',
-					body: JSON.stringify( { active: true } ),
-				}
-			)
+			.post( `/jetpack-blogs/${ siteId }/rest-api/`, {
+				path: `/jetpack/v4/module/${ moduleSlug }/active/`,
+				body: JSON.stringify( { active: true } ),
+			} )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -94,13 +91,10 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 		} );
 
 		return wpcom.req
-			.post(
-				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-				{
-					path: '/jetpack/v4/module/' + moduleSlug + '/active/',
-					body: JSON.stringify( { active: false } ),
-				}
-			)
+			.post( `/jetpack-blogs/${ siteId }/rest-api/`, {
+				path: `/jetpack/v4/module/${ moduleSlug }/active/`,
+				body: JSON.stringify( { active: false } ),
+			} )
 			.then( () => {
 				dispatch( {
 					type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -147,10 +141,9 @@ export const fetchModuleList = ( siteId ) => {
 		} );
 
 		return wpcom.req
-			.get(
-				{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-				{ path: '/jetpack/v4/module/all/' }
-			)
+			.get( `/jetpack-blogs/${ siteId }/rest-api/`, {
+				path: '/jetpack/v4/module/all/',
+			} )
 			.then( ( { data } ) => {
 				const modules = mapValues( data, ( module ) => ( {
 					active: module.activated,
