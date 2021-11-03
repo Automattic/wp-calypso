@@ -184,14 +184,19 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			return undefined;
 		}
 
+		const card = <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />;
 		return (
-			<div
-				className={ classNames( 'product-grid__free', {
-					[ 'horizontal-layout' ]: ! shouldWrapOtherItems,
-				} ) }
-			>
-				<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-			</div>
+			getForCurrentCROIteration( {
+				[ Iterations.ONLY_REALTIME_PRODUCTS ]: card,
+			} ) ?? (
+				<div
+					className={ classNames( 'product-grid__free', {
+						[ 'horizontal-layout' ]: ! shouldWrapOtherItems,
+					} ) }
+				>
+					{ card }
+				</div>
+			)
 		);
 	};
 
