@@ -1,12 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import './style.scss';
 
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
@@ -71,7 +74,11 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					</div>
 					<div>
 						{ shouldDisplayTopLinks && (
-							<a href="/" className="videos-ui__skip-link" onClick={ skipClickHandler }>
+							<a
+								href={ `/post/${ siteSlug }` }
+								className="videos-ui__skip-link"
+								onClick={ skipClickHandler }
+							>
 								{ translate( 'Skip and draft first post' ) }
 							</a>
 						) }
