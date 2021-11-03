@@ -77,8 +77,8 @@ references:
   restore-yarn-cache: &restore-yarn-cache
     name: 'Restore yarn cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache-{{ checksum ".yarnrc.yml" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-yarn-cache-{{ checksum ".yarnrc.yml" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-yarn-cache
 
   yarn-install: &yarn-install
     name: Install dependencies
@@ -103,7 +103,7 @@ references:
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache-{{ checksum ".yarnrc.yml" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v2-yarn-cache-{{ checksum ".yarnrc.yml" }}
     paths:
       # This is the default path when using enableGlobalCache:true
       - ~/.yarn/berry/cache
