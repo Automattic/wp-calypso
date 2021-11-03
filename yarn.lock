@@ -20670,7 +20670,7 @@ fsevents@~2.1.2:
     tannin: ^1.1.1
     use-subscription: ^1.5.1
   peerDependencies:
-    react: ">=16.2.0"
+    react: ^17.0.2
   languageName: unknown
   linkType: soft
 
