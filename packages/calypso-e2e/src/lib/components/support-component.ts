@@ -165,22 +165,17 @@ export class SupportComponent {
 	}
 
 	/**
-	 * Click on the `Read More` button shown on the support popover.
-	 *
-	 * The target button is shown only for Article type results.
-	 */
-	async clickReadMore(): Promise< void > {
-		await this.page.click( selectors.readMoreButton );
-	}
-
-	/**
 	 * Visit the support article from the inline support popover.
 	 *
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
-		// Wait for the placeholder to disappear from the Support article preview.
-		await this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } );
+		const visitArticleHandle = await this.page.waitForSelector( selectors.visitArticleButton );
+		await Promise.all( [
+			visitArticleHandle.waitForElementState( 'stable' ),
+			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
+			this.page.click( selectors.readMoreButton ),
+		] );
 
 		const browserContext = this.page.context();
 		// `Visit article` launches a new page.
