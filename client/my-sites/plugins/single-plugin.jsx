@@ -1,4 +1,6 @@
+import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,6 +12,7 @@ import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -110,7 +113,7 @@ function SinglePlugin( props ) {
 	}
 
 	if ( existingPlugin === false ) {
-		return <PluginDoesNotExistView translate={ translate } selectedSite={ selectedSite } />;
+		return <PluginDoesNotExistView />;
 	}
 
 	return (
@@ -123,7 +126,11 @@ function SinglePlugin( props ) {
 
 			<div className="single-plugin__page">
 				<div className="single-plugin__layout single-plugin__top-section">
-					<div className="single-plugin__layout-col single-plugin__layout-col-left">
+					<div
+						className={ classNames( 'single-plugin__layout-col', 'single-plugin__layout-col-left', {
+							'no-cta ': ! shouldDisplayCTA( selectedSite, props.pluginSlug ),
+						} ) }
+					>
 						<div className="single-plugin__header">
 							<div className="single-plugin__name">{ fullPlugin.name }</div>
 							<div className="single-plugin__description">{ fullPlugin.description }</div>
@@ -156,13 +163,17 @@ function SinglePlugin( props ) {
 							</div>
 						</div>
 					</div>
-					<div className="single-plugin__layout-col single-plugin__layout-col-right">
+					<div
+						className={ classNames(
+							'single-plugin__layout-col',
+							'single-plugin__layout-col-right',
+							{ 'no-cta': ! shouldDisplayCTA( selectedSite, props.pluginSlug ) }
+						) }
+					>
 						<div className="single-plugin__header">
 							<div className="single-plugin__price">{ translate( 'Free' ) }</div>
 							<div className="single-plugin__install">
-								<Button className="single-plugin__install-button">
-									{ translate( 'Install and activate' ) }
-								</Button>
+								<CTA slug={ props.pluginSlug } />
 							</div>
 							<div className="single-plugin__t-and-c">
 								{ translate(
@@ -213,6 +224,37 @@ function SinglePlugin( props ) {
 	);
 }
 
+function shouldDisplayCTA( selectedSite, slug ) {
+	return selectedSite && isCompatiblePlugin( slug );
+}
+
+function CTA( { slug } ) {
+	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
+
+	if ( ! shouldDisplayCTA( selectedSite, slug ) ) {
+		return null;
+	}
+
+	if (
+		isBusiness( selectedSite.plan ) ||
+		isEnterprise( selectedSite.plan ) ||
+		isEcommerce( selectedSite.plan )
+	) {
+		return (
+			<Button className="single-plugin__install-button">
+				{ translate( 'Install and activate' ) }
+			</Button>
+		);
+	}
+
+	return (
+		<Button className="single-plugin__install-button">
+			{ translate( 'Upgrade and install' ) }
+		</Button>
+	);
+}
+
 /* TODO: add the stars icons */
 function Rating( { rating } ) {
 	// const inverseRating = 100 - Math.round( rating / 10 ) * 10;
@@ -221,7 +263,9 @@ function Rating( { rating } ) {
 	return rating / 20;
 }
 
-function PluginDoesNotExistView( { selectedSite, translate } ) {
+function PluginDoesNotExistView() {
+	const translate = useTranslate();
+	const selectedSite = useSelector( getSelectedSite );
 	const actionUrl = '/plugins' + ( selectedSite ? '/' + selectedSite.slug : '' );
 	const action = translate( 'Browse all plugins' );
 

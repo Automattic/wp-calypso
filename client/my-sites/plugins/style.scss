@@ -140,6 +140,14 @@ body.is-section-plugins:not( .is-nav-unification ) {
 
 .single-plugin__top-section {
 	border-bottom: 1px solid var( --studio-gray-5 );
+
+	.single-plugin__layout-col-left.no-cta {
+		@include grid-column( 1, 12 );
+	}
+
+	.single-plugin__layout-col-right.no-cta {
+		display: none;
+	}
 }
 
 .single-plugin__header {
