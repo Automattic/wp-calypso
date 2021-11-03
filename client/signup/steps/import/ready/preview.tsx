@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import type { FunctionComponent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -41,7 +42,11 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 			);
 		}
 
-		return <div>Loading...</div>;
+		return (
+			<div className="import__screenshot-loading">
+				<LoadingEllipsis />
+			</div>
+		);
 	};
 
 	return (
