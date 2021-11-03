@@ -44,59 +44,6 @@ Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
 };
 
-/*
- * Retrieve Jetpack modules data for a site with id siteid.
- * Uses the REST API of the Jetpack site.
- *
- * @param {number}      [siteId]
- * @param {Function} fn
- */
-Undocumented.prototype.getJetpackModules = function ( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/module/all/' },
-		fn
-	);
-};
-
-/*
- * Activate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Uses the REST API of the Jetpack site.
- *
- * @param {number} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- */
-Undocumented.prototype.jetpackModuleActivate = function ( siteId, moduleSlug, fn ) {
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{
-			path: '/jetpack/v4/module/' + moduleSlug + '/active/',
-			body: JSON.stringify( { active: true } ),
-		},
-		fn
-	);
-};
-
-/*
- * Deactivate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Uses the REST API of the Jetpack site.
- *
- * @param {number} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- */
-Undocumented.prototype.jetpackModuleDeactivate = function ( siteId, moduleSlug, fn ) {
-	return this.wpcom.req.post(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{
-			path: '/jetpack/v4/module/' + moduleSlug + '/active/',
-			body: JSON.stringify( { active: false } ),
-		},
-		fn
-	);
-};
-
 /**
  * Fetches settings for the Monitor module.
  *
