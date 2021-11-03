@@ -187,8 +187,11 @@
 .nav-item__task-timing {
 	line-height: 12px;
 	position: relative;
-	padding-left: 24px;
+	padding-left: 26px;
 	padding-right: 8px;
+	min-width: 52px;
+	text-align: left;
+	font-weight: 400;
 
 	.gridicon {
 		top: -2px;
