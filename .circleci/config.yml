@@ -106,7 +106,7 @@ references:
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache-{{ checksum ".yarnrc.yml" }}
     paths:
       # This is the default path when using enableGlobalCache:true
-      - ./.yarn/berry/cache
+      - ~/.yarn/berry/cache
 
   desktop-install-app-deps: &desktop-install-app-deps
     name: Install Desktop Dependencies
