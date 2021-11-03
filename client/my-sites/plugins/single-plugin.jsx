@@ -11,13 +11,21 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
+import { userCan } from 'calypso/lib/site/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { getPluginOnSites, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { installPlugin } from 'calypso/state/plugins/installed/actions';
+import {
+	getPluginOnSites,
+	isRequestingForSites,
+	getPluginOnSite,
+} from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
 	isFetching as isWporgPluginFetching,
@@ -55,6 +63,9 @@ function SinglePlugin( props ) {
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
 	);
+	const sitePlugin = useSelector(
+		( state ) => selectedSiteId && getPluginOnSite( state, selectedSiteId, props.pluginSlug )
+	);
 	const userCanManagePlugins = useSelector( ( state ) =>
 		selectedSiteId
 			? canCurrentUser( state, selectedSiteId, 'manage_options' )
@@ -63,6 +74,8 @@ function SinglePlugin( props ) {
 
 	const isWpcom = selectedSite && ! isJetpackSite;
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+
+	const isPluginInstalledOnsite = ! requestingPluginsForSites ? !! sitePlugin : null;
 
 	const fullPlugin = {
 		...plugin,
@@ -128,7 +141,11 @@ function SinglePlugin( props ) {
 				<div className="single-plugin__layout single-plugin__top-section">
 					<div
 						className={ classNames( 'single-plugin__layout-col', 'single-plugin__layout-col-left', {
-							'no-cta ': ! shouldDisplayCTA( selectedSite, props.pluginSlug ),
+							'no-cta ': ! shouldDisplayCTA(
+								selectedSite,
+								props.pluginSlug,
+								isPluginInstalledOnsite
+							),
 						} ) }
 					>
 						<div className="single-plugin__header">
@@ -167,13 +184,23 @@ function SinglePlugin( props ) {
 						className={ classNames(
 							'single-plugin__layout-col',
 							'single-plugin__layout-col-right',
-							{ 'no-cta': ! shouldDisplayCTA( selectedSite, props.pluginSlug ) }
+							{
+								'no-cta': ! shouldDisplayCTA(
+									selectedSite,
+									props.pluginSlug,
+									isPluginInstalledOnsite
+								),
+							}
 						) }
 					>
 						<div className="single-plugin__header">
 							<div className="single-plugin__price">{ translate( 'Free' ) }</div>
 							<div className="single-plugin__install">
-								<CTA slug={ props.pluginSlug } />
+								<CTA
+									slug={ props.pluginSlug }
+									isPluginInstalledOnsite={ isPluginInstalledOnsite }
+									fullPlugin={ fullPlugin }
+								/>
 							</div>
 							<div className="single-plugin__t-and-c">
 								{ translate(
@@ -224,15 +251,36 @@ function SinglePlugin( props ) {
 	);
 }
 
-function shouldDisplayCTA( selectedSite, slug ) {
-	return selectedSite && isCompatiblePlugin( slug );
+function shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) {
+	return (
+		isPluginInstalledOnsite === false &&
+		selectedSite &&
+		userCan( 'manage_options', selectedSite ) &&
+		isCompatiblePlugin( slug )
+	);
 }
 
-function CTA( { slug } ) {
+function onClickInstallPlugin( { dispatch, selectedSiteId, fullPlugin, slug } ) {
+	dispatch( removePluginStatuses( 'completed', 'error' ) );
+	dispatch( installPlugin( selectedSiteId, fullPlugin ) );
+
+	dispatch( recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', slug ) );
+	dispatch(
+		recordGoogleEvent( 'calypso_plugin_install_click_from_plugin_info', {
+			site: selectedSiteId,
+			plugin: slug,
+		} )
+	);
+}
+
+function CTA( { slug, isPluginInstalledOnsite, fullPlugin } ) {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 
-	if ( ! shouldDisplayCTA( selectedSite, slug ) ) {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const dispatch = useDispatch();
+
+	if ( ! shouldDisplayCTA( selectedSite, slug, isPluginInstalledOnsite ) ) {
 		return null;
 	}
 
@@ -242,7 +290,10 @@ function CTA( { slug } ) {
 		isEcommerce( selectedSite.plan )
 	) {
 		return (
-			<Button className="single-plugin__install-button">
+			<Button
+				className="single-plugin__install-button"
+				onClick={ () => onClickInstallPlugin( { dispatch, selectedSiteId, fullPlugin, slug } ) }
+			>
 				{ translate( 'Install and activate' ) }
 			</Button>
 		);
