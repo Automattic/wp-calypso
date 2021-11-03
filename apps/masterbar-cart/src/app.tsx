@@ -1,7 +1,7 @@
+import { MiniCart } from '@automattic/mini-cart';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import React, { useMemo, useCallback } from 'react';
 import ReactDom from 'react-dom';
-import { MasterbarCart } from 'calypso/layout/masterbar/masterbar-cart';
 import authWrapper from './auth-wrapper';
 import type { RequestCart } from '@automattic/shopping-cart';
 
@@ -36,7 +36,7 @@ function App( { siteId, wpcom }: { siteId: string; wpcom: any } ) {
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
 			<header id="masterbar" className="masterbar masterbar-cart-app">
-				<MasterbarCart selectedSiteSlug={ siteId } goToCheckout={ goToCheckout } />
+				<MiniCart selectedSiteSlug={ siteId } goToCheckout={ goToCheckout } />
 			</header>
 		</ShoppingCartProvider>
 	);

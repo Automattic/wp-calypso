@@ -25,7 +25,7 @@
 		"sync": "yarn clean && yarn build && sh ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"calypso": "^0.17.0",
+		"@automattic/mini-cart": "^1.0.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-query": "^3.9.8",
