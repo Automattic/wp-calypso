@@ -265,6 +265,7 @@ const SiteSetupList = ( {
 									isCurrent={
 										useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
 									}
+									timing={ enhancedTask.timing }
 									onClick={
 										useAccordionLayout && isCurrent && showAccordionSelectedTask
 											? () => {

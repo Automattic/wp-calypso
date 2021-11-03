@@ -143,8 +143,9 @@
 		line-height: 20px;
 	}
 
-	.nav-item__chevron {
+	.nav-item__end {
 		margin-left: auto;
+		display: flex;
 	}
 
 	.site-setup-list__nav-back {
@@ -181,4 +182,28 @@
 
 .customer-home__main .site-setup-list .card-heading {
 	margin-bottom: 0;
+}
+
+.nav-item__task-timing {
+	line-height: 18px;
+	position: relative;
+	padding-left: 26px;
+	padding-right: 8px;
+	min-width: 52px;
+	text-align: left;
+	font-weight: 400;
+
+	.gridicon {
+		top: 0;
+		position: absolute;
+		width: 24px;
+		left: 0;
+	}
+}
+
+.site-setup-list__task-timing {
+	display: none;
+	@include break-large {
+		display: block;
+	}
 }
