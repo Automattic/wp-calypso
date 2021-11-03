@@ -105,6 +105,8 @@ interface PropsWithoutUrl {
 
 const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
 	const { __ } = useI18n();
+	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
+	const platformName = convertPlatformName( platform );
 
 	return (
 		<div className="import-layout__center">
@@ -127,12 +129,20 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 						<NextButton>{ __( 'Import your content' ) }</NextButton>
 						{ coveredPlatforms.includes( platform ) && (
 							<div>
-								<BackButton>{ __( 'View the import guide' ) }</BackButton>
+								<BackButton onClick={ setIsModalDetailsOpen.bind( this, true ) }>
+									{ __( 'View the import guide' ) }
+								</BackButton>
 							</div>
 						) }
 					</div>
 				</div>
 			</div>
+			{ isModalDetailsOpen && (
+				<ImportPlatformDetails
+					platform={ platform }
+					onClose={ setIsModalDetailsOpen.bind( this, false ) }
+				/>
+			) }
 		</div>
 	);
 };
