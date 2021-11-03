@@ -4,7 +4,9 @@ export function getIntroductoryOfferIntervalDisplay(
 	translate: ReturnType< typeof useTranslate >,
 	intervalUnit: string,
 	intervalCount: number,
-	isFreeTrial: boolean
+	isFreeTrial: boolean,
+	context: string,
+	remainingRenewalsUsingOffer = 0
 ): string {
 	let text = String( translate( 'Discount for first period' ) );
 	if ( isFreeTrial ) {
@@ -60,6 +62,29 @@ export function getIntroductoryOfferIntervalDisplay(
 					} )
 				);
 			}
+		}
+	}
+	if ( remainingRenewalsUsingOffer > 0 ) {
+		if ( context === 'checkout' ) {
+			text +=
+				' - ' +
+				String(
+					translate( 'The first %(remainingRenewals)d renewals are also discounted.', {
+						args: {
+							remainingRenewals: remainingRenewalsUsingOffer,
+						},
+					} )
+				);
+		} else {
+			text +=
+				' - ' +
+				String(
+					translate( '%(remainingRenewals)d discounted renewals remaining.', {
+						args: {
+							remainingRenewals: remainingRenewalsUsingOffer,
+						},
+					} )
+				);
 		}
 	}
 	return text;

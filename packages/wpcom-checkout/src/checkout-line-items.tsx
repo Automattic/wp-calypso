@@ -617,7 +617,9 @@ function IntroductoryOfferCallout( {
 		translate,
 		product.introductory_offer_terms.interval_unit,
 		product.introductory_offer_terms.interval_count,
-		isFreeTrial
+		isFreeTrial,
+		'checkout',
+		product.introductory_offer_terms.transition_after_renewal_count
 	);
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }

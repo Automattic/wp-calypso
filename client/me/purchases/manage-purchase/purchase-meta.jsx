@@ -276,7 +276,9 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 		translate,
 		purchase.introductoryOffer.intervalUnit,
 		purchase.introductoryOffer.intervalCount,
-		isIntroductoryOfferFreeTrial( purchase )
+		isIntroductoryOfferFreeTrial( purchase ),
+		'manage-purchases',
+		purchase.introductoryOffer.remainingRenewalsUsingOffer
 	);
 
 	return (
