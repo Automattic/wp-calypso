@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import useCourseQuery from 'calypso/data/courses/use-course-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
@@ -8,11 +9,42 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
 
+	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
+	const [ currentVideo, setCurrentVideo ] = useState( null );
+
 	const onVideoPlayClick = ( video ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
 			video,
 		} );
+
+		setCurrentVideo( video );
+	};
+
+	useEffect( () => {
+		if ( ! currentVideoKey && course ) {
+			// @TODO add logic to pick the first unseen video
+			const initialVideoId = 'find-theme';
+			setCurrentVideoKey( initialVideoId );
+		}
+	}, [ currentVideoKey, course ] );
+
+	useEffect( () => {
+		if ( currentVideoKey && course ) {
+			setCurrentVideo( course.videos[ currentVideoKey ] );
+		}
+	}, [ currentVideoKey, course ] );
+
+	const VideoPlayer = ( { videoUrl } ) => {
+		return (
+			<div className="videos-ui__video">
+				<video controls>
+					<source src={ videoUrl } />{ ' ' }
+					{ /* @TODO: check if tracks are available, the linter demands one */ }
+					<track src="caption.vtt" kind="captions" srclang="en" label="english_captions" />
+				</video>
+			</div>
+		);
 	};
 
 	const skipClickHandler = () =>
@@ -76,9 +108,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					<h3>{ course && course.title }</h3>
 				</div>
 				<div className="videos-ui__video-content">
-					<div className="videos-ui__video">
-						<img src="https://placekitten.com/720/480" alt="placeholder" />
-					</div>
+					{ currentVideo && <VideoPlayer videoUrl={ currentVideo.url } /> }
 					<div className="videos-ui__chapters">
 						{ course &&
 							Object.entries( course.videos ).map( ( data, i ) => {
@@ -93,7 +123,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
 										</div>
-										<Button onClick={ () => onVideoPlayClick( data[ 0 ] ) }>
+										<Button onClick={ () => onVideoPlayClick( video ) }>
 											<Gridicon icon="play" />
 											<span>{ translate( 'Play video' ) }</span>
 										</Button>
