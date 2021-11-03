@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { NavbarComponent, SidebarComponent } from '../components';
+import { NavbarComponent, MeSidebarComponent } from '../components';
 import { AccountSettingsPage } from '../pages';
 
 /**
@@ -24,15 +24,11 @@ export class ChangeUILanguageFlow {
 	 * then onto Account Settings.
 	 */
 	async changeUILanguage( localeSlug: string ): Promise< void > {
-		await new SidebarComponent( this.page ).waitForSidebarInitialization();
-
 		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickMe();
 
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( 'a[href="/me/account"]' ),
-		] );
+		const meSidebar = new MeSidebarComponent( this.page );
+		await meSidebar.navigate( '/me/account' );
 
 		const accountSettingsPage = new AccountSettingsPage( this.page );
 		await accountSettingsPage.changeUILanguage( localeSlug );
