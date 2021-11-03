@@ -26,8 +26,10 @@ import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsTemplates from '../name-servers/dns-templates';
 import DnsAddNew from './dns-add-new';
+import DnsAddNewRecordButton from './dns-add-new-record-button';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
+import DnsMenuOptionsButton from './dns-menu-options-button';
 import DomainConnectRecord from './domain-connect-record';
 
 import './style.scss';
@@ -83,7 +85,19 @@ class Dns extends Component {
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		const buttons = [
+			<DnsAddNewRecordButton label={ translate( 'Add a new record' ) } />,
+			<DnsMenuOptionsButton />,
+		];
+
+		return (
+			<Breadcrumbs
+				items={ items }
+				mobileItem={ mobileItem }
+				buttons={ buttons }
+				mobileButtons={ buttons }
+			/>
+		);
 	}
 
 	renderMain() {
