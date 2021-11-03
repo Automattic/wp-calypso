@@ -112,11 +112,19 @@
 					margin-left: 10px;
 				}
 
+				.videos-ui__chapter-accordion-toggle {
+					color: #fff;
+					cursor: pointer;
+					display: block;
+					width: 100%;
+					text-align: left;
+				}
+
 				.videos-ui__active-video-content {
 					margin-top: 26px;
 				}
 
-				button {
+				.videos-ui__play-button {
 					width: 100%;
 				}
 			}

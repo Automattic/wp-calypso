@@ -8,6 +8,7 @@ import './style.scss';
 const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const translate = useTranslate();
 	const { data: course } = useCourseQuery( 'blogging-quick-start', { retry: false } );
+	const [ selectedVideoIndex, setSelectedVideoIndex ] = useState( null );
 
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
@@ -118,16 +119,33 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 							Object.entries( course.videos ).map( ( data, i ) => {
 								const video = data[ 1 ];
 								return (
-									<div key={ i } className="videos-ui__chapter">
-										<span className="videos-ui__completed">
+									<div
+										key={ i }
+										className={ `${
+											selectedVideoIndex === i ? 'selected ' : ''
+										}videos-ui__chapter` }
+									>
+										<p>
+											<button
+												type="button"
+												className="videos-ui__chapter-accordion-toggle"
+												onClick={ () => setSelectedVideoIndex( i ) }
+											>
+												{ /* to be restored when completion functionality is implmented */ }
+												{ /* <span className="videos-ui__completed">
 											<Gridicon icon="checkmark" size={ 12 } />
-										</span>
-										{ i + 1 }. { video.title }{ ' ' }
-										<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+										</span> */ }
+												{ i + 1 }. { video.title }{ ' ' }
+												<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+											</button>
+										</p>
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
 										</div>
-										<Button onClick={ () => onVideoPlayClick( data[ 0 ] ) }>
+										<Button
+											className="videos-ui__play-button"
+											onClick={ () => onVideoPlayClick( data[ 0 ] ) }
+										>
 											<Gridicon icon="play" />
 											<span>{ translate( 'Play video' ) }</span>
 										</Button>
