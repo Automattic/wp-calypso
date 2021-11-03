@@ -158,14 +158,16 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 											<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
 										</button>
 										<div className="videos-ui__active-video-content">
-											<p>{ video.description } </p>
-											<Button
-												className="videos-ui__play-button"
-												onClick={ () => onVideoPlayClick( data[ 0 ] ) }
-											>
-												<Gridicon icon="play" />
-												<span>{ translate( 'Play video' ) }</span>
-											</Button>
+											<div>
+												<p>{ video.description } </p>
+												<Button
+													className="videos-ui__play-button"
+													onClick={ () => onVideoPlayClick( data[ 0 ] ) }
+												>
+													<Gridicon icon="play" />
+													<span>{ translate( 'Play video' ) }</span>
+												</Button>
+											</div>
 										</div>
 									</div>
 								);

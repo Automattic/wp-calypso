@@ -81,17 +81,12 @@
 		.videos-ui__chapters {
 			background: #1d262a;
 			font-size: $font-body-small;
-			overflow: auto;
 
 			.videos-ui__chapter {
 				border-bottom: 1px solid #343c3f;
 
 				&:last-child {
 					border-bottom: none;
-				}
-
-				&.active {
-					height: auto;
 				}
 
 				.videos-ui__duration {
@@ -122,20 +117,23 @@
 				}
 
 				.videos-ui__active-video-content {
-					padding: 20px;
-					display: none;
+					overflow: hidden;
+					height: 0;
+					transition:
+						height 0.3s linear;
+
+					div {
+						padding: 20px;
+						overflow-y: auto;
+					}
 				}
 
 				.videos-ui__play-button {
 					width: 100%;
 				}
 
-				&.selected {
+				&.selected .videos-ui__active-video-content {
 					height: 250px;
-					overflow-y: auto;
-					.videos-ui__active-video-content {
-						display: block;
-					}
 				}
 			}
 		}
