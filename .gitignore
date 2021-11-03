@@ -68,6 +68,7 @@ cached-requests.json
 /packages/*/dist/
 /build-tools/dist/
 /apps/*/.cache/
+/desktop/.cache/
 
 # webpack assets
 /assets*.json
@@ -89,6 +90,8 @@ cached-requests.json
 /desktop/e2e/logs
 /desktop/e2e/screenshots
 /desktop/e2e/result.xml
+/desktop/test/.cache/
+/desktop/test/e2e/results/
 
 # Typescript
 *.tsbuildinfo
