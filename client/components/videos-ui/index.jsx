@@ -15,7 +15,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const onVideoPlayClick = ( video ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
-			video: video.title,
+			video,
 		} );
 
 		setCurrentVideo( video );
@@ -127,7 +127,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
 										</div>
-										<Button onClick={ () => onVideoPlayClick( video ) }>
+										<Button onClick={ () => onVideoPlayClick( data[ 0 ] ) }>
 											<Gridicon icon="play" />
 											<span>{ translate( 'Play video' ) }</span>
 										</Button>
