@@ -52,9 +52,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 			course: course.slug,
 		} );
 
-	recordTracksEvent( 'calypso_courses_view', {
-		course: course.slug,
-	} );
+	useEffect( () => {
+		if ( course ) {
+			recordTracksEvent( 'calypso_courses_view', {
+				course: course.slug,
+			} );
+		}
+	}, [ course ] );
 
 	return (
 		<div className="videos-ui">
@@ -123,7 +127,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
 										</div>
-										<Button onClick={ () => onVideoPlayClick( video ) }>
+										<Button onClick={ () => onVideoPlayClick( data[ 0 ] ) }>
 											<Gridicon icon="play" />
 											<span>{ translate( 'Play video' ) }</span>
 										</Button>
