@@ -66,7 +66,11 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 		return null;
 	}
 
-	if ( ! hasDiscount( googleWorkspaceProduct ) ) {
+	// Verify that we have a percentage discount
+	if (
+		! hasDiscount( googleWorkspaceProduct ) ||
+		( ! googleWorkspaceProduct?.sale_coupon?.discount ?? null )
+	) {
 		return null;
 	}
 
@@ -99,7 +103,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				'google-sale'
 			) }
 			title={ translate( 'Get %(discount)d% off Google Workspace for your domain!', {
-				args: { discount: googleWorkspaceProduct?.sale_coupon?.discount ?? 50 },
+				args: { discount: googleWorkspaceProduct?.sale_coupon?.discount },
 				comment: '%(discount)d is a percentage discount, e.g. 50',
 			} ) }
 		/>
