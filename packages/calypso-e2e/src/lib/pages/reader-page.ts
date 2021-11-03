@@ -11,8 +11,7 @@ const selectors = {
 	placeholder: '.is-placeholder',
 	commentTextArea: '.comments__form textarea',
 	commentSubmitButton: '.comments__form button:text("Send")',
-	commentContentLocator: ( commentText: string ) =>
-		`.comments__comment :text( '${ commentText }' )`,
+	comment: ( commentText: string ) => `div:text( '${ commentText }' )`,
 };
 
 /**
@@ -28,13 +27,6 @@ export class ReaderPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-	}
-
-	/**
-	 * Waits until the page is considered to be loaded.
-	 */
-	private async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
 	}
 
 	/**
@@ -72,23 +64,32 @@ export class ReaderPage {
 			throw new Error( 'Unable to select and visit post - specify one of index or text.' );
 		}
 
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
-		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+		await Promise.all( [
+			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+			this.page.waitForNavigation( { waitUntil: 'networkidle' } ),
+			this.page.click( selector ),
+		] );
 	}
 
 	/**
-	 * Sets and submits comment on latest post
+	 * Submits a given string of text as comment on a post.
+	 *
+	 * This method requires that current page is on an article that supports comments.
+	 * Otherwise, this method will throw.
 	 *
 	 * @param {string} comment Text of the comment.
-	 * @returns {Promise<void>} No return value.
 	 */
 	async comment( comment: string ): Promise< void > {
-		await this.waitUntilLoaded();
-
 		const elementHandle = await this.page.waitForSelector( selectors.commentTextArea );
-		await elementHandle.scrollIntoViewIfNeeded();
+		await this.page.evaluate(
+			( element: SVGElement | HTMLElement ) => element.scrollIntoView(),
+			elementHandle
+		);
 		await this.page.fill( selectors.commentTextArea, comment );
-		await this.page.click( selectors.commentSubmitButton );
-		await this.page.waitForLoadState( 'networkidle' );
+		await Promise.all( [
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.click( selectors.commentSubmitButton ),
+		] );
+		await this.page.waitForSelector( selectors.comment( comment ) );
 	}
 }

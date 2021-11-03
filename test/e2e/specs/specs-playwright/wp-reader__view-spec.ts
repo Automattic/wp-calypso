@@ -16,7 +16,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let page: Page;
 	let readerPage: ReaderPage;
 	let notificationsComponent: NotificationsComponent;
-	const comment = DataHelper.getRandomPhrase();
+	const comment = DataHelper.getRandomPhrase() + 'wp-reader__view-spec';
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
