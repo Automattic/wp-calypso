@@ -132,13 +132,9 @@ export function saveWhois( domain, whoisData, transferLock ) {
 		} );
 
 		return wpcom.req
-			.post( {
-				path: `/domains/${ domain }/whois`,
-				apiVersion: '1.1',
-				body: {
-					whois: whoisData,
-					transfer_lock: transferLock,
-				},
+			.post( `/domains/${ domain }/whois`, {
+				whois: whoisData,
+				transfer_lock: transferLock,
 			} )
 			.then( ( data ) => {
 				dispatch( updateWhois( domain, whoisData ) );

@@ -436,13 +436,9 @@ class ListAll extends Component {
 		const saveWhoisPromises = selectedDomainNamesList.map( ( domainName ) => {
 			const updatedContactInfo = this.getUpdatedContactInfo( domainName, contactInfo );
 			return wpcom.req
-				.post( {
-					path: `/domains/${ domainName }/whois`,
-					apiVersion: '1.1',
-					body: {
-						whois: updatedContactInfo,
-						transfer_lock: this.state.transferLockOptOut,
-					},
+				.post( `/domains/${ domainName }/whois`, {
+					whois: updatedContactInfo,
+					transfer_lock: this.state.transferLockOptOut,
 				} )
 				.then( () => {
 					this.setState( ( { contactInfoSaveResults } ) => {
