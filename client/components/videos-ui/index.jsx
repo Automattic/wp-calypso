@@ -48,8 +48,12 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 		);
 	};
 
+	const isVideoSelected = ( idx ) => {
+		return selectedVideoIndex === idx;
+	};
+
 	const onVideoSelected = ( idx ) => {
-		if ( selectedVideoIndex === idx ) {
+		if ( isVideoSelected( idx ) ) {
 			setSelectedVideoIndex( null );
 		} else {
 			setSelectedVideoIndex( idx );
@@ -129,9 +133,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 								return (
 									<div
 										key={ i }
-										className={ `${
-											selectedVideoIndex === i ? 'selected ' : ''
-										}videos-ui__chapter` }
+										className={ `${ isVideoSelected( i ) ? 'selected ' : '' }videos-ui__chapter` }
 									>
 										<button
 											type="button"
@@ -142,6 +144,16 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 											{ /* <span className="videos-ui__completed">
 											<Gridicon icon="checkmark" size={ 12 } />
 										</span> */ }
+											{ isVideoSelected( i ) && (
+												<span className="videos-ui__status-icon">
+													<Gridicon icon="chevron-up" size={ 24 } />
+												</span>
+											) }
+											{ ! isVideoSelected( i ) && (
+												<span className="videos-ui__status-icon">
+													<Gridicon icon="chevron-down" size={ 24 } />
+												</span>
+											) }
 											{ i + 1 }. { video.title }{ ' ' }
 											<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
 										</button>

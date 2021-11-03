@@ -98,17 +98,16 @@
 					color: rgba( 255, 255, 255, 0.5 );
 				}
 
-				.videos-ui__completed {
-					display: block;
-					width: 24px;
-					height: 24px;
-					/* stylelint-disable-next-line scales/radii */
-					border-radius: 24px;
+				.videos-ui__status-icon {
+					height: 48px;
 					float: right;
-					background: #00a32a;
 					text-align: center;
-					line-height: 24px;
+					line-height: 48px;
 					margin-left: 10px;
+
+					svg {
+						vertical-align: middle;
+					}
 				}
 
 				.videos-ui__chapter-accordion-toggle {
