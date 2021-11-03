@@ -169,12 +169,14 @@
 		margin-bottom: 0;
 	}
 
+	.action-card__button-container a,
 	.action-card__button-container button {
 		text-align: right;
 		padding-right: 0;
 		border: none;
 	}
 
+	.action-card__button-container a svg,
 	.action-card__button-container button svg {
 		fill: var( --studio-gray-30 );
 	}

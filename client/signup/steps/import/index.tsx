@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
@@ -11,6 +12,9 @@ interface Props {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
+	queryObject: {
+		siteSlug?: string;
+	};
 }
 
 const MOCK_DATA = {
@@ -42,6 +46,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 			hideNext={ shouldHideNextBtn( props.stepName, isScanning ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
+			backUrl={ props.stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
 			hideFormattedHeader={ true }
 			stepContent={
 				<div className="import__onboarding-page">
@@ -52,7 +57,7 @@ export default function ImportOnboarding( props: Props ): React.ReactNode {
 							setIsScanning={ setIsScanning }
 						/>
 					) }
-					{ props.stepName === 'list' && <ListStep /> }
+					{ props.stepName === 'list' && <ListStep goToStep={ props.goToStep } /> }
 
 					{ props.stepName === 'ready' && ! props.stepSectionName && (
 						<ReadyStep platform={ MOCK_DATA.platform } />
