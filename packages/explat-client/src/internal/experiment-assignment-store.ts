@@ -3,10 +3,14 @@ import localStorage from './local-storage';
 import * as Validations from './validations';
 import type { ExperimentAssignment } from '../types';
 
-// Only exported for testing purposes
+/**
+ * Exported for testing purposes only.
+ */
 export const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 
-// Only exported for testing purposes
+/**
+ * Exported for testing purposes only.
+ */
 export const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
 	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
 
@@ -56,17 +60,23 @@ export function retrieveExperimentAssignment(
 
 const range = ( i: number ) => [ ...Array( i ).keys() ];
 
-// Only exported for testing purposes
+/**
+ * Exported for testing purposes only.
+ */
 export function getAllLocalStorageKeys(): string[] {
 	return range( localStorage.length ).map( ( i ) => localStorage.key( i ) as string );
 }
 
-// Only exported for testing purposes
+/**
+ * Exported for testing purposes only.
+ */
 export function isLocalStorageExperimentAssignmentKey( key: string ): boolean {
 	return key.startsWith( localStorageExperimentAssignmentKeyPrefix );
 }
 
-// Only exported for testing purposes
+/**
+ * Exported for testing purposes only.
+ */
 export function experimentNameFromLocalStorageExperimentAssignmentKey( key: string ): string {
 	return key.slice( localStorageExperimentAssignmentKeyPrefix.length + 1 );
 }
