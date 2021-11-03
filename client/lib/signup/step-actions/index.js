@@ -560,6 +560,13 @@ export function createAccount(
 			return;
 		}
 
+		// Handling special case where users log in via social using signup form.
+		let newAccountCreated = true;
+
+		if ( signupType === SIGNUP_TYPE_SOCIAL && response && ! response.created_account ) {
+			newAccountCreated = false;
+		}
+
 		// we should either have an error with an error property, or we should have a response with a bearer_token
 		const bearerToken = {};
 		if ( response && response.bearer_token ) {
@@ -593,12 +600,14 @@ export function createAccount(
 
 		const plans_reorder_abtest_variation = response?.plans_reorder_abtest_variation ?? '';
 
-		// Fire after a new user registers.
-		recordRegistration( {
-			userData: registrationUserData,
-			flow: flowName,
-			type: signupType,
-		} );
+		// Fire tracking events, but only after a _new_ user registers.
+		if ( newAccountCreated ) {
+			recordRegistration( {
+				userData: registrationUserData,
+				flow: flowName,
+				type: signupType,
+			} );
+		}
 
 		const providedDependencies = {
 			username,
