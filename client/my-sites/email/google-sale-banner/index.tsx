@@ -7,9 +7,8 @@ import { Banner } from 'calypso/components/banner';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import { getMonthlyPrice, hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
+import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -27,7 +26,6 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 	const translate = useTranslate();
 
 	const canCurrentUserPurchaseGSuite = useSelector( canUserPurchaseGSuite );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentRoute = useSelector( getCurrentRoute );
 	const googleWorkspaceProduct = useSelector( ( state ) =>
 		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY )
@@ -74,23 +72,20 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 		return null;
 	}
 
-	const monthlyPrice = getMonthlyPrice( googleWorkspaceProduct.sale_cost, currencyCode );
-
 	return (
 		<Banner
 			callToAction={ translate( 'Get Google Workspace' ) }
 			className="google-sale-banner"
 			description={ translate(
-				'Set up a custom email address @%(domainName)s for only {{strong}}%(price)s/mailbox/month{{/strong}} billed annually',
+				'Set up your custom mailbox @%(domainName)s and enable all the productivity tools Google Workspace offers.',
 				{
 					args: {
 						domainName: domainForSale.name,
-						price: monthlyPrice,
 					},
 					comment:
 						'%(domainName)s is a domain name, e.g. example.com; %(price)s is a formatted price, e.g. $3, £2.50',
 					components: {
-						strong: <strong />,
+						em: <em />,
 					},
 				}
 			) }
@@ -102,7 +97,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				currentRoute,
 				'google-sale'
 			) }
-			title={ translate( 'Get %(discount)d% off Google Workspace for your domain!', {
+			title={ translate( 'Get %(discount)d% off Google Workspace for a limited time!', {
 				args: { discount: googleWorkspaceProduct?.sale_coupon?.discount },
 				comment: '%(discount)d is a percentage discount, e.g. 50',
 			} ) }
