@@ -119,6 +119,7 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
+				disabledTracks
 			/>
 		);
 	}
