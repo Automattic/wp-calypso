@@ -72,7 +72,7 @@ const getTourFromQuery = createSelector(
 		const initial = getInitialQueryArguments( state );
 		const current = getCurrentQueryArguments( state );
 		const timestamp = getCurrentRouteTimestamp( state );
-		const tour = current && current.tour ? current.tour : initial.tour;
+		const tour = current.tour ?? initial.tour;
 
 		if ( tour && find( relevantFeatures, { tour } ) ) {
 			return { tour, timestamp };
