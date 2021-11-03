@@ -69,6 +69,13 @@
 
 		.videos-ui__video {
 			margin-bottom: 30px;
+			flex-basis: auto;
+			width: 60%;
+
+			video {
+				width: 100%;
+				height: auto;
+			}
 		}
 
 		.videos-ui__chapters {
