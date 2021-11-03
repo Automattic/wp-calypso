@@ -146,12 +146,12 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 										</span> */ }
 											{ isVideoSelected( i ) && (
 												<span className="videos-ui__status-icon">
-													<Gridicon icon="chevron-up" size={ 24 } />
+													<Gridicon icon="chevron-up" size={ 18 } />
 												</span>
 											) }
 											{ ! isVideoSelected( i ) && (
 												<span className="videos-ui__status-icon">
-													<Gridicon icon="chevron-down" size={ 24 } />
+													<Gridicon icon="chevron-down" size={ 18 } />
 												</span>
 											) }
 											{ i + 1 }. { video.title }{ ' ' }
