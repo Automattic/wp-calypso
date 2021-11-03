@@ -70,7 +70,7 @@
 		"build-desktop:config": "cd desktop && yarn run build:config",
 		"build-desktop:secrets": "cd desktop && yarn run build:secrets",
 		"build-desktop:install-app-deps": "cd desktop && yarn install --frozen-lockfile",
-		"test-desktop:e2e": "node desktop/e2e/run.js",
+		"test-desktop:e2e": "echo 'Deprecated, run `cd desktop && yarn run test:e2e` instead'",
 		"build-docker": "node bin/build-docker.js",
 		"build-static": "npx ncp static public && npx ncp client/lib/service-worker public --filter='service-worker(/service-worker\\.js)?$'",
 		"build-server": "mkdirp build && BROWSERSLIST_ENV=server webpack --config client/webpack.config.node.js --stats-preset errors-only && yarn run build-server:copy-modules",
@@ -319,5 +319,5 @@
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
 		"@types/react": "^17.0.33"
 	},
-	"packageManager": "yarn@3.0.0"
+	"packageManager": "yarn@3.1.0"
 }

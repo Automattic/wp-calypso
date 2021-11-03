@@ -40,7 +40,6 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 12px 15px;
-	background-color: var( --color-surface );
 	justify-content: center;
 	font-weight: 400;
 	margin-top: 30px;
@@ -123,7 +122,6 @@ $plan-features-sidebar-width: 272px;
 		transition: opacity 0.05s;
 		border-right: solid 1px var( --color-neutral-5 );
 		border-left: solid 1px var( --color-neutral-5 );
-		background-color: var( --color-surface );
 		position: relative;
 
 		&.is-bold {

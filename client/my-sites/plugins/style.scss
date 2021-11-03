@@ -10,8 +10,8 @@
 	}
 }
 
-.is-section-plugins.theme-default.color-scheme {
-	--color-surface-backdrop: --studio-white;
+body.is-section-plugins.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
 }
 
 // Fix for Jetpack not having nav-unification styles yet.

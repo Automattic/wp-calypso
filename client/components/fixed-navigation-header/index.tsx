@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import classNames from 'classnames';
 import { ReactNode } from 'react';
-import { preventWidows } from 'calypso/lib/formatting';
+import Breadcrumb from 'calypso/components/breadcrumb';
 
 const Header = styled.header`
 	position: fixed;
@@ -46,29 +45,25 @@ const Container = styled.div`
 	}
 `;
 
-const H1 = styled.h1``;
-
 const ActionsContainer = styled.div`
 	display: flex;
 	align-items: center;
 `;
 
 interface Props {
-	brandFont?: boolean;
 	id?: string;
-	headerText: string | ReactNode;
 	className?: string;
 	children?: ReactNode;
+	navigationItems: { label: string; href?: string }[];
 }
 
 const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { brandFont, id, headerText, className, children } = props;
-	const headerClasses = classNames( { 'wp-brand-font': brandFont } );
+	const { id, className, children, navigationItems } = props;
 
 	return (
 		<Header id={ id } className={ className }>
 			<Container>
-				<H1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</H1>
+				<Breadcrumb items={ navigationItems } />
 				<ActionsContainer>{ children }</ActionsContainer>
 			</Container>
 		</Header>
@@ -78,7 +73,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 FixedNavigationHeader.defaultProps = {
 	id: '',
 	className: '',
-	brandFont: false,
+	navigationItems: [],
 };
 
 export default FixedNavigationHeader;
