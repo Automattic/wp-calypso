@@ -102,6 +102,7 @@ cached-requests.json
 # Yarn
 yarn-error.log
 .yarn/*
+desktop/.yarn/*
 !.yarn/patches
 !.yarn/releases
 !.yarn/plugins
