@@ -1,3 +1,10 @@
+/**
+ * External dependencies
+ */
+import { Reducer, AnyAction } from 'redux';
+/**
+ * Internal dependencies
+ */
 import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
 
 /**
@@ -8,7 +15,7 @@ import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-typ
  */
 const editorPattern = /^\/(block-editor|page[^s]|post[^s])/;
 
-export const lastNonEditorRouteReducer = ( state = '', action ) => {
+export const lastNonEditorRouteReducer: Reducer< string, AnyAction > = ( state = '', action ) => {
 	const { path, type } = action;
 	switch ( type ) {
 		case ROUTE_SET:
