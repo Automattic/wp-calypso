@@ -14,7 +14,7 @@ const navigationItems = [
 ];
 
 function render() {
-	return <Breadcrumb items={ navigationItems }/>;
+	return <Breadcrumb items={ navigationItems } />;
 }
 ```
 
