@@ -461,12 +461,12 @@ export class PluginsBrowser extends Component {
 	getNavigationItems() {
 		const { search, siteSlug } = this.props;
 		const navigationItems = [
-			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ siteSlug }` },
+			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` },
 		];
 		if ( search ) {
 			navigationItems.push( {
 				label: this.props.translate( 'Search Results' ),
-				href: `/plugins/${ siteSlug }?s=${ search }`,
+				href: `/plugins/${ siteSlug || '' }?s=${ search }`,
 			} );
 		}
 
@@ -500,7 +500,6 @@ export class PluginsBrowser extends Component {
 				<SidebarNavigation />
 				{ ! this.props.hideHeader && (
 					<FixedNavigationHeader
-						brandFont
 						className="plugins-browser__header"
 						navigationItems={ this.getNavigationItems() }
 					>

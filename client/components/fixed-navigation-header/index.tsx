@@ -1,7 +1,6 @@
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
-import { Key, ReactNode } from 'react';
+import { ReactNode } from 'react';
+import Breadcrumb from 'calypso/components/breadcrumb';
 
 const Header = styled.header`
 	position: fixed;
@@ -46,43 +45,25 @@ const Container = styled.div`
 	}
 `;
 
-const H1 = styled.h1``;
-
 const ActionsContainer = styled.div`
 	display: flex;
 	align-items: center;
 `;
 
 interface Props {
-	brandFont?: boolean;
 	id?: string;
 	className?: string;
 	children?: ReactNode;
 	navigationItems: { label: string; href?: string }[];
 }
 
-const renderBreadcrumb = ( items: any[] ) => {
-	return (
-		<ul>
-			{ ' ' }
-			{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
-				<li key={ index }>
-					<Gridicon icon="chevron-right" size={ 18 } />
-					{ item.href ? <a href={ item.href }>{ item.label }</a> : <span>{ item.label }</span> }
-				</li>
-			) ) }
-		</ul>
-	);
-};
-
 const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { brandFont, id, className, children, navigationItems } = props;
-	const headerClasses = classNames( { 'wp-brand-font': brandFont } );
+	const { id, className, children, navigationItems } = props;
 
 	return (
 		<Header id={ id } className={ className }>
 			<Container>
-				<H1 className={ headerClasses }>{ renderBreadcrumb( navigationItems ) }</H1>
+				<Breadcrumb items={ navigationItems } />
 				<ActionsContainer>{ children }</ActionsContainer>
 			</Container>
 		</Header>
@@ -92,7 +73,6 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 FixedNavigationHeader.defaultProps = {
 	id: '',
 	className: '',
-	brandFont: false,
 	navigationItems: [],
 };
 

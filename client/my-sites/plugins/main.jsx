@@ -390,6 +390,25 @@ export class PluginsMain extends Component {
 		);
 	}
 
+	getNavigationItems() {
+		const { search, selectedSiteSlug } = this.props;
+		const navigationItems = [
+			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ selectedSiteSlug || '' }` },
+			{
+				label: this.props.translate( 'Manage' ),
+				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
+			},
+		];
+		if ( search ) {
+			navigationItems.push( {
+				label: this.props.translate( 'Search Results' ),
+				href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
+			} );
+		}
+
+		return navigationItems;
+	}
+
 	render() {
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
@@ -419,9 +438,8 @@ export class PluginsMain extends Component {
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
 				<FixedNavigationHeader
-					brandFont
 					className="plugins__page-heading"
-					headerText={ this.props.translate( 'Plugins' ) }
+					navigationItems={ this.getNavigationItems() }
 				>
 					<div className="plugins__main-buttons">
 						{ this.renderAddPluginButton() }
