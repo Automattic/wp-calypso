@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Dialog, Gridicon } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import coursesLogo from 'calypso/assets/images/customer-home/courses-logo.png';
+import playImage from 'calypso/assets/images/customer-home/plain-play.png';
 import VideosUi from 'calypso/components/videos-ui';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { EDUCATION_BLOGGING_QUICK_START } from 'calypso/my-sites/customer-home/cards/constants';
@@ -61,7 +61,7 @@ const BloggingQuickStart = () => {
 					text: 'Start learning',
 				},
 			] }
-			illustration={ coursesLogo }
+			illustration={ playImage }
 			cardName={ EDUCATION_BLOGGING_QUICK_START }
 		/>
 	);
