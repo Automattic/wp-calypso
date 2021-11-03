@@ -87,9 +87,10 @@ export class ReaderPage {
 		);
 		await this.page.fill( selectors.commentTextArea, comment );
 		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForResponse(
+				( response ) => response.status() === 200 && response.url().includes( 'new?' )
+			),
 			this.page.click( selectors.commentSubmitButton ),
 		] );
-		await this.page.waitForSelector( selectors.comment( comment ) );
 	}
 }
