@@ -120,9 +120,8 @@ class ListAll extends Component {
 	};
 
 	fetchWhoisData = ( domain ) => {
-		wpcom
-			.undocumented()
-			.fetchWhois( domain )
+		wpcom.req
+			.get( `/domains/${ domain }/whois` )
 			.then( ( whoisData ) => this.setWhoisData( domain, whoisData[ 0 ] ?? null ) )
 			.catch( () => this.setWhoisData( domain, null ) );
 	};
@@ -436,9 +435,11 @@ class ListAll extends Component {
 
 		const saveWhoisPromises = selectedDomainNamesList.map( ( domainName ) => {
 			const updatedContactInfo = this.getUpdatedContactInfo( domainName, contactInfo );
-			return wpcom
-				.undocumented()
-				.updateWhois( domainName, updatedContactInfo, this.state.transferLockOptOut )
+			return wpcom.req
+				.post( `/domains/${ domainName }/whois`, {
+					whois: updatedContactInfo,
+					transfer_lock: this.state.transferLockOptOut,
+				} )
 				.then( () => {
 					this.setState( ( { contactInfoSaveResults } ) => {
 						return {

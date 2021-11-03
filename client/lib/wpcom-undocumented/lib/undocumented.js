@@ -1183,39 +1183,6 @@ Undocumented.prototype.transferToSite = function ( siteId, domainName, targetSit
 	);
 };
 
-/*
- * Retrieves WHOIS data for given domain.
- *
- * @param {string} [domainName]
- * @param {Function} [fn]
- */
-Undocumented.prototype.fetchWhois = function ( domainName, fn ) {
-	debug( '/domains/:domainName/whois query' );
-	return this.wpcom.req.get( `/domains/${ domainName }/whois`, fn );
-};
-
-/*
- * Updates WHOIS data for given domain.
- *
- * @param {string} [domainName]
- * @param {object} [whois]
- * @param {Function} [fn]
- */
-Undocumented.prototype.updateWhois = function ( domainName, whois, transferLock, fn ) {
-	debug( '/domains/:domainName/whois' );
-	return this.wpcom.req.post(
-		{
-			path: `/domains/${ domainName }/whois`,
-			apiVersion: '1.1',
-			body: {
-				whois,
-				transfer_lock: transferLock,
-			},
-		},
-		fn
-	);
-};
-
 /**
  * Add domain mapping for eligible clients.
  *
