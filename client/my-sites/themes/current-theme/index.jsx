@@ -99,7 +99,7 @@ class CurrentTheme extends Component {
 													'components-button',
 													'current-theme__' + this.props.name
 												) }
-												primary={ option.label.toLowerCase() === 'customize' }
+												primary={ name === 'customize' }
 												name={ name }
 												key={ name }
 												label={ option.label }

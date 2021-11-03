@@ -1,5 +1,4 @@
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 /**
@@ -13,7 +12,7 @@ import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
  * @returns {string}           Customizer or Block Editor URL
  */
 export default function getCustomizeUrl( state, themeId, siteId ) {
-	return isSiteUsingFullSiteEditing( state, siteId ) || isSiteUsingCoreSiteEditor( state, siteId )
+	return isSiteUsingFullSiteEditing( state, siteId )
 		? getFrontPageEditorUrl( state, siteId )
 		: getThemeCustomizeUrl( state, themeId, siteId );
 }

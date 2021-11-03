@@ -3,10 +3,12 @@ import { localize } from 'i18n-calypso';
 import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
@@ -30,7 +32,9 @@ import {
 
 const identity = ( theme ) => theme;
 
-function getAllThemeOptions( { translate } ) {
+function getAllThemeOptions( { translate, blockEditorSettings } ) {
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+
 	const purchase = config.isEnabled( 'upgrades/checkout' )
 		? {
 				label: translate( 'Purchase', {
@@ -99,17 +103,27 @@ function getAllThemeOptions( { translate } ) {
 	};
 
 	const customize = {
-		label: translate( 'Customize' ),
-		extendedLabel: translate( 'Customize this design' ),
-		header: translate( 'Customize on:', {
-			comment: 'label in the dialog for selecting a site for which to customize a theme',
-		} ),
 		icon: 'customize',
-		getUrl: getCustomizeUrl,
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
 	};
+
+	if ( isFSEActive ) {
+		customize.label = translate( 'Edit', { comment: "label for button to edit a theme's design" } );
+		customize.extendedLabel = translate( 'Edit this design' );
+		customize.header = translate( 'Edit design on:', {
+			comment: "label in the dialog for selecting a site for which to edit a theme's design",
+		} );
+		customize.getUrl = ( state, _themeId, siteId ) => getSiteEditorUrl( state, siteId );
+	} else {
+		customize.label = translate( 'Customize' );
+		customize.extendedLabel = translate( 'Customize this design' );
+		customize.header = translate( 'Customize on:', {
+			comment: 'label in the dialog for selecting a site for which to customize a theme',
+		} );
+		customize.getUrl = getCustomizeUrl;
+	}
 
 	const tryandcustomize = {
 		label: translate( 'Try & Customize' ),
@@ -252,4 +266,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose( localize, connectOptionsHoc );
+export const connectOptions = compose( localize, withBlockEditorSettings, connectOptionsHoc );

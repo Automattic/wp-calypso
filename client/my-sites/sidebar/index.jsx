@@ -1100,7 +1100,6 @@ function mapStateToProps( state, props ) {
 	const { blockEditorSettings } = props;
 
 	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
-
 	const currentUser = getCurrentUser( state );
 	const currentRoute = getCurrentRoute( state );
 
