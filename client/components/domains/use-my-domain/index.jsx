@@ -61,7 +61,7 @@ function UseMyDomain( props ) {
 	const [ transferDomainFlowPageSlug, setTransferDomainFlowPageSlug ] = useState(
 		stepSlug.TRANSFER_START
 	);
-	const initialValidation = useRef( isSignupStep );
+	const initialValidation = useRef( null );
 
 	const baseClassName = 'use-my-domain';
 
