@@ -50,7 +50,7 @@
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.2.4",
 		"postcss": "^8.3.11",
-		"webpack": "^5.54.0",
+		"webpack": "^5.61.0",
 		"webpack-dev-server": "^3.11.2"
 	}
 }

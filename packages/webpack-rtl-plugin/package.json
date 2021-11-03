@@ -28,10 +28,10 @@
 		"@automattic/calypso-typescript-config": "^1.0.0",
 		"css-loader": "^5.2.4",
 		"mini-css-extract-plugin": "^1.6.0",
-		"webpack": "^5.54.0"
+		"webpack": "^5.61.0"
 	},
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.61.0"
 	},
 	"dependencies": {
 		"@romainberger/css-diff": "^1.0.3",
