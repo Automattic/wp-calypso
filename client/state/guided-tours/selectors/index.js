@@ -1,10 +1,11 @@
 import { createSelector } from '@automattic/state-utils';
 import debugFactory from 'debug';
-import { difference, find, findLast, flatMap, get, includes, map, startsWith, pick } from 'lodash';
+import { difference, find, findLast, flatMap, get, includes, map, startsWith } from 'lodash';
 import GuidedToursConfig from 'calypso/layout/guided-tours/config';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
 import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRouteTimestamp from 'calypso/state/selectors/get-current-route-timestamp';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'calypso/state/ui/action-log/selectors';
 import { getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
@@ -70,12 +71,11 @@ const getTourFromQuery = createSelector(
 	( state ) => {
 		const initial = getInitialQueryArguments( state );
 		const current = getCurrentQueryArguments( state );
-		const tourProps = [ 'tour', '_timestamp' ];
-		const { tour, _timestamp } =
-			current && current.tour ? pick( current, tourProps ) : pick( initial, tourProps );
+		const timestamp = getCurrentRouteTimestamp( state );
+		const tour = current.tour ?? initial.tour;
 
 		if ( tour && find( relevantFeatures, { tour } ) ) {
-			return { tour, _timestamp };
+			return { tour, timestamp };
 		}
 	},
 	[ getInitialQueryArguments, getCurrentQueryArguments ]
@@ -85,9 +85,9 @@ const getTourFromQuery = createSelector(
  * Returns true if `tour` has been seen in the current Calypso session, false
  * otherwise.
  */
-const hasJustSeenTour = ( state, { tour, _timestamp } ) =>
+const hasJustSeenTour = ( state, { tour, timestamp } ) =>
 	getToursHistory( state ).some(
-		( entry ) => entry.tourName === tour && entry.timestamp > _timestamp
+		( entry ) => entry.tourName === tour && timestamp != null && entry.timestamp > timestamp
 	);
 
 /*

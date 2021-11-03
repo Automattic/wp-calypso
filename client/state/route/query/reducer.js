@@ -1,16 +1,4 @@
-import { isEqual, omit } from 'lodash';
 import { ROUTE_SET } from 'calypso/state/action-types';
-
-const timestamped = ( query ) => ( {
-	...query,
-	_timestamp: Date.now(),
-} );
-
-const isEqualQuery = ( a, b ) => isEqual( omit( a, '_timestamp' ), omit( b, '_timestamp' ) );
-
-const initialReducer = ( state, query ) => ( state === false ? timestamped( query ) : state );
-const currentReducer = ( state, query ) =>
-	! isEqualQuery( state, query ) ? timestamped( query ) : state;
 
 const initialState = {
 	initial: false,
@@ -19,15 +7,15 @@ const initialState = {
 };
 
 export const queryReducer = ( state = initialState, action ) => {
-	const { query, type } = action;
-	switch ( type ) {
+	switch ( action.type ) {
 		case ROUTE_SET:
 			return {
-				initial: initialReducer( state.initial, query ),
-				current: currentReducer( state.current, query ),
-				previous: state.current === false ? false : state.current,
+				initial: state.initial === false ? action.query : state.initial,
+				current: action.query,
+				previous: state.current,
 			};
 	}
+
 	return state;
 };
 
