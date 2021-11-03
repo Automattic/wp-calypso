@@ -58,7 +58,7 @@ interface Props {
 	id?: string;
 	className?: string;
 	children?: ReactNode;
-	navigationItems: { text: string; path: string }[];
+	navigationItems: { label: string; href?: string }[];
 }
 
 const renderBreadcrumb = ( items ) => {
@@ -68,7 +68,7 @@ const renderBreadcrumb = ( items ) => {
 			{ items.map( ( item ) => (
 				<li>
 					<Gridicon icon="chevron-right" size={ 18 } />
-					<a href={ item.path }>{ item.text }</a>
+					{ item.href ? <a href={ item.href }>{ item.label }</a> : <span>{ item.label }</span> }
 				</li>
 			) ) }
 		</ul>

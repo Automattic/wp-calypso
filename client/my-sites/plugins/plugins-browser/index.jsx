@@ -461,12 +461,12 @@ export class PluginsBrowser extends Component {
 	getNavigationItems() {
 		const { search, siteSlug } = this.props;
 		const navigationItems = [
-			{ text: this.props.translate( 'Plugins' ), path: `/plugins/${ siteSlug }` },
+			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ siteSlug }` },
 		];
 		if ( search ) {
 			navigationItems.push( {
-				text: this.props.translate( 'Search Results' ),
-				path: `/plugins/${ siteSlug }?s=${ search }`,
+				label: this.props.translate( 'Search Results' ),
+				href: `/plugins/${ siteSlug }?s=${ search }`,
 			} );
 		}
 

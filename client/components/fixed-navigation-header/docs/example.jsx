@@ -3,10 +3,10 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 
 export default function FixedNavigationHeaderExample() {
 	const navigationItems = [
-		{ text: this.props.translate( 'Plugins' ), path: `/plugins` },
+		{ label: this.props.translate( 'Plugins' ), href: `/plugins` },
 		{
-			text: this.props.translate( 'Search' ),
-			path: `/plugins?s=woo`,
+			label: this.props.translate( 'Search' ),
+			href: `/plugins?s=woo`,
 		},
 	];
 	return (

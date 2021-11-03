@@ -9,10 +9,10 @@ It can also include children items which will be positioned to the far right.
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 
 const navigationItems = [
-	{ text: this.props.translate( 'Plugins' ), path: `/plugins` },
+	{ label: this.props.translate( 'Plugins' ), href: `/plugins` },
 	{
-		text: this.props.translate( 'Search' ),
-		path: `/plugins?s=woo`,
+		label: this.props.translate( 'Search' ),
+		href: `/plugins?s=woo`,
 	},
 ];
 
@@ -23,7 +23,7 @@ function render() {
 
 ## Props
 
-- `navigationItems` (`{ text: string; path: string }[]`) - The Navigations items to be shown
+- `navigationItems` (`{ label: string; href: string }[]`) - The Navigations items to be shown
 - `brandFont` (`bool`) - use the WP.com brand font for `navigationItems`
 - `id` (`string`) - ID for the header (optional)
 - `className` (`string`) - A class name for the wrapped component (optional)
