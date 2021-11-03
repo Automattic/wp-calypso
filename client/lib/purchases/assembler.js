@@ -76,6 +76,7 @@ function createPurchaseObject( purchase ) {
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
+		regularPriceText: purchase.regular_price_text,
 		renewDate: purchase.renew_date,
 		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),

@@ -281,10 +281,37 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 		purchase.introductoryOffer.remainingRenewalsUsingOffer
 	);
 
+	let regularPriceText = null;
+	if ( purchase.introductoryOffer.isNextRenewalUsingOffer ) {
+		regularPriceText = translate(
+			'After the offer ends, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	} else if ( purchase.introductoryOffer.isNextRenewalProrated ) {
+		regularPriceText = translate(
+			'After the first renewal, the subscription price will be %(regularPrice)s',
+			{
+				args: {
+					regularPrice: purchase.regularPriceText,
+				},
+			}
+		);
+	}
+
 	return (
 		<>
 			<br />
 			<small> { text } </small>
+			{ regularPriceText && (
+				<>
+					{ ' ' }
+					<br /> <small> { regularPriceText } </small>{ ' ' }
+				</>
+			) }
 		</>
 	);
 }
