@@ -48,6 +48,14 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 		);
 	};
 
+	const onVideoSelected = ( idx ) => {
+		if ( selectedVideoIndex === idx ) {
+			setSelectedVideoIndex( null );
+		} else {
+			setSelectedVideoIndex( idx );
+		}
+	};
+
 	const skipClickHandler = () =>
 		recordTracksEvent( 'calypso_courses_skip_to_draft', {
 			course: course.slug,
@@ -125,30 +133,28 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 											selectedVideoIndex === i ? 'selected ' : ''
 										}videos-ui__chapter` }
 									>
-										<p>
-											<button
-												type="button"
-												className="videos-ui__chapter-accordion-toggle"
-												onClick={ () => setSelectedVideoIndex( i ) }
-											>
-												{ /* to be restored when completion functionality is implmented */ }
-												{ /* <span className="videos-ui__completed">
+										<button
+											type="button"
+											className="videos-ui__chapter-accordion-toggle"
+											onClick={ () => onVideoSelected( i ) }
+										>
+											{ /* to be restored when completion functionality is implmented */ }
+											{ /* <span className="videos-ui__completed">
 											<Gridicon icon="checkmark" size={ 12 } />
 										</span> */ }
-												{ i + 1 }. { video.title }{ ' ' }
-												<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
-											</button>
-										</p>
+											{ i + 1 }. { video.title }{ ' ' }
+											<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+										</button>
 										<div className="videos-ui__active-video-content">
 											<p>{ video.description } </p>
+											<Button
+												className="videos-ui__play-button"
+												onClick={ () => onVideoPlayClick( data[ 0 ] ) }
+											>
+												<Gridicon icon="play" />
+												<span>{ translate( 'Play video' ) }</span>
+											</Button>
 										</div>
-										<Button
-											className="videos-ui__play-button"
-											onClick={ () => onVideoPlayClick( data[ 0 ] ) }
-										>
-											<Gridicon icon="play" />
-											<span>{ translate( 'Play video' ) }</span>
-										</Button>
 									</div>
 								);
 							} ) }

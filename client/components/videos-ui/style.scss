@@ -84,7 +84,6 @@
 			overflow: auto;
 
 			.videos-ui__chapter {
-				padding: 14px 20px;
 				border-bottom: 1px solid #343c3f;
 
 				&:last-child {
@@ -118,14 +117,26 @@
 					display: block;
 					width: 100%;
 					text-align: left;
+					height: 48px;
+					line-height: 48px;
+					padding: 0 20px;
 				}
 
 				.videos-ui__active-video-content {
-					margin-top: 26px;
+					padding: 20px;
+					display: none;
 				}
 
 				.videos-ui__play-button {
 					width: 100%;
+				}
+
+				&.selected {
+					height: 250px;
+					overflow-y: auto;
+					.videos-ui__active-video-content {
+						display: block;
+					}
 				}
 			}
 		}
