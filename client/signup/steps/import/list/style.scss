@@ -70,5 +70,20 @@
 				padding-left: 72px;
 			}
 		}
+
+		.list__importer-action {
+			position: relative;
+
+			button {
+				background: none;
+				width: 100%;
+				position: absolute;
+				margin: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+			}
+		}
 	}
 }
