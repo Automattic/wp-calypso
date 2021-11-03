@@ -419,12 +419,13 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
+					export HEADLESS=true
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 					# Run the test
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=coblocks
+					yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=coblocks
 				""".trimIndent()
 			}
 			bashNodeScript {
@@ -438,6 +439,9 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 
 					mkdir -p logs
 					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
 				""".trimIndent()
 			}
 		}
