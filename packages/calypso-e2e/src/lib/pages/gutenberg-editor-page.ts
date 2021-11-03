@@ -1,5 +1,4 @@
 import assert from 'assert';
-import { resolve } from 'path/posix';
 import { Page, Frame, ElementHandle } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
 import { NavbarComponent } from '../components';
