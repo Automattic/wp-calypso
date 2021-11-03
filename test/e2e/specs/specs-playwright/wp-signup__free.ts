@@ -11,7 +11,6 @@ import {
 	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
-	BrowserHelper,
 	CloseAccountFlow,
 	GutenboardingFlow,
 } from '@automattic/calypso-e2e';
