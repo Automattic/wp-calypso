@@ -1455,41 +1455,6 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 };
 
 /**
- * Creates a Push Notification registration for the device
- *
- * @param {string}     registration   The registration to be stored
- * @param {string}     deviceFamily   The device family
- * @param {string}     deviceName     The device name
- * @param {Function}   fn             The callback function
- * @returns {globalThis.XMLHttpRequest}          The XHR instance
- */
-Undocumented.prototype.registerDevice = function ( registration, deviceFamily, deviceName, fn ) {
-	debug( '/devices/new' );
-	return this.wpcom.req.post(
-		{ path: '/devices/new' },
-		{},
-		{
-			device_token: registration,
-			device_family: deviceFamily,
-			device_name: deviceName,
-		},
-		fn
-	);
-};
-
-/**
- * Removes a Push Notification registration for the device
- *
- * @param {number}        deviceId       The device ID for the registration to be removed
- * @param {Function}   fn             The callback function
- * @returns {globalThis.XMLHttpRequest}          The XHR instance
- */
-Undocumented.prototype.unregisterDevice = function ( deviceId, fn ) {
-	debug( '/devices/:device_id/delete' );
-	return this.wpcom.req.post( { path: `/devices/${ deviceId }/delete` }, fn );
-};
-
-/**
  * Requests streamlined approval to WordAds program
  *
  * @param {number}       siteId            The site ID
