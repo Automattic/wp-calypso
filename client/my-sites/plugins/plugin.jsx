@@ -42,10 +42,6 @@ import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors'
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
 
-function goBack() {
-	window.history.back();
-}
-
 class SinglePlugin extends Component {
 	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
@@ -95,7 +91,7 @@ class SinglePlugin extends Component {
 		if ( prevPath ) {
 			return this.getPreviousListUrl();
 		}
-		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
+		return ! shouldUseHistoryBack ? '/plugins/' + ( siteUrl || '' ) : null;
 	};
 
 	displayHeader() {
@@ -111,7 +107,6 @@ class SinglePlugin extends Component {
 				isCompact={ true }
 				backHref={ this.backHref( shouldUseHistoryBack ) }
 				onBackArrowClick={ recordEvent }
-				onClick={ shouldUseHistoryBack ? goBack : undefined }
 			/>
 		);
 	}
