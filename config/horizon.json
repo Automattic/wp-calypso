@@ -58,7 +58,6 @@
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
-		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
 		"jetpack/only-realtime-products": false,
 		"jetpack/simplify-pricing-structure": false,
