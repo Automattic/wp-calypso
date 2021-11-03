@@ -579,6 +579,10 @@ function FirstTermDiscountCallout( {
 	const cost = product.product_cost_integer;
 	const isRenewal = product.is_renewal;
 
+	if ( product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+
 	if (
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
 		origCost <= cost ||
