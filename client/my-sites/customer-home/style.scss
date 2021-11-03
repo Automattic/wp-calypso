@@ -1,7 +1,7 @@
 @import './grid-mixins.scss';
 
-body.is-section-home {
-	background: var( --studio-white );
+body.is-section-home.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
 }
 
 .customer-home__heading {
@@ -133,11 +133,6 @@ body.is-section-home {
 	}
 }
 
-.is-section-home.is-nav-unification .sidebar .sidebar__heading::after,
-.is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
-	border-right-color: var( --studio-white );
-}
-
 .primary__customer-home-location-content {
 	display: flex;
 	flex-direction: column;
@@ -149,7 +144,8 @@ body.is-section-home {
 	// This lets us align the edges of the pager controls with text & images
 	// from the cards while also giving the checklist the freedom to reach the
 	// edges of the space with it's inner list.
-	.card, .task {
+	.card,
+	.task {
 		margin: 32px;
 	}
 
@@ -163,7 +159,6 @@ body.is-section-home {
 	@include breakpoint-deprecated( '>660px' ) {
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
 	}
-
 }
 
 .primary__customer-home-location-content .dot-pager__controls {
@@ -174,7 +169,8 @@ body.is-section-home {
 .primary__customer-home-location-content .task {
 	box-shadow: none;
 
-	.task__text, .task__illustration {
+	.task__text,
+	.task__illustration {
 		padding-top: 0;
 		padding-bottom: 0;
 	}

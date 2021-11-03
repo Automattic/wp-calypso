@@ -21,12 +21,8 @@
 	}
 }
 
-body.edit__body-white {
-	background: var( --studio-white );
-	&.is-nav-unification .sidebar .sidebar__heading::after,
-	&.is-nav-unification .sidebar .sidebar__menu-link::after {
-		border-right-color: var( --studio-white );
-	}
+body.edit__body-white.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
 }
 
 .domain-details-card {
