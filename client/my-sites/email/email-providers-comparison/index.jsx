@@ -735,7 +735,8 @@ export default connect(
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
 
-		const domainName = ownProps.cartDomainName ?? domain.name;
+		const resolvedDomainName = domain ? domain.name : ownProps.selectedDomainName;
+		const domainName = ownProps.cartDomainName ?? resolvedDomainName;
 		const hasCartDomain = Boolean( ownProps.cartDomainName );
 
 		const isGSuiteSupported =
