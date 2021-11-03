@@ -77,8 +77,8 @@ references:
   restore-yarn-cache: &restore-yarn-cache
     name: 'Restore yarn cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache-{{ checksum ".yarnrc.yml" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache
 
   yarn-install: &yarn-install
     name: Install dependencies
@@ -86,7 +86,7 @@ references:
       source "$HOME/.nvm/nvm.sh"
       nvm use
       npm install -g yarn
-      yarn install --frozen-lockfile
+      yarn install --immutable --inline-builds
 
   update-node: &update-node
     name: Update node
@@ -103,9 +103,10 @@ references:
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-cache-{{ checksum ".yarnrc.yml" }}
     paths:
-      - ~/.cache/yarn
+      # This is the default path when using enableGlobalCache:true
+      - ./.yarn/berry/cache
 
   desktop-install-app-deps: &desktop-install-app-deps
     name: Install Desktop Dependencies
@@ -139,14 +140,6 @@ references:
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
-  prepare:
-    description: 'Prepare Job'
-    steps:
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      - attach_workspace:
-          at: '~'
-      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -158,28 +151,18 @@ commands:
           path: /tmp/artifacts
 
 jobs:
-  setup:
+  translate:
     <<: *defaults
     steps:
-      # repo
       - restore_cache: *restore-git-cache
       - checkout
       - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
-      # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
-      - persist_to_workspace:
-          root: '~'
-          paths:
-            - wp-calypso
-
-  translate:
-    <<: *defaults
-    steps:
-      - prepare
+      - run: *setup-results-and-artifacts
       - run:
           name: Extract strings
           command: |
@@ -532,10 +515,7 @@ workflows:
   version: 2
   calypso:
     jobs:
-      - setup
-      - translate:
-          requires:
-            - setup
+      - translate
   wp-desktop:
     jobs:
       - wp-desktop-assets:
