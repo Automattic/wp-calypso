@@ -1,10 +1,10 @@
 import { Popover } from '@automattic/components';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import MasterbarItem from './item';
-import { MasterbarCart } from './masterbar-cart';
 
 import './masterbar-cart-button-style.scss';
 
@@ -48,7 +48,7 @@ export function MasterbarCartButton( {
 					context={ masterbarButtonRef.current }
 					position="bottom left"
 				>
-					<MasterbarCart selectedSiteSlug={ selectedSiteSlug } goToCheckout={ goToCheckout } />
+					<MiniCart selectedSiteSlug={ selectedSiteSlug } goToCheckout={ goToCheckout } />
 				</Popover>
 			</CheckoutErrorBoundary>
 		</div>
