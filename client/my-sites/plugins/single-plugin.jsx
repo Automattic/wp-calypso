@@ -115,7 +115,7 @@ function SinglePlugin( props ) {
 		// - add "Search Results" breadcrumb if prev page was search results
 		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
 		const navigationItems = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite.slug || '' }` },
+			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
 			{ label: fullPlugin.name },
 		];
 
