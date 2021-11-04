@@ -343,38 +343,61 @@ class EmailProvidersComparison extends Component {
 			return null;
 		}
 
-		const formattedPrice = translate( '{{price/}} /user /month billed annually', {
-			components: {
-				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
-			},
-			comment: '{{price/}} is the formatted price, e.g. $20',
-		} );
-
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
-		const discount = productIsDiscounted
-			? translate(
-					'First year %(discountedPrice)s - %(monthlyPrice)s /user /month billed annually',
+		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
+		const formattedPrice = productIsDiscounted
+			? translate( '{{fullPrice/}} {{discountedPrice/}} /user /month billed annually', {
+					components: {
+						fullPrice: <span>{ monthlyPrice }</span>,
+						discountedPrice: (
+							<span className="email-providers-comparison__discounted-price">
+								{ getMonthlyPrice( gSuiteProduct.sale_cost, currencyCode ) }
+							</span>
+						),
+					},
+					comment:
+						'{{fullPrice/}} is the formatted full price, e.g. $20; {{discountedPrice/}} is the discounted, formatted price, e.g. $10',
+			  } )
+			: translate( '{{price/}} /user /month billed annually', {
+					components: {
+						price: <span>{ monthlyPrice }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+			  } );
+
+		const standardPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
+
+		// Note that when we have a discount, we include all renewal information in the discount content
+		const discount = productIsDiscounted ? (
+			<span className="email-providers-comparison__discount-with-renewal">
+				{ translate(
+					'%(discount)d% Off{{span}}, %(discountedPrice)s billed today, renews annually at %(standardPrice)s{{/span}}',
 					{
 						args: {
+							discount: gSuiteProduct.sale_coupon.discount,
 							discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-							monthlyPrice: getMonthlyPrice( gSuiteProduct.sale_cost, currencyCode ),
+							standardPrice,
 						},
 						comment:
-							'%(discountedPrice)s is a formatted price, e.g. $72; %(monthlyPrice)s is also a formatted price, e.g. $6',
+							'%(discount)d is a numeric discount percentage, e.g. 40; ' +
+							'%(discountedPrice)s is a formatted, discounted price that the user will pay today, e.g. $3; ' +
+							'%(standardPrice)s is a formatted price, e.g. $5',
+						components: {
+							span: <span />,
+						},
 					}
-			  )
-			: null;
+				) }
+			</span>
+		) : null;
 
-		const annualPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
-		const annualPriceTranslateArgs = {
-			args: {
-				price: annualPrice,
-			},
-			comment: "Annual price formatted with the currency (e.g. '$99.99')",
-		};
 		const additionalPriceInformation = productIsDiscounted
-			? translate( 'Renews annually at %(price)s', annualPriceTranslateArgs )
-			: translate( '%(price)s billed annually', annualPriceTranslateArgs );
+			? null
+			: translate( '%(price)s billed annually', {
+					args: {
+						standardPrice,
+					},
+					comment: "Annual price formatted with the currency (e.g. '$99.99')",
+			  } );
 
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =

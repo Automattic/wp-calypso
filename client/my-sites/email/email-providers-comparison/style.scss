@@ -172,11 +172,22 @@
 			.price__discounted {
 				text-decoration: line-through;
 			}
+
+			&.price__discounted span.email-providers-comparison__discounted-price {
+				text-decoration: none;
+			}
 		}
 
 		.price__discount {
 			display: block;
+			font-weight: 600;
 			margin-left: 0;
+			margin-top: 0.25em;
+
+			.email-providers-comparison__discount-with-renewal span {
+				color: var( --color-text-subtle );
+				font-weight: 400;
+			}
 		}
 	}
 
