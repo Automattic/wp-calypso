@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import licensingActivationPluginInstall from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import ExternalLink from 'calypso/components/external-link';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -37,6 +38,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug } ) => {
 			/>
 			<LicensingActivation
 				title={ translate( 'Be sure that you have the latest version of Jetpack' ) }
+				footerImage={ licensingActivationPluginInstall }
 				showProgressIndicator
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }

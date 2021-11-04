@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -41,6 +42,7 @@ const LicensingActivationThankYou: FC< Props > = ( { productSlug } ) => {
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
 					</>
 				}
+				footerImage={ footerCardImg }
 				showProgressIndicator
 				progressIndicatorValue={ 1 }
 				progressIndicatorTotal={ 3 }

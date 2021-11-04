@@ -2,7 +2,6 @@ import { Card, ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import { FC } from 'react';
 import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
-import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import type { TranslateResult } from 'i18n-calypso';
@@ -12,6 +11,7 @@ import './style.scss';
 interface Props {
 	className?: string;
 	title: TranslateResult;
+	footerImage?: string;
 	showJetpackLogo?: boolean;
 	showProgressIndicator?: boolean;
 	progressIndicatorValue?: number;
@@ -22,6 +22,7 @@ const LicensingActivation: FC< Props > = ( {
 	children,
 	className,
 	title,
+	footerImage,
 	showJetpackLogo = true,
 	showProgressIndicator = false,
 	progressIndicatorValue = 0,
@@ -52,9 +53,11 @@ const LicensingActivation: FC< Props > = ( {
 					className="licensing-activation__card-footer"
 					style={ { backgroundImage: `url(${ footerCardBackground })` } }
 				>
-					<div className="licensing-activation__card-footer-image">
-						<img src={ footerCardImg } alt="Checkout Thank you" />
-					</div>
+					{ footerImage && (
+						<div className="licensing-activation__card-footer-image">
+							<img src={ footerImage } alt="Checkout Thank you" />
+						</div>
+					) }
 				</div>
 			</Card>
 		</Main>
