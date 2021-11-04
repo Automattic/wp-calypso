@@ -1,4 +1,5 @@
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
@@ -30,6 +31,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 	const googleWorkspaceProduct = useSelector( ( state ) =>
 		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY )
 	);
+	const isMobile = useMobileBreakpoint();
 
 	const domainsEligibleForGoogleWorkspaceSale = domains
 		.filter( ( domain ) => {
@@ -55,6 +57,10 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 	const siteForSale = useSelector( ( state ) =>
 		domainForSale?.blogId ? getSite( state, domainForSale.blogId ) : getSelectedSite( state )
 	);
+
+	if ( isMobile ) {
+		return null;
+	}
 
 	if ( ! canCurrentUserPurchaseGSuite ) {
 		return null;
@@ -89,6 +95,7 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				}
 			) }
 			disableCircle
+			event="get-google-workspace"
 			iconPath={ googleWorkspaceIcon }
 			href={ emailManagementPurchaseNewEmailAccount(
 				siteForSale?.slug,
@@ -102,6 +109,8 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 				},
 				comment: '%(discount)d is a percentage discount, e.g. 50',
 			} ) }
+			tracksClickName="calypso_email_google_workspace_sale_banner_cta_click"
+			tracksImpressionName="calypso_email_google_workspace_sale_banner_impression"
 		/>
 	);
 };
