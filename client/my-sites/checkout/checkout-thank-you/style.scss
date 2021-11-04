@@ -777,11 +777,9 @@
 }
 
 .jetpack-checkout-siteless-thank-you,
-.licensing-thank-you-auto-activation,
-.licensing-thank-you-manual-activation {
+.licensing-thank-you-auto-activation {
 	.jetpack-checkout-siteless-thank-you__card,
-	.licensing-thank-you-auto-activation__card,
-	.licensing-thank-you-manual-activation__card {
+	.licensing-thank-you-auto-activation__card {
 		display: flex;
 		flex-direction: column;
 		padding: 0;
@@ -817,8 +815,7 @@
 		}
 
 		a.jetpack-checkout-siteless-thank-you__link,
-		a.licensing-thank-you-auto-activation__link,
-		a.licensing-thank-you-manual-activation__link {
+		a.licensing-thank-you-auto-activation__link {
 			text-decoration: underline;
 			color: var( --color-studio-black );
 			&:hover {
@@ -836,8 +833,7 @@
 		.jetpack-checkout-siteless-thank-you__card-main {
 			max-width: 744px;
 		}
-		.licensing-thank-you-auto-activation__card-main,
-		.licensing-thank-you-manual-activation__card-main {
+		.licensing-thank-you-auto-activation__card-main {
 			@include break-large {
 				flex: 1 1 648px;
 			}
@@ -924,8 +920,7 @@
 		}
 
 		.jetpack-checkout-siteless-thank-you__main-message,
-		.licensing-thank-you-auto-activation__main-message,
-		.licensing-thank-you-manual-activation__main-message {
+		.licensing-thank-you-auto-activation__main-message {
 			font-size: 2.25rem;
 			font-weight: 700;
 			margin-bottom: 24px;
@@ -936,8 +931,7 @@
 		}
 
 		.jetpack-checkout-siteless-thank-you__sub-message,
-		.licensing-thank-you-auto-activation__sub-message,
-		.licensing-thank-you-manual-activation__sub-message {
+		.licensing-thank-you-auto-activation__sub-message {
 			font-size: 1.5rem;
 			margin-bottom: 64px;
 		}
@@ -951,8 +945,7 @@
 			margin-top: 24px;
 		}
 
-		.licensing-thank-you-auto-activation__card-footer,
-		.licensing-thank-you-manual-activation__card-footer {
+		.licensing-thank-you-auto-activation__card-footer {
 			position: relative;
 			display: flex;
 			align-items: center;
@@ -990,15 +983,12 @@
 		}
 
 		.licensing-thank-you-auto-activation__button,
-		.licensing-thank-you-auto-activation__button:visited,
-		.licensing-thank-you-manual-activation__button,
-		.licensing-thank-you-manual-activation__button:visited {
+		.licensing-thank-you-auto-activation__button:visited {
 			border-radius: 2px;
 			@include jetpack-primary-button;
 		}
 
-		.licensing-thank-you-auto-activation__button,
-		.licensing-thank-you-manual-activation__button {
+		.licensing-thank-you-auto-activation__button {
 			&.is-primary {
 				&.is-busy {
 					background-image: linear-gradient(
@@ -1037,26 +1027,6 @@
 	}
 }
 
-.licensing-thank-you-manual-activation__card-top {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	margin-bottom: 45px;
-}
-
-.licensing-thank-you-manual-activation .licensing-thank-you-manual-activation__card-top .jetpack-logo {
-	margin-bottom: 0;
-}
-
-.licensing-thank-you-manual-activation__progress-bar {
-	width: 60px;
-
-	.progress-bar__progress {
-		background-color: var( --studio-jetpack-green-40 );
-	}
-}
-
 .jetpack-checkout-siteless-thank-you {
 	.jetpack-checkout-siteless-thank-you__card {
 		@include break-medium {
@@ -1067,10 +1037,8 @@
 	}
 }
 
-.licensing-thank-you-auto-activation,
-.licensing-thank-you-manual-activation {
-	.licensing-thank-you-auto-activation__card,
-	.licensing-thank-you-manual-activation__card {
+.licensing-thank-you-auto-activation {
+	.licensing-thank-you-auto-activation__card {
 		@include break-large {
 			flex-direction: row;
 			width: auto;
@@ -1097,8 +1065,6 @@
 	width: 28px;
 	height: 28px;
 }
-
-
 
 .jetpack-checkout-thank-you {
 	.jetpack-checkout-thank-you__card,
