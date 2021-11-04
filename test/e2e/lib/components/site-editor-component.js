@@ -222,6 +222,107 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		);
 	}
 
+	async clickGlobalStylesResetButton() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-global-styles-sidebar button[aria-label="More Global Styles Actions"' )
+		);
+		const resetButtonLocator = driverHelper.createTextLocator(
+			By.css( '.popover-slot button.components-dropdown-menu__menu-item' ),
+			'Reset to defaults'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, resetButtonLocator );
+	}
+
+	async changeGlobalStylesFontSize( value, blocksLevel ) {
+		if ( ! blocksLevel ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.edit-site-global-styles-sidebar button[aria-label="Set custom size"]' )
+			);
+		}
+		return await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '.edit-site-global-styles-sidebar .components-font-size-picker input' ),
+			value
+		);
+	}
+
+	async changeGlobalStylesColor( colorType, { valueIndex = 1 } ) {
+		await this.clickGlobalStylesMenuItem( colorType );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				`.edit-site-global-styles-sidebar .components-circular-option-picker .components-circular-option-picker__option-wrapper:nth-of-type(${ valueIndex }) button`
+			)
+		);
+	}
+
+	async saveGlobalStyles( { pauseAfter = false } = {} ) {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-save-button__button' )
+		);
+		const allCheckboxes = await this.driver.findElements(
+			By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
+		);
+		for ( const checkbox of allCheckboxes ) {
+			await driverHelper.setCheckbox( this.driver, () => checkbox, false );
+		}
+		const locator = driverHelper.createTextLocator(
+			By.css( '.entities-saved-states__panel .components-checkbox-control__label' ),
+			'Custom Styles'
+		);
+		await driverHelper.clickWhenClickable( this.driver, locator );
+		const saveClicked = await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-entities-saved-states__save-button' )
+		);
+
+		if ( pauseAfter ) {
+			// The pause ensures there is enough time for the debounced tracking function to run,
+			// and get/compare entities to create the tracks event.
+			return await this.driver.sleep( 500 );
+		}
+		return saveClicked;
+	}
+
+	async changeGlobalStylesFirstColorPaletteItem( value, { pickerOpened = false } = {} ) {
+		if ( ! pickerOpened ) {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css(
+					'.edit-site-global-styles-sidebar .components-base-control:last-of-type .components-color-edit__color-option button'
+				)
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.components-color-picker button[aria-label="Show detailed inputs"]' )
+			);
+		}
+
+		return await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '.components-color-picker input' ),
+			value
+		);
+	}
+
+	async clickGlobalStylesMenuItem( menuTitle ) {
+		const locator = driverHelper.createTextLocator(
+			By.css( '.edit-site-global-styles-sidebar button' ),
+			menuTitle
+		);
+		return await driverHelper.clickWhenClickable( this.driver, locator );
+	}
+
+	async clickGlobalStylesBackButton() {
+		const backButtonLocator = By.css(
+			'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
+	}
+
 	/**
 	 * Alias for `toggleNavigationSidebar`. We need to have the same function
 	 * name in both this and gutenberg editor component to make sure general

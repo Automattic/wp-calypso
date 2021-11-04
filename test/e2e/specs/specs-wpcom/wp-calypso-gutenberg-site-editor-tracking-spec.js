@@ -36,57 +36,6 @@ const navigationSidebarBackToRoot = async ( driver ) => {
 	}
 };
 
-const clickGlobalStylesButton = async ( driver ) =>
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css( '.edit-site-header__actions button[aria-label="Global Styles"]' )
-	);
-
-const clickGlobalStylesResetButton = async ( driver ) => {
-	await driverHelper.clickIfPresent(
-		driver,
-		By.css(
-			'.edit-site-global-styles-sidebar .edit-site-global-styles-sidebar__reset-button:enabled'
-		)
-	);
-};
-
-const clickGlobalStylesBlockPanel = async ( driver, name ) => {
-	const locator = driverHelper.createTextLocator(
-		By.css( '.edit-site-global-styles-sidebar .components-panel__body button' ),
-		name
-	);
-	await driverHelper.clickWhenClickable( driver, locator );
-};
-
-const changeGlobalStylesFontSize = async ( driver, value ) =>
-	await driverHelper.setWhenSettable(
-		driver,
-		By.css( '.edit-site-global-styles-sidebar .components-font-size-picker input' ),
-		value
-	);
-
-const changeGlobalStylesColor = async ( driver, colorTypeIndex, colorValueIndex ) =>
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css(
-			`.edit-site-global-styles-sidebar .block-editor-color-gradient-control:nth-of-type(${ colorTypeIndex }) .components-circular-option-picker__option-wrapper:nth-of-type(${ colorValueIndex }) .components-circular-option-picker__option`
-		)
-	);
-
-const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpened = false ) => {
-	if ( ! pickerOpened ) {
-		await driverHelper.clickWhenClickable(
-			driver,
-			By.css(
-				'.edit-site-global-styles-sidebar .components-base-control:last-of-type .components-color-edit__color-option button'
-			)
-		);
-	}
-
-	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
-};
-
 const deleteCustomEntities = async function ( driver, entityName ) {
 	await SiteEditorComponent.Expect( driver );
 	const getAndDeleteEntities = async ( name ) => {
@@ -114,25 +63,6 @@ const clickBlockSettingsButton = async ( driver ) =>
 		By.css( '.edit-site-header__actions button[aria-label="Settings"]' )
 	);
 
-const clickNthTabInGlobalStylesSidebar = async ( driver, tabIndex ) =>
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css(
-			`.edit-site-global-styles-sidebar .components-tab-panel__tabs button:nth-child(${ tabIndex })`
-		)
-	);
-
-const clickGlobalStylesBlockTypeTab = async ( driver ) =>
-	await clickNthTabInGlobalStylesSidebar( driver, 2 );
-
-const clickGlobalStylesMenuItem = async ( driver, menuTitle ) => {
-	const locator = driverHelper.createTextLocator(
-		By.css( '.edit-site-global-styles-sidebar button' ),
-		menuTitle
-	);
-	return await driverHelper.clickWhenClickable( driver, locator );
-};
-
 const getGlobalStylesToggleEvents = async ( driver ) => {
 	const eventsStack = await getEventsStack( driver );
 	return eventsStack.filter(
@@ -154,50 +84,40 @@ const getGlobalStylesUpdateEvents = async ( driver ) => {
 	);
 };
 
-const saveGlobalStyles = async ( driver ) => {
-	await driverHelper.clickWhenClickable( driver, By.css( '.edit-site-save-button__button' ) );
-	const allCheckboxes = await driver.findElements(
-		By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
-	);
-	for ( const checkbox of allCheckboxes ) {
-		await driverHelper.setCheckbox( driver, () => checkbox, false );
-	}
-	const locator = driverHelper.createTextLocator(
-		By.css( '.entities-saved-states__panel .components-checkbox-control__label' ),
-		'Custom Styles'
-	);
-	await driverHelper.clickWhenClickable( driver, locator );
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css( '.editor-entities-saved-states__save-button' )
-	);
-	// Ensure there is enough time for the debounced function to run, and get/compare entities to
-	// create the track event.
-	await driver.sleep( 500 );
-};
-
-const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false ) => {
+const testGlobalStylesColorAndTypography = async (
+	driver,
+	editor,
+	{ blocksLevel = false } = {}
+) => {
 	if ( blocksLevel ) {
-		await clickGlobalStylesBlockTypeTab( driver );
-		await clickGlobalStylesBlockPanel( driver, 'Button' );
+		await editor.clickGlobalStylesMenuItem( 'Blocks' );
+		await editor.clickGlobalStylesMenuItem( 'Button' );
 	}
 
-	await changeGlobalStylesFontSize( driver, '11' );
+	await editor.clickGlobalStylesMenuItem( 'Typography' );
+	await editor.changeGlobalStylesFontSize( '11', blocksLevel );
+	await editor.clickGlobalStylesBackButton();
 	// Update events are debounced to avoid event spam when items are updated using
 	// slider inputs. Therefore we must wait so this update event is not debounced.
 	await driver.sleep( 100 );
 
 	// Update text color option.
-	await changeGlobalStylesColor( driver, 1, 1 );
+	await editor.clickGlobalStylesMenuItem( 'Colors' );
+	await editor.changeGlobalStylesColor( 'Text', { valueIndex: 1 } );
+	await editor.clickGlobalStylesBackButton();
+
 	await driver.sleep( 100 );
 
 	if ( blocksLevel ) {
-		await clickGlobalStylesBlockPanel( driver, 'Button' );
-		await clickGlobalStylesBlockPanel( driver, 'Column' );
+		await editor.clickGlobalStylesBackButton();
+		await editor.clickGlobalStylesBackButton();
+		await editor.clickGlobalStylesMenuItem( 'Column' );
+		await editor.clickGlobalStylesMenuItem( 'Colors' );
 	}
 
 	// Update link color option.
-	await changeGlobalStylesColor( driver, 3, 2 );
+	await editor.changeGlobalStylesColor( 'Links', { valueIndex: 2 } );
+	await editor.clickGlobalStylesBackButton();
 	// The last sleep before accessing the event stack must be longer to ensure there is
 	// enough time for the function to retrieve entities and compare.
 	await driver.sleep( 500 );
@@ -253,7 +173,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 	);
 
 	await clearEventsStack( driver );
-	await clickGlobalStylesResetButton( driver );
+	await editor.clickGlobalStylesResetButton();
 	await driver.sleep( 500 );
 	updateEvents = await getGlobalStylesUpdateEvents( driver );
 
@@ -299,14 +219,17 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 	);
 };
 
-const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => {
-	await changeGlobalStylesFirstColorPaletteItem( driver, '#ff0ff0' );
+const testGlobalStylesColorPalette = async ( driver, editor ) => {
+	await editor.clickGlobalStylesMenuItem( 'Colors' );
+	await editor.clickGlobalStylesMenuItem( '5 colors' );
+
+	await editor.changeGlobalStylesFirstColorPaletteItem( 'ff0ff0' );
 
 	// A timeout is necessary both because the function is debounced and needs time to retrieve
 	// entities to compare.
 	await driver.sleep( 500 );
 
-	let updateEvents = await getEventsStack( driver );
+	let updateEvents = await getGlobalStylesUpdateEvents( driver );
 
 	// The first palette change will instantiate all palette settings onto the global styles object.
 	// We expect to see one update per palette setting.
@@ -314,7 +237,10 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 	updateEvents.forEach( ( event ) => {
 		const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
 		assert(
-			block_type === blockName &&
+			// Note that we expect 'undefined' as the block_type, even when the palette is accessed
+			// through the block level as block level palettes are no longer supported and this
+			// interface now leads to the global settings.
+			block_type === undefined &&
 				section === 'color' &&
 				field === 'palette' &&
 				element_type === undefined &&
@@ -328,7 +254,7 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 		updateEvents.some( ( event ) => {
 			const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
 			return (
-				block_type === blockName &&
+				block_type === undefined &&
 				section === 'color' &&
 				field === 'palette' &&
 				element_type === undefined &&
@@ -338,25 +264,18 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 		} )
 	);
 	await clearEventsStack( driver );
-	await changeGlobalStylesFirstColorPaletteItem( driver, '#a1a1a1', true );
+	await editor.changeGlobalStylesFirstColorPaletteItem( 'a1a1a1', { pickerOpened: true } );
 	await driver.sleep( 500 );
 	updateEvents = await getGlobalStylesUpdateEvents( driver );
 
-	// Now that settings have been instantiated, only one event should fire.
-	assert.strictEqual( updateEvents.length, 1 );
-
+	// Now that settings have been instantiated, all palette update events should correspond to the
+	// same palette slug.
+	updateEvents.forEach( ( event ) => assert( event[ 1 ].palette_slug === 'primary' ) );
 	assert(
-		( function () {
-			const {
-				block_type,
-				section,
-				field,
-				field_value,
-				element_type,
-				palette_slug,
-			} = updateEvents[ 0 ][ 1 ];
+		updateEvents.some( ( event ) => {
+			const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
 			return (
-				block_type === blockName &&
+				block_type === undefined &&
 				section === 'color' &&
 				field === 'palette' &&
 				element_type === undefined &&
@@ -364,18 +283,18 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 				typeof field_value === 'string' &&
 				field_value === '#a1a1a1'
 			);
-		} )()
+		} )
 	);
 
 	// Toggle the menu to ensure the color picker closes.
 	// Otherwise clicking 'reset' will close the color picker after the reset
 	// takes place, causing an unwanted update to that value.
-	await clickGlobalStylesButton( driver );
-	await clickGlobalStylesButton( driver );
+	await editor.toggleGlobalStyles();
+	await editor.toggleGlobalStyles();
 
 	await clearEventsStack( driver );
 
-	await clickGlobalStylesResetButton( driver );
+	await editor.clickGlobalStylesResetButton();
 	await driver.sleep( 500 );
 
 	updateEvents = await getGlobalStylesUpdateEvents( driver );
@@ -383,7 +302,7 @@ const testGlobalStylesColorPalette = async ( driver, blockName = undefined ) => 
 	updateEvents.forEach( ( event ) => {
 		const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
 		assert(
-			block_type === blockName &&
+			block_type === undefined &&
 				section === 'color' &&
 				field === 'palette' &&
 				element_type === undefined &&
@@ -476,15 +395,11 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 					await editor.toggleGlobalStyles();
 
-					const backButtonLocator = By.css(
-						'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
-					);
-
-					await clickGlobalStylesMenuItem( this.driver, 'Typography' );
-					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
-					await clickGlobalStylesMenuItem( this.driver, 'Colors' );
-					await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
-					await clickGlobalStylesMenuItem( this.driver, 'Blocks' );
+					await editor.clickGlobalStylesMenuItem( 'Typography' );
+					await editor.clickGlobalStylesBackButton();
+					await editor.clickGlobalStylesMenuItem( 'Colors' );
+					await editor.clickGlobalStylesBackButton();
+					await editor.clickGlobalStylesMenuItem( 'Blocks' );
 
 					const globalStylesMenuEvents = await getGlobalStylesMenuEvents( this.driver );
 					assert.strictEqual( globalStylesMenuEvents.length, 3 );
@@ -506,66 +421,61 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		// Temporarily skip these tests until we can update track events / tests to handle the new
-		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
-		describe.skip( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
 			before( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				// Since these events are tracked via redux actions in updateEntityRecord and
+				// saveEditedEntityRecord, they are independent of UI.  If the desktop flow populates
+				// these events properly, the mobile flow will as well.  There is no added benefit to
+				// maintaining these interactions in e2e for both viewport sizes.
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
+			} );
+
+			beforeEach( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.toggleGlobalStyles();
 			} );
 
-			// Since these events are tracked via redux actions in updateEntityRecord and
-			// saveEditedEntityRecord, they are independent of UI.  If the desktop flow populates
-			// these events properly, the mobile flow will as well.  There is no added benefit to
-			// maintaining these interactions in e2e for both viewport sizes.
 			it( 'global color and typography', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
 				// Reset Global Styles before testing.
-				await clickGlobalStylesResetButton( this.driver );
-				await saveGlobalStyles( this.driver );
+				await editor.clickGlobalStylesResetButton();
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 				await clearEventsStack( this.driver );
-
-				await testGlobalStylesColorAndTypography( this.driver );
+				await testGlobalStylesColorAndTypography( this.driver, editor );
 			} );
 
 			it( 'global color palette settings', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-				await testGlobalStylesColorPalette( this.driver );
+				await testGlobalStylesColorPalette( this.driver, editor );
 			} );
 
 			it( 'block level typography and color', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-				await testGlobalStylesColorAndTypography( this.driver, true );
+				await testGlobalStylesColorAndTypography( this.driver, editor, { blocksLevel: true } );
 			} );
 
 			it( 'block level color palette settings', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
-				await testGlobalStylesColorPalette( this.driver, 'core/column' );
+				await editor.clickGlobalStylesMenuItem( 'Blocks' );
+				await editor.clickGlobalStylesMenuItem( 'Column' );
+				await testGlobalStylesColorPalette( this.driver, editor );
 			} );
 
-			after( async function () {
+			afterEach( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.closeGlobalStyles();
 			} );
 		} );
 
-		// Temporarily skip these tests until we can update track events / tests to handle the new
-		// interface.  https://github.com/Automattic/wp-calypso/pull/56544
-		describe.skip( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
 			before( async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
 				await editor.toggleGlobalStyles();
 			} );
 
@@ -574,27 +484,29 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			// to verify that the expected number of events are triggered.
 			it( 'sends the expected amount of tracks events', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				if ( editor.screenSize === 'mobile' ) {
-					return this.skip();
-				}
 
 				// Reset global styles before testing.
-				await clickGlobalStylesResetButton( this.driver );
-				await saveGlobalStyles( this.driver );
+				await editor.clickGlobalStylesResetButton();
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 				await clearEventsStack( this.driver );
 
-				await changeGlobalStylesFontSize( this.driver, '11' );
-				await changeGlobalStylesColor( this.driver, 1, 1 );
-				await changeGlobalStylesColor( this.driver, 3, 2 );
-				await saveGlobalStyles( this.driver );
+				await editor.clickGlobalStylesMenuItem( 'Typography' );
+				await editor.changeGlobalStylesFontSize( '11' );
+				await editor.clickGlobalStylesBackButton();
+				await editor.clickGlobalStylesMenuItem( 'Colors' );
+				await editor.changeGlobalStylesColor( 'Text', { valueIndex: 1 } );
+				await editor.clickGlobalStylesBackButton();
+				await editor.changeGlobalStylesColor( 'Links', { valueIndex: 2 } );
+				await editor.clickGlobalStylesBackButton();
+				await editor.saveGlobalStyles( { pauseAfter: true } );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
 				);
 				assert.strictEqual( saveEvents.length, 3 );
 
 				// Clean up by resetting to be safe.
-				await clickGlobalStylesResetButton( this.driver );
-				await saveGlobalStyles( this.driver );
+				await editor.clickGlobalStylesResetButton();
+				await editor.saveGlobalStyles();
 			} );
 
 			after( async function () {
