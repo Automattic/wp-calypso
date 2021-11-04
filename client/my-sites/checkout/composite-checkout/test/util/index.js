@@ -711,7 +711,10 @@ export function mockPayPalEndpoint( endpointResponse ) {
 	return endpoint;
 }
 
-export const mockPayPalRedirectResponse = () => [ 200, 'https://test-redirect-url' ];
+export const mockPayPalRedirectResponse = () => [
+	200,
+	{ redirect_url: 'https://test-redirect-url' },
+];
 
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	const transactionsEndpoint = jest.fn();
