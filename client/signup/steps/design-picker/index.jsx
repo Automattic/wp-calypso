@@ -16,6 +16,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
 import { getRecommendedThemes } from 'calypso/state/themes/selectors';
+import DIFMThemes from '../difm-design-picker/themes';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
@@ -126,18 +127,22 @@ class DesignPickerStep extends Component {
 	};
 
 	previewDesign = ( selectedDesign ) => {
+		const locale = ! this.props.userLoggedIn ? getLocaleSlug() : '';
+
 		recordTracksEvent( 'calypso_signup_design_preview_select', {
 			theme: `pub/${ selectedDesign.theme }`,
 			template: selectedDesign.template,
+			flow: this.props.flowName,
 		} );
 
-		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme ) );
+		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme, locale ) );
 	};
 
 	submitDesign = ( selectedDesign = this.state.selectedDesign ) => {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			theme: `pub/${ selectedDesign?.theme }`,
 			template: selectedDesign?.template,
+			flow: this.props.flowName,
 		} );
 
 		this.props.goToNextStep();
@@ -164,6 +169,7 @@ class DesignPickerStep extends Component {
 			signupDependencies: { siteSlug },
 			locale,
 			translate,
+			hideExternalPreview,
 		} = this.props;
 
 		const { selectedDesign } = this.state;
@@ -177,6 +183,7 @@ class DesignPickerStep extends Component {
 				showClose={ false }
 				showEdit={ false }
 				externalUrl={ siteSlug }
+				showExternal={ ! hideExternalPreview }
 				previewUrl={ previewUrl }
 				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 					components: { strong: <strong /> },
@@ -238,6 +245,7 @@ class DesignPickerStep extends Component {
 					defaultDependencies={ defaultDependencies }
 					backUrl={ getStepUrl( flowName, stepName, '', locale ) }
 					goToNextStep={ this.submitDesign }
+					stepSectionName={ designTitle }
 				/>
 			);
 		}
@@ -260,9 +268,11 @@ class DesignPickerStep extends Component {
 
 export default compose(
 	connect(
-		( state ) => {
+		( state, ownProps ) => {
 			return {
-				themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
+				themes: ownProps.useDIFMThemes
+					? DIFMThemes
+					: getRecommendedThemes( state, 'auto-loading-homepage' ),
 				userLoggedIn: isUserLoggedIn( state ),
 			};
 		},
