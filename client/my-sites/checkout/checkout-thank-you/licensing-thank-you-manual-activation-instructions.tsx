@@ -39,6 +39,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug } ) => {
 			<LicensingActivation
 				title={ translate( 'Be sure that you have the latest version of Jetpack' ) }
 				footerImage={ licensingActivationPluginInstall }
+				showContactUs
 				showProgressIndicator
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }
