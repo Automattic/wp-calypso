@@ -5,7 +5,13 @@ import {
 	isNextDomainFree,
 } from 'calypso/lib/cart-values/cart-items';
 
-export function getMappingFreeText( { cart, domain, primaryWithPlansOnly, selectedSite } ) {
+export function getMappingFreeText( {
+	cart,
+	domain,
+	primaryWithPlansOnly,
+	selectedSite,
+	isSignupStep,
+} ) {
 	let mappingFreeText;
 
 	if (
@@ -14,8 +20,8 @@ export function getMappingFreeText( { cart, domain, primaryWithPlansOnly, select
 		isDomainBundledWithPlan( cart, domain )
 	) {
 		mappingFreeText = __( 'No additional charge with your plan' );
-	} else if ( primaryWithPlansOnly ) {
-		mappingFreeText = __( 'Included in paid plans' );
+	} else if ( primaryWithPlansOnly || isSignupStep ) {
+		mappingFreeText = __( 'Included in annual plans' );
 	}
 
 	return mappingFreeText;

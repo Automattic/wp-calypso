@@ -37,6 +37,10 @@ function UseMyDomainInput( {
 			onClear();
 			return;
 		}
+
+		if ( event.key === ' ' ) {
+			return false;
+		}
 	};
 
 	return (

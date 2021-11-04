@@ -48,7 +48,7 @@ function DomainTransferOrConnect( {
 	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState(
 		domainInboundTransferStatusInfo
 	);
-	const [ isFetching, setIsFetching ] = useState( availabilityData === null );
+	const [ isFetching, setIsFetching ] = useState( false );
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -82,31 +82,35 @@ function DomainTransferOrConnect( {
 	// retrieves the availability data by itself if not provided by the parent component
 	useEffect( () => {
 		( async () => {
-			if ( availabilityData && inboundTransferStatusInfo ) return;
+			if ( ( availabilityData && inboundTransferStatusInfo ) || isFetching ) return;
+
 			try {
 				setIsFetching( true );
 				if ( ! availabilityData ) {
 					const retrievedAvailabilityData = await wpcom.domain( domain ).isAvailable( {
 						apiVersion: '1.3',
-						blog_id: selectedSite.ID,
+						blog_id: selectedSite?.ID,
 						is_cart_pre_check: false,
 					} );
 
 					setAvailabilityData( retrievedAvailabilityData );
 				}
+			} catch {
+				setAvailabilityData( {} );
+			}
 
+			try {
 				if ( ! inboundTransferStatusInfo ) {
 					const inboundTransferStatusResult = await getDomainInboundTransferStatusInfo( domain );
 					setInboundTransferStatusInfo( inboundTransferStatusResult );
 				}
-				setIsFetching( false );
 			} catch {
-				setIsFetching( false );
-				setAvailabilityData( {} );
 				setInboundTransferStatusInfo( {} );
+			} finally {
+				setIsFetching( false );
 			}
 		} )();
-	} );
+	}, [ availabilityData, domain, inboundTransferStatusInfo, isFetching, selectedSite?.ID ] );
 
 	const baseClassName = 'domain-transfer-or-connect';
 
@@ -122,12 +126,14 @@ function DomainTransferOrConnect( {
 						{ ...optionProps }
 					/>
 				) ) }
-				<div className={ baseClassName + '__support-link' }>
-					{ createInterpolateElement(
-						__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
-						{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
-					) }
-				</div>
+				{ ! isFetching && (
+					<div className={ baseClassName + '__support-link' }>
+						{ createInterpolateElement(
+							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
+							{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
+						) }
+					</div>
+				) }
 			</Card>
 		</>
 	);
@@ -141,7 +147,7 @@ DomainTransferOrConnect.propTypes = {
 	isSignupStep: PropTypes.bool,
 	onConnect: PropTypes.func,
 	onTransfer: PropTypes.func,
-	selectedSite: PropTypes.object.isRequired,
+	selectedSite: PropTypes.object,
 	transferDomainUrl: PropTypes.string,
 };
 

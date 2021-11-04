@@ -6,15 +6,19 @@ import { domainAddNew } from 'calypso/my-sites/domains/paths';
 
 export function getAvailabilityErrorMessage( { availabilityData, domainName, selectedSite } ) {
 	const { status, mappable, maintenance_end_time, other_site_domain } = availabilityData;
-	const searchPageLink = domainAddNew( selectedSite.slug, domainName );
 
 	if ( domainAvailability.AVAILABLE === status ) {
-		return createInterpolateElement(
-			__( "This domain isn't registered. Did you mean to <a>search for a domain</a> instead?" ),
-			{
-				a: createElement( 'a', { href: searchPageLink } ),
-			}
-		);
+		if ( selectedSite ) {
+			const searchPageLink = domainAddNew( selectedSite.slug, domainName );
+			return createInterpolateElement(
+				__( "This domain isn't registered. Did you mean to <a>search for a domain</a> instead?" ),
+				{
+					a: createElement( 'a', { href: searchPageLink } ),
+				}
+			);
+		}
+
+		return __( "This domain isn't registered. Try again." );
 	}
 
 	const isMappable = domainAvailability.MAPPABLE === mappable;
@@ -39,7 +43,7 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 		? status
 		: mappable;
 	const maintenanceEndTime = maintenance_end_time ?? null;
-	const site = other_site_domain ?? selectedSite.slug;
+	const site = other_site_domain ?? selectedSite?.slug;
 
 	const errorData = getAvailabilityNotice( domainName, availabilityStatus, {
 		site,

@@ -37,14 +37,7 @@ export default function OptionContent( {
 					<h2> </h2>
 				</div>
 				<div className="option-content__top-text"></div>
-				<a
-					className="option-content__learn-more"
-					target="_blank"
-					href={ learnMoreLink }
-					rel="noopener noreferrer"
-				>
-					{ __( 'Learn more' ) }
-				</a>
+				<div className="option-content__learn-more"></div>
 			</div>
 		</div>
 	) : (

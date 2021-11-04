@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
+import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
@@ -31,6 +32,7 @@ export class NavigationLink extends Component {
 		primary: PropTypes.bool,
 		backIcon: PropTypes.string,
 		forwardIcon: PropTypes.string,
+		queryParams: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -81,7 +83,7 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
+		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -91,12 +93,15 @@ export class NavigationLink extends Component {
 		);
 
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+		const queryString = queryParams ? '?' + stringify( queryParams ) : '';
 
-		return getStepUrl(
-			previousStep.lastKnownFlow || this.props.flowName,
-			previousStep.stepName,
-			stepSectionName,
-			locale
+		return (
+			getStepUrl(
+				previousStep.lastKnownFlow || this.props.flowName,
+				previousStep.stepName,
+				stepSectionName,
+				locale
+			) + queryString
 		);
 	}
 

@@ -139,10 +139,16 @@ function CheckoutSummaryFeaturesList( props: {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+		( product ) =>
+			product.is_domain_registration ||
+			product.product_slug === 'domain_transfer' ||
+			product.product_slug === 'domain_map'
 	);
 	const domains = responseCart.products.filter(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+		( product ) =>
+			product.is_domain_registration ||
+			product.product_slug === 'domain_transfer' ||
+			product.product_slug === 'domain_map'
 	);
 	const hasPlanInCart = responseCart.products.some( ( product ) => isPlan( product ) );
 	const translate = useTranslate();
