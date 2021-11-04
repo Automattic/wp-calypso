@@ -64,7 +64,7 @@ export const addEmailForwardFailure = ( action, error ) => {
 };
 
 export const addEmailForwardSuccess = ( action, response ) => {
-	const { domainName, mailbox, destination, onSuccessRedirectTarget = noop } = action;
+	const { domainName, mailbox, destination, onSuccessRedirect = noop } = action;
 
 	if ( response && response.created ) {
 		let successMessage = translate( '%(email)s has been successfully added!', {
@@ -87,7 +87,7 @@ export const addEmailForwardSuccess = ( action, response ) => {
 			);
 		}
 
-		onSuccessRedirectTarget();
+		onSuccessRedirect();
 
 		return [
 			successNotice( successMessage, {

@@ -8,9 +8,11 @@ function validateAllFields( fieldValues, existingForwards = [] ) {
 			name: fieldName,
 		} );
 
-		return isValid
-			? validateDuplicatedForward( { value, name: fieldName }, existingForwards )
-			: [ 'Invalid' ];
+		if ( ! isValid ) {
+			return [ 'Invalid' ];
+		}
+
+		return validateDuplicatedForward( { value, name: fieldName }, existingForwards );
 	} );
 }
 
@@ -26,14 +28,11 @@ function validateField( { name, value } ) {
 }
 
 function validateDuplicatedForward( { name, value }, existingForwards ) {
-	switch ( name ) {
-		case 'mailbox':
-			return existingForwards?.filter( ( t ) => t.mailbox === value ).length > 1
-				? [ 'Repeated' ]
-				: [];
-		default:
-			return [];
+	if ( name !== 'mailbox' ) {
+		return [];
 	}
+
+	return existingForwards?.some( ( forward ) => forward.mailbox === value ) ? [ 'Duplicated' ] : [];
 }
 
 export { getEmailForwardsCount } from './get-email-forwards-count';

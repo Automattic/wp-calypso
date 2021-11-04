@@ -15,9 +15,9 @@ class EmailForwardingAddNewCompact extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
 		index: PropTypes.number,
-		removeHandler: PropTypes.func.isRequired,
+		onRemoveEmailForward: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		updateHandler: PropTypes.func.isRequired,
+		onUpdateEmailForward: PropTypes.func.isRequired,
 		emailForwards: PropTypes.array,
 	};
 
@@ -26,11 +26,8 @@ class EmailForwardingAddNewCompact extends Component {
 		fields: this.props.fields,
 	};
 
-	getInitialFields() {
-		return this.props.fields;
-	}
-
-	UNSAFE_componentWillMount() {
+	constructor( props ) {
+		super( props );
 		this.formStateController = formState.Controller( {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
@@ -40,6 +37,10 @@ class EmailForwardingAddNewCompact extends Component {
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
+	}
+
+	getInitialFields() {
+		return this.props.fields;
 	}
 
 	setFormState = ( fields ) => {
@@ -67,7 +68,7 @@ class EmailForwardingAddNewCompact extends Component {
 
 	removeButton() {
 		const updateForm = () => {
-			this.props.removeHandler( this.props.index );
+			this.props.onRemoveEmailForward( this.props.index );
 		};
 
 		return (
@@ -151,7 +152,7 @@ class EmailForwardingAddNewCompact extends Component {
 			value,
 		} );
 
-		this.props.updateHandler( index, name, value );
+		this.props.onUpdateEmailForward( index, name, value );
 	};
 
 	isValid( fieldName ) {
@@ -164,14 +165,17 @@ class EmailForwardingAddNewCompact extends Component {
 		if ( ! errorMessage ) {
 			return null;
 		}
+
 		if ( fieldName === 'mailbox' ) {
 			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
 				return translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' );
 			}
+
 			if ( errorMessage.filter( ( t ) => t === 'Repeated' ).length === 1 ) {
 				return translate( 'Invalid mailbox - Duplicated' );
 			}
 		}
+
 		if ( fieldName === 'destination' ) {
 			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
 				return translate( 'Invalid destination address' );

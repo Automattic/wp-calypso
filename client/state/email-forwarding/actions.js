@@ -44,18 +44,13 @@ export const receiveGetEmailForwardsFailure = ( domainName, error ) => {
 	};
 };
 
-export const addEmailForward = (
-	domainName,
-	mailbox,
-	destination,
-	onSuccessRedirectTarget = noop
-) => {
+export const addEmailForward = ( domainName, mailbox, destination, onSuccessRedirect = noop ) => {
 	return {
 		type: EMAIL_FORWARDING_ADD_REQUEST,
 		domainName,
 		mailbox,
 		destination,
-		onSuccessRedirectTarget,
+		onSuccessRedirect,
 	};
 };
 

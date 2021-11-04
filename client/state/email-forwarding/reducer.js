@@ -207,7 +207,6 @@ const combinedReducer = keyedReducer(
 		requesting: requestingReducer,
 		requestError: requestErrorReducer,
 		addingForward: addingReducer,
-		addError: addErrorReducer,
 		type: typeReducer,
 	} )
 );

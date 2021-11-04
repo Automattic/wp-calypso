@@ -252,19 +252,8 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
-	onForwardsMailboxesChange = ( changedMailboxes ) => {
-		this.setState( { forwardingMailboxes: changedMailboxes } );
-	};
-
 	onGoogleUsersChange = ( changedUsers ) => {
 		this.setState( { googleUsers: changedUsers } );
-	};
-
-	onForwardsFormReturnKeyPress = ( event ) => {
-		// Simulate form submission
-		if ( event.key === 'Enter' ) {
-			this.onForwardingConfirmNewMailboxes();
-		}
 	};
 
 	onGoogleFormReturnKeyPress = ( event ) => {
