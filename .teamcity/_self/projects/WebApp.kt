@@ -460,7 +460,14 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 		}
 
 		params {
-			param("env.SAVE_AUTH_COOKIES", "true")
+			checkbox(
+				name = "env.SAVE_AUTH_COOKIES",
+				value = "true",
+				label = "Save authentication cookies",
+				description = "Login once and reuse auth cookies for all specs",
+				checked = "true",
+				unchecked = "false"
+			)
 		}
 
 		steps {
