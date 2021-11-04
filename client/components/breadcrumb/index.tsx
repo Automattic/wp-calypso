@@ -16,13 +16,13 @@ const StyledLi = styled.li`
 	font-weight: 500;
 	--color-link: var( --studio-gray-100 );
 
-	&.first {
+	:first-child {
 		font-size: 16px;
 		font-weight: 600;
 		--color-link: var( --studio-gray-80 );
 	}
 
-	&.last {
+	:last-child {
 		--color-link: var( --studio-gray-50 );
 	}
 `;
@@ -39,11 +39,9 @@ interface Props {
 const Breadcrumb: React.FunctionComponent< Props > = ( { items } ) => {
 	return (
 		<StyledUl>
-			{ items.map( ( item: { href?: string; label: string }, index: Key, { length } ) => {
-				// eslint-disable-next-line no-nested-ternary
-				const className = index === 0 ? 'first' : index === length - 1 ? 'last' : '';
+			{ items.map( ( item: { href?: string; label: string }, index: Key ) => {
 				return (
-					<StyledLi key={ index } className={ className }>
+					<StyledLi key={ index }>
 						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 18 } /> }
 						{ item.href ? <a href={ item.href }>{ item.label }</a> : <span>{ item.label }</span> }
 					</StyledLi>
