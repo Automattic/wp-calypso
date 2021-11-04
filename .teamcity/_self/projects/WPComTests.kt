@@ -36,8 +36,8 @@ object WPComTests : Project({
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
 	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
 	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
-	buildType(coblocksPlaywrightBuildType("desktop", ""));
-	buildType(coblocksPlaywrightBuildType("mobile", ""));
+	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
+	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
 	buildType(VisualRegressionTests);
@@ -365,7 +365,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
     return BuildType {
 		id("WPComTests_coblocks_Playwright_$targetDevice")
-		// uuid=buildUuid TODO: Set for real post merge when it is created
+		uuid=buildUuid
 		name = "Playwright CoBlocks E2E Tests ($targetDevice)"
 		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
 
