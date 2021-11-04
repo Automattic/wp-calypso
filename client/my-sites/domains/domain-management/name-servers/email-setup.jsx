@@ -13,11 +13,7 @@ import './email-setup.scss';
 
 class EmailSetup extends Component {
 	static propTypes = {
-		// domains: PropTypes.array.isRequired,
-		// dns: PropTypes.object.isRequired,
-		// showPlaceholder: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	constructor( props ) {
@@ -80,17 +76,17 @@ class EmailSetup extends Component {
 		return this.state.selectedTab === provider;
 	};
 
-	renderProviders = () => {
+	renderProviderTabs = () => {
 		return (
 			<SectionNav selectedText={ this.state.selectedTab }>
 				<NavTabs label="Email providers">
-					{ this.state.templates.map( this.renderProvider ) }
+					{ this.state.templates.map( this.renderProviderTab ) }
 				</NavTabs>
 			</SectionNav>
 		);
 	};
 
-	renderProvider = ( template ) => {
+	renderProviderTab = ( template ) => {
 		return (
 			<NavItem
 				key={ `email-provider-${ template.dnsTemplateProvider }` }
@@ -102,11 +98,13 @@ class EmailSetup extends Component {
 		);
 	};
 
-	renderConfiguration = () => {
-		const template = this.state.templates.find( ( t ) => this.state.selectedTab === t.name );
-		if ( ! template ) return null;
+	renderConfigurationForm = () => {
+		const selectedTemplate = this.state.templates.find(
+			( template ) => this.state.selectedTab === template.name
+		);
+		if ( ! selectedTemplate ) return null;
 
-		return <EmailProvider template={ template } domain={ this.props.selectedDomainName } />;
+		return <EmailProvider template={ selectedTemplate } domain={ this.props.selectedDomainName } />;
 	};
 
 	render = () => {
@@ -119,8 +117,8 @@ class EmailSetup extends Component {
 		);
 		return (
 			<FoldableCard header={ header } clickableHeader className="email-setup">
-				{ this.renderProviders() }
-				{ this.renderConfiguration() }
+				{ this.renderProviderTabs() }
+				{ this.renderConfigurationForm() }
 			</FoldableCard>
 		);
 	};
