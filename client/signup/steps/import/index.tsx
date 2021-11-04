@@ -7,11 +7,12 @@ import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
-import { GoToStep } from './types';
+import { GoToNextStep, GoToStep } from './types';
 import './style.scss';
 
 type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
+	goToNextStep: GoToNextStep;
 	stepName: string;
 	stepSectionName: string;
 	queryObject: {
@@ -26,6 +27,7 @@ const MOCK_DATA = {
 
 const ImportOnboarding: React.FunctionComponent< Props > = ( {
 	goToStep,
+	goToNextStep,
 	stepName,
 	stepSectionName,
 	isAnalyzing,
@@ -51,6 +53,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
 			backUrl={ stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
+			goToNextStep={ goToNextStep }
 			hideFormattedHeader={ true }
 			stepName={ stepName }
 			stepContent={
