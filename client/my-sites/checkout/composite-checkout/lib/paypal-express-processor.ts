@@ -27,10 +27,7 @@ export default async function payPalProcessor(
 		siteSlug,
 		contactDetails,
 	} = transactionOptions;
-	recordTransactionBeginAnalytics( {
-		reduxDispatch,
-		paymentMethodId: 'paypal',
-	} );
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal' } ) );
 
 	const thankYouUrl = getThankYouUrl();
 	let currentUrl;

@@ -2,16 +2,29 @@ import config from '@automattic/calypso-config';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import wp from 'calypso/lib/wp';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
+
+const logCheckoutError = ( error ) => {
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'composite checkout load error',
+		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+		extra: {
+			env: config( 'env_id' ),
+			type: 'checkout_system_decider',
+			message: String( error ),
+		},
+	} );
+};
 
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
@@ -29,7 +42,6 @@ export default function CheckoutSystemDecider( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 } ) {
-	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -37,36 +49,16 @@ export default function CheckoutSystemDecider( {
 
 	useEffect( () => {
 		if ( productAliasFromUrl ) {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'CheckoutSystemDecider saw productSlug to add',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						productSlug: productAliasFromUrl,
-					},
-				} )
-			);
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'CheckoutSystemDecider saw productSlug to add',
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				extra: {
+					productSlug: productAliasFromUrl,
+				},
+			} );
 		}
-	}, [ reduxDispatch, productAliasFromUrl ] );
-
-	const logCheckoutError = useCallback(
-		( error ) => {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'composite checkout load error',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						env: config( 'env_id' ),
-						type: 'checkout_system_decider',
-						message: String( error ),
-					},
-				} )
-			);
-		},
-		[ reduxDispatch ]
-	);
+	}, [ productAliasFromUrl ] );
 
 	let siteSlug = selectedSite?.slug;
 
