@@ -196,6 +196,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	domainDetails: DomainContactDetails | null;
 	country: string;
 	postalCode: string;
+	as_json: true;
 };
 
 export type PayPalExpressEndpointResponse = unknown;
