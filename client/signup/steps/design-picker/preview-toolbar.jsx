@@ -52,7 +52,7 @@ const DesignPickerPreviewToolbar = ( {
 						<rect x="32" width="8" height="8" rx="4" />
 					</g>
 				</svg>
-				<span className="preview-toolbar__browser-url">{ externalUrl }</span>
+				{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
 			</div>
 		</div>
 	);
