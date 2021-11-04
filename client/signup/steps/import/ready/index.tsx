@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { urlData } from '../types';
+import { urlData, GoToStep } from '../types';
 import { convertPlatformName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
@@ -73,7 +73,11 @@ const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	);
 };
 
-const ReadyNotStep: React.FunctionComponent = () => {
+interface ReadyNotProps {
+	goToStep: GoToStep;
+}
+
+const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( { goToStep } ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -90,7 +94,9 @@ const ReadyNotStep: React.FunctionComponent = () => {
 					<div className="import__buttons-group">
 						<NextButton>{ __( 'Start building' ) }</NextButton>
 						<div>
-							<BackButton>{ __( 'Back to the start' ) }</BackButton>
+							<BackButton onClick={ () => goToStep( 'capture' ) }>
+								{ __( 'Back to the start' ) }
+							</BackButton>
 						</div>
 					</div>
 				</div>

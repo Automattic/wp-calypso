@@ -64,7 +64,9 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( {
 					{ stepName === 'ready' && ! stepSectionName && (
 						<ReadyStep platform={ MOCK_DATA.platform } />
 					) }
-					{ stepName === 'ready' && stepSectionName === 'not' && <ReadyNotStep /> }
+					{ stepName === 'ready' && stepSectionName === 'not' && (
+						<ReadyNotStep goToStep={ goToStep } />
+					) }
 					{ stepName === 'ready' && stepSectionName === 'preview' && <ReadyPreviewStep /> }
 				</div>
 			}
