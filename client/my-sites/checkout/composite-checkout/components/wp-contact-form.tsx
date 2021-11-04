@@ -1,10 +1,6 @@
-import {
-	FormStatus,
-	useSelect,
-	useFormStatus,
-	useIsStepActive,
-} from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
+import { useSelect } from '@wordpress/data';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import ContactDetailsContainer from './contact-details-container';

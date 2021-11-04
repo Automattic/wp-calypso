@@ -4,9 +4,9 @@ import {
 	isDomainMapping,
 	getDomain,
 } from '@automattic/calypso-products';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { Field, styled } from '@automattic/wpcom-checkout';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';

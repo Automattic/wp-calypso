@@ -8,18 +8,17 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
-	useDispatch,
 	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
 	usePaymentMethod,
-	useSelect,
 	useTotal,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
