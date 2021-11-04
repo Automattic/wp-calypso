@@ -688,6 +688,7 @@ class EmailProvidersComparison extends Component {
 			isGSuiteSupported,
 			selectedDomainName,
 			selectedSite,
+			source,
 		} = this.props;
 
 		return (
@@ -719,6 +720,7 @@ class EmailProvidersComparison extends Component {
 						context: comparisonContext,
 						is_gsuite_supported: isGSuiteSupported,
 						layout: 'stacked',
+						source,
 					} }
 				/>
 			</Main>
