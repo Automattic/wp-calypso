@@ -1,6 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
+import { connect, ConnectedProps } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { isAnalyzing } from '../../../state/imports/url-analyzer/selectors';
 import { getStepUrl } from 'calypso/signup/utils';
 import CaptureStep from './capture';
 import ListStep from './list';
@@ -8,67 +10,70 @@ import { ReadyPreviewStep, ReadyNotStep, ReadyStep } from './ready';
 import { GoToStep } from './types';
 import './style.scss';
 
-interface Props {
+type Props = ConnectedProps< typeof connector > & {
 	goToStep: GoToStep;
 	stepName: string;
 	stepSectionName: string;
 	queryObject: {
 		siteSlug?: string;
 	};
-}
+};
 
 const MOCK_DATA = {
 	website: 'https://openweb.com',
 	platform: 'Wix',
 };
 
-const shouldHideBackBtn = ( stepName: string, isScanning = false ): boolean => {
-	const STEPS_WITHOUT_BACK = [ 'scanning' ];
-
-	return STEPS_WITHOUT_BACK.includes( stepName ) || isScanning;
-};
-
-const shouldHideNextBtn = ( stepName: string, isScanning = false ): boolean => {
-	const STEPS_WITH_NEXT = [ 'capture' ];
-
-	return ! STEPS_WITH_NEXT.includes( stepName ) || isScanning;
-};
-
-export default function ImportOnboarding( props: Props ): React.ReactNode {
+const ImportOnboarding: React.FunctionComponent< Props > = ( {
+	goToStep,
+	stepName,
+	stepSectionName,
+	isAnalyzing,
+} ) => {
 	const { __ } = useI18n();
-	const [ isScanning, setIsScanning ] = React.useState( false );
+
+	const shouldHideBackBtn = ( stepName: string ): boolean => {
+		const STEPS_WITHOUT_BACK = [ 'scanning' ];
+		return STEPS_WITHOUT_BACK.includes( stepName ) || isAnalyzing;
+	};
+
+	const shouldHideNextBtn = ( stepName: string ): boolean => {
+		const STEPS_WITH_NEXT = [ 'capture' ];
+		return ! STEPS_WITH_NEXT.includes( stepName ) || isAnalyzing;
+	};
 
 	return (
 		<StepWrapper
 			flowName={ 'importer' }
 			hideSkip={ true }
-			hideBack={ shouldHideBackBtn( props.stepName, isScanning ) }
-			hideNext={ shouldHideNextBtn( props.stepName, isScanning ) }
+			hideBack={ shouldHideBackBtn( stepName ) }
+			hideNext={ shouldHideNextBtn( stepName ) }
 			nextLabelText={ __( "I don't have a site address" ) }
 			allowBackFirstStep={ true }
-			backUrl={ props.stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
+			backUrl={ stepName === 'capture' ? getStepUrl( 'setup-site', 'intent' ) : undefined }
 			hideFormattedHeader={ true }
+			stepName={ stepName }
 			stepContent={
 				<div className="import__onboarding-page">
-					{ props.stepName === 'capture' && (
-						<CaptureStep
-							goToStep={ props.goToStep }
-							isScanning={ isScanning }
-							setIsScanning={ setIsScanning }
-						/>
-					) }
-					{ props.stepName === 'list' && <ListStep goToStep={ props.goToStep } /> }
+					{ stepName === 'capture' && <CaptureStep goToStep={ goToStep } /> }
+					{ stepName === 'list' && <ListStep goToStep={ goToStep } /> }
 
-					{ props.stepName === 'ready' && ! props.stepSectionName && (
+					{ stepName === 'ready' && ! stepSectionName && (
 						<ReadyStep platform={ MOCK_DATA.platform } />
 					) }
-					{ props.stepName === 'ready' && props.stepSectionName === 'not' && <ReadyNotStep /> }
-					{ props.stepName === 'ready' && props.stepSectionName === 'preview' && (
-						<ReadyPreviewStep website={ MOCK_DATA.website } platform={ MOCK_DATA.platform } />
-					) }
+					{ stepName === 'ready' && stepSectionName === 'not' && <ReadyNotStep /> }
+					{ stepName === 'ready' && stepSectionName === 'preview' && <ReadyPreviewStep /> }
 				</div>
 			}
-			{ ...props }
 		/>
 	);
-}
+};
+
+const connector = connect(
+	( state ) => ( {
+		isAnalyzing: isAnalyzing( state ),
+	} ),
+	{}
+);
+
+export default connector( ImportOnboarding );

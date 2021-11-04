@@ -20,6 +20,7 @@ import { fromApi } from './api';
 import { appStates } from './constants';
 import siteImporter from './site-importer/reducer';
 import uploads from './uploads/reducer';
+import urlAnalyzer from './url-analyzer/reducer';
 
 function isImporterStatusHydrated( state = false, action ) {
 	switch ( action.type ) {
@@ -171,6 +172,7 @@ const combinedReducer = combineReducers( {
 	isImporterStatusHydrated,
 	uploads,
 	siteImporter,
+	urlAnalyzer,
 } );
 
 export default withStorageKey( 'imports', combinedReducer );

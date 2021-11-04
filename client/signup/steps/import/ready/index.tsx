@@ -3,6 +3,9 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { urlData } from '../types';
 import ImportPlatformDetails from './platform-details';
 import ImportPreview from './preview';
 import './style.scss';
@@ -10,16 +13,29 @@ import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
-	website: string;
-	platform: string;
+	urlData: urlData;
 }
 
-const ReadyPreviewStep: React.FunctionComponent< Props > = ( { website, platform } ) => {
+const platformMap: { [ key: string ]: string } = {
+	wordpress: 'WordPress',
+	wix: 'Wix',
+	blogger: 'Blogger',
+	medium: 'Medium',
+	'godaddy-central': 'GoDaddy Central',
+	tumblr: 'Tumblr',
+};
+
+const convertPlatformName = ( platform: string ): string => {
+	return platformMap[ platform ] !== undefined ? platformMap[ platform ] : 'Unknown';
+};
+
+const ReadyPreview: React.FunctionComponent< Props > = ( { urlData } ) => {
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
-	const convertToFrendlyWebsiteName = ( website: string ): string => {
-		return website.replace( 'https://', '' ).replace( 'http://', '' ).replace( 'www.', '' );
+	const convertToFriendlyWebsiteName = ( website: string ): string => {
+		const { hostname, pathname } = new URL( website );
+		return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
 	};
 
 	return (
@@ -35,8 +51,8 @@ const ReadyPreviewStep: React.FunctionComponent< Props > = ( { website, platform
 									'It looks like <strong>%(website)s</strong> is hosted by %(platform)s. To move your existing content to your newly created WordPress.com site, try our %(platform)s importer.'
 								),
 								{
-									website: convertToFrendlyWebsiteName( website ),
-									platform,
+									website: convertToFriendlyWebsiteName( urlData.url ),
+									platform: convertPlatformName( urlData.platform ),
 								}
 							),
 							{ strong: createElement( 'strong' ) }
@@ -54,12 +70,12 @@ const ReadyPreviewStep: React.FunctionComponent< Props > = ( { website, platform
 				</div>
 			</div>
 			<div className="import__content">
-				<ImportPreview website={ website } />
+				<ImportPreview website={ urlData.url } />
 			</div>
 
 			{ isModalDetailsOpen && (
 				<ImportPlatformDetails
-					platform={ platform }
+					platform={ urlData.platform }
 					onClose={ setIsModalDetailsOpen.bind( this, false ) }
 				/>
 			) }
@@ -96,6 +112,7 @@ const ReadyNotStep: React.FunctionComponent = () => {
 interface PropsWithoutUrl {
 	platform: string;
 }
+
 const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) => {
 	const { __ } = useI18n();
 
@@ -111,7 +128,7 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 								'To move your existing %(platform)s hosted content to your newly created WordPress.com site, try our %(platform)s importer.'
 							),
 							{
-								platform,
+								platform: convertPlatformName( platform ),
 							}
 						) }
 					</SubTitle>
@@ -127,5 +144,9 @@ const ReadyStep: React.FunctionComponent< PropsWithoutUrl > = ( { platform } ) =
 		</div>
 	);
 };
+
+const ReadyPreviewStep = connect( ( state ) => ( {
+	urlData: getUrlData( state ),
+} ) )( ReadyPreview );
 
 export { ReadyPreviewStep, ReadyNotStep, ReadyStep };
