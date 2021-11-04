@@ -145,7 +145,7 @@ describe( 'payPalExpressProcessor', () => {
 				create_new_blog: false,
 				tax: { location: { postal_code: 'PR26 7RY', country_code: 'GB' } },
 			},
-			postalCode: 'PR26 7RY',
+			postal_code: 'PR26 7RY',
 			country: 'GB',
 		} );
 	} );
@@ -173,7 +173,7 @@ describe( 'payPalExpressProcessor', () => {
 				create_new_blog: false,
 				products: [ domainProduct ],
 			},
-			domainDetails: basicExpectedDomainDetails,
+			domain_details: basicExpectedDomainDetails,
 		} );
 	} );
 } );
