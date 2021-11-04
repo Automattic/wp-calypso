@@ -9,6 +9,7 @@ import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
+import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import PostCheckoutUpsellExperimentRedirector, {
 	PROFESSIONAL_EMAIL_OFFER,
 } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
@@ -320,16 +321,17 @@ export function redirectToSupportSession( context ) {
 }
 
 export function licensingThankYouManualActivation( context, next ) {
-	const { receiptId, source, siteId } = context.query;
+	const { product } = context.params;
 
-	context.primary = (
-		<LicensingThankYouManualActivation
-			productSlug={ context.params.product }
-			receiptId={ receiptId }
-			source={ source }
-			jetpackTemporarySiteId={ siteId }
-		/>
-	);
+	context.primary = <LicensingThankYouManualActivation productSlug={ product } />;
+
+	next();
+}
+
+export function licensingThankYouManualActivationInstructions( context, next ) {
+	const { product } = context.params;
+
+	context.primary = <LicensingThankYouManualActivationInstructions productSlug={ product } />;
 
 	next();
 }

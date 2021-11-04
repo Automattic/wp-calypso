@@ -9,6 +9,7 @@ import {
 	checkoutSiteless,
 	checkoutThankYou,
 	licensingThankYouManualActivation,
+	licensingThankYouManualActivationInstructions,
 	licensingThankYouAutoActivation,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
@@ -56,6 +57,13 @@ export default function () {
 			'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
 			noSite,
 			licensingThankYouManualActivation,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/checkout/jetpack/thank-you/licensing-manual-activate-instructions/:product',
+			noSite,
+			licensingThankYouManualActivationInstructions,
 			makeLayout,
 			clientRender
 		);
