@@ -1079,6 +1079,25 @@
 	}
 }
 
+.licensing-thank-you-manual-activation-instructions__step-number {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	margin-right: 12px;
+
+	font-weight: bold;
+	text-align: center;
+	color: white;
+
+	background-color: var( --studio-jetpack-green-40 );
+
+	border-radius: 24px; /* stylelint-disable-line */
+
+	width: 28px;
+	height: 28px;
+}
+
 
 
 .jetpack-checkout-thank-you {
