@@ -13,13 +13,13 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ currentVideo, setCurrentVideo ] = useState( null );
 
-	const onVideoPlayClick = ( video ) => {
+	const onVideoPlayClick = ( videoSlug, videoInfo ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
-			video,
+			videoSlug,
 		} );
 
-		setCurrentVideo( video );
+		setCurrentVideo( videoInfo );
 	};
 
 	useEffect( () => {
@@ -129,7 +129,7 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 					<div className="videos-ui__chapters">
 						{ course &&
 							Object.entries( course.videos ).map( ( data, i ) => {
-								const video = data[ 1 ];
+								const videoInfo = data[ 1 ];
 								return (
 									<div
 										key={ i }
@@ -154,15 +154,15 @@ const VideosUi = ( { shouldDisplayTopLinks = false } ) => {
 													<Gridicon icon="chevron-down" size={ 18 } />
 												</span>
 											) }
-											{ i + 1 }. { video.title }{ ' ' }
-											<span className="videos-ui__duration"> { video.duration } </span>{ ' ' }
+											{ i + 1 }. { videoInfo.title }{ ' ' }
+											<span className="videos-ui__duration"> { videoInfo.duration } </span>{ ' ' }
 										</button>
 										<div className="videos-ui__active-video-content">
 											<div>
-												<p>{ video.description } </p>
+												<p>{ videoInfo.description } </p>
 												<Button
 													className="videos-ui__play-button"
-													onClick={ () => onVideoPlayClick( data[ 0 ] ) }
+													onClick={ () => onVideoPlayClick( data[ 0 ], videoInfo ) }
 												>
 													<Gridicon icon="play" />
 													<span>{ translate( 'Play video' ) }</span>
