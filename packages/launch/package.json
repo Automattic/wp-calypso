@@ -62,7 +62,7 @@
 		"@wordpress/data": "^6.1.0",
 		"@wordpress/element": "^4.0.1",
 		"@wordpress/i18n": "^4.2.2",
-		"react-native": "^0.65.0",
+		"react-native": "^0.66.2",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.0.5"
 	},

@@ -363,7 +363,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
   languageName: unknown
   linkType: soft
 
@@ -394,7 +394,7 @@ __metadata:
     debug: ^4.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -429,7 +429,7 @@ __metadata:
     "@wordpress/element": ^4.0.1
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -609,7 +609,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -667,7 +667,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     "@wordpress/element": ^4.0.1
     "@wordpress/i18n": ^4.2.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -796,7 +796,7 @@ __metadata:
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     webpack: ^5.54.0
@@ -828,7 +828,7 @@ __metadata:
   peerDependencies:
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
   languageName: unknown
   linkType: soft
@@ -857,7 +857,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -891,7 +891,7 @@ __metadata:
     "@wordpress/i18n": ^4.2.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -956,7 +956,7 @@ __metadata:
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     sass-loader: ^10.1.1
@@ -1003,7 +1003,7 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -1147,7 +1147,7 @@ __metadata:
     "@wordpress/data": ^6.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
   languageName: unknown
@@ -1212,7 +1212,7 @@ __metadata:
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.0.5
     tinymce: ^4.9.6
@@ -1315,7 +1315,7 @@ __metadata:
     puppeteer: ^3.0.4
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     reakit-utils: ^0.15.1
     redux: ^4.1.1
     utility-types: ^3.10.0
@@ -4486,10 +4486,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/polyfills@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@react-native/polyfills@npm:1.0.0"
-  checksum: eda9581f43ef232fd67a3bd2da8f85492ad90501584cf0e208df492f9737d949d056d2e27cde9eb26e02302bd148a37214769735bf5827bc6f66a132ad8a244f
+"@react-native/polyfills@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@react-native/polyfills@npm:2.0.0"
+  checksum: 6202e584464a7584f178b424f524d37b9967002c75a435f6cc05dd3c6c2df62a0c880e87500331a1ea580f0d4b5dcdc6512463488abbc02fb9baf5e8745d7f97
   languageName: node
   linkType: hard
 
@@ -9994,19 +9994,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ast-types@npm:0.9.6":
-  version: 0.9.6
-  resolution: "ast-types@npm:0.9.6"
-  checksum: d6aa2f8322d7ff7794bae2c25f97211595fc62f591cb097624c1d22fe683ce9a948b2978917d1b8c54ff93d0e09847e3b64f31797d9439e49590e4de0faa6aee
-  languageName: node
-  linkType: hard
-
-"ast-types@npm:^0.14.2":
+"ast-types@npm:0.14.2, ast-types@npm:^0.14.2":
   version: 0.14.2
   resolution: "ast-types@npm:0.14.2"
   dependencies:
     tslib: ^2.0.1
   checksum: 5d66d89b6c07fe092087454b6042dbaf81f2882b176db93861e2b986aafe0bce49e1f1ff59aac775d451c1426ad1e967d250e9e3548f5166ea8a3475e66c169d
+  languageName: node
+  linkType: hard
+
+"ast-types@npm:0.9.6":
+  version: 0.9.6
+  resolution: "ast-types@npm:0.9.6"
+  checksum: d6aa2f8322d7ff7794bae2c25f97211595fc62f591cb097624c1d22fe683ce9a948b2978917d1b8c54ff93d0e09847e3b64f31797d9439e49590e4de0faa6aee
   languageName: node
   linkType: hard
 
@@ -11589,7 +11589,7 @@ __metadata:
     react-intersection-observer: ^8.32.1
     react-live: ^2.3.0
     react-modal: ^3.14.3
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     react-query: ^3.9.8
     react-redux: ^7.2.4
     react-router-dom: ^5.1.2
@@ -17439,10 +17439,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flow-parser@npm:0.*":
-  version: 0.119.0
-  resolution: "flow-parser@npm:0.119.0"
-  checksum: 9cbaeb25eceb4c602f6788b3c45c6ffa0fac9481c7c9b9c34cadceed0f6836314fda1941040618a43588b07d5e3c9a40b2a6be7884a97a47f7a5b9ed09fd4a41
+"flow-parser@npm:0.*, flow-parser@npm:^0.121.0":
+  version: 0.121.0
+  resolution: "flow-parser@npm:0.121.0"
+  checksum: 831cf56b2ed987677fd056fd5a035aee88c9c474c507e14e8ffd85374da7b42236a7280a801fc893779331be638c2c4f8af3fb654a298f8ed16c209926450576
   languageName: node
   linkType: hard
 
@@ -19073,10 +19073,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"hermes-engine@npm:~0.8.1":
-  version: 0.8.1
-  resolution: "hermes-engine@npm:0.8.1"
-  checksum: cee6baf5a37a3c8172893f075fbf13b3a5aac0d8ef06956903eabb012f64d2aa98eda5d0a4016b33c2d5305301b33bb59d60e15b07e98ef7d53f7188f49db285
+"hermes-engine@npm:~0.9.0":
+  version: 0.9.0
+  resolution: "hermes-engine@npm:0.9.0"
+  checksum: 59fc0fc1ac7a30fc08279eee8d82227ab2593a82c744be85c9e2b73365d54b88fba4f998ce6450b13f8b7d7a8b6d0d5db5bb40b912cb66e6387c1308e0198095
   languageName: node
   linkType: hard
 
@@ -22526,6 +22526,37 @@ fsevents@~2.1.2:
   version: 250230.2.1
   resolution: "jsc-android@npm:250230.2.1"
   checksum: b8825e2ca12f813ac3229388ed049557ad6aa9a1f5535ef99844b0ea692a6a90824deb234c56e6850f4e1f7c688896213115fbe957d12fe1f593be8de045add7
+  languageName: node
+  linkType: hard
+
+"jscodeshift@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "jscodeshift@npm:0.11.0"
+  dependencies:
+    "@babel/core": ^7.1.6
+    "@babel/parser": ^7.1.6
+    "@babel/plugin-proposal-class-properties": ^7.1.0
+    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.1.0
+    "@babel/plugin-proposal-optional-chaining": ^7.1.0
+    "@babel/plugin-transform-modules-commonjs": ^7.1.0
+    "@babel/preset-flow": ^7.0.0
+    "@babel/preset-typescript": ^7.1.0
+    "@babel/register": ^7.0.0
+    babel-core: ^7.0.0-bridge.0
+    colors: ^1.1.2
+    flow-parser: 0.*
+    graceful-fs: ^4.2.4
+    micromatch: ^3.1.10
+    neo-async: ^2.5.0
+    node-dir: ^0.1.17
+    recast: ^0.20.3
+    temp: ^0.8.1
+    write-file-atomic: ^2.3.0
+  peerDependencies:
+    "@babel/preset-env": ^7.1.6
+  bin:
+    jscodeshift: bin/jscodeshift.js
+  checksum: 71f9e545fffecd8de4120305440b155013ebc9a48be8ef00eca18de9e8f09841cda99a7effa96af96324abd54e96cc3773add864358dec3afd4794e966bf98f8
   languageName: node
   linkType: hard
 
@@ -29542,13 +29573,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-devtools-core@npm:^4.6.0":
-  version: 4.16.0
-  resolution: "react-devtools-core@npm:4.16.0"
+"react-devtools-core@npm:^4.13.0":
+  version: 4.21.0
+  resolution: "react-devtools-core@npm:4.21.0"
   dependencies:
     shell-quote: ^1.6.1
     ws: ^7
-  checksum: e79f69ebed2c3c31b59c9d5f928878a666ba7955a37af455e340e50e7fb6f1b3cc1932896e616719fe9f21e92aa58574c2e8d768f0cc5c29154b30076c5a654d
+  checksum: f4a519d253c187be616425818c99510531ddcef76c16fd30f70fbdc4e37697750a4cd7ee546f86eb9700cafe2ffb51a8c4098ff16a963df9d24185236d305996
   languageName: node
   linkType: hard
 
@@ -29777,6 +29808,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-native-codegen@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "react-native-codegen@npm:0.0.7"
+  dependencies:
+    flow-parser: ^0.121.0
+    jscodeshift: ^0.11.0
+    nullthrows: ^1.1.1
+  checksum: 262ee8bd0809dbcc136c44bdb6deb7de3c007ba5cd8cedbb9ec237828a76f743c3a9181084906b922869f93734e319bbc6dc73005e77e1d0c1d8530f1b67e979
+  languageName: node
+  linkType: hard
+
 "react-native-url-polyfill@npm:^1.1.2":
   version: 1.1.2
   resolution: "react-native-url-polyfill@npm:1.1.2"
@@ -29789,9 +29831,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-native@npm:^0.65.0":
-  version: 0.65.1
-  resolution: "react-native@npm:0.65.1"
+"react-native@npm:^0.66.2":
+  version: 0.66.2
+  resolution: "react-native@npm:0.66.2"
   dependencies:
     "@jest/create-cache-key-function": ^27.0.1
     "@react-native-community/cli": ^6.0.0
@@ -29799,12 +29841,12 @@ fsevents@~2.1.2:
     "@react-native-community/cli-platform-ios": ^6.0.0
     "@react-native/assets": 1.0.0
     "@react-native/normalize-color": 1.0.0
-    "@react-native/polyfills": 1.0.0
+    "@react-native/polyfills": 2.0.0
     abort-controller: ^3.0.0
     anser: ^1.4.9
     base64-js: ^1.1.2
     event-target-shim: ^5.0.1
-    hermes-engine: ~0.8.1
+    hermes-engine: ~0.9.0
     invariant: ^2.2.4
     jsc-android: ^250230.2.1
     metro-babel-register: 0.66.2
@@ -29815,7 +29857,8 @@ fsevents@~2.1.2:
     pretty-format: ^26.5.2
     promise: ^8.0.3
     prop-types: ^15.7.2
-    react-devtools-core: ^4.6.0
+    react-devtools-core: ^4.13.0
+    react-native-codegen: ^0.0.7
     react-refresh: ^0.4.0
     regenerator-runtime: ^0.13.2
     scheduler: ^0.20.2
@@ -29827,7 +29870,7 @@ fsevents@~2.1.2:
     react: 17.0.2
   bin:
     react-native: cli.js
-  checksum: b90c024a0529735fa8265db59f4ebb62ae3014a905f93933d21bbf61febee7e5bcf3f0f768d7bac6c6b91429ab524341a5d9d8dabb8ded49bd0bc752057540e8
+  checksum: dd9e50ed844aa62cb29ffe93a70666456acb401c138e93edde9f02031a2c8d3b3de2ae0640123a45f86199295ab65ffae1bc7b03f53a1744a3fd3eca51f46847
   languageName: node
   linkType: hard
 
@@ -30513,6 +30556,18 @@ fsevents@~2.1.2:
     private: ^0.1.8
     source-map: ~0.6.1
   checksum: 1d0451038cea9bd452834724b90757af8774680c80bbcf6a527405f9cf7a368e049d35cebe28ceef8a9e114e8e4a6c86af05effb98b451ac94dda982a7f540dd
+  languageName: node
+  linkType: hard
+
+"recast@npm:^0.20.3":
+  version: 0.20.5
+  resolution: "recast@npm:0.20.5"
+  dependencies:
+    ast-types: 0.14.2
+    esprima: ~4.0.0
+    source-map: ~0.6.1
+    tslib: ^2.0.1
+  checksum: 7810216ff36c7376eddd66d3ce6b2df421305fdc983f2122711837911712177d52d804419655e1f29d4bb93016c178cffe442af410bdcf726050ca19af6fed32
   languageName: node
   linkType: hard
 
@@ -37384,7 +37439,7 @@ typescript@^4.4.3:
     qs: ^6.9.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-native: ^0.65.0
+    react-native: ^0.66.2
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.10
