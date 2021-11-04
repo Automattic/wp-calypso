@@ -1,6 +1,7 @@
 import { Page } from 'playwright';
 import { NavbarComponent, MeSidebarComponent } from '../components';
 import { AccountSettingsPage } from '../pages';
+import type { LanguageSlug } from '@automattic/languages';
 
 /**
  * Change the UI language.
@@ -23,7 +24,7 @@ export class ChangeUILanguageFlow {
 	 * This method will navigate from the navbar to the /me page,
 	 * then onto Account Settings.
 	 */
-	async changeUILanguage( localeSlug: string ): Promise< void > {
+	async changeUILanguage( localeSlug: LanguageSlug ): Promise< void > {
 		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickMe();
 

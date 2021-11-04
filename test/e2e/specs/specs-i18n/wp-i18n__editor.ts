@@ -11,8 +11,19 @@ import {
 	setupHooks,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import type { LanguageSlug } from '@automattic/languages';
 
-const translations = {
+type Translations = {
+	[ language in LanguageSlug ]?: Partial< {
+		blocks: {
+			blockName: string;
+			blockEditorSelector: string;
+			blockEditorContent: string[];
+			blockPanelTitle: string;
+		}[];
+	} >;
+};
+const translations: Translations = {
 	en: {
 		blocks: [
 			// Core
@@ -202,7 +213,7 @@ const translations = {
 		],
 	},
 };
-const locales = Object.keys( translations );
+const locales = Object.keys( translations ) as LanguageSlug[];
 
 describe( DataHelper.createSuiteTitle( 'Editor Translations' ), function () {
 	let gutenbergEditorPage: GutenbergEditorPage;

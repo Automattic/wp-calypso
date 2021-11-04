@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import type { LanguageSlug } from '@automattic/languages';
 
 const selectors = {
 	// Close account
@@ -15,7 +16,8 @@ const selectors = {
 	// UI Language
 	uiLanguageButton: 'button.language-picker',
 	uiLanguageSearch: '.language-picker-component__search-desktop .search-component__input',
-	uiLanguageItem: '.language-picker-component__language-button',
+	uiLanguageItem: ( localeSlug: LanguageSlug ) =>
+		`.language-picker-component__language-button:has([lang="${ localeSlug }"])`,
 	uiLanguageApplyButton: '.language-picker__modal-buttons button.is-secondary',
 };
 
@@ -62,10 +64,10 @@ export class AccountSettingsPage {
 	/**
 	 * Changes the UI language for the currently logged in user.
 	 */
-	async changeUILanguage( localeSlug: string ): Promise< void > {
+	async changeUILanguage( localeSlug: LanguageSlug ): Promise< void > {
 		await this.page.click( selectors.uiLanguageButton );
 		await this.page.fill( selectors.uiLanguageSearch, localeSlug );
-		await this.page.click( `${ selectors.uiLanguageItem }:has([lang="${ localeSlug }"])` );
+		await this.page.click( selectors.uiLanguageItem( localeSlug ) );
 		await this.page.click( selectors.uiLanguageApplyButton );
 	}
 }
