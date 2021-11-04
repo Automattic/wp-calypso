@@ -32,6 +32,10 @@ const TransferDomainStepUnlock = ( {
 	}, [ domain, setCheckInProgress ] );
 
 	const checkDomainLockStatus = async () => {
+		if ( initialDomainLockStatus === domainLockStatusType.UNKNOWN ) {
+			onNextStep();
+		}
+
 		try {
 			const isDomainUnlocked = await getDomainLockStatus();
 			if ( isDomainUnlocked ) onNextStep();
@@ -85,7 +89,9 @@ const TransferDomainStepUnlock = ( {
 			</p>
 			<div className={ className + '__actions' }>
 				<Button primary onClick={ checkDomainLockStatus } busy={ checkInProgress }>
-					{ __( "I've unlocked my domain" ) }
+					{ initialDomainLockStatus === domainLockStatusType.UNKNOWN
+						? __( 'Skip domain lock verificaiton' )
+						: __( "I've unlocked my domain" ) }
 				</Button>
 			</div>
 		</div>
