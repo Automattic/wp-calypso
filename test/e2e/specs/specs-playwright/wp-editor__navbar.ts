@@ -1,5 +1,6 @@
 /**
  * @group gutenberg
+ * @group calypso-pr
  */
 
 import {
@@ -31,7 +32,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 
 	it( 'Return to Home dashboard', async function () {
 		const gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.openNavSidebar();
 		await gutenbergEditorPage.returnToHomeDashboard();
 	} );
 } );

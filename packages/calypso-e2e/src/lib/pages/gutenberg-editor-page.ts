@@ -382,12 +382,22 @@ export class GutenbergEditorPage {
 	 */
 	async returnToHomeDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
+		const targetDevice = getTargetDeviceName();
+
+		if (
+			targetDevice !== 'mobile' &&
+			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
+				'false'
+		) {
+			await this.openNavSidebar();
+		}
+
 		const navbarComponent = new NavbarComponent( this.page );
-		const actions: unknown[] = [
+		const actions: Promise< unknown >[] = [
 			this.page.waitForNavigation( { url: '**/home/**', waitUntil: 'load' } ),
 		];
 
-		if ( getTargetDeviceName() === 'desktop' ) {
+		if ( getTargetDeviceName() !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );
 		} else {
 			actions.push( navbarComponent.clickMySites() );
