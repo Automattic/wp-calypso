@@ -54,16 +54,13 @@ class Dns extends Component {
 	onRestoreSuccess() {
 		const { translate, selectedDomainName } = this.props;
 		this.props.fetchDns( selectedDomainName, true );
-		this.props.successNotice( translate( 'Default DNS records restored successfully.' ) );
+		this.props.successNotice(
+			translate( 'Yay, the name servers have been successfully updated!' )
+		);
 	}
 
-	onRestoreError() {
-		const { translate } = this.props;
-		this.props.errorNotice(
-			translate(
-				'There was an error trying to restore the default DNS records for your domain. Please try again later.'
-			)
-		);
+	onRestoreError( errorMessage ) {
+		this.props.errorNotice( errorMessage );
 	}
 
 	renderDnsTemplates() {
