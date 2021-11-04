@@ -90,7 +90,7 @@ const TransferDomainStepUnlock = ( {
 			</p>
 			<div className={ className + '__actions' }>
 				<Button primary onClick={ checkDomainLockStatus } busy={ checkInProgress }>
-					{ initialDomainLockStatus === domainLockStatusType.UNKNOWN
+					{ domainLockStatusType.UNKNOWN === initialDomainLockStatus
 						? __( 'Skip domain lock verificaiton' )
 						: __( "I've unlocked my domain" ) }
 				</Button>
