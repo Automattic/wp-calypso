@@ -22,7 +22,7 @@ Refer to the [Playwright style guide](docs/style-guide-playwright.md) for more i
 
 ## Get Started
 
-Tests can be written in both TypeScript and JavaScript.
+Tests should be written in TypeScript.
 
 ### 1. Create a spec file with the following structure
 
@@ -52,6 +52,7 @@ The current suites used are...
 - `calypso-pr` - tests run pre-merge on every Calypso PR.
 - `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
 - `calypso-release` - tests run post-merge and pre-release in the Calypso deployment process.
+- `coblocks` - tests that that target CoBlocks block testing in the editor, for CoBlocks upgrades
 
 ### 3. Import the basics
 
@@ -91,14 +92,14 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 
 With Playwright, the `page` instance lives until it is closed or crashes. As such, the same `page` instance can be used throughout the test.
 
-Invoke the `setupHooks` call to obtain an instance of a `Page` object:
+Invoke the `setupHooks` call in `lib/jest/setup-hooks` to obtain an instance of a `Page` object:
 
 ```typescript
 describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	setupHooks( ( createdPage ) => {
+		page = createdPage;
 	} );
 } );
 ```
