@@ -126,9 +126,29 @@ export class PeoplePage {
 	/**
 	 * Locate and click on a pending invite.
 	 *
+	 * This method will make several attempts to locate the pending invite.
+	 * Each attempt will wait 5 seconds before the page is refreshed and another attempt made.
+	 *
+	 * The retry mechanism is necessary due to Calypso sometimes not immediately reflecting
+	 * the newly invited user. This can occur due to large number of pending invites and also
+	 * because of faster-than-human execution speed of automated test frameworks.
+	 *
 	 * @param {string} emailAddress Email address of the pending user.
 	 */
 	async selectInvitedUser( emailAddress: string ): Promise< void > {
+		// Retry three times, each time allowing 5 seconds for Playwright to locate the
+		// pending user invite.
+		for ( let retries = 3; retries > 0; retries -= 1 ) {
+			console.log( retries );
+			try {
+				await this.page.waitForSelector( selectors.invitedUser( emailAddress ), {
+					timeout: 5 * 1000,
+				} );
+			} catch {
+				await this.page.reload();
+			}
+		}
+
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitedUser( emailAddress ) ),
