@@ -598,6 +598,7 @@ __metadata:
   resolution: "@automattic/language-picker@workspace:packages/language-picker"
   dependencies:
     "@automattic/calypso-typescript-config": ^1.0.0
+    "@automattic/languages": ^1.0.0
     "@automattic/search": ^1.0.0
     "@babel/runtime": ^7.15.3
     "@wordpress/base-styles": ^4.0.0
