@@ -35,7 +35,11 @@ const TransferDomainStepUnlock = ( {
 	const checkDomainLockStatus = async () => {
 		try {
 			const isDomainUnlocked = await getDomainLockStatus();
-			if ( isDomainUnlocked || lockStatusUnknown ) {
+			if (
+				isDomainUnlocked ||
+				lockStatusUnknown ||
+				( domainLockStatusType.UNKNOWN === initialDomainLockStatus && null === isDomainUnlocked )
+			) {
 				onNextStep();
 			} else if ( isDomainUnlocked === null ) {
 				setDomainStatusError( 'Can’t get the domain’s lock status' );
