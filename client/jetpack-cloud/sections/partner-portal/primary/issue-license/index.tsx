@@ -21,7 +21,7 @@ export default function IssueLicense(): ReactElement {
 	}, [] );
 
 	return (
-		<Main className="issue-license">
+		<Main wideLayout className="issue-license">
 			<DocumentHead title={ translate( 'Issue a new License' ) } />
 			<SidebarNavigation />
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>

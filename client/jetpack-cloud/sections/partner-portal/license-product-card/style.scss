@@ -1,0 +1,61 @@
+.license-product-card {
+	width: 33%;
+}
+
+.license-product-card__inner {
+	margin: 0.5rem;
+	padding: 1.5rem;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	cursor: pointer;
+}
+
+.license-product-card.selected .license-product-card__inner {
+	border: 1px solid #fff;
+	background: #fff;
+	box-shadow: 0 0 12px #ddd;
+}
+
+.license-product-card__title {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	color: #444;
+	display: inline-block;
+}
+
+.license-product-card__radio {
+	border: 2px solid #444;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	float: right;
+}
+
+.license-product-card__radio .gridicon {
+	color: #fff;
+	position: relative;
+	top: -4px;
+	left: 1px;
+	width: 14px;
+}
+
+.license-product-card.selected .license-product-card__radio {
+	border: 2px solid green;
+	background: green;
+}
+
+.issue-license-form p.license-product-card__text {
+	font-size: 0.75rem;
+	color: #777;
+	margin-bottom: 0;
+}
+
+.issue-license-form__top {
+	display: flex;
+	justify-content: space-between;
+}
+
+.issue-license-form__top > div {
+	align-self: flex-end;
+	margin-bottom: 0;
+}
