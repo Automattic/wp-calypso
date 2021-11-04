@@ -10,7 +10,7 @@ const debug = debugFactory( 'wporg' );
 /**
  * Constants
  */
-const WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=query_plugins';
+const WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.2/?action=query_plugins';
 const DEFAULT_PAGE_SIZE = 24;
 const DEFAULT_CATEGORY = 'all';
 const DEFAULT_FIRST_PAGE = 1;
@@ -72,7 +72,7 @@ export function fetchPluginInformation( pluginSlug ) {
 
 	pluginSlug = pluginSlug.replace( new RegExp( '.php$' ), '' );
 
-	const baseUrl = 'https://api.wordpress.org/plugins/info/1.0/' + pluginSlug + '.jsonp';
+	const baseUrl = 'https://api.wordpress.org/plugins/info/1.2/' + pluginSlug + '.jsonp';
 
 	return new Promise( ( resolve, reject ) => {
 		jsonp( baseUrl, query, function ( error, data ) {
@@ -100,6 +100,7 @@ export function fetchPluginsList( options, callback ) {
 	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
+	const locale = options.locale;
 
 	payload =
 		'request[page]=' +
@@ -108,7 +109,9 @@ export function fetchPluginsList( options, callback ) {
 		pageSize +
 		'&request[fields][icons]=1&request[fields][banners]=1' +
 		'&request[fields][compatibility]=1&request[fields][tested]=0' +
-		'&request[fields][requires]=0&request[fields][sections]=0';
+		'&request[fields][requires]=0&request[fields][sections]=0' +
+		'&request[locale]=' +
+		locale;
 
 	if ( search ) {
 		payload += '&request[search]=' + search;

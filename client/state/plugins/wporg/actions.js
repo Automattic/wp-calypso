@@ -10,6 +10,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	getNextPluginsListPage,
 	isFetching,
@@ -124,6 +125,7 @@ export function fetchPluginsList(
 				page,
 				category,
 				search: searchTerm,
+				locale: getCurrentUserLocale( getState() ),
 			},
 			function ( error, data ) {
 				dispatch(
