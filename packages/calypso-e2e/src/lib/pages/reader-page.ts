@@ -3,12 +3,13 @@ import { Page } from 'playwright';
 const selectors = {
 	// Reader main stream
 	readerCard: '.reader-post-card',
+	streamPlaceholder: 'span.reader__placeholder-text',
 	visitSiteLink: '.reader-visit-link',
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
 	// Post
-	placeholder: '.is-placeholder',
+	relatedPostsPlaceholder: '.is-placeholder',
 	commentTextArea: '.comments__form textarea',
 	commentSubmitButton: '.comments__form button:text("Send")',
 	comment: ( commentText: string ) => `div:text( '${ commentText }' )`,
@@ -54,6 +55,9 @@ export class ReaderPage {
 	 * @throws {Error} If neither index or text are specified.
 	 */
 	async visitPost( { index, text }: { index?: number; text?: string } = {} ): Promise< void > {
+		// Wait for main reader stream to populate.
+		await this.page.waitForSelector( selectors.streamPlaceholder, { state: 'hidden' } );
+
 		let selector = '';
 
 		if ( index ) {
@@ -65,7 +69,6 @@ export class ReaderPage {
 		}
 
 		await Promise.all( [
-			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
 			this.page.waitForNavigation( { waitUntil: 'networkidle' } ),
 			this.page.click( selector ),
 		] );
@@ -80,12 +83,17 @@ export class ReaderPage {
 	 * @param {string} comment Text of the comment.
 	 */
 	async comment( comment: string ): Promise< void > {
+		// Wait for related posts card to generate.
+		await this.page.waitForSelector( selectors.relatedPostsPlaceholder, { state: 'hidden' } );
+
+		// Force scroll.
 		const elementHandle = await this.page.waitForSelector( selectors.commentTextArea );
 		await this.page.evaluate(
 			( element: SVGElement | HTMLElement ) => element.scrollIntoView(),
 			elementHandle
 		);
 		await this.page.fill( selectors.commentTextArea, comment );
+
 		await Promise.all( [
 			this.page.waitForResponse(
 				( response ) => response.status() === 200 && response.url().includes( 'new?' )
